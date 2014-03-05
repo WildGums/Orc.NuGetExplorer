@@ -1,0 +1,1 @@
+Storing packages via NuGet in visual studio is very slow. To speed up things, please run RestorePackages.bat
