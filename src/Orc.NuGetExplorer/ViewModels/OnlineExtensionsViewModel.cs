@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel;
     using Catel.Collections;
     using Catel.MVVM;
+    using Catel.Services;
     using NuGet;
     using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Services;
@@ -18,12 +19,15 @@ namespace Orc.NuGetExplorer.ViewModels
     public class OnlineExtensionsViewModel : ViewModelBase
     {
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IDispatcherService _dispatcherService;
 
-        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService)
+        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => packageQueryService);
+            Argument.IsNotNull(() => dispatcherService);
 
             _packageQueryService = packageQueryService;
+            _dispatcherService = dispatcherService;
 
             AvailablePackages = new ObservableCollection<PackageDetails>();
         }
@@ -50,7 +54,10 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(PackageSource))
             {
-                AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(PackageSource, SearchFilter));
+                _dispatcherService.BeginInvoke(() =>
+                {
+                    AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(PackageSource, SearchFilter));
+                });
             }
         }
     }
