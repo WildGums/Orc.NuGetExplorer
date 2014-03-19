@@ -11,5 +11,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class InstalledExtensionsViewModel : ViewModelBase
     {
+        public string PackageSource { get; set; }
     }
 }

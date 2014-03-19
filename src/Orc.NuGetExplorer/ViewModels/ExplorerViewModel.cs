@@ -7,21 +7,32 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using Catel;
     using Catel.MVVM;
     using Orc.NuGetExplorer.Services;
 
     public class ExplorerViewModel : ViewModelBase
     {
-        private readonly INuGetService _nuGetService;
+        private readonly IPackageSourceService _packageSourceService;
 
-        public ExplorerViewModel(INuGetService nuGetService)
+        public ExplorerViewModel(IPackageSourceService packageSourceService)
         {
-            Argument.IsNotNull(() => nuGetService);
+            Argument.IsNotNull(() => packageSourceService);
 
-            _nuGetService = nuGetService;
+            _packageSourceService = packageSourceService;
+
+            AvailablePackageSources = new List<string>();
+            foreach (var packageSource in packageSourceService.PackageSources)
+            {
+                AvailablePackageSources.Add(packageSource.Name);
+            }
         }
 
         public string SelectedGroup { get; set; }
+
+        public string SelectedPackageSource { get; set; }
+
+        public List<string> AvailablePackageSources { get; private set; }
     }
 }

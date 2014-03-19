@@ -5,6 +5,7 @@
     using Catel.MVVM.Views;
     using Catel.Windows.Controls;
     using NuGet;
+    using Orc.NuGetExplorer.Models;
 
     /// <summary>
     /// Interaction logic for PackageListView.xaml.
@@ -18,30 +19,28 @@
         {
             InitializeComponent();
 
-            ItemsSource = new ObservableCollection<IPackageMetadata>();
+            ItemsSource = new ObservableCollection<PackageDetails>();
         }
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public ObservableCollection<IPackageMetadata> ItemsSource
+        public ObservableCollection<PackageDetails> ItemsSource
         {
-            get { return (ObservableCollection<IPackageMetadata>)GetValue(ItemsSourceProperty); }
+            get { return (ObservableCollection<PackageDetails>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ItemsSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
-            typeof(ObservableCollection<IPackageMetadata>), typeof(PackageListView), new PropertyMetadata(null));
-
+            typeof(ObservableCollection<PackageDetails>), typeof(PackageListView), 
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
-        public IPackageMetadata SelectedPackage
+        public PackageDetails SelectedPackage
         {
-            get { return (IPackageMetadata)GetValue(SelectedPackageProperty); }
+            get { return (PackageDetails)GetValue(SelectedPackageProperty); }
             set { SetValue(SelectedPackageProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SelectedPackage.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage",
-            typeof(IPackageMetadata), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            typeof(PackageDetails), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
     }
 }

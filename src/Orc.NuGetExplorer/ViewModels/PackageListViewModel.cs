@@ -8,21 +8,17 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.ObjectModel;
-    using Catel;
     using Catel.MVVM;
-    using NuGet;
+    using Orc.NuGetExplorer.Models;
 
     public class PackageListViewModel : ViewModelBase
     {
-        public PackageListViewModel(IPackageMetadata selectedPackage)
+        public PackageListViewModel()
         {
-            Argument.IsNotNull(() => selectedPackage);
-
-            SelectedPackage = selectedPackage;
         }
 
-        public ObservableCollection<IPackageMetadata> ItemsSource { get; set; }
+        public ObservableCollection<PackageDetails> ItemsSource { get; set; }
 
-        public IPackageMetadata SelectedPackage { get; private set; }
+        public PackageDetails SelectedPackage { get; set; }
     }
 }

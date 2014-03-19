@@ -8,18 +8,29 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
+    using Catel.Fody;
     using Catel.MVVM;
     using NuGet;
+    using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Services;
 
     public class PackageDetailsViewModel : ViewModelBase
     {
-        public PackageDetailsViewModel(IServerPackageMetadata package)
+        public PackageDetailsViewModel(PackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
             Package = package;
         }
 
-        public IServerPackageMetadata Package { get; private set; }
+        public override string Title
+        {
+            get { return Package.Title; }
+        }
+
+        [Model(SupportIEditableObject = false)]
+        [Expose("Summary")]
+        [Expose("Icon")]
+        public PackageDetails Package { get; private set; }
     }
 }

@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				  xmlns:catel="http://catel.codeplex.com"
 				  xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
+				  xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
 				  Width="800" Height="400" SizeToContent="Manual">
     
     <Grid>
@@ -16,19 +17,20 @@
         </Grid.ColumnDefinitions>
         
         <TreeView x:Name="treeView" Grid.Column="0">
-            <TreeViewItem Header="Installed" Selected="OnTreeViewItemSelected" >
-                <TreeViewItem Header="All" />
-            </TreeViewItem>
+            <TreeViewItem Header="Installed" Selected="OnTreeViewItemSelected" />
 
-            <TreeViewItem Header="Online" Selected="OnTreeViewItemSelected">
-                <TreeViewItem Header="All" />
-            </TreeViewItem>
+            <TreeViewItem Header="Online" Selected="OnTreeViewItemSelected" />
 
-            <TreeViewItem Header="Updates" Selected="OnTreeViewItemSelected">
-                <TreeViewItem Header="All" />
-            </TreeViewItem>
+            <TreeViewItem Header="Updates" Selected="OnTreeViewItemSelected" />
         </TreeView>
 
-        <ContentPresenter Grid.Column="1" Content="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToViewConverter}}" />
+        <views:InstalledExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
+                                       Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Installed}" />
+
+        <views:OnlineExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
+                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Online}" />
+
+        <views:UpdateExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
+                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Updates}" />
     </Grid>
 </catel:DataWindow>

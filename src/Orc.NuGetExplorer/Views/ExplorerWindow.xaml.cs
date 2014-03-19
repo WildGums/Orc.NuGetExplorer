@@ -7,9 +7,11 @@
 
 namespace Orc.NuGetExplorer.Views
 {
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using Catel;
+    using Catel.MVVM;
     using Catel.Windows;
     using Orc.NuGetExplorer.ViewModels;
 
@@ -31,8 +33,11 @@ namespace Orc.NuGetExplorer.Views
 
         protected override void OnViewModelChanged()
         {
-            if (ViewModel != null)
+            var vm = GetViewModel();
+            if (vm != null)
             {
+                InitializeSources(vm);
+
                 SelectCategory("online");
             }
         }
@@ -50,25 +55,61 @@ namespace Orc.NuGetExplorer.Views
                 return;
             }
 
+            var newTreeViewItem = (TreeViewItem)e.Source;
+            var topItem = GetTopTreeViewItem(newTreeViewItem);
+
             foreach (TreeViewItem item in treeView.Items)
             {
-                if (IsTopTreeViewItem(item))
+                if (IsTopTreeViewItem(item) && !ReferenceEquals(newTreeViewItem, item))
                 {
                     item.IsExpanded = false;
+
+                    if (!ReferenceEquals(topItem, item))
+                    {
+                        foreach (TreeViewItem childItem in item.Items)
+                        {
+                            childItem.IsSelected = false;
+                        }
+                    }
+                }
+            }
+
+            foreach (TreeViewItem childItem in topItem.Items)
+            {
+                if (!ReferenceEquals(childItem, newTreeViewItem))
+                {
+                    childItem.IsSelected = false;
                 }
             }
 
             var previousSelection = vm.SelectedGroup;
-
-            var selectedItem = (TreeViewItem)e.Source;
-            var topItem = GetTopTreeViewItem(selectedItem);
-
             topItem.IsExpanded = true;
-            var newSelection = topItem.Header as string;
+            topItem.IsSelected = false;
 
+            var newSelection = topItem.Header as string;
             if (!string.Equals(previousSelection, newSelection))
             {
                 vm.SelectedGroup = newSelection;
+            }
+
+            string newPackageSource = null;
+
+            if (ReferenceEquals(newTreeViewItem, topItem))
+            {
+                // Select ALL
+                var selectedPackageSourceItem = (TreeViewItem) newTreeViewItem.Items[0];
+                selectedPackageSourceItem.IsSelected = true;
+                newPackageSource = selectedPackageSourceItem.Header as string;
+            }
+            else
+            {
+                var selectedPackageSourceItem = newTreeViewItem;
+                newPackageSource = selectedPackageSourceItem.Header as string;
+            }
+
+            if (!string.Equals(newPackageSource, vm.SelectedPackageSource))
+            {
+                vm.SelectedPackageSource = newPackageSource;
             }
         }
 
@@ -81,6 +122,37 @@ namespace Orc.NuGetExplorer.Views
             }
 
             return GetTopTreeViewItem(parentTreeViewItem);
+        }
+
+        private void InitializeSources(ExplorerViewModel vm)
+        {
+            var topItems = (from item in treeView.Items.Cast<TreeViewItem>()
+                            where IsTopTreeViewItem(item)
+                            select item);
+
+            foreach (var topItem in topItems)
+            {
+                topItem.Items.Clear();
+
+                var allItem = new TreeViewItem
+                {
+                    Header = "All"
+                };
+
+                allItem.Selected += OnTreeViewItemSelected;
+                topItem.Items.Add(allItem);
+
+                foreach (var packageSource in vm.AvailablePackageSources)
+                {
+                    var packageSourceItem = new TreeViewItem
+                    {
+                        Header = packageSource
+                    };
+
+                    packageSourceItem.Selected += OnTreeViewItemSelected;
+                    topItem.Items.Add(packageSourceItem);
+                }
+            }
         }
 
         private bool IsTopTreeViewItem(TreeViewItem item)

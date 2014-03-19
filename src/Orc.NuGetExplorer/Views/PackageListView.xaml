@@ -23,7 +23,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Image Grid.RowSpan="2" Source="{Binding IconUrl}" Width="32" Height="32" />
+                        <Image Grid.RowSpan="2" Source="{Binding Icon}" Width="32" Height="32" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Title}" FontWeight="Bold" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Summary}" TextWrapping="Wrap" />

@@ -7,15 +7,17 @@
 
 namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Collections.ObjectModel;
     using Catel;
     using NuGet;
 
-    public class NuGetFeedService : INuGetFeedService
+    public class PackageSourceService : IPackageSourceService
     {
-        public NuGetFeedService()
+        public PackageSourceService()
         {
-            PackageSources = new ObservableCollection<string>();
+            PackageSources = new ObservableCollection<PackageSource>();
+            PackageSources.Add(new PackageSource("http://www.nuget.org/api/v2/", "NuGet", true, true));
         }
 
         #region Methods
@@ -26,7 +28,17 @@ namespace Orc.NuGetExplorer.Services
             return PackageRepositoryFactory.Default.CreateRepository(packageSource);
         }
 
-        public ObservableCollection<string> PackageSources { get; private set; } 
+        public ObservableCollection<PackageSource> PackageSources { get; private set; } 
         #endregion
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
