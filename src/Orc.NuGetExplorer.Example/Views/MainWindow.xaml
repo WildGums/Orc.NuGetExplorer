@@ -17,6 +17,6 @@
 		</catel:StackGrid.RowDefinitions>
 		
 		<TextBlock Text="{Binding Title}" />
-        <TextBlock Text="Here goes your real content" />
+        <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
     </catel:StackGrid>
 </catel:DataWindow>

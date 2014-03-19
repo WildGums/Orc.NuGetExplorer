@@ -6,6 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer", "Orc.NuGetExplorer\Orc.NuGetExplorer.csproj", "{7E8F0C02-141A-4824-9066-2A544601654C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{BD04453D-295F-4526-8EF7-469DAF18EB04}"
+	ProjectSection(SolutionItems) = preProject
+		..\lib\readme.txt = ..\lib\readme.txt
+		..\lib\repositories.config = ..\lib\repositories.config
+		..\lib\RestorePackages.bat = ..\lib\RestorePackages.bat
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}"
 EndProject
@@ -14,6 +19,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{57D12309-E3F7-4E10-ACD7-847B9DB96E7A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Example", "Orc.NuGetExplorer.Example\Orc.NuGetExplorer.Example.csproj", "{2487CA27-DD19-4BEE-ABB3-A3E9BA7BEAC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{1D63EB96-1789-449D-A332-3D417BF03F3F}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\NuGet\NuGet.exe = ..\tools\NuGet\NuGet.exe
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitVersion", "GitVersion", "{7D3DE74B-C8AD-4F2E-ABF1-975899AC654A}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\GitVersion\GitVersion.exe = ..\tools\GitVersion\GitVersion.exe
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +51,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7E8F0C02-141A-4824-9066-2A544601654C} = {005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}
 		{2487CA27-DD19-4BEE-ABB3-A3E9BA7BEAC6} = {005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}
+		{1D63EB96-1789-449D-A332-3D417BF03F3F} = {F6DF0966-0C5C-4E93-9FBB-4067222E757F}
+		{7D3DE74B-C8AD-4F2E-ABF1-975899AC654A} = {F6DF0966-0C5C-4E93-9FBB-4067222E757F}
 	EndGlobalSection
 EndGlobal

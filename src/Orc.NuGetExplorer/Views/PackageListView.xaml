@@ -1,0 +1,39 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageListView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <ListBox ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="48" />
+                        </Grid.RowDefinitions>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.RowSpan="2" Source="{Binding IconUrl}" Width="32" Height="32" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Title}" FontWeight="Bold" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Summary}" TextWrapping="Wrap" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <!-- TODO: Paging -->
+    </Grid>
+    
+
+</catel:UserControl>

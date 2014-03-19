@@ -7,7 +7,6 @@
 
 #pragma warning disable 1699    // 1699 = Use command line option '/keyfile' or appropriate project settings instead of 'AssemblyKeyFile'
 
-using System.Runtime.InteropServices;
 using System;
 using System.Reflection;
 using System.Resources;
@@ -36,7 +35,6 @@ using System.Resources;
 
 [assembly: AssemblyVersion("0.1")]
 [assembly: AssemblyInformationalVersion("0.1, manual release via Visual Studio build")]
-[assembly: ComVisible(false)]
 
 #if DEBUG
 
