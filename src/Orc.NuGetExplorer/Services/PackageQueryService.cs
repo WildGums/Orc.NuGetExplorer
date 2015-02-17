@@ -5,15 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Services
+namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
-    using Catel.Collections;
     using NuGet;
-    using Orc.NuGetExplorer.Models;
 
     public class PackageQueryService : IPackageQueryService
     {

@@ -1,17 +1,28 @@
-﻿namespace Orc.NuGetExplorer.Views
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PackageListView.xaml.cs" company="Orcomp development team">
+//   Copyright (c) 2008 - 2015 Orcomp development team. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+namespace Orc.NuGetExplorer.Views
 {
     using System.Collections.ObjectModel;
     using System.Windows;
     using Catel.MVVM.Views;
-    using Catel.Windows.Controls;
-    using NuGet;
-    using Orc.NuGetExplorer.Models;
 
-    /// <summary>
-    /// Interaction logic for PackageListView.xaml.
-    /// </summary>
-    public partial class PackageListView : UserControl
+    public partial class PackageListView
     {
+        #region Constructors
+        /// <summary>
+        /// Initializes static members of the <see cref="PackageListView"/> class.
+        /// </summary>
+        /// <remarks>This method is required for design time support.</remarks>
+        static PackageListView()
+        {
+            typeof(PackageListView).AutoDetectViewPropertiesToSubscribe();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PackageListView"/> class.
         /// </summary>
@@ -21,6 +32,7 @@
 
             ItemsSource = new ObservableCollection<PackageDetails>();
         }
+        #endregion
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public ObservableCollection<PackageDetails> ItemsSource
@@ -30,7 +42,7 @@
         }
 
         public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
-            typeof(ObservableCollection<PackageDetails>), typeof(PackageListView), 
+            typeof(ObservableCollection<PackageDetails>), typeof(PackageListView),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]

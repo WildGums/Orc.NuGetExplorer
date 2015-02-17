@@ -18,7 +18,7 @@ namespace Orc.NuGetExplorer.Views
     /// <summary>
     /// Interaction logic for ExplorerView.xaml.
     /// </summary>
-    public partial class ExplorerView : DataWindow
+    public partial class ExplorerView
     {
         #region Constructors
         /// <summary>

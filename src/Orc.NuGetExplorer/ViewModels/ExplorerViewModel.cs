@@ -10,7 +10,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Collections.Generic;
     using Catel;
     using Catel.MVVM;
-    using Orc.NuGetExplorer.Services;
 
     public class ExplorerViewModel : ViewModelBase
     {

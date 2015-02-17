@@ -5,12 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Services
+namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.ObjectModel;
     using Catel;
     using NuGet;
+    using PackageSource = NuGet.PackageSource;
 
     public class PackageSourceService : IPackageSourceService
     {

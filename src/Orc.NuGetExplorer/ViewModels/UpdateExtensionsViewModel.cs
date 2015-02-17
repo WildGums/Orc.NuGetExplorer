@@ -11,8 +11,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class UpdateExtensionsViewModel : ViewModelBase
     {
-
         public string PackageSource { get; set; }
-
     }
 }

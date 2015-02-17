@@ -5,14 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Services
+namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
     using Catel.Caching;
     using Catel.Caching.Policies;
     using NuGet;
-    using Orc.NuGetExplorer.Models;
 
     public class PackageCacheService : IPackageCacheService
     {

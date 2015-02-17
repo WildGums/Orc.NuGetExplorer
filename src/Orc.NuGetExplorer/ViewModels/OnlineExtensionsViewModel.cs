@@ -12,9 +12,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Collections;
     using Catel.MVVM;
     using Catel.Services;
-    using NuGet;
-    using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Services;
 
     public class OnlineExtensionsViewModel : ViewModelBase
     {

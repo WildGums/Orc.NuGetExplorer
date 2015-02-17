@@ -9,14 +9,22 @@ namespace Orc.NuGetExplorer.Views
 {
     using System.Windows;
     using Catel.MVVM.Views;
-    using Catel.Windows.Controls;
 
     /// <summary>
     /// Interaction logic for OnlineExtensionsView.xaml.
     /// </summary>
-    public partial class OnlineExtensionsView : UserControl
+    public partial class OnlineExtensionsView
     {
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OnlineExtensionsView"/> class.
+        /// </summary>
+        /// <remarks>This method is required for design time support.</remarks>
+        static OnlineExtensionsView()
+        {
+            typeof(InstalledExtensionsView).AutoDetectViewPropertiesToSubscribe();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OnlineExtensionsView"/> class.
         /// </summary>

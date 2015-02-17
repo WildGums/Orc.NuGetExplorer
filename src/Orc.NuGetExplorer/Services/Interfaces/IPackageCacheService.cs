@@ -5,10 +5,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Services
+namespace Orc.NuGetExplorer
 {
     using NuGet;
-    using Orc.NuGetExplorer.Models;
 
     public interface IPackageCacheService
     {

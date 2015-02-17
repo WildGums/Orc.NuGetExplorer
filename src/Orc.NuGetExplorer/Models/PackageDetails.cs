@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Models
+namespace Orc.NuGetExplorer
 {
     using System.Windows.Media.Imaging;
     using Catel;

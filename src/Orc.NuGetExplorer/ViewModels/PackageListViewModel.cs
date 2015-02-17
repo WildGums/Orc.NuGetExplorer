@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.ObjectModel;
     using Catel.MVVM;
-    using Orc.NuGetExplorer.Models;
 
     public class PackageListViewModel : ViewModelBase
     {

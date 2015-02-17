@@ -10,9 +10,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel;
     using Catel.Fody;
     using Catel.MVVM;
-    using NuGet;
-    using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Services;
 
     public class PackageDetailsViewModel : ViewModelBase
     {
