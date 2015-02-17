@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Weavers>
-	<ModuleInit />
-	<Catel />
-	<Costura>
-		<IncludeAssemblies>
+  <ModuleInit/>
+  <Costura>
+    <IncludeAssemblies>
 			NuGet.Core
 			Microsoft.Web.XmlTransform
 		</IncludeAssemblies>
-	</Costura>
+  </Costura>
+  <Catel/>
 </Weavers>

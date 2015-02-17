@@ -8,7 +8,7 @@
 namespace Orc.NuGetExplorer.Converters
 {
     using System;
-    using Catel.Windows.Data.Converters;
+    using Catel.MVVM.Converters;
 
     public class SelectedExplorerOptionToHidingVisibilityConverter : HidingVisibilityConverterBase
     {

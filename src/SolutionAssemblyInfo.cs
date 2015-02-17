@@ -18,7 +18,7 @@ using System.Resources;
 ////[assembly: AssemblyDescription("DEFINED IN ACTUAL ASSEMBLYINFO")]
 
 [assembly: AssemblyCompany("Orcomp")]
-[assembly: AssemblyCopyright("Copyright © Orcomp 2013 - 2014")]
+[assembly: AssemblyCopyright("Copyright © Orcomp 2013 - 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en-US")]
