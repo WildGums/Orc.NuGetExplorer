@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InstalledExtensionsView.xaml.cs" company="Orcomp development team">
-//   Copyright (c) 2008 - 2015 Orcomp development team. All rights reserved.
+// <copyright file="InstalledExtensionsView.xaml.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,16 +15,12 @@ namespace Orc.NuGetExplorer.Views
     /// </summary>
     public partial class InstalledExtensionsView
     {
-        #region Constructors
-        /// <summary>
-        /// Initializes static members of the <see cref="InstalledExtensionsView"/> class.
-        /// </summary>
-        /// <remarks>This method is required for design time support.</remarks>
-        static InstalledExtensionsView()
-        {
-            typeof(InstalledExtensionsView).AutoDetectViewPropertiesToSubscribe();
-        }
+        #region Fields
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (string),
+            typeof (InstalledExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="InstalledExtensionsView"/> class.
         /// </summary>
@@ -32,18 +28,24 @@ namespace Orc.NuGetExplorer.Views
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Initializes static members of the <see cref="InstalledExtensionsView"/> class.
+        /// </summary>
+        /// <remarks>This method is required for design time support.</remarks>
+        static InstalledExtensionsView()
+        {
+            typeof (InstalledExtensionsView).AutoDetectViewPropertiesToSubscribe();
+        }
         #endregion
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string PackageSource
         {
-            get { return (string)GetValue(PackageSourceProperty); }
+            get { return (string) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
-
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof(string),
-            typeof(InstalledExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
     }
 }

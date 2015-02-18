@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetFeedService.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="PackageSourceService.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,15 +11,20 @@ namespace Orc.NuGetExplorer
     using System.Collections.ObjectModel;
     using Catel;
     using NuGet;
-    using PackageSource = NuGet.PackageSource;
 
     public class PackageSourceService : IPackageSourceService
     {
+        #region Constructors
         public PackageSourceService()
         {
             PackageSources = new ObservableCollection<PackageSource>();
             PackageSources.Add(new PackageSource("http://www.nuget.org/api/v2/", "NuGet", true, true));
         }
+        #endregion
+
+        #region Properties
+        public ObservableCollection<PackageSource> PackageSources { get; private set; }
+        #endregion
 
         #region Methods
         public IPackageRepository GetPackageRepository(string packageSource)
@@ -28,9 +33,6 @@ namespace Orc.NuGetExplorer
 
             return PackageRepositoryFactory.Default.CreateRepository(packageSource);
         }
-
-        public ObservableCollection<PackageSource> PackageSources { get; private set; } 
-        #endregion
 
         public void Save()
         {
@@ -41,5 +43,6 @@ namespace Orc.NuGetExplorer
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

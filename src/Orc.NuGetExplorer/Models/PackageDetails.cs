@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageDetails.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="PackageDetails.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -29,13 +29,9 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public string Id { get; private set; }
-
         public string Title { get; private set; }
-
         public string Summary { get; private set; }
-
         public BitmapSource Icon { get; private set; }
-
         public IPackage Package { get; private set; }
         #endregion
     }

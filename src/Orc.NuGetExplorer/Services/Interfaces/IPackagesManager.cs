@@ -1,18 +1,18 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdateExtensionsViewModel.cs" company="Wild Gums">
+// <copyright file="IPackagesManager.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer
 {
-    using Catel.MVVM;
+    using System.Threading.Tasks;
 
-    public class UpdateExtensionsViewModel : ViewModelBase
+    public interface IPackagesManager
     {
-        #region Properties
-        public string PackageSource { get; set; }
+        #region Methods
+        Task Show();
         #endregion
     }
 }

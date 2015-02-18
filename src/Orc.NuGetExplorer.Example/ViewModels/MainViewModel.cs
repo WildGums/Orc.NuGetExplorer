@@ -1,46 +1,45 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainViewModel.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="MainViewModel.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
 namespace Orc.NuGetExplorer.Example.ViewModels
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.MVVM;
-    using Catel.Services;
-    using Orc.NuGetExplorer.ViewModels;
 
     public class MainViewModel : ViewModelBase
     {
-        private readonly IUIVisualizerService _uiVisualizerService;
+        #region Fields
+        private readonly IPackagesManager _packagesManager;
+        #endregion
 
         #region Constructors
-        public MainViewModel(IUIVisualizerService uiVisualizerService)
+        public MainViewModel(IPackagesManager packagesManager)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => packagesManager);
 
-            _uiVisualizerService = uiVisualizerService;
+            _packagesManager = packagesManager;
 
-            ShowExplorer = new Command(OnShowExplorerExecute);
+            ShowExplorer = new TaskCommand(OnShowExplorerExecute);
         }
         #endregion
 
-        #region Properties
+        #region Commands
         /// <summary>
         /// Gets the ShowExplorer command.
         /// </summary>
-        public Command ShowExplorer { get; private set; }
-        #endregion
+        public TaskCommand ShowExplorer { get; private set; }
 
-        #region Methods
         /// <summary>
         /// Method to invoke when the ShowExplorer command is executed.
         /// </summary>
-        private void OnShowExplorerExecute()
+        private async Task OnShowExplorerExecute()
         {
-            _uiVisualizerService.ShowDialog<ExplorerViewModel>();
+            await _packagesManager.Show();
         }
         #endregion
     }

@@ -98,13 +98,18 @@
     </Compile>
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\NavigationItem.cs" />
     <Compile Include="Models\PackageDetails.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Interfaces\INavigationTreeService.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageSourceService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
+    <Compile Include="Services\Interfaces\IPackagesManager.cs" />
+    <Compile Include="Services\NavigationTreeService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
+    <Compile Include="Services\PackagesManager.cs" />
     <Compile Include="Services\PackageSourceService.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />

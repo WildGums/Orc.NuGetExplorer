@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageListView.xaml.cs" company="Orcomp development team">
-//   Copyright (c) 2008 - 2015 Orcomp development team. All rights reserved.
+// <copyright file="PackageListView.xaml.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,16 +13,16 @@ namespace Orc.NuGetExplorer.Views
 
     public partial class PackageListView
     {
-        #region Constructors
-        /// <summary>
-        /// Initializes static members of the <see cref="PackageListView"/> class.
-        /// </summary>
-        /// <remarks>This method is required for design time support.</remarks>
-        static PackageListView()
-        {
-            typeof(PackageListView).AutoDetectViewPropertiesToSubscribe();
-        }
+        #region Fields
+        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
+            typeof (ObservableCollection<PackageDetails>), typeof (PackageListView),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage",
+            typeof (PackageDetails), typeof (PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        #endregion
+
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="PackageListView"/> class.
         /// </summary>
@@ -32,27 +32,31 @@ namespace Orc.NuGetExplorer.Views
 
             ItemsSource = new ObservableCollection<PackageDetails>();
         }
+
+        /// <summary>
+        /// Initializes static members of the <see cref="PackageListView"/> class.
+        /// </summary>
+        /// <remarks>This method is required for design time support.</remarks>
+        static PackageListView()
+        {
+            typeof (PackageListView).AutoDetectViewPropertiesToSubscribe();
+        }
         #endregion
 
+        #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public ObservableCollection<PackageDetails> ItemsSource
         {
-            get { return (ObservableCollection<PackageDetails>)GetValue(ItemsSourceProperty); }
+            get { return (ObservableCollection<PackageDetails>) GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
-
-        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
-            typeof(ObservableCollection<PackageDetails>), typeof(PackageListView),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
         public PackageDetails SelectedPackage
         {
-            get { return (PackageDetails)GetValue(SelectedPackageProperty); }
+            get { return (PackageDetails) GetValue(SelectedPackageProperty); }
             set { SetValue(SelectedPackageProperty, value); }
         }
-
-        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage",
-            typeof(PackageDetails), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        #endregion
     }
 }

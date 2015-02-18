@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExplorerWindow.xaml.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="ExplorerWindow.xaml.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,26 +11,31 @@ namespace Orc.NuGetExplorer.Views
     using System.Windows;
     using System.Windows.Controls;
     using Catel;
-    using Catel.MVVM;
     using Catel.Windows;
-    using Orc.NuGetExplorer.ViewModels;
+    using ViewModels;
 
     /// <summary>
     /// Interaction logic for ExplorerView.xaml.
     /// </summary>
-    public partial class ExplorerView
+    internal partial class ExplorerView
     {
         #region Constructors
+        public ExplorerView()
+            : this(null)
+        {
+            
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="ExplorerView"/> class.
         /// </summary>
-        public ExplorerView()
-            : base(DataWindowMode.Close)
+        public ExplorerView(ExplorerViewModel viewModel)
+            : base(viewModel, DataWindowMode.Close)
         {
             InitializeComponent();
         }
         #endregion
 
+       /* #region Methods
         protected override void OnViewModelChanged()
         {
             var vm = GetViewModel();
@@ -55,7 +60,7 @@ namespace Orc.NuGetExplorer.Views
                 return;
             }
 
-            var newTreeViewItem = (TreeViewItem)e.Source;
+            var newTreeViewItem = (TreeViewItem) e.Source;
             var topItem = GetTopTreeViewItem(newTreeViewItem);
 
             foreach (TreeViewItem item in treeView.Items)
@@ -127,8 +132,8 @@ namespace Orc.NuGetExplorer.Views
         private void InitializeSources(ExplorerViewModel vm)
         {
             var topItems = (from item in treeView.Items.Cast<TreeViewItem>()
-                            where IsTopTreeViewItem(item)
-                            select item);
+                where IsTopTreeViewItem(item)
+                select item);
 
             foreach (var topItem in topItems)
             {
@@ -193,5 +198,6 @@ namespace Orc.NuGetExplorer.Views
                 treeViewItem.IsSelected = true;
             }
         }
+        #endregion*/
     }
 }

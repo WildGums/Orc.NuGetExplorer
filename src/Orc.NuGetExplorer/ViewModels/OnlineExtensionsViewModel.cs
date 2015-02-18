@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OnlineExtensionsViewModel.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="OnlineExtensionsViewModel.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,9 +15,12 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class OnlineExtensionsViewModel : ViewModelBase
     {
-        private readonly IPackageQueryService _packageQueryService;
+        #region Fields
         private readonly IDispatcherService _dispatcherService;
+        private readonly IPackageQueryService _packageQueryService;
+        #endregion
 
+        #region Constructors
         public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => packageQueryService);
@@ -28,19 +31,20 @@ namespace Orc.NuGetExplorer.ViewModels
 
             AvailablePackages = new ObservableCollection<PackageDetails>();
         }
+        #endregion
 
+        #region Properties
         public string PackageSource { get; set; }
+        public string SearchFilter { get; set; }
+        public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
+        public PackageDetails SelectedPackage { get; set; }
+        #endregion
 
+        #region Methods
         private void OnPackageSourceChanged()
         {
             Search();
         }
-
-        public string SearchFilter { get; set; }
-
-        public ObservableCollection<PackageDetails> AvailablePackages { get; private set; } 
-
-        public PackageDetails SelectedPackage { get; set; }
 
         private void OnSearchFilterChanged()
         {
@@ -51,11 +55,9 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(PackageSource))
             {
-                _dispatcherService.BeginInvoke(() =>
-                {
-                    AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(PackageSource, SearchFilter));
-                });
+                _dispatcherService.BeginInvoke(() => { AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(PackageSource, SearchFilter)); });
             }
         }
+        #endregion
     }
 }

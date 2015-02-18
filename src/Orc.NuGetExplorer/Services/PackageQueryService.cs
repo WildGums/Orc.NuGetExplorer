@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetService.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="PackageQueryService.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,9 +15,12 @@ namespace Orc.NuGetExplorer
 
     public class PackageQueryService : IPackageQueryService
     {
-        private readonly IPackageSourceService _packageSourceService;
+        #region Fields
         private readonly IPackageCacheService _packageCacheService;
+        private readonly IPackageSourceService _packageSourceService;
+        #endregion
 
+        #region Constructors
         public PackageQueryService(IPackageSourceService packageSourceService, IPackageCacheService packageCacheService)
         {
             Argument.IsNotNull(() => packageSourceService);
@@ -26,7 +29,9 @@ namespace Orc.NuGetExplorer
             _packageSourceService = packageSourceService;
             _packageCacheService = packageCacheService;
         }
+        #endregion
 
+        #region Methods
         public IEnumerable<PackageDetails> GetPackages(string packageSource, string filter = null, int skip = 0, int take = 10)
         {
             Argument.IsNotNullOrWhitespace(() => packageSource);
@@ -70,7 +75,8 @@ namespace Orc.NuGetExplorer
                 }
             }
 
-            return new PackageDetails[] { };
+            return new PackageDetails[] {};
         }
+        #endregion
     }
 }

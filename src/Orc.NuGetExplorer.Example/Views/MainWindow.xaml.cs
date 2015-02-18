@@ -1,7 +1,13 @@
-﻿namespace Orc.NuGetExplorer.Example.Views
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainWindow.xaml.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+namespace Orc.NuGetExplorer.Example.Views
 {
     using Catel.Windows;
-
     using ViewModels;
 
     /// <summary>
@@ -9,11 +15,14 @@
     /// </summary>
     public partial class MainWindow : DataWindow
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
         public MainWindow()
-            : this(null) { }
+            : this(null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -27,5 +36,6 @@
         {
             InitializeComponent();
         }
+        #endregion
     }
 }

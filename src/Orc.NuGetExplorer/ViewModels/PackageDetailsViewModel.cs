@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageDetailsViewModel.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="PackageDetailsViewModel.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,13 +13,16 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class PackageDetailsViewModel : ViewModelBase
     {
+        #region Constructors
         public PackageDetailsViewModel(PackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
             Package = package;
         }
+        #endregion
 
+        #region Properties
         public override string Title
         {
             get { return Package.Title; }
@@ -29,5 +32,6 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("Summary")]
         [Expose("Icon")]
         public PackageDetails Package { get; private set; }
+        #endregion
     }
 }

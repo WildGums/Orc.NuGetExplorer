@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InstalledExtensionsViewModel.cs" company="Orchestra development team">
-//   Copyright (c) 2008 - 2014 Orchestra development team. All rights reserved.
+// <copyright file="InstalledExtensionsViewModel.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class InstalledExtensionsViewModel : ViewModelBase
     {
+        #region Properties
         public string PackageSource { get; set; }
+        #endregion
     }
 }
