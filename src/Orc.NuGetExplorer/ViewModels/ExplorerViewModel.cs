@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using Catel.MVVM;
 
@@ -15,33 +16,35 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private readonly INavigationTreeService _navigationTreeService;
-        private readonly IPackageSourceService _packageSourceService;
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IPackageSourceService packageSourceService, INavigationTreeService navigationTreeService)
+        public ExplorerViewModel(INavigationTreeService navigationTreeService)
         {
-            Argument.IsNotNull(() => packageSourceService);
             Argument.IsNotNull(() => navigationTreeService);
 
-            _packageSourceService = packageSourceService;
             _navigationTreeService = navigationTreeService;
 
-            NavigationItems = new List<NavigationItem>(_navigationTreeService.GetNavigationItems());
+            NavigationItems = new List<NavigationItemsGroup>(_navigationTreeService.GetNavigationGroups());
+            SelectedGroup = NavigationItems.FirstOrDefault(x => x.IsExpanded);
 
-            AvailablePackageSources = new List<string>();
-            foreach (var packageSource in packageSourceService.PackageSources)
-            {
-                AvailablePackageSources.Add(packageSource.Name);
-            }
+            GroupExpanded = new Command<NavigationItemsGroup>(OnGroupExpandedExecute);
         }
         #endregion
 
         #region Properties
-        public IList<NavigationItem> NavigationItems { get; private set; }
-        public string SelectedGroup { get; set; }
+        public IList<NavigationItemsGroup> NavigationItems { get; private set; }
+        public NavigationItemsGroup SelectedGroup { get; set; }
         public string SelectedPackageSource { get; set; }
-        public List<string> AvailablePackageSources { get; private set; }
+        #endregion
+
+        #region Commands
+        public Command<NavigationItemsGroup> GroupExpanded { get; private set; }
+
+        private void OnGroupExpandedExecute(NavigationItemsGroup navigationItemsGroup)
+        {
+            SelectedGroup = navigationItemsGroup;
+        }
         #endregion
     }
 }

@@ -4,10 +4,32 @@
 				  xmlns:catel="http://catel.codeplex.com"
 				  xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
 				  xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
-				  xmlns:nuGetExplorer="clr-namespace:Orc.NuGetExplorer"
+				  xmlns:local="clr-namespace:Orc.NuGetExplorer"
+				  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+				  xmlns:templateSelectors="clr-namespace:Orc.NuGetExplorer.TemplateSelectors"
 				  Width="800" Height="400" SizeToContent="Manual"
                   x:ClassModifier="internal">
-    
+    <catel:DataWindow.Resources>
+        <DataTemplate x:Key="Installed">
+            <views:InstalledExtensionsView PackageSource="{Binding SelectedPackageSource}" 
+                                       Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Installed}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="Online">
+            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" 
+                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Online}" />
+        </DataTemplate>
+        
+        <DataTemplate x:Key="Update">
+            <views:UpdateExtensionsView PackageSource="{Binding SelectedPackageSource}" 
+                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Updates}" />
+        </DataTemplate>
+
+        <templateSelectors:NavigationTemplateSelector x:Key="NavigationTemplateSelector" 
+                                                      InstalledTemplate="{StaticResource Installed}"
+                                                      OnlineTemplate="{StaticResource Online}"
+                                                      UpdateTemplate="{StaticResource Update}"/>
+    </catel:DataWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -17,23 +39,35 @@
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        
+        <ItemsControl ItemsSource="{Binding NavigationItems}" Grid.Column="0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Expander Header="{Binding Name}" ExpandDirection="Down" VerticalAlignment="Top" HorizontalAlignment="Stretch" IsExpanded="{Binding IsExpanded}">
+                        <i:Interaction.Behaviors>
+                            <local:SingeExpandedBehavior/>
+                        </i:Interaction.Behaviors>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Expanded">
+                                <catel:EventToCommand Command="{Binding Path=DataContext.GroupExpanded, RelativeSource={RelativeSource AncestorType={x:Type views:ExplorerView}}}" 
+                                                      PassEventArgsToCommand="False" CommandParameter="{Binding}"/>
+                            </i:EventTrigger>                            
+                        </i:Interaction.Triggers>
+                        <ListBox BorderThickness="0" ItemsSource="{Binding Children}" HorizontalAlignment="Stretch" SelectionMode="Single" SelectedIndex="{Binding SelectedIndex}">
+                            <i:Interaction.Behaviors>
+                                <local:FocusOnVisibleBehavior/>
+                            </i:Interaction.Behaviors>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" Margin="10,0,0,0"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-        <TreeView Grid.Column="0" ItemsSource="{Binding NavigationItems}">
-            <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type nuGetExplorer:NavigationItem}" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Name}"/>
-                </HierarchicalDataTemplate>
-            </TreeView.Resources>
-            
-        </TreeView>
-
-        <views:InstalledExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
-                                       Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Installed}" />
-
-        <views:OnlineExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
-                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Online}" />
-
-        <views:UpdateExtensionsView Grid.Column="1" PackageSource="{Binding SelectedPackageSource}" 
-                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Updates}" />
+        <ContentControl Grid.Column="1" Content="{Binding SelectedGroup}" ContentTemplateSelector="{StaticResource NavigationTemplateSelector}"/>        
     </Grid>
 </catel:DataWindow>

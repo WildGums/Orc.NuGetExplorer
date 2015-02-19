@@ -8,6 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
+    using System.Linq;
+
     using Catel;
 
     internal class NavigationTreeService : INavigationTreeService
@@ -21,26 +23,27 @@ namespace Orc.NuGetExplorer
             _packageSourceService = packageSourceService;
         }
 
-        public IEnumerable<NavigationItem> GetNavigationItems()
+        public IEnumerable<NavigationItemsGroup> GetNavigationGroups()
         {
-            return new[] { GetNode("Installed", false), GetNode("Online"), GetNode("Updates") };
+            var navigationItemBases = new[] { GetNavigationItemsGroup("Installed", false), GetNavigationItemsGroup("Online"), GetNavigationItemsGroup("Updates") };
+            navigationItemBases[0].IsExpanded = true;
+            return navigationItemBases;
         }
 
-        private NavigationItem GetNode(string name, bool addPackageSources = true)
+        private NavigationItemsGroup GetNavigationItemsGroup(string name, bool addPackageSources = true)
         {
-            var navigationItem = new NavigationItem(name);
-            navigationItem.Children.Add(new NavigationItem("All"));
-
-            if (!addPackageSources)
+            PackageSourceNavigationItem[] packageSources;
+            if (addPackageSources)
             {
-                return navigationItem;
+                packageSources = _packageSourceService.PackageSources.Select(packageSource => new PackageSourceNavigationItem(packageSource)).ToArray();
+            }
+            else
+            {
+                packageSources = new PackageSourceNavigationItem[] { };
             }
 
-            foreach (var packageSource in _packageSourceService.PackageSources)
-            {
-                navigationItem.Children.Add(new NavigationItem(packageSource.Name));
-            }
-
+            var aggregativeNavigationItem = new AggregativeNavigationItem("All", packageSources);
+            var navigationItem = new NavigationItemsGroup(name, aggregativeNavigationItem);
             return navigationItem;
         }
     }

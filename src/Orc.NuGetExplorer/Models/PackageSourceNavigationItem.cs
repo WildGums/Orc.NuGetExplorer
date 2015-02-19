@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NavigationItem.cs" company="Wild Gums">
+// <copyright file="PackageSourceNavigationItem.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,23 +7,20 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Collections.Generic;
-    using Catel.Data;
+    using NuGet;
 
-    public class NavigationItem : ModelBase
+    internal class PackageSourceNavigationItem : NavigationItemBase
     {
         #region Constructors
-        public NavigationItem(string name)
+        public PackageSourceNavigationItem(PackageSource packageSource)
+            : base(packageSource.Name)
         {
-            Name = name;
-            Children = new List<NavigationItem>();
+            PackageSource = packageSource;
         }
         #endregion
 
         #region Properties
-        public NavigationItem Parent { get; set; }
-        public IList<NavigationItem> Children { get; private set; }
-        public string Name { get; private set; }
+        public PackageSource PackageSource { get; private set; }
         #endregion
     }
 }
