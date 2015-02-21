@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             _navigationTreeService = navigationTreeService;
 
-            NavigationItems = new List<NavigationItemsGroup>(_navigationTreeService.GetNavigationGroups());
+            NavigationItems = new List<NavigationItemsGroup>(_navigationTreeService.CreateNavigationGroups());
             SelectedGroup = NavigationItems.FirstOrDefault(x => x.IsExpanded);
 
             GroupExpanded = new Command<NavigationItemsGroup>(OnGroupExpandedExecute);
@@ -35,7 +35,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         public IList<NavigationItemsGroup> NavigationItems { get; private set; }
         public NavigationItemsGroup SelectedGroup { get; set; }
-        public string SelectedPackageSource { get; set; }
+        public PackageSourcesNavigationItem SelectedPackageSource { get; set; }
         #endregion
 
         #region Commands
@@ -44,6 +44,8 @@ namespace Orc.NuGetExplorer.ViewModels
         private void OnGroupExpandedExecute(NavigationItemsGroup navigationItemsGroup)
         {
             SelectedGroup = navigationItemsGroup;
+            var index = navigationItemsGroup.SelectedIndex;
+            SelectedPackageSource = navigationItemsGroup.Children[index];
         }
         #endregion
     }

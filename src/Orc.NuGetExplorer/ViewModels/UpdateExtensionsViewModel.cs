@@ -9,10 +9,10 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel.MVVM;
 
-    public class UpdateExtensionsViewModel : ViewModelBase
+    internal class UpdateExtensionsViewModel : ViewModelBase
     {
         #region Properties
-        public string PackageSource { get; set; }
+        public PackageSourcesNavigationItem PackageSource { get; set; }
         #endregion
     }
 }

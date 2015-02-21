@@ -100,11 +100,10 @@
     <Compile Include="Behaviors\SingeExpandedBehavior.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Models\AggregativeNavigationItem.cs" />
     <Compile Include="Models\Base\NavigationItemBase.cs" />
     <Compile Include="Models\NavigationItemsGroup.cs" />
     <Compile Include="Models\PackageDetails.cs" />
-    <Compile Include="Models\PackageSourceNavigationItem.cs" />
+    <Compile Include="Models\PackageSourcesNavigationItem.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interfaces\INavigationTreeService.cs" />

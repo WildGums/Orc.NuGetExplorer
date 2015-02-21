@@ -9,42 +9,48 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using System.Linq;
-
     using Catel;
 
     internal class NavigationTreeService : INavigationTreeService
     {
+        #region Fields
         private readonly IPackageSourceService _packageSourceService;
+        #endregion
 
+        #region Constructors
         public NavigationTreeService(IPackageSourceService packageSourceService)
         {
             Argument.IsNotNull(() => packageSourceService);
 
             _packageSourceService = packageSourceService;
         }
+        #endregion
 
-        public IEnumerable<NavigationItemsGroup> GetNavigationGroups()
+        #region Methods
+        public IEnumerable<NavigationItemsGroup> CreateNavigationGroups()
         {
-            var navigationItemBases = new[] { GetNavigationItemsGroup("Installed", false), GetNavigationItemsGroup("Online"), GetNavigationItemsGroup("Updates") };
+            var navigationItemBases = new[] {CreateNavigationItemsGroup("Installed", false), CreateNavigationItemsGroup("Online"), CreateNavigationItemsGroup("Updates")};
             navigationItemBases[0].IsExpanded = true;
             return navigationItemBases;
         }
 
-        private NavigationItemsGroup GetNavigationItemsGroup(string name, bool addPackageSources = true)
+        private NavigationItemsGroup CreateNavigationItemsGroup(string name, bool hasdPackageSources = true)
         {
-            PackageSourceNavigationItem[] packageSources;
-            if (addPackageSources)
+            Argument.IsNotNullOrWhitespace(() => name);
+            if (!hasdPackageSources)
             {
-                packageSources = _packageSourceService.PackageSources.Select(packageSource => new PackageSourceNavigationItem(packageSource)).ToArray();
-            }
-            else
-            {
-                packageSources = new PackageSourceNavigationItem[] { };
+                return new NavigationItemsGroup(name, new PackageSourcesNavigationItem());
             }
 
-            var aggregativeNavigationItem = new AggregativeNavigationItem("All", packageSources);
-            var navigationItem = new NavigationItemsGroup(name, aggregativeNavigationItem);
-            return navigationItem;
+            var packageSourceses = _packageSourceService.PackageSources.ToArray();
+
+            var packageSourcesNavigationItems = new List<PackageSourcesNavigationItem>();
+            var aggregativeNavigationItem = new PackageSourcesNavigationItem(packageSourceses);
+            packageSourcesNavigationItems.Add(aggregativeNavigationItem);
+
+            packageSourcesNavigationItems.AddRange(packageSourceses.Select(packageSource => new PackageSourcesNavigationItem(packageSource)));
+            return new NavigationItemsGroup(name, packageSourcesNavigationItems.ToArray());
         }
+        #endregion
     }
 }

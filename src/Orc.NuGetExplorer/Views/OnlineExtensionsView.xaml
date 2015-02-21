@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   x:ClassModifier="internal">
 
     <Grid>
         <Grid.RowDefinitions>

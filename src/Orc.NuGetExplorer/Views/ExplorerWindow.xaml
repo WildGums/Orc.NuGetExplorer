@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExplorerView"
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExplorerWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				  xmlns:catel="http://catel.codeplex.com"
@@ -11,18 +11,15 @@
                   x:ClassModifier="internal">
     <catel:DataWindow.Resources>
         <DataTemplate x:Key="Installed">
-            <views:InstalledExtensionsView PackageSource="{Binding SelectedPackageSource}" 
-                                       Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Installed}" />
+            <views:InstalledExtensionsView PackageSource="{Binding SelectedPackageSource}" />
         </DataTemplate>
 
         <DataTemplate x:Key="Online">
-            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" 
-                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Online}" />
+            <views:OnlineExtensionsView />
         </DataTemplate>
         
         <DataTemplate x:Key="Update">
-            <views:UpdateExtensionsView PackageSource="{Binding SelectedPackageSource}" 
-                                    Visibility="{Binding SelectedGroup, Converter={converters:SelectedExplorerOptionToHidingVisibilityConverter}, ConverterParameter=Updates}" />
+            <views:UpdateExtensionsView PackageSource="{Binding SelectedPackageSource}" />
         </DataTemplate>
 
         <templateSelectors:NavigationTemplateSelector x:Key="NavigationTemplateSelector" 
@@ -49,7 +46,7 @@
                         </i:Interaction.Behaviors>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Expanded">
-                                <catel:EventToCommand Command="{Binding Path=DataContext.GroupExpanded, RelativeSource={RelativeSource AncestorType={x:Type views:ExplorerView}}}" 
+                                <catel:EventToCommand Command="{Binding Path=DataContext.GroupExpanded, RelativeSource={RelativeSource AncestorType={x:Type views:ExplorerWindow}}}" 
                                                       PassEventArgsToCommand="False" CommandParameter="{Binding}"/>
                             </i:EventTrigger>                            
                         </i:Interaction.Triggers>

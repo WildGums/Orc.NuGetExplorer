@@ -10,19 +10,27 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Collections.ObjectModel;
     using Catel;
     using Catel.Collections;
+    using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
+    using NuGet;
 
-    public class OnlineExtensionsViewModel : ViewModelBase
+    internal class OnlineExtensionsViewModel : ViewModelBase
     {
+        [Model]
+        [Expose("PackageSource")]
+        public NavigationItemsGroup NavigationItemsGroup { get; private set; }
+
         #region Fields
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageQueryService _packageQueryService;
         #endregion
 
         #region Constructors
-        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
+        public OnlineExtensionsViewModel(NavigationItemsGroup navigationItemsGroup, IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
+            NavigationItemsGroup = navigationItemsGroup;
+            Argument.IsNotNull(() => navigationItemsGroup);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
 
@@ -34,7 +42,6 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        public string PackageSource { get; set; }
         public string SearchFilter { get; set; }
         public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
         public PackageDetails SelectedPackage { get; set; }
@@ -53,9 +60,9 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void Search()
         {
-            if (!string.IsNullOrWhiteSpace(PackageSource))
+            if (NavigationItemsGroup.PackageSource != null)
             {
-                _dispatcherService.BeginInvoke(() => { AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(PackageSource, SearchFilter)); });
+                _dispatcherService.BeginInvoke(() => { AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(NavigationItemsGroup.PackageSource.Name, SearchFilter)); });
             }
         }
         #endregion

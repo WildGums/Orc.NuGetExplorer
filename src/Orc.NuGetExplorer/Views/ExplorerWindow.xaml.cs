@@ -11,20 +11,20 @@ namespace Orc.NuGetExplorer.Views
     using ViewModels;
 
     /// <summary>
-    /// Interaction logic for ExplorerView.xaml.
+    /// Interaction logic for ExplorerWindow.xaml.
     /// </summary>
-    internal partial class ExplorerView
+    internal partial class ExplorerWindow
     {
         #region Constructors
-        public ExplorerView()
+        public ExplorerWindow()
             : this(null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExplorerView"/> class.
+        /// Initializes a new instance of the <see cref="ExplorerWindow"/> class.
         /// </summary>
-        public ExplorerView(ExplorerViewModel viewModel)
+        public ExplorerWindow(ExplorerViewModel viewModel)
             : base(viewModel, DataWindowMode.Close)
         {
             InitializeComponent();

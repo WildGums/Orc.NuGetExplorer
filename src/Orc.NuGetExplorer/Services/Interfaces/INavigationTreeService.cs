@@ -11,6 +11,6 @@ namespace Orc.NuGetExplorer
 
     internal interface INavigationTreeService
     {
-        IEnumerable<NavigationItemsGroup> GetNavigationGroups();
+        IEnumerable<NavigationItemsGroup> CreateNavigationGroups();
     }
 }

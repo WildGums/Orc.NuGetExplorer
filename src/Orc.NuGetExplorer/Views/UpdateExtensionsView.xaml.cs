@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer.Views
     using System.Windows;
     using Catel.MVVM.Views;
 
-    public partial class UpdateExtensionsView
+    internal partial class UpdateExtensionsView
     {
         #region Fields
         public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (string),
@@ -38,9 +38,9 @@ namespace Orc.NuGetExplorer.Views
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public string PackageSource
+        public PackageSourcesNavigationItem PackageSource
         {
-            get { return (string) GetValue(PackageSourceProperty); }
+            get { return (PackageSourcesNavigationItem)GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         #endregion

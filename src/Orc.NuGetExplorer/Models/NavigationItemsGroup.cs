@@ -7,24 +7,19 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-
     using Catel;
-
-    using NuGet;
 
     internal class NavigationItemsGroup : NavigationItemBase
     {
         #region Constructors
-        public NavigationItemsGroup(string name, AggregativeNavigationItem aggregativeNavigationItem)
+        public NavigationItemsGroup(string name, params PackageSourcesNavigationItem[] packageSourcesNavigationItems)
             : base(name)
         {
-            Argument.IsNotNull(() => aggregativeNavigationItem);
+            Argument.IsNotNull(() => packageSourcesNavigationItems);
 
-            Children = new List<NavigationItemBase> { aggregativeNavigationItem };
-            Children.AddRange(aggregativeNavigationItem.PackageSources);
+            Children = new List<PackageSourcesNavigationItem>(packageSourcesNavigationItems);
         }
         #endregion
 
@@ -33,8 +28,15 @@ namespace Orc.NuGetExplorer
         public bool IsExpanded { get; set; }
 
         public int SelectedIndex { get; set; }
+        public IList<PackageSourcesNavigationItem> Children { get; private set; }
+        public PackageSourcesNavigationItem PackageSource { get; private set; }
+        #endregion
 
-        public IList<NavigationItemBase> Children { get; private set; }
+        #region Methods
+        private void OnSelectedIndexChanged()
+        {
+            PackageSource = Children[SelectedIndex];
+        }
         #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer.Views
     /// <summary>
     /// Interaction logic for InstalledExtensionsView.xaml.
     /// </summary>
-    public partial class InstalledExtensionsView
+    internal partial class InstalledExtensionsView
     {
         #region Fields
         public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (string),
@@ -41,9 +41,9 @@ namespace Orc.NuGetExplorer.Views
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public string PackageSource
+        public PackageSourcesNavigationItem PackageSource
         {
-            get { return (string) GetValue(PackageSourceProperty); }
+            get { return (PackageSourcesNavigationItem)GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         #endregion
