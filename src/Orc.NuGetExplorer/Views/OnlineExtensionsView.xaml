@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0">SORTING</Label>
-        
+
         <views:PackageListView Grid.Row="1" Grid.Column="0" 
                                ItemsSource="{Binding AvailablePackages, Mode=OneWay}"
                                SelectedPackage="{Binding SelectedPackage}"/>

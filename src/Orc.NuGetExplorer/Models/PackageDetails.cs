@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Windows.Media.Imaging;
     using Catel;
     using Catel.Data;
@@ -21,12 +22,16 @@ namespace Orc.NuGetExplorer
 
             Id = package.Id;
             Title = package.Title;
-            Summary = package.Summary;
+            Summary = package.Description;
 
             Package = package;
             if (package.IconUrl != null)
             {
                 Icon = new BitmapImage(package.IconUrl);
+            }
+            else
+            {
+                Icon = new BitmapImage(new Uri(@"http://www.nuget.org/Content/Images/packageDefaultIcon.png"));                
             }
             
         }

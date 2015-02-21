@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using Catel.Data;
 
-    internal abstract class NavigationItemBase : ModelBase
+    public abstract class NavigationItemBase : ModelBase
     {
         #region Constructors
         public NavigationItemBase(string name)

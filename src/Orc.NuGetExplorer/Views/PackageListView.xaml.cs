@@ -29,7 +29,6 @@ namespace Orc.NuGetExplorer.Views
         public PackageListView()
         {
             InitializeComponent();
-
             ItemsSource = new ObservableCollection<PackageDetails>();
         }
 

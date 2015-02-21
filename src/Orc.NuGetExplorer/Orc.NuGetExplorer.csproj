@@ -97,13 +97,13 @@
       <Link>Properties\SolutionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\FocusOnVisibleBehavior.cs" />
-    <Compile Include="Behaviors\SingeExpandedBehavior.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\Base\NavigationItemBase.cs" />
     <Compile Include="Models\NavigationItemsGroup.cs" />
     <Compile Include="Models\PackageDetails.cs" />
     <Compile Include="Models\PackageSourcesNavigationItem.cs" />
+    <Compile Include="Models\PagingItem.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interfaces\INavigationTreeService.cs" />
@@ -146,7 +146,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resurces\Images\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>

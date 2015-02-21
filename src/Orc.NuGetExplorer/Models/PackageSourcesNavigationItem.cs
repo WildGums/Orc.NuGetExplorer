@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using NuGet;
 
-    internal class PackageSourcesNavigationItem : NavigationItemBase
+    public class PackageSourcesNavigationItem : NavigationItemBase
     {
         #region Constructors
         public PackageSourcesNavigationItem()
@@ -22,18 +22,18 @@ namespace Orc.NuGetExplorer
         public PackageSourcesNavigationItem(IEnumerable<PackageSource> packageSourceses)
             : base("All")
         {
-            PackageSourceses = new List<PackageSource>(packageSourceses);
+            PackageSources = new List<PackageSource>(packageSourceses);
         }
 
         public PackageSourcesNavigationItem(PackageSource packageSource)
             : base(packageSource.Name)
         {
-            PackageSourceses = new List<PackageSource> {packageSource};
+            PackageSources = new List<PackageSource> {packageSource};
         }
         #endregion
 
         #region Properties
-        public IList<PackageSource> PackageSourceses { get; private set; }
+        public IList<PackageSource> PackageSources { get; private set; }
         #endregion
     }
 }

@@ -8,11 +8,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        <ListBox ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}">
+
+        <ListBox  Grid.Row="0" ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}" HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid HorizontalAlignment="Stretch">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="48" />
@@ -26,13 +27,19 @@
                         <Image Grid.Column="0" Grid.RowSpan="2" Source="{Binding Icon}" Width="32" Height="32" />
 
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" FontWeight="Bold" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Summary}" TextWrapping="Wrap" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Summary}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         
-        <!-- TODO: Paging -->
+        <ItemsControl ItemsSource="{Binding }">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </Grid>
     
 

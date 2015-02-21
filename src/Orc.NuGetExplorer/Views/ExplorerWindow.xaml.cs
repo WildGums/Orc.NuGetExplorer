@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer.Views
 {
+    using System.Windows.Controls;
     using Catel.Windows;
     using ViewModels;
 
@@ -26,7 +27,7 @@ namespace Orc.NuGetExplorer.Views
         /// </summary>
         public ExplorerWindow(ExplorerViewModel viewModel)
             : base(viewModel, DataWindowMode.Close)
-        {
+        {          
             InitializeComponent();
         }
         #endregion

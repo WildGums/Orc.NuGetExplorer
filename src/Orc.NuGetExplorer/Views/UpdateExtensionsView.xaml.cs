@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer.Views
     internal partial class UpdateExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSourceNavigationItem", typeof (string),
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("SelectedPackageSource", typeof (string),
             typeof (UpdateExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 

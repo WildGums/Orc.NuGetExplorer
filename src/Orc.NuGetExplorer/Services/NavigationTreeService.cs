@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer
         public IEnumerable<NavigationItemsGroup> CreateNavigationGroups()
         {
             var navigationItemBases = new[] {CreateNavigationItemsGroup("Installed", false), CreateNavigationItemsGroup("Online"), CreateNavigationItemsGroup("Updates")};
-            navigationItemBases[0].IsExpanded = true;
+            navigationItemBases[0].IsSelected = true;
             return navigationItemBases;
         }
 

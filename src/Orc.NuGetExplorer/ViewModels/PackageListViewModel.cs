@@ -8,6 +8,8 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.ObjectModel;
+    using Catel;
+    using Catel.Fody;
     using Catel.MVVM;
 
     public class PackageListViewModel : ViewModelBase
@@ -15,12 +17,14 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Constructors
         public PackageListViewModel()
         {
+            PagingItems = new ObservableCollection<PagingItem>();
         }
         #endregion
 
         #region Properties
         public ObservableCollection<PackageDetails> ItemsSource { get; set; }
         public PackageDetails SelectedPackage { get; set; }
+        public ObservableCollection<PagingItem> PagingItems { get; set; }
         #endregion
     }
 }
