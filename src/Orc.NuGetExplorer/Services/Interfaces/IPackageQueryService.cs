@@ -8,12 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
+    using NuGet;
 
     public interface IPackageQueryService
     {
         #region Methods
-        IEnumerable<PackageDetails> GetPackages(string packageSource, string filter = null, int skip = 0, int take = 10);
-        IEnumerable<PackageDetails> GetPackages(string[] packageSources, string filter = null, int skip = 0, int take = 10);
+        IEnumerable<PackageDetails> GetPackages(IEnumerable<PackageSource> packageSources, string filter = null, int skip = 0, int take = 10);
+        IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, string filter = null, int skip = 0, int take = 10);
         #endregion
     }
 }

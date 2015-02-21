@@ -11,7 +11,7 @@
                   x:ClassModifier="internal">
     <catel:DataWindow.Resources>
         <DataTemplate x:Key="Installed">
-            <views:InstalledExtensionsView PackageSource="{Binding SelectedPackageSource}" />
+            <views:InstalledExtensionsView />
         </DataTemplate>
 
         <DataTemplate x:Key="Online">
@@ -19,7 +19,7 @@
         </DataTemplate>
         
         <DataTemplate x:Key="Update">
-            <views:UpdateExtensionsView PackageSource="{Binding SelectedPackageSource}" />
+            <views:UpdateExtensionsView />
         </DataTemplate>
 
         <templateSelectors:NavigationTemplateSelector x:Key="NavigationTemplateSelector" 

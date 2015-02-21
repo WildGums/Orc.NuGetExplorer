@@ -29,13 +29,13 @@ namespace Orc.NuGetExplorer
 
         public int SelectedIndex { get; set; }
         public IList<PackageSourcesNavigationItem> Children { get; private set; }
-        public PackageSourcesNavigationItem PackageSource { get; private set; }
+        public PackageSourcesNavigationItem PackageSourceNavigationItem { get; private set; }
         #endregion
 
         #region Methods
         private void OnSelectedIndexChanged()
         {
-            PackageSource = Children[SelectedIndex];
+            PackageSourceNavigationItem = Children[SelectedIndex];
         }
         #endregion
     }

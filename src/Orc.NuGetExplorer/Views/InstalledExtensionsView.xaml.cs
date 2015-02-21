@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer.Views
     internal partial class InstalledExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (string),
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSourceNavigationItem", typeof (string),
             typeof (InstalledExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 

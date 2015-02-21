@@ -7,7 +7,9 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using Catel;
     using Catel.Collections;
     using Catel.Fody;
@@ -18,7 +20,7 @@ namespace Orc.NuGetExplorer.ViewModels
     internal class OnlineExtensionsViewModel : ViewModelBase
     {
         [Model]
-        [Expose("PackageSource")]
+        [Expose("PackageSourceNavigationItem")]
         public NavigationItemsGroup NavigationItemsGroup { get; private set; }
 
         #region Fields
@@ -48,7 +50,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        private void OnPackageSourceChanged()
+        private void OnPackageSourceNavigationItemChanged()
         {
             Search();
         }
@@ -60,9 +62,14 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void Search()
         {
-            if (NavigationItemsGroup.PackageSource != null)
+            if (NavigationItemsGroup.PackageSourceNavigationItem != null)
             {
-                _dispatcherService.BeginInvoke(() => { AvailablePackages.ReplaceRange(_packageQueryService.GetPackages(NavigationItemsGroup.PackageSource.Name, SearchFilter)); });
+                _dispatcherService.BeginInvoke(() =>
+                {
+                    var packageSourceses = NavigationItemsGroup.PackageSourceNavigationItem.PackageSourceses;
+                    var packageDetails = _packageQueryService.GetPackages(packageSourceses, SearchFilter).ToArray();
+                    AvailablePackages.ReplaceRange(packageDetails);
+                });
             }
         }
         #endregion

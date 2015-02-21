@@ -24,6 +24,11 @@ namespace Orc.NuGetExplorer
             Summary = package.Summary;
 
             Package = package;
+            if (package.IconUrl != null)
+            {
+                Icon = new BitmapImage(package.IconUrl);
+            }
+            
         }
         #endregion
 
