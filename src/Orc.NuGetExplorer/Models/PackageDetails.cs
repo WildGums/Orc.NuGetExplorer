@@ -31,9 +31,8 @@ namespace Orc.NuGetExplorer
             }
             else
             {
-                Icon = new BitmapImage(new Uri(@"http://www.nuget.org/Content/Images/packageDefaultIcon.png"));                
+                Icon = new BitmapImage(new Uri(@"http://www.nuget.org/Content/Images/packageDefaultIcon.png"));
             }
-            
         }
         #endregion
 

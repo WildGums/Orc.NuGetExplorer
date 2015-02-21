@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.TemplateSelectors
 {
     using System.Windows;
@@ -10,10 +12,13 @@ namespace Orc.NuGetExplorer.TemplateSelectors
 
     public class NavigationTemplateSelector : DataTemplateSelector
     {
+        #region Properties
         public DataTemplate InstalledTemplate { get; set; }
         public DataTemplate OnlineTemplate { get; set; }
         public DataTemplate UpdateTemplate { get; set; }
+        #endregion
 
+        #region Methods
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var navigationGroup = item as NavigationItemsGroup;
@@ -24,15 +29,16 @@ namespace Orc.NuGetExplorer.TemplateSelectors
 
             switch (navigationGroup.Name)
             {
-                case "Installed":
+                case PackageGroups.Installed:
                     return InstalledTemplate;
-                case "Online":
+                case PackageGroups.Online:
                     return OnlineTemplate;
-                case "Update":
+                case PackageGroups.Update:
                     return UpdateTemplate;
             }
 
             return base.SelectTemplate(item, container);
         }
+        #endregion
     }
 }

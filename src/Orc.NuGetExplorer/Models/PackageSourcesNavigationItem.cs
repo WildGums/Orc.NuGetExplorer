@@ -20,7 +20,7 @@ namespace Orc.NuGetExplorer
         }
 
         public PackageSourcesNavigationItem(IEnumerable<PackageSource> packageSourceses)
-            : base("All")
+            : base(PackageGroups.All)
         {
             PackageSources = new List<PackageSource>(packageSourceses);
         }

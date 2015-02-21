@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Windows;
@@ -10,6 +12,7 @@ namespace Orc.NuGetExplorer
 
     public class FocusOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
+        #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
             AssociatedObject.IsVisibleChanged += OnIsVisibleChanged;
@@ -27,5 +30,6 @@ namespace Orc.NuGetExplorer
         {
             AssociatedObject.Focus();
         }
+        #endregion
     }
 }

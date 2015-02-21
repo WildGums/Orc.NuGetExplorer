@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer.Views
     internal partial class OnlineExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof(PackageSourcesNavigationItem),
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (PackageSourcesNavigationItem),
             typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 
@@ -39,7 +39,7 @@ namespace Orc.NuGetExplorer.Views
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public PackageSourcesNavigationItem PackageSource
         {
-            get { return (PackageSourcesNavigationItem)GetValue(PackageSourceProperty); }
+            get { return (PackageSourcesNavigationItem) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         #endregion

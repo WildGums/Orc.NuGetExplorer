@@ -8,8 +8,6 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.ObjectModel;
-    using Catel;
-    using Catel.Fody;
     using Catel.MVVM;
 
     public class PackageListViewModel : ViewModelBase

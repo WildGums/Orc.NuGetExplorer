@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer
 
     internal interface INavigationTreeService
     {
+        #region Methods
         IEnumerable<NavigationItemsGroup> CreateNavigationGroups();
+        #endregion
     }
 }

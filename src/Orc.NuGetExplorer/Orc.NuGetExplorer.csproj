@@ -97,8 +97,8 @@
       <Link>Properties\SolutionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\FocusOnVisibleBehavior.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\Base\NavigationItemBase.cs" />
     <Compile Include="Models\NavigationItemsGroup.cs" />
     <Compile Include="Models\PackageDetails.cs" />

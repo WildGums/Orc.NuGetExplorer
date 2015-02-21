@@ -43,7 +43,7 @@ namespace Orc.NuGetExplorer.Views
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public PackageSourcesNavigationItem PackageSource
         {
-            get { return (PackageSourcesNavigationItem)GetValue(PackageSourceProperty); }
+            get { return (PackageSourcesNavigationItem) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         #endregion

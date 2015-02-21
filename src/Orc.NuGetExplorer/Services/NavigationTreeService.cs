@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public IEnumerable<NavigationItemsGroup> CreateNavigationGroups()
         {
-            var navigationItemBases = new[] {CreateNavigationItemsGroup("Installed", false), CreateNavigationItemsGroup("Online"), CreateNavigationItemsGroup("Updates")};
+            var navigationItemBases = new[] { CreateNavigationItemsGroup(PackageGroups.Installed, false), CreateNavigationItemsGroup(PackageGroups.Online), CreateNavigationItemsGroup(PackageGroups.Update) };
             navigationItemBases[0].IsSelected = true;
             return navigationItemBases;
         }

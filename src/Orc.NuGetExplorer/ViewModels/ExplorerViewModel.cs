@@ -14,18 +14,12 @@ namespace Orc.NuGetExplorer.ViewModels
 
     internal class ExplorerViewModel : ViewModelBase
     {
-        #region Fields
-        private readonly INavigationTreeService _navigationTreeService;
-        #endregion
-
         #region Constructors
         public ExplorerViewModel(INavigationTreeService navigationTreeService)
         {
             Argument.IsNotNull(() => navigationTreeService);
 
-            _navigationTreeService = navigationTreeService;
-
-            NavigationItems = new List<NavigationItemsGroup>(_navigationTreeService.CreateNavigationGroups());
+            NavigationItems = new List<NavigationItemsGroup>(navigationTreeService.CreateNavigationGroups());
             SelectedGroup = NavigationItems.FirstOrDefault(x => x.IsSelected);
         }
         #endregion
@@ -36,11 +30,13 @@ namespace Orc.NuGetExplorer.ViewModels
         public PackageSourcesNavigationItem SelectedPackageSource { get; set; }
         #endregion
 
+        #region Methods
         private void OnSelectedGroupChanged()
         {
             var navigationItemsGroup = SelectedGroup;
             var index = navigationItemsGroup.SelectedIndex;
             SelectedPackageSource = navigationItemsGroup.PackageSources[index];
         }
+        #endregion
     }
 }

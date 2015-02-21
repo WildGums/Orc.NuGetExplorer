@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.Versioning;
     using Catel;
     using NuGet;
 
@@ -36,7 +35,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageSources);
 
-            IPackageRepository repo = new AggregateRepository(PackageRepositoryFactory.Default, packageSources.Select(x => x.Source), true); 
+            IPackageRepository repo = new AggregateRepository(PackageRepositoryFactory.Default, packageSources.Select(x => x.Source), true);
 
             return GetPackages(repo, filter, skip, take);
         }
@@ -52,7 +51,6 @@ namespace Orc.NuGetExplorer
                 queryable = queryable.Where(x => x.Title.Contains(filter));
             }
 
-            
             queryable = queryable.Where(x => x.IsLatestVersion);
             var count = queryable.Count();
             // TODO: Merge results with multiple package sources

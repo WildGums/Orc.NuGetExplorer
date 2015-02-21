@@ -1,16 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PagingItem.cs" company="Wild Gums">
+// <copyright file="Constants.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-
 namespace Orc.NuGetExplorer
 {
-    public class PagingItem
+    public static class PackageGroups
     {
-        #region Properties
-        public string Header { get; set; }
-        #endregion
+        public const string All = "All";
+        public const string Installed = "Installed";
+        public const string Online = "Online";
+        public const string Update = "Update";
     }
 }

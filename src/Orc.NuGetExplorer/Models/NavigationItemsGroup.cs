@@ -31,7 +31,6 @@ namespace Orc.NuGetExplorer
         public int SelectedIndex { get; set; }
         public IList<PackageSourcesNavigationItem> PackageSources { get; private set; }
         public PackageSourcesNavigationItem SelectedPackageSource { get; set; }
-        
         #endregion
 
         #region Methods
