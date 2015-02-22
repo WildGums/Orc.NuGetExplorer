@@ -15,14 +15,14 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Constructors
         public PackageListViewModel()
         {
-            PagingItems = new ObservableCollection<PagingItem>();
+            
         }
         #endregion
 
         #region Properties
         public ObservableCollection<PackageDetails> ItemsSource { get; set; }
         public PackageDetails SelectedPackage { get; set; }
-        public ObservableCollection<PagingItem> PagingItems { get; set; }
+        public string ButtonHeader { get; set; }
         #endregion
     }
 }

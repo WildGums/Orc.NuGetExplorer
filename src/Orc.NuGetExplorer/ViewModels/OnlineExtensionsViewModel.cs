@@ -32,6 +32,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
             AvailablePackages = new ObservableCollection<PackageDetails>();
 
+            PackageAction = new Command(OnPackageActionExecute);
+
             Search();
         }
         #endregion
@@ -41,6 +43,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public PackageDetails SelectedPackage { get; set; }
         public PackageSourcesNavigationItem PackageSource { get; set; }
         public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
+        public int TotalPackagesCount { get; set; }
         #endregion
 
         #region Methods
@@ -63,8 +66,17 @@ namespace Orc.NuGetExplorer.ViewModels
                     var packageSources = PackageSource.PackageSources;
                     var packageDetails = _packageQueryService.GetPackages(packageSources, SearchFilter).ToArray();
                     AvailablePackages.ReplaceRange(packageDetails);
+                   // TotalPackagesCount = _packageQueryService.
                 });
             }
+        }
+        #endregion
+
+        #region Commands
+        public Command PackageAction { get; private set; }
+
+        private void OnPackageActionExecute()
+        {
         }
         #endregion
     }

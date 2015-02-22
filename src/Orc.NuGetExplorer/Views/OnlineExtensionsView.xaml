@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -21,15 +22,19 @@
 
         <views:PackageListView Grid.Row="1" Grid.Column="0" 
                                ItemsSource="{Binding AvailablePackages, Mode=OneWay}"
-                               SelectedPackage="{Binding SelectedPackage}"/>
+                               SelectedPackage="{Binding SelectedPackage}" 
+                               ButtonHeader="Install"
+                               PackageCommand="{Binding PackageAction}"/>
 
         <catel:WatermarkTextBox Grid.Row="0" Grid.Column="1" Watermark="Search Online" Text="{Binding SearchFilter}">
             <i:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
             </i:Interaction.Behaviors>
         </catel:WatermarkTextBox>
+
+        <views:PagingView Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center"/>
         
-        <views:PackageDetailsView Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedPackage}" />
+        <views:PackageDetailsView Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding SelectedPackage}" />
     </Grid>
 
 </catel:UserControl>
