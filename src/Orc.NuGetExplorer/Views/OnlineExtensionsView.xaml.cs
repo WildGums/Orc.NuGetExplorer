@@ -18,6 +18,9 @@ namespace Orc.NuGetExplorer.Views
         #region Fields
         public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (PackageSourcesNavigationItem),
             typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
+            typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 
         #region Constructors
@@ -41,6 +44,13 @@ namespace Orc.NuGetExplorer.Views
         {
             get { return (PackageSourcesNavigationItem) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
+        }
+        
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        public string ActionName
+        {
+            get { return (string)GetValue(ActionNameProperty); }
+            set { SetValue(ActionNameProperty, value); }
         }
         #endregion
     }

@@ -13,20 +13,25 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Collections;
     using Catel.MVVM;
     using Catel.Services;
+    using NuGet;
 
     internal class OnlineExtensionsViewModel : ViewModelBase
     {
         #region Fields
+        private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IPackageRepositoryService _packageRepositoryService;
         #endregion
 
         #region Constructors
-        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
+        public OnlineExtensionsViewModel(IPackageRepositoryService packageRepositoryService, IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
+            Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
 
+            _packageRepositoryService = packageRepositoryService;
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
 
@@ -44,11 +49,19 @@ namespace Orc.NuGetExplorer.ViewModels
         public PackageSourcesNavigationItem PackageSource { get; set; }
         public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
         public int TotalPackagesCount { get; set; }
+        public int PackagesToSkip { get; set; }
+        public string ActionName { get; set; }
         #endregion
 
         #region Methods
+        private void OnPackagesToSkipChanged()
+        {
+            Search();
+        }
+        
         private void OnPackageSourceChanged()
         {
+            UpdateRepository();
             Search();
         }
 
@@ -57,16 +70,26 @@ namespace Orc.NuGetExplorer.ViewModels
             Search();
         }
 
+        private void OnActionNameChanged()
+        {
+            UpdateRepository();
+        }
+
+        private void UpdateRepository()
+        {
+            var packageSources = PackageSource.PackageSources;
+            _packageRepository = _packageRepositoryService.GetRepository(ActionName, packageSources);
+            TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);
+        }
+
         private void Search()
         {
             if (PackageSource != null)
             {
                 _dispatcherService.BeginInvoke(() =>
                 {
-                    var packageSources = PackageSource.PackageSources;
-                    var packageDetails = _packageQueryService.GetPackages(packageSources, SearchFilter).ToArray();
+                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, SearchFilter, PackagesToSkip).ToArray();
                     AvailablePackages.ReplaceRange(packageDetails);
-                   // TotalPackagesCount = _packageQueryService.
                 });
             }
         }

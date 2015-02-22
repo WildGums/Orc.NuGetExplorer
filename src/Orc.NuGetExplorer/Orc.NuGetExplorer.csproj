@@ -101,6 +101,7 @@
     <Compile Include="Behaviors\FocusOnVisibleBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
+    <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Models\Base\NavigationItemBase.cs" />
     <Compile Include="Models\NavigationItemsGroup.cs" />
     <Compile Include="Models\PackageDetails.cs" />
@@ -113,8 +114,10 @@
     <Compile Include="Services\Interfaces\IPackageSourceService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IPackagesManager.cs" />
+    <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
     <Compile Include="Services\NavigationTreeService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
+    <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="Services\PackagesManager.cs" />
     <Compile Include="Services\PackageSourceService.cs" />
     <Compile Include="Services\PackageQueryService.cs" />

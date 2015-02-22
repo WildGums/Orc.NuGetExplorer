@@ -14,7 +14,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="Online">
-            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}"/>
+            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Install"/>
         </DataTemplate>
         
         <DataTemplate x:Key="Update">

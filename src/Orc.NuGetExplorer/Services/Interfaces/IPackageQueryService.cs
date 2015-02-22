@@ -16,5 +16,7 @@ namespace Orc.NuGetExplorer
         IEnumerable<PackageDetails> GetPackages(IEnumerable<PackageSource> packageSources, string filter = null, int skip = 0, int take = 10);
         IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, string filter = null, int skip = 0, int take = 10);
         #endregion
+
+        int GetPackagesCount(IPackageRepository packageRepository, string filter);
     }
 }

@@ -60,7 +60,7 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(ItemsCountProperty, value); }
         }
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        [ViewToViewModel("ItemsPerPage", MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public int ItemsPerPage
         {
             get { return (int)GetValue(ItemsPerPageProperty); }

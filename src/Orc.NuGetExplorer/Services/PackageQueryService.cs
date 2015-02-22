@@ -44,6 +44,19 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
+            var queryable = CreateQuery(packageRepository, filter);
+            return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList().Select(x => _packageCacheService.GetPackageDetails(x));
+        }
+
+        public int GetPackagesCount(IPackageRepository packageRepository, string filter)
+        {
+            var queryable = CreateQuery(packageRepository, filter);
+            var count = queryable.Count();
+            return count;
+        }
+
+        private static IQueryable<IPackage> CreateQuery(IPackageRepository packageRepository, string filter)
+        {
             var queryable = packageRepository.GetPackages();
             if (!string.IsNullOrWhiteSpace(filter))
             {
@@ -52,9 +65,7 @@ namespace Orc.NuGetExplorer
             }
 
             queryable = queryable.Where(x => x.IsLatestVersion);
-            var count = queryable.Count();
-            // TODO: Merge results with multiple package sources
-            return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList().Select(x => _packageCacheService.GetPackageDetails(x));
+            return queryable;
         }
         #endregion
     }

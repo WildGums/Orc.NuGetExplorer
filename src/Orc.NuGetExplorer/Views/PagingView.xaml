@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:catel="http://catel.codeplex.com"
+             xmlns:local="clr-namespace:Orc.NuGetExplorer"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    
     <StackPanel Orientation="Horizontal">
+        <StackPanel.Resources>
+            <local:DataContextSpy x:Key="dataContextSpy" />
+        </StackPanel.Resources>
         <Button Content="&lt;&lt;" Command="{Binding MoveToFirst}"/>
         <Button Content="&lt;" Command="{Binding MoveBack}"/>
         
@@ -19,7 +24,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>
-                        <Hyperlink Command="{Binding MoveToPage}" CommandParameter="{Binding}">
+                        <Hyperlink Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.MoveToPage}"
+                                   CommandParameter="{Binding}">
                             <TextBlock Text="{Binding Header}" />
                         </Hyperlink>
                     </TextBlock>
@@ -29,7 +35,7 @@
         
         <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold"/>
         
-        <ItemsControl ItemsSource="{Binding LeftPages}">
+        <ItemsControl ItemsSource="{Binding RightPages}">            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -38,7 +44,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>
-                        <Hyperlink Command="{Binding MoveToPage}" CommandParameter="{Binding}">
+                        <Hyperlink Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.MoveToPage}"
+                                   CommandParameter="{Binding}">
                             <TextBlock Text="{Binding Header}" />
                         </Hyperlink>
                     </TextBlock>

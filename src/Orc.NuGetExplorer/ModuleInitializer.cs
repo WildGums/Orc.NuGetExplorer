@@ -18,5 +18,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<INavigationTreeService, NavigationTreeService>();
         serviceLocator.RegisterType<IPackagesManager, PackagesManager>();
+        serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
     }
 }
