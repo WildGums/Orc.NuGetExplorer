@@ -61,13 +61,12 @@ namespace Orc.NuGetExplorer.ViewModels
         
         private void OnPackageSourceChanged()
         {
-            UpdateRepository();
-            Search();
+            UpdateRepository();            
         }
 
         private void OnSearchFilterChanged()
         {
-            Search();
+            UpdateRepository();            
         }
 
         private void OnActionNameChanged()
@@ -75,15 +74,33 @@ namespace Orc.NuGetExplorer.ViewModels
             UpdateRepository();
         }
 
+        private static bool _updatingRepisitory;
+
         private void UpdateRepository()
         {
-            var packageSources = PackageSource.PackageSources;
-            _packageRepository = _packageRepositoryService.GetRepository(ActionName, packageSources);
-            TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);
+            if (_updatingRepisitory)
+            {
+                return;
+            }
+
+            using (new DisposableToken(this, x => _updatingRepisitory = true, x => _updatingRepisitory = false))
+            {
+                var packageSources = PackageSource.PackageSources;
+                _packageRepository = _packageRepositoryService.GetRepository(ActionName, packageSources);
+                PackagesToSkip = 0;
+                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);                
+            }
+
+            Search();
         }
 
         private void Search()
         {
+            if (_updatingRepisitory)
+            {
+                return;
+            }
+
             if (PackageSource != null)
             {
                 _dispatcherService.BeginInvoke(() =>

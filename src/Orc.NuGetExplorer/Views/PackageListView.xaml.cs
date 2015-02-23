@@ -57,7 +57,7 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public PackageDetails SelectedPackage
         {
             get { return (PackageDetails) GetValue(SelectedPackageProperty); }

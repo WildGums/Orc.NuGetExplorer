@@ -67,7 +67,7 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(ItemsPerPageProperty, value); }
         }
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayDoNothing)]
         public int ItemIndex
         {
             get { return (int)GetValue(ItemIndexProperty); }
