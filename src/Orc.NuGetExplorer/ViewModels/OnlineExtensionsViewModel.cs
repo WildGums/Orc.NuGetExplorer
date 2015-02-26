@@ -46,7 +46,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         public string SearchFilter { get; set; }
         public PackageDetails SelectedPackage { get; set; }
-        public PackageSourcesNavigationItem PackageSource { get; set; }
+        public NamedRepo NamedRepo { get; set; }
         public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
@@ -85,8 +85,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             using (new DisposableToken(this, x => _updatingRepisitory = true, x => _updatingRepisitory = false))
             {
-                var packageSources = PackageSource.PackageSources;
-                _packageRepository = _packageRepositoryService.GetRepository(ActionName, packageSources);
+                _packageRepository = NamedRepo.Value;
                 PackagesToSkip = 0;
                 TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);                
             }
@@ -101,7 +100,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            if (PackageSource != null)
+            if (NamedRepo != null)
             {
                 _dispatcherService.BeginInvoke(() =>
                 {

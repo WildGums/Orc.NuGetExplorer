@@ -5,11 +5,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
-    public static class PackageGroups
+    public static class RepoCategoryName
     {
-        public const string All = "All";
         public const string Installed = "Installed";
         public const string Online = "Online";
         public const string Update = "Update";
+    }
+
+    public static class RepoName
+    {
+        public const string All = "All";
     }
 }

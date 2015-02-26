@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer.ViewModels
     internal class UpdateExtensionsViewModel : ViewModelBase
     {
         #region Properties
-        public PackageSourcesNavigationItem PackageSource { get; set; }
+        public NamedRepo PackageSource { get; set; }
         #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer.Views
     internal partial class OnlineExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("PackageSource", typeof (PackageSourcesNavigationItem),
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("NamedRepo", typeof (NamedRepo),
             typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
@@ -40,9 +40,9 @@ namespace Orc.NuGetExplorer.Views
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public PackageSourcesNavigationItem PackageSource
+        public NamedRepo PackageSource
         {
-            get { return (PackageSourcesNavigationItem) GetValue(PackageSourceProperty); }
+            get { return (NamedRepo) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         

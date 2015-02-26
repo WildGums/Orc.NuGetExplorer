@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer.Views
     internal partial class UpdateExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("SelectedPackageSource", typeof (string),
+        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("SelectedRepo", typeof (string),
             typeof (UpdateExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 
@@ -38,9 +38,9 @@ namespace Orc.NuGetExplorer.Views
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public PackageSourcesNavigationItem PackageSource
+        public NamedRepo PackageSource
         {
-            get { return (PackageSourcesNavigationItem) GetValue(PackageSourceProperty); }
+            get { return (NamedRepo) GetValue(PackageSourceProperty); }
             set { SetValue(PackageSourceProperty, value); }
         }
         #endregion

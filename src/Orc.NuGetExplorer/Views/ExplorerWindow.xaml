@@ -10,7 +10,7 @@
                   x:ClassModifier="internal">
     <catel:DataWindow.Resources>
         <DataTemplate x:Key="Installed">
-            <views:InstalledExtensionsView />
+            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Remove" />
         </DataTemplate>
 
         <DataTemplate x:Key="Online">

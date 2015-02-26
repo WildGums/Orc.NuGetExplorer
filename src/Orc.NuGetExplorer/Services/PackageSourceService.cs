@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Catel;
     using NuGet;
@@ -17,21 +18,14 @@ namespace Orc.NuGetExplorer
         #region Constructors
         public PackageSourceService()
         {
-            PackageSources = new ObservableCollection<PackageSource>();
-            PackageSources.Add(new PackageSource("http://www.nuget.org/api/v2/", "NuGet", true, true));
+
         }
         #endregion
 
-        #region Properties
-        public ObservableCollection<PackageSource> PackageSources { get; private set; }
-        #endregion
-
         #region Methods
-        public IPackageRepository GetPackageRepository(string packageSource)
+        public IEnumerable<PackageSource> GetPackageSources()
         {
-            Argument.IsNotNullOrWhitespace(() => packageSource);
-
-            return PackageRepositoryFactory.Default.CreateRepository(packageSource);
+            yield return new PackageSource("http://www.nuget.org/api/v2/", "NuGet", true, true);
         }
 
         public void Save()

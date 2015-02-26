@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageSourceService.cs" company="Wild Gums">
+// <copyright file="ReposNavigator.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,15 +8,19 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using NuGet;
+    using Catel.Collections;
 
-    public interface IPackageSourceService
+    public class ReposNavigator
     {
-        #region Methods
-        IEnumerable<PackageSource> GetPackageSources();
-        void Save();
-        void Load();
+        #region Constructors
+        public ReposNavigator()
+        {
+            RepoCategories = new FastObservableCollection<RepoCategory>();
+        }
+        #endregion
+
+        #region Properties
+        public IList<RepoCategory> RepoCategories { get; private set; }
         #endregion
     }
 }

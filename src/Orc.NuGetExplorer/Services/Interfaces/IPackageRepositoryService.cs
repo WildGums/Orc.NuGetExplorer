@@ -5,6 +5,6 @@
 
     public interface IPackageRepositoryService
     {
-        IPackageRepository GetRepository(string actionName, IEnumerable<PackageSource> packageSources);
+        IDictionary<string, IPackageRepository> GetRepositories(string actionName);
     }
 }

@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer.TemplateSelectors
         #region Methods
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            var navigationGroup = item as NavigationItemsGroup;
+            var navigationGroup = item as RepoCategory;
             if (item == null)
             {
                 return base.SelectTemplate(item, container);
@@ -29,11 +29,11 @@ namespace Orc.NuGetExplorer.TemplateSelectors
 
             switch (navigationGroup.Name)
             {
-                case PackageGroups.Installed:
+                case RepoCategoryName.Installed:
                     return InstalledTemplate;
-                case PackageGroups.Online:
+                case RepoCategoryName.Online:
                     return OnlineTemplate;
-                case PackageGroups.Update:
+                case RepoCategoryName.Update:
                     return UpdateTemplate;
             }
 

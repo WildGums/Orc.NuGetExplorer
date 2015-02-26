@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NavigationItemBase.cs" company="Wild Gums">
+// <copyright file="NamedRepo.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,18 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using Catel.Data;
+    using NuGet;
 
-    public abstract class NavigationItemBase : ModelBase
+    public class NamedRepo : ModelBase
     {
-        #region Constructors
-        public NavigationItemBase(string name)
-        {
-            Name = name;
-        }
-        #endregion
-
         #region Properties
-        public string Name { get; private set; }
+        public string Name { get; set; }
+        public IPackageRepository Value { get; set; }
         #endregion
     }
 }

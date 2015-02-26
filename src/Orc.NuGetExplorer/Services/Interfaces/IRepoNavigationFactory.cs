@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INavigationTreeService.cs" company="Wild Gums">
+// <copyright file="IRepoNavigationFactory.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,10 +9,10 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
 
-    internal interface INavigationTreeService
+    internal interface IRepoNavigationFactory
     {
         #region Methods
-        IEnumerable<NavigationItemsGroup> CreateNavigationGroups();
+        IEnumerable<RepoCategory> CreateRepoCategories();
         #endregion
     }
 }
