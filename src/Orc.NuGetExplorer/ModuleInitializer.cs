@@ -19,5 +19,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRepoNavigationFactory, RepoNavigationFactory>();
         serviceLocator.RegisterType<IPackagesManager, PackagesManager>();
         serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
+        serviceLocator.RegisterType<IRepoNavigationService, RepoNavigationService>();
     }
 }

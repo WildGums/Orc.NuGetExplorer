@@ -7,35 +7,43 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Catel;
+    using Catel.Fody;
     using Catel.MVVM;
 
     internal class ExplorerViewModel : ViewModelBase
     {
-        #region Constructors
-        public ExplorerViewModel(IRepoNavigationFactory repoNavigationFactory)
-        {
-            Argument.IsNotNull(() => repoNavigationFactory);
+        #region Fields
+        private readonly IRepoNavigationService _repoNavigationService;
+        #endregion
 
-            NavigationItems = new List<RepoCategory>(repoNavigationFactory.CreateRepoCategories());
-            SelectedGroup = NavigationItems.FirstOrDefault(x => x.IsSelected);
+        #region Constructors
+        public ExplorerViewModel(IRepoNavigationService repoNavigationService)
+        {
+            Argument.IsNotNull(() => repoNavigationService);
+
+            _repoNavigationService = repoNavigationService;
+            Navigator = _repoNavigationService.GetNavigator();
         }
         #endregion
 
         #region Properties
-        public IList<RepoCategory> NavigationItems { get; private set; }
-        public RepoCategory SelectedGroup { get; set; }
-        public NamedRepo SelectedPackageSource { get; set; }
+        [Model]
+        [Expose("RepoCategories")]
+        [Expose("SelectedNamedRepo")]
+        [Expose("SelectedRepoCategory")]
+        public ReposNavigator Navigator { get; private set; }
         #endregion
 
         #region Methods
-        private void OnSelectedGroupChanged()
+        private void OnSelectedRepoCategoryChanged()
         {
-            var navigationItemsGroup = SelectedGroup;
-            var index = navigationItemsGroup.SelectedIndex;
-            SelectedPackageSource = navigationItemsGroup.Repos[index];
+
+        }
+
+        private void OnSelectedNamedRepoChanged()
+        {
+
         }
         #endregion
     }

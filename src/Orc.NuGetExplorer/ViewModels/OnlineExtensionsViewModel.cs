@@ -21,17 +21,14 @@ namespace Orc.NuGetExplorer.ViewModels
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageQueryService _packageQueryService;
-        private readonly IPackageRepositoryService _packageRepositoryService;
         #endregion
 
         #region Constructors
-        public OnlineExtensionsViewModel(IPackageRepositoryService packageRepositoryService, IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
+        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
-            Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
 
-            _packageRepositoryService = packageRepositoryService;
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
 

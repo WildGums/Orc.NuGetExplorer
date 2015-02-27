@@ -21,13 +21,13 @@ namespace Orc.NuGetExplorer.TemplateSelectors
         #region Methods
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            var navigationGroup = item as RepoCategory;
+            var repoCategory = item as RepoCategory;
             if (item == null)
             {
                 return base.SelectTemplate(item, container);
             }
 
-            switch (navigationGroup.Name)
+            switch (repoCategory.Name)
             {
                 case RepoCategoryName.Installed:
                     return InstalledTemplate;

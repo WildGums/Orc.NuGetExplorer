@@ -98,8 +98,11 @@
       <Link>Properties\SolutionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\FocusOnVisibleBehavior.cs" />
+    <Compile Include="Behaviors\UpdateSelectedItemSourceBehavior.cs" />
+    <Compile Include="Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
+    <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Models\RepoCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />
@@ -108,31 +111,28 @@
     <Compile Include="Models\PagingItemInfo.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Interfaces\IRepoNavigationFactory.cs" />
+    <Compile Include="Factories\Interfaces\IRepoNavigationFactory.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageSourceService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IPackagesManager.cs" />
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
-    <Compile Include="Services\RepoNavigationFactory.cs" />
+    <Compile Include="Factories\RepoNavigationFactory.cs" />
+    <Compile Include="Services\Interfaces\IRepoNavigationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="Services\PackagesManager.cs" />
     <Compile Include="Services\PackageSourceService.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
+    <Compile Include="Services\RepoNavigationService.cs" />
     <Compile Include="TemplateSelectors\NavigationTemplateSelector.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
-    <Compile Include="ViewModels\InstalledExtensionsViewModel.cs" />
     <Compile Include="ViewModels\OnlineExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="ViewModels\PackageListViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
-    <Compile Include="ViewModels\UpdateExtensionsViewModel.cs" />
     <Compile Include="Views\ExplorerWindow.xaml.cs">
       <DependentUpon>ExplorerWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\InstalledExtensionsView.xaml.cs">
-      <DependentUpon>InstalledExtensionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OnlineExtensionsView.xaml.cs">
       <DependentUpon>OnlineExtensionsView.xaml</DependentUpon>
@@ -145,9 +145,6 @@
     </Compile>
     <Compile Include="Views\PagingView.xaml.cs">
       <DependentUpon>PagingView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UpdateExtensionsView.xaml.cs">
-      <DependentUpon>UpdateExtensionsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -165,10 +162,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InstalledExtensionsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\OnlineExtensionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -182,10 +175,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PagingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UpdateExtensionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

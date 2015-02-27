@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Collections.Generic;
     using Catel;
 
     internal class RepoNavigationFactory : IRepoNavigationFactory
@@ -26,17 +25,14 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IEnumerable<RepoCategory> CreateRepoCategories()
+        public ReposNavigator CreateRepoNavigator()
         {
-            var repoCategories = new[]
-            {
-                CreateRepoCategory(RepoCategoryName.Installed),
-                CreateRepoCategory(RepoCategoryName.Online),
-                CreateRepoCategory(RepoCategoryName.Update)
-            };
+            var navigator = new ReposNavigator();
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Installed));
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Online));
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Update));
 
-            repoCategories[0].IsSelected = true;
-            return repoCategories;
+            return navigator;
         }
 
         private RepoCategory CreateRepoCategory(string categoryName)

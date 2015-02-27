@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FocusOnVisibleBehavior.cs" company="Wild Gums">
+// <copyright file="UpdateSourceOnVisibleBehavior.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using Catel.Windows.Interactivity;
 
-    public class FocusOnVisibleBehavior : BehaviorBase<FrameworkElement>
+    public class UpdateSourceOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()
@@ -28,12 +28,12 @@ namespace Orc.NuGetExplorer
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (!(bool)e.NewValue)
+            if (!(bool) e.NewValue)
             {
                 return;
             }
 
-            AssociatedObject.Focus();
+            AssociatedObject.UpdateItemSource();
         }
         #endregion
     }

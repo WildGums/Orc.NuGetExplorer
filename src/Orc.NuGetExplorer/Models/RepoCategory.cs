@@ -32,19 +32,8 @@ namespace Orc.NuGetExplorer
         [DefaultValue(false)]
         public bool IsSelected { get; set; }
 
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set
-            {
-                _selectedIndex = value;
-                SelectedRepo = Repos[_selectedIndex];
-            }
-        }
-
         public string Name { get; set; }
         public IList<NamedRepo> Repos { get; private set; }
-        public NamedRepo SelectedRepo { get; set; }
         #endregion
     }
 }

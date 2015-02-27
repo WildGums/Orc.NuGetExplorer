@@ -18,7 +18,7 @@
         </DataTemplate>
         
         <DataTemplate x:Key="Update">
-            <views:UpdateExtensionsView />
+            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Update"/>
         </DataTemplate>
 
         <templateSelectors:NavigationTemplateSelector x:Key="NavigationTemplateSelector" 
@@ -37,7 +37,11 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding NavigationItems}" SelectedItem="{Binding SelectedGroup}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepoCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+            <ListBox.Resources>
+                <local:DataContextSpy x:Key="dataContextSpy" />
+            </ListBox.Resources>
+            
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
@@ -50,10 +54,13 @@
                         <Grid>
                             <TextBlock Text="{Binding Name}"/>
                         </Grid>
-                        <ListBox BorderThickness="0" ItemsSource="{Binding PackageSources}" HorizontalAlignment="Stretch" SelectionMode="Single" SelectedIndex="{Binding SelectedIndex}"
+                        <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch" SelectionMode="Single" SelectedIndex="0"
+                                 SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepo, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
                                 <local:FocusOnVisibleBehavior/>
+                                <local:UpdateSourceOnVisibleBehavior/>
+                                <local:UpdateSelectedItemSourceBehavior/>
                             </i:Interaction.Behaviors>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -66,6 +73,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ContentControl Grid.Column="1" Content="{Binding SelectedGroup}" ContentTemplateSelector="{StaticResource NavigationTemplateSelector}"/>        
+        <ContentControl Grid.Column="1" Content="{Binding SelectedRepoCategory}" ContentTemplateSelector="{StaticResource NavigationTemplateSelector}"/>        
     </Grid>
 </catel:DataWindow>

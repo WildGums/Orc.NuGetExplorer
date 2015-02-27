@@ -1,18 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdateExtensionsViewModel.cs" company="Wild Gums">
+// <copyright file="IRepoNavigationService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer
 {
-    using Catel.MVVM;
-
-    internal class UpdateExtensionsViewModel : ViewModelBase
+    public interface IRepoNavigationService
     {
-        #region Properties
-        public NamedRepo PackageSource { get; set; }
-        #endregion
+        ReposNavigator GetNavigator();
     }
 }

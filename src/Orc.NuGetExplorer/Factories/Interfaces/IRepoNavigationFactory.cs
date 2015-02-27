@@ -9,10 +9,10 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
 
-    internal interface IRepoNavigationFactory
+    public interface IRepoNavigationFactory
     {
         #region Methods
-        IEnumerable<RepoCategory> CreateRepoCategories();
+        ReposNavigator CreateRepoNavigator();
         #endregion
     }
 }
