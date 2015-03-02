@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-
+        private PackageManager _packageManager;
         #endregion
 
         #region Constructors
@@ -37,6 +37,8 @@ namespace Orc.NuGetExplorer
             _uiVisualizerService = uiVisualizerService;
             _packageQueryService = packageQueryService;
             _nuGetConfigurationService = nuGetConfigurationService;
+
+
         }
         #endregion
 
@@ -50,40 +52,10 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
             
-/*            var version = Environment.Version;
-            if (targetFramework == null)
-            {
-                
-                var supportedFrameworks = package.GetSupportedFrameworks();
-                targetFramework = supportedFrameworks.FirstOrDefault(x => x.Version.Major == version.Major && x.Version.Minor == version.Minor);
-            }
-
-            if (targetFramework == null)
-            {
-                throw new NotSupportedInPlatformException(string.Format("Framework version {0} does notsupport by package {1}.",
-                    version, package.GetFullName()));
-            }*/
-
-          //  var dependencies = package.GetCompatiblePackageDependencies(targetFramework);
-
-            // TODO: Need to implement getting dependency package before
-            /*  
-            var packages = _packageQueryService.GetPackages(packageRepository, dependencies);
-            foreach (var dependecyPackage in packages)
-            {
-                await Install(dependecyPackage, packageRepository, targetFramework);
-            }*/
-
             var folder = _nuGetConfigurationService.GetDestinationFolder();
-          //  folder = Path.Combine(folder, package.Id);
 
-         //   var packageFiles = package.GetFiles();
-
-            // TODO: add downloading package
-           // var downloadUrl = ((NuGet.DataServicePackage) (package)).DownloadUrl;
-
-            var packageManager = new PackageManager(packageRepository, folder);
-            packageManager.InstallPackage(package, false, true);
+            _packageManager = new PackageManager(packageRepository, folder);
+            _packageManager.InstallPackage(package, false, true);
            
         }
         #endregion
