@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OnlineExtensionsViewModel.cs" company="Wild Gums">
+// <copyright file="ExtensionsViewModel.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,16 +15,17 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using NuGet;
 
-    internal class OnlineExtensionsViewModel : ViewModelBase
+    public class ExtensionsViewModel : ViewModelBase
     {
         #region Fields
+        private static bool _updatingRepisitory;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageQueryService _packageQueryService;
         #endregion
 
         #region Constructors
-        public OnlineExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
+        public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
@@ -41,9 +42,9 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
+        public NamedRepo NamedRepository { get; set; }
         public string SearchFilter { get; set; }
         public PackageDetails SelectedPackage { get; set; }
-        public NamedRepo NamedRepo { get; set; }
         public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
@@ -55,23 +56,21 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             Search();
         }
-        
-        private void OnPackageSourceChanged()
+
+        private void OnNamedRepositoryChanged()
         {
-            UpdateRepository();            
+            UpdateRepository();
         }
 
         private void OnSearchFilterChanged()
         {
-            UpdateRepository();            
+            UpdateRepository();
         }
 
         private void OnActionNameChanged()
         {
             UpdateRepository();
         }
-
-        private static bool _updatingRepisitory;
 
         private void UpdateRepository()
         {
@@ -82,9 +81,9 @@ namespace Orc.NuGetExplorer.ViewModels
 
             using (new DisposableToken(this, x => _updatingRepisitory = true, x => _updatingRepisitory = false))
             {
-                _packageRepository = NamedRepo.Value;
+                _packageRepository = NamedRepository.Value;
                 PackagesToSkip = 0;
-                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);                
+                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);
             }
 
             Search();
@@ -97,7 +96,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            if (NamedRepo != null)
+            if (NamedRepository != null)
             {
                 _dispatcherService.BeginInvoke(() =>
                 {

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OnlineExtensionsView.xaml.cs" company="Wild Gums">
+// <copyright file="ExtensionsView.xaml.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,43 +7,44 @@
 
 namespace Orc.NuGetExplorer.Views
 {
+    using System;
     using System.Windows;
     using Catel.MVVM.Views;
 
     /// <summary>
-    /// Interaction logic for OnlineExtensionsView.xaml.
+    /// Interaction logic for ExtensionsView.xaml.
     /// </summary>
-    internal partial class OnlineExtensionsView
+    public partial class ExtensionsView
     {
         #region Fields
-        public static readonly DependencyProperty PackageSourceProperty = DependencyProperty.Register("NamedRepo", typeof (NamedRepo),
-            typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepo),
+            typeof (ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
-            typeof (OnlineExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            typeof (ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="OnlineExtensionsView"/> class.
+        /// Initializes a new instance of the <see cref="ExtensionsView"/> class.
         /// </summary>
-        public OnlineExtensionsView()
+        public ExtensionsView()
         {
             InitializeComponent();
         }
 
-        static OnlineExtensionsView()
+        static ExtensionsView()
         {
-            typeof (OnlineExtensionsView).AutoDetectViewPropertiesToSubscribe();
+            typeof (ExtensionsView).AutoDetectViewPropertiesToSubscribe();
         }
         #endregion
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public NamedRepo PackageSource
+        public NamedRepo NamedRepository
         {
-            get { return (NamedRepo) GetValue(PackageSourceProperty); }
-            set { SetValue(PackageSourceProperty, value); }
+            get { return (NamedRepo) GetValue(NamedRepositoryProperty); }
+            set { SetValue(NamedRepositoryProperty, value); }
         }
         
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]

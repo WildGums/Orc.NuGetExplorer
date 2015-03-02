@@ -9,23 +9,7 @@
 				  Width="800" Height="400" SizeToContent="Manual"
                   x:ClassModifier="internal">
     <catel:DataWindow.Resources>
-        <DataTemplate x:Key="Installed">
-            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Remove" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="Online">
-            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Install"/>
-        </DataTemplate>
-        
-        <DataTemplate x:Key="Update">
-            <views:OnlineExtensionsView PackageSource="{Binding SelectedPackageSource}" ActionName="Update"/>
-        </DataTemplate>
-
-        <templateSelectors:NavigationTemplateSelector x:Key="NavigationTemplateSelector" 
-                                                      InstalledTemplate="{StaticResource Installed}"
-                                                      OnlineTemplate="{StaticResource Online}"
-                                                      UpdateTemplate="{StaticResource Update}"/>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>        
     </catel:DataWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -37,11 +21,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepoCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepoCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">           
             <ListBox.Resources>
                 <local:DataContextSpy x:Key="dataContextSpy" />
             </ListBox.Resources>
-            
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
@@ -73,6 +56,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ContentControl Grid.Column="1" Content="{Binding SelectedRepoCategory}" ContentTemplateSelector="{StaticResource NavigationTemplateSelector}"/>        
+        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepo}" ActionName="Remove" />        
     </Grid>
 </catel:DataWindow>

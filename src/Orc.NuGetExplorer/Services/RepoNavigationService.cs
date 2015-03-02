@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     public class RepoNavigationService : IRepoNavigationService
     {
         #region Fields
-        private ReposNavigator _navgator;
+        private ReposNavigator _navigator;
         private readonly IRepoNavigationFactory _repoNavigationFactory;
         #endregion
 
@@ -28,12 +28,12 @@ namespace Orc.NuGetExplorer
         #region Methods
         public ReposNavigator GetNavigator()
         {
-            if (_navgator == null)
+            if (_navigator == null)
             {
-                _navgator = _repoNavigationFactory.CreateRepoNavigator();
+                _navigator = _repoNavigationFactory.CreateRepoNavigator();
             }
 
-            return _navgator;
+            return _navigator;
         }
         #endregion
     }

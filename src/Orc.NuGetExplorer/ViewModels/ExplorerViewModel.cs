@@ -30,21 +30,11 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         [Model]
         [Expose("RepoCategories")]
-        [Expose("SelectedNamedRepo")]
         [Expose("SelectedRepoCategory")]
         public ReposNavigator Navigator { get; private set; }
-        #endregion
 
-        #region Methods
-        private void OnSelectedRepoCategoryChanged()
-        {
-
-        }
-
-        private void OnSelectedNamedRepoChanged()
-        {
-
-        }
+        [ViewModelToModel("Navigator")]
+        public NamedRepo SelectedNamedRepo { get; set; }
         #endregion
     }
 }

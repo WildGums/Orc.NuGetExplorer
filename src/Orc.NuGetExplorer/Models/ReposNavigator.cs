@@ -24,5 +24,10 @@ namespace Orc.NuGetExplorer
         public NamedRepo SelectedNamedRepo { get; set; }
         public RepoCategory SelectedRepoCategory { get; set; }
         #endregion
+
+        private void OnSelectedNamedRepoChanged()
+        {
+            
+        }
     }
 }

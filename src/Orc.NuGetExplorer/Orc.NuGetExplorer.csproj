@@ -127,15 +127,15 @@
     <Compile Include="Services\RepoNavigationService.cs" />
     <Compile Include="TemplateSelectors\NavigationTemplateSelector.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
-    <Compile Include="ViewModels\OnlineExtensionsViewModel.cs" />
+    <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="ViewModels\PackageListViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="Views\ExplorerWindow.xaml.cs">
       <DependentUpon>ExplorerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OnlineExtensionsView.xaml.cs">
-      <DependentUpon>OnlineExtensionsView.xaml</DependentUpon>
+    <Compile Include="Views\ExtensionsView.xaml.cs">
+      <DependentUpon>ExtensionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PackageDetailsView.xaml.cs">
       <DependentUpon>PackageDetailsView.xaml</DependentUpon>
@@ -162,7 +162,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\OnlineExtensionsView.xaml">
+    <Page Include="Views\ExtensionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
