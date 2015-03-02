@@ -28,20 +28,18 @@ namespace Orc.NuGetExplorer
         public ReposNavigator CreateRepoNavigator()
         {
             var navigator = new ReposNavigator();
-            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Installed));
-            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Online));
-            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryName.Update));
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Installed));
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Online));
+            navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Update));
 
             return navigator;
         }
 
-        private RepoCategory CreateRepoCategory(string categoryName)
+        private RepoCategory CreateRepoCategory(RepoCategoryType category)
         {
-            Argument.IsNotNullOrWhitespace(() => categoryName);
+            var repoCategory = new RepoCategory(category);
 
-            var repoCategory = new RepoCategory(categoryName);
-
-            foreach (var repository in _packageRepositoryService.GetRepositories(categoryName))
+            foreach (var repository in _packageRepositoryService.GetRepositories(category))
             {
                 repoCategory.Repos.Add(new NamedRepo {Name = repository.Key, Value = repository.Value});
             }

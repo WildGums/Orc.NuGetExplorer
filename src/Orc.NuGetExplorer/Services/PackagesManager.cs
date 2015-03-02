@@ -7,11 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Versioning;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
@@ -21,24 +16,23 @@ namespace Orc.NuGetExplorer
     internal class PackagesManager : IPackagesManager
     {
         #region Fields
+        private readonly PackageManager _packageManager;
         private readonly IUIVisualizerService _uiVisualizerService;
-        private readonly IPackageQueryService _packageQueryService;
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private PackageManager _packageManager;
         #endregion
 
         #region Constructors
-        public PackagesManager(IUIVisualizerService uiVisualizerService, IPackageQueryService packageQueryService, INuGetConfigurationService nuGetConfigurationService)
+        public PackagesManager(IUIVisualizerService uiVisualizerService, INuGetConfigurationService nuGetConfigurationService,
+            IPackageRepositoryService packageRepositoryService)
         {
             Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => nuGetConfigurationService);
 
             _uiVisualizerService = uiVisualizerService;
-            _packageQueryService = packageQueryService;
-            _nuGetConfigurationService = nuGetConfigurationService;
 
+            var repository = packageRepositoryService.GetAggregateRepository();
+            var folder = nuGetConfigurationService.GetDestinationFolder();
 
+            _packageManager = new PackageManager(repository, folder);
         }
         #endregion
 
@@ -48,15 +42,18 @@ namespace Orc.NuGetExplorer
             await _uiVisualizerService.ShowDialog<ExplorerViewModel>();
         }
 
-        public async Task Install(IPackage package, IPackageRepository packageRepository, FrameworkName targetFramework = null)
+        public async Task Install(IPackage package)
         {
             Argument.IsNotNull(() => package);
-            
-            var folder = _nuGetConfigurationService.GetDestinationFolder();
 
-            _packageManager = new PackageManager(packageRepository, folder);
             _packageManager.InstallPackage(package, false, true);
-           
+        }
+
+        public async Task Uninstall(IPackage package)
+        {
+            Argument.IsNotNull(() => package);
+
+            _packageManager.UninstallPackage(package);
         }
         #endregion
     }

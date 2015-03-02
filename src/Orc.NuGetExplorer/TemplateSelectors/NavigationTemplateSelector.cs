@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer.TemplateSelectors
 {
+    using System;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -27,14 +28,17 @@ namespace Orc.NuGetExplorer.TemplateSelectors
                 return base.SelectTemplate(item, container);
             }
 
-            switch (repoCategory.Name)
+            if (repoCategory != null)
             {
-                case RepoCategoryName.Installed:
-                    return InstalledTemplate;
-                case RepoCategoryName.Online:
-                    return OnlineTemplate;
-                case RepoCategoryName.Update:
-                    return UpdateTemplate;
+                switch ((RepoCategoryType)Enum.Parse(typeof(RepoCategoryType), repoCategory.Name))
+                {
+                    case RepoCategoryType.Installed:
+                        return InstalledTemplate;
+                    case RepoCategoryType.Online:
+                        return OnlineTemplate;
+                    case RepoCategoryType.Update:
+                        return UpdateTemplate;
+                }
             }
 
             return base.SelectTemplate(item, container);

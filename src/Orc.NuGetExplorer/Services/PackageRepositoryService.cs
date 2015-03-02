@@ -12,13 +12,13 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using NuGet;
-    using Path = Catel.IO.Path;
 
     public class PackageRepositoryService : IPackageRepositoryService
     {
         #region Fields
-        private readonly IPackageSourceService _packageSourceService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+        private readonly PackageSource[] _packageSources;
+        private readonly PackageRepositoryFactory _repositoryFactory;
         #endregion
 
         #region Constructors
@@ -27,58 +27,59 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => packageSourceService);
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            _packageSourceService = packageSourceService;
             _nuGetConfigurationService = nuGetConfigurationService;
+            _repositoryFactory = PackageRepositoryFactory.Default;
+            _packageSources = packageSourceService.GetPackageSources().ToArray();
         }
         #endregion
 
         #region Methods
-        public IDictionary<string, IPackageRepository> GetRepositories(string categoryName)
+        public IDictionary<string, IPackageRepository> GetRepositories(RepoCategoryType category)
         {
-            switch (categoryName)
+            var result = new Dictionary<string, IPackageRepository>();
+            switch (category)
             {
-                case RepoCategoryName.Installed:
-                    return GetInstalledRepo();
-                case RepoCategoryName.Online:
-                    return GetOnlineRepos();
+                case RepoCategoryType.Installed:
+                    var folder = _nuGetConfigurationService.GetDestinationFolder();
+                    result[RepoName.All] = GetLocalRepository(folder);
+                    break;
+                case RepoCategoryType.Online:
+                    result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+                    var remoteRepositories = GetRemoteRepositories();
+                    result.AddRange(remoteRepositories);
+                    return remoteRepositories;
             }
 
-            return new Dictionary<string, IPackageRepository>();
+            return result;
         }
 
-        private IDictionary<string, IPackageRepository> GetOnlineRepos()
+        public IPackageRepository GetAggregateRepository()
         {
-            var repositoryFactory = PackageRepositoryFactory.Default;
+            return new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+        }
 
-            var packageSources = _packageSourceService.GetPackageSources().ToArray();
-            var aggregateRepository = new AggregateRepository(repositoryFactory, packageSources.Select(x => x.Source), true);
-            var repositories = new Dictionary<string, IPackageRepository>
+        public IDictionary<string, IPackageRepository> GetRemoteRepositories()
+        {
+            var result = new Dictionary<string, IPackageRepository>();
+            foreach (var packageSource in _packageSources)
             {
-                {RepoName.All, aggregateRepository}
-            };
-
-            foreach (var packageSource in packageSources)
-            {
-                var repo = repositoryFactory.CreateRepository(packageSource.Source);
-                repositories.Add(packageSource.Name, repo);
+                var repo = _repositoryFactory.CreateRepository(packageSource.Source);
+                result.Add(packageSource.Name, repo);
             }
 
-            return repositories;
+            return result;
         }
 
-        private IDictionary<string, IPackageRepository> GetInstalledRepo()
+        public IPackageRepository GetLocalRepository(string path)
         {
-            var path = _nuGetConfigurationService.GetDestinationFolder();
+            Argument.IsNotNullOrEmpty(() => path);
 
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
-            return new Dictionary<string, IPackageRepository>
-            {
-                {RepoName.All, new LocalPackageRepository(path, true)}
-            };
+            return new LocalPackageRepository(path, true);
         }
         #endregion
     }

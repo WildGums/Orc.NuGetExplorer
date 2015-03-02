@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Runtime.Versioning;
     using System.Threading.Tasks;
     using NuGet;
 
@@ -15,8 +14,8 @@ namespace Orc.NuGetExplorer
     {
         #region Methods
         Task Show();
-
-        Task Install(IPackage package, IPackageRepository packageRepository, FrameworkName targetFramework = null);
+        Task Install(IPackage package);
+        Task Uninstall(IPackage package);
         #endregion
     }
 }

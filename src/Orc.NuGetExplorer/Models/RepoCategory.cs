@@ -7,10 +7,10 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using Catel;
 
     public class RepoCategory
     {
@@ -19,11 +19,9 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public RepoCategory(string name)
+        public RepoCategory(RepoCategoryType category)
         {
-            Argument.IsNotNullOrWhitespace(() => name);
-
-            Name = name;
+            Name = Enum.GetName(typeof (RepoCategoryType), category);
             Repos = new ObservableCollection<NamedRepo>();
         }
         #endregion
