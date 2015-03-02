@@ -21,17 +21,21 @@ namespace Orc.NuGetExplorer.ViewModels
         private static bool _updatingRepisitory;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
+        private readonly IPackagesManager _packagesManager;
         private readonly IPackageQueryService _packageQueryService;
         #endregion
 
         #region Constructors
-        public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService)
+        public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
+            IPackagesManager packagesManager)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
+            Argument.IsNotNull(() => packagesManager);
 
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
+            _packagesManager = packagesManager;
 
             AvailablePackages = new ObservableCollection<PackageDetails>();
 
@@ -112,6 +116,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
+            _packagesManager.Install(SelectedPackage.Package, _packageRepository);
         }
         #endregion
     }

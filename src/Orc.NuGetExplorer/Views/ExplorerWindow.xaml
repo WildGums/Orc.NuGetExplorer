@@ -56,6 +56,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepo}" ActionName="Remove" />        
+        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepo}" ActionName="Action" />        
     </Grid>
 </catel:DataWindow>

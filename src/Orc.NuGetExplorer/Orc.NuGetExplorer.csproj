@@ -119,6 +119,8 @@
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
     <Compile Include="Factories\RepoNavigationFactory.cs" />
     <Compile Include="Services\Interfaces\IRepoNavigationService.cs" />
+    <Compile Include="Services\Interfaces\INuGetConfigurationService.cs" />
+    <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="Services\PackagesManager.cs" />

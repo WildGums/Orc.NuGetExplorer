@@ -55,6 +55,11 @@ namespace Orc.NuGetExplorer
             return count;
         }
 
+        public IEnumerable<IPackage> GetPackages(IPackageRepository packageRepository, IEnumerable<PackageDependency> packageDependencies)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private static IQueryable<IPackage> CreateQuery(IPackageRepository packageRepository, string filter)
         {
             var queryable = packageRepository.GetPackages();

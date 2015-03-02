@@ -18,14 +18,17 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IPackageSourceService _packageSourceService;
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
         #endregion
 
         #region Constructors
-        public PackageRepositoryService(IPackageSourceService packageSourceService)
+        public PackageRepositoryService(IPackageSourceService packageSourceService, INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => packageSourceService);
+            Argument.IsNotNull(() => nuGetConfigurationService);
 
             _packageSourceService = packageSourceService;
+            _nuGetConfigurationService = nuGetConfigurationService;
         }
         #endregion
 
@@ -63,10 +66,10 @@ namespace Orc.NuGetExplorer
             return repositories;
         }
 
-        private static IDictionary<string, IPackageRepository> GetInstalledRepo()
+        private IDictionary<string, IPackageRepository> GetInstalledRepo()
         {
-            var applicationDataDirectory = Path.GetApplicationDataDirectory();
-            var path = Path.Combine(applicationDataDirectory, "plugins");
+            var path = _nuGetConfigurationService.GetDestinationFolder();
+            
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
