@@ -69,7 +69,7 @@ namespace Orc.NuGetExplorer
         private IDictionary<string, IPackageRepository> GetInstalledRepo()
         {
             var path = _nuGetConfigurationService.GetDestinationFolder();
-            
+
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

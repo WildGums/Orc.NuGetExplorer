@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
             
-            var version = Environment.Version;
+/*            var version = Environment.Version;
             if (targetFramework == null)
             {
                 
@@ -62,11 +62,12 @@ namespace Orc.NuGetExplorer
             {
                 throw new NotSupportedInPlatformException(string.Format("Framework version {0} does notsupport by package {1}.",
                     version, package.GetFullName()));
-            }
+            }*/
 
-            var dependencies = package.GetCompatiblePackageDependencies(targetFramework);
+          //  var dependencies = package.GetCompatiblePackageDependencies(targetFramework);
 
-            /*  temporery commemnted. Need to implement getting dependency package before
+            // TODO: Need to implement getting dependency package before
+            /*  
             var packages = _packageQueryService.GetPackages(packageRepository, dependencies);
             foreach (var dependecyPackage in packages)
             {
@@ -74,22 +75,16 @@ namespace Orc.NuGetExplorer
             }*/
 
             var folder = _nuGetConfigurationService.GetDestinationFolder();
-            folder = Path.Combine(folder, package.Id);
+          //  folder = Path.Combine(folder, package.Id);
 
-            var packageFiles = package.GetFiles();
-            foreach (var packageFile in packageFiles)
-            {
-                var destPath = Path.Combine(folder, packageFile.Path);
-                var sourcePath = ((PhysicalPackageFile) packageFile).SourcePath;
+         //   var packageFiles = package.GetFiles();
 
-                var destFolder = Path.GetDirectoryName(destPath);
-                if (!Directory.Exists(destFolder))
-                {
-                    Directory.CreateDirectory(destFolder);
-                }
-                File.Copy(sourcePath, destPath);
-            }
-            
+            // TODO: add downloading package
+           // var downloadUrl = ((NuGet.DataServicePackage) (package)).DownloadUrl;
+
+            var packageManager = new PackageManager(packageRepository, folder);
+            packageManager.InstallPackage(package, false, true);
+           
         }
         #endregion
     }
