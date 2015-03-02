@@ -14,15 +14,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
     public class MainViewModel : ViewModelBase
     {
         #region Fields
-        private readonly IPackagesManager _packagesManager;
+        private readonly IPackagesUIService _packagesUiService;
         #endregion
 
         #region Constructors
-        public MainViewModel(IPackagesManager packagesManager)
+        public MainViewModel(IPackagesUIService packagesUiService)
         {
-            Argument.IsNotNull(() => packagesManager);
-
-            _packagesManager = packagesManager;
+            Argument.IsNotNull(() => packagesUiService);
+            _packagesUiService = packagesUiService;
 
             ShowExplorer = new TaskCommand(OnShowExplorerExecute);
         }
@@ -39,7 +38,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         /// </summary>
         private async Task OnShowExplorerExecute()
         {
-            await _packagesManager.Show();
+            await _packagesUiService.ShowPackagesExplorer();
         }
         #endregion
     }

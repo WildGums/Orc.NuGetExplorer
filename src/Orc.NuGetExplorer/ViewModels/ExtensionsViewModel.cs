@@ -116,7 +116,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            _packagesManager.Install(SelectedPackage.Package);
+            _packagesManager.Uninstall(SelectedPackage.Package);
         }
         #endregion
     }

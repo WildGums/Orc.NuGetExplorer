@@ -6,6 +6,7 @@ namespace Orc.NuGetExplorer
     {
         public string GetDestinationFolder()
         {
+            // TODO: this is temporary decision
             var applicationDataDirectory = Path.GetApplicationDataDirectory();
             var path = Path.Combine(applicationDataDirectory, "plugins");
             return path;

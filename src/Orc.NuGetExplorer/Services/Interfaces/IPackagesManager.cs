@@ -13,9 +13,9 @@ namespace Orc.NuGetExplorer
     public interface IPackagesManager
     {
         #region Methods
-        Task Show();
         Task Install(IPackage package);
         Task Uninstall(IPackage package);
+        Task Update(IPackage package);
         #endregion
     }
 }
