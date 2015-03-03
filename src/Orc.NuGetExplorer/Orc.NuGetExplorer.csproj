@@ -127,7 +127,7 @@
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
-    <Compile Include="Services\PackagesManager.cs" />
+    <Compile Include="Services\NuGetPackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\RepoNavigationService.cs" />
