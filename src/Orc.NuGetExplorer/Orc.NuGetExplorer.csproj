@@ -119,7 +119,6 @@
     <Compile Include="Services\Enums\RepoCategoryType.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
-    <Compile Include="Services\Interfaces\IPackagesManager.cs" />
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
     <Compile Include="Factories\RepoNavigationFactory.cs" />
     <Compile Include="Services\Interfaces\IRepoNavigationService.cs" />
