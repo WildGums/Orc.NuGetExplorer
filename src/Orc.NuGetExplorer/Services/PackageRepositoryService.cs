@@ -46,7 +46,7 @@ namespace Orc.NuGetExplorer
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
-                    return remoteRepositories;
+                    break;
             }
 
             return result;

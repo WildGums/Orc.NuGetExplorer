@@ -147,7 +147,7 @@ namespace Orc.NuGetExplorer
             var packageSourcesString = _configurationService.GetValue(Settings.PackageSources, string.Empty);
             if (string.IsNullOrWhiteSpace(packageSourcesString))
             {
-                packageSourcesString = string.Empty;
+                return Enumerable.Empty<string>();
             }
 
             var packageSourceNames = packageSourcesString.Split(Separator);
