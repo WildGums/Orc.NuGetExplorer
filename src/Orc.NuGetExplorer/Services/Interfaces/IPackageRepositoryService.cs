@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     {
         #region Methods
         IDictionary<string, IPackageRepository> GetRepositories(RepoCategoryType category);
-        IPackageRepository GetLocalRepository(string path);
+        IPackageRepository GetLocalRepository();
         IDictionary<string, IPackageRepository> GetRemoteRepositories();
         IPackageRepository GetAggregateRepository();
         #endregion

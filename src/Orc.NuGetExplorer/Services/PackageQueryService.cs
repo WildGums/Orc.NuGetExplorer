@@ -62,7 +62,7 @@ namespace Orc.NuGetExplorer
             {
                 queryable = queryable.Where(x => x.IsLatestVersion);
             }
-
+            
             return queryable;
         }
         #endregion

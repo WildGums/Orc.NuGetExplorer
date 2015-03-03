@@ -12,6 +12,7 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using NuGet;
+    using Repositories;
 
     public class PackageRepositoryService : IPackageRepositoryService
     {
@@ -38,18 +39,35 @@ namespace Orc.NuGetExplorer
             var result = new Dictionary<string, IPackageRepository>();
             switch (category)
             {
-                case RepoCategoryType.Installed:
-                    var folder = _nuGetConfigurationService.GetDestinationFolder();
-                    result[RepoName.All] = GetLocalRepository(folder);
+                case RepoCategoryType.Installed:                    
+                    result[RepoName.All] = GetLocalRepository();
                     break;
                 case RepoCategoryType.Online:
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
                     break;
+                case RepoCategoryType.Update:
+                    result[RepoName.All] = GetAggeregateUpdateRepository();
+                    var updateRepositories = GetUpdateRepositories();
+                    result.AddRange(updateRepositories);
+                    break;
             }
 
             return result;
+        }
+
+        private IPackageRepository GetAggeregateUpdateRepository()
+        {
+            var localRepository = GetLocalRepository();
+            var sourceRepository = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+            return new UpdateRepository(localRepository, sourceRepository);
+        }
+
+        private IDictionary<string, IPackageRepository> GetUpdateRepositories()
+        {
+            var localRepository = GetLocalRepository();
+            return GetRemoteRepositories().ToDictionary(x => x.Key, x => (IPackageRepository)new UpdateRepository(localRepository, x.Value));
         }
 
         public IPackageRepository GetAggregateRepository()
@@ -69,9 +87,9 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        public IPackageRepository GetLocalRepository(string path)
+        public IPackageRepository GetLocalRepository()
         {
-            Argument.IsNotNullOrEmpty(() => path);
+            var path = _nuGetConfigurationService.GetDestinationFolder();
 
             if (!Directory.Exists(path))
             {

@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer
         #region Properties
         public string Name { get; set; }
         public IPackageRepository Value { get; set; }
+        public bool IsForUpdate { get; set; }
         #endregion
     }
 }
