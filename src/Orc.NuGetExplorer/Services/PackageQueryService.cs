@@ -28,31 +28,24 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IEnumerable<PackageDetails> GetPackages(IEnumerable<PackageSource> packageSources, string filter = null, int skip = 0, int take = 10)
-        {
-            Argument.IsNotNull(() => packageSources);
-
-            IPackageRepository repo = new AggregateRepository(PackageRepositoryFactory.Default, packageSources.Select(x => x.Source), true);
-
-            return GetPackages(repo, filter, skip, take);
-        }
-
-        public IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, string filter = null, int skip = 0, int take = 10)
+        public IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, bool allowPrereleaseVersions, 
+            string filter = null, int skip = 0, int take = 10)
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var queryable = CreateQuery(packageRepository, filter);
-            return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList().Select(x => _packageCacheService.GetPackageDetails(x));
+            var queryable = CreateQuery(packageRepository, filter, allowPrereleaseVersions);
+            var packages = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
+            return packages.Select(x => _packageCacheService.GetPackageDetails(x));
         }
 
-        public int GetPackagesCount(IPackageRepository packageRepository, string filter)
+        public int GetPackagesCount(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
-            var queryable = CreateQuery(packageRepository, filter);
+            var queryable = CreateQuery(packageRepository, filter, allowPrereleaseVersions);
             var count = queryable.Count();
             return count;
         }
 
-        private static IQueryable<IPackage> CreateQuery(IPackageRepository packageRepository, string filter)
+        private static IQueryable<IPackage> CreateQuery(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
             var queryable = packageRepository.GetPackages();
             if (!string.IsNullOrWhiteSpace(filter))
@@ -61,7 +54,15 @@ namespace Orc.NuGetExplorer
                 queryable = queryable.Where(x => x.Title.Contains(filter));
             }
 
-            queryable = queryable.Where(x => x.IsLatestVersion);
+            if (allowPrereleaseVersions)
+            {
+                queryable = queryable.Where(x => x.IsAbsoluteLatestVersion);
+            }
+            else
+            {
+                queryable = queryable.Where(x => x.IsLatestVersion);
+            }
+
             return queryable;
         }
         #endregion

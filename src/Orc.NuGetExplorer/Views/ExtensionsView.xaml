@@ -17,7 +17,9 @@
             <ColumnDefinition Width="175" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0">SORTING</Label>
+        <StackPanel Grid.Row="0">
+            <CheckBox IsChecked="{Binding IsPrereleaseEnabled}" IsEnabled="{Binding IsPrereleaseSupports}" Content="Enable prerelease packages"/>
+        </StackPanel>
 
         <views:PackageListView Grid.Row="1" Grid.Column="0" 
                                ItemsSource="{Binding AvailablePackages, Mode=OneWay}"

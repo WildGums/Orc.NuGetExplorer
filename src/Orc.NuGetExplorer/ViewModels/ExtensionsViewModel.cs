@@ -53,9 +53,29 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
+        public bool IsPrereleaseEnabled { get; set; }
+
+        public bool IsPrereleaseSupports
+        {
+            get
+            {
+                if (NamedRepository == null)
+                {
+                    IsPrereleaseEnabled = false;
+                    return false;
+                }
+
+                return NamedRepository.Value.SupportsPrereleasePackages;
+            }
+        }
         #endregion
 
         #region Methods
+        private void OnIsPrereleaseEnabledChanged()
+        {
+            UpdateRepository();
+        }
+
         private void OnPackagesToSkipChanged()
         {
             Search();
@@ -87,7 +107,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _packageRepository = NamedRepository.Value;
                 PackagesToSkip = 0;
-                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter);
+                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter, IsPrereleaseEnabled);
             }
 
             Search();
@@ -104,8 +124,9 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _dispatcherService.BeginInvoke(() =>
                 {
-                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, SearchFilter, PackagesToSkip).ToArray();
-                    AvailablePackages.ReplaceRange(packageDetails);
+                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseEnabled, SearchFilter, PackagesToSkip).ToArray();
+                    AvailablePackages.Clear();
+                    AvailablePackages.AddRange(packageDetails);
                 });
             }
         }
@@ -116,7 +137,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            _packagesManager.Uninstall(SelectedPackage.Package);
+            //_packagesManager.Uninstall(SelectedPackage.Package);
         }
         #endregion
     }

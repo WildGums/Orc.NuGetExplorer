@@ -13,9 +13,9 @@ namespace Orc.NuGetExplorer
     public interface IPackageQueryService
     {
         #region Methods
-        IEnumerable<PackageDetails> GetPackages(IEnumerable<PackageSource> packageSources, string filter = null, int skip = 0, int take = 10);
-        IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, string filter = null, int skip = 0, int take = 10);
-        int GetPackagesCount(IPackageRepository packageRepository, string filter);
+        IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, bool allowPrereleaseVersions,
+            string filter = null, int skip = 0, int take = 10);
+        int GetPackagesCount(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions);
         #endregion
     }
 }
