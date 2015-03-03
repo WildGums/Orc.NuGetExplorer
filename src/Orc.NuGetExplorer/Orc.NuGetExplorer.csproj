@@ -69,6 +69,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO">
@@ -103,6 +104,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\SelectedExplorerOptionToHidingVisibilityConverter.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Models\RepoCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />

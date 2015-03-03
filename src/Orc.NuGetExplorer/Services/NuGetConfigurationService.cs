@@ -1,15 +1,155 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NuGetConfigurationService.cs" company="Wild Gums">
+//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Catel;
+    using Catel.Configuration;
     using Catel.IO;
+    using Catel.Logging;
+    using NuGet;
 
     public class NuGetConfigurationService : INuGetConfigurationService
     {
+        #region Fields
+        private const char Separator = '|';
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private string _defaultDestinationFolder;
+        private readonly IConfigurationService _configurationService;
+        #endregion
+
+        #region Constructors
+        public NuGetConfigurationService(IConfigurationService configurationService)
+        {
+            Argument.IsNotNull(() => configurationService);
+
+            _configurationService = configurationService;
+        }
+        #endregion
+
+        #region Properties
+        private string DefaultDestinationFolder
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_defaultDestinationFolder))
+                {
+                    var applicationDataDirectory = Path.GetApplicationDataDirectory();
+                    _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
+                }
+
+                return _defaultDestinationFolder;
+            }
+        }
+        #endregion
+
+        #region Methods
         public string GetDestinationFolder()
         {
-            // TODO: this is temporary decision
-            var applicationDataDirectory = Path.GetApplicationDataDirectory();
-            var path = Path.Combine(applicationDataDirectory, "plugins");
-            return path;
+            return _configurationService.GetValue(Settings.DestFolder, DefaultDestinationFolder);
         }
+
+        public void SetDestinationFolder(string value)
+        {
+            Argument.IsNotNullOrWhitespace(() => value);
+
+            _configurationService.SetValue(Settings.DestFolder, value);
+        }
+
+        public IEnumerable<PackageSource> LoadPackageSources()
+        {
+            var packageSourceNames = LoadPackageSourceNames();
+            var result = new List<PackageSource>();
+
+            foreach (var sourceName in packageSourceNames)
+            {
+                var sourceKey = sourceName.ToPackageSourceKey();
+                var sourceValue = _configurationService.GetValue(sourceKey, string.Empty);
+                if (string.IsNullOrWhiteSpace(sourceValue))
+                {
+                    Log.Warning("The information about package {0} has not found.", sourceName);
+                    continue;
+                }
+
+                var stringValues = sourceValue.Split(Separator);
+                if (stringValues.Length != 3)
+                {
+                    Log.Warning("The information about package {0} contains wrong amount of data. Must be 3 values separated by \'|\' (string|string|boolean).", sourceName);
+                    continue;
+                }
+
+                var source = stringValues[0].Trim();
+                var name = stringValues[1].Trim();
+                var isEnabled = bool.Parse(stringValues[2].Trim());
+
+                result.Add(new PackageSource(source, name, isEnabled));
+            }
+
+            return result;
+        }
+
+        public void SavePackageSource(string name, string source, bool isEnabled = true)
+        {
+            Argument.IsNotNullOrWhitespace(() => name);
+
+            var packageSourceNames = LoadPackageSourceNames().ToList();
+            if (!packageSourceNames.Contains(name))
+            {
+                packageSourceNames.Add(name);
+            }
+
+            using (_configurationService.SuspendNotifications())
+            {
+                var packageSourceKey = name.ToPackageSourceKey();
+                var value = string.Format("{0}|{1}|{2}", source, name, isEnabled);
+                _configurationService.SetValue(packageSourceKey, value);
+            }
+
+            SavePackageSourceNames(packageSourceNames);
+        }
+
+        public void DeletePackageSource(string name)
+        {
+            Argument.IsNotNullOrWhitespace(() => name);
+
+            var packageSourceNames = LoadPackageSourceNames().ToList();
+            if (!packageSourceNames.Contains(name))
+            {
+                return;
+            }
+
+            using (_configurationService.SuspendNotifications())
+            {
+                var packageSourceKey = name.ToPackageSourceKey();
+                _configurationService.SetValue(packageSourceKey, string.Empty);
+            }
+
+            SavePackageSourceNames(packageSourceNames.Where(x => !string.Equals(name, x)));
+        }
+
+        private IEnumerable<string> LoadPackageSourceNames()
+        {
+            var packageSourcesString = _configurationService.GetValue(Settings.PackageSources, string.Empty);
+            if (string.IsNullOrWhiteSpace(packageSourcesString))
+            {
+                packageSourcesString = string.Empty;
+            }
+
+            var packageSourceNames = packageSourcesString.Split(Separator);
+            return packageSourceNames;
+        }
+
+        private void SavePackageSourceNames(IEnumerable<string> packageSourceNames)
+        {
+            var packageSourcesString = string.Join(Separator.ToString(), packageSourceNames);
+            _configurationService.SetValue(Settings.PackageSources, packageSourcesString);
+        }
+        #endregion
     }
 }

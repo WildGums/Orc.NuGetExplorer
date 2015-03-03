@@ -1,18 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Constants.cs" company="Wild Gums">
+// <copyright file="StringExtensions.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
-    public static class RepoName
-    {
-        public const string All = "All";
-    }
+    using Catel;
 
-    public class Settings
+    public static class StringExtensions
     {
-        public const string DestFolder = "DestFolder";
-        public const string PackageSources = "PackageSources";
+        public static string ToPackageSourceKey(this string packageSourceName)
+        {
+            Argument.IsNotNullOrWhitespace(() => packageSourceName);
+
+            return string.Format("packageSource_{0}", packageSourceName);
+        }
     }
 }

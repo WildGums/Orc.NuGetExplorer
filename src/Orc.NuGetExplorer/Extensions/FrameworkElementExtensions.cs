@@ -12,12 +12,15 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Media;
+    using Catel;
 
     public static class FrameworkElementExtensions
     {
         #region Methods
         public static void UpdateItemSource(this FrameworkElement frameworkElement)
         {
+            Argument.IsNotNull(() => frameworkElement);
+
             var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
             foreach (var field in infos.Where(x => x.FieldType == typeof (DependencyProperty)))
             {
