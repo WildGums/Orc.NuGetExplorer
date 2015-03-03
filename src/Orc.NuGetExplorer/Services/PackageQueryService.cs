@@ -16,16 +16,13 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IPackageCacheService _packageCacheService;
-        private readonly IPackageSourceService _packageSourceService;
         #endregion
 
         #region Constructors
-        public PackageQueryService(IPackageSourceService packageSourceService, IPackageCacheService packageCacheService)
+        public PackageQueryService(IPackageCacheService packageCacheService)
         {
-            Argument.IsNotNull(() => packageSourceService);
             Argument.IsNotNull(() => packageCacheService);
 
-            _packageSourceService = packageSourceService;
             _packageCacheService = packageCacheService;
         }
         #endregion
@@ -53,11 +50,6 @@ namespace Orc.NuGetExplorer
             var queryable = CreateQuery(packageRepository, filter);
             var count = queryable.Count();
             return count;
-        }
-
-        public IEnumerable<IPackage> GetPackages(IPackageRepository packageRepository, IEnumerable<PackageDependency> packageDependencies)
-        {
-            throw new System.NotImplementedException();
         }
 
         private static IQueryable<IPackage> CreateQuery(IPackageRepository packageRepository, string filter)

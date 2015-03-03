@@ -22,14 +22,13 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageRepositoryService(IPackageSourceService packageSourceService, INuGetConfigurationService nuGetConfigurationService)
+        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService)
         {
-            Argument.IsNotNull(() => packageSourceService);
             Argument.IsNotNull(() => nuGetConfigurationService);
 
             _nuGetConfigurationService = nuGetConfigurationService;
             _repositoryFactory = PackageRepositoryFactory.Default;
-            _packageSources = packageSourceService.GetPackageSources().ToArray();
+            _packageSources = _nuGetConfigurationService.LoadPackageSources().ToArray();
         }
         #endregion
 

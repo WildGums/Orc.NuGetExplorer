@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
         string GetDestinationFolder();
         void SetDestinationFolder(string value);
         IEnumerable<PackageSource> LoadPackageSources();
-        void SavePackageSource(string name, string source, bool isEnabled = true);
+        void SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true);
         void DeletePackageSource(string name);
         #endregion
     }

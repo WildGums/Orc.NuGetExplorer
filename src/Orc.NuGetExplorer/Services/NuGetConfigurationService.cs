@@ -78,23 +78,32 @@ namespace Orc.NuGetExplorer
                 }
 
                 var stringValues = sourceValue.Split(Separator);
-                if (stringValues.Length != 3)
+                if (stringValues.Length != 4)
                 {
-                    Log.Warning("The information about package {0} contains wrong amount of data. Must be 3 values separated by \'|\' (string|string|boolean).", sourceName);
+                    Log.Warning("The information about package {0} contains wrong amount of data. Must be 4 values separated by \'|\' (string|string|boolean|boolean).", sourceName);
                     continue;
                 }
 
                 var source = stringValues[0].Trim();
                 var name = stringValues[1].Trim();
                 var isEnabled = bool.Parse(stringValues[2].Trim());
+                var isOfficial = bool.Parse(stringValues[3].Trim());
 
-                result.Add(new PackageSource(source, name, isEnabled));
+                var packageSource = new PackageSource(source, name, isEnabled, isOfficial);
+
+                result.Add(packageSource);
+            }
+
+            if (!result.Any())
+            {
+                SavePackageSource("NuGet", "http://www.nuget.org/api/v2/");
+                result.AddRange(LoadPackageSources()); 
             }
 
             return result;
         }
 
-        public void SavePackageSource(string name, string source, bool isEnabled = true)
+        public void SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
         {
             Argument.IsNotNullOrWhitespace(() => name);
 
@@ -107,7 +116,7 @@ namespace Orc.NuGetExplorer
             using (_configurationService.SuspendNotifications())
             {
                 var packageSourceKey = name.ToPackageSourceKey();
-                var value = string.Format("{0}|{1}|{2}", source, name, isEnabled);
+                var value = string.Format("{0}|{1}|{2}|{3}", source, name, isEnabled, isOfficial);
                 _configurationService.SetValue(packageSourceKey, value);
             }
 

@@ -116,7 +116,6 @@
     <Compile Include="Factories\Interfaces\IRepoNavigationFactory.cs" />
     <Compile Include="Services\Enums\RepoCategoryType.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
-    <Compile Include="Services\Interfaces\IPackageSourceService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IPackagesManager.cs" />
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
@@ -128,7 +127,6 @@
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="Services\PackagesManager.cs" />
-    <Compile Include="Services\PackageSourceService.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\RepoNavigationService.cs" />

@@ -13,7 +13,6 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        serviceLocator.RegisterType<IPackageSourceService, PackageSourceService>();
         serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
         serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IRepoNavigationFactory, RepoNavigationFactory>();
