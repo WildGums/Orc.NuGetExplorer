@@ -131,7 +131,6 @@
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\RepoNavigationService.cs" />
-    <Compile Include="TemplateSelectors\NavigationTemplateSelector.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />

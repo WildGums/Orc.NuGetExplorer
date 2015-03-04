@@ -5,7 +5,6 @@
 				  xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
 				  xmlns:local="clr-namespace:Orc.NuGetExplorer"
 				  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-				  xmlns:templateSelectors="clr-namespace:Orc.NuGetExplorer.TemplateSelectors"
 				  Width="800" Height="400" SizeToContent="Manual"
                   x:ClassModifier="internal">
     <catel:DataWindow.Resources>
