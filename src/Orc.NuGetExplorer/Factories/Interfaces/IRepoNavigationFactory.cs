@@ -7,8 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Collections.Generic;
-
     public interface IRepoNavigationFactory
     {
         #region Methods

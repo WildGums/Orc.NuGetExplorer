@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.MVVM;
     using Catel.Services;
     using NuGet;
+    using Repositories;
 
     public class ExtensionsViewModel : ViewModelBase
     {
@@ -74,6 +75,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Methods
         private void OnIsPrereleaseAllowedChanged()
         {
+            var updateRepository = _packageRepository as UpdateRepository;
+            if (updateRepository != null)
+            {
+                updateRepository.AllowPrerelease = IsPrereleaseAllowed;
+            }
+
             UpdateRepository();
         }
 
@@ -108,7 +115,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _packageRepository = NamedRepository.Value;
                 PackagesToSkip = 0;
-                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter, IsPrereleaseAllowed);
+                TotalPackagesCount = _packageRepository.CountPackages(SearchFilter, IsPrereleaseAllowed);
             }
 
             Search();
@@ -138,7 +145,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            int skip = 0;
+            /*int skip = 0;
             int take = 10;
             IEnumerable<IPackage> versionsOfPackage;
             List<IPackage> accumList = new List<IPackage>();
@@ -146,9 +153,9 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 versionsOfPackage = _packageQueryService.GetVersionsOfPackage(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
                 accumList.AddRange(versionsOfPackage);
-            } while (versionsOfPackage.Any());
-            
+            } while (versionsOfPackage.Any());*/
 
+            UpdatePackages();
         }
 
         private void UninstallPackage()

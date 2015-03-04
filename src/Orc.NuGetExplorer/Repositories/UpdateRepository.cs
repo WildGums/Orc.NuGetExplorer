@@ -3,28 +3,53 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.Repositories
 {
     using System.Linq;
+    using Catel;
     using NuGet;
 
     public class UpdateRepository : IPackageRepository
     {
+        #region Fields
         private readonly IPackageRepository _destinationRepository;
         private readonly IPackageRepository _sourceRepository;
+        #endregion
 
+        #region Constructors
         public UpdateRepository(IPackageRepository destinationRepository, IPackageRepository sourceRepository)
         {
+            Argument.IsNotNull(() => destinationRepository);
+            Argument.IsNotNull(() => sourceRepository);
+
             _destinationRepository = destinationRepository;
             _sourceRepository = sourceRepository;
         }
+        #endregion
 
-        public bool IncludePrerelease { get; set; }
+        #region Properties
+        public bool AllowPrerelease { get; set; }
 
+        public string Source
+        {
+            get { return string.Empty; }
+        }
+
+        public PackageSaveModes PackageSaveMode { get; set; }
+
+        public bool SupportsPrereleasePackages
+        {
+            get { return _destinationRepository.SupportsPrereleasePackages && _sourceRepository.SupportsPrereleasePackages; }
+        }
+        #endregion
+
+        #region Methods
         public IQueryable<IPackage> GetPackages()
         {
             var packageNames = _destinationRepository.GetPackages().Select(x => new PackageName(x.Id, x.Version));
-            return _sourceRepository.GetUpdates(packageNames, IncludePrerelease, true).AsQueryable();
+            return _sourceRepository.GetUpdates(packageNames, AllowPrerelease, true).AsQueryable();
         }
 
         public void AddPackage(IPackage package)
@@ -36,17 +61,6 @@ namespace Orc.NuGetExplorer.Repositories
         {
             throw new System.NotImplementedException();
         }
-
-        public string Source
-        {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public PackageSaveModes PackageSaveMode { get; set; }
-
-        public bool SupportsPrereleasePackages
-        {
-            get { return _destinationRepository.SupportsPrereleasePackages && _sourceRepository.SupportsPrereleasePackages; }
-        }
+        #endregion
     }
 }

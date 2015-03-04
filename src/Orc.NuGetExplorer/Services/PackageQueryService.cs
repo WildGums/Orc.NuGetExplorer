@@ -33,76 +33,20 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var queryable = CreateQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
-            var packages = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
-            return packages.Select(x => _packageCacheService.GetPackageDetails(x));
-        }
+            return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
+                .Select(package => _packageCacheService.GetPackageDetails(package));
+        }        
 
-        public int GetPackagesCount(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
-        {
-            var queryable = CreateQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
-            var count = queryable.Count();
-            return count;
-        }
-
-        public IEnumerable<IPackage> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
+        public IEnumerable<PackageDetails> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
             ref int skip, int minimalTake = 10)
         {
-            if (skip < 0)
-            {
-                return Enumerable.Empty<IPackage>();
-            }
+            Argument.IsNotNull(() => packageRepository);
 
-            var queryable = packageRepository.GetPackages().Where(x => Equals(x.Id, package.Id)).Skip(skip).Take(minimalTake);
-
-            var result = new List<IPackage>(queryable.ToList());
-
-            if (result.Count < minimalTake)
-            {
-                skip = -1;
-            }
-            else
-            {
-                skip += minimalTake;
-            }
-            
-            if (!allowPrereleaseVersions && result.Any())
-            {
-                result = result.Where(x => x.IsReleaseVersion()).ToList();
-
-                var count = result.Count;
-                
-                if (skip >= 0 && count < minimalTake)
-                {
-                    var additional = GetVersionsOfPackage(packageRepository, package, false, ref skip, minimalTake).ToList();
-                    result.AddRange(additional);
-                }
-            }
-
-
-            return result;
+            return packageRepository.FindPackageVersions(package, allowPrereleaseVersions, ref skip, minimalTake)
+                .Select(p => _packageCacheService.GetPackageDetails(p));
         }
 
-        private static IQueryable<IPackage> CreateQueryForSingleVersion(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
-        {
-            var queryable = packageRepository.GetPackages();
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                filter = filter.Trim();
-                queryable = queryable.Where(x => x.Title.Contains(filter));
-            }
-
-            if (allowPrereleaseVersions)
-            {
-                queryable = queryable.Where(x => x.IsAbsoluteLatestVersion);
-            }
-            else
-            {
-                queryable = queryable.Where(x => x.IsLatestVersion);
-            }
-
-            return queryable;
-        }
+        
         #endregion
     }
 }

@@ -39,7 +39,7 @@ namespace Orc.NuGetExplorer
             var result = new Dictionary<string, IPackageRepository>();
             switch (category)
             {
-                case RepoCategoryType.Installed:                    
+                case RepoCategoryType.Installed:
                     result[RepoName.All] = GetLocalRepository();
                     break;
                 case RepoCategoryType.Online:
@@ -57,17 +57,10 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        private IPackageRepository GetAggeregateUpdateRepository()
+        public IDictionary<string, IPackageRepository> GetUpdateRepositories()
         {
             var localRepository = GetLocalRepository();
-            var sourceRepository = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
-            return new UpdateRepository(localRepository, sourceRepository);
-        }
-
-        private IDictionary<string, IPackageRepository> GetUpdateRepositories()
-        {
-            var localRepository = GetLocalRepository();
-            return GetRemoteRepositories().ToDictionary(x => x.Key, x => (IPackageRepository)new UpdateRepository(localRepository, x.Value));
+            return GetRemoteRepositories().ToDictionary(x => x.Key, x => (IPackageRepository) new UpdateRepository(localRepository, x.Value));
         }
 
         public IPackageRepository GetAggregateRepository()
@@ -97,6 +90,13 @@ namespace Orc.NuGetExplorer
             }
 
             return new LocalPackageRepository(path, true);
+        }
+
+        private IPackageRepository GetAggeregateUpdateRepository()
+        {
+            var localRepository = GetLocalRepository();
+            var sourceRepository = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+            return new UpdateRepository(localRepository, sourceRepository);
         }
         #endregion
     }
