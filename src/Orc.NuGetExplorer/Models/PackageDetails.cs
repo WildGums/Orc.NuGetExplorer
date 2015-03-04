@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             Id = package.Id;
-            Title = package.Title;
+            Title = package.GetFullName();
             Summary = package.Description;
 
             Package = package;

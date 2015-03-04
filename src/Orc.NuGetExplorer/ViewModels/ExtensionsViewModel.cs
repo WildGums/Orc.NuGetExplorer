@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using Catel;
@@ -137,7 +138,17 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
+            int skip = 0;
+            int take = 10;
+            IEnumerable<IPackage> versionsOfPackage;
+            List<IPackage> accumList = new List<IPackage>();
+            do
+            {
+                versionsOfPackage = _packageQueryService.GetVersionsOfPackage(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
+                accumList.AddRange(versionsOfPackage);
+            } while (versionsOfPackage.Any());
             
+
         }
 
         private void UninstallPackage()
@@ -152,6 +163,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void UpdatePackages()
         {
+            
             _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
         }
         #endregion
