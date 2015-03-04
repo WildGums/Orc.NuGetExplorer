@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
 
-            return _packageDetailsCache.GetFromCacheOrFetch(package.Id + package.Version, () => new PackageDetails(package));
+            return _packageDetailsCache.GetFromCacheOrFetch(package.GetFullName(), () => new PackageDetails(package));
         }
         #endregion
     }

@@ -53,7 +53,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
-        public bool IsPrereleaseEnabled { get; set; }
+        public bool IsPrereleaseAllowed { get; set; }
 
         public bool IsPrereleaseSupports
         {
@@ -61,7 +61,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 if (NamedRepository == null)
                 {
-                    IsPrereleaseEnabled = false;
+                    IsPrereleaseAllowed = false;
                     return false;
                 }
 
@@ -71,7 +71,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        private void OnIsPrereleaseEnabledChanged()
+        private void OnIsPrereleaseAllowedChanged()
         {
             UpdateRepository();
         }
@@ -107,7 +107,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _packageRepository = NamedRepository.Value;
                 PackagesToSkip = 0;
-                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter, IsPrereleaseEnabled);
+                TotalPackagesCount = _packageQueryService.GetPackagesCount(_packageRepository, SearchFilter, IsPrereleaseAllowed);
             }
 
             Search();
@@ -124,7 +124,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _dispatcherService.BeginInvoke(() =>
                 {
-                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseEnabled, SearchFilter, PackagesToSkip).ToArray();
+                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip).ToArray();
                     AvailablePackages.Clear();
                     AvailablePackages.AddRange(packageDetails);
                 });
@@ -137,7 +137,22 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            //_packageManager.UpdatePackage(SelectedPackage.Package, );
+            
+        }
+
+        private void UninstallPackage()
+        {
+            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
+        }
+
+        private void InstallPackage()
+        {
+            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
+        }
+
+        private void UpdatePackages()
+        {
+            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
         }
         #endregion
     }
