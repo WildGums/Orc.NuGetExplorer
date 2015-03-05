@@ -14,38 +14,24 @@ namespace Orc.NuGetExplorer.Views
 
     public partial class PackageListView
     {
-        #region Fields
-        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
-            typeof (ObservableCollection<PackageDetails>), typeof (PackageListView),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage",
-            typeof (PackageDetails), typeof (PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty ButtonHeaderProperty = DependencyProperty.Register("ButtonHeader",
-            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty PackageCommandProperty = DependencyProperty.Register("PackageCommand",
-            typeof(ICommand), typeof(PackageListView), new UIPropertyMetadata(null));
-        #endregion
-
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PackageListView"/> class.
-        /// </summary>
-        public PackageListView()
-        {
-            InitializeComponent();
-            ItemsSource = new ObservableCollection<PackageDetails>();
-        }
-
         /// <summary>
         /// Initializes static members of the <see cref="PackageListView"/> class.
         /// </summary>
         /// <remarks>This method is required for design time support.</remarks>
         static PackageListView()
         {
-            typeof (PackageListView).AutoDetectViewPropertiesToSubscribe();
+            typeof(PackageListView).AutoDetectViewPropertiesToSubscribe();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PackageListView"/> class.
+        /// </summary>
+        public PackageListView()
+        {
+            InitializeComponent();
+
+            ItemsSource = new ObservableCollection<PackageDetails>();
         }
         #endregion
 
@@ -57,24 +43,41 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(ItemsSourceProperty, value); }
         }
 
+        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<PackageDetails>), 
+            typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public PackageDetails SelectedPackage
         {
             get { return (PackageDetails) GetValue(SelectedPackageProperty); }
             set { SetValue(SelectedPackageProperty, value); }
         }
-        
+
+        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage", typeof(PackageDetails), 
+            typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public string ButtonHeader
         {
             get { return (string)GetValue(ButtonHeaderProperty); }
             set { SetValue(ButtonHeaderProperty, value); }
         }
-        
+
+        public static readonly DependencyProperty ButtonHeaderProperty = DependencyProperty.Register("ButtonHeader",
+            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
+        //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public ICommand PackageCommand 
         {
             get { return (ICommand)GetValue(PackageCommandProperty); }
             set { SetValue(PackageCommandProperty, value); }
         }
+
+        public static readonly DependencyProperty PackageCommandProperty = DependencyProperty.Register("PackageCommand",
+                    typeof(ICommand), typeof(PackageListView), new UIPropertyMetadata(null));
         #endregion
     }
 }

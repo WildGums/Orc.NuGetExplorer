@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Threading.Tasks;
@@ -12,18 +14,24 @@ namespace Orc.NuGetExplorer
 
     public class PackagesUIService : IPackagesUIService
     {
+        #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;
+        #endregion
 
+        #region Constructors
         public PackagesUIService(IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => uiVisualizerService);
 
             _uiVisualizerService = uiVisualizerService;
         }
+        #endregion
 
+        #region Methods
         public async Task ShowPackagesExplorer()
         {
             await _uiVisualizerService.ShowDialog<ExplorerViewModel>();
-        } 
+        }
+        #endregion
     }
 }

@@ -1,11 +1,11 @@
 ﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageDetailsView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com">
+                   xmlns:catel="http://catel.codeplex.com">
 
     <ScrollViewer>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-            <Image Source="{Binding Icon}" Width="32" Height="32" />
+            <Image Source="{Binding IconUrl}" Width="32" Height="32" />
 
             <TextBlock Text="{Binding Title}" FontWeight="Bold" />
             <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" />

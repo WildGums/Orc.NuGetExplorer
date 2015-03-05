@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
     using Catel.MVVM;
@@ -23,6 +24,7 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => repoNavigationService);
 
             _repoNavigationService = repoNavigationService;
+
             Navigator = _repoNavigationService.GetNavigator();
         }
         #endregion
@@ -36,5 +38,12 @@ namespace Orc.NuGetExplorer.ViewModels
         [ViewModelToModel("Navigator")]
         public NamedRepo SelectedNamedRepo { get; set; }
         #endregion
+
+        protected override async Task Initialize()
+        {
+            await base.Initialize();
+
+            // TODO: set selected named repo
+        }
     }
 }

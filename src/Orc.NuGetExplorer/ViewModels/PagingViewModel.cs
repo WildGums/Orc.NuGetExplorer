@@ -38,6 +38,91 @@ namespace Orc.NuGetExplorer.ViewModels
         public string CurrentPage { get; set; }
         #endregion
 
+        #region Commands
+        public Command MoveToLast { get; private set; }
+
+        private void OnMoveToLastExcute()
+        {
+            //    var pagesCount = Math.Ceiling(ItemsCount/(double) ItemsPerPage);
+
+        }
+
+        private bool OnMoveToLastCanExecute()
+        {
+            return true;
+        }
+
+        public Command MoveForward { get; private set; }
+
+        private void OnMoveForwardExecute()
+        {
+            Step(1);
+        }
+
+        private bool OnMoveForwardCanExecute()
+        {
+            return true;
+        }
+
+        public Command MoveBack { get; private set; }
+
+        private void OnMoveBackExecute()
+        {
+            if (ItemIndex == 0)
+            {
+                return;
+            }
+
+            Step(-1);
+        }
+
+        private bool OnMoveBackCanExecute()
+        {
+            return ItemIndex > 0;
+        }
+
+        public Command MoveToFirst { get; private set; }
+
+        public void OnMoveToFirstExecute()
+        {
+            if (ItemIndex == 0)
+            {
+                return;
+            }
+
+            ItemIndex = 0;
+        }
+
+        private bool OnMoveToFirstCanExecute()
+        {
+            return ItemIndex > 0;
+        }
+
+        public Command<PagingItemInfo> MoveToPage { get; private set; }
+
+        private void OnMoveToPageExecute(PagingItemInfo pagingItem)
+        {
+            var stepValue = pagingItem.StepValue;
+            Step(stepValue);
+        }
+
+        private void Step(int stepValue)
+        {
+            var newIndex = ItemIndex + ItemsPerPage * stepValue;
+            if (newIndex < 0)
+            {
+                newIndex = 0;
+            }
+
+            ItemIndex = newIndex;
+        }
+
+        private bool OnMoveToPageCanExecute(PagingItemInfo pagingItem)
+        {
+            return true;
+        }
+        #endregion
+
         #region Methods
         private void OnVisiblePagesChanged()
         {
@@ -143,91 +228,6 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 LeftPages.Add(new PagingItemInfo((currentPage - i).ToString(CultureInfo.InvariantCulture), -1*i));
             }
-        }
-        #endregion
-
-        #region Commands
-        public Command MoveToLast { get; private set; }
-
-        private void OnMoveToLastExcute()
-        {
-        //    var pagesCount = Math.Ceiling(ItemsCount/(double) ItemsPerPage);
-
-        }
-
-        private bool OnMoveToLastCanExecute()
-        {
-            return true;
-        }
-
-        public Command MoveForward { get; private set; }
-
-        private void OnMoveForwardExecute()
-        {
-            Step(1);
-        }
-
-        private bool OnMoveForwardCanExecute()
-        {
-            return true;
-        }
-
-        public Command MoveBack { get; private set; }
-
-        private void OnMoveBackExecute()
-        {
-            if (ItemIndex == 0)
-            {
-                return;
-            }
-
-            Step(-1);
-        }
-
-        private bool OnMoveBackCanExecute()
-        {
-            return ItemIndex > 0;
-        }
-
-        public Command MoveToFirst { get; private set; }
-
-        public void OnMoveToFirstExecute()
-        {
-            if (ItemIndex == 0)
-            {
-                return;
-            }
-
-            ItemIndex = 0;
-        }
-
-        private bool OnMoveToFirstCanExecute()
-        {
-            return ItemIndex > 0;
-        }
-
-        public Command<PagingItemInfo> MoveToPage { get; private set; }
-
-        private void OnMoveToPageExecute(PagingItemInfo pagingItem)
-        {
-            var stepValue = pagingItem.StepValue;
-            Step(stepValue);
-        }
-
-        private void Step(int stepValue)
-        {
-            var newIndex = ItemIndex + ItemsPerPage*stepValue;
-            if (newIndex < 0)
-            {
-                newIndex = 0;
-            }
-
-            ItemIndex = newIndex;
-        }
-
-        private bool OnMoveToPageCanExecute(PagingItemInfo pagingItem)
-        {
-            return true;
         }
         #endregion
     }

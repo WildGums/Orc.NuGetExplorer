@@ -42,11 +42,13 @@ namespace Orc.NuGetExplorer
                 case RepoCategoryType.Installed:
                     result[RepoName.All] = GetLocalRepository();
                     break;
+
                 case RepoCategoryType.Online:
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
                     break;
+
                 case RepoCategoryType.Update:
                     result[RepoName.All] = GetAggeregateUpdateRepository();
                     var updateRepositories = GetUpdateRepositories();

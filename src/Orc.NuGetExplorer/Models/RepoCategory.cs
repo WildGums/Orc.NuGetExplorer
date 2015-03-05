@@ -10,7 +10,6 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
 
     public class RepoCategory
     {
@@ -27,10 +26,10 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        [DefaultValue(false)]
         public bool IsSelected { get; set; }
 
         public string Name { get; set; }
+
         public IList<NamedRepo> Repos { get; private set; }
         #endregion
     }

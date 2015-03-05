@@ -35,7 +35,7 @@ namespace Orc.NuGetExplorer
 
             return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                 .Select(package => _packageCacheService.GetPackageDetails(package));
-        }        
+        }
 
         public IEnumerable<PackageDetails> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
             ref int skip, int minimalTake = 10)
@@ -45,8 +45,6 @@ namespace Orc.NuGetExplorer
             return packageRepository.FindPackageVersions(package, allowPrereleaseVersions, ref skip, minimalTake)
                 .Select(p => _packageCacheService.GetPackageDetails(p));
         }
-
-        
         #endregion
     }
 }

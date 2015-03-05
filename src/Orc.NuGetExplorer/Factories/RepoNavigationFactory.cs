@@ -28,6 +28,7 @@ namespace Orc.NuGetExplorer
         public ReposNavigator CreateRepoNavigator()
         {
             var navigator = new ReposNavigator();
+
             navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Installed));
             navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Online));
             navigator.RepoCategories.Add(CreateRepoCategory(RepoCategoryType.Update));
@@ -41,7 +42,11 @@ namespace Orc.NuGetExplorer
 
             foreach (var repository in _packageRepositoryService.GetRepositories(category))
             {
-                repoCategory.Repos.Add(new NamedRepo {Name = repository.Key, Value = repository.Value});
+                repoCategory.Repos.Add(new NamedRepo
+                {
+                    Name = repository.Key, 
+                    Value = repository.Value
+                });
             }
 
             return repoCategory;

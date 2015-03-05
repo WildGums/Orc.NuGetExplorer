@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         [Model(SupportIEditableObject = false)]
         [Expose("Summary")]
-        [Expose("Icon")]
+        [Expose("IconUrl")]
         public PackageDetails Package { get; private set; }
         #endregion
     }

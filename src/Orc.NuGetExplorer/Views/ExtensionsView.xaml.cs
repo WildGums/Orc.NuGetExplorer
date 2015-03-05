@@ -16,14 +16,6 @@ namespace Orc.NuGetExplorer.Views
     /// </summary>
     public partial class ExtensionsView
     {
-        #region Fields
-        public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepo),
-            typeof (ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-        public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
-            typeof (ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtensionsView"/> class.
@@ -46,13 +38,20 @@ namespace Orc.NuGetExplorer.Views
             get { return (NamedRepo) GetValue(NamedRepositoryProperty); }
             set { SetValue(NamedRepositoryProperty, value); }
         }
-        
+
+        public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepo),
+            typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string ActionName
         {
             get { return (string)GetValue(ActionNameProperty); }
             set { SetValue(ActionNameProperty, value); }
         }
+
+        public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
+            typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
     }
 }

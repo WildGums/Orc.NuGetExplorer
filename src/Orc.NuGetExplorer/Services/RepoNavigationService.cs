@@ -12,8 +12,9 @@ namespace Orc.NuGetExplorer
     public class RepoNavigationService : IRepoNavigationService
     {
         #region Fields
-        private ReposNavigator _navigator;
         private readonly IRepoNavigationFactory _repoNavigationFactory;
+
+        private ReposNavigator _navigator;
         #endregion
 
         #region Constructors

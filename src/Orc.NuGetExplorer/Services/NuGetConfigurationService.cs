@@ -73,7 +73,7 @@ namespace Orc.NuGetExplorer
                 var sourceValue = _configurationService.GetValue(sourceKey, string.Empty);
                 if (string.IsNullOrWhiteSpace(sourceValue))
                 {
-                    Log.Warning("The information about package {0} has not found.", sourceName);
+                    Log.Warning("The information about package {0} was not found.", sourceName);
                     continue;
                 }
 

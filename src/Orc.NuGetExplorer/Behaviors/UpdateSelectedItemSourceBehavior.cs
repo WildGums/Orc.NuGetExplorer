@@ -16,14 +16,15 @@ namespace Orc.NuGetExplorer
         #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
-            AssociatedObject.SelectionChanged += OnIsVisibleChanged;
-
             base.OnAssociatedObjectLoaded();
+
+            AssociatedObject.SelectionChanged += OnIsVisibleChanged;
         }
 
         protected override void OnAssociatedObjectUnloaded()
         {
             AssociatedObject.SelectionChanged -= OnIsVisibleChanged;
+
             base.OnAssociatedObjectUnloaded();
         }
 

@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
     using Catel.MVVM;
@@ -42,8 +43,6 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailablePackages = new ObservableCollection<PackageDetails>();
 
             PackageAction = new Command(OnPackageActionExecute);
-
-            Search();
         }
         #endregion
 
@@ -72,7 +71,48 @@ namespace Orc.NuGetExplorer.ViewModels
         }
         #endregion
 
+        #region Commands
+        public Command PackageAction { get; private set; }
+
+        private void OnPackageActionExecute()
+        {
+            /*int skip = 0;
+            int take = 10;
+            IEnumerable<IPackage> versionsOfPackage;
+            List<IPackage> accumList = new List<IPackage>();
+            do
+            {
+                versionsOfPackage = _packageQueryService.GetVersionsOfPackage(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
+                accumList.AddRange(versionsOfPackage);
+            } while (versionsOfPackage.Any());*/
+
+            UpdatePackages();
+        }
+
+        private void UninstallPackage()
+        {
+            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
+        }
+
+        private void InstallPackage()
+        {
+            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
+        }
+
+        private void UpdatePackages()
+        {
+            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
+        }
+        #endregion
+
         #region Methods
+        protected override async Task Initialize()
+        {
+            await base.Initialize();
+
+            Search();
+        }
+
         private void OnIsPrereleaseAllowedChanged()
         {
             var updateRepository = _packageRepository as UpdateRepository;
@@ -137,41 +177,6 @@ namespace Orc.NuGetExplorer.ViewModels
                     AvailablePackages.AddRange(packageDetails);
                 });
             }
-        }
-        #endregion
-
-        #region Commands
-        public Command PackageAction { get; private set; }
-
-        private void OnPackageActionExecute()
-        {
-            /*int skip = 0;
-            int take = 10;
-            IEnumerable<IPackage> versionsOfPackage;
-            List<IPackage> accumList = new List<IPackage>();
-            do
-            {
-                versionsOfPackage = _packageQueryService.GetVersionsOfPackage(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
-                accumList.AddRange(versionsOfPackage);
-            } while (versionsOfPackage.Any());*/
-
-            UpdatePackages();
-        }
-
-        private void UninstallPackage()
-        {
-            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
-        }
-
-        private void InstallPackage()
-        {
-            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
-        }
-
-        private void UpdatePackages()
-        {
-            
-            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
         }
         #endregion
     }
