@@ -50,6 +50,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Catel.MVVM.4.1.0-unstable0098\lib\net40\Catel.MVVM.dll</HintPath>
     </Reference>
+    <Reference Include="MethodTimer">
+      <HintPath>..\..\lib\MethodTimer.Fody.1.15.2.0\Lib\portable-net4+sl5+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\MethodTimer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.Threading.Tasks">
       <HintPath>..\..\lib\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -107,6 +111,7 @@
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
+    <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\RepoCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />
     <Compile Include="Models\NamedRepo.cs" />
@@ -117,6 +122,7 @@
     <Compile Include="Factories\Interfaces\IRepoNavigationFactory.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\RepoCategoryType.cs" />
+    <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />

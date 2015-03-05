@@ -15,13 +15,14 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Collections;
     using Catel.MVVM;
     using Catel.Services;
+    using MethodTimer;
     using NuGet;
     using Repositories;
 
     public class ExtensionsViewModel : ViewModelBase
     {
         #region Fields
-        private static bool _updatingRepisitory;
+        private static bool _updatingRepository;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageManager _packageManager;
@@ -40,7 +41,7 @@ namespace Orc.NuGetExplorer.ViewModels
             _dispatcherService = dispatcherService;
             _packageManager = packageManager;
 
-            AvailablePackages = new ObservableCollection<PackageDetails>();
+            AvailablePackages = new FastObservableCollection<PackageDetails>();
 
             PackageAction = new Command(OnPackageActionExecute);
         }
@@ -50,7 +51,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public NamedRepo NamedRepository { get; set; }
         public string SearchFilter { get; set; }
         public PackageDetails SelectedPackage { get; set; }
-        public ObservableCollection<PackageDetails> AvailablePackages { get; private set; }
+        public FastObservableCollection<PackageDetails> AvailablePackages { get; private set; }
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
@@ -82,7 +83,7 @@ namespace Orc.NuGetExplorer.ViewModels
             List<IPackage> accumList = new List<IPackage>();
             do
             {
-                versionsOfPackage = _packageQueryService.GetVersionsOfPackage(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
+                versionsOfPackage = _packageQueryService.GetVersionsOfPackageAsync(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
                 accumList.AddRange(versionsOfPackage);
             } while (versionsOfPackage.Any());*/
 
@@ -110,10 +111,10 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             await base.Initialize();
 
-            Search();
+            await Search();
         }
 
-        private void OnIsPrereleaseAllowedChanged()
+        private async void OnIsPrereleaseAllowedChanged()
         {
             var updateRepository = _packageRepository as UpdateRepository;
             if (updateRepository != null)
@@ -121,60 +122,65 @@ namespace Orc.NuGetExplorer.ViewModels
                 updateRepository.AllowPrerelease = IsPrereleaseAllowed;
             }
 
-            UpdateRepository();
+            await UpdateRepository();
         }
 
-        private void OnPackagesToSkipChanged()
+        private async void OnPackagesToSkipChanged()
         {
-            Search();
+            await Search();
         }
 
-        private void OnNamedRepositoryChanged()
+        private async void OnNamedRepositoryChanged()
         {
-            UpdateRepository();
+            await UpdateRepository();
         }
 
-        private void OnSearchFilterChanged()
+        private async void OnSearchFilterChanged()
         {
-            UpdateRepository();
+            await UpdateRepository();
         }
 
-        private void OnActionNameChanged()
+        private async void OnActionNameChanged()
         {
-            UpdateRepository();
+            await UpdateRepository();
         }
 
-        private void UpdateRepository()
+        [Time]
+        private async Task UpdateRepository()
         {
-            if (_updatingRepisitory)
+            if (_updatingRepository)
             {
                 return;
             }
 
-            using (new DisposableToken(this, x => _updatingRepisitory = true, x => _updatingRepisitory = false))
+            using (new DisposableToken(this, x => _updatingRepository = true, x => _updatingRepository = false))
             {
                 _packageRepository = NamedRepository.Value;
                 PackagesToSkip = 0;
-                TotalPackagesCount = _packageRepository.CountPackages(SearchFilter, IsPrereleaseAllowed);
+                TotalPackagesCount = await _packageRepository.CountPackagesAsync(SearchFilter, IsPrereleaseAllowed);
             }
 
-            Search();
+            await Search();
         }
 
-        private void Search()
+        [Time]
+        private async Task Search()
         {
-            if (_updatingRepisitory)
+            if (_updatingRepository)
             {
                 return;
             }
 
             if (NamedRepository != null)
             {
+                var packages = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip).ToArray();
+
                 _dispatcherService.BeginInvoke(() =>
                 {
-                    var packageDetails = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip).ToArray();
-                    AvailablePackages.Clear();
-                    AvailablePackages.AddRange(packageDetails);
+                    using (AvailablePackages.SuspendChangeNotifications())
+                    {
+                        AvailablePackages.ReplaceRange(packages);
+                    }
                 });
             }
         }

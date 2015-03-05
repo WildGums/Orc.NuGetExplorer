@@ -9,12 +9,21 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Catel;
+    using MethodTimer;
     using NuGet;
 
     public static class PackageRepositoryExtensions
     {
         #region Methods
+        public static async Task<IEnumerable<IPackage>> FindAllAsync(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
+            int skip = 0, int take = 10)
+        {
+            return await Task.Factory.StartNew(() => FindAll(packageRepository, allowPrereleaseVersions, skip, take));
+        }
+
+        [Time]
         public static IEnumerable<IPackage> FindAll(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
@@ -23,6 +32,13 @@ namespace Orc.NuGetExplorer
             return packageRepository.FindFiltered(string.Empty, allowPrereleaseVersions, skip, take);
         }
 
+        public static async Task<IEnumerable<IPackage>> FindFilteredAsync(this IPackageRepository packageRepository, string filter, 
+            bool allowPrereleaseVersions, int skip = 0, int take = 10)
+        {
+            return await Task.Factory.StartNew(() => FindFiltered(packageRepository, filter, allowPrereleaseVersions, skip, take));
+        }
+
+        [Time]
         public static IEnumerable<IPackage> FindFiltered(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
@@ -32,6 +48,12 @@ namespace Orc.NuGetExplorer
             return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
         }
 
+        public static async Task<int> CountPackagesAsync(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        {
+            return await Task.Factory.StartNew(() => CountPackages(packageRepository, filter, allowPrereleaseVersions));
+        }
+
+        [Time]
         public static int CountPackages(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
             Argument.IsNotNull(() => packageRepository);
@@ -41,6 +63,12 @@ namespace Orc.NuGetExplorer
             return count;
         }
 
+        public static async Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)
+        {
+            return await Task.Factory.StartNew(() => FindPackageVersions(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));
+        }
+
+        [Time]
         public static IEnumerable<IPackage> FindPackageVersions(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
             ref int skip, int minimalTake = 10)
         {
