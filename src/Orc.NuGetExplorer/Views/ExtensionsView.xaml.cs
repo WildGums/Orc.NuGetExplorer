@@ -33,13 +33,13 @@ namespace Orc.NuGetExplorer.Views
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public NamedRepo NamedRepository
+        public NamedRepository NamedRepository
         {
-            get { return (NamedRepo) GetValue(NamedRepositoryProperty); }
+            get { return (NamedRepository) GetValue(NamedRepositoryProperty); }
             set { SetValue(NamedRepositoryProperty, value); }
         }
 
-        public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepo),
+        public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepository),
             typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         #endregion

@@ -115,7 +115,7 @@
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\RepoCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />
-    <Compile Include="Models\NamedRepo.cs" />
+    <Compile Include="Models\NamedRepository.cs" />
     <Compile Include="Models\ReposNavigator.cs" />
     <Compile Include="Models\PagingItemInfo.cs" />
     <Compile Include="ModuleInitializer.cs" />

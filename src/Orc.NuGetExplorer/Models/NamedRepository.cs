@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NamedRepo.cs" company="Wild Gums">
+// <copyright file="NamedRepository.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using NuGet;
 
-    public class NamedRepo : ModelBase
+    public class NamedRepository : ModelBase
     {
         #region Properties
         public string Name { get; set; }

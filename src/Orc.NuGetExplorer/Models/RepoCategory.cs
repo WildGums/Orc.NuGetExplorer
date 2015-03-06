@@ -10,8 +10,9 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using Catel.Data;
 
-    public class RepoCategory
+    public class RepoCategory : ModelBase
     {
         #region Fields
         private int _selectedIndex;
@@ -21,7 +22,7 @@ namespace Orc.NuGetExplorer
         public RepoCategory(RepoCategoryType category)
         {
             Name = Enum.GetName(typeof (RepoCategoryType), category);
-            Repos = new ObservableCollection<NamedRepo>();
+            Repos = new ObservableCollection<NamedRepository>();
         }
         #endregion
 
@@ -30,7 +31,7 @@ namespace Orc.NuGetExplorer
 
         public string Name { get; set; }
 
-        public IList<NamedRepo> Repos { get; private set; }
+        public IList<NamedRepository> Repos { get; private set; }
         #endregion
     }
 }
