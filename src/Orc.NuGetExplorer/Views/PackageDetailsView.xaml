@@ -3,6 +3,14 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls">
-    <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"
-                     VerticalScrollBarVisibility="Auto"/>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Paragraph}">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="FontStyle" Value="Normal"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </UserControl.Resources>
+    <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" BorderBrush="Transparent"
+                                  TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"
+                                  VerticalScrollBarVisibility="Auto"/>
 </catel:UserControl>

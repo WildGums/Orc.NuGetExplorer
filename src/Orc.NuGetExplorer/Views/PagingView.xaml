@@ -7,6 +7,14 @@
                    xmlns:local="clr-namespace:Orc.NuGetExplorer"
                    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}" 
+           BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Padding" Value="4 0 4 4" />
+            <Setter Property="Margin" Value="2 0 2 0" />
+        </Style>
+    </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
         <StackPanel.Resources>
             <local:DataContextSpy x:Key="dataContextSpy" />
@@ -33,7 +41,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold"/>
+        <TextBlock Text="{Binding CurrentPage}" FontWeight="Medium" Margin="5" />
         
         <ItemsControl ItemsSource="{Binding RightPages}">            
             <ItemsControl.ItemsPanel>
