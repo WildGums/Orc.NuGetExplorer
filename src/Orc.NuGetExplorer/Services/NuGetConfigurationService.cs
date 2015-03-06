@@ -30,29 +30,16 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => configurationService);
 
             _configurationService = configurationService;
-        }
-        #endregion
 
-        #region Properties
-        private string DefaultDestinationFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_defaultDestinationFolder))
-                {
-                    var applicationDataDirectory = Path.GetApplicationDataDirectory();
-                    _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
-                }
-
-                return _defaultDestinationFolder;
-            }
+            var applicationDataDirectory = Path.GetApplicationDataDirectory();
+            _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
         }
         #endregion
 
         #region Methods
         public string GetDestinationFolder()
         {
-            return _configurationService.GetValue(Settings.DestFolder, DefaultDestinationFolder);
+            return _configurationService.GetValue(Settings.DestFolder, _defaultDestinationFolder);
         }
 
         public void SetDestinationFolder(string value)

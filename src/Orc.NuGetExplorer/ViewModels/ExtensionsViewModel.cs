@@ -7,8 +7,6 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
@@ -51,7 +49,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        public NamedRepo NamedRepository { get; set; }
+        public NamedRepository NamedRepository { get; set; }
         public string SearchFilter { get; set; }
         public PackageDetails SelectedPackage { get; set; }
         public FastObservableCollection<PackageDetails> AvailablePackages { get; private set; }
@@ -72,40 +70,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 return NamedRepository.Value.SupportsPrereleasePackages;
             }
-        }
-        #endregion
-
-        #region Commands
-        public Command PackageAction { get; private set; }
-
-        private void OnPackageActionExecute()
-        {
-            /*int skip = 0;
-            int take = 10;
-            IEnumerable<IPackage> versionsOfPackage;
-            List<IPackage> accumList = new List<IPackage>();
-            do
-            {
-                versionsOfPackage = _packageQueryService.GetVersionsOfPackageAsync(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
-                accumList.AddRange(versionsOfPackage);
-            } while (versionsOfPackage.Any());*/
-
-            //UpdatePackages();
-        }
-
-        private void UninstallPackage()
-        {
-            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
-        }
-
-        private void InstallPackage()
-        {
-            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
-        }
-
-        private void UpdatePackages()
-        {
-            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
         }
         #endregion
 
@@ -186,6 +150,40 @@ namespace Orc.NuGetExplorer.ViewModels
                     }
                 });
             }
+        }
+        #endregion
+
+        #region Commands
+        public Command PackageAction { get; private set; }
+
+        private void OnPackageActionExecute()
+        {
+            /*int skip = 0;
+            int take = 10;
+            IEnumerable<IPackage> versionsOfPackage;
+            List<IPackage> accumList = new List<IPackage>();
+            do
+            {
+                versionsOfPackage = _packageQueryService.GetVersionsOfPackageAsync(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
+                accumList.AddRange(versionsOfPackage);
+            } while (versionsOfPackage.Any());*/
+
+            //UpdatePackages();
+        }
+
+        private void UninstallPackage()
+        {
+            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
+        }
+
+        private void InstallPackage()
+        {
+            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
+        }
+
+        private void UpdatePackages()
+        {
+            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
         }
         #endregion
     }

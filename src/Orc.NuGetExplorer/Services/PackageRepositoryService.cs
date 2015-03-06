@@ -19,16 +19,17 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly PackageSource[] _packageSources;
-        private readonly PackageRepositoryFactory _repositoryFactory;
+        private readonly IPackageRepositoryFactory _repositoryFactory;
         #endregion
 
         #region Constructors
-        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService)
+        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
+            Argument.IsNotNull(() => packageRepositoryFactory);
 
             _nuGetConfigurationService = nuGetConfigurationService;
-            _repositoryFactory = PackageRepositoryFactory.Default;
+            _repositoryFactory = packageRepositoryFactory;
             _packageSources = _nuGetConfigurationService.LoadPackageSources().ToArray();
         }
         #endregion

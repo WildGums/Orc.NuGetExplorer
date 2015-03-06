@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using Catel.Collections;
 
-    public class ReposNavigator
+    public class ReposNavigator //(cannot be inherited from ModelBase)
     {
         #region Constructors
         public ReposNavigator()
@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public IList<RepoCategory> RepoCategories { get; private set; }
-        public NamedRepo SelectedNamedRepository { get; set; }
+        public NamedRepository SelectedNamedRepository { get; set; }
         public RepoCategory SelectedRepositoryCategory { get; set; }
         #endregion
     }

@@ -22,7 +22,6 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         public ObservableCollection<PackageDetails> ItemsSource { get; set; }
         public PackageDetails SelectedPackage { get; set; }
-        public string ButtonHeader { get; set; }
         #endregion
     }
 }
