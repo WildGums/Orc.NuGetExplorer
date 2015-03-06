@@ -29,14 +29,14 @@ namespace Orc.NuGetExplorer
         {
             var navigator = new RepositoryNavigator();
 
-            navigator.RepoCategories.Add(CreateRepoCategory(RepositoryCategoryType.Installed));
-            navigator.RepoCategories.Add(CreateRepoCategory(RepositoryCategoryType.Online));
-            navigator.RepoCategories.Add(CreateRepoCategory(RepositoryCategoryType.Update));
+            navigator.RepoCategories.Add(CreateRepositoryCategory(RepositoryCategoryType.Installed));
+            navigator.RepoCategories.Add(CreateRepositoryCategory(RepositoryCategoryType.Online));
+            navigator.RepoCategories.Add(CreateRepositoryCategory(RepositoryCategoryType.Update));
 
             return navigator;
         }
 
-        private RepositoryCategory CreateRepoCategory(RepositoryCategoryType category)
+        private RepositoryCategory CreateRepositoryCategory(RepositoryCategoryType category)
         {
             var repoCategory = new RepositoryCategory(category);
 
@@ -45,7 +45,8 @@ namespace Orc.NuGetExplorer
                 repoCategory.Repos.Add(new NamedRepository
                 {
                     Name = repository.Key, 
-                    Value = repository.Value
+                    Value = repository.Value,
+                    RepositoryCategory = category
                 });
             }
 

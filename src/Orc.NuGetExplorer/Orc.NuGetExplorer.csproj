@@ -121,6 +121,7 @@
     <Compile Include="Models\NamedRepository.cs" />
     <Compile Include="Models\RepositoryNavigator.cs" />
     <Compile Include="Models\PagingItemInfo.cs" />
+    <Compile Include="NuGet\Interfaces\INuGetPackageManager.cs" />
     <Compile Include="NuGet\NuGetPackageSource.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

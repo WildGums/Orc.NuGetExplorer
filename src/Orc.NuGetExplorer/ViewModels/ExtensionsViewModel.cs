@@ -24,14 +24,14 @@ namespace Orc.NuGetExplorer.ViewModels
         private static bool _updatingRepository;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
-        private readonly IPackageManager _packageManager;
+        private readonly INuGetPackageManager _packageManager;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
         public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
-            IPackageManager packageManager, IPleaseWaitService pleaseWaitService)
+            INuGetPackageManager packageManager, IPleaseWaitService pleaseWaitService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
@@ -46,9 +46,6 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
             PackageAction = new Command(OnPackageActionExecute);
-
-            // (will be dynamically renamed)
-            ActionName = "Action";
         }
         #endregion
 
@@ -103,6 +100,21 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnNamedRepositoryChanged()
         {
+            if (NamedRepository != null)
+            {
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        ActionName = "Uninstall";
+                        break;
+                    case RepositoryCategoryType.Online:
+                        ActionName = "Install";
+                        break;
+                    case RepositoryCategoryType.Update:
+                        ActionName = "Update";
+                        break;
+                }
+            }
             await UpdateRepository();
         }
 
@@ -174,22 +186,27 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            /*int skip = 0;
-            int take = 10;
-            IEnumerable<IPackage> versionsOfPackage;
-            List<IPackage> accumList = new List<IPackage>();
-            do
+            using (_pleaseWaitService.WaitingScope())
             {
-                versionsOfPackage = _packageQueryService.GetVersionsOfPackageAsync(_packageRepository, SelectedPackage.Package, IsPrereleaseAllowed, ref skip, take);
-                accumList.AddRange(versionsOfPackage);
-            } while (versionsOfPackage.Any());*/
-
-            //UpdatePackages();
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        UninstallPackage();
+                        break;
+                    case RepositoryCategoryType.Online:
+                        InstallPackage();
+                        break;
+                    case RepositoryCategoryType.Update:
+                        UpdatePackages();
+                        break;
+                }
+            }
         }
 
         private void UninstallPackage()
         {
             _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
+            Search();
         }
 
         private void InstallPackage()
@@ -200,6 +217,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private void UpdatePackages()
         {
             _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
+            Search();
         }
         #endregion
     }

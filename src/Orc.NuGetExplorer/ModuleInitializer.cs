@@ -21,7 +21,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPackageManager, NuGetPackageManager>();
+        serviceLocator.RegisterType<INuGetPackageManager, NuGetPackageManager>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();
 

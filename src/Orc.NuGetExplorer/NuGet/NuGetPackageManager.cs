@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using NuGet;
 
-    internal class NuGetPackageManager : PackageManager
+    internal class NuGetPackageManager : PackageManager, INuGetPackageManager
     {
         #region Constructors
         public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService)
