@@ -4,8 +4,7 @@
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:local="clr-namespace:Orc.NuGetExplorer"
-                   mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+                   xmlns:local="clr-namespace:Orc.NuGetExplorer">
     
     <UserControl.Resources>
         <Style TargetType="{x:Type Button}" 
@@ -15,7 +14,7 @@
             <Setter Property="Margin" Value="2 0 2 0" />
         </Style>
     </UserControl.Resources>
-    <StackPanel Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
         <StackPanel.Resources>
             <local:DataContextSpy x:Key="dataContextSpy" />
         </StackPanel.Resources>
@@ -41,7 +40,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         
-        <TextBlock Text="{Binding CurrentPage}" FontWeight="Medium" Margin="5" />
+        <TextBlock Text="{Binding CurrentPage}" FontWeight="Medium" />
         
         <ItemsControl ItemsSource="{Binding RightPages}">            
             <ItemsControl.ItemsPanel>

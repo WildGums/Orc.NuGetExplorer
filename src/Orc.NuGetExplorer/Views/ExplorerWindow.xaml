@@ -9,11 +9,12 @@
                   x:ClassModifier="internal">
     
     <catel:DataWindow.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>        
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
     </catel:DataWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
@@ -21,7 +22,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">           
+        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" 
+                 Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0">           
             <ListBox.Resources>
                 <local:DataContextSpy x:Key="dataContextSpy" />
             </ListBox.Resources>
@@ -29,6 +31,28 @@
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
+                                        Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter Property="Background" TargetName="Bd" Value="WhiteSmoke"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
 
@@ -59,6 +83,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepository}" />        
+        <views:ExtensionsView Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
+        <GridSplitter Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HorizontalGridSplitterStyle}" />
     </Grid>
 </catel:DataWindow>

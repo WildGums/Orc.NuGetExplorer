@@ -10,7 +10,7 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
     </UserControl.Resources>
-    <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" BorderBrush="Transparent"
+    <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" BorderThickness="0"
                                   TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"
                                   VerticalScrollBarVisibility="Auto"/>
 </catel:UserControl>
