@@ -7,35 +7,48 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Windows;
+    using System.Threading.Tasks;
     using System.Windows.Documents;
     using Catel;
-    using Catel.Fody;
     using Catel.MVVM;
 
     public class PackageDetailsViewModel : ViewModelBase
     {
+        #region Fields
+        private readonly IPackageDetailsService _packageDetailsService;
+        #endregion
+
         #region Constructors
-        public PackageDetailsViewModel(PackageDetails package)
+        public PackageDetailsViewModel(PackageDetails package, IPackageDetailsService packageDetailsService)
         {
             Argument.IsNotNull(() => package);
+            Argument.IsNotNull(() => packageDetailsService);
+
+            _packageDetailsService = packageDetailsService;
 
             Package = package;
-            PackageSummary = new FlowDocument();
-            Paragraph p = new Paragraph(new Run(Package.Id));
-            p.FontSize = 14;
-            p.FontStyle = FontStyles.Oblique;
-
-            PackageSummary.Blocks.Add(p);
         }
         #endregion
 
         #region Properties
-
         [Model(SupportIEditableObject = false)]
         public PackageDetails Package { get; private set; }
 
         public FlowDocument PackageSummary { get; private set; }
+        #endregion
+
+        #region Methods
+        protected override async Task Initialize()
+        {
+            await base.Initialize();
+
+            PackageSummary = await _packageDetailsService.PackageToFlowDocument(Package.Package);
+        }
+
+        private static Bold CreateTitle(string text)
+        {
+            return text.ToInline().Bold();
+        }
         #endregion
     }
 }
