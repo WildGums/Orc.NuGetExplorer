@@ -7,20 +7,26 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
+    using Catel;
+    using Catel.Fody;
     using Catel.MVVM;
 
     internal class PagingViewModel : ViewModelBase
     {
-        #region Constructors
-        public PagingViewModel()
-        {
-            LeftPages = new ObservableCollection<PagingItemInfo>();
-            RightPages = new ObservableCollection<PagingItemInfo>();
-            MoveToPage = new Command<PagingItemInfo>(OnMoveToPageExecute, OnMoveToPageCanExecute);
+        #region Fields
+        private readonly IPagingService _pagingService;
+        #endregion
 
+        #region Constructors
+        public PagingViewModel(IPagingService pagingService)
+        {
+            Argument.IsNotNull(() => pagingService);
+
+            _pagingService = pagingService;
+
+            Pager = new Pager();
+
+            MoveToPage = new Command<PagingItemInfo>(OnMoveToPageExecute, OnMoveToPageCanExecute);
             MoveToFirst = new Command(OnMoveToFirstExecute, OnMoveToFirstCanExecute);
             MoveBack = new Command(OnMoveBackExecute, OnMoveBackCanExecute);
             MoveForward = new Command(OnMoveForwardExecute, OnMoveForwardCanExecute);
@@ -29,13 +35,46 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        public ObservableCollection<PagingItemInfo> LeftPages { get; set; }
-        public ObservableCollection<PagingItemInfo> RightPages { get; set; }
-        public int VisiblePages { get; set; }
-        public int ItemsCount { get; set; }
-        public int ItemsPerPage { get; set; }
+        [Model(SupportIEditableObject = true)]
+        [Expose("LeftPages")]
+        [Expose("RightPages")]
+        [Expose("CurrentPage")]
+        public Pager Pager { get; private set; }
+
+        [ViewModelToModel("Pager")]
         public int ItemIndex { get; set; }
-        public string CurrentPage { get; set; }
+
+        [ViewModelToModel("Pager")]
+        public int VisiblePages { get; set; }
+
+        [ViewModelToModel("Pager")]
+        public int ItemsCount { get; set; }
+
+        [ViewModelToModel("Pager")]
+        public int ItemsPerPage { get; set; }
+        #endregion
+
+        #region Methods
+        private void OnVisiblePagesChanged()
+        {
+            _pagingService.UpdatePagingItems(Pager);
+        }
+
+        private void OnItemsCountChanged()
+        {
+            Pager.ItemsCount = ItemsCount; // TODO: this is temporary (doesn't refresh automatically)
+            _pagingService.UpdatePagingItems(Pager);
+        }
+
+        private void OnItemsPerPageChanged()
+        {
+            _pagingService.UpdatePagingItems(Pager);
+        }
+
+        private void OnItemIndexChanged()
+        {
+            _pagingService.UpdatePagingItems(Pager);
+        }
         #endregion
 
         #region Commands
@@ -43,8 +82,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnMoveToLastExcute()
         {
-            //    var pagesCount = Math.Ceiling(ItemsCount/(double) ItemsPerPage);
-
+            _pagingService.MoveToLast(Pager);
         }
 
         private bool OnMoveToLastCanExecute()
@@ -56,7 +94,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnMoveForwardExecute()
         {
-            Step(1);
+            _pagingService.Step(Pager, 1);
         }
 
         private bool OnMoveForwardCanExecute()
@@ -73,7 +111,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            Step(-1);
+            _pagingService.Step(Pager, -1);
         }
 
         private bool OnMoveBackCanExecute()
@@ -85,12 +123,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public void OnMoveToFirstExecute()
         {
-            if (ItemIndex == 0)
-            {
-                return;
-            }
-
-            ItemIndex = 0;
+            _pagingService.MoveToFirst(Pager);
         }
 
         private bool OnMoveToFirstCanExecute()
@@ -102,132 +135,12 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnMoveToPageExecute(PagingItemInfo pagingItem)
         {
-            var stepValue = pagingItem.StepValue;
-            Step(stepValue);
-        }
-
-        private void Step(int stepValue)
-        {
-            var newIndex = ItemIndex + ItemsPerPage * stepValue;
-            if (newIndex < 0)
-            {
-                newIndex = 0;
-            }
-
-            ItemIndex = newIndex;
+            _pagingService.StepTo(Pager, pagingItem);
         }
 
         private bool OnMoveToPageCanExecute(PagingItemInfo pagingItem)
         {
             return true;
-        }
-        #endregion
-
-        #region Methods
-        private void OnVisiblePagesChanged()
-        {
-            UpdatePagingItems();
-        }
-
-        private void OnItemsCountChanged()
-        {
-            UpdatePagingItems();
-        }
-
-        private void OnItemsPerPageChanged()
-        {
-            UpdatePagingItems();
-        }
-
-        private void OnItemIndexChanged()
-        {
-            UpdatePagingItems();
-        }
-
-        private void UpdatePagingItems()
-        {
-            if (ItemsPerPage == 0)
-            {
-                return;
-            }
-
-            int leftPages;
-            int rightPages;
-
-            var currentPage = GetPagesCount(out leftPages, out rightPages);
-
-            FillLeftPages(leftPages, currentPage);
-
-            FillRightPages(rightPages, currentPage);
-        }
-
-        private int GetPagesCount(out int leftPages, out int rightPages)
-        {
-            leftPages = 0;
-            rightPages = 0;
-
-            var rightItems = ItemsCount - ItemIndex;
-            var leftItems = ItemsCount - rightItems;
-
-            var totalRightPages = (int) Math.Ceiling(rightItems/(double) ItemsPerPage) - 1;
-            var totalLeftPages = (int) Math.Ceiling(leftItems/(double) ItemsPerPage);
-
-            var totalPagesCount = totalRightPages + totalLeftPages;
-            var currentPage = totalLeftPages + 1;
-            CurrentPage = currentPage.ToString(CultureInfo.InvariantCulture);
-
-            var leftAdding = true;
-            var pageCouner = 0;
-            while (pageCouner < VisiblePages - 1 && pageCouner < totalPagesCount)
-            {
-                if (totalLeftPages.Equals(0))
-                {
-                    leftAdding = false;
-                }
-
-                if (totalRightPages.Equals(0))
-                {
-                    leftAdding = true;
-                }
-
-                if (totalLeftPages > 0 && leftAdding)
-                {
-                    leftAdding = false;
-                    leftPages++;
-                    totalLeftPages--;
-                    pageCouner++;
-                    continue;
-                }
-
-                if (totalRightPages > 0 && !leftAdding)
-                {
-                    leftAdding = true;
-                    rightPages++;
-                    totalRightPages--;
-                    pageCouner++;
-                }
-            }
-            return currentPage;
-        }
-
-        private void FillRightPages(int rightPages, int currentPage)
-        {
-            RightPages.Clear();
-
-            for (var i = 1; i <= rightPages; i++)
-            {
-                RightPages.Add(new PagingItemInfo((currentPage + i).ToString(CultureInfo.InvariantCulture), i));
-            }
-        }
-
-        private void FillLeftPages(int leftPagesCount, int currentPage)
-        {
-            LeftPages.Clear();
-
-            for (var i = leftPagesCount; i > 0; i--)
-            {
-                LeftPages.Add(new PagingItemInfo((currentPage - i).ToString(CultureInfo.InvariantCulture), -1*i));
-            }
         }
         #endregion
     }

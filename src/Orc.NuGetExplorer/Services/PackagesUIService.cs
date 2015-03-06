@@ -7,15 +7,16 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using Catel.Services;
     using ViewModels;
 
     internal class PackagesUIService : IPackagesUIService
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
@@ -31,17 +32,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public async Task ShowPackagesExplorer()
         {
-            try
-            {
-                await _uiVisualizerService.ShowDialog<ExplorerViewModel>();
-
-            }
-            catch (Exception exception)
-            {
-                
-                //throw;
-            }
-            
+            await _uiVisualizerService.ShowDialog<ExplorerViewModel>();
         }
         #endregion
     }

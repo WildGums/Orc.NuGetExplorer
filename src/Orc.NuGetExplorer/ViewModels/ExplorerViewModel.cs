@@ -11,11 +11,13 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
+    using Catel.Logging;
     using Catel.MVVM;
 
     internal class ExplorerViewModel : ViewModelBase
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IRepositoryNavigationService _repositoryNavigationService;
         #endregion
 
@@ -32,13 +34,14 @@ namespace Orc.NuGetExplorer.ViewModels
 
         #region Properties
         [Model]
-        [Expose("RepoCategories")]       
+        [Expose("RepoCategories")]
         public RepositoryNavigator Navigator { get; private set; }
 
         [ViewModelToModel("Navigator")]
         public NamedRepository SelectedNamedRepository { get; set; }
         #endregion
 
+        #region Methods
         protected override async Task Initialize()
         {
             await base.Initialize();
@@ -51,5 +54,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 SelectedNamedRepository = selectedRepositoryCategory.Repos.FirstOrDefault();
             }
         }
+        #endregion
     }
 }

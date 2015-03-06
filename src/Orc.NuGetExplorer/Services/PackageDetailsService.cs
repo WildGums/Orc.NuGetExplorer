@@ -11,10 +11,15 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Catel;
+    using Catel.Logging;
     using NuGet;
 
     internal class PackageDetailsService : IPackageDetailsService
     {
+        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        #endregion
+
         #region Methods
         public async Task<FlowDocument> PackageToFlowDocument(IPackage package)
         {

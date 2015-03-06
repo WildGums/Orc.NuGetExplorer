@@ -3,12 +3,15 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using NuGet;
 
     internal class NuGetPackageSource : PackageSource, IPackageSource
     {
+        #region Constructors
         public NuGetPackageSource(string source) : base(source)
         {
         }
@@ -24,5 +27,6 @@ namespace Orc.NuGetExplorer
         public NuGetPackageSource(string source, string name, bool isEnabled, bool isOfficial) : base(source, name, isEnabled, isOfficial)
         {
         }
+        #endregion
     }
 }

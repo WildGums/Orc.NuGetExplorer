@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Catel;
+    using Catel.Logging;
     using Catel.MVVM;
 
     internal class PackageDetailsViewModel : ViewModelBase
@@ -43,11 +44,6 @@ namespace Orc.NuGetExplorer.ViewModels
             await base.Initialize();
 
             PackageSummary = await _packageDetailsService.PackageToFlowDocument(Package.Package);
-        }
-
-        private static Bold CreateTitle(string text)
-        {
-            return text.ToInline().Bold();
         }
         #endregion
     }

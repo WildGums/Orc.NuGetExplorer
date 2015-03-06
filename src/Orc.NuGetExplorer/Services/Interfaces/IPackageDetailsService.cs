@@ -4,7 +4,7 @@
     using System.Windows.Documents;
     using NuGet;
 
-    public interface IPackageDetailsService
+    internal interface IPackageDetailsService
     {
         Task<FlowDocument> PackageToFlowDocument(IPackage package);
     }

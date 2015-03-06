@@ -11,11 +11,13 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Caching;
     using Catel.Caching.Policies;
+    using Catel.Logging;
     using NuGet;
 
     internal class PackageCacheService : IPackageCacheService
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly ICacheStorage<string, PackageDetails> _packageDetailsCache = new CacheStorage<string, PackageDetails>(() => ExpirationPolicy.Duration(TimeSpan.FromSeconds(60)));
         #endregion
 

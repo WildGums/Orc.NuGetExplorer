@@ -8,13 +8,14 @@
 namespace Orc.NuGetExplorer
 {
     using Catel;
+    using Catel.Logging;
 
     internal class RepositoryNavigationService : IRepositoryNavigationService
     {
         #region Fields
-        private readonly IRepositoryNavigationFactory _repositoryNavigationFactory;
-
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private RepositoryNavigator _navigator;
+        private readonly IRepositoryNavigationFactory _repositoryNavigationFactory;
         #endregion
 
         #region Constructors

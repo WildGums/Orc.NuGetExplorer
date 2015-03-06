@@ -10,11 +10,13 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
+    using Catel.Logging;
     using NuGet;
 
     internal class PackageQueryService : IPackageQueryService
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IPackageCacheService _packageCacheService;
         #endregion
 

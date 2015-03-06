@@ -7,10 +7,10 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
+    using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
     using MethodTimer;
@@ -20,24 +20,28 @@ namespace Orc.NuGetExplorer.ViewModels
     internal class ExtensionsViewModel : ViewModelBase
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static bool _updatingRepository;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageManager _packageManager;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
         public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
-            IPackageManager packageManager)
+            IPackageManager packageManager, IPleaseWaitService pleaseWaitService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
             Argument.IsNotNull(() => packageManager);
+            Argument.IsNotNull(() => pleaseWaitService);
 
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
             _packageManager = packageManager;
+            _pleaseWaitService = pleaseWaitService;
 
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
@@ -125,14 +129,18 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            using (new DisposableToken(this, x => _updatingRepository = true, x => _updatingRepository = false))
+            using (_pleaseWaitService.WaitingScope())
             {
-                _packageRepository = NamedRepository.Value;
-                PackagesToSkip = 0;
-                TotalPackagesCount = await _packageRepository.CountPackagesAsync(SearchFilter, IsPrereleaseAllowed);
-            }
+                using (new DisposableToken(this, x => _updatingRepository = true, x => _updatingRepository = false))
+                {
+                    _packageRepository = NamedRepository.Value;
+                    PackagesToSkip = 0;
 
-            await Search();
+                    TotalPackagesCount = await _packageRepository.CountPackagesAsync(SearchFilter, IsPrereleaseAllowed);
+                }
+
+                await Search();
+            }
         }
 
         [Time]
@@ -145,15 +153,18 @@ namespace Orc.NuGetExplorer.ViewModels
 
             if (NamedRepository != null)
             {
-                var packages = _packageQueryService.GetPackages(_packageRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip).ToArray();
-
-                _dispatcherService.BeginInvoke(() =>
+                using (_pleaseWaitService.WaitingScope())
                 {
-                    using (AvailablePackages.SuspendChangeNotifications())
+                    var packages = await _packageQueryService.GetPackagesAsync(_packageRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip);
+
+                    _dispatcherService.BeginInvoke(() =>
                     {
-                        AvailablePackages.ReplaceRange(packages);
-                    }
-                });
+                        using (AvailablePackages.SuspendChangeNotifications())
+                        {
+                            AvailablePackages.ReplaceRange(packages);
+                        }
+                    });
+                }
             }
         }
         #endregion
