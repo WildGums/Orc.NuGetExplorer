@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer.Repositories
     using Catel;
     using NuGet;
 
-    public class UpdateRepository : IPackageRepository
+    internal class UpdateRepository : IPackageRepository
     {
         #region Fields
         private readonly IPackageRepository _destinationRepository;

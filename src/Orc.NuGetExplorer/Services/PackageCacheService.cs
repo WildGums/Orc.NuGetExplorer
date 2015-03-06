@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     using Catel.Caching.Policies;
     using NuGet;
 
-    public class PackageCacheService : IPackageCacheService
+    internal class PackageCacheService : IPackageCacheService
     {
         #region Fields
         private readonly ICacheStorage<string, PackageDetails> _packageDetailsCache = new CacheStorage<string, PackageDetails>(() => ExpirationPolicy.Duration(TimeSpan.FromSeconds(60)));

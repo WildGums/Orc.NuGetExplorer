@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using NuGet;
 
-    public class PackageDetailsService : IPackageDetailsService
+    internal class PackageDetailsService : IPackageDetailsService
     {
         #region Methods
         public async Task<FlowDocument> PackageToFlowDocument(IPackage package)

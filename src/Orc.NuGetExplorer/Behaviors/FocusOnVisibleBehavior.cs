@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using Catel.Windows.Interactivity;
 
-    public class FocusOnVisibleBehavior : BehaviorBase<FrameworkElement>
+    internal class FocusOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()

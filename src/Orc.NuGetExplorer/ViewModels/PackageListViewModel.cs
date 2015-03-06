@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Collections.ObjectModel;
     using Catel.MVVM;
 
-    public class PackageListViewModel : ViewModelBase
+    internal class PackageListViewModel : ViewModelBase
     {
         #region Constructors
         public PackageListViewModel()

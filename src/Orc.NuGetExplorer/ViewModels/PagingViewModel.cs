@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Globalization;
     using Catel.MVVM;
 
-    public class PagingViewModel : ViewModelBase
+    internal class PagingViewModel : ViewModelBase
     {
         #region Constructors
         public PagingViewModel()

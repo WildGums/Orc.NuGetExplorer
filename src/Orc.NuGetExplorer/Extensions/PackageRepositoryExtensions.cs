@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     using MethodTimer;
     using NuGet;
 
-    public static class PackageRepositoryExtensions
+    internal static class PackageRepositoryExtensions
     {
         #region Methods
         public static async Task<IEnumerable<IPackage>> FindAllAsync(this IPackageRepository packageRepository, bool allowPrereleaseVersions,

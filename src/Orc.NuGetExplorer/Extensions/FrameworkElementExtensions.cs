@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     using System.Windows.Media;
     using Catel;
 
-    public static class FrameworkElementExtensions
+    internal static class FrameworkElementExtensions
     {
         #region Methods
         public static void UpdateItemSource(this FrameworkElement frameworkElement)

@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer.Views
     /// <summary>
     /// Interaction logic for PackageDetailsView.xaml.
     /// </summary>
-    public partial class PackageDetailsView
+    internal partial class PackageDetailsView
     {
         #region Constructors
         /// <summary>

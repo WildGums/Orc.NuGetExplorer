@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     using Catel.Services;
     using ViewModels;
 
-    public class PackagesUIService : IPackagesUIService
+    internal class PackagesUIService : IPackagesUIService
     {
         #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;

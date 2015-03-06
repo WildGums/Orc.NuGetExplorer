@@ -13,15 +13,14 @@ namespace Orc.NuGetExplorer
     using Catel.Configuration;
     using Catel.IO;
     using Catel.Logging;
-    using NuGet;
 
-    public class NuGetConfigurationService : INuGetConfigurationService
+    internal class NuGetConfigurationService : INuGetConfigurationService
     {
         #region Fields
         private const char Separator = '|';
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private string _defaultDestinationFolder;
         private readonly IConfigurationService _configurationService;
+        private readonly string _defaultDestinationFolder;
         #endregion
 
         #region Constructors
@@ -49,10 +48,10 @@ namespace Orc.NuGetExplorer
             _configurationService.SetValue(Settings.DestFolder, value);
         }
 
-        public IEnumerable<PackageSource> LoadPackageSources()
+        public IEnumerable<IPackageSource> LoadPackageSources()
         {
             var packageSourceNames = LoadPackageSourceNames();
-            var result = new List<PackageSource>();
+            var result = new List<IPackageSource>();
 
             foreach (var sourceName in packageSourceNames)
             {
@@ -76,7 +75,7 @@ namespace Orc.NuGetExplorer
                 var isEnabled = bool.Parse(stringValues[2].Trim());
                 var isOfficial = bool.Parse(stringValues[3].Trim());
 
-                var packageSource = new PackageSource(source, name, isEnabled, isOfficial);
+                var packageSource = new NuGetPackageSource(source, name, isEnabled, isOfficial);
 
                 result.Add(packageSource);
             }
@@ -84,7 +83,7 @@ namespace Orc.NuGetExplorer
             if (!result.Any())
             {
                 SavePackageSource("NuGet", "http://www.nuget.org/api/v2/");
-                result.AddRange(LoadPackageSources()); 
+                result.AddRange(LoadPackageSources());
             }
 
             return result;

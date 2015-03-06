@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using NuGet;
 
-    public class PackageDetails : ModelBase
+    internal class PackageDetails : ModelBase
     {
         #region Constructors
         public PackageDetails(IPackage package)

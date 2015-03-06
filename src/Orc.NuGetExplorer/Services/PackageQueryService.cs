@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using NuGet;
 
-    public class PackageQueryService : IPackageQueryService
+    internal class PackageQueryService : IPackageQueryService
     {
         #region Fields
         private readonly IPackageCacheService _packageCacheService;

@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using Catel.Windows.Interactivity;
 
-    public class UpdateSourceOnVisibleBehavior : BehaviorBase<FrameworkElement>
+    internal class UpdateSourceOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()

@@ -17,7 +17,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using NuGet;
     using Repositories;
 
-    public class ExtensionsViewModel : ViewModelBase
+    internal class ExtensionsViewModel : ViewModelBase
     {
         #region Fields
         private static bool _updatingRepository;

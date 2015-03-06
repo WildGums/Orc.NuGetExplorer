@@ -14,11 +14,11 @@ namespace Orc.NuGetExplorer
     using NuGet;
     using Repositories;
 
-    public class PackageRepositoryService : IPackageRepositoryService
+    internal class PackageRepositoryService : IPackageRepositoryService
     {
         #region Fields
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly PackageSource[] _packageSources;
+        private readonly IPackageSource[] _packageSources;
         private readonly IPackageRepositoryFactory _repositoryFactory;
         #endregion
 
@@ -35,22 +35,22 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IDictionary<string, IPackageRepository> GetRepositories(RepoCategoryType category)
+        public IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category)
         {
             var result = new Dictionary<string, IPackageRepository>();
             switch (category)
             {
-                case RepoCategoryType.Installed:
+                case RepositoryCategoryType.Installed:
                     result[RepoName.All] = GetLocalRepository();
                     break;
 
-                case RepoCategoryType.Online:
+                case RepositoryCategoryType.Online:
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
                     break;
 
-                case RepoCategoryType.Update:
+                case RepositoryCategoryType.Update:
                     result[RepoName.All] = GetAggeregateUpdateRepository();
                     var updateRepositories = GetUpdateRepositories();
                     result.AddRange(updateRepositories);

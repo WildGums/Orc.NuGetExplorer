@@ -3,19 +3,21 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Windows.Documents;
 
-    public static class InlineExtensions
+    internal static class InlineExtensions
     {
+        #region Methods
         public static Bold Bold(this Inline inline)
         {
             return new Bold(inline);
         }
-       
+
         public static Inline Insert(this Inline inline, Inline inlineToAdd)
         {
             var span = inline as Span ?? new Span(inline);
@@ -24,7 +26,7 @@ namespace Orc.NuGetExplorer
 
             return span;
         }
-        
+
         public static Inline Append(this Inline inline, Inline inlineToAdd)
         {
             var span = new Span(inline);
@@ -42,7 +44,7 @@ namespace Orc.NuGetExplorer
 
             return span;
         }
-        
+
         public static Inline AppendRange(this Inline inline, IEnumerable<Inline> inlines)
         {
             var span = new Span(inline);
@@ -51,7 +53,6 @@ namespace Orc.NuGetExplorer
 
             return span;
         }
-
-
+        #endregion
     }
 }

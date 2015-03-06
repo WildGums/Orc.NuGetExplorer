@@ -16,24 +16,24 @@ namespace Orc.NuGetExplorer.ViewModels
     internal class ExplorerViewModel : ViewModelBase
     {
         #region Fields
-        private readonly IRepoNavigationService _repoNavigationService;
+        private readonly IRepositoryNavigationService _repositoryNavigationService;
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepoNavigationService repoNavigationService)
+        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService)
         {
-            Argument.IsNotNull(() => repoNavigationService);
+            Argument.IsNotNull(() => repositoryNavigationService);
 
-            _repoNavigationService = repoNavigationService;
+            _repositoryNavigationService = repositoryNavigationService;
 
-            Navigator = _repoNavigationService.GetNavigator();
+            Navigator = _repositoryNavigationService.GetNavigator();
         }
         #endregion
 
         #region Properties
         [Model]
         [Expose("RepoCategories")]       
-        public ReposNavigator Navigator { get; private set; }
+        public RepositoryNavigator Navigator { get; private set; }
 
         [ViewModelToModel("Navigator")]
         public NamedRepository SelectedNamedRepository { get; set; }

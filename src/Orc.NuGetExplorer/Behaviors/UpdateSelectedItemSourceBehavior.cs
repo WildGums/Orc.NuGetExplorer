@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Windows.Controls.Primitives;
     using Catel.Windows.Interactivity;
 
-    public class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
+    internal class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()

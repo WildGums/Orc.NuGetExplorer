@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using NuGet;
 
-    public interface IPackageCacheService
+    internal interface IPackageCacheService
     {
         #region Methods
         PackageDetails GetPackageDetails(IPackage package);

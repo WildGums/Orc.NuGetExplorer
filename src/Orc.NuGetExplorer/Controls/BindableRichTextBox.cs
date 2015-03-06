@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer.Controls
     using System.Windows.Controls;
     using System.Windows.Documents;
 
-    public class BindableRichTextBox : RichTextBox
+    internal class BindableRichTextBox : RichTextBox
     {
         public static readonly DependencyProperty BindableDocumentProperty =
            DependencyProperty.Register("BindableDocument", typeof(FlowDocument),

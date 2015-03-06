@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepoNavigationService.cs" company="Wild Gums">
+// <copyright file="IRepositoryNavigationService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,8 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
-    public interface IRepoNavigationService
+    internal interface IRepositoryNavigationService
     {
-        ReposNavigator GetNavigator();
+        RepositoryNavigator GetNavigator();
     }
 }

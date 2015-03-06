@@ -10,10 +10,10 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using NuGet;
 
-    public interface IPackageRepositoryService
+    internal interface IPackageRepositoryService
     {
         #region Methods
-        IDictionary<string, IPackageRepository> GetRepositories(RepoCategoryType category);
+        IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category);
         IPackageRepository GetLocalRepository();
         IDictionary<string, IPackageRepository> GetRemoteRepositories();
         IPackageRepository GetAggregateRepository();

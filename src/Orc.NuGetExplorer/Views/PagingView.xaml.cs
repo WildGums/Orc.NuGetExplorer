@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer.Views
     /// <summary>
     /// Interaction logic for PagingView.xaml
     /// </summary>
-    public partial class PagingView
+    internal partial class PagingView
     {
         #region Constructors
         public PagingView()

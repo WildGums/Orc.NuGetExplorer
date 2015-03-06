@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RepoCategoryType.cs" company="Wild Gums">
+// <copyright file="RepositoryCategoryType.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    public enum RepoCategoryType
+    internal enum RepositoryCategoryType
     {
         Installed,
         Online,

@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel;
     using Catel.MVVM;
 
-    public class PackageDetailsViewModel : ViewModelBase
+    internal class PackageDetailsViewModel : ViewModelBase
     {
         #region Fields
         private readonly IPackageDetailsService _packageDetailsService;

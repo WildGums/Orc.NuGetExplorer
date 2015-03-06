@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer.Views
     using System.Windows.Input;
     using Catel.MVVM.Views;
 
-    public partial class PackageListView
+    internal partial class PackageListView
     {
         #region Constructors
         /// <summary>

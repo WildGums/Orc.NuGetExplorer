@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer.Views
     /// <summary>
     /// Interaction logic for ExtensionsView.xaml.
     /// </summary>
-    public partial class ExtensionsView
+    internal partial class ExtensionsView
     {
         #region Constructors
         /// <summary>

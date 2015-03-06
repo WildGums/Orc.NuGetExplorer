@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepoNavigationFactory.cs" company="Wild Gums">
+// <copyright file="IRepositoryNavigationFactory.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,10 +7,10 @@
 
 namespace Orc.NuGetExplorer
 {
-    public interface IRepoNavigationFactory
+    internal interface IRepositoryNavigationFactory
     {
         #region Methods
-        ReposNavigator CreateRepoNavigator();
+        RepositoryNavigator CreateRepoNavigator();
         #endregion
     }
 }

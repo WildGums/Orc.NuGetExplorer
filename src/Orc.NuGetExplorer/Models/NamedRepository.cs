@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using NuGet;
 
-    public class NamedRepository : ModelBase
+    internal class NamedRepository : ModelBase
     {
         #region Properties
         public string Name { get; set; }

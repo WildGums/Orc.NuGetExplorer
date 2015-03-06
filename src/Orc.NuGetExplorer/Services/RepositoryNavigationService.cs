@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RepoNavigationService.cs" company="Wild Gums">
+// <copyright file="RepositoryNavigationService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,29 +9,29 @@ namespace Orc.NuGetExplorer
 {
     using Catel;
 
-    public class RepoNavigationService : IRepoNavigationService
+    internal class RepositoryNavigationService : IRepositoryNavigationService
     {
         #region Fields
-        private readonly IRepoNavigationFactory _repoNavigationFactory;
+        private readonly IRepositoryNavigationFactory _repositoryNavigationFactory;
 
-        private ReposNavigator _navigator;
+        private RepositoryNavigator _navigator;
         #endregion
 
         #region Constructors
-        public RepoNavigationService(IRepoNavigationFactory repoNavigationFactory)
+        public RepositoryNavigationService(IRepositoryNavigationFactory repositoryNavigationFactory)
         {
-            Argument.IsNotNull(() => repoNavigationFactory);
+            Argument.IsNotNull(() => repositoryNavigationFactory);
 
-            _repoNavigationFactory = repoNavigationFactory;
+            _repositoryNavigationFactory = repositoryNavigationFactory;
         }
         #endregion
 
         #region Methods
-        public ReposNavigator GetNavigator()
+        public RepositoryNavigator GetNavigator()
         {
             if (_navigator == null)
             {
-                _navigator = _repoNavigationFactory.CreateRepoNavigator();
+                _navigator = _repositoryNavigationFactory.CreateRepoNavigator();
             }
 
             return _navigator;

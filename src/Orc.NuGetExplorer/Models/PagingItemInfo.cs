@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Data;
 
-    public class PagingItemInfo : ModelBase
+    internal class PagingItemInfo : ModelBase
     {
         #region Constructors
         public PagingItemInfo(string header, int stepValue)
