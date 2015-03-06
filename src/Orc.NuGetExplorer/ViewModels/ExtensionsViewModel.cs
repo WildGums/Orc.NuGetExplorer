@@ -120,6 +120,11 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
+            if (NamedRepository == null)
+            {
+                return;
+            }
+
             using (new DisposableToken(this, x => _updatingRepository = true, x => _updatingRepository = false))
             {
                 _packageRepository = NamedRepository.Value;

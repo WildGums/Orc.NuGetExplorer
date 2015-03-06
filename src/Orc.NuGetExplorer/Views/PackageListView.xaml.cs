@@ -58,7 +58,7 @@ namespace Orc.NuGetExplorer.Views
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
+        //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public string ButtonHeader
         {
             get { return (string)GetValue(ButtonHeaderProperty); }
