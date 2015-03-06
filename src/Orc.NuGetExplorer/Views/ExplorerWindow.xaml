@@ -10,6 +10,11 @@
     
     <catel:DataWindow.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
+
+        <SolidColorBrush x:Key="Expander.Static.Arrow.Stroke" Color="Black"/>
+
+        <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+
     </catel:DataWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -41,7 +46,7 @@
                                         BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
                                         Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
                                     <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -57,12 +62,24 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical" >
-                        <Grid>
-                            <TextBlock Text="{Binding Name}"/>
-                        </Grid>
+                    <StackPanel>
+                        <DockPanel>
+                            <Path x:Name="arrow" HorizontalAlignment="Left" Fill="Transparent" 
+                                  Stroke="{StaticResource Expander.Static.Arrow.Stroke}" StrokeThickness="1" VerticalAlignment="Top"  
+                                  Data="{StaticResource ExpanderToggleButtonArrow}" Height="4.5" Stretch="Fill" Width="8" 
+                                  RenderTransformOrigin="0.5,0.5" Margin="4,10,0,0">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform X="0.18" Y="0.43"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="{Binding Name}" Margin="5 5 0 5"/>
+                        </DockPanel>
                         
-                        <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch" SelectionMode="Single" SelectedIndex="0"
+                        <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch"
+                                 SelectionMode="Single" SelectedIndex="0"
                                  SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepository, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
@@ -73,15 +90,29 @@
                             
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" Margin="10,0,0,0"/>
+                                    <TextBlock Text="{Binding Name}" Margin="15,5,0,5"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                            <Setter Property="Margin" TargetName="arrow" Value="4,12,0,0"/>
+                            <Setter Property="RenderTransform" TargetName="arrow">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="135"/>
+                                        <TranslateTransform X="0.18" Y="0.43"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Fill" TargetName="arrow" Value="{StaticResource Expander.Static.Arrow.Stroke}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
         <views:ExtensionsView Grid.Row="0" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
         
         <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}"
