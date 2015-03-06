@@ -15,7 +15,8 @@
         </Grid.RowDefinitions>
 
         <ListBox  Grid.Row="0" ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}"
-                  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  BorderThickness="0" Background="#F8F8F8">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0" Padding="4 4 4 8">

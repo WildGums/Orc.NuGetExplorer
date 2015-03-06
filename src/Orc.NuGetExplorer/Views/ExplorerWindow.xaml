@@ -5,7 +5,7 @@
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                   xmlns:local="clr-namespace:Orc.NuGetExplorer"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                  Width="800" Height="400" SizeToContent="Manual"
+                  Width="900" Height="500" SizeToContent="Manual"
                   x:ClassModifier="internal">
     
     <catel:DataWindow.Resources>
@@ -14,11 +14,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -82,8 +81,9 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
-        <views:ExtensionsView Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
-        <GridSplitter Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HorizontalGridSplitterStyle}" />
+        
+        <views:ExtensionsView Grid.Row="0" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
+        
+        <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}" HorizontalAlignment="Right" />
     </Grid>
 </catel:DataWindow>

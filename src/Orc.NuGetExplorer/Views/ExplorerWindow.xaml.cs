@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer.Views
         /// Initializes a new instance of the <see cref="ExplorerWindow"/> class.
         /// </summary>
         public ExplorerWindow(ExplorerViewModel viewModel)
-            : base(viewModel, DataWindowMode.Close)
+            : base(viewModel, DataWindowMode.Custom)
         {
             InitializeComponent();
         }
