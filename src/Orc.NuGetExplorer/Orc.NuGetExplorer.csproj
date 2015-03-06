@@ -109,6 +109,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\BindableRichTextBox.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Extensions\InlineExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
@@ -131,8 +132,10 @@
     <Compile Include="Services\Interfaces\IRepoNavigationService.cs" />
     <Compile Include="Services\Interfaces\INuGetConfigurationService.cs" />
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
+    <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
+    <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="Services\NuGetPackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />

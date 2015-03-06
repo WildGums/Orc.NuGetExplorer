@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.Windows.Documents;
     using Catel;
 
     public static class StringExtensions
@@ -17,6 +18,11 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => packageSourceName);
 
             return string.Format("packageSource_{0}", packageSourceName);
+        }
+
+        public static Inline ToInline(this string text)
+        {
+            return new Run(text);
         }
         #endregion
     }
