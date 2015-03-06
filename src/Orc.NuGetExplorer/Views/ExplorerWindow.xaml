@@ -84,6 +84,7 @@
         
         <views:ExtensionsView Grid.Row="0" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
         
-        <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}" HorizontalAlignment="Right" />
+        <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}"
+                      HorizontalAlignment="Right" IsEnabled="False"/>
     </Grid>
 </catel:DataWindow>

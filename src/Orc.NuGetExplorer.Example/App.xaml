@@ -55,7 +55,9 @@
                     <Setter Property="BorderBrush" Value="LightGray" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource AccentColorBrush}" />
+                    <Setter Property="Background" Value="{StaticResource AccentColorBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush}" />
+                    <Setter Property="Foreground" Value="White" />
                 </Trigger>
             </Style.Triggers>
         </Style>

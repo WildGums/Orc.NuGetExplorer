@@ -17,7 +17,7 @@
             <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Background="#F8F8F8">
+        <StackPanel Grid.Row="0">
             <CheckBox IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupports}"
                       Content="Enable prerelease packages" Margin="5"/>
         </StackPanel>
@@ -27,6 +27,9 @@
                                SelectedPackage="{Binding SelectedPackage}" 
                                ButtonHeader="{Binding ActionName}"
                                PackageCommand="{Binding PackageAction}"/>
+
+        <GridSplitter Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}" 
+                      HorizontalAlignment="Left" IsEnabled="False" />
 
         <catel:WatermarkTextBox Grid.Row="0" Grid.Column="1" Margin="5" Watermark="Search Online" Text="{Binding SearchFilter}">
             <i:Interaction.Behaviors>

@@ -11,7 +11,7 @@
             <Setter Property="Margin" Value="2 0 2 0" />
         </Style>
     </UserControl.Resources>
-    <StackPanel Orientation="Horizontal" Margin="5">
+    <StackPanel Orientation="Horizontal" Margin="5 5 5 10">
         <StackPanel.Resources>
             <local:DataContextSpy x:Key="dataContextSpy" />
         </StackPanel.Resources>
