@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepoCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">           
+        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single">           
             <ListBox.Resources>
                 <local:DataContextSpy x:Key="dataContextSpy" />
             </ListBox.Resources>
@@ -40,7 +40,7 @@
                         </Grid>
                         
                         <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch" SelectionMode="Single" SelectedIndex="0"
-                                 SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepo, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
+                                 SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepository, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
                                 <local:FocusOnVisibleBehavior/>
@@ -59,6 +59,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepo}" ActionName="Action" />        
+        <views:ExtensionsView Grid.Column="1" NamedRepository="{Binding SelectedNamedRepository}" />        
     </Grid>
 </catel:DataWindow>

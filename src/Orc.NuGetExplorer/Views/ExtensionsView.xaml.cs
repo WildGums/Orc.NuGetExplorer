@@ -42,16 +42,6 @@ namespace Orc.NuGetExplorer.Views
         public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepo),
             typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public string ActionName
-        {
-            get { return (string)GetValue(ActionNameProperty); }
-            set { SetValue(ActionNameProperty, value); }
-        }
-
-        public static readonly DependencyProperty ActionNameProperty = DependencyProperty.Register("ActionName", typeof(string),
-            typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         #endregion
     }
 }

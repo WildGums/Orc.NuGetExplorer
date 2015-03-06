@@ -44,6 +44,9 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
             PackageAction = new Command(OnPackageActionExecute);
+
+            // (will be dynamically renamed)
+            ActionName = "Action";
         }
         #endregion
 
@@ -87,7 +90,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 accumList.AddRange(versionsOfPackage);
             } while (versionsOfPackage.Any());*/
 
-            UpdatePackages();
+            //UpdatePackages();
         }
 
         private void UninstallPackage()

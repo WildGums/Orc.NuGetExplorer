@@ -7,6 +7,8 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Windows;
+    using System.Windows.Documents;
     using Catel;
     using Catel.Fody;
     using Catel.MVVM;
@@ -19,19 +21,21 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => package);
 
             Package = package;
+            PackageSummary = new FlowDocument();
+            Paragraph p = new Paragraph(new Run(Package.Id));
+            p.FontSize = 14;
+            p.FontStyle = FontStyles.Oblique;
+
+            PackageSummary.Blocks.Add(p);
         }
         #endregion
 
         #region Properties
-        public override string Title
-        {
-            get { return Package.Title; }
-        }
 
         [Model(SupportIEditableObject = false)]
-        [Expose("Summary")]
-        [Expose("IconUrl")]
         public PackageDetails Package { get; private set; }
+
+        public FlowDocument PackageSummary { get; private set; }
         #endregion
     }
 }

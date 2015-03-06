@@ -32,11 +32,11 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         [Model]
         [Expose("RepoCategories")]
-        [Expose("SelectedRepoCategory")]
+        [Expose("SelectedRepositoryCategory")]
         public ReposNavigator Navigator { get; private set; }
 
         [ViewModelToModel("Navigator")]
-        public NamedRepo SelectedNamedRepo { get; set; }
+        public NamedRepo SelectedNamedRepository { get; set; }
         #endregion
 
         protected override async Task Initialize()

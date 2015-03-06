@@ -20,11 +20,12 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             Package = package;
-
-            Id = package.Id;
+            Version = package.Version;
+            Id = package.Id;           
             Title = package.GetFullName();
             Summary = package.Description;
             IconUrl = package.IconUrl;
+            Published = package.Published == null ? (DateTime?) null : package.Published.Value.LocalDateTime;
         }
         #endregion
 
@@ -34,6 +35,8 @@ namespace Orc.NuGetExplorer
         public string Summary { get; private set; }
         public Uri IconUrl { get; private set; }
         public IPackage Package { get; private set; }
+        public DateTime? Published { get; private set; }
+        public SemanticVersion Version { get; private set; }
         #endregion
     }
 }

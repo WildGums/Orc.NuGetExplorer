@@ -21,8 +21,8 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public IList<RepoCategory> RepoCategories { get; private set; }
-        public NamedRepo SelectedNamedRepo { get; set; }
-        public RepoCategory SelectedRepoCategory { get; set; }
+        public NamedRepo SelectedNamedRepository { get; set; }
+        public RepoCategory SelectedRepositoryCategory { get; set; }
         #endregion
     }
 }
