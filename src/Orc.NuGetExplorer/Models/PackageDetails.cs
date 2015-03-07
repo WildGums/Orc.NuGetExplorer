@@ -12,10 +12,10 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using NuGet;
 
-    internal class PackageDetails : ModelBase
+    public class PackageDetails : ModelBase
     {
         #region Constructors
-        public PackageDetails(IPackage package)
+        internal PackageDetails(IPackage package)
         {
             Argument.IsNotNull(() => package);
 
@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
         public string Title { get; private set; }
         public string Summary { get; private set; }
         public Uri IconUrl { get; private set; }
-        public IPackage Package { get; private set; }
+        internal IPackage Package { get; private set; }
         public DateTime? Published { get; private set; }
         public SemanticVersion Version { get; private set; }
         #endregion

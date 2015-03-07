@@ -9,12 +9,15 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Globalization;
+    using Catel;
 
     internal class PagingService : IPagingService
     {
         #region Methods
         public void UpdatePagingItems(Pager pager)
         {
+            Argument.IsNotNull(() => pager);
+
             if (pager.ItemsPerPage == 0)
             {
                 return;
@@ -32,6 +35,8 @@ namespace Orc.NuGetExplorer
 
         public void Step(Pager pager, int stepValue)
         {
+            Argument.IsNotNull(() => pager);
+
             var newIndex = pager.ItemIndex + pager.ItemsPerPage*stepValue;
             if (newIndex < 0)
             {
@@ -43,6 +48,8 @@ namespace Orc.NuGetExplorer
 
         public void MoveToLast(Pager pager)
         {
+            Argument.IsNotNull(() => pager);
+
             var pagesCount = (int)Math.Ceiling(pager.ItemsCount / (double)pager.ItemsPerPage);
             var i = (pagesCount - 1) * pager.ItemsPerPage;
             pager.ItemIndex = i;
@@ -50,6 +57,8 @@ namespace Orc.NuGetExplorer
 
         public void MoveToFirst(Pager pager)
         {
+            Argument.IsNotNull(() => pager);
+
             if (pager.ItemIndex == 0)
             {
                 return;
@@ -60,12 +69,16 @@ namespace Orc.NuGetExplorer
 
         public void StepTo(Pager pager, PagingItemInfo pagingItem)
         {
+            Argument.IsNotNull(() => pager);
+
             var stepValue = pagingItem.StepValue;
             Step(pager, stepValue);
         }
 
         private int GetPagesCount(Pager pager, out int leftPages, out int rightPages)
         {
+            Argument.IsNotNull(() => pager);
+
             leftPages = 0;
             rightPages = 0;
 
@@ -115,6 +128,8 @@ namespace Orc.NuGetExplorer
 
         private void FillRightPages(Pager pager, int rightPages, int currentPage)
         {
+            Argument.IsNotNull(() => pager);
+
             pager.RightPages.Clear();
 
             for (var i = 1; i <= rightPages; i++)
@@ -125,6 +140,8 @@ namespace Orc.NuGetExplorer
 
         private void FillLeftPages(Pager pager, int leftPagesCount, int currentPage)
         {
+            Argument.IsNotNull(() => pager);
+
             pager.LeftPages.Clear();
 
             for (var i = leftPagesCount; i > 0; i--)

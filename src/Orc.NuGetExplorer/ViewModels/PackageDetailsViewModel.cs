@@ -10,7 +10,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Catel;
-    using Catel.Logging;
     using Catel.MVVM;
 
     internal class PackageDetailsViewModel : ViewModelBase

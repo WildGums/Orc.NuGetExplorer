@@ -113,6 +113,7 @@
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
+    <Compile Include="Listeners\PackageManagementListenerBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\Pager.cs" />
     <Compile Include="NuGet\Interfaces\IPackageSource.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Factories\Interfaces\IRepositoryNavigationFactory.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\RepositoryCategoryType.cs" />
+    <Compile Include="Services\EventArgs\NuGetPackageOperationEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
     <Compile Include="Services\Extensions\IPleaseWaitServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
@@ -139,9 +141,11 @@
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
+    <Compile Include="Services\Interfaces\IPackageManagementListeningService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
+    <Compile Include="Services\PackageManagementListeningService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="NuGet\NuGetPackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />

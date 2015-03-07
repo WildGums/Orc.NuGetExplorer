@@ -24,6 +24,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<INuGetPackageManager, NuGetPackageManager>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();
+        serviceLocator.RegisterType<IPackageManagementListeningService, PackageManagementListeningService>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
     }
