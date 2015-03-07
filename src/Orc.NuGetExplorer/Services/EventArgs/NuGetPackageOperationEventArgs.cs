@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public string InstallPath { get; private set; }
-        public PackageDetails PackageDetails { get; private set; }
+        public IPackageDetails PackageDetails { get; private set; }
         #endregion
     }
 }

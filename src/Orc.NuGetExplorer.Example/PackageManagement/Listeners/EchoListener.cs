@@ -29,22 +29,22 @@ namespace Orc.NuGetExplorer.Example
         #region Methods
         protected override void OnPackageInstalled(object sender, NuGetPackageOperationEventArgs e)
         {
-            _echo.Lines.Add(string.Format("Installed {0}", e.PackageDetails.Title));
+            _echo.Lines.Add(string.Format("Installed {0}", e.PackageDetails.FullName));
         }
 
         protected override void OnPackageInstalling(object sender, NuGetPackageOperationEventArgs e)
         {
-            _echo.Lines.Add(string.Format("Installing {0}", e.PackageDetails.Title));
+            _echo.Lines.Add(string.Format("Installing {0}", e.PackageDetails.FullName));
         }
 
         protected override void OnPackageUninstalled(object sender, NuGetPackageOperationEventArgs e)
         {
-            _echo.Lines.Add(string.Format("Uninstalled {0}", e.PackageDetails.Title));
+            _echo.Lines.Add(string.Format("Uninstalled {0}", e.PackageDetails.FullName));
         }
 
         protected override void OnPackageUninstalling(object sender, NuGetPackageOperationEventArgs e)
         {
-            _echo.Lines.Add(string.Format("Uninstalling {0}", e.PackageDetails.Title));
+            _echo.Lines.Add(string.Format("Uninstalling {0}", e.PackageDetails.FullName));
         }
         #endregion
     }
