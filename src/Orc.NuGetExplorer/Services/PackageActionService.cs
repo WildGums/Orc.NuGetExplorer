@@ -67,8 +67,6 @@ namespace Orc.NuGetExplorer
 
         public bool CanExecute(RepositoryCategoryType repositoryCategory, PackageDetails packageDetails)
         {
-            Argument.IsNotNull(() => packageDetails);
-
             return true;
         }
 
