@@ -50,8 +50,8 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => pager);
 
-            var pagesCount = (int)Math.Ceiling(pager.ItemsCount / (double)pager.ItemsPerPage);
-            var i = (pagesCount - 1) * pager.ItemsPerPage;
+            var pagesCount = (int) Math.Ceiling(pager.ItemsCount/(double) pager.ItemsPerPage);
+            var i = (pagesCount - 1)*pager.ItemsPerPage;
             pager.ItemIndex = i;
         }
 

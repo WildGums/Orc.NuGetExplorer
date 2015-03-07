@@ -9,6 +9,8 @@ namespace Orc.NuGetExplorer
 {
     internal interface IRepositoryNavigationService
     {
+        #region Methods
         RepositoryNavigator GetNavigator();
+        #endregion
     }
 }

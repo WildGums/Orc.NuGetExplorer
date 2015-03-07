@@ -32,7 +32,7 @@ namespace Orc.NuGetExplorer
             return packageRepository.FindFiltered(string.Empty, allowPrereleaseVersions, skip, take);
         }
 
-        public static async Task<IEnumerable<IPackage>> FindFilteredAsync(this IPackageRepository packageRepository, string filter, 
+        public static async Task<IEnumerable<IPackage>> FindFilteredAsync(this IPackageRepository packageRepository, string filter,
             bool allowPrereleaseVersions, int skip = 0, int take = 10)
         {
             return await Task.Factory.StartNew(() => FindFiltered(packageRepository, filter, allowPrereleaseVersions, skip, take));

@@ -28,9 +28,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public bool IsSelected { get; set; }
-
         public string Name { get; set; }
-
         public IList<NamedRepository> Repos { get; private set; }
         #endregion
     }

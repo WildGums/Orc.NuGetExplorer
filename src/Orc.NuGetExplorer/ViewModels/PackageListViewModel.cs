@@ -15,7 +15,6 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Constructors
         public PackageListViewModel()
         {
-            
         }
         #endregion
 

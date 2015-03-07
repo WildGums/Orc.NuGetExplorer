@@ -17,17 +17,17 @@ namespace Orc.NuGetExplorer
         {
         }
 
-        public NuGetPackageManager(IPackageRepository sourceRepository, string path) 
+        public NuGetPackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
         }
 
-        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem) 
+        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem)
             : base(sourceRepository, pathResolver, fileSystem)
         {
         }
 
-        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem, IPackageRepository localRepository) 
+        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem, IPackageRepository localRepository)
             : base(sourceRepository, pathResolver, fileSystem, localRepository)
         {
         }

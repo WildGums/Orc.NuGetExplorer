@@ -3,13 +3,19 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.Example
 {
     using Models;
 
     public class EchoService : IEchoService
     {
+        #region Fields
         private PackageManagementEcho _echo;
+        #endregion
+
+        #region Methods
         public PackageManagementEcho GetPackageManagementEcho()
         {
             if (_echo == null)
@@ -19,5 +25,6 @@ namespace Orc.NuGetExplorer.Example
 
             return _echo;
         }
+        #endregion
     }
 }

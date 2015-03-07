@@ -33,9 +33,11 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         }
         #endregion
 
+        #region Properties
         [Model]
         [Expose("Lines")]
         public PackageManagementEcho Echo { get; private set; }
+        #endregion
 
         #region Commands
         /// <summary>

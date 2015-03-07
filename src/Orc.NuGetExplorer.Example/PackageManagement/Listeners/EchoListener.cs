@@ -12,6 +12,10 @@ namespace Orc.NuGetExplorer.Example
 
     public class EchoListener : PackageManagementListenerBase
     {
+        #region Fields
+        private readonly PackageManagementEcho _echo;
+        #endregion
+
         #region Constructors
         public EchoListener(IPackageManagementListeningService packageManagementListeningService, IEchoService echoService)
             : base(packageManagementListeningService)
@@ -22,7 +26,7 @@ namespace Orc.NuGetExplorer.Example
         }
         #endregion
 
-        private PackageManagementEcho _echo;
+        #region Methods
         protected override void OnPackageInstalled(object sender, NuGetPackageOperationEventArgs e)
         {
             _echo.Lines.Add(string.Format("Installed {0}", e.PackageDetails.Title));
@@ -42,5 +46,6 @@ namespace Orc.NuGetExplorer.Example
         {
             _echo.Lines.Add(string.Format("Uninstalling {0}", e.PackageDetails.Title));
         }
+        #endregion
     }
 }

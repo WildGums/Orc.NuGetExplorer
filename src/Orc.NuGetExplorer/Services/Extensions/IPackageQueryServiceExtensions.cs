@@ -14,6 +14,7 @@ namespace Orc.NuGetExplorer
 
     internal static class IPackageQueryServiceExtensions
     {
+        #region Methods
         public static async Task<IEnumerable<PackageDetails>> GetPackagesAsync(this IPackageQueryService packageQueryService,
             IPackageRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
         {
@@ -28,5 +29,6 @@ namespace Orc.NuGetExplorer
 
             return await Task.Factory.StartNew(() => packageQueryService.GetVersionsOfPackage(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));
         }
+        #endregion
     }
 }

@@ -12,10 +12,12 @@ namespace Orc.NuGetExplorer
 
     internal class NamedRepository : ModelBase
     {
+        #region Constructors
         public NamedRepository()
         {
-            
         }
+        #endregion
+
         #region Properties
         public string Name { get; set; }
         public IPackageRepository Value { get; set; }

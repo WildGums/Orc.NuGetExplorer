@@ -44,7 +44,7 @@ namespace Orc.NuGetExplorer
             {
                 repoCategory.Repos.Add(new NamedRepository
                 {
-                    Name = repository.Key, 
+                    Name = repository.Key,
                     Value = repository.Value,
                     RepositoryCategory = category
                 });

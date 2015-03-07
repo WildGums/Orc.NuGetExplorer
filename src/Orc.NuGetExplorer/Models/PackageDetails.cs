@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
 
             Package = package;
             Version = package.Version;
-            Id = package.Id;           
+            Id = package.Id;
             Title = package.GetFullName();
             Summary = package.Description;
             IconUrl = package.IconUrl;

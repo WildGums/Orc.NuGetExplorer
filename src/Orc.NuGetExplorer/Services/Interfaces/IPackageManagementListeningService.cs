@@ -11,9 +11,11 @@ namespace Orc.NuGetExplorer
 
     public interface IPackageManagementListeningService
     {
+        #region Methods
         event EventHandler<NuGetPackageOperationEventArgs> PackageInstalling;
         event EventHandler<NuGetPackageOperationEventArgs> PackageInstalled;
         event EventHandler<NuGetPackageOperationEventArgs> PackageUninstalled;
         event EventHandler<NuGetPackageOperationEventArgs> PackageUninstalling;
+        #endregion
     }
 }
