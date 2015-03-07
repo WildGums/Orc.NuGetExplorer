@@ -4,14 +4,21 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:local="clr-namespace:Orc.NuGetExplorer"
                    x:ClassModifier="internal">
-    
+
     <UserControl.Resources>
-        <Style x:Key="ArrowButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Height" Value="20" />
-            <Setter Property="Padding" Value="4 0 4 4" />
-            <Setter Property="Margin" Value="2 0 2 0" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="ArrowButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Height" Value="20" />
+                <Setter Property="Padding" Value="4 0 4 4" />
+                <Setter Property="Margin" Value="2 0 2 0" />
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
+
     <StackPanel Orientation="Horizontal" Margin="5 5 5 10">
         <StackPanel.Resources>
             <local:DataContextSpy x:Key="dataContextSpy" />
@@ -19,7 +26,7 @@
 
         <Button Content="&lt;&lt;" Command="{Binding MoveToFirst}" Style="{StaticResource ArrowButtonStyle}"/>
         <Button Content="&lt;" Command="{Binding MoveBack}" Style="{StaticResource ArrowButtonStyle}"/>
-        
+
         <ItemsControl ItemsSource="{Binding LeftPages}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -36,8 +43,8 @@
         </ItemsControl>
 
         <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" Style="{StaticResource HyperLinkTextBlockStyle}" />
-        
-        <ItemsControl ItemsSource="{Binding RightPages}">            
+
+        <ItemsControl ItemsSource="{Binding RightPages}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -53,6 +60,6 @@
         </ItemsControl>
 
         <Button Content="&gt;" Command="{Binding MoveForward}" Style="{StaticResource ArrowButtonStyle}"/>
-        <Button Content="&gt;&gt;" Command="{Binding MoveToLast}" Style="{StaticResource ArrowButtonStyle}"/>        
+        <Button Content="&gt;&gt;" Command="{Binding MoveToLast}" Style="{StaticResource ArrowButtonStyle}"/>
     </StackPanel>
 </catel:UserControl>

@@ -6,6 +6,14 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    x:ClassModifier="internal">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -41,7 +49,7 @@
         <views:PagingView Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"
                           HorizontalContentAlignment="Center" Background="#F8F8F8"
                           ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
-        
+
         <views:PackageDetailsView Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding SelectedPackage}" />
     </Grid>
 

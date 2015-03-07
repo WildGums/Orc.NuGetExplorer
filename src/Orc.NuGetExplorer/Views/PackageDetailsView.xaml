@@ -8,4 +8,5 @@
     <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" BorderThickness="0"
                                   TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"
                                   VerticalScrollBarVisibility="Auto" Margin="4 8 4 4"/>
+    
 </catel:UserControl>
