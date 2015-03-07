@@ -24,29 +24,30 @@ namespace Orc.NuGetExplorer.ViewModels
         private static bool _updatingRepository;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
-        private readonly INuGetPackageManager _packageManager;
+        private readonly IPackageActionService _packageActionService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
         public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
-            INuGetPackageManager packageManager, IPleaseWaitService pleaseWaitService)
+            IPleaseWaitService pleaseWaitService, IPackageActionService packageActionService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
-            Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => pleaseWaitService);
+            Argument.IsNotNull(() => packageActionService);
 
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
-            _packageManager = packageManager;
             _pleaseWaitService = pleaseWaitService;
+            _packageActionService = packageActionService;
 
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
-            PackageAction = new Command(OnPackageActionExecute);
+            PackageAction = new Command(OnPackageActionExecute, OnPackageActionCanExecute);
         }
+        
         #endregion
 
         #region Properties
@@ -102,18 +103,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             if (NamedRepository != null)
             {
-                switch (NamedRepository.RepositoryCategory)
-                {
-                    case RepositoryCategoryType.Installed:
-                        ActionName = "Uninstall";
-                        break;
-                    case RepositoryCategoryType.Online:
-                        ActionName = "Install";
-                        break;
-                    case RepositoryCategoryType.Update:
-                        ActionName = "Update";
-                        break;
-                }
+                ActionName = _packageActionService.GetActionName(NamedRepository.RepositoryCategory);
             }
             await UpdateRepository();
         }
@@ -186,38 +176,16 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            using (_pleaseWaitService.WaitingScope())
+            _packageActionService.Execute(NamedRepository.RepositoryCategory, SelectedPackage, IsPrereleaseAllowed);
+            if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
-                switch (NamedRepository.RepositoryCategory)
-                {
-                    case RepositoryCategoryType.Installed:
-                        UninstallPackage();
-                        break;
-                    case RepositoryCategoryType.Online:
-                        InstallPackage();
-                        break;
-                    case RepositoryCategoryType.Update:
-                        UpdatePackages();
-                        break;
-                }
-            }
+                Search();
+            }             
         }
 
-        private void UninstallPackage()
+        private bool OnPackageActionCanExecute()
         {
-            _packageManager.UninstallPackage(SelectedPackage.Package, true, false);
-            Search();
-        }
-
-        private void InstallPackage()
-        {
-            _packageManager.InstallPackage(SelectedPackage.Package, false, IsPrereleaseAllowed);
-        }
-
-        private void UpdatePackages()
-        {
-            _packageManager.UpdatePackage(SelectedPackage.Package, true, IsPrereleaseAllowed);
-            Search();
+            return _packageActionService.CanExecute(NamedRepository.RepositoryCategory, SelectedPackage);
         }
         #endregion
     }

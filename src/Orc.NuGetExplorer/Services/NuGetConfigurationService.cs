@@ -50,6 +50,8 @@ namespace Orc.NuGetExplorer
 
         public IEnumerable<IPackageSource> LoadPackageSources()
         {
+            Log.Debug("Loading package sources");
+
             var packageSourceNames = LoadPackageSourceNames();
             var result = new List<IPackageSource>();
 
@@ -86,6 +88,8 @@ namespace Orc.NuGetExplorer
                 result.AddRange(LoadPackageSources());
             }
 
+
+            Log.Debug("Package sources has been loaded");
             return result;
         }
 

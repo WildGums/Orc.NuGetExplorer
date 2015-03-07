@@ -142,7 +142,9 @@
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
     <Compile Include="Services\Interfaces\IPackageManagementListeningService.cs" />
+    <Compile Include="Services\Interfaces\IPackageActionService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
+    <Compile Include="Services\PackageActionService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackageManagementListeningService.cs" />
