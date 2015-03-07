@@ -36,7 +36,7 @@ namespace Orc.NuGetExplorer
         public Uri IconUrl { get; private set; }
         internal IPackage Package { get; private set; }
         public DateTime? Published { get; private set; }
-        public SemanticVersion Version { get; private set; }
+        internal SemanticVersion Version { get; private set; }
         #endregion
     }
 }

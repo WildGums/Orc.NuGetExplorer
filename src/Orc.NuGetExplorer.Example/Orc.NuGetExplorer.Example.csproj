@@ -99,7 +99,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\PackageManagementEcho.cs" />
     <Compile Include="ModuleInitializer.cs" />
+    <Compile Include="PackageManagement\Listeners\EchoListener.cs" />
+    <Compile Include="Services\EchoService.cs" />
+    <Compile Include="Services\Interfaces\IEchoService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -113,10 +117,7 @@
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>

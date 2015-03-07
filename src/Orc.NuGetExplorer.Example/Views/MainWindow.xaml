@@ -14,9 +14,11 @@
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</catel:StackGrid.RowDefinitions>
 		
 		<TextBlock Text="{Binding Title}" />
         <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
+        <ListBox ItemsSource="{Binding Lines}"/>
     </catel:StackGrid>
 </catel:DataWindow>

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Listeners
+namespace Orc.NuGetExplorer
 {
     using Catel;
 

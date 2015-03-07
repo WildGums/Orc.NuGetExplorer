@@ -9,7 +9,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 {
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Fody;
     using Catel.MVVM;
+    using Models;
 
     public class MainViewModel : ViewModelBase
     {
@@ -18,14 +20,22 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #endregion
 
         #region Constructors
-        public MainViewModel(IPackagesUIService packagesUiService)
+        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService)
         {
             Argument.IsNotNull(() => packagesUiService);
+            Argument.IsNotNull(() => echoService);
+
             _packagesUiService = packagesUiService;
+
+            Echo = echoService.GetPackageManagementEcho();
 
             ShowExplorer = new TaskCommand(OnShowExplorerExecute);
         }
         #endregion
+
+        [Model]
+        [Expose("Lines")]
+        public PackageManagementEcho Echo { get; private set; }
 
         #region Commands
         /// <summary>
