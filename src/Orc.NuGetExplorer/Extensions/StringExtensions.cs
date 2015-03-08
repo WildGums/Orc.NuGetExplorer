@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows.Documents;
     using Catel;
 
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         #region Methods
         public static string ToPackageSourceKey(this string packageSourceName)
