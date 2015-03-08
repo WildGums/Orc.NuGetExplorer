@@ -88,7 +88,6 @@ namespace Orc.NuGetExplorer
                 result.AddRange(LoadPackageSources());
             }
 
-
             Log.Debug("Package sources has been loaded");
             return result;
         }
@@ -127,6 +126,7 @@ namespace Orc.NuGetExplorer
             using (_configurationService.SuspendNotifications())
             {
                 var packageSourceKey = name.ToPackageSourceKey();
+
                 _configurationService.SetValue(packageSourceKey, string.Empty);
             }
 

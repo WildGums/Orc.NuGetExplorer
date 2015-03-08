@@ -17,7 +17,13 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNullOrWhitespace(() => packageSourceName);
 
-            return string.Format("packageSource_{0}", packageSourceName);
+            var value = string.Format("packageSource_{0}", packageSourceName);
+
+            // Replace special characters
+            value = value.Replace(":", "_");
+            value = value.Replace(" ", "_");
+
+            return value;
         }
 
         public static Inline ToInline(this string text)
