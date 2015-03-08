@@ -107,6 +107,7 @@ namespace Orc.NuGetExplorer
             {
                 var packageSourceKey = name.ToPackageSourceKey();
                 var value = string.Format("{0}|{1}|{2}|{3}", source, name, isEnabled, isOfficial);
+
                 _configurationService.SetValue(packageSourceKey, value);
             }
 
