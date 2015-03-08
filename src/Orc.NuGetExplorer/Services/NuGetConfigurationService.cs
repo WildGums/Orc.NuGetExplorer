@@ -74,8 +74,8 @@ namespace Orc.NuGetExplorer
 
                 var source = stringValues[0].Trim();
                 var name = stringValues[1].Trim();
-                var isEnabled = bool.Parse(stringValues[2].Trim());
-                var isOfficial = bool.Parse(stringValues[3].Trim());
+                var isEnabled = StringToObjectHelper.ToBool(stringValues[2].Trim());
+                var isOfficial = StringToObjectHelper.ToBool(stringValues[3].Trim());
 
                 var packageSource = new NuGetPackageSource(source, name, isEnabled, isOfficial);
 
