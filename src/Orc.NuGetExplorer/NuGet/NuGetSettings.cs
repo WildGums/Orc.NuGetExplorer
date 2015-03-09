@@ -41,12 +41,12 @@ namespace Orc.NuGetExplorer
 
         public IList<SettingValue> GetValues(string section, bool isPath)
         {
-            return GetNuGetValues(section, section, isPath);
+            return GetNuGetValues(section, isPath);
         }
 
         public IList<SettingValue> GetNestedValues(string section, string subsection)
         {
-            return GetNuGetValues(section);
+            return GetNuGetValues(section, subsection);
         }
 
         public void SetValue(string section, string key, string value)
@@ -66,11 +66,19 @@ namespace Orc.NuGetExplorer
 
         public bool DeleteValue(string section, string key)
         {
+            return true;
             throw new System.NotImplementedException();
         }
 
         public bool DeleteSection(string section)
         {
+            /*var sectionListKey = GetSectionListKey();
+            var sectionsString = _configurationService.GetValue<string>(sectionListKey);
+            if (string.IsNullOrEmpty(sectionsString))
+            {
+                
+            }*/
+            return true;
             throw new System.NotImplementedException();
         }
 
@@ -96,9 +104,9 @@ namespace Orc.NuGetExplorer
 
         private void UpdateKeysList(IList<KeyValuePair<string, string>> values, string valuesListKey)
         {
-            var valueKeysString = _configurationService.GetValue(valuesListKey, string.Empty);
+            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
 
-            var existedKeys = valueKeysString.Split(Separator);
+            var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
             var keysToSave = values.Select(x => x.Key);
 
             var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
@@ -113,7 +121,11 @@ namespace Orc.NuGetExplorer
         private IList<SettingValue> GetNuGetValues(string section, bool isPath = false)
         {
             var valuesListKey = GetSectionValuesListKey(section);
-            var valueKeysString = _configurationService.GetValue(valuesListKey, string.Empty);
+            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
+            if (string.IsNullOrEmpty(valueKeysString))
+            {
+                return null;
+            }
             var keys = valueKeysString.Split(Separator);
 
             return keys.Select(key => GetNuGetValue(section, key, isPath)).ToList();
@@ -122,7 +134,12 @@ namespace Orc.NuGetExplorer
         private IList<SettingValue> GetNuGetValues(string section, string subsection, bool isPath = false)
         {
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            var valueKeysString = _configurationService.GetValue(valuesListKey, string.Empty);
+            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
+            if (string.IsNullOrEmpty(valueKeysString))
+            {
+                return null;
+            }
+
             var keys = valueKeysString.Split(Separator);
 
             return keys.Select(key => GetNuGetValue(section, subsection, key, isPath)).ToList();
@@ -131,7 +148,7 @@ namespace Orc.NuGetExplorer
         private SettingValue GetNuGetValue(string section, string key, bool isPath)
         {
             var combinedKey = GetSectionValueKey(section, key);
-            var value = _configurationService.GetValue(combinedKey, string.Empty);
+            var value = _configurationService.GetValue<string>(combinedKey);
 
             if (isPath)
             {
@@ -144,7 +161,7 @@ namespace Orc.NuGetExplorer
         private SettingValue GetNuGetValue(string section, string subsection, string key, bool isPath)
         {
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
-            var value = _configurationService.GetValue(combinedKey, string.Empty);
+            var value = _configurationService.GetValue<string>(combinedKey);
 
             if (isPath)
             {
@@ -168,22 +185,27 @@ namespace Orc.NuGetExplorer
 
         private string GetSectionValueKey(string section, string key)
         {
-            return string.Format("NuGetSection_{0}_value_{1}", section, key);
+            return string.Format("NuGet_{0}_value_{1}", section, key);
         }
 
         private string GetSubsectionValueKey(string section, string subsection, string key)
         {
-            return string.Format("NuGetSection_{0}_subsection_{1}_value_{2}", section, subsection, key);
+            return string.Format("NuGet_{0}_{1}_value_{2}", section, subsection, key);
         }
 
         private static string GetSectionValuesListKey(string section)
         {
-            return string.Format("NuGetSection_{0}_values", section);
+            return string.Format("NuGet_{0}_values", section);
         }
 
         private static string GetSubsectionValuesListKey(string section, string subsection)
         {
-            return string.Format("NuGetSection_{0}_subsection_{1}_values", section, subsection);
+            return string.Format("NuGet_{0}_{1}_values", section, subsection);
+        }
+
+        private static string GetSectionListKey()
+        {
+            return "NuGet_sections";
         }
         #endregion
     }

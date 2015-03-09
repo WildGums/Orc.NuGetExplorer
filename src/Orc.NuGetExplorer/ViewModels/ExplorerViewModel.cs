@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService, ITypeFactory typeFactory)
+        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService, ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
             Argument.IsNotNull(() => repositoryNavigationService);
             Argument.IsNotNull(() => typeFactory);

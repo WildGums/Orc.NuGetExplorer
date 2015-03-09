@@ -12,13 +12,13 @@ namespace Orc.NuGetExplorer
 
     internal class CredentialProvider : ICredentialProvider
     {
-        private readonly IAuthenticationProvider _authenticationProvider;
+        private readonly IAutentificationProvider _autentificationProvider;
 
-        public CredentialProvider(IAuthenticationProvider authenticationProvider)
+        public CredentialProvider(IAutentificationProvider autentificationProvider)
         {
-            Argument.IsNotNull(() => authenticationProvider);
+            Argument.IsNotNull(() => autentificationProvider);
 
-            _authenticationProvider = authenticationProvider;
+            _autentificationProvider = autentificationProvider;
         }
 
         public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CredentialType credentialType, bool retrying)
@@ -26,9 +26,9 @@ namespace Orc.NuGetExplorer
             switch (credentialType)
             {
                 case CredentialType.ProxyCredentials:
-                    return _authenticationProvider.GetProxyCredentials(uri, proxy);
+                    return _autentificationProvider.GetProxyCredentials(uri, proxy);
                 case CredentialType.RequestCredentials:
-                    return _authenticationProvider.GetRequestCredentials(uri, proxy);
+                    return _autentificationProvider.GetRequestCredentials(uri, proxy);
             }
 
             return null;

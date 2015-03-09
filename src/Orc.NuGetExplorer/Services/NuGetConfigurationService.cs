@@ -8,11 +8,11 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
     using Catel.Logging;
+    using NuGet;
 
     internal class NuGetConfigurationService : INuGetConfigurationService
     {
@@ -21,14 +21,17 @@ namespace Orc.NuGetExplorer
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
+        private readonly IPackageSourceProvider _packageSourceProvider;
         #endregion
 
         #region Constructors
-        public NuGetConfigurationService(IConfigurationService configurationService)
+        public NuGetConfigurationService(IConfigurationService configurationService, IPackageSourceProvider packageSourceProvider)
         {
             Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => packageSourceProvider);
 
             _configurationService = configurationService;
+            _packageSourceProvider = packageSourceProvider;
 
             var applicationDataDirectory = Path.GetApplicationDataDirectory();
             _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
@@ -50,106 +53,22 @@ namespace Orc.NuGetExplorer
 
         public IEnumerable<IPackageSource> LoadPackageSources()
         {
-            Log.Debug("Loading package sources");
-
-            var packageSourceNames = LoadPackageSourceNames();
-            var result = new List<IPackageSource>();
-
-            foreach (var sourceName in packageSourceNames)
-            {
-                var sourceKey = sourceName.ToPackageSourceKey();
-                var sourceValue = _configurationService.GetValue(sourceKey, string.Empty);
-                if (string.IsNullOrWhiteSpace(sourceValue))
-                {
-                    Log.Warning("The information about package {0} was not found.", sourceName);
-                    continue;
-                }
-
-                var stringValues = sourceValue.Split(Separator);
-                if (stringValues.Length != 4)
-                {
-                    Log.Warning("The information about package {0} contains wrong amount of data. Must be 4 values separated by \'|\' (string|string|boolean|boolean).", sourceName);
-                    continue;
-                }
-
-                var source = stringValues[0].Trim();
-                var name = stringValues[1].Trim();
-                var isEnabled = StringToObjectHelper.ToBool(stringValues[2].Trim());
-                var isOfficial = StringToObjectHelper.ToBool(stringValues[3].Trim());
-
-                var packageSource = new NuGetPackageSource(source, name, isEnabled, isOfficial);
-
-                result.Add(packageSource);
-            }
-
-            if (!result.Any())
-            {
-                SavePackageSource("NuGet", "http://www.nuget.org/api/v2/");
-                result.AddRange(LoadPackageSources());
-            }
-
-            Log.Debug("Package sources has been loaded");
-
-            return result;
+            return _packageSourceProvider.LoadPackageSources().ToPackageSourceInterfaces();
         }
 
         public void SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
         {
             Argument.IsNotNullOrWhitespace(() => name);
+            Argument.IsNotNullOrWhitespace(() => source);
 
-            var packageSourceNames = LoadPackageSourceNames().ToList();
-            if (!packageSourceNames.Contains(name))
-            {
-                packageSourceNames.Add(name);
-            }
-
-            using (_configurationService.SuspendNotifications())
-            {
-                var packageSourceKey = name.ToPackageSourceKey();
-                var value = string.Format("{0}|{1}|{2}|{3}", source, name, isEnabled, isOfficial);
-
-                _configurationService.SetValue(packageSourceKey, value);
-            }
-
-            SavePackageSourceNames(packageSourceNames);
+            _packageSourceProvider.SavePackageSources(new[] {new PackageSource(source, name, isEnabled, isOfficial)});
         }
 
-        public void DeletePackageSource(string name)
+        public void DeletePackageSource(string name, string source)
         {
             Argument.IsNotNullOrWhitespace(() => name);
 
-            var packageSourceNames = LoadPackageSourceNames().ToList();
-            if (!packageSourceNames.Contains(name))
-            {
-                return;
-            }
-
-            using (_configurationService.SuspendNotifications())
-            {
-                var packageSourceKey = name.ToPackageSourceKey();
-
-                _configurationService.SetValue(packageSourceKey, string.Empty);
-            }
-
-            SavePackageSourceNames(packageSourceNames.Where(x => !string.Equals(name, x)));
-        }
-
-        private IEnumerable<string> LoadPackageSourceNames()
-        {
-            var packageSourcesString = _configurationService.GetValue(Settings.PackageSources, string.Empty);
-            if (string.IsNullOrWhiteSpace(packageSourcesString))
-            {
-                return Enumerable.Empty<string>();
-            }
-
-            var packageSourceNames = packageSourcesString.Split(Separator);
-            return packageSourceNames;
-        }
-
-        private void SavePackageSourceNames(IEnumerable<string> packageSourceNames)
-        {
-            var packageSourcesString = string.Join(Separator.ToString(), packageSourceNames);
-            _configurationService.SetValue(Settings.PackageSources, packageSourcesString);
+            _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
         }
         #endregion
     }

@@ -7,14 +7,13 @@
 
 namespace Orc.NuGetExplorer
 {
-    using Extensions;
     using NuGet;
 
     internal class NuGetPackageSourceProvider : PackageSourceProvider
     {
         #region Constructors
         public NuGetPackageSourceProvider(ISettings settingsManager, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
-            : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToNuGetPackageSources())
+            : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToPackageSourceInstances())
         {
         }
         #endregion
