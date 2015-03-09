@@ -134,6 +134,7 @@
     <Compile Include="Services\Enums\FeedVerificationResult.cs" />
     <Compile Include="Services\Enums\RepositoryCategoryType.cs" />
     <Compile Include="Services\EventArgs\NuGetPackageOperationEventArgs.cs" />
+    <Compile Include="Services\Extensions\INuGetFeedVerificationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
     <Compile Include="Services\Extensions\IPleaseWaitServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />

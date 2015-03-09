@@ -9,8 +9,9 @@ namespace Orc.NuGetExplorer
 {
     public enum FeedVerificationResult
     {
+        Unknown,
         Valid,
-        AuthenticaitonRequired,
+        AuthenticationRequired,
         Invalid
     }
 }

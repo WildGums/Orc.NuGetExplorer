@@ -35,7 +35,7 @@ namespace Orc.NuGetExplorer
             try
             {
                 var repository = _packageRepositoryFactory.CreateRepository(source);
-                var packages = repository.GetPackages().Take(1).ToArray();
+                var packagesCount = repository.GetPackages().Take(1).Count();
             }
             catch (WebException ex)
             {
@@ -44,7 +44,7 @@ namespace Orc.NuGetExplorer
                     var response = ex.Response as HttpWebResponse;
                     if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        result = FeedVerificationResult.AuthenticaitonRequired;
+                        result = FeedVerificationResult.AuthenticationRequired;
                     }
                     else
                     {
