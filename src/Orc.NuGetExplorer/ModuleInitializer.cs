@@ -27,6 +27,11 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageManagementListeningService, PackageManagementListeningService>();
         serviceLocator.RegisterType<IPackageActionService, PackageActionService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
+        serviceLocator.RegisterType<ISettings, NuGetSettings>();
+        serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
+        serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
+        serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
+        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
     }

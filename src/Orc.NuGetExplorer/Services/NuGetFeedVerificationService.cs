@@ -32,8 +32,11 @@ namespace Orc.NuGetExplorer
         public FeedVerificationResult VerifyFeed(string source)
         {
             var result = FeedVerificationResult.Valid;
+            var originalCredentialProvider = HttpClient.DefaultCredentialProvider;
             try
             {
+                HttpClient.DefaultCredentialProvider = NullCredentialProvider.Instance;
+
                 var repository = _packageRepositoryFactory.CreateRepository(source);
                 var packagesCount = repository.GetPackages().Take(1).Count();
             }
@@ -59,6 +62,10 @@ namespace Orc.NuGetExplorer
             catch (Exception)
             {
                 result = FeedVerificationResult.Invalid;
+            }
+            finally
+            {
+                HttpClient.DefaultCredentialProvider = originalCredentialProvider;
             }
 
             return result;

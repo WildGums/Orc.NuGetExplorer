@@ -11,24 +11,31 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
+    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
+    using NuGet;
 
     internal class ExplorerViewModel : ViewModelBase
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IRepositoryNavigationService _repositoryNavigationService;
+        private readonly ITypeFactory _typeFactory;
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService)
+        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => repositoryNavigationService);
+            Argument.IsNotNull(() => typeFactory);
 
             _repositoryNavigationService = repositoryNavigationService;
+            _typeFactory = typeFactory;
 
             Navigator = _repositoryNavigationService.GetNavigator();
+
+            HttpClient.DefaultCredentialProvider = _typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
         }
         #endregion
 

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageSource.cs" company="Wild Gums">
+// <copyright file="IAuthenticationProvider.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,13 +7,14 @@
 
 namespace Orc.NuGetExplorer
 {
-    public interface IPackageSource
+    using System;
+    using System.Net;
+
+    public interface IAuthenticationProvider
     {
-        #region Properties
-        bool IsEnabled { get; }
-        bool IsOfficial { get; }
-        string Name { get; }
-        string Source { get; }
+        #region Methods
+        ICredentials GetProxyCredentials(Uri uri, IWebProxy proxy);
+        ICredentials GetRequestCredentials(Uri uri, IWebProxy proxy);
         #endregion
     }
 }

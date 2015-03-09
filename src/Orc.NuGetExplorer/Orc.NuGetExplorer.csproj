@@ -118,6 +118,12 @@
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\Interfaces\IPackageDetails.cs" />
     <Compile Include="Models\Pager.cs" />
+    <Compile Include="NuGet\Extensions\IPackageSourceExtensions.cs" />
+    <Compile Include="NuGet\NuGetSettingsCredentialProvider.cs" />
+    <Compile Include="Providers\CredentialProvider.cs" />
+    <Compile Include="Providers\DefaultPackageSourcesProvider.cs" />
+    <Compile Include="Providers\Interfaces\IDefaultPackageSourcesProvider.cs" />
+    <Compile Include="Providers\Interfaces\IAuthenticationProvider.cs" />
     <Compile Include="NuGet\Interfaces\IPackageSource.cs" />
     <Compile Include="Models\RepositoryCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />
@@ -127,9 +133,11 @@
     <Compile Include="NuGet\Interfaces\INuGetPackageManager.cs" />
     <Compile Include="NuGet\NuGetPackageSource.cs" />
     <Compile Include="ModuleInitializer.cs" />
+    <Compile Include="NuGet\NuGetPackageSourceProvider.cs" />
     <Compile Include="NuGet\NuGetSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Factories\Interfaces\IRepositoryNavigationFactory.cs" />
+    <Compile Include="Providers\AuthenticationProvider.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\FeedVerificationResult.cs" />
     <Compile Include="Services\Enums\RepositoryCategoryType.cs" />
