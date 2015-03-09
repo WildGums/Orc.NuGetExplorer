@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -35,8 +36,19 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
-                .Select(package => _packageCacheService.GetPackageDetails(package));
+            try
+            {
+                Log.Info("Getting packages filter=\"{0}\", skip {1}, take {2}", filter, skip, take);
+
+                return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
+                    .Select(package => _packageCacheService.GetPackageDetails(package));
+            }
+            catch(Exception exception)
+            {
+                Log.Warning(exception);
+
+                return Enumerable.Empty<PackageDetails>();
+            }
         }
 
         public IEnumerable<PackageDetails> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,

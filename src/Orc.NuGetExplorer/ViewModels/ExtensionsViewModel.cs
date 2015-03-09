@@ -153,6 +153,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
+
             if (NamedRepository != null)
             {
                 using (_pleaseWaitService.WaitingScope())

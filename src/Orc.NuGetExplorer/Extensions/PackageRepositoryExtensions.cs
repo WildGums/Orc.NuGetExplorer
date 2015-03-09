@@ -60,9 +60,17 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
-            var count = queryable.Count();
-            return count;
+            try
+            {
+                var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
+                var count = queryable.Count();
+                return count;
+            }
+            catch
+            {
+                return 0;
+            }
+
         }
 
         public static async Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)

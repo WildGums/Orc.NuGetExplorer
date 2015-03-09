@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -32,6 +33,9 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetValue(string section, string key, bool isPath)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             var settingValue = GetValues(section, isPath).FirstOrDefault(x => string.Equals(x.Key, key));
 
             var result = settingValue == null ? string.Empty : settingValue.Value;
@@ -41,49 +45,109 @@ namespace Orc.NuGetExplorer
 
         public IList<SettingValue> GetValues(string section, bool isPath)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+
             return GetNuGetValues(section, isPath);
         }
 
         public IList<SettingValue> GetNestedValues(string section, string subsection)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+
             return GetNuGetValues(section, subsection);
         }
 
         public void SetValue(string section, string key, string value)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             SetNuGetValues(section, new[] {new KeyValuePair<string, string>(key, value)});
         }
 
         public void SetValues(string section, IList<KeyValuePair<string, string>> values)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+
             SetNuGetValues(section, values);
         }
 
         public void SetNestedValues(string section, string key, IList<KeyValuePair<string, string>> values)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             SetNuGetValues(section, key, values);
         }
 
         public bool DeleteValue(string section, string key)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
+            try
+            {
+                var valuesListKey = GetSectionValuesListKey(section);
+                var keysString = _configurationService.GetValue<string>(valuesListKey);
+                if (string.IsNullOrEmpty(keysString))
+                {
+                    return true;
+                }
+
+                var newKeys = keysString.Split(Separator).Where(x => !string.Equals(x, key));
+                keysString = string.Join(Separator.ToString(), newKeys);
+                _configurationService.SetValue(valuesListKey, keysString);
+
+                var valueKey = GetSectionValueKey(section, key);
+                _configurationService.SetValue(valueKey, string.Empty);
+            }
+            catch
+            {
+                return false;
+            }
+
             return true;
-            throw new System.NotImplementedException();
         }
 
         public bool DeleteSection(string section)
         {
-            /*var sectionListKey = GetSectionListKey();
-            var sectionsString = _configurationService.GetValue<string>(sectionListKey);
-            if (string.IsNullOrEmpty(sectionsString))
+            Argument.IsNotNullOrWhitespace(() => section);
+
+            var result = true;
+            try
             {
-                
-            }*/
-            return true;
-            throw new System.NotImplementedException();
+                var sectionListKey = GetSectionListKey();
+                var sectionsString = _configurationService.GetValue<string>(sectionListKey);
+                if (string.IsNullOrEmpty(sectionsString))
+                {
+                    return true;
+                }
+
+                var newSections = sectionsString.Split(Separator).Where(x => !string.Equals(x, section));
+                sectionsString = string.Join(Separator.ToString(), newSections);
+                _configurationService.SetValue(sectionListKey, sectionsString);
+
+                var values = GetValues(section, false);
+                foreach (var settingValue in values)
+                {
+                    result = result && DeleteValue(section, settingValue.Key);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return result;
         }
 
         private void SetNuGetValues(string section, IList<KeyValuePair<string, string>> values)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+
+            EnsureSectionExists(section);
+
             var valuesListKey = GetSectionValuesListKey(section);
             UpdateKeysList(values, valuesListKey);
             foreach (var keyValuePair in values)
@@ -92,8 +156,28 @@ namespace Orc.NuGetExplorer
             }
         }
 
+        private void EnsureSectionExists(string section)
+        {
+            Argument.IsNotNullOrWhitespace(() => section);
+
+            var sectionListKey = GetSectionListKey();
+            var sectionsString = _configurationService.GetValue(sectionListKey, string.Empty);
+            var sections = sectionsString.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (!sections.Contains(section))
+            {
+                sections.Add(section);
+                sectionsString = string.Join(Separator.ToString(), sections);
+                _configurationService.SetValue(sectionListKey, sectionsString);
+            }
+        }
+
         private void SetNuGetValues(string section, string subsection, IList<KeyValuePair<string, string>> values)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+
+            EnsureSectionExists(section);
+
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
             UpdateKeysList(values, valuesListKey);
             foreach (var keyValuePair in values)
@@ -120,6 +204,8 @@ namespace Orc.NuGetExplorer
 
         private IList<SettingValue> GetNuGetValues(string section, bool isPath = false)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+
             var valuesListKey = GetSectionValuesListKey(section);
             var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
             if (string.IsNullOrEmpty(valueKeysString))
@@ -133,6 +219,9 @@ namespace Orc.NuGetExplorer
 
         private IList<SettingValue> GetNuGetValues(string section, string subsection, bool isPath = false)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
             var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
             if (string.IsNullOrEmpty(valueKeysString))
@@ -147,6 +236,9 @@ namespace Orc.NuGetExplorer
 
         private SettingValue GetNuGetValue(string section, string key, bool isPath)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             var combinedKey = GetSectionValueKey(section, key);
             var value = _configurationService.GetValue<string>(combinedKey);
 
@@ -160,6 +252,10 @@ namespace Orc.NuGetExplorer
 
         private SettingValue GetNuGetValue(string section, string subsection, string key, bool isPath)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
             var value = _configurationService.GetValue<string>(combinedKey);
 
@@ -173,12 +269,19 @@ namespace Orc.NuGetExplorer
 
         private void SetNuGetValue(string section, string key, string value)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             var combinedKey = GetSectionValueKey(section, key);
             _configurationService.SetValue(combinedKey, value);
         }
 
         private void SetNuGetValue(string section, string subsection, string key, string value)
         {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+            Argument.IsNotNullOrWhitespace(() => key);
+
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
             _configurationService.SetValue(combinedKey, value);
         }
