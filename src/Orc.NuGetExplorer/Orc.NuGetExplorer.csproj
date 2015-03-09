@@ -127,9 +127,11 @@
     <Compile Include="NuGet\Interfaces\INuGetPackageManager.cs" />
     <Compile Include="NuGet\NuGetPackageSource.cs" />
     <Compile Include="ModuleInitializer.cs" />
+    <Compile Include="NuGet\NuGetSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Factories\Interfaces\IRepositoryNavigationFactory.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
+    <Compile Include="Services\Enums\FeedVerificationResult.cs" />
     <Compile Include="Services\Enums\RepositoryCategoryType.cs" />
     <Compile Include="Services\EventArgs\NuGetPackageOperationEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
@@ -145,7 +147,9 @@
     <Compile Include="Services\Interfaces\IPagingService.cs" />
     <Compile Include="Services\Interfaces\IPackageManagementListeningService.cs" />
     <Compile Include="Services\Interfaces\IPackageActionService.cs" />
+    <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
+    <Compile Include="Services\NuGetFeedVerificationService.cs" />
     <Compile Include="Services\PackageActionService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />

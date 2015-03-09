@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using System.Linq;
     using Catel;
+    using Catel.ExceptionHandling;
     using Catel.Logging;
     using NuGet;
     using Repositories;
@@ -77,8 +78,9 @@ namespace Orc.NuGetExplorer
         {
             var result = new Dictionary<string, IPackageRepository>();
             foreach (var packageSource in _packageSources)
-            {
+            {               
                 var repo = _repositoryFactory.CreateRepository(packageSource.Source);
+
                 result.Add(packageSource.Name, repo);
             }
 

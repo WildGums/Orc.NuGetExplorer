@@ -89,6 +89,7 @@ namespace Orc.NuGetExplorer
             }
 
             Log.Debug("Package sources has been loaded");
+
             return result;
         }
 
