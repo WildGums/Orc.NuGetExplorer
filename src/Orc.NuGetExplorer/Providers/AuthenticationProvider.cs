@@ -51,37 +51,29 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-            /*try
+            _dispatcherService.Invoke(() =>
             {
-                _dispatcherService.Invoke(() =>
+                var credentialsPrompter = new CredentialsPrompter
                 {
-                    try
-                    {
-                        var credentialsPrompter = new CredentialsPrompter();
-                        credentialsPrompter.UserName = string.Empty;
-                        credentialsPrompter.Password = string.Empty;
-                        credentialsPrompter.WindowTitle = "prompt credentials";
-                        credentialsPrompter.ShowDialog();
-                    }
-                    catch (Exception)
-                    {
-                        
-                    }
-                });
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }*/
-
-
-            _dispatcherService.Invoke(() => result = _uiVisualizerService.ShowDialog<AuthenticationViewModel>(credentials));
+                    ShowSaveCheckBox = true,
+                    UserName = string.Empty,
+                    Password = string.Empty,
+                    WindowTitle = "prompt credentials",
+                    Content = "content",
+                    MainInstruction = "main instruction"
+                };
+                
+                result = credentialsPrompter.ShowDialog();
+                if (result ?? false)
+                {
+                    credentials.UserName = credentialsPrompter.UserName;
+                    credentials.Password = credentialsPrompter.Password;
+                }
+            });
 
             _pleaseWaitService.Show();
 
-            if (result != null && result.Value)
+            if (result ?? false)
             {
                 Log.Debug("Successfully requested credentials for '{0}'", uri);
 

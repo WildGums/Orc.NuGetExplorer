@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer.Native
         {
             Generic = 0x1,
             Checkbox = 0x2,
-            AutoPackageOnly = 0x10,
+            AuthPackageOnly = 0x10,
             InCredOnly = 0x20,
             EnumerateAdmins = 0x100,
             EnumerateCurrentUser = 0x200,
@@ -65,23 +65,23 @@ namespace Orc.NuGetExplorer.Native
         #endregion
 
         #region Methods
-        [DllImport("credui.dll", CharSet = CharSet.Unicode)]
-        internal static extern CredUIReturnCodes CredUIPromptForCredentials(
-            ref CREDUI_INFO pUiInfo,
-            string targetName,
-            IntPtr Reserved,
-            int dwAuthError,
-            StringBuilder pszUserName,
-            uint ulUserNameMaxChars,
-            StringBuilder pszPassword,
-            uint ulPaswordMaxChars,
-            [MarshalAs(UnmanagedType.Bool), In(), Out()] ref bool pfSave,
-            CREDUI_FLAGS dwFlags);
+        //[DllImport("credui.dll", CharSet = CharSet.Unicode)]
+        //internal static extern CredUIReturnCodes CredUIPromptForCredentials(
+        //    ref CREDUI_INFO pUiInfo,
+        //    string targetName,
+        //    IntPtr Reserved,
+        //    int dwAuthError,
+        //    StringBuilder pszUserName,
+        //    uint ulUserNameMaxChars,
+        //    StringBuilder pszPassword,
+        //    uint ulPaswordMaxChars,
+        //    [MarshalAs(UnmanagedType.Bool), In(), Out()] ref bool pfSave,
+        //    CREDUI_FLAGS dwFlags);
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode)]
         public static extern CredUIReturnCodes CredUIPromptForWindowsCredentials(
             ref CREDUI_INFO pUiInfo,
-            uint dwAuthError,
+            int dwAuthError,
             ref uint pulAuthPackage,
             IntPtr pvInAuthBuffer,
             uint ulInAuthBufferSize,
@@ -107,7 +107,8 @@ namespace Orc.NuGetExplorer.Native
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CredPackAuthenticationBuffer(uint dwFlags, string pszUserName, string pszPassword, IntPtr pPackedCredentials, ref uint pcbPackedCredentials);
+        public static extern bool CredPackAuthenticationBuffer(int dwFlags, string pszUserName, string pszPassword, IntPtr pPackedCredentials, 
+            ref uint pcbPackedCredentials);
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -141,14 +142,15 @@ namespace Orc.NuGetExplorer.Native
             Enterprise = 3
         }
 
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct CREDUI_INFO
         {
             #region Fields
             public int cbSize;
-            public IntPtr hbmBanner;
             public IntPtr hwndParent;
-            [MarshalAs(UnmanagedType.LPWStr)] public string pszCaptionText;
             [MarshalAs(UnmanagedType.LPWStr)] public string pszMessageText;
+            [MarshalAs(UnmanagedType.LPWStr)] public string pszCaptionText;
+            public IntPtr hbmBanner;
             #endregion
         }
 
