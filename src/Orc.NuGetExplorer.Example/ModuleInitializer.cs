@@ -15,6 +15,8 @@ public static class ModuleInitializer
         var serviceLocator = ServiceLocator.Default;
 
         serviceLocator.RegisterType<IEchoService, EchoService>();
+        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
+
         serviceLocator.RegisterTypeAndInstantiate<EchoListener>();
     }
 }

@@ -21,7 +21,6 @@ namespace Orc.NuGetExplorer
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IPackageSource[] _packageSources;
         private readonly IPackageRepositoryFactory _repositoryFactory;
         #endregion
 
@@ -33,13 +32,18 @@ namespace Orc.NuGetExplorer
 
             _nuGetConfigurationService = nuGetConfigurationService;
             _repositoryFactory = packageRepositoryFactory;
-            _packageSources = _nuGetConfigurationService.LoadPackageSources().ToArray();
         }
         #endregion
+
+        private IEnumerable<IPackageSource> GetPackageSources()
+        {
+            return _nuGetConfigurationService.LoadPackageSources();
+        }
 
         #region Methods
         public IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category)
         {
+            var packageSources = GetPackageSources();
             var result = new Dictionary<string, IPackageRepository>();
             switch (category)
             {
@@ -48,7 +52,7 @@ namespace Orc.NuGetExplorer
                     break;
 
                 case RepositoryCategoryType.Online:
-                    result[RepoName.All] = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+                    result[RepoName.All] = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
                     break;
@@ -71,13 +75,15 @@ namespace Orc.NuGetExplorer
 
         public IPackageRepository GetAggregateRepository()
         {
-            return new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+            var packageSources = GetPackageSources();
+            return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
         }
 
         public IDictionary<string, IPackageRepository> GetRemoteRepositories()
         {
             var result = new Dictionary<string, IPackageRepository>();
-            foreach (var packageSource in _packageSources)
+            var packageSources = GetPackageSources();
+            foreach (var packageSource in packageSources)
             {               
                 var repo = _repositoryFactory.CreateRepository(packageSource.Source);
 
@@ -102,7 +108,8 @@ namespace Orc.NuGetExplorer
         private IPackageRepository GetAggeregateUpdateRepository()
         {
             var localRepository = GetLocalRepository();
-            var sourceRepository = new AggregateRepository(_repositoryFactory, _packageSources.Select(x => x.Source), true);
+            var packageSources = GetPackageSources();
+            var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
             return new UpdateRepository(localRepository, sourceRepository);
         }
         #endregion

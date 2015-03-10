@@ -14,11 +14,33 @@
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</catel:StackGrid.RowDefinitions>
 		
 		<TextBlock Text="{Binding Title}" />
         <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
+        <catel:StackGrid>
+            <catel:StackGrid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>              
+            </catel:StackGrid.RowDefinitions>
+            <catel:StackGrid >
+                <catel:StackGrid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </catel:StackGrid.ColumnDefinitions>
+                <catel:StackGrid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </catel:StackGrid.RowDefinitions>
+                <TextBlock Text="Package source name"/>
+                <TextBox Text="{Binding PackageSourceName, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="Package source feed"/>
+                <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
+            </catel:StackGrid>
+            <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
+        </catel:StackGrid>
         <ListBox ItemsSource="{Binding Lines}"/>
     </catel:StackGrid>
 </catel:DataWindow>

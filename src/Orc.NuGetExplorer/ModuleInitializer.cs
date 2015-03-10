@@ -31,7 +31,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
         serviceLocator.RegisterType<IAutentificationProvider, NullAutentificationProvider>();
         serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
-        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
+        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
+        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
     }

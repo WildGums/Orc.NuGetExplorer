@@ -103,6 +103,7 @@
     <Compile Include="Models\PackageManagementEcho.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="PackageManagement\Listeners\EchoListener.cs" />
+    <Compile Include="Providers\DefaultPackageSourcesProvider.cs" />
     <Compile Include="Services\EchoService.cs" />
     <Compile Include="Services\Interfaces\IEchoService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

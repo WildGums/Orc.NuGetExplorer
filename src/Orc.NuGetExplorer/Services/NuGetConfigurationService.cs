@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
@@ -21,17 +22,21 @@ namespace Orc.NuGetExplorer
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
+        private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IPackageSourceProvider _packageSourceProvider;
         #endregion
 
         #region Constructors
-        public NuGetConfigurationService(IConfigurationService configurationService, IPackageSourceProvider packageSourceProvider)
+        public NuGetConfigurationService(IConfigurationService configurationService, IPackageSourceProvider packageSourceProvider,
+            INuGetFeedVerificationService feedVerificationService)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => packageSourceProvider);
+            Argument.IsNotNull(() => feedVerificationService);
 
             _configurationService = configurationService;
             _packageSourceProvider = packageSourceProvider;
+            _feedVerificationService = feedVerificationService;
 
             var applicationDataDirectory = Path.GetApplicationDataDirectory();
             _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
@@ -56,12 +61,39 @@ namespace Orc.NuGetExplorer
             return _packageSourceProvider.LoadPackageSources().ToPackageSourceInterfaces();
         }
 
-        public void SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
+        public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
         {
             Argument.IsNotNullOrWhitespace(() => name);
             Argument.IsNotNullOrWhitespace(() => source);
 
-            _packageSourceProvider.SavePackageSources(new[] {new PackageSource(source, name, isEnabled, isOfficial)});
+            try
+            {
+                var verificationResult = _feedVerificationService.VerifyFeed(source);
+                if (verificationResult == FeedVerificationResult.Invalid || verificationResult == FeedVerificationResult.Unknown)
+                {
+                    return false;
+                }
+
+                var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
+
+                var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
+                if (existedSource == null)
+                {
+                    existedSource = new PackageSource(source, name);
+                    packageSources.Add(existedSource);
+                }
+
+                existedSource.IsEnabled = isEnabled;
+                existedSource.IsOfficial = isOfficial;
+
+                _packageSourceProvider.SavePackageSources(packageSources);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void DeletePackageSource(string name, string source)

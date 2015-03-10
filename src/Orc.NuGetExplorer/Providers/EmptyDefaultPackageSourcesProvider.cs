@@ -1,17 +1,22 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DefaultPackageSourcesProvider.cs" company="Wild Gums">
+// <copyright file="EmptyDefaultPackageSourcesProvider.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
+    using System.Linq;
 
-    internal class DefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
+    internal class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
     {
+        #region Methods
         public IEnumerable<IPackageSource> GetDefaultPackages()
         {
-            yield return new NuGetPackageSource("http://www.nuget.org/api/v2/", "NuGet", true, true);
+            return Enumerable.Empty<IPackageSource>();
         }
+        #endregion
     }
 }

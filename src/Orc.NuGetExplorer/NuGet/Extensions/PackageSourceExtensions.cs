@@ -12,17 +12,17 @@ namespace Orc.NuGetExplorer
     using Catel;
     using NuGet;
 
-    internal static class PackageSourceExtensions
+    public static class PackageSourceExtensions
     {
         #region Methods
-        public static IEnumerable<PackageSource> ToPackageSourceInstances(this IEnumerable<IPackageSource> packageSources)
+        internal static IEnumerable<PackageSource> ToPackageSourceInstances(this IEnumerable<IPackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);
 
             return packageSources.Select(x => new PackageSource(x.Source, x.Name, x.IsEnabled, x.IsOfficial));
         }
 
-        public static IEnumerable<IPackageSource> ToPackageSourceInterfaces(this IEnumerable<PackageSource> packageSources)
+        internal static IEnumerable<IPackageSource> ToPackageSourceInterfaces(this IEnumerable<PackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);
 
