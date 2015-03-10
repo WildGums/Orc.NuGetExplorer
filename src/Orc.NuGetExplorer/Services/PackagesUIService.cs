@@ -32,7 +32,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public async Task ShowPackagesExplorer()
         {
-            await _uiVisualizerService.ShowDialog<ExplorerViewModel>();
+            _uiVisualizerService.ShowDialog<ExplorerViewModel>();
         }
         #endregion
     }

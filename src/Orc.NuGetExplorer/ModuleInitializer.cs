@@ -29,7 +29,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
         serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
-        serviceLocator.RegisterType<IAutentificationProvider, NullAutentificationProvider>();
+        serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
         serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
         serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();

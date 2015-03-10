@@ -8,11 +8,18 @@
 namespace Orc.NuGetExplorer.Example
 {
     using System.Windows;
+    using Catel.Logging;
 
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+#if DEBUG
+            LogManager.AddDebugListener(true);
+#endif
+        }
     }
 }

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Weavers>
-  <ModuleInit />
+  <ModuleInit/>
   <Costura>
     <IncludeAssemblies>
 			NuGet.Core
 			Microsoft.Web.XmlTransform
 		</IncludeAssemblies>
   </Costura>
-  <Catel />
-  <MethodTimer />
+  <MethodTimer/>
+  <Catel/>
 </Weavers>

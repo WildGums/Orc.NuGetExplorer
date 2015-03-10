@@ -7,31 +7,30 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Net;
+    using System.Threading.Tasks;
     using Catel;
     using NuGet;
 
     internal class CredentialProvider : ICredentialProvider
     {
-        private readonly IAutentificationProvider _autentificationProvider;
+        private readonly IAuthenticationProvider _authenticationProvider;
 
-        public CredentialProvider(IAutentificationProvider autentificationProvider)
+        public CredentialProvider(IAuthenticationProvider authenticationProvider)
         {
-            Argument.IsNotNull(() => autentificationProvider);
+            Argument.IsNotNull(() => authenticationProvider);
 
-            _autentificationProvider = autentificationProvider;
+            _authenticationProvider = authenticationProvider;
         }
 
         public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CredentialType credentialType, bool retrying)
         {
-            switch (credentialType)
+            var credentials = _authenticationProvider.GetCredentials(uri);
+            if (credentials == null)
             {
-                case CredentialType.ProxyCredentials:
-                    return _autentificationProvider.GetProxyCredentials(uri, proxy);
-                case CredentialType.RequestCredentials:
-                    return _autentificationProvider.GetRequestCredentials(uri, proxy);
+                return null;
             }
-
-            return null;
+            
+            return new NetworkCredential(credentials.UserName, credentials.Password);
         }
     }
 }

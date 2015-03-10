@@ -60,7 +60,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public string ActionName { get; set; }
         public bool IsPrereleaseAllowed { get; set; }
 
-        public bool IsPrereleaseSupports
+        public bool IsPrereleaseSupported
         {
             get
             {
@@ -70,7 +70,9 @@ namespace Orc.NuGetExplorer.ViewModels
                     return false;
                 }
 
-                return NamedRepository.Value.SupportsPrereleasePackages;
+                // Blocking call!
+                //return NamedRepository.Value.SupportsPrereleasePackages;
+                return true;
             }
         }
         #endregion

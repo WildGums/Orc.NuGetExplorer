@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0">
-            <CheckBox IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupports}"
+            <CheckBox IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupported}"
                       Content="Enable prerelease packages" Margin="5"/>
         </StackPanel>
 
