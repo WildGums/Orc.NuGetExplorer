@@ -50,12 +50,15 @@ namespace Orc.NuGetExplorer
                 var downloads = GetDetailsRecord("Downloads: ", dataServicePackage.DownloadCount.ToString());
                 paragraph.Inlines.Add(downloads);
 
-                var dependencies = GetDetailsRecord("Dependencies: ", dataServicePackage.Dependencies);
-                paragraph.Inlines.Add(dependencies);
+                if (!string.IsNullOrWhiteSpace(dataServicePackage.Dependencies))
+                {
+                    var dependencies = GetDetailsRecord("Dependencies: ", dataServicePackage.Dependencies);
+                    paragraph.Inlines.Add(dependencies);
+                }
             }
 
-            var description = GetDetailsRecord("Description: ", package.Description);
-            paragraph.Inlines.Add(description);
+            //var description = GetDetailsRecord("Description: ", package.Description);
+            //paragraph.Inlines.Add(description);
 
             result.Blocks.Add(paragraph);
             return result;
