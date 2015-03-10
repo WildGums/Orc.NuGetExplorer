@@ -21,21 +21,16 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IRepositoryNavigationService _repositoryNavigationService;
-        private readonly ITypeFactory _typeFactory;
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService, ITypeFactory typeFactory, INuGetConfigurationService configurationService)
+        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService)
         {
             Argument.IsNotNull(() => repositoryNavigationService);
-            Argument.IsNotNull(() => typeFactory);
 
             _repositoryNavigationService = repositoryNavigationService;
-            _typeFactory = typeFactory;
 
-            Navigator = _repositoryNavigationService.GetNavigator();
-
-            HttpClient.DefaultCredentialProvider = _typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
+            Navigator = _repositoryNavigationService.GetNavigator();            
         }
         #endregion
 

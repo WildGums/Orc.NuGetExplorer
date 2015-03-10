@@ -17,25 +17,31 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
+        private readonly ICredentialProvider _credentialProvider;
         #endregion
 
         #region Constructors
-        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory)
+        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory, ICredentialProvider credentialProvider)
         {
             Argument.IsNotNull(() => packageRepositoryFactory);
+            Argument.IsNotNull(() => credentialProvider);
 
             _packageRepositoryFactory = packageRepositoryFactory;
+            _credentialProvider = credentialProvider;
         }
         #endregion
 
         #region Methods
-        public FeedVerificationResult VerifyFeed(string source)
+        public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
             var result = FeedVerificationResult.Valid;
             var originalCredentialProvider = HttpClient.DefaultCredentialProvider;
             try
             {
-                HttpClient.DefaultCredentialProvider = NullCredentialProvider.Instance;
+                if (!authenticateIfRequired)
+                {
+                    HttpClient.DefaultCredentialProvider = NullCredentialProvider.Instance;
+                }
 
                 var repository = _packageRepositoryFactory.CreateRepository(source);
                 var packagesCount = repository.GetPackages().Take(1).Count();
@@ -65,7 +71,10 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                HttpClient.DefaultCredentialProvider = originalCredentialProvider;
+                if (!authenticateIfRequired)
+                {
+                    HttpClient.DefaultCredentialProvider = originalCredentialProvider;
+                }
             }
 
             return result;

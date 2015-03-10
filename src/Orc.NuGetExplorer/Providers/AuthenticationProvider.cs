@@ -8,6 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.ComponentModel;
+    using System.Net;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
@@ -47,6 +49,20 @@ namespace Orc.NuGetExplorer
             _pleaseWaitService.Hide();
 
             var credentials = new AuthenticationCredentials(uri);
+
+            try
+            {
+                /*var container = new Container();
+                var credentialDialog = new CredentialDialog();//container);
+                credentialDialog.
+                var res = credentialDialog.ShowDialog();*/
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
 
             _dispatcherService.Invoke(() => result = _uiVisualizerService.ShowDialog<AuthenticationViewModel>(credentials));
 

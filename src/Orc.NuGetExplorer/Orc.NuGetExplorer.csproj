@@ -81,6 +81,7 @@
     <Reference Include="System.IO">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management.Automation" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
@@ -122,6 +123,8 @@
     <Compile Include="Models\AuthenticationCredentials.cs" />
     <Compile Include="Models\Interfaces\IPackageDetails.cs" />
     <Compile Include="Models\Pager.cs" />
+    <Compile Include="Native\CredentialsPrompter.cs" />
+    <Compile Include="Native\CredUi.cs" />
     <Compile Include="NuGet\Extensions\PackageSourceExtensions.cs" />
     <Compile Include="Providers\NuGetSettingsCredentialProvider.cs" />
     <Compile Include="Providers\CredentialProvider.cs" />

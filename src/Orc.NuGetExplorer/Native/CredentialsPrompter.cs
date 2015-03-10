@@ -1,14 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INuGetFeedVerificationService.cs" company="Wild Gums">
+// <copyright file="CredentialsPrompter.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer.Native
 {
-    public interface INuGetFeedVerificationService
+    using System;
+
+    public class CredentialsPrompter
     {
-        FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true);
+        #region Methods
+        public bool ShowDialog()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

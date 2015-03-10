@@ -26,9 +26,6 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("UserName")]
         public AuthenticationCredentials AuthenticationCredentials { get; private set; }
 
-        private void OnPasswordChanged()
-        {
-        }
         #endregion
     }
 }
