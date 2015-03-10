@@ -14,6 +14,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Logging;
     using Catel.Services;
+    using Native;
     using ViewModels;
 
     internal class AuthenticationProvider : IAuthenticationProvider
@@ -50,18 +51,30 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-            try
+            /*try
             {
-                /*var container = new Container();
-                var credentialDialog = new CredentialDialog();//container);
-                credentialDialog.
-                var res = credentialDialog.ShowDialog();*/
+                _dispatcherService.Invoke(() =>
+                {
+                    try
+                    {
+                        var credentialsPrompter = new CredentialsPrompter();
+                        credentialsPrompter.UserName = string.Empty;
+                        credentialsPrompter.Password = string.Empty;
+                        credentialsPrompter.WindowTitle = "prompt credentials";
+                        credentialsPrompter.ShowDialog();
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
+                });
+
             }
             catch (Exception)
             {
 
                 throw;
-            }
+            }*/
 
 
             _dispatcherService.Invoke(() => result = _uiVisualizerService.ShowDialog<AuthenticationViewModel>(credentials));

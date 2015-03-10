@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredUi.cs" company="Wild Gums">
+// <copyright file="NativeMethods.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,6 +14,14 @@ namespace Orc.NuGetExplorer.Native
 
     internal static class CredUi
     {
+        public static bool IsWindowsVistaOrLater
+        {
+            get
+            {
+                return Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= new Version(6, 0, 6000);
+            }
+        }
+
         #region Delegates
         [Flags]
         public enum CREDUI_FLAGS

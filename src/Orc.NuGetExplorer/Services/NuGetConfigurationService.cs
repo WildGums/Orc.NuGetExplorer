@@ -68,7 +68,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                var verificationResult = _feedVerificationService.VerifyFeed(source);
+                var verificationResult = _feedVerificationService.VerifyFeed(source, false);
                 if (verificationResult == FeedVerificationResult.Invalid || verificationResult == FeedVerificationResult.Unknown)
                 {
                     return false;
