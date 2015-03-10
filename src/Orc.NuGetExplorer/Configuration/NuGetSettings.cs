@@ -63,7 +63,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => section);
             Argument.IsNotNullOrWhitespace(() => key);
 
-            SetNuGetValues(section, new[] {new KeyValuePair<string, string>(key, value)});
+            SetNuGetValues(section, new[] { new KeyValuePair<string, string>(key, value) });
         }
 
         public void SetValues(string section, IList<KeyValuePair<string, string>> values)
@@ -115,6 +115,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => section);
 
             var result = true;
+
             try
             {
                 var sectionListKey = GetSectionListKey();
@@ -129,6 +130,11 @@ namespace Orc.NuGetExplorer
                 _configurationService.SetValue(sectionListKey, sectionsString);
 
                 var values = GetValues(section, false);
+                if (values == null)
+                {
+                    return false;
+                }
+
                 foreach (var settingValue in values)
                 {
                     result = result && DeleteValue(section, settingValue.Key);
