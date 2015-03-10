@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         [Model]
         [Expose("Password")]
-        [Expose("RememberMe")]
+        [Expose("StoreCredentials")]
         [Expose("UserName")]
         public AuthenticationCredentials AuthenticationCredentials { get; private set; }
 

@@ -22,18 +22,21 @@ namespace Orc.NuGetExplorer
             Package = package;
             Version = package.Version.Version;
             Id = package.Id;
+            Title = package.Title;
             FullName = package.GetFullName();
             Description = package.Description;
             IconUrl = package.IconUrl;
             Published = package.Published == null ? (DateTime?) null : package.Published.Value.LocalDateTime;
             SpecialVersion = package.Version.SpecialVersion;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
-            IsLatestVersion = package.IsLatestVersion;
+
+            IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
         }
         #endregion
 
         #region Properties
         public string Id { get; private set; }
+        public string Title { get; private set; }
         public string FullName { get; private set; }
         public string Description { get; private set; }
         public Uri IconUrl { get; private set; }
@@ -43,6 +46,7 @@ namespace Orc.NuGetExplorer
         public string SpecialVersion { get; private set; }
         public bool IsAbsoluteLatestVersion { get; private set; }
         public bool IsLatestVersion { get; private set; }
+        public bool IsPrerelease { get; private set; }
         #endregion
     }
 }
