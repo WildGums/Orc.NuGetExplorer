@@ -110,6 +110,7 @@
     <Compile Include="Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\BindableRichTextBox.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\InlineExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />

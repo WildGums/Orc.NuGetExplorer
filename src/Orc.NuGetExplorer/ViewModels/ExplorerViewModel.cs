@@ -9,11 +9,14 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Media;
     using Catel;
     using Catel.Fody;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
+    using Extensions;
     using NuGet;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -30,7 +33,10 @@ namespace Orc.NuGetExplorer.ViewModels
 
             _repositoryNavigationService = repositoryNavigationService;
 
-            Navigator = _repositoryNavigationService.GetNavigator();            
+            Navigator = _repositoryNavigationService.GetNavigator();
+
+            var accentColor = GetAccentColorBrush().Color;
+            accentColor.CreateAccentColorResourceDictionary();
         }
         #endregion
 
@@ -55,6 +61,16 @@ namespace Orc.NuGetExplorer.ViewModels
                 selectedRepositoryCategory.IsSelected = true;
                 SelectedNamedRepository = selectedRepositoryCategory.Repos.FirstOrDefault();
             }
+        }
+
+        private SolidColorBrush GetAccentColorBrush()
+        {
+            var accentColorBrush = Application.Current.TryFindResource("AccentColorBrush") as SolidColorBrush;
+            if (accentColorBrush != null)
+            {
+                return accentColorBrush;
+            }
+            return new SolidColorBrush(Color.FromArgb(255, 0, 122, 204));
         }
         #endregion
     }
