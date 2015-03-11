@@ -36,6 +36,10 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type ListBox}">
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    
     <Style TargetType="{x:Type ListBoxItem}">
         <Style.Resources>
             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor4}"/>

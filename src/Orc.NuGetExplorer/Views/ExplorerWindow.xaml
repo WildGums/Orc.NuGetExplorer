@@ -31,7 +31,7 @@
         </Grid.ColumnDefinitions>
 
         <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" 
-                 Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0">
+                 Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0" Margin="0">
             <ListBox.Resources>
                 <local:DataContextSpy x:Key="dataContextSpy" />
             </ListBox.Resources>
@@ -83,7 +83,7 @@
                         </DockPanel>
 
                         <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch"
-                                 SelectionMode="Single" SelectedIndex="0"
+                                 SelectionMode="Single" SelectedIndex="0" Margin="0"
                                  SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepository, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
