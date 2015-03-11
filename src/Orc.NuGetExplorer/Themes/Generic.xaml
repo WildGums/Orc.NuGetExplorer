@@ -32,6 +32,12 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ArrowButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Padding" Value="4 0 4 4" />
+        <Setter Property="Margin" Value="2 0 2 0" />
+    </Style>
+    
     <Style TargetType="{x:Type ListBox}">
         <Setter Property="Margin" Value="0" />
     </Style>
@@ -86,6 +92,18 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderBrush" Value="LightGray" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentColorBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush}" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
