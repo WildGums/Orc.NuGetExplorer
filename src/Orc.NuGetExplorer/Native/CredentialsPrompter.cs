@@ -10,9 +10,7 @@ namespace Orc.NuGetExplorer.Native
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
-    using System.Windows;
     using Catel;
-    using Catel.Windows;
 
     internal class CredentialsPrompter
     {
@@ -22,14 +20,12 @@ namespace Orc.NuGetExplorer.Native
         #endregion
 
         #region Properties
-        
-
         public string Target { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-
         public bool AllowStoredCredentials { get; set; }
         public bool ShowSaveCheckBox { get; set; }
+
         public bool IsSaveChecked
         {
             get { return _isSaveChecked; }
@@ -39,7 +35,6 @@ namespace Orc.NuGetExplorer.Native
         public string WindowTitle { get; set; }
         public string MainInstruction { get; set; }
         public string Content { get; set; }
-
         public DownlevelTextMode DownlevelTextMode { get; set; }
         #endregion
 
@@ -85,7 +80,7 @@ namespace Orc.NuGetExplorer.Native
                     CredUi.CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
                     if (inBufferSize > 0)
                     {
-                        inBuffer = Marshal.AllocCoTaskMem((int)inBufferSize);
+                        inBuffer = Marshal.AllocCoTaskMem((int) inBufferSize);
                         if (!CredUi.CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                         {
                             throw new CredentialException(Marshal.GetLastWin32Error());
@@ -103,8 +98,8 @@ namespace Orc.NuGetExplorer.Native
                     case CredUi.CredUiReturnCodes.NO_ERROR:
                         var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
                         var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
-                        var userNameSize = (uint)userName.Capacity;
-                        var passwordSize = (uint)password.Capacity;
+                        var userNameSize = (uint) userName.Capacity;
+                        var passwordSize = (uint) password.Capacity;
                         uint domainSize = 0;
                         if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
                         {
@@ -136,7 +131,7 @@ namespace Orc.NuGetExplorer.Native
                         return false;
 
                     default:
-                        throw new CredentialException((int)result);
+                        throw new CredentialException((int) result);
                 }
             }
             finally
@@ -158,9 +153,14 @@ namespace Orc.NuGetExplorer.Native
             IntPtr nCredPtr;
 
             var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out nCredPtr);
+            var lastError = Marshal.GetLastWin32Error();
+
             if (!read)
             {
-                return null;
+                if (lastError == (int)CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                    return null;
+                else
+                    throw new CredentialException(lastError);
             }
 
             var credential = new CredUi.SimpleCredentials();
@@ -188,7 +188,7 @@ namespace Orc.NuGetExplorer.Native
             cred.TargetName = key;
             cred.UserName = userName;
             cred.CredentialBlob = secret;
-            cred.CredentialBlobSize = (UInt32)Encoding.Unicode.GetBytes(secret).Length;
+            cred.CredentialBlobSize = (UInt32) Encoding.Unicode.GetBytes(secret).Length;
             cred.AttributeCount = 0;
             cred.Attributes = IntPtr.Zero;
             cred.Comment = null;
@@ -202,7 +202,7 @@ namespace Orc.NuGetExplorer.Native
             if (!written)
             {
                 var message = string.Format("CredWrite failed with the error code {0}.", lastError);
-                throw new Exception(message);
+                throw new CredentialException(lastError, message);
             }
 
             return true;
@@ -221,7 +221,7 @@ namespace Orc.NuGetExplorer.Native
             else
             {
                 var error = Marshal.GetLastWin32Error();
-                if (error != (int)CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
+                if (error != (int) CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
                 {
                     throw new CredentialException(error);
                 }

@@ -15,6 +15,18 @@ namespace Orc.NuGetExplorer.Native
 
     internal static class CredUi
     {
+        public enum CredUIReturnCodes
+        {
+            NO_ERROR = 0,
+            ERROR_CANCELLED = 1223,
+            ERROR_NO_SUCH_LOGON_SESSION = 1312,
+            ERROR_NOT_FOUND = 1168,
+            ERROR_INVALID_ACCOUNT_NAME = 1315,
+            ERROR_INSUFFICIENT_BUFFER = 122,
+            ERROR_INVALID_PARAMETER = 87,
+            ERROR_INVALID_FLAGS = 1004,
+        }
+
         internal sealed class CriticalCredentialHandle : CriticalHandleZeroOrMinusOneIsInvalid
         {
             internal CriticalCredentialHandle(IntPtr preExistingHandle)
@@ -34,8 +46,7 @@ namespace Orc.NuGetExplorer.Native
 
                 // Create a managed Credential type and fill it with data from the native counterpart.
                 var cred = new Credential();
-                cred.CredentialBlobSize = ncred.CredentialBlobSize;
-                cred.CredentialBlob = Marshal.PtrToStringUni(ncred.CredentialBlob, (int)ncred.CredentialBlobSize / 2);
+                cred.CredentialBlobSize = ncred.CredentialBlobSize;                
                 cred.UserName = Marshal.PtrToStringUni(ncred.UserName);
                 cred.TargetName = Marshal.PtrToStringUni(ncred.TargetName);
                 cred.TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias);
@@ -43,8 +54,14 @@ namespace Orc.NuGetExplorer.Native
                 cred.Flags = ncred.Flags;
                 cred.Persist = (CredPersistance)ncred.Persist;
 
+                byte[] encryptedPassword = new byte[ncred.CredentialBlobSize];
+                Marshal.Copy(ncred.CredentialBlob, encryptedPassword, 0, encryptedPassword.Length);
+                cred.CredentialBlob = DecryptPassword(encryptedPassword);
+
                 return cred;
             }
+
+            
 
             // Perform any specific actions to release the handle in the ReleaseHandle method.
             // Often, you need to use Pinvoke to make a call into the Win32 API to release the 
@@ -123,6 +140,26 @@ namespace Orc.NuGetExplorer.Native
             {
                 return Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version <= new Version(6, 0, 6000);
             }
+        }
+
+        public  static string DecryptPassword(byte[] encrypted)
+        {
+            try
+            {
+                var unprotectedBytes = System.Security.Cryptography.ProtectedData.Unprotect(encrypted, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(unprotectedBytes);
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static byte[] EncryptPassword(string password)
+        {
+            var unprotectedBytes = Encoding.UTF8.GetBytes(password);
+            var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+            return protectedBytes;
         }
 
         #region Methods
@@ -249,9 +286,21 @@ namespace Orc.NuGetExplorer.Native
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
                 ncred.Persist = (UInt32)CredPersistance.Session;
-                ncred.CredentialBlobSize = (UInt32)cred.CredentialBlobSize;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
-                ncred.CredentialBlob = Marshal.StringToCoTaskMemUni(cred.CredentialBlob);
+
+                var encryptedPassword = EncryptPassword(cred.CredentialBlob);
+                try
+                {
+                    ncred.CredentialBlob = Marshal.AllocHGlobal(encryptedPassword.Length);
+                    Marshal.Copy(encryptedPassword, 0, ncred.CredentialBlob, encryptedPassword.Length);
+                    ncred.CredentialBlobSize = (uint)encryptedPassword.Length;
+                    ncred.Type = CredUi.CredTypes.CRED_TYPE_GENERIC;                    
+                }                
+                finally
+                {
+                    Marshal.FreeCoTaskMem(ncred.CredentialBlob);
+                }
+
                 ncred.UserName = Marshal.StringToCoTaskMemUni(cred.UserName);
 
                 return ncred;
