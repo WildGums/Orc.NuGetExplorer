@@ -68,7 +68,8 @@ namespace Orc.NuGetExplorer
                 }
             });
 
-            _pleaseWaitService.Show();
+            // NOTE: don't show, we should check if it was visible in the first place
+            //_pleaseWaitService.Show();
 
             if (result ?? false)
             {
