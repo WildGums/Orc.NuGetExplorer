@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CredentialType credentialType, bool retrying)
         {
-            var credentials = _authenticationProvider.GetCredentials(uri);
+            var credentials = _authenticationProvider.GetCredentials(uri, retrying);
             if (credentials == null)
             {
                 return null;

@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     public interface IAuthenticationProvider
     {
         #region Methods
-        AuthenticationCredentials GetCredentials(Uri uri);
+        AuthenticationCredentials GetCredentials(Uri uri, bool previousCredentialsFailed);
         #endregion
     }
 }
