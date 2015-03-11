@@ -1,4 +1,6 @@
 ﻿using Catel.IoC;
+using Catel.Logging;
+using Catel.Services;
 using Orc.NuGetExplorer;
 using NuGet;
 
@@ -7,6 +9,8 @@ using NuGet;
 /// </summary>
 public static class ModuleInitializer
 {
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
     /// <summary>
     /// Initializes the module.
     /// </summary>
@@ -34,6 +38,12 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
         serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
 
-        serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);          
+        serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
+
+        Log.Debug("Forcing the loading of assembly Catel by the following types");
+        Log.Debug("  * {0}", typeof(DispatcherService).Name);
+
+        var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
+        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
     }
 }

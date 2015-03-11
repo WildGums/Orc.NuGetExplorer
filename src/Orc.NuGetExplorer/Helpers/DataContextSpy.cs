@@ -9,17 +9,13 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Windows;
-
-#if DEBUG
     using System.ComponentModel;
     using System.Windows.Data;
-#endif
 
     // this code has been found at http://www.codeproject.com/Articles/27432/Artificial-Inheritance-Contexts-in-WPF
     public class DataContextSpy
         : Freezable // Enable ElementName and DataContext bindings
     {
-#if DEBUG
         #region Constructors
         public DataContextSpy()
         {
@@ -71,7 +67,6 @@ namespace Orc.NuGetExplorer
 
         // Borrow the DataContext dependency property from FrameworkElement.
         public static readonly DependencyProperty DataContextProperty = FrameworkElement.DataContextProperty.AddOwner(typeof (DataContextSpy), new PropertyMetadata(null, null, OnCoerceDataContext));
-#endif
 
         protected override Freezable CreateInstanceCore()
         {

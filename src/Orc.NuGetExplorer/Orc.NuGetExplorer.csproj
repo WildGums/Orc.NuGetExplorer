@@ -81,11 +81,11 @@
     <Reference Include="System.IO">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
     </Reference>
-    <Reference Include="System.Management.Automation" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -118,7 +118,6 @@
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="Factories\PackageSourceFactory.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
-    <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Listeners\PackageManagementListenerBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\AuthenticationCredentials.cs" />

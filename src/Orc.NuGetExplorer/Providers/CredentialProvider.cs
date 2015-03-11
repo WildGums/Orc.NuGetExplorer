@@ -8,11 +8,10 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Net;
     using Catel;
+    using Catel.IoC;
     using NuGet;
 
     internal class CredentialProvider : ICredentialProvider
@@ -29,7 +28,7 @@ namespace Orc.NuGetExplorer
 
             _authenticationProvider = authenticationProvider;
 
-            _cancelledUris = new BindingList<Uri>();
+            _cancelledUris = new List<Uri>();
         }
         #endregion
 

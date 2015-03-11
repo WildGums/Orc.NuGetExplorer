@@ -13,11 +13,12 @@ namespace Orc.NuGetExplorer
     public static class AuthenticationRequiredExtensions
     {
         #region Methods
-        public static async Task<FeedVerificationResult> VerifyFeedAsync(this INuGetFeedVerificationService nuGetFeedVerificationService, string source)
+        public static async Task<FeedVerificationResult> VerifyFeedAsync(this INuGetFeedVerificationService nuGetFeedVerificationService, 
+            string source, bool authenticateIfRequired = true)
         {
             Argument.IsNotNull(() => nuGetFeedVerificationService);
 
-            return await Task.Factory.StartNew(() => nuGetFeedVerificationService.VerifyFeed(source));
+            return await Task.Factory.StartNew(() => nuGetFeedVerificationService.VerifyFeed(source, authenticateIfRequired));
         }
         #endregion
     }
