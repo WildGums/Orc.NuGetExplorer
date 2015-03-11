@@ -40,7 +40,7 @@
         <GridSplitter Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}" 
                       HorizontalAlignment="Left" IsEnabled="False" />
 
-        <catel:WatermarkTextBox Grid.Row="0" Grid.Column="1" Margin="5" Watermark="Search Online" Text="{Binding SearchFilter}">
+        <catel:WatermarkTextBox Grid.Row="0" Grid.Column="1" Margin="5" Watermark="{Binding FilterWatermark}" Text="{Binding SearchFilter}">
             <i:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
             </i:Interaction.Behaviors>

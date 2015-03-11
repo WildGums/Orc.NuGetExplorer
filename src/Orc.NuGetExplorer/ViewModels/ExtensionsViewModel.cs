@@ -22,12 +22,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static bool _updatingRepository;
+        private bool _isPrereleaseAllowed;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageActionService _packageActionService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
-        private bool _isPrereleaseAllowed;
         #endregion
 
         #region Constructors
@@ -58,6 +58,24 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
+
+        public string FilterWatermark
+        {
+            get
+            {
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return "Search in Installed";
+                    case RepositoryCategoryType.Online:
+                        return "Search Online";
+                    case RepositoryCategoryType.Update:
+                        return "Search in Updates";
+                }
+
+                return "Search";
+            }
+        }
 
         public bool IsPrereleaseAllowed
         {
