@@ -75,6 +75,13 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             _pagingService.UpdatePagingItems(Pager);
         }
+
+        private bool CanMoveForward()
+        {
+            var tooFewItems = ItemsCount <= ItemsPerPage;
+            var lastPage = _pagingService.IsLastPage(Pager);
+            return !lastPage && !tooFewItems;
+        }
         #endregion
 
         #region Commands
@@ -87,8 +94,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private bool OnMoveToLastCanExecute()
         {
-            return true;
-        }
+            return CanMoveForward();
+        }        
 
         public Command MoveForward { get; private set; }
 
@@ -99,7 +106,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private bool OnMoveForwardCanExecute()
         {
-            return true;
+            return CanMoveForward();
         }
 
         public Command MoveBack { get; private set; }
