@@ -126,6 +126,7 @@
     <Compile Include="Native\CredentialsPrompter.cs" />
     <Compile Include="Native\CredUi.cs" />
     <Compile Include="Native\Exceptions\CredentialException.cs" />
+    <Compile Include="Native\User32.cs" />
     <Compile Include="NuGet\Extensions\PackageSourceExtensions.cs" />
     <Compile Include="Providers\NuGetSettingsCredentialProvider.cs" />
     <Compile Include="Providers\CredentialProvider.cs" />

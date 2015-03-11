@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer.Native
             credUiInfo.pszCaptionText = "";
             credUiInfo.pszMessageText = "";
 
-            var windowHandle = Application.Current.MainWindow.GetWindowHandle();
+            var windowHandle = User32.GetActiveWindow();
             return PromptForCredentialsCredUIWin(windowHandle, true);
         }
 
