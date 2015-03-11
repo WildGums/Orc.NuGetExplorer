@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer
         void MoveToLast(Pager pager);
         void MoveToFirst(Pager pager);
         void StepTo(Pager pager, PagingItemInfo pagingItem);
+        bool IsLastPage(Pager pager);
         #endregion
     }
 }

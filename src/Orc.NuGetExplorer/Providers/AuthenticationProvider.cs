@@ -8,40 +8,33 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.ComponentModel;
-    using System.Net;
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using Catel.Services;
     using Native;
-    using ViewModels;
 
     internal class AuthenticationProvider : IAuthenticationProvider
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IUIVisualizerService _uiVisualizerService;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IUIVisualizerService uiVisualizerService, IDispatcherService dispatcherService,
-            IPleaseWaitService pleaseWaitService)
+        public AuthenticationProvider(IDispatcherService dispatcherService, IPleaseWaitService pleaseWaitService)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => dispatcherService);
+            Argument.IsNotNull(() => pleaseWaitService);
 
-            _uiVisualizerService = uiVisualizerService;
             _dispatcherService = dispatcherService;
             _pleaseWaitService = pleaseWaitService;
         }
         #endregion
 
         #region Methods
-        public AuthenticationCredentials GetCredentials(Uri uri)
+        public AuthenticationCredentials GetCredentials(Uri uri, bool previousCredentialsFailed)
         {
             Log.Debug("Requesting credentials for '{0}'", uri);
 
@@ -53,14 +46,18 @@ namespace Orc.NuGetExplorer
 
             _dispatcherService.Invoke(() =>
             {
+                var uriString = uri.ToString().ToLower();
+
                 var credentialsPrompter = new CredentialsPrompter
                 {
-                    ShowSaveCheckBox = true,
+                    Target = uriString,
                     UserName = string.Empty,
                     Password = string.Empty,
-                    WindowTitle = "prompt credentials",
-                    Content = "content",
-                    MainInstruction = "main instruction"
+                    AllowStoredCredentials = !previousCredentialsFailed,
+                    ShowSaveCheckBox = true,
+                    WindowTitle = "Credentials required",
+                    MainInstruction = "Credentials are required to access this feed",
+                    Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri)
                 };
                 
                 result = credentialsPrompter.ShowDialog();
@@ -75,7 +72,7 @@ namespace Orc.NuGetExplorer
 
             if (result ?? false)
             {
-                Log.Debug("Successfully requested credentials for '{0}'", uri);
+                Log.Debug("Successfully requested credentials for '{0}' using user '{1}'", uri, credentials.UserName);
 
                 return credentials;
             }

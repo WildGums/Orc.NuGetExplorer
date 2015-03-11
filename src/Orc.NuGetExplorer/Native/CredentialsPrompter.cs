@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer.Native
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows;
+    using Catel;
     using Catel.Windows;
 
     internal class CredentialsPrompter
@@ -21,11 +22,14 @@ namespace Orc.NuGetExplorer.Native
         #endregion
 
         #region Properties
-        public bool ShowSaveCheckBox { get; set; }
+        
+
+        public string Target { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public string Target { get; set; }
 
+        public bool AllowStoredCredentials { get; set; }
+        public bool ShowSaveCheckBox { get; set; }
         public bool IsSaveChecked
         {
             get { return _isSaveChecked; }
@@ -35,27 +39,39 @@ namespace Orc.NuGetExplorer.Native
         public string WindowTitle { get; set; }
         public string MainInstruction { get; set; }
         public string Content { get; set; }
+
         public DownlevelTextMode DownlevelTextMode { get; set; }
         #endregion
 
         #region Methods
         public bool ShowDialog()
         {
-            var creduiInfo = new CredUi.CREDUI_INFO();
-            creduiInfo.pszCaptionText = "lklkl";
-            creduiInfo.pszMessageText = "message";
+            var credUiInfo = new CredUi.CredUiInfo();
+            credUiInfo.pszCaptionText = "";
+            credUiInfo.pszMessageText = "";
 
-            var windowHandle = Application.Current.MainWindow.GetWindowHandle();
+            var windowHandle = User32.GetActiveWindow();
             return PromptForCredentialsCredUIWin(windowHandle, true);
         }
 
         private bool PromptForCredentialsCredUIWin(IntPtr owner, bool storedCredentials)
         {
+            if (AllowStoredCredentials)
+            {
+                var credentials = ReadCredential(Target);
+                if (credentials != null)
+                {
+                    UserName = credentials.UserName;
+                    Password = credentials.Password;
+                    return true;
+                }
+            }
+
             var info = CreateCredUIInfo(owner, false);
-            var flags = CredUi.CredUIWinFlags.Generic;
+            var flags = CredUi.CredUiWinFlags.Generic;
             if (ShowSaveCheckBox)
             {
-                flags |= CredUi.CredUIWinFlags.Checkbox;
+                flags |= CredUi.CredUiWinFlags.Checkbox;
             }
 
             var inBuffer = IntPtr.Zero;
@@ -69,7 +85,7 @@ namespace Orc.NuGetExplorer.Native
                     CredUi.CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
                     if (inBufferSize > 0)
                     {
-                        inBuffer = Marshal.AllocCoTaskMem((int) inBufferSize);
+                        inBuffer = Marshal.AllocCoTaskMem((int)inBufferSize);
                         if (!CredUi.CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                         {
                             throw new CredentialException(Marshal.GetLastWin32Error());
@@ -80,15 +96,15 @@ namespace Orc.NuGetExplorer.Native
                 uint outBufferSize = 0;
                 uint package = 0;
 
-                var result = CredUi.CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize, 
+                var result = CredUi.CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
                     out outBuffer, out outBufferSize, ref _isSaveChecked, flags);
                 switch (result)
                 {
-                    case CredUi.CredUIReturnCodes.NO_ERROR:
+                    case CredUi.CredUiReturnCodes.NO_ERROR:
                         var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
                         var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
-                        var userNameSize = (uint) userName.Capacity;
-                        var passwordSize = (uint) password.Capacity;
+                        var userNameSize = (uint)userName.Capacity;
+                        var passwordSize = (uint)password.Capacity;
                         uint domainSize = 0;
                         if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
                         {
@@ -97,23 +113,30 @@ namespace Orc.NuGetExplorer.Native
 
                         UserName = userName.ToString();
                         Password = password.ToString();
+
                         if (ShowSaveCheckBox)
                         {
                             _confirmTarget = Target;
-                            // If the credential was stored previously but the user has now cleared the save checkbox,
-                            // we want to delete the credential.
+
+                            // If the NativeCredential was stored previously but the user has now cleared the save checkbox,
+                            // we want to delete the NativeCredential.
                             if (storedCredentials && !IsSaveChecked)
                             {
-                                /* DeleteCredential(Target);*/
+                                DeleteCredential(Target);
+                            }
+
+                            if (IsSaveChecked)
+                            {
+                                WriteCredential(Target, UserName, Password);
                             }
                         }
                         return true;
 
-                    case CredUi.CredUIReturnCodes.ERROR_CANCELLED:
+                    case CredUi.CredUiReturnCodes.ERROR_CANCELLED:
                         return false;
 
                     default:
-                        throw new CredentialException((int) result);
+                        throw new CredentialException((int)result);
                 }
             }
             finally
@@ -130,35 +153,86 @@ namespace Orc.NuGetExplorer.Native
             }
         }
 
-        /*public static bool DeleteCredential(string target)
+        private static CredUi.SimpleCredentials ReadCredential(string key)
         {
-            if (target == null)
-                throw new ArgumentNullException("target");
-            if (target.Length == 0)
-                throw new ArgumentException(Properties.Resources.CredentialEmptyTargetError, "target");
+            IntPtr nCredPtr;
 
-            bool found = false;
-            lock (_applicationInstanceCredentialCache)
+            var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out nCredPtr);
+            if (!read)
             {
-                found = _applicationInstanceCredentialCache.Remove(target);
+                return null;
             }
 
-            if (CredUi.CredDelete(target, CredUi.CredTypes.CRED_TYPE_GENERIC, 0))
+            var credential = new CredUi.SimpleCredentials();
+
+            using (var criticalCredentialHandle = new CredUi.CriticalCredentialHandle(nCredPtr))
+            {
+                var cred = criticalCredentialHandle.GetCredential();
+
+                credential.UserName = cred.UserName;
+                credential.Password = cred.CredentialBlob;
+            }
+
+            return credential;
+        }
+
+        private static bool WriteCredential(string key, string userName, string secret)
+        {
+            var byteArray = Encoding.Unicode.GetBytes(secret);
+            if (byteArray.Length > 512)
+            {
+                throw new ArgumentOutOfRangeException("secret", "The secret message has exceeded 512 bytes.");
+            }
+
+            var cred = new CredUi.Credential();
+            cred.TargetName = key;
+            cred.UserName = userName;
+            cred.CredentialBlob = secret;
+            cred.CredentialBlobSize = (UInt32)Encoding.Unicode.GetBytes(secret).Length;
+            cred.AttributeCount = 0;
+            cred.Attributes = IntPtr.Zero;
+            cred.Comment = null;
+            cred.TargetAlias = null;
+            cred.Type = CredUi.CredTypes.CRED_TYPE_GENERIC;
+            cred.Persist = CredUi.IsWindowsVistaOrEarlier ? CredUi.CredPersistance.Session : CredUi.CredPersistance.LocalMachine;
+
+            var ncred = CredUi.NativeCredential.GetNativeCredential(cred);
+            var written = CredUi.CredWrite(ref ncred, 0);
+            var lastError = Marshal.GetLastWin32Error();
+            if (!written)
+            {
+                var message = string.Format("CredWrite failed with the error code {0}.", lastError);
+                throw new Exception(message);
+            }
+
+            return true;
+        }
+
+        private static bool DeleteCredential(string key)
+        {
+            Argument.IsNotNullOrWhitespace(() => key);
+
+            var found = false;
+
+            if (CredUi.CredDelete(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0))
             {
                 found = true;
             }
             else
             {
-                int error = Marshal.GetLastWin32Error();
-                if (error != (int)CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                var error = Marshal.GetLastWin32Error();
+                if (error != (int)CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
+                {
                     throw new CredentialException(error);
+                }
             }
-            return found;
-        }*/
 
-        private CredUi.CREDUI_INFO CreateCredUIInfo(IntPtr owner, bool downlevelText)
+            return found;
+        }
+
+        private CredUi.CredUiInfo CreateCredUIInfo(IntPtr owner, bool downlevelText)
         {
-            var info = new CredUi.CREDUI_INFO();
+            var info = new CredUi.CredUiInfo();
             info.cbSize = Marshal.SizeOf(info);
             info.hwndParent = owner;
 
