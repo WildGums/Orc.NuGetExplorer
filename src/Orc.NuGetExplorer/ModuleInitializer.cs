@@ -45,5 +45,8 @@ public static class ModuleInitializer
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
+
+
+        serviceLocator.RegisterTypeAndInstantiate<DeletemeListener>();
     }
 }

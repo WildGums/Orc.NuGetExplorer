@@ -22,6 +22,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static bool _updatingRepository;
+        private bool _isPrereleaseAllowed;
         private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageActionService _packageActionService;
@@ -47,7 +48,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
             PackageAction = new Command(OnPackageActionExecute, OnPackageActionCanExecute);
         }
-        
         #endregion
 
         #region Properties
@@ -58,7 +58,43 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
-        public bool IsPrereleaseAllowed { get; set; }
+
+        public string FilterWatermark
+        {
+            get
+            {
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return "Search in Installed";
+                    case RepositoryCategoryType.Online:
+                        return "Search Online";
+                    case RepositoryCategoryType.Update:
+                        return "Search in Updates";
+                }
+
+                return "Search";
+            }
+        }
+
+        public bool IsPrereleaseAllowed
+        {
+            get
+            {
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return true;
+
+                    case RepositoryCategoryType.Online:
+                    case RepositoryCategoryType.Update:
+                        return _isPrereleaseAllowed;
+                }
+
+                return _isPrereleaseAllowed;
+            }
+            set { _isPrereleaseAllowed = value; }
+        }
 
         public bool IsPrereleaseSupported
         {
@@ -70,9 +106,18 @@ namespace Orc.NuGetExplorer.ViewModels
                     return false;
                 }
 
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return false;
+                    case RepositoryCategoryType.Online:
+                        return true;
+                    case RepositoryCategoryType.Update:
+                        return true;
+                }
                 // Blocking call!
                 //return NamedRepository.Value.SupportsPrereleasePackages;
-                return true;
+                return false;
             }
         }
         #endregion
@@ -155,7 +200,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-
             if (NamedRepository != null)
             {
                 using (_pleaseWaitService.WaitingScope())
@@ -183,7 +227,7 @@ namespace Orc.NuGetExplorer.ViewModels
             if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
                 Search();
-            }             
+            }
         }
 
         private bool OnPackageActionCanExecute()

@@ -13,11 +13,9 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Windows.Media;
     using Catel;
     using Catel.Fody;
-    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using Extensions;
-    using NuGet;
 
     internal class ExplorerViewModel : ViewModelBase
     {
