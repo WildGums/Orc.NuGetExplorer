@@ -44,8 +44,6 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
             VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
         }
-
-        
         #endregion
 
         #region Properties

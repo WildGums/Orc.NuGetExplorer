@@ -36,6 +36,7 @@ namespace Orc.NuGetExplorer
         {
             var result = FeedVerificationResult.Valid;
             var originalCredentialProvider = HttpClient.DefaultCredentialProvider;
+
             try
             {
                 if (!authenticateIfRequired)

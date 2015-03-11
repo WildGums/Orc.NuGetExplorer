@@ -14,6 +14,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private RepositoryNavigator _navigator;
         private readonly IRepositoryNavigationFactory _repositoryNavigationFactory;
         #endregion

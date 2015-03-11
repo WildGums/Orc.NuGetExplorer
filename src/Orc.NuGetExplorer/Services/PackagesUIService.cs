@@ -37,7 +37,6 @@ namespace Orc.NuGetExplorer
           //  _httpClientFactory = httpClientFactory;
             _packageRepositoryFactory = packageRepositoryFactory;
 
-            HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
             var repositoryFactory = packageRepositoryFactory as PackageRepositoryFactory;
             if (repositoryFactory != null)
             {

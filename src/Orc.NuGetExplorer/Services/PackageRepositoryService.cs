@@ -20,6 +20,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageRepositoryFactory _repositoryFactory;
         #endregion
