@@ -84,12 +84,13 @@ namespace Orc.NuGetExplorer.ViewModels
                 switch (NamedRepository.RepositoryCategory)
                 {
                     case RepositoryCategoryType.Installed:
-                        return false;
+                        return true;
+
                     case RepositoryCategoryType.Online:
-                        return _isPrereleaseAllowed;
                     case RepositoryCategoryType.Update:
                         return _isPrereleaseAllowed;
                 }
+
                 return _isPrereleaseAllowed;
             }
             set { _isPrereleaseAllowed = value; }
