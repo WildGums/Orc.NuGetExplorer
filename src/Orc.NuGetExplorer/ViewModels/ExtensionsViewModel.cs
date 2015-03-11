@@ -27,6 +27,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private readonly IPackageActionService _packageActionService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
+        private bool _isPrereleaseAllowed;
         #endregion
 
         #region Constructors
@@ -57,7 +58,24 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
-        public bool IsPrereleaseAllowed { get; set; }
+
+        public bool IsPrereleaseAllowed
+        {
+            get
+            {
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return false;
+                    case RepositoryCategoryType.Online:
+                        return _isPrereleaseAllowed;
+                    case RepositoryCategoryType.Update:
+                        return _isPrereleaseAllowed;
+                }
+                return _isPrereleaseAllowed;
+            }
+            set { _isPrereleaseAllowed = value; }
+        }
 
         public bool IsPrereleaseSupported
         {
