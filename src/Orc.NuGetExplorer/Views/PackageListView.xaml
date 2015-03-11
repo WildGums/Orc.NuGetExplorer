@@ -7,6 +7,17 @@
 
     <catel:UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
+
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+            </Style.Resources>
+            <Style.Triggers>
+                <Trigger Property="ListBoxItem.IsSelected" Value="True" >
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </catel:UserControl.Resources>
 
     <Grid>
@@ -17,10 +28,11 @@
 
         <ListBox  Grid.Row="0" ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}"
                   HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  BorderThickness="0" Background="#F8F8F8">
+                  BorderThickness="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="0" Padding="4 4 4 8">
+                    <Border x:Name="Container" BorderBrush="Transparent" BorderThickness="3" Background="Transparent" 
+                            Padding="4 4 4 8" Margin="-2 0 0 0">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -49,6 +61,11 @@
                                     Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource CollapsingVisibilityConverter}}"/>
                         </Grid>
                     </Border>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
+                            <Setter Property="BorderBrush" TargetName="Container" Value="{StaticResource AccentColorBrush4}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
