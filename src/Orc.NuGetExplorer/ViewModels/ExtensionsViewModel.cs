@@ -67,8 +67,10 @@ namespace Orc.NuGetExplorer.ViewModels
                 {
                     case RepositoryCategoryType.Installed:
                         return "Search in Installed";
+
                     case RepositoryCategoryType.Online:
                         return "Search Online";
+
                     case RepositoryCategoryType.Update:
                         return "Search in Updates";
                 }
