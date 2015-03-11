@@ -24,6 +24,7 @@
             <catel:StackGrid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>              
+                <RowDefinition Height="Auto"/>              
             </catel:StackGrid.RowDefinitions>
             <catel:StackGrid >
                 <catel:StackGrid.ColumnDefinitions>
@@ -39,6 +40,7 @@
                 <TextBlock Text="Package source feed"/>
                 <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
             </catel:StackGrid>
+            <Button Content="verify feed" Command="{Binding VerifyFeed}"/>
             <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
         </catel:StackGrid>
         <ListBox ItemsSource="{Binding Lines}"/>

@@ -42,6 +42,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
             ShowExplorer = new TaskCommand(OnShowExplorerExecute);
             AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
+            VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
         }
 
         
@@ -71,6 +72,18 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         private bool OnAdddPackageSourceCanExecute()
         {           
             return !string.IsNullOrWhiteSpace(PackageSourceName) && !string.IsNullOrWhiteSpace(PackageSourceUrl);
+        }
+
+        public TaskCommand VerifyFeed { get; private set; }
+
+        private async Task OnVerifyFeedExecute()
+        {
+            var result = await _feedVerificationService.VerifyFeedAsync(PackageSourceUrl);
+        }
+
+        private bool OnVerifyFeedCanExecute()
+        {
+            return !string.IsNullOrWhiteSpace(PackageSourceUrl);
         }
 
         /// <summary>
