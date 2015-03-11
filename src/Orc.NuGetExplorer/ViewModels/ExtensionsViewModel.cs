@@ -47,7 +47,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
             PackageAction = new Command(OnPackageActionExecute, OnPackageActionCanExecute);
         }
-        
         #endregion
 
         #region Properties
@@ -70,9 +69,18 @@ namespace Orc.NuGetExplorer.ViewModels
                     return false;
                 }
 
+                switch (NamedRepository.RepositoryCategory)
+                {
+                    case RepositoryCategoryType.Installed:
+                        return false;
+                    case RepositoryCategoryType.Online:
+                        return true;
+                    case RepositoryCategoryType.Update:
+                        return true;
+                }
                 // Blocking call!
                 //return NamedRepository.Value.SupportsPrereleasePackages;
-                return true;
+                return false;
             }
         }
         #endregion
@@ -155,7 +163,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-
             if (NamedRepository != null)
             {
                 using (_pleaseWaitService.WaitingScope())
@@ -183,7 +190,7 @@ namespace Orc.NuGetExplorer.ViewModels
             if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
                 Search();
-            }             
+            }
         }
 
         private bool OnPackageActionCanExecute()

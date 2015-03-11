@@ -180,15 +180,11 @@
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\PagingService.cs" />
     <Compile Include="Services\RepositoryNavigationService.cs" />
-    <Compile Include="ViewModels\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="ViewModels\PackageListViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
-    <Compile Include="Views\AuthenticationWindow.xaml.cs">
-      <DependentUpon>AuthenticationWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ExplorerWindow.xaml.cs">
       <DependentUpon>ExplorerWindow.xaml</DependentUpon>
     </Compile>
@@ -217,10 +213,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AuthenticationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
