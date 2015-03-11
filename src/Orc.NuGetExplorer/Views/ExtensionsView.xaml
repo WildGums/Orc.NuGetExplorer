@@ -47,7 +47,7 @@
         </catel:WatermarkTextBox>
 
         <views:PagingView Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"
-                          HorizontalContentAlignment="Center" Background="#F8F8F8"
+                          HorizontalContentAlignment="Center" 
                           ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
 
         <views:PackageDetailsView Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding SelectedPackage}" />
