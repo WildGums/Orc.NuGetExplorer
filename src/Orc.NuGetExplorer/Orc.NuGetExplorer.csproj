@@ -118,6 +118,7 @@
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="Factories\PackageSourceFactory.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
+    <Compile Include="Listeners\DeletemeListener.cs" />
     <Compile Include="Listeners\PackageManagementListenerBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\AuthenticationCredentials.cs" />
