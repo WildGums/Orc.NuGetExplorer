@@ -26,10 +26,11 @@
             <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <CheckBox IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupported}"
-                      Content="Enable prerelease packages" Margin="8 12 8 4"/>
-        </StackPanel>
+        <catel:WatermarkTextBox Grid.Row="0" Grid.Column="0" Margin="4" VerticalContentAlignment="Center" Watermark="Search Online" Text="{Binding SearchFilter}">
+            <i:Interaction.Behaviors>
+                <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
+            </i:Interaction.Behaviors>
+        </catel:WatermarkTextBox>
 
         <views:PackageListView Grid.Row="1" Grid.Column="0"
                                ItemsSource="{Binding AvailablePackages, Mode=OneWay}"
@@ -40,17 +41,15 @@
         <GridSplitter Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}" 
                       HorizontalAlignment="Left" IsEnabled="False" />
 
-        <catel:WatermarkTextBox Grid.Row="0" Grid.Column="1" Margin="4 6 4 2" VerticalContentAlignment="Center" Watermark="Search Online" Text="{Binding SearchFilter}">
-            <i:Interaction.Behaviors>
-                <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
-            </i:Interaction.Behaviors>
-        </catel:WatermarkTextBox>
+        
 
-        <views:PagingView Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"
-                          HorizontalContentAlignment="Center" 
-                          ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
-
-        <views:PackageDetailsView Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding SelectedPackage}" />
+        <DockPanel Grid.Column="0" Grid.Row="2">
+            <CheckBox IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupported}"
+                      Content="Include prerelease" Margin="8 8 8 4" DockPanel.Dock="Left"/>
+            <views:PagingView HorizontalAlignment="Right" HorizontalContentAlignment="Center" Margin="0 0 20 0"
+                              ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
+        </DockPanel>
+        <views:PackageDetailsView Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" DataContext="{Binding SelectedPackage}" />
     </Grid>
 
 </catel:UserControl>

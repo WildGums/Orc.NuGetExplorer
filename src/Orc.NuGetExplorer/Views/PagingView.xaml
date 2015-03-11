@@ -18,10 +18,11 @@
             <local:DataContextSpy x:Key="dataContextSpy" />
         </StackPanel.Resources>
 
-        <Button Content="&lt;&lt;" Command="{Binding MoveToFirst}" Style="{StaticResource ArrowButtonStyle}"/>
-        <Button Content="&lt;" Command="{Binding MoveBack}" Style="{StaticResource ArrowButtonStyle}"/>
+        <!--<Button Content="&lt;&lt;" Command="{Binding MoveToFirst}" Style="{StaticResource ArrowButtonStyle}"/>-->
+        <Button Content="Back" Command="{Binding MoveBack}" Style="{StaticResource HyperLinkButtonStyle}" Margin="0 0 5 0"
+                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToHidingVisibilityConverter}}"/>
 
-        <ItemsControl ItemsSource="{Binding LeftPages}">
+        <!--<ItemsControl ItemsSource="{Binding LeftPages}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -34,11 +35,11 @@
                             CommandParameter="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        </ItemsControl>-->
 
-        <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" Style="{StaticResource HyperLinkTextBlockStyle}" />
+        <!--<TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" Style="{StaticResource HyperLinkTextBlockStyle}" />-->
 
-        <ItemsControl ItemsSource="{Binding RightPages}">
+        <!--<ItemsControl ItemsSource="{Binding RightPages}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -51,9 +52,10 @@
                             CommandParameter="{Binding}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        </ItemsControl>-->
 
-        <Button Content="&gt;" Command="{Binding MoveForward}" Style="{StaticResource ArrowButtonStyle}"/>
-        <Button Content="&gt;&gt;" Command="{Binding MoveToLast}" Style="{StaticResource ArrowButtonStyle}"/>
+        <Button Content="Next" Command="{Binding MoveForward}" Style="{StaticResource HyperLinkButtonStyle}"
+                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToHidingVisibilityConverter}}"/>
+        <!--<Button Content="&gt;&gt;" Command="{Binding MoveToLast}" Style="{StaticResource ArrowButtonStyle}"/>-->
     </StackPanel>
 </catel:UserControl>
