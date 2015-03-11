@@ -19,8 +19,13 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        protected override void OnPackageUninstalling(object sender, NuGetPackageOperationEventArgs e)
+        protected override void OnPackageUninstalled(object sender, NuGetPackageOperationEventArgs e)
         {
+            if (!Directory.Exists(e.InstallPath))
+            {
+                return;
+            }
+
             var fileName = string.Format("{0}.deleteme", e.PackageDetails.Id);
             var fullName = Path.Combine(e.InstallPath, fileName);
 
