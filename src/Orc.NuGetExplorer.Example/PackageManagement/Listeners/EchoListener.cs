@@ -17,8 +17,9 @@ namespace Orc.NuGetExplorer.Example
         #endregion
 
         #region Constructors
-        public EchoListener(IPackageManagerListeningService packageManagerListeningService, IEchoService echoService)
-            : base(packageManagerListeningService)
+        public EchoListener(IPackageManagerListeningService packageManagerListeningService, INuGetLogListeningSevice nuGetLogListeningSevice,
+            IEchoService echoService)
+            : base(packageManagerListeningService, nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => echoService);
 

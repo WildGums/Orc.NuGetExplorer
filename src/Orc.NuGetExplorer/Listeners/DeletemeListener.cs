@@ -13,7 +13,8 @@ namespace Orc.NuGetExplorer
     public class DeletemeListener : PackageManagerListenerBase
     {
         #region Constructors
-        public DeletemeListener(IPackageManagerListeningService packageManagerListeningService) : base(packageManagerListeningService)
+        public DeletemeListener(IPackageManagerListeningService packageManagerListeningService, INuGetLogListeningSevice nuGetLogListeningSevice)
+            : base(packageManagerListeningService, nuGetLogListeningSevice)
         {
         }
         #endregion

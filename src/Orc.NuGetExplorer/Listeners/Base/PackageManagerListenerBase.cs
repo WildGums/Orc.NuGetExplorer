@@ -12,7 +12,8 @@ namespace Orc.NuGetExplorer
     public abstract class PackageManagerListenerBase
     {
         #region Constructors
-        public PackageManagerListenerBase(IPackageManagerListeningService packageManagerListeningService)
+        public PackageManagerListenerBase(IPackageManagerListeningService packageManagerListeningService,
+            INuGetLogListeningSevice nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => packageManagerListeningService);
 

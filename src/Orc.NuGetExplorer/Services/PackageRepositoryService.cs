@@ -11,7 +11,6 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using System.Linq;
     using Catel;
-    using Catel.ExceptionHandling;
     using Catel.Logging;
     using NuGet;
     using Repositories;
@@ -20,7 +19,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
+        private IPackageRepository _localRepository;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageRepositoryFactory _repositoryFactory;
         #endregion
@@ -36,10 +35,19 @@ namespace Orc.NuGetExplorer
         }
         #endregion
 
-        private IEnumerable<IPackageSource> GetPackageSources()
+        #region Properties
+        public IPackageRepository LocalRepository
         {
-            return _nuGetConfigurationService.LoadPackageSources();
+            get
+            {
+                if (_localRepository == null)
+                {
+                    _localRepository = GetLocalRepository();
+                }
+                return _localRepository;
+            }
         }
+        #endregion
 
         #region Methods
         public IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category)
@@ -85,7 +93,7 @@ namespace Orc.NuGetExplorer
             var result = new Dictionary<string, IPackageRepository>();
             var packageSources = GetPackageSources();
             foreach (var packageSource in packageSources)
-            {               
+            {
                 var repo = _repositoryFactory.CreateRepository(packageSource.Source);
 
                 result.Add(packageSource.Name, repo);
@@ -94,7 +102,12 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        public IPackageRepository GetLocalRepository()
+        private IEnumerable<IPackageSource> GetPackageSources()
+        {
+            return _nuGetConfigurationService.LoadPackageSources();
+        }
+
+        private IPackageRepository GetLocalRepository()
         {
             var path = _nuGetConfigurationService.GetDestinationFolder();
 

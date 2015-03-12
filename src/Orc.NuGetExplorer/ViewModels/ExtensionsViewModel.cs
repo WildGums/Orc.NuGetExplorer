@@ -235,7 +235,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            _packageActionService.Execute(NamedRepository.RepositoryCategory, SelectedPackage, IsPrereleaseAllowed);
+            _packageActionService.Execute(NamedRepository.RepositoryCategory, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
             if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
                 Search();

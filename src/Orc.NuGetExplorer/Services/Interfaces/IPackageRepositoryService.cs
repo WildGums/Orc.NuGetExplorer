@@ -12,9 +12,12 @@ namespace Orc.NuGetExplorer
 
     internal interface IPackageRepositoryService
     {
+        #region Properties
+        IPackageRepository LocalRepository { get; }
+        #endregion
+
         #region Methods
         IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category);
-        IPackageRepository GetLocalRepository();
         IDictionary<string, IPackageRepository> GetRemoteRepositories();
         IPackageRepository GetAggregateRepository();
         IDictionary<string, IPackageRepository> GetUpdateRepositories();
