@@ -10,15 +10,15 @@ namespace Orc.NuGetExplorer.Example
     using Catel;
     using Models;
 
-    public class EchoListener : PackageManagementListenerBase
+    public class EchoListener : PackageManagerListenerBase
     {
         #region Fields
         private readonly PackageManagementEcho _echo;
         #endregion
 
         #region Constructors
-        public EchoListener(IPackageManagementListeningService packageManagementListeningService, IEchoService echoService)
-            : base(packageManagementListeningService)
+        public EchoListener(IPackageManagerListeningService packageManagerListeningService, IEchoService echoService)
+            : base(packageManagerListeningService)
         {
             Argument.IsNotNull(() => echoService);
 

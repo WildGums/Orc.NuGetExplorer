@@ -120,7 +120,7 @@
     <Compile Include="Factories\PackageSourceFactory.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Listeners\DeletemeListener.cs" />
-    <Compile Include="Listeners\PackageManagementListenerBase.cs" />
+    <Compile Include="Listeners\Base\PackageManagerListenerBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\AuthenticationCredentials.cs" />
     <Compile Include="Models\Interfaces\IPackageDetails.cs" />
@@ -166,7 +166,7 @@
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
-    <Compile Include="Services\Interfaces\IPackageManagementListeningService.cs" />
+    <Compile Include="Services\Interfaces\IPackageManagerListeningService.cs" />
     <Compile Include="Services\Interfaces\IPackageActionService.cs" />
     <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
@@ -174,7 +174,7 @@
     <Compile Include="Services\PackageActionService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
-    <Compile Include="Services\PackageManagementListeningService.cs" />
+    <Compile Include="Services\PackageManagerListeningService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="NuGet\NuGetPackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />

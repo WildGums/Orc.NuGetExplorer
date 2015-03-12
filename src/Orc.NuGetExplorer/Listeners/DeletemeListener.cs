@@ -10,10 +10,10 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using Path = Catel.IO.Path;
 
-    public class DeletemeListener : PackageManagementListenerBase
+    public class DeletemeListener : PackageManagerListenerBase
     {
         #region Constructors
-        public DeletemeListener(IPackageManagementListeningService packageManagementListeningService) : base(packageManagementListeningService)
+        public DeletemeListener(IPackageManagerListeningService packageManagerListeningService) : base(packageManagerListeningService)
         {
         }
         #endregion

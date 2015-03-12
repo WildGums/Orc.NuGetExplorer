@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageManagementListenerBase.cs" company="Wild Gums">
+// <copyright file="PackageManagerListenerBase.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,17 +9,17 @@ namespace Orc.NuGetExplorer
 {
     using Catel;
 
-    public abstract class PackageManagementListenerBase
+    public abstract class PackageManagerListenerBase
     {
         #region Constructors
-        public PackageManagementListenerBase(IPackageManagementListeningService packageManagementListeningService)
+        public PackageManagerListenerBase(IPackageManagerListeningService packageManagerListeningService)
         {
-            Argument.IsNotNull(() => packageManagementListeningService);
+            Argument.IsNotNull(() => packageManagerListeningService);
 
-            packageManagementListeningService.PackageInstalled += OnPackageInstalled;
-            packageManagementListeningService.PackageInstalling += OnPackageInstalling;
-            packageManagementListeningService.PackageUninstalled += OnPackageUninstalled;
-            packageManagementListeningService.PackageUninstalling += OnPackageUninstalling;
+            packageManagerListeningService.PackageInstalled += OnPackageInstalled;
+            packageManagerListeningService.PackageInstalling += OnPackageInstalling;
+            packageManagerListeningService.PackageUninstalled += OnPackageUninstalled;
+            packageManagerListeningService.PackageUninstalling += OnPackageUninstalling;
         }
         #endregion
 

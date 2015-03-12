@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageManagementListeningService.cs" company="Wild Gums">
+// <copyright file="IPackageManagerListeningService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    public interface IPackageManagementListeningService
+    public interface IPackageManagerListeningService
     {
         #region Methods
         event EventHandler<NuGetPackageOperationEventArgs> PackageInstalling;
