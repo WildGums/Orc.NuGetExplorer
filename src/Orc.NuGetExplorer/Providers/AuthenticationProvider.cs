@@ -40,36 +40,34 @@ namespace Orc.NuGetExplorer
 
             bool? result = null;
 
-            _pleaseWaitService.Hide();
-
             var credentials = new AuthenticationCredentials(uri);
 
-            _dispatcherService.Invoke(() =>
+            using (_pleaseWaitService.HideTemporarily())
             {
-                var uriString = uri.ToString().ToLower();
-
-                var credentialsPrompter = new CredentialsPrompter
+                _dispatcherService.Invoke(() =>
                 {
-                    Target = uriString,
-                    UserName = string.Empty,
-                    Password = string.Empty,
-                    AllowStoredCredentials = !previousCredentialsFailed,
-                    ShowSaveCheckBox = true,
-                    WindowTitle = "Credentials required",
-                    MainInstruction = "Credentials are required to access this feed",
-                    Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri)
-                };
-                
-                result = credentialsPrompter.ShowDialog();
-                if (result ?? false)
-                {
-                    credentials.UserName = credentialsPrompter.UserName;
-                    credentials.Password = credentialsPrompter.Password;
-                }
-            });
+                    var uriString = uri.ToString().ToLower();
 
-            // NOTE: don't show, we should check if it was visible in the first place
-            //_pleaseWaitService.Show();
+                    var credentialsPrompter = new CredentialsPrompter
+                    {
+                        Target = uriString,
+                        UserName = string.Empty,
+                        Password = string.Empty,
+                        AllowStoredCredentials = !previousCredentialsFailed,
+                        ShowSaveCheckBox = true,
+                        WindowTitle = "Credentials required",
+                        MainInstruction = "Credentials are required to access this feed",
+                        Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri)
+                    };
+
+                    result = credentialsPrompter.ShowDialog();
+                    if (result ?? false)
+                    {
+                        credentials.UserName = credentialsPrompter.UserName;
+                        credentials.Password = credentialsPrompter.Password;
+                    }
+                });
+            }
 
             if (result ?? false)
             {
