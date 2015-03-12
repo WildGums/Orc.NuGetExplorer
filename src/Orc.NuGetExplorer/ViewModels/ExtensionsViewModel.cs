@@ -95,7 +95,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 return _isPrereleaseAllowed;
             }
-            set { _isPrereleaseAllowed = value; }
+            set
+            {
+                _isPrereleaseAllowed = value;
+                OnIsPrereleaseAllowedChanged();
+            }
         }
 
         public bool IsPrereleaseSupported
@@ -178,6 +182,12 @@ namespace Orc.NuGetExplorer.ViewModels
             if (NamedRepository == null)
             {
                 return;
+            }
+
+            var updateRepository = NamedRepository.Value as UpdateRepository;
+            if (updateRepository != null)
+            {
+                updateRepository.AllowPrerelease = IsPrereleaseAllowed;
             }
 
             using (_pleaseWaitService.WaitingScope())
