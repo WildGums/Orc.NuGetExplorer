@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -126,7 +127,15 @@ namespace Orc.NuGetExplorer
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 filter = filter.Trim();
-                queryable = queryable.Where(x => x.Title.ToUpper().Contains(filter.ToUpper()));
+                var localPackageRepository = packageRepository as LocalPackageRepository;
+                if (localPackageRepository == null)
+                {
+                    queryable = queryable.Where(x => x.Title.ToUpper().Contains(filter.ToUpper()));
+                }
+                else
+                {
+                    queryable = queryable.Where(x => CultureInfo.InvariantCulture.CompareInfo.IndexOf(x.Id, filter, CompareOptions.IgnoreCase) != -1);
+                }
             }
 
             if (allowPrereleaseVersions)
