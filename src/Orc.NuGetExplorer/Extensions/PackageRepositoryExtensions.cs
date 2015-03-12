@@ -126,7 +126,7 @@ namespace Orc.NuGetExplorer
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 filter = filter.Trim();
-                queryable = queryable.Where(x => x.Title.Contains(filter));
+                queryable = queryable.Where(x => x.Title.ToUpper().Contains(filter.ToUpper()));
             }
 
             if (allowPrereleaseVersions)
