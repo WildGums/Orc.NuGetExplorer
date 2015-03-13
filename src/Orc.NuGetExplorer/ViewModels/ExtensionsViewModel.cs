@@ -46,7 +46,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
-            PackageAction = new Command(OnPackageActionExecute, OnPackageActionCanExecute);
+            PackageAction = new TaskCommand(OnPackageActionExecute, OnPackageActionCanExecute);
         }
         #endregion
 
@@ -231,14 +231,14 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Commands
-        public Command PackageAction { get; private set; }
+        public TaskCommand PackageAction { get; private set; }
 
-        private void OnPackageActionExecute()
+        private async Task OnPackageActionExecute()
         {
-            _packageActionService.Execute(NamedRepository.RepositoryCategory, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
+            await _packageActionService.Execute(NamedRepository.RepositoryCategory, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
             if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
-                Search();
+                await Search();
             }
         }
 

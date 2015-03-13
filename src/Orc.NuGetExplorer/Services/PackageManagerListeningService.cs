@@ -9,21 +9,26 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
+    using Catel.Services;
     using NuGet;
 
     internal class PackageManagerListeningService : IPackageManagerListeningService
     {
         #region Fields
+        private readonly IDispatcherService _dispatcherService;
         private readonly IPackageCacheService _packageCacheService;
         #endregion
 
         #region Constructors
-        public PackageManagerListeningService(INuGetPackageManager nuGetPackageManager, IPackageCacheService packageCacheService)
+        public PackageManagerListeningService(INuGetPackageManager nuGetPackageManager, IPackageCacheService packageCacheService,
+            IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => packageCacheService);
+            Argument.IsNotNull(() => dispatcherService);
 
             _packageCacheService = packageCacheService;
+            _dispatcherService = dispatcherService;
 
             nuGetPackageManager.PackageInstalling += OnPackageInstalling;
             nuGetPackageManager.PackageInstalled += OnPackageInstalled;
@@ -62,11 +67,14 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => handler);
 
-            if (handler != null)
+            _dispatcherService.Invoke(() =>
             {
-                var packageDetails = _packageCacheService.GetPackageDetails(e.Package);
-                handler(sender, new NuGetPackageOperationEventArgs(packageDetails, e.InstallPath));
-            }
+                if (handler != null)
+                {
+                    var packageDetails = _packageCacheService.GetPackageDetails(e.Package);
+                    handler(sender, new NuGetPackageOperationEventArgs(packageDetails, e.InstallPath));
+                }
+            });
         }
         #endregion
     }

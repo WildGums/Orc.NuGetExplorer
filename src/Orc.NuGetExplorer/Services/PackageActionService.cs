@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
     using NuGet;
@@ -15,10 +16,11 @@ namespace Orc.NuGetExplorer
     internal class PackageActionService : IPackageActionService
     {
         #region Fields
+        private readonly ILogger _logger;
         private readonly INuGetPackageManager _packageManager;
         private readonly IPackageRepositoryService _packageRepositoryService;
-        private readonly ILogger _logger;
         private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IPackageRepository _localRepository;
         #endregion
 
         #region Constructors
@@ -34,6 +36,7 @@ namespace Orc.NuGetExplorer
             _packageManager = packageManager;
             _packageRepositoryService = packageRepositoryService;
             _logger = logger;
+            _localRepository = _packageRepositoryService.LocalRepository;
         }
         #endregion
 
@@ -53,26 +56,28 @@ namespace Orc.NuGetExplorer
             return string.Empty;
         }
 
-        public void Execute(RepositoryCategoryType repositoryCategory, IPackageRepository remoteRepository, 
-            PackageDetails packageDetails, bool allowedPrerelease)
+        public async Task Execute(RepositoryCategoryType repositoryCategory, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => packageDetails);
 
-            using (_pleaseWaitService.WaitingScope())
+            await Task.Factory.StartNew(() =>
             {
-                switch (repositoryCategory)
+                using (_pleaseWaitService.WaitingScope())
                 {
-                    case RepositoryCategoryType.Installed:
-                        UninstallPackage(remoteRepository, packageDetails);
-                        break;
-                    case RepositoryCategoryType.Online:
-                        InstallPackage(remoteRepository, packageDetails, allowedPrerelease);
-                        break;
-                    case RepositoryCategoryType.Update:
-                        UpdatePackages(packageDetails, allowedPrerelease);
-                        break;
+                    switch (repositoryCategory)
+                    {
+                        case RepositoryCategoryType.Installed:
+                            UninstallPackage(remoteRepository, packageDetails);
+                            break;
+                        case RepositoryCategoryType.Online:
+                            InstallPackage(remoteRepository, packageDetails, allowedPrerelease);
+                            break;
+                        case RepositoryCategoryType.Update:
+                            UpdatePackages(remoteRepository, packageDetails, allowedPrerelease);
+                            break;
+                    }
                 }
-            }
+            });
         }
 
         public bool CanExecute(RepositoryCategoryType repositoryCategory, PackageDetails packageDetails)
@@ -99,22 +104,12 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            try
-            {
-                var localRepository = _packageRepositoryService.LocalRepository;
-                var walker = new UninstallWalker(localRepository, new DependentsWalker(remoteRepository, null), null, 
-                    _logger, false, false);
+            var dependentsResolver = new DependentsWalker(remoteRepository, null);
 
-                var operations = walker.ResolveOperations(packageDetails.Package);
-                foreach (var operation in operations)
-                {
-                    ExecuteOperation(true, operation);
-                }
-            }
-            catch(Exception exception)
-            {
-                _logger.Log(MessageLevel.Error, exception.Message);
-            }            
+            var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
+                _logger, false, false);
+
+            ExecuteOperation(packageDetails, walker);
 
             _packageManager.UninstallPackage(packageDetails.Package, true, false);
         }
@@ -124,43 +119,49 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => remoteRepository);
             Argument.IsNotNull(() => packageDetails);
 
-            try
-            {
-                var localRepository = _packageRepositoryService.LocalRepository;
-                var walker = new InstallWalker(localRepository, remoteRepository, null, _logger, false, allowedPrerelease, 
-                    DependencyVersion.Lowest);
+           
 
-                var operations = walker.ResolveOperations(packageDetails.Package);
-                foreach (var operation in operations)
-                {
-                    ExecuteOperation(allowedPrerelease, operation);
-                }
-            }
-            catch(Exception exception)
-            {
-                _logger.Log(MessageLevel.Error, exception.Message);
-            }
+            var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
+                DependencyVersion.Highest);
+
+            ExecuteOperation(packageDetails, walker, allowedPrerelease);
         }
 
-        private void ExecuteOperation(bool allowedPrerelease, PackageOperation operation)
-        {
-            switch (operation.Action)
-            {
-                case PackageAction.Install:
-                    _packageManager.InstallPackage(operation.Package, false, allowedPrerelease);
-                    break;
-                case PackageAction.Uninstall:
-                    _packageManager.UninstallPackage(operation.Package, true, allowedPrerelease);
-                    break;
-            }
-        }
-
-        private void UpdatePackages(PackageDetails packageDetails, bool allowedPrerelease)
+        private void UpdatePackages(IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => packageDetails);
 
-            _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
+            var dependentsResolver = new DependentsWalker(remoteRepository, null);
+
+            var walker = new UpdateWalker(_localRepository, remoteRepository, dependentsResolver, null, null, _logger, true, allowedPrerelease);
+
+            ExecuteOperation(packageDetails, walker, allowedPrerelease);
+            // _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
         }
+
+        private void ExecuteOperation(PackageDetails packageDetails, IPackageOperationResolver operationResolver, bool allowedPrerelease = true)
+        {
+            try
+            {
+                var operations = operationResolver.ResolveOperations(packageDetails.Package);
+                foreach (var operation in operations)
+                {
+                    switch (operation.Action)
+                    {
+                        case PackageAction.Install:
+                            _packageManager.InstallPackage(operation.Package, true, allowedPrerelease);
+                            break;
+                        case PackageAction.Uninstall:
+                            _packageManager.UninstallPackage(operation.Package, false, false);
+                            break;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Log(MessageLevel.Error, exception.Message);
+            }
+        }        
         #endregion
     }
 }
