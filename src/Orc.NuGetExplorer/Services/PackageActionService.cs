@@ -107,11 +107,9 @@ namespace Orc.NuGetExplorer
             var dependentsResolver = new DependentsWalker(remoteRepository, null);
 
             var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
-                _logger, false, false);
+                _logger, true, false);
 
             ExecuteOperation(packageDetails, walker);
-
-            _packageManager.UninstallPackage(packageDetails.Package, true, false);
         }
 
         private void InstallPackage(IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
@@ -136,7 +134,6 @@ namespace Orc.NuGetExplorer
             var walker = new UpdateWalker(_localRepository, remoteRepository, dependentsResolver, null, null, _logger, true, allowedPrerelease);
 
             ExecuteOperation(packageDetails, walker, allowedPrerelease);
-            // _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
         }
 
         private void ExecuteOperation(PackageDetails packageDetails, IPackageOperationResolver operationResolver, bool allowedPrerelease = true)
