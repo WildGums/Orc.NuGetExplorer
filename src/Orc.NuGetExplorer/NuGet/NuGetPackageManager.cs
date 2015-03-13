@@ -7,14 +7,19 @@
 
 namespace Orc.NuGetExplorer
 {
+    using Catel;
     using NuGet;
 
     internal class NuGetPackageManager : PackageManager, INuGetPackageManager
     {
         #region Constructors
-        public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService)
+        public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
+            ILogger logger)
             : this(packageRepositoryService.GetAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
         {
+            Argument.IsNotNull(() => logger);
+
+            Logger = logger;
         }
 
         public NuGetPackageManager(IPackageRepository sourceRepository, string path)
@@ -22,15 +27,6 @@ namespace Orc.NuGetExplorer
         {
         }
 
-        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem)
-            : base(sourceRepository, pathResolver, fileSystem)
-        {
-        }
-
-        public NuGetPackageManager(IPackageRepository sourceRepository, IPackagePathResolver pathResolver, IFileSystem fileSystem, IPackageRepository localRepository)
-            : base(sourceRepository, pathResolver, fileSystem, localRepository)
-        {
-        }
         #endregion
     }
 }
