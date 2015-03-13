@@ -21,10 +21,31 @@ namespace Orc.NuGetExplorer
             packageManagerListeningService.PackageInstalling += OnPackageInstalling;
             packageManagerListeningService.PackageUninstalled += OnPackageUninstalled;
             packageManagerListeningService.PackageUninstalling += OnPackageUninstalling;
+
+            nuGetLogListeningSevice.Error += OnError;
+            nuGetLogListeningSevice.Info += OnInfo;
+            nuGetLogListeningSevice.Debug += OnDebug;
+            nuGetLogListeningSevice.Warning += OnWarning;
         }
         #endregion
 
         #region Methods
+        protected virtual void OnWarning(object sender, NuGetLogRecordEventArgs e)
+        {
+        }
+
+        protected virtual void OnDebug(object sender, NuGetLogRecordEventArgs e)
+        {
+        }
+
+        protected virtual void OnInfo(object sender, NuGetLogRecordEventArgs e)
+        {
+        }
+
+        protected virtual void OnError(object sender, NuGetLogRecordEventArgs e)
+        {
+        }
+
         protected virtual void OnPackageInstalled(object sender, NuGetPackageOperationEventArgs e)
         {
         }

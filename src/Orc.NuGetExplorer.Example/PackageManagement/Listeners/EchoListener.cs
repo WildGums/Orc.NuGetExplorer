@@ -47,6 +47,26 @@ namespace Orc.NuGetExplorer.Example
         {
             _echo.Lines.Add(string.Format("Uninstalling {0}", e.PackageDetails.FullName));
         }
+
+        protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
+        {
+            _echo.Lines.Add(string.Format("Info: {0}", e.Message));
+        }
+
+        protected override void OnError(object sender, NuGetLogRecordEventArgs e)
+        {
+            _echo.Lines.Add(string.Format("Error: {0}", e.Message));
+        }
+
+        protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
+        {
+            _echo.Lines.Add(string.Format("Debug: {0}", e.Message));
+        }
+
+        protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
+        {
+            _echo.Lines.Add(string.Format("Warning: {0}", e.Message));
+        }
         #endregion
     }
 }

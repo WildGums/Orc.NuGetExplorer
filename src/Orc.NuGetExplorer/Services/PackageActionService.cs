@@ -113,7 +113,7 @@ namespace Orc.NuGetExplorer
             }
             catch(Exception exception)
             {
-                _logger.Log(MessageLevel.Error, exception.ToString());
+                _logger.Log(MessageLevel.Error, exception.Message);
             }            
 
             _packageManager.UninstallPackage(packageDetails.Package, true, false);
@@ -138,7 +138,7 @@ namespace Orc.NuGetExplorer
             }
             catch(Exception exception)
             {
-                _logger.Log(MessageLevel.Error, exception.ToString());
+                _logger.Log(MessageLevel.Error, exception.Message);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Orc.NuGetExplorer
                     _packageManager.InstallPackage(operation.Package, false, allowedPrerelease);
                     break;
                 case PackageAction.Uninstall:
-                    _packageManager.UpdatePackage(operation.Package, true, allowedPrerelease);
+                    _packageManager.UninstallPackage(operation.Package, true, allowedPrerelease);
                     break;
             }
         }
