@@ -154,6 +154,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnNamedRepositoryChanged()
         {
+            AvailablePackages.Clear();
+
             if (NamedRepository != null)
             {
                 ActionName = _packageActionService.GetActionName(NamedRepository.RepositoryCategory);
@@ -166,14 +168,10 @@ namespace Orc.NuGetExplorer.ViewModels
             await UpdateRepository();
         }
 
-        private async void OnActionNameChanged()
-        {
-            await UpdateRepository();
-        }
-
         [Time]
         private async Task UpdateRepository()
-        {
+        {          
+
             if (_updatingRepository)
             {
                 return;
@@ -197,7 +195,7 @@ namespace Orc.NuGetExplorer.ViewModels
                     _packageRepository = NamedRepository.Value;
                     PackagesToSkip = 0;
 
-                    TotalPackagesCount = await _packageRepository.CountPackagesAsync(SearchFilter, IsPrereleaseAllowed);
+                    TotalPackagesCount = await _packageQueryService.CountPackagesAsync(_packageRepository, SearchFilter, IsPrereleaseAllowed);
                 }
 
                 await Search();

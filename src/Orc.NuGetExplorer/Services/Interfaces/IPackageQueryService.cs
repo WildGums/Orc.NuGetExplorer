@@ -18,6 +18,8 @@ namespace Orc.NuGetExplorer
 
         IEnumerable<PackageDetails> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
             ref int skip, int minimalTake = 10);
+
+        int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions);
         #endregion
     }
 }

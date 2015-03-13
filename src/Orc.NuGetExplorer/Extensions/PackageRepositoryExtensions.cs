@@ -51,29 +51,7 @@ namespace Orc.NuGetExplorer
             return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
         }
 
-        public static async Task<int> CountPackagesAsync(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
-        {
-            return await Task.Factory.StartNew(() => CountPackages(packageRepository, filter, allowPrereleaseVersions));
-        }
-
-        [Time]
-        public static int CountPackages(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
-        {
-            Argument.IsNotNull(() => packageRepository);
-
-            try
-            {
-                var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
-                var count = queryable.Count();
-                return count;
-            }
-            catch
-            {
-                return 0;
-            }
-
-        }
-
+        
         public static async Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)
         {
             return await Task.Factory.StartNew(() => FindPackageVersions(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));
@@ -119,7 +97,7 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        private static IQueryable<IPackage> BuildQueryForSingleVersion(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        public static IQueryable<IPackage> BuildQueryForSingleVersion(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
             Argument.IsNotNull(() => packageRepository);
 

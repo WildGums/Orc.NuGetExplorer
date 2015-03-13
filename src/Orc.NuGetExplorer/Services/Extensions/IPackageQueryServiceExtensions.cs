@@ -29,6 +29,14 @@ namespace Orc.NuGetExplorer
 
             return await Task.Factory.StartNew(() => packageQueryService.GetVersionsOfPackage(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));
         }
+
+        public static async Task<int> CountPackagesAsync(this IPackageQueryService packageQueryService, IPackageRepository packageRepository,
+            string filter, bool allowPrereleaseVersions)
+        {
+            Argument.IsNotNull(() => packageQueryService);
+
+            return await Task.Factory.StartNew(() => packageQueryService.CountPackages(packageRepository, filter, allowPrereleaseVersions));
+        }
         #endregion
     }
 }

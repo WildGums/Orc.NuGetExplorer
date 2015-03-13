@@ -12,6 +12,8 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using Catel.Logging;
+    using Catel.Services;
+    using MethodTimer;
     using NuGet;
 
     internal class PackageQueryService : IPackageQueryService
@@ -22,7 +24,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageQueryService(IPackageCacheService packageCacheService)
+        public PackageQueryService(IPackageCacheService packageCacheService, IPleaseWaitService pleaseWaitService)
         {
             Argument.IsNotNull(() => packageCacheService);
 
@@ -31,6 +33,24 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+        [Time]
+        public int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        {
+            Argument.IsNotNull(() => packageRepository);
+
+            try
+            {
+                var queryable = packageRepository.BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
+                var count = queryable.Count();
+                return count;
+            }
+            catch
+            {
+                return 0;
+            }
+
+        }
+
         public IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, bool allowPrereleaseVersions,
             string filter = null, int skip = 0, int take = 10)
         {
@@ -38,7 +58,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                Log.Info("Getting packages filter=\"{0}\", skip {1}, take {2}", filter, skip, take);
+                Log.Info("Getting {0} packages starting from {1}, which contains \"{0}\"", take, skip, filter);
 
                 return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));
@@ -56,8 +76,18 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            return packageRepository.FindPackageVersions(package, allowPrereleaseVersions, ref skip, minimalTake)
-                .Select(p => _packageCacheService.GetPackageDetails(p));
+            try
+            {
+                return packageRepository.FindPackageVersions(package, allowPrereleaseVersions, ref skip, minimalTake)
+                    .Select(p => _packageCacheService.GetPackageDetails(p));
+            }
+            catch (Exception exception)
+            {
+                Log.Warning(exception);
+
+                return Enumerable.Empty<PackageDetails>();
+            }
+            
         }
         #endregion
     }
