@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageManagerListeningService.cs" company="Wild Gums">
+// <copyright file="PackageManagerWatchService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     using Catel.Services;
     using NuGet;
 
-    internal class PackageManagerListeningService : IPackageManagerListeningService
+    internal class PackageManagerWatchService : IPackageManagerWatchService
     {
         #region Fields
         private readonly IDispatcherService _dispatcherService;
@@ -20,7 +20,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageManagerListeningService(INuGetPackageManager nuGetPackageManager, IPackageCacheService packageCacheService,
+        public PackageManagerWatchService(INuGetPackageManager nuGetPackageManager, IPackageCacheService packageCacheService,
             IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => nuGetPackageManager);

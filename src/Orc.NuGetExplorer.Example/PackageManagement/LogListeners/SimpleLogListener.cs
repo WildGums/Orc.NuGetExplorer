@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EchoListener.cs" company="Wild Gums">
+// <copyright file="SimpleLogListener.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,16 +10,16 @@ namespace Orc.NuGetExplorer.Example
     using Catel;
     using Models;
 
-    public class EchoListener : PackageManagerListenerBase
+    public class SimpleLogListener : PackageManagerLogListenerBase
     {
         #region Fields
         private readonly PackageManagementEcho _echo;
         #endregion
 
         #region Constructors
-        public EchoListener(IPackageManagerListeningService packageManagerListeningService, INuGetLogListeningSevice nuGetLogListeningSevice,
+        public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
             IEchoService echoService)
-            : base(packageManagerListeningService, nuGetLogListeningSevice)
+            : base( nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => echoService);
 
@@ -28,26 +28,6 @@ namespace Orc.NuGetExplorer.Example
         #endregion
 
         #region Methods
-        protected override void OnPackageInstalled(object sender, NuGetPackageOperationEventArgs e)
-        {
-            _echo.Lines.Add(string.Format("Installed {0}", e.PackageDetails.FullName));
-        }
-
-        protected override void OnPackageInstalling(object sender, NuGetPackageOperationEventArgs e)
-        {
-            _echo.Lines.Add(string.Format("Installing {0}", e.PackageDetails.FullName));
-        }
-
-        protected override void OnPackageUninstalled(object sender, NuGetPackageOperationEventArgs e)
-        {
-            _echo.Lines.Add(string.Format("Uninstalled {0}", e.PackageDetails.FullName));
-        }
-
-        protected override void OnPackageUninstalling(object sender, NuGetPackageOperationEventArgs e)
-        {
-            _echo.Lines.Add(string.Format("Uninstalling {0}", e.PackageDetails.FullName));
-        }
-
         protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
         {
             _echo.Lines.Add(string.Format("Info: {0}", e.Message));

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeletemeListener.cs" company="Wild Gums">
+// <copyright file="DeletemeWatcher.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,11 +10,11 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using Path = Catel.IO.Path;
 
-    public class DeletemeListener : PackageManagerListenerBase
+    public class DeletemeWatcher : PackageManagerWatcherBase
     {
         #region Constructors
-        public DeletemeListener(IPackageManagerListeningService packageManagerListeningService, INuGetLogListeningSevice nuGetLogListeningSevice)
-            : base(packageManagerListeningService, nuGetLogListeningSevice)
+        public DeletemeWatcher(IPackageManagerWatchService packageManagerWatchService)
+            : base(packageManagerWatchService)
         {
         }
         #endregion

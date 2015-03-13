@@ -116,7 +116,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                var operations = walker.ResolveOperations(packageDetails.Package);
+                var operations = walker.ResolveOperations(packageDetails.Package);// checking uninstall ability
 
                 _packageManager.UninstallPackage(packageDetails.Package, false, true);
             }
@@ -136,7 +136,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                var operations = walker.ResolveOperations(packageDetails.Package);
+                var operations = walker.ResolveOperations(packageDetails.Package);// checking install ability
 
                 _packageManager.InstallPackage(packageDetails.Package, false, allowedPrerelease, false);
             }
