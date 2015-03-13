@@ -16,28 +16,37 @@ namespace Orc.NuGetExplorer
     internal class PackageActionService : IPackageActionService
     {
         #region Fields
+        private readonly IDispatcherService _dispatcherService;
+        private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _packageManager;
         private readonly IPackageRepositoryService _packageRepositoryService;
         private readonly IPleaseWaitService _pleaseWaitService;
-        private readonly IPackageRepository _localRepository;
         #endregion
 
         #region Constructors
         public PackageActionService(IPleaseWaitService pleaseWaitService, INuGetPackageManager packageManager,
-            IPackageRepositoryService packageRepositoryService, ILogger logger)
+            IPackageRepositoryService packageRepositoryService, ILogger logger, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => logger);
+            Argument.IsNotNull(() => dispatcherService);
 
             _pleaseWaitService = pleaseWaitService;
             _packageManager = packageManager;
             _packageRepositoryService = packageRepositoryService;
             _logger = logger;
+            _dispatcherService = dispatcherService;
             _localRepository = _packageRepositoryService.LocalRepository;
+
+            DependencyVersion = DependencyVersion.Highest;
         }
+        #endregion
+
+        #region Properties
+        public DependencyVersion DependencyVersion { get; set; }
         #endregion
 
         #region Methods
@@ -117,10 +126,8 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => remoteRepository);
             Argument.IsNotNull(() => packageDetails);
 
-           
-
             var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
-                DependencyVersion.Highest);
+                DependencyVersion);
 
             ExecuteOperation(packageDetails, walker, allowedPrerelease);
         }
@@ -129,9 +136,28 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            var dependentsResolver = new DependentsWalker(remoteRepository, null);
+            try
+            {
+                _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
+            }
+            catch (Exception exception)
+            {
+                _logger.Log(MessageLevel.Error, exception.Message);
+            }
+            
 
-            var walker = new UpdateWalker(_localRepository, remoteRepository, dependentsResolver, null, null, _logger, true, allowedPrerelease);
+            return; // temporary switched off (has problem wich will solved later. updating process is hangs)
+            var dependentsResolver = new DependentsWalker(remoteRepository, null)
+            {
+                DependencyVersion = DependencyVersion
+            };
+            
+            var walker = new UpdateWalker(_localRepository, remoteRepository, dependentsResolver, NullConstraintProvider.Instance, null,
+                _logger, true, allowedPrerelease)
+            {
+                AcceptedTargets = PackageTargets.All,
+                DependencyVersion = DependencyVersion
+            };
 
             ExecuteOperation(packageDetails, walker, allowedPrerelease);
         }
@@ -141,6 +167,7 @@ namespace Orc.NuGetExplorer
             try
             {
                 var operations = operationResolver.ResolveOperations(packageDetails.Package);
+
                 foreach (var operation in operations)
                 {
                     switch (operation.Action)
@@ -158,7 +185,7 @@ namespace Orc.NuGetExplorer
             {
                 _logger.Log(MessageLevel.Error, exception.Message);
             }
-        }        
+        }
         #endregion
     }
 }
