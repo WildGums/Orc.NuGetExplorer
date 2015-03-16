@@ -26,12 +26,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Viewbox x:Name="CheckMark" Width="24" Height="24">
-                            <Canvas Width="24" Height="24">
-                                <Path x:Name="Checkmark"
+                        <Viewbox x:Name="CheckMark" Width="16" Height="16">
+                                <Path x:Name="Checkmark" Stretch="Fill"
                                         Data="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
                                         Fill="LimeGreen" />
-                            </Canvas>
                         </Viewbox>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="False">
@@ -56,42 +54,47 @@
                   BorderThickness="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Container" BorderBrush="Transparent" BorderThickness="3" Background="Transparent" 
-                            Padding="4" Margin="-2 0 0 0">
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="24"/>
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                    <Border x:Name="Border" BorderBrush="WhiteSmoke" BorderThickness="0 0 0 1" Background="Transparent" Margin="-2 0 0 0">
+                        <Border x:Name="Container" BorderBrush="Transparent" BorderThickness="3" Background="Transparent" 
+                                Padding="4" Margin="0">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="24"/>
+                                </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <CheckBox Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsActionExecuted}" IsEnabled="False"
-                                      Visibility="{Binding IsActionExecuted, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
-                            
-                            <Image Grid.Column="1" Grid.RowSpan="3" Source="{Binding IconUrl}" Width="32" Height="32"
-                                    VerticalAlignment="Top" Margin="4 4 10 0" />
+                                <CheckBox Grid.RowSpan="3" Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsActionExecuted}"
+                                          IsEnabled="False" Margin="4 12 8 0" VerticalAlignment="Top"
+                                          Visibility="{Binding IsActionExecuted, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
+                                
+                                <Image Grid.Column="1" Grid.RowSpan="3" Source="{Binding IconUrl}" Width="32" Height="32"
+                                        VerticalAlignment="Top" Margin="4 4 14 0" />
 
-                            <TextBlock  Grid.Row="0" Grid.Column="2" Text="{Binding Title}" FontWeight="Bold" />
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Description}" TextWrapping="Wrap" 
-                                       TextTrimming="WordEllipsis" Margin="0 4 0 2"/>
+                                <TextBlock  Grid.Row="0" Grid.Column="2" Text="{Binding Title}" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Description}" TextWrapping="Wrap" 
+                                           TextTrimming="WordEllipsis" Margin="0 4 0 2"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="This is a prerelease package" FontSize="11" FontStyle="Italic"
-                                       Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" 
-                                       Margin="0"/>
-
-                            <Button Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top" Width="70" Height="25" Margin="4"
-                                    Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
-                                    Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
-                                    CommandParameter="{Binding}"
-                                    Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource HidingVisibilityConverter}}"/>
-                        </Grid>
+                                
+                                <StackPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
+                                    <Button VerticalAlignment="Top" Width="70" Height="25" Margin="4"
+                                            Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
+                                            Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource HidingVisibilityConverter}}"/>
+                                    
+                                    <TextBlock Text="Prerelease" FontSize="11" FontStyle="Italic" HorizontalAlignment="Center"
+                                           Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" 
+                                           Margin="0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </Border>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
