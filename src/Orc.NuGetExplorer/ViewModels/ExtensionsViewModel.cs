@@ -198,6 +198,11 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
 
                 await Search();
+
+                foreach (var package in AvailablePackages)
+                {
+                    _packageActionService.CanExecute(NamedRepository.RepositoryCategory, package);
+                }
             }
         }
 

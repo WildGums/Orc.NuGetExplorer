@@ -97,14 +97,14 @@ namespace Orc.NuGetExplorer
 
             if (repositoryCategory == RepositoryCategoryType.Online)
             {
-                if (packageDetails.IsInstalled == null)
+                if (packageDetails.IsActionExecuted == null)
                 {
                     var count = _packageQueryService.CountPackages(_localRepository, packageDetails.Id);
-                    packageDetails.IsInstalled = count != 0;
+                    packageDetails.IsActionExecuted = count != 0;
                     return count == 0;
                 }
 
-                return !packageDetails.IsInstalled.Value;
+                return !packageDetails.IsActionExecuted.Value;
             }
             return true;
         }
