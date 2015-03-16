@@ -59,7 +59,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                Log.Info("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
+                Log.Debug("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
 
                 return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));
