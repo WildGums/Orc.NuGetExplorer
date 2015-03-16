@@ -22,12 +22,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static bool _updatingRepository;
-        private bool _isPrereleaseAllowed;
-        private IPackageRepository _packageRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageActionService _packageActionService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
+        private bool _isPrereleaseAllowed;
+        private IPackageRepository _packageRepository;
         #endregion
 
         #region Constructors
@@ -170,8 +170,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         [Time]
         private async Task UpdateRepository()
-        {          
-
+        {
             if (_updatingRepository)
             {
                 return;
@@ -237,6 +236,13 @@ namespace Orc.NuGetExplorer.ViewModels
             if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
             {
                 await Search();
+            }
+            else
+            {
+                foreach (var package in AvailablePackages)
+                {
+                    package.IsActionExecuted = null;
+                }
             }
         }
 

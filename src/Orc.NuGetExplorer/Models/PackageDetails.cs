@@ -48,6 +48,8 @@ namespace Orc.NuGetExplorer
         public bool IsAbsoluteLatestVersion { get; private set; }
         public bool IsLatestVersion { get; private set; }
         public bool IsPrerelease { get; private set; }
+        internal bool? IsInstalled { get; set; }
+
         #endregion
     }
 }

@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageQueryService(IPackageCacheService packageCacheService, IPleaseWaitService pleaseWaitService)
+        public PackageQueryService(IPackageCacheService packageCacheService)
         {
             Argument.IsNotNull(() => packageCacheService);
 
@@ -34,6 +34,12 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+        public int CountPackages(IPackageRepository packageRepository, string packageId)
+        {
+            var count = packageRepository.GetPackages().Count(x => string.Equals(x.Id, packageId));
+            return count;
+        }
+
         [Time]
         public int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {

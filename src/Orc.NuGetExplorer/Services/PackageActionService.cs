@@ -17,6 +17,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly ILogger _logger;
+        private readonly IPackageQueryService _packageQueryService;
         private readonly INuGetPackageManager _packageManager;
         private readonly IPleaseWaitService _pleaseWaitService;
         private readonly IPackageRepository _localRepository;
@@ -24,16 +25,18 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageActionService(IPleaseWaitService pleaseWaitService, INuGetPackageManager packageManager,
-            IPackageRepositoryService packageRepositoryService, ILogger logger)
+            IPackageRepositoryService packageRepositoryService, ILogger logger, IPackageQueryService packageQueryService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => logger);
+            Argument.IsNotNull(() => packageQueryService);
 
             _pleaseWaitService = pleaseWaitService;
             _packageManager = packageManager;
             _logger = logger;
+            _packageQueryService = packageQueryService;
 
             _localRepository = packageRepositoryService.LocalRepository;
 
@@ -87,6 +90,22 @@ namespace Orc.NuGetExplorer
 
         public bool CanExecute(RepositoryCategoryType repositoryCategory, PackageDetails packageDetails)
         {
+            if (packageDetails == null)
+            {
+                return false;
+            }
+
+            if (repositoryCategory == RepositoryCategoryType.Online)
+            {
+                if (packageDetails.IsInstalled == null)
+                {
+                    var count = _packageQueryService.CountPackages(_localRepository, packageDetails.Id);
+                    packageDetails.IsInstalled = count != 0;
+                    return count == 0;
+                }
+
+                return !packageDetails.IsInstalled.Value;
+            }
             return true;
         }
 
