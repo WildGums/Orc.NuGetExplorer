@@ -28,7 +28,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<INuGetPackageManager, NuGetPackageManager>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();
-        serviceLocator.RegisterType<IPackageManagerWatchService, PackageManagerWatchService>();
         serviceLocator.RegisterType<IPackageActionService, PackageActionService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
@@ -48,6 +47,8 @@ public static class ModuleInitializer
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
 
+        var nuGetPackageManager = serviceLocator.ResolveType<INuGetPackageManager>();
+        serviceLocator.RegisterInstance(typeof(INuGetPackageManagerNotifier), nuGetPackageManager);
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranstalor>();

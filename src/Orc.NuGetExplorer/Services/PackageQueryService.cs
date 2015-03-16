@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer
     using Catel.Services;
     using MethodTimer;
     using NuGet;
+    using NuGetExplorer;
 
     internal class PackageQueryService : IPackageQueryService
     {
@@ -58,7 +59,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                Log.Info("Getting {0} packages starting from {1}, which contains \"{0}\"", take, skip, filter);
+                Log.Info("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
 
                 return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));

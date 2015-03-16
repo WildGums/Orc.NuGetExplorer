@@ -285,7 +285,7 @@ namespace Orc.NuGetExplorer.Native
                 ncred.Comment = IntPtr.Zero;
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
-                ncred.Persist = (UInt32)CredPersistance.Session;
+                ncred.Persist = (UInt32)cred.Persist;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
 
                 var encryptedPassword = EncryptPassword(cred.CredentialBlob);

@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using Catel;
     using NuGet;
 
@@ -25,8 +26,39 @@ namespace Orc.NuGetExplorer
         public NuGetPackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
+            this.PackageInstalling += (sender, args) => NotifyOperationStarted(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
+            this.PackageInstalled += (sender, args) => NotifyOperationFinished(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
+
+            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
+            this.PackageUninstalled += (sender, args) => NotifyOperationFinished(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
+        }
+        #endregion
+
+        #region Methods
+        public event EventHandler<NuGetOperationsBatchEventArgs> OperationsBatchStarted;
+        public event EventHandler<NuGetOperationsBatchEventArgs> OperationsBatchFinished;
+        public event EventHandler<NuGetPackageOperationEventArgs> OperationStarted;
+        public event EventHandler<NuGetPackageOperationEventArgs> OperationFinished;
+
+        public void NotifyOperationFinished(IPackageDetails packageDetails, string installPath, PackageOperationType operationType)
+        {
+            OperationFinished.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
+        public void NotifyOperationStarted(IPackageDetails packageDetails, string installPath, PackageOperationType operationType)
+        {
+            OperationStarted.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
+        }
+
+        public void NotifyOperationsBatchStarted(IPackageDetails packageDetails, PackageOperationType operationType)
+        {
+            OperationsBatchStarted.SafeInvoke(this, new NuGetOperationsBatchEventArgs(packageDetails, operationType));
+        }
+
+        public void NotifyOperationsBatchFinished(IPackageDetails packageDetails, PackageOperationType operationType)
+        {
+            OperationsBatchFinished.SafeInvoke(this, new NuGetOperationsBatchEventArgs(packageDetails, operationType));
+        }
         #endregion
     }
 }

@@ -114,6 +114,7 @@
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\InlineExtensions.cs" />
+    <Compile Include="Extensions\INuGetPackageManagerNotifierExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
@@ -121,6 +122,10 @@
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
+    <Compile Include="Native\Enums\DownlevelTextMode.cs" />
+    <Compile Include="NuGet\Interfaces\INuGetPackageManagerNotifier.cs" />
+    <Compile Include="Services\Enums\PackageOperationType.cs" />
+    <Compile Include="Services\EventArgs\NuGetOperationsBatchEventArgs.cs" />
     <Compile Include="Watchers\DeletemeWatcher.cs" />
     <Compile Include="Watchers\Base\PackageManagerWatcherBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
@@ -172,7 +177,6 @@
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
-    <Compile Include="Services\Interfaces\IPackageManagerWatchService.cs" />
     <Compile Include="Services\Interfaces\IPackageActionService.cs" />
     <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
@@ -180,7 +184,6 @@
     <Compile Include="Services\PackageActionService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
-    <Compile Include="Services\PackageManagerWatchService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="NuGet\NuGetPackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />

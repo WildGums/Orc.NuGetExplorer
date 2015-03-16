@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
+    using Extensions;
     using NuGet;
 
     internal class PackageActionService : IPackageActionService
@@ -109,21 +110,24 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            var dependentsResolver = new DependentsWalker(remoteRepository, null);
-
-            var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
-                _logger, true, false);
-
-            try
+            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Uninstall))
             {
-                var operations = walker.ResolveOperations(packageDetails.Package);// checking uninstall ability
+                var dependentsResolver = new DependentsWalker(remoteRepository, null);
 
-                _packageManager.UninstallPackage(packageDetails.Package, false, true);
-            }
-            catch (Exception exception)
-            {
-                _logger.Log(MessageLevel.Error, exception.Message);
-            }
+                var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
+                    _logger, true, false);
+
+                try
+                {
+                    var operations = walker.ResolveOperations(packageDetails.Package);// checking uninstall ability
+
+                    _packageManager.UninstallPackage(packageDetails.Package, false, true);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Log(MessageLevel.Error, exception.Message);
+                }
+            }            
         }
 
         private void InstallPackage(IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
@@ -131,33 +135,39 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => remoteRepository);
             Argument.IsNotNull(() => packageDetails);
 
-            var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
+            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Install))
+            {
+                var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
                 DependencyVersion);
 
-            try
-            {
-                var operations = walker.ResolveOperations(packageDetails.Package);// checking install ability
+                try
+                {
+                    var operations = walker.ResolveOperations(packageDetails.Package);// checking install ability
 
-                _packageManager.InstallPackage(packageDetails.Package, false, allowedPrerelease, false);
-            }
-            catch (Exception exception)
-            {
-                _logger.Log(MessageLevel.Error, exception.Message);
-            }
+                    _packageManager.InstallPackage(packageDetails.Package, false, allowedPrerelease, false);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Log(MessageLevel.Error, exception.Message);
+                }
+            }            
         }
 
         private void UpdatePackages(PackageDetails packageDetails, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => packageDetails);
 
-            try
+            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Update))
             {
-                _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
-            }
-            catch (Exception exception)
-            {
-                _logger.Log(MessageLevel.Error, exception.Message);
-            }
+                try
+                {
+                    _packageManager.UpdatePackage(packageDetails.Package, true, allowedPrerelease);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Log(MessageLevel.Error, exception.Message);
+                }
+            }            
         }
         #endregion
     }

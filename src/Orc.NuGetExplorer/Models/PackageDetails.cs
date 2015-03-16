@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer
     internal class PackageDetails : ModelBase, IPackageDetails
     {
         #region Constructors
+
         internal PackageDetails(IPackage package)
         {
             Argument.IsNotNull(() => package);

@@ -12,31 +12,31 @@ namespace Orc.NuGetExplorer
     public abstract class PackageManagerWatcherBase
     {
         #region Constructors
-        public PackageManagerWatcherBase(IPackageManagerWatchService packageManagerWatchService)
+        public PackageManagerWatcherBase(INuGetPackageManagerNotifier nuGetPackageManagerNotifier)
         {
-            Argument.IsNotNull(() => packageManagerWatchService);
+            Argument.IsNotNull(() => nuGetPackageManagerNotifier);
 
-            packageManagerWatchService.PackageInstalled += OnPackageInstalled;
-            packageManagerWatchService.PackageInstalling += OnPackageInstalling;
-            packageManagerWatchService.PackageUninstalled += OnPackageUninstalled;
-            packageManagerWatchService.PackageUninstalling += OnPackageUninstalling;
+            nuGetPackageManagerNotifier.OperationStarted += OnOperationStarted;
+            nuGetPackageManagerNotifier.OperationFinished += OnOperationFinished;
+            nuGetPackageManagerNotifier.OperationsBatchStarted += OnOperationsBatchStarted;
+            nuGetPackageManagerNotifier.OperationsBatchFinished += OnOperationsBatchFinished;
         }
         #endregion
 
         #region Methods
-        protected virtual void OnPackageInstalled(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationsBatchFinished(object sender, NuGetOperationsBatchEventArgs e)
         {
         }
 
-        protected virtual void OnPackageUninstalling(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationsBatchStarted(object sender, NuGetOperationsBatchEventArgs e)
         {
         }
 
-        protected virtual void OnPackageUninstalled(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationFinished(object sender, NuGetPackageOperationEventArgs e)
         {
         }
 
-        protected virtual void OnPackageInstalling(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationStarted(object sender, NuGetPackageOperationEventArgs e)
         {
         }
         #endregion
