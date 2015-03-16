@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Extensions
+namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;

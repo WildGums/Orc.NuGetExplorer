@@ -11,7 +11,6 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
-    using Extensions;
     using NuGet;
 
     internal class PackageActionService : IPackageActionService

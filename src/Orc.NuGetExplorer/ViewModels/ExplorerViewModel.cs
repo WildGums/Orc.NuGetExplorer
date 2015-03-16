@@ -15,7 +15,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
-    using Extensions;
 
     internal class ExplorerViewModel : ViewModelBase
     {
