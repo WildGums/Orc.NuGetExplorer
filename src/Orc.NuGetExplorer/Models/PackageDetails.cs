@@ -15,7 +15,6 @@ namespace Orc.NuGetExplorer
     internal class PackageDetails : ModelBase, IPackageDetails
     {
         #region Constructors
-
         internal PackageDetails(IPackage package)
         {
             Argument.IsNotNull(() => package);
@@ -49,7 +48,6 @@ namespace Orc.NuGetExplorer
         public bool IsLatestVersion { get; private set; }
         public bool IsPrerelease { get; private set; }
         public bool? IsActionExecuted { get; set; }
-
         #endregion
     }
 }

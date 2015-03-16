@@ -157,10 +157,14 @@ namespace Orc.NuGetExplorer.Native
 
             if (!read)
             {
-                if (lastError == (int)CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                if (lastError == (int) CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                {
                     return null;
+                }
                 else
+                {
                     throw new CredentialException(lastError);
+                }
             }
 
             var credential = new CredUi.SimpleCredentials();

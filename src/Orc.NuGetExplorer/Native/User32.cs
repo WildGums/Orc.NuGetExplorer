@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.Native
 {
     using System;
@@ -10,7 +12,9 @@ namespace Orc.NuGetExplorer.Native
 
     public static class User32
     {
+        #region Methods
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
+        #endregion
     }
 }

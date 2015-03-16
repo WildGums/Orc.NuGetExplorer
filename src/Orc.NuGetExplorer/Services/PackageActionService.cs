@@ -16,11 +16,11 @@ namespace Orc.NuGetExplorer
     internal class PackageActionService : IPackageActionService
     {
         #region Fields
-        private readonly ILogger _logger;
-        private readonly IPackageQueryService _packageQueryService;
-        private readonly INuGetPackageManager _packageManager;
-        private readonly IPleaseWaitService _pleaseWaitService;
         private readonly IPackageRepository _localRepository;
+        private readonly ILogger _logger;
+        private readonly INuGetPackageManager _packageManager;
+        private readonly IPackageQueryService _packageQueryService;
+        private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
@@ -106,7 +106,7 @@ namespace Orc.NuGetExplorer
 
                 return !packageDetails.IsActionExecuted.Value;
             }
-            
+
             packageDetails.IsActionExecuted = null;
             return true;
         }
@@ -139,7 +139,7 @@ namespace Orc.NuGetExplorer
 
                 try
                 {
-                    var operations = walker.ResolveOperations(packageDetails.Package);// checking uninstall ability
+                    var operations = walker.ResolveOperations(packageDetails.Package); // checking uninstall ability
 
                     _packageManager.UninstallPackage(packageDetails.Package, false, true);
                 }
@@ -147,7 +147,7 @@ namespace Orc.NuGetExplorer
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
                 }
-            }            
+            }
         }
 
         private void InstallPackage(IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
@@ -158,11 +158,11 @@ namespace Orc.NuGetExplorer
             using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Install))
             {
                 var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
-                DependencyVersion);
+                    DependencyVersion);
 
                 try
                 {
-                    var operations = walker.ResolveOperations(packageDetails.Package);// checking install ability
+                    var operations = walker.ResolveOperations(packageDetails.Package); // checking install ability
 
                     _packageManager.InstallPackage(packageDetails.Package, false, allowedPrerelease, false);
                 }
@@ -170,7 +170,7 @@ namespace Orc.NuGetExplorer
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
                 }
-            }            
+            }
         }
 
         private void UpdatePackages(PackageDetails packageDetails, bool allowedPrerelease)
@@ -187,7 +187,7 @@ namespace Orc.NuGetExplorer
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
                 }
-            }            
+            }
         }
         #endregion
     }

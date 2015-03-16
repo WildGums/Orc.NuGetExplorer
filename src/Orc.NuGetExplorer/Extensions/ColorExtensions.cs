@@ -12,7 +12,9 @@ namespace Orc.NuGetExplorer
 
     internal static class ColorExtensions
     {
+        #region Fields
         private static ResourceDictionary _accentColorResourceDictionary;
+        #endregion
 
         #region Methods
         public static ResourceDictionary CreateAccentColorResourceDictionary(this Color color)
@@ -26,9 +28,9 @@ namespace Orc.NuGetExplorer
             resourceDictionary.Add("AccentColor4", color.CalculateAccentColor4());
             resourceDictionary.Add("AccentColor", color);
 
-            resourceDictionary.Add("AccentColorBrush4", new SolidColorBrush((Color)resourceDictionary["AccentColor4"]));
-            resourceDictionary.Add("AccentColorBrush", new SolidColorBrush((Color)resourceDictionary["AccentColor"]));
-           
+            resourceDictionary.Add("AccentColorBrush4", new SolidColorBrush((Color) resourceDictionary["AccentColor4"]));
+            resourceDictionary.Add("AccentColorBrush", new SolidColorBrush((Color) resourceDictionary["AccentColor"]));
+
             var application = Application.Current;
             var applicationResources = application.Resources;
             applicationResources.MergedDictionaries.Insert(0, resourceDictionary);

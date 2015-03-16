@@ -50,14 +50,8 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => pager);
 
-            pager.ItemIndex = GetLastPageIndex(pager); ;
-        }
-
-        private static int GetLastPageIndex(Pager pager)
-        {
-            var pagesCount = (int) Math.Ceiling(pager.ItemsCount/(double) pager.ItemsPerPage);
-            var i = (pagesCount - 1)*pager.ItemsPerPage;
-            return i;
+            pager.ItemIndex = GetLastPageIndex(pager);
+            ;
         }
 
         public bool IsLastPage(Pager pager)
@@ -84,6 +78,13 @@ namespace Orc.NuGetExplorer
 
             var stepValue = pagingItem.StepValue;
             Step(pager, stepValue);
+        }
+
+        private static int GetLastPageIndex(Pager pager)
+        {
+            var pagesCount = (int) Math.Ceiling(pager.ItemsCount/(double) pager.ItemsPerPage);
+            var i = (pagesCount - 1)*pager.ItemsPerPage;
+            return i;
         }
 
         private int GetPagesCount(Pager pager, out int leftPages, out int rightPages)

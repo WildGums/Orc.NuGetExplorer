@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.Native
 {
     using System;
@@ -15,8 +17,11 @@ namespace Orc.NuGetExplorer.Native
     [Serializable()]
     public class CredentialException : System.ComponentModel.Win32Exception
     {
+        #region Fields
         private const string CredentialError = "An error occurred acquiring credentials.";
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CredentialException" /> class.
         /// </summary>
@@ -78,6 +83,6 @@ namespace Orc.NuGetExplorer.Native
             : base(info, context)
         {
         }
+        #endregion
     }
-
 }

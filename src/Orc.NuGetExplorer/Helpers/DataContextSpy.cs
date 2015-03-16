@@ -8,8 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Windows;
     using System.ComponentModel;
+    using System.Windows;
     using System.Windows.Data;
 
     // this code has been found at http://www.codeproject.com/Articles/27432/Artificial-Inheritance-Contexts-in-WPF
@@ -63,15 +63,15 @@ namespace Orc.NuGetExplorer
 
             return value;
         }
-        #endregion
-
-        // Borrow the DataContext dependency property from FrameworkElement.
-        public static readonly DependencyProperty DataContextProperty = FrameworkElement.DataContextProperty.AddOwner(typeof (DataContextSpy), new PropertyMetadata(null, null, OnCoerceDataContext));
 
         protected override Freezable CreateInstanceCore()
         {
             // We are required to override this abstract method.
             throw new NotImplementedException();
         }
+        #endregion
+
+        // Borrow the DataContext dependency property from FrameworkElement.
+        public static readonly DependencyProperty DataContextProperty = FrameworkElement.DataContextProperty.AddOwner(typeof (DataContextSpy), new PropertyMetadata(null, null, OnCoerceDataContext));
     }
 }

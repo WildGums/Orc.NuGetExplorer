@@ -19,9 +19,9 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private IPackageRepository _localRepository;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageRepositoryFactory _repositoryFactory;
+        private IPackageRepository _localRepository;
         #endregion
 
         #region Constructors

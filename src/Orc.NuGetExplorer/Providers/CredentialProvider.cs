@@ -11,7 +11,6 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Net;
     using Catel;
-    using Catel.IoC;
     using NuGet;
 
     internal class CredentialProvider : ICredentialProvider

@@ -20,7 +20,6 @@ namespace Orc.NuGetExplorer
             ref int skip, int minimalTake = 10);
 
         int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions);
-
         int CountPackages(IPackageRepository packageRepository, string packageId);
         #endregion
     }

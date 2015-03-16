@@ -16,8 +16,8 @@ namespace Orc.NuGetExplorer
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         #region Fields
-        private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ICredentialProvider _credentialProvider;
+        private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         #endregion
 
         #region Constructors

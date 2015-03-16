@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer.Views
         /// <remarks>This method is required for design time support.</remarks>
         static PackageListView()
         {
-            typeof(PackageListView).AutoDetectViewPropertiesToSubscribe();
+            typeof (PackageListView).AutoDetectViewPropertiesToSubscribe();
         }
 
         /// <summary>
@@ -43,9 +43,8 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<PackageDetails>), 
-            typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
+        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<PackageDetails>),
+            typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public PackageDetails SelectedPackage
@@ -54,30 +53,29 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(SelectedPackageProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage", typeof(PackageDetails), 
+        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage", typeof(PackageDetails),
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
+        
 
         //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public string ButtonHeader
         {
-            get { return (string)GetValue(ButtonHeaderProperty); }
+            get { return (string) GetValue(ButtonHeaderProperty); }
             set { SetValue(ButtonHeaderProperty, value); }
         }
 
         public static readonly DependencyProperty ButtonHeaderProperty = DependencyProperty.Register("ButtonHeader",
-            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
+            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
 
         //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public ICommand PackageCommand 
+        public ICommand PackageCommand
         {
-            get { return (ICommand)GetValue(PackageCommandProperty); }
+            get { return (ICommand) GetValue(PackageCommandProperty); }
             set { SetValue(PackageCommandProperty, value); }
         }
 
         public static readonly DependencyProperty PackageCommandProperty = DependencyProperty.Register("PackageCommand",
-                    typeof(ICommand), typeof(PackageListView), new UIPropertyMetadata(null));
+            typeof(ICommand), typeof(PackageListView), new UIPropertyMetadata(null));
         #endregion
     }
 }

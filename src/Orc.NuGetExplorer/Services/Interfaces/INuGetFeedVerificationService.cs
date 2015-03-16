@@ -9,6 +9,8 @@ namespace Orc.NuGetExplorer
 {
     public interface INuGetFeedVerificationService
     {
+        #region Methods
         FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true);
+        #endregion
     }
 }

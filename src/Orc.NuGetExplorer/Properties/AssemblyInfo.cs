@@ -20,6 +20,7 @@ using System.Windows;
 // COM, set the ComVisible attribute to true on that type.
 
 #if !PCL
+
 [assembly: ComVisible(false)]
 #endif
 
@@ -30,4 +31,4 @@ using System.Windows;
     ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
     //(used if a resource is not found in the page, 
     // app, or any theme specific resource dictionaries)
-)]
+    )]

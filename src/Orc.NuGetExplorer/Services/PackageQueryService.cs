@@ -12,10 +12,8 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using Catel.Logging;
-    using Catel.Services;
     using MethodTimer;
     using NuGet;
-    using NuGetExplorer;
 
     internal class PackageQueryService : IPackageQueryService
     {
@@ -55,7 +53,6 @@ namespace Orc.NuGetExplorer
             {
                 return 0;
             }
-
         }
 
         public IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, bool allowPrereleaseVersions,
@@ -70,7 +67,7 @@ namespace Orc.NuGetExplorer
                 return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 Log.Warning(exception);
 
@@ -94,7 +91,6 @@ namespace Orc.NuGetExplorer
 
                 return Enumerable.Empty<PackageDetails>();
             }
-            
         }
         #endregion
     }

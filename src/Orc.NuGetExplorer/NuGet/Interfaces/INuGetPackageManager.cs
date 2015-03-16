@@ -11,6 +11,5 @@ namespace Orc.NuGetExplorer
 
     internal interface INuGetPackageManager : IPackageManager, INuGetPackageManagerNotifier
     {
-        
     }
 }

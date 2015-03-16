@@ -95,7 +95,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private bool OnMoveToLastCanExecute()
         {
             return CanMoveForward();
-        }        
+        }
 
         public Command MoveForward { get; private set; }
 

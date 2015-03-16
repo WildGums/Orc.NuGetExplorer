@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer.Views
 {
-    using System;
     using System.Windows;
     using Catel.MVVM.Views;
 
@@ -17,17 +16,17 @@ namespace Orc.NuGetExplorer.Views
     internal partial class ExtensionsView
     {
         #region Constructors
+        static ExtensionsView()
+        {
+            typeof (ExtensionsView).AutoDetectViewPropertiesToSubscribe();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtensionsView"/> class.
         /// </summary>
         public ExtensionsView()
         {
             InitializeComponent();
-        }
-
-        static ExtensionsView()
-        {
-            typeof (ExtensionsView).AutoDetectViewPropertiesToSubscribe();
         }
         #endregion
 
@@ -41,7 +40,6 @@ namespace Orc.NuGetExplorer.Views
 
         public static readonly DependencyProperty NamedRepositoryProperty = DependencyProperty.Register("NamedRepository", typeof(NamedRepository),
             typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
         #endregion
     }
 }

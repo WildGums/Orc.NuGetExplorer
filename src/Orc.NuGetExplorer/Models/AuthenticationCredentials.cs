@@ -25,10 +25,8 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public string Host { get; private set; }
-
         public string UserName { get; set; }
         public string Password { get; set; }
-
         public bool StoreCredentials { get; set; }
         #endregion
     }

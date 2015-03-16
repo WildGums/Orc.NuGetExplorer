@@ -7,11 +7,9 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Net;
     using System.Threading.Tasks;
     using Catel;
     using MethodTimer;
@@ -51,7 +49,6 @@ namespace Orc.NuGetExplorer
             return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
         }
 
-        
         public static async Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)
         {
             return await Task.Factory.StartNew(() => FindPackageVersions(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));

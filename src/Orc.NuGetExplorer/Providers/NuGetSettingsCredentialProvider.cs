@@ -12,12 +12,12 @@ namespace Orc.NuGetExplorer
     internal class NuGetSettingsCredentialProvider : SettingsCredentialProvider
     {
         #region Constructors
-        public NuGetSettingsCredentialProvider(ICredentialProvider credentialProvider, IPackageSourceProvider packageSourceProvider) 
+        public NuGetSettingsCredentialProvider(ICredentialProvider credentialProvider, IPackageSourceProvider packageSourceProvider)
             : base(credentialProvider, packageSourceProvider)
         {
         }
 
-        public NuGetSettingsCredentialProvider(ICredentialProvider credentialProvider, IPackageSourceProvider packageSourceProvider, ILogger logger) 
+        public NuGetSettingsCredentialProvider(ICredentialProvider credentialProvider, IPackageSourceProvider packageSourceProvider, ILogger logger)
             : base(credentialProvider, packageSourceProvider, logger)
         {
         }
