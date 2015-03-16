@@ -199,10 +199,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 await Search();
 
-                foreach (var package in AvailablePackages)
-                {
-                    _packageActionService.CanExecute(NamedRepository.RepositoryCategory, package);
-                }
+                RefreshCanExecuteForEachItem();
             }
         }
 
@@ -248,6 +245,16 @@ namespace Orc.NuGetExplorer.ViewModels
                 {
                     package.IsActionExecuted = null;
                 }
+            }
+
+            RefreshCanExecuteForEachItem();
+        }
+
+        private void RefreshCanExecuteForEachItem()
+        {
+            foreach (var package in AvailablePackages)
+            {
+                _packageActionService.CanExecute(NamedRepository.RepositoryCategory, package);
             }
         }
 
