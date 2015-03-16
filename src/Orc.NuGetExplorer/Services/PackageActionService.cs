@@ -106,6 +106,8 @@ namespace Orc.NuGetExplorer
 
                 return !packageDetails.IsActionExecuted.Value;
             }
+            
+            packageDetails.IsActionExecuted = null;
             return true;
         }
 

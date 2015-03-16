@@ -49,6 +49,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
+                            
                             <CheckBox IsChecked="{Binding IsActionExecuted}" IsEnabled="False" Visibility="{Binding IsActionExecuted, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
                             
                             <Image Grid.Column="1" Grid.RowSpan="3" Source="{Binding IconUrl}" Width="32" Height="32"
