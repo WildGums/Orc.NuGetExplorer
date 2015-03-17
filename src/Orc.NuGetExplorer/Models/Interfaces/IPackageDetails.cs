@@ -21,6 +21,7 @@ namespace Orc.NuGetExplorer
         bool IsAbsoluteLatestVersion { get; }
         bool IsLatestVersion { get; }
         bool IsPrerelease { get; }
+        string Title { get; }
         #endregion
     }
 }
