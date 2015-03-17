@@ -13,24 +13,30 @@ namespace Orc.NuGetExplorer
 
     internal class NuGetPackageManager : PackageManager, INuGetPackageManager
     {
+        private readonly IPackageCacheService _packageCacheService;
+
         #region Constructors
         public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
-            ILogger logger)
+            ILogger logger, IPackageCacheService packageCacheService)
             : this(packageRepositoryService.GetAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
         {
+            Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => logger);
-
+            Argument.IsNotNull(() => packageCacheService);
+            
+            _packageCacheService = packageCacheService;
             Logger = logger;
         }
 
         public NuGetPackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
-            this.PackageInstalling += (sender, args) => NotifyOperationStarted(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
-            this.PackageInstalled += (sender, args) => NotifyOperationFinished(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
+            this.PackageInstalling += (sender, args) => NotifyOperationStarted(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
+            this.PackageInstalled += (sender, args) => NotifyOperationFinished(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
 
-            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
-            this.PackageUninstalled += (sender, args) => NotifyOperationFinished(new PackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
+            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
+            this.PackageUninstalled += (sender, args) => NotifyOperationFinished(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
         }
         #endregion
 

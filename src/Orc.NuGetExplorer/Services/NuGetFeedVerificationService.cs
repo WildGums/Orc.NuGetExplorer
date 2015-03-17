@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Linq;
     using System.Net;
     using Catel;
@@ -16,18 +15,18 @@ namespace Orc.NuGetExplorer
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         #region Fields
-        private readonly ICredentialProvider _credentialProvider;
+        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         #endregion
 
         #region Constructors
-        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory, ICredentialProvider credentialProvider)
+        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory, IAuthenticationSilencerService authenticationSilencerService)
         {
             Argument.IsNotNull(() => packageRepositoryFactory);
-            Argument.IsNotNull(() => credentialProvider);
+            Argument.IsNotNull(() => authenticationSilencerService);
 
             _packageRepositoryFactory = packageRepositoryFactory;
-            _credentialProvider = credentialProvider;
+            _authenticationSilencerService = authenticationSilencerService;
         }
         #endregion
 
@@ -35,49 +34,38 @@ namespace Orc.NuGetExplorer
         public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
             var result = FeedVerificationResult.Valid;
-            var originalCredentialProvider = HttpClient.DefaultCredentialProvider;
 
-            try
+            using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
             {
-                if (!authenticateIfRequired)
+                try
                 {
-                    HttpClient.DefaultCredentialProvider = NullCredentialProvider.Instance;
+                    var repository = _packageRepositoryFactory.CreateRepository(source);
+                    var packagesCount = repository.GetPackages().Take(1).Count();
                 }
-
-                var repository = _packageRepositoryFactory.CreateRepository(source);
-                var packagesCount = repository.GetPackages().Take(1).Count();
-            }
-            catch (WebException ex)
-            {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
+                catch (WebException ex)
                 {
-                    var response = ex.Response as HttpWebResponse;
-                    if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
-                        result = FeedVerificationResult.AuthenticationRequired;
+                        var response = ex.Response as HttpWebResponse;
+                        if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            result = FeedVerificationResult.AuthenticationRequired;
+                        }
+                        else
+                        {
+                            result = FeedVerificationResult.Invalid;
+                        }
                     }
                     else
                     {
                         result = FeedVerificationResult.Invalid;
                     }
                 }
-                else
+                catch
                 {
                     result = FeedVerificationResult.Invalid;
                 }
             }
-            catch (Exception)
-            {
-                result = FeedVerificationResult.Invalid;
-            }
-            finally
-            {
-                if (!authenticateIfRequired)
-                {
-                    HttpClient.DefaultCredentialProvider = originalCredentialProvider;
-                }
-            }
-
             return result;
         }
         #endregion

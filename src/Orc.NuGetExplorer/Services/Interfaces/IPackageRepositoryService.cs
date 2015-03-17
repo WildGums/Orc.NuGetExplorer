@@ -21,6 +21,7 @@ namespace Orc.NuGetExplorer
         IDictionary<string, IPackageRepository> GetRemoteRepositories();
         IPackageRepository GetAggregateRepository();
         IDictionary<string, IPackageRepository> GetUpdateRepositories();
+        IPackageRepository GetAggeregateUpdateRepository();
         #endregion
     }
 }

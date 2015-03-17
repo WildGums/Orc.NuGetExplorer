@@ -44,7 +44,27 @@
             <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
         </catel:StackGrid>
         
-        <ListBox ItemsSource="{Binding Lines}"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="0.5*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Grid.Column="0" ItemsSource="{Binding Lines}"/>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0" Grid.Column="0" Content="Check for updates" Command="{Binding CheckForUpdates}"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" Content="allow prereleases" IsChecked="{Binding AllowPrerelease}"/>
+                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding AvailableUpdates}"/>
+            </Grid>
+        </Grid>
+        
         
     </catel:StackGrid>
 </catel:DataWindow>

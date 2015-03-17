@@ -38,6 +38,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
         serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
+        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
+        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 

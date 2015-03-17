@@ -119,7 +119,7 @@ namespace Orc.NuGetExplorer
             return new LocalPackageRepository(path, true);
         }
 
-        private IPackageRepository GetAggeregateUpdateRepository()
+        public IPackageRepository GetAggeregateUpdateRepository()
         {
             var localRepository = GetLocalRepository();
             var packageSources = GetPackageSources();
