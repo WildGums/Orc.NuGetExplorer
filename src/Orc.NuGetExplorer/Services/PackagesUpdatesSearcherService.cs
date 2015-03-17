@@ -21,8 +21,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService,
-            IPackageCacheService packageCacheService)
+        public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService, IPackageCacheService packageCacheService)
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => authenticationSilencerService);
@@ -34,15 +33,26 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IEnumerable<IPackageDetails> SearchForUpdates(bool allowPrerelease = false, bool authenticateIfRequired = false)
+        public IEnumerable<IPackageDetails> SearchForUpdates(bool? allowPrerelease = null, bool authenticateIfRequired = true)
         {
+            var availableUpdates = new List<IPackageDetails>();
+
             using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
             {
                 var packageRepository = _packageRepositoryService.GetAggregateRepository();
 
-                var queryable = _packageRepositoryService.LocalRepository.GetPackages();
-                return packageRepository.GetUpdates(queryable, allowPrerelease, false).Select(package => _packageCacheService.GetPackageDetails(package));
+                var packages = _packageRepositoryService.LocalRepository.GetPackages();
+
+                foreach (var package in packages)
+                {
+                    var prerelease = allowPrerelease ?? package.IsPrerelease();
+
+                    var packageUpdates = packageRepository.GetUpdates(new [] { package }, prerelease, false).Select(x => _packageCacheService.GetPackageDetails(x));
+                    availableUpdates.AddRange(packageUpdates);
+                }
             }
+
+            return availableUpdates;
         }
         #endregion
     }

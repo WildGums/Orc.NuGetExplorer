@@ -20,6 +20,7 @@ namespace Orc.NuGetExplorer
         string SpecialVersion { get; }
         bool IsAbsoluteLatestVersion { get; }
         bool IsLatestVersion { get; }
+        bool IsPrerelease { get; }
         #endregion
     }
 }

@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     public static class IPackagesUpdatesSearcherServiceExtensions
     {
         #region Methods
-        public static async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(this IPackagesUpdatesSearcherService packagesUpdatesSearcherService, bool allowPrerelease, bool authenticateIfRequired = true)
+        public static async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(this IPackagesUpdatesSearcherService packagesUpdatesSearcherService, bool? allowPrerelease = null, bool authenticateIfRequired = true)
         {
             Argument.IsNotNull(() => packagesUpdatesSearcherService);
 

@@ -64,7 +64,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         [Expose("Lines")]
         public PackageManagementEcho Echo { get; private set; }
 
-        public bool AllowPrerelease { get; set; }
+        public bool? AllowPrerelease { get; set; }
 
         public string PackageSourceName { get; set; }
         public string PackageSourceUrl { get; set; }
@@ -77,14 +77,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnCheckForUpdatesExecute()
         {
-            using (_pleaseWaitService.WaitingScope())
-            {
+            //using (_pleaseWaitService.WaitingScope())
+            //{
                 AvailableUpdates.Clear();
 
                 var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease);
 
                 AvailableUpdates.AddRange(packages.Select(x => x.FullName).ToArray());
-            }
+            //}
         }
 
         public TaskCommand AdddPackageSource { get; private set; }
