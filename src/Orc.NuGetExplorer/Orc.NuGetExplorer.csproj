@@ -131,6 +131,8 @@
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationSilencerService.cs" />
     <Compile Include="Services\Interfaces\IPackagesUpdatesSearcherService.cs" />
+    <Compile Include="Services\Interfaces\IImageResolveService.cs" />
+    <Compile Include="Services\ImageResolveService.cs" />
     <Compile Include="Services\PackagesUpdatesSearcherService.cs" />
     <Compile Include="Watchers\DeletemeWatcher.cs" />
     <Compile Include="Watchers\Base\PackageManagerWatcherBase.cs" />

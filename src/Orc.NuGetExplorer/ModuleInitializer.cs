@@ -40,6 +40,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
         serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();
+        serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 

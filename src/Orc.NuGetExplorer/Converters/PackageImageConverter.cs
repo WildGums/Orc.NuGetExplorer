@@ -8,43 +8,34 @@
 namespace Orc.NuGetExplorer.Converters
 {
     using System;
-    using System.Windows.Media.Imaging;
-    using Catel.Caching;
+    using Catel.IoC;
     using Catel.MVVM.Converters;
 
     public class PackageImageConverter : ValueConverterBase
     {
         #region Fields
-        private static readonly object Sync = new object();
-        private readonly ICacheStorage<string, BitmapImage> _packageDetailsCache = new CacheStorage<string, BitmapImage>();
+        private IImageResolveService _imageResolveService;
+        #endregion
+
+        #region Properties
+        private IImageResolveService ImageResolveService
+        {
+            get
+            {
+                if (_imageResolveService == null)
+                {
+                    var serviceLocator = this.GetServiceLocator();
+                    _imageResolveService = serviceLocator.ResolveType<IImageResolveService>();
+                }
+                return _imageResolveService;
+            }
+        }
         #endregion
 
         #region Methods
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            var uri = value as Uri;
-            if (uri == null)
-            {
-                return ResolveImageFromString("http://nuget.org/Content/Images/packageDefaultIcon.png");
-            }
-
-            return ResolveImageFromUri(uri);
-        }
-
-        private BitmapImage ResolveImageFromString(string uriString)
-        {
-            lock (Sync)
-            {
-                return _packageDetailsCache.GetFromCacheOrFetch(uriString, () => new BitmapImage(new Uri(uriString)));
-            }
-        }
-
-        private BitmapImage ResolveImageFromUri(Uri uri)
-        {
-            lock (Sync)
-            {
-                return _packageDetailsCache.GetFromCacheOrFetch(uri.AbsoluteUri, () => new BitmapImage(uri));
-            }
+            return ImageResolveService.ResolveImageFromUri(value as Uri);
         }
         #endregion
     }
