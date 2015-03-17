@@ -102,6 +102,14 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
+        public IPackageRepository GetAggeregateUpdateRepository()
+        {
+            var localRepository = GetLocalRepository();
+            var packageSources = GetPackageSources();
+            var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
+            return new UpdateRepository(localRepository, sourceRepository);
+        }
+
         private IEnumerable<IPackageSource> GetPackageSources()
         {
             return _nuGetConfigurationService.LoadPackageSources();
@@ -117,14 +125,6 @@ namespace Orc.NuGetExplorer
             }
 
             return new LocalPackageRepository(path, true);
-        }
-
-        public IPackageRepository GetAggeregateUpdateRepository()
-        {
-            var localRepository = GetLocalRepository();
-            var packageSources = GetPackageSources();
-            var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-            return new UpdateRepository(localRepository, sourceRepository);
         }
         #endregion
     }

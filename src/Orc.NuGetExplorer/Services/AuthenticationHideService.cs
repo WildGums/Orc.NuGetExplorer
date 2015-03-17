@@ -1,8 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AuthenticationSilencerService.cs" company="Wild Gums">
+// <copyright file="AuthenticationHideService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System;
@@ -11,15 +13,20 @@ namespace Orc.NuGetExplorer
 
     public class AuthenticationSilencerService : IAuthenticationSilencerService
     {
+        #region Fields
         private readonly ICredentialProvider _credentialProvider;
+        #endregion
 
+        #region Constructors
         public AuthenticationSilencerService(ICredentialProvider credentialProvider)
         {
             Argument.IsNotNull(() => credentialProvider);
 
             _credentialProvider = credentialProvider;
         }
+        #endregion
 
+        #region Methods
         public IDisposable UseAuthentication(bool authenticateIfRequired = true)
         {
             var originalCredentialProvider = HttpClient.DefaultCredentialProvider;
@@ -44,5 +51,6 @@ namespace Orc.NuGetExplorer
                 HttpClient.DefaultCredentialProvider = _credentialProvider;
             }
         }
+        #endregion
     }
 }

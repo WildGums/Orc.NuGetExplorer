@@ -3,20 +3,24 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
-    using NuGet;
     using Repositories;
 
     internal class PackagesUpdatesSearcherService : IPackagesUpdatesSearcherService
     {
-        private readonly IPackageRepositoryService _packageRepositoryService;
+        #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IPackageRepositoryService _packageRepositoryService;
+        #endregion
 
+        #region Constructors
         public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService,
             IPackageQueryService packageQueryService)
         {
@@ -28,8 +32,10 @@ namespace Orc.NuGetExplorer
             _authenticationSilencerService = authenticationSilencerService;
             _packageQueryService = packageQueryService;
         }
+        #endregion
 
-        public IEnumerable<IPackageDetails> SearchForUpdates(bool allowPrerelease, bool authenticateIfRequired = true)
+        #region Methods
+        public IEnumerable<IPackageDetails> SearchForUpdates(bool allowPrerelease = false, bool authenticateIfRequired = false)
         {
             using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
             {
@@ -43,5 +49,6 @@ namespace Orc.NuGetExplorer
                 return _packageQueryService.GetPackages(packageRepository, allowPrerelease);
             }
         }
+        #endregion
     }
 }
