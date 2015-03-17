@@ -15,7 +15,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using MethodTimer;
     using NuGet;
-    using Repositories;
 
     internal class ExtensionsViewModel : ViewModelBase
     {

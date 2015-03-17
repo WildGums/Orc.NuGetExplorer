@@ -11,28 +11,24 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using NuGet;
-    using Repositories;
 
     internal class PackagesUpdatesSearcherService : IPackagesUpdatesSearcherService
     {
         #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
-        private readonly IPackageQueryService _packageQueryService;
         private readonly IPackageCacheService _packageCacheService;
         private readonly IPackageRepositoryService _packageRepositoryService;
         #endregion
 
         #region Constructors
         public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService,
-            IPackageQueryService packageQueryService, IPackageCacheService packageCacheService)
+            IPackageCacheService packageCacheService)
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => authenticationSilencerService);
-            Argument.IsNotNull(() => packageQueryService);
 
             _packageRepositoryService = packageRepositoryService;
             _authenticationSilencerService = authenticationSilencerService;
-            _packageQueryService = packageQueryService;
             _packageCacheService = packageCacheService;
         }
         #endregion
