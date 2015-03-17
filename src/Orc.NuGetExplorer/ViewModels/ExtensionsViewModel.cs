@@ -138,12 +138,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnIsPrereleaseAllowedChanged()
         {
-            var updateRepository = _packageRepository as UpdateRepository;
-            if (updateRepository != null)
-            {
-                updateRepository.AllowPrerelease = IsPrereleaseAllowed;
-            }
-
             await UpdateRepository();
         }
 
@@ -179,12 +173,6 @@ namespace Orc.NuGetExplorer.ViewModels
             if (NamedRepository == null)
             {
                 return;
-            }
-
-            var updateRepository = NamedRepository.Value as UpdateRepository;
-            if (updateRepository != null)
-            {
-                updateRepository.AllowPrerelease = IsPrereleaseAllowed;
             }
 
             using (_pleaseWaitService.WaitingScope())

@@ -30,8 +30,6 @@ namespace Orc.NuGetExplorer.Repositories
         #endregion
 
         #region Properties
-        public bool AllowPrerelease { get; set; }
-
         public string Source
         {
             get { return string.Empty; }
@@ -49,7 +47,7 @@ namespace Orc.NuGetExplorer.Repositories
         public IQueryable<IPackage> GetPackages()
         {
             var packageNames = _destinationRepository.GetPackages().Select(x => new PackageName(x.Id, x.Version));
-            return _sourceRepository.GetUpdates(packageNames, AllowPrerelease, false).AsQueryable();
+            return _sourceRepository.GetUpdates(packageNames, true, false).AsQueryable();
         }
 
         public void AddPackage(IPackage package)
