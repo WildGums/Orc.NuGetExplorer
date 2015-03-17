@@ -49,7 +49,7 @@ namespace Orc.NuGetExplorer.Repositories
         public IQueryable<IPackage> GetPackages()
         {
             var packageNames = _destinationRepository.GetPackages().Select(x => new PackageName(x.Id, x.Version));
-            return _sourceRepository.GetUpdates(packageNames, AllowPrerelease, true).AsQueryable();
+            return _sourceRepository.GetUpdates(packageNames, AllowPrerelease, false).AsQueryable();
         }
 
         public void AddPackage(IPackage package)

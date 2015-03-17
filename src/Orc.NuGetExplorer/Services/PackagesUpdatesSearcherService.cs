@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
+    using NuGet;
     using Repositories;
 
     internal class PackagesUpdatesSearcherService : IPackagesUpdatesSearcherService
@@ -17,12 +18,13 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IPackageCacheService _packageCacheService;
         private readonly IPackageRepositoryService _packageRepositoryService;
         #endregion
 
         #region Constructors
         public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService,
-            IPackageQueryService packageQueryService)
+            IPackageQueryService packageQueryService, IPackageCacheService packageCacheService)
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => authenticationSilencerService);
@@ -31,6 +33,7 @@ namespace Orc.NuGetExplorer
             _packageRepositoryService = packageRepositoryService;
             _authenticationSilencerService = authenticationSilencerService;
             _packageQueryService = packageQueryService;
+            _packageCacheService = packageCacheService;
         }
         #endregion
 
@@ -39,14 +42,10 @@ namespace Orc.NuGetExplorer
         {
             using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
             {
-                var packageRepository = _packageRepositoryService.GetAggeregateUpdateRepository() as UpdateRepository;
-                if (packageRepository == null)
-                {
-                    return Enumerable.Empty<IPackageDetails>();
-                }
-                packageRepository.AllowPrerelease = allowPrerelease;
+                var packageRepository = _packageRepositoryService.GetAggregateRepository();
 
-                return _packageQueryService.GetPackages(packageRepository, allowPrerelease);
+                var queryable = _packageRepositoryService.LocalRepository.GetPackages();
+                return packageRepository.GetUpdates(queryable, allowPrerelease, false).Select(package => _packageCacheService.GetPackageDetails(package));
             }
         }
         #endregion
