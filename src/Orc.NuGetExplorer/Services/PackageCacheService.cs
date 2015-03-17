@@ -7,10 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using Catel;
     using Catel.Caching;
-    using Catel.Caching.Policies;
     using Catel.Logging;
     using NuGet;
 
@@ -18,7 +16,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly ICacheStorage<string, PackageDetails> _packageDetailsCache = new CacheStorage<string, PackageDetails>(() => ExpirationPolicy.Duration(TimeSpan.FromSeconds(60)));
+        private readonly ICacheStorage<string, PackageDetails> _packageDetailsCache = new CacheStorage<string, PackageDetails>();
         #endregion
 
         #region Constructors
