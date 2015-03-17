@@ -3,11 +3,13 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
+                   xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
                    x:ClassModifier="internal">
 
     <catel:UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="HidingVisibilityConverter"/>
         <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter"/>
+        <converters:PackageImageConverter x:Key="ImageConverter"/>
 
         <Style TargetType="{x:Type ListBoxItem}">
             <Style.Resources>
@@ -73,7 +75,7 @@
                                 <CheckBox Grid.RowSpan="2" Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsActionExecuted}"
                                           IsEnabled="False" Margin="4 12 8 0" VerticalAlignment="Top"
                                           Visibility="{Binding IsActionExecuted, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
-                                <Image Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Source="{Binding IconUrl}"
+                                <Image Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Source="{Binding IconUrl, Converter={StaticResource ImageConverter}}"
                                        Width="32" Height="32" VerticalAlignment="Top" Margin="4 4 14 0" />
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Title}" FontWeight="Bold" />
