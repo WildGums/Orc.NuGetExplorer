@@ -50,4 +50,4 @@ namespace Orc.NuGetExplorer
         public bool? IsActionExecuted { get; set; }
         #endregion
     }
-}
+} 
