@@ -37,7 +37,7 @@ namespace Orc.NuGetExplorer
         {
             var availableUpdates = new List<IPackageDetails>();
 
-            using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
+            using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
                 var packageRepository = _packageRepositoryService.GetAggregateRepository();
 

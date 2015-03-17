@@ -126,7 +126,7 @@
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
     <Compile Include="NuGet\Interfaces\INuGetPackageManagerNotifier.cs" />
-    <Compile Include="Services\AuthenticationHideService.cs" />
+    <Compile Include="Services\AuthenticationSilencerService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
     <Compile Include="Services\EventArgs\NuGetOperationsBatchEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />

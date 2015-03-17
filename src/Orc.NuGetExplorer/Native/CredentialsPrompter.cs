@@ -36,6 +36,7 @@ namespace Orc.NuGetExplorer.Native
         public string MainInstruction { get; set; }
         public string Content { get; set; }
         public DownlevelTextMode DownlevelTextMode { get; set; }
+        public bool IsAuthenticationRequired { get; set; }
         #endregion
 
         #region Methods
@@ -60,6 +61,11 @@ namespace Orc.NuGetExplorer.Native
                     Password = credentials.Password;
                     return true;
                 }
+            }
+
+            if (!IsAuthenticationRequired)
+            {
+                return false;
             }
 
             var info = CreateCredUIInfo(owner, false);

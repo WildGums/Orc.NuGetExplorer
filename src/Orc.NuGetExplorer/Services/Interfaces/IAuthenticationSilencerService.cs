@@ -11,8 +11,12 @@ namespace Orc.NuGetExplorer
 
     public interface IAuthenticationSilencerService
     {
+        #region Properties
+        bool IsAuthenticationRequired { get; set; }
+        #endregion
+
         #region Methods
-        IDisposable UseAuthentication(bool authenticateIfRequired = true);
+        IDisposable AuthenticationRequiredScope(bool authenticateIfRequired = true);
         #endregion
     }
 }

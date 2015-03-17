@@ -35,7 +35,7 @@ namespace Orc.NuGetExplorer
         {
             var result = FeedVerificationResult.Valid;
 
-            using (_authenticationSilencerService.UseAuthentication(authenticateIfRequired))
+            using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
                 try
                 {

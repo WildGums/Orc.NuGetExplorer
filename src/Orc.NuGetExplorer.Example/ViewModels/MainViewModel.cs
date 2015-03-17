@@ -77,14 +77,11 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnCheckForUpdatesExecute()
         {
-            //using (_pleaseWaitService.WaitingScope())
-            //{
-                AvailableUpdates.Clear();
+            AvailableUpdates.Clear();
 
-                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease);
+            var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease, false);
 
-                AvailableUpdates.AddRange(packages.Select(x => x.FullName).ToArray());
-            //}
+            AvailableUpdates.AddRange(packages.Select(x => x.FullName).ToArray());
         }
 
         public TaskCommand AdddPackageSource { get; private set; }

@@ -19,16 +19,19 @@ namespace Orc.NuGetExplorer
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IDispatcherService _dispatcherService;
         private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IDispatcherService dispatcherService, IPleaseWaitService pleaseWaitService)
+        public AuthenticationProvider(IDispatcherService dispatcherService, IPleaseWaitService pleaseWaitService, IAuthenticationSilencerService authenticationSilencerService)
         {
             Argument.IsNotNull(() => dispatcherService);
             Argument.IsNotNull(() => pleaseWaitService);
+            Argument.IsNotNull(() => authenticationSilencerService);
 
             _dispatcherService = dispatcherService;
             _pleaseWaitService = pleaseWaitService;
+            _authenticationSilencerService = authenticationSilencerService;
         }
         #endregion
 
@@ -56,7 +59,8 @@ namespace Orc.NuGetExplorer
                         ShowSaveCheckBox = true,
                         WindowTitle = "Credentials required",
                         MainInstruction = "Credentials are required to access this feed",
-                        Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri)
+                        Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
+                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired
                     };
 
                     result = credentialsPrompter.ShowDialog();
