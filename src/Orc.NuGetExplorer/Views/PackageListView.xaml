@@ -9,6 +9,7 @@
     <catel:UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="HidingVisibilityConverter"/>
         <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter"/>
+        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite"/>
         <converters:PackageImageConverter x:Key="ImageConverter"/>
 
         <Style TargetType="{x:Type ListBoxItem}">
@@ -86,7 +87,8 @@
                                     <Button VerticalAlignment="Top" Width="70" Height="25" Margin="4"
                                             Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
                                             Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
-                                            CommandParameter="{Binding }" />
+                                            CommandParameter="{Binding }" 
+                                            IsEnabled="{Binding IsActionExecuted, Converter={StaticResource BooleanToOpposite}}"/>
 
                                     <TextBlock Text="Prerelease" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
                                            Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" />
