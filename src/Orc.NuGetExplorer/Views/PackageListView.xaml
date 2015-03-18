@@ -86,8 +86,7 @@
                                     <Button VerticalAlignment="Top" Width="70" Height="25" Margin="4"
                                             Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
                                             Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
-                                            CommandParameter="{Binding}"
-                                            Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource HidingVisibilityConverter}}"/>
+                                            CommandParameter="{Binding }" />
 
                                     <TextBlock Text="Prerelease" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
                                            Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" />
