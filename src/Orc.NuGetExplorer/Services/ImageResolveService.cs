@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
     internal class ImageResolveService : IImageResolveService
     {
         #region Fields
-        private const string DefaultPackageUrl = "http://nuget.org/Content/Images/packageDefaultIcon.png";
+        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer;component/Resources/Images/packageDefaultIcon.png";
         private static readonly object Sync = new object();
         private readonly ICacheStorage<string, ImageSource> _packageDetailsCache = new CacheStorage<string, ImageSource>();
         #endregion
@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer
 
         private ImageSource CreateImage(Uri uri)
         {
-            if (uri == null || !RemoteFileExists(uri.AbsoluteUri))
+            if (uri == null || (!string.Equals(DefaultPackageUrl, uri.AbsoluteUri) && !RemoteFileExists(uri.AbsoluteUri)))
             {
                 return GetDefaultImage();
             }
