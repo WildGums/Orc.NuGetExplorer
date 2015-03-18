@@ -74,7 +74,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnOpenUpdateWindowExecute()
         {
-            _packagesBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update);
+            await _packagesBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
         }
 
         private bool OnOpenUpdateWindowCanExecute()

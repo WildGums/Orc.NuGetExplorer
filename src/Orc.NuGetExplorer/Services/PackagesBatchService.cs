@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using Catel;
@@ -18,23 +19,27 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;
+        private readonly IDispatcherService _dispatcherService;
         #endregion
 
         #region Constructors
-        public PackagesBatchService(IUIVisualizerService uiVisualizerService)
+        public PackagesBatchService(IUIVisualizerService uiVisualizerService, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => dispatcherService);
 
             _uiVisualizerService = uiVisualizerService;
+            _dispatcherService = dispatcherService;
         }
         #endregion
 
         #region Methods
-        public void ShowPackagesBatch(ObservableCollection<IPackageDetails> packageDetails, PackageOperationType operationType)
+        public void ShowPackagesBatch(IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
         {
             var packagesBatch = new PackagesBatch {OperationType = PackageOperationType.Update};
             packagesBatch.PackageList.AddRange(packageDetails.Cast<PackageDetails>());
-            _uiVisualizerService.ShowDialog<PackagesBatchViewModel>(packagesBatch);
+
+            _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackagesBatchViewModel>(packagesBatch));
         }
         #endregion
     }

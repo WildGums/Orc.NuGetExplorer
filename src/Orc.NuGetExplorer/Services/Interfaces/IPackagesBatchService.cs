@@ -7,10 +7,10 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
 
     public interface IPackagesBatchService
     {
-        void ShowPackagesBatch(ObservableCollection<IPackageDetails> packageDetails, PackageOperationType operationType);
+        void ShowPackagesBatch(IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType);
     }
 }
