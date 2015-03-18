@@ -19,8 +19,8 @@ namespace Orc.NuGetExplorer
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _packageManager;
-        private readonly IPackageRepositoryService _packageRepositoryService;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly IPackageRepositoryService _packageRepositoryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
@@ -53,7 +53,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetActionName(PackageOperationType operationType)
         {
-            return Enum.GetName(typeof(PackageOperationType), operationType);           
+            return Enum.GetName(typeof (PackageOperationType), operationType);
         }
 
         public async Task Execute(PackageOperationType operationType, PackageDetails packageDetails, IPackageRepository sourceRepository = null, bool allowedPrerelease = false)
@@ -114,25 +114,6 @@ namespace Orc.NuGetExplorer
             return !(package.IsActionExecuted ?? true);
         }
 
-        private bool CanInstall(PackageDetails package)
-        {
-            var count = _packageQueryService.CountPackages(_localRepository, package.Id);
-
-            return count == 0;
-        }
-
-        private bool CanUpdate(PackageDetails package)
-        {
-            var count = _packageQueryService.CountPackages(_localRepository, package);
-
-            return count == 0;
-        }
-
-        private bool CanUninstall(PackageDetails package)
-        {
-            return true;
-        }
-
         public bool IsRefreshReqired(PackageOperationType operationType)
         {
             switch (operationType)
@@ -146,6 +127,29 @@ namespace Orc.NuGetExplorer
             }
 
             return false;
+        }
+
+        private bool CanInstall(PackageDetails package)
+        {
+            Argument.IsNotNull(() => package);
+
+            var count = _packageQueryService.CountPackages(_localRepository, package.Id);
+
+            return count == 0;
+        }
+
+        private bool CanUpdate(PackageDetails package)
+        {
+            Argument.IsNotNull(() => package);
+
+            var count = _packageQueryService.CountPackages(_localRepository, package);
+
+            return count == 0;
+        }
+
+        private bool CanUninstall(PackageDetails package)
+        {
+            return true;
         }
 
         private void UninstallPackage(PackageDetails packageDetails)

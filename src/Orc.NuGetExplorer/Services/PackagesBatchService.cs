@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using Catel;
     using Catel.Services;
@@ -18,8 +17,8 @@ namespace Orc.NuGetExplorer
     internal class PackagesBatchService : IPackagesBatchService
     {
         #region Fields
-        private readonly IUIVisualizerService _uiVisualizerService;
         private readonly IDispatcherService _dispatcherService;
+        private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
         #region Constructors
