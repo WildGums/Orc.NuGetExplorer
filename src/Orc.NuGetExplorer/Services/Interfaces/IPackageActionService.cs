@@ -13,10 +13,10 @@ namespace Orc.NuGetExplorer
     internal interface IPackageActionService
     {
         #region Methods
-        string GetActionName(RepositoryCategoryType repositoryCategory);
-        Task Execute(RepositoryCategoryType repositoryCategory, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease);
-        bool CanExecute(RepositoryCategoryType repositoryCategory, PackageDetails packageDetails);
-        bool IsRefreshReqired(RepositoryCategoryType repositoryCategory);
+        string GetActionName(PackageOperationType operationType);
+        Task Execute(PackageOperationType operationType, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease);
+        bool CanExecute(PackageOperationType operationType, PackageDetails packageDetails);
+        bool IsRefreshReqired(PackageOperationType operationType);
         #endregion
     }
 }

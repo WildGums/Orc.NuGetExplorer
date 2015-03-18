@@ -19,9 +19,23 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public RepositoryCategory(RepositoryCategoryType category)
+        public RepositoryCategory(PackageOperationType packageOperationType)
         {
-            Name = Enum.GetName(typeof (RepositoryCategoryType), category);
+            switch (packageOperationType)
+            {
+                case PackageOperationType.Install:
+                    Name = "Online";
+                    break;
+                
+                case PackageOperationType.Uninstall:
+                    Name = "Installed";
+                    break;
+                
+                case PackageOperationType.Update:
+                    Name = "Update";
+                    break;
+            }
+
             Repos = new ObservableCollection<NamedRepository>();
         }
         #endregion

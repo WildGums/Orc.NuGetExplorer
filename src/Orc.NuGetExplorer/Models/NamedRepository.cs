@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
         #region Properties
         public string Name { get; set; }
         public IPackageRepository Value { get; set; }
-        public RepositoryCategoryType RepositoryCategory { get; set; }
+        public PackageOperationType AllwedOperation { get; set; }
         #endregion
     }
 }

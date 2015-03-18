@@ -57,7 +57,6 @@ namespace Orc.NuGetExplorer.Views
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         
 
-        //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public string ButtonHeader
         {
             get { return (string) GetValue(ButtonHeaderProperty); }
@@ -67,7 +66,6 @@ namespace Orc.NuGetExplorer.Views
         public static readonly DependencyProperty ButtonHeaderProperty = DependencyProperty.Register("ButtonHeader",
             typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
 
-        //[ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public ICommand PackageCommand
         {
             get { return (ICommand) GetValue(PackageCommandProperty); }

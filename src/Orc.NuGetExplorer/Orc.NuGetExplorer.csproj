@@ -179,7 +179,6 @@
     <Compile Include="Providers\AuthenticationProvider.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\FeedVerificationResult.cs" />
-    <Compile Include="Services\Enums\RepositoryCategoryType.cs" />
     <Compile Include="Services\EventArgs\NuGetPackageOperationEventArgs.cs" />
     <Compile Include="Services\Extensions\INuGetConfigurationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\INuGetFeedVerificationServiceExtensions.cs" />

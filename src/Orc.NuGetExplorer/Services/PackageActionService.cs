@@ -49,22 +49,14 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public string GetActionName(RepositoryCategoryType repositoryCategory)
+        public string GetActionName(PackageOperationType operationType)
         {
-            switch (repositoryCategory)
-            {
-                case RepositoryCategoryType.Installed:
-                    return "Uninstall";
-                case RepositoryCategoryType.Online:
-                    return "Install";
-                case RepositoryCategoryType.Update:
-                    return "Update";
-            }
-
+            return Enum.GetName(typeof(PackageOperationType), operationType);
+            
             return string.Empty;
         }
 
-        public async Task Execute(RepositoryCategoryType repositoryCategory, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
+        public async Task Execute(PackageOperationType operationType, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => packageDetails);
 
@@ -72,15 +64,15 @@ namespace Orc.NuGetExplorer
             {
                 using (_pleaseWaitService.WaitingScope())
                 {
-                    switch (repositoryCategory)
+                    switch (operationType)
                     {
-                        case RepositoryCategoryType.Installed:
+                        case PackageOperationType.Uninstall:
                             UninstallPackage(remoteRepository, packageDetails);
                             break;
-                        case RepositoryCategoryType.Online:
+                        case PackageOperationType.Install:
                             InstallPackage(remoteRepository, packageDetails, allowedPrerelease);
                             break;
-                        case RepositoryCategoryType.Update:
+                        case PackageOperationType.Update:
                             UpdatePackages(packageDetails, allowedPrerelease);
                             break;
                     }
@@ -88,14 +80,14 @@ namespace Orc.NuGetExplorer
             });
         }
 
-        public bool CanExecute(RepositoryCategoryType repositoryCategory, PackageDetails packageDetails)
+        public bool CanExecute(PackageOperationType operationType, PackageDetails packageDetails)
         {
             if (packageDetails == null)
             {
                 return false;
             }
 
-            if (repositoryCategory == RepositoryCategoryType.Online)
+            if (operationType == PackageOperationType.Install)
             {
                 if (packageDetails.IsActionExecuted == null)
                 {
@@ -111,15 +103,15 @@ namespace Orc.NuGetExplorer
             return true;
         }
 
-        public bool IsRefreshReqired(RepositoryCategoryType repositoryCategory)
+        public bool IsRefreshReqired(PackageOperationType operationType)
         {
-            switch (repositoryCategory)
+            switch (operationType)
             {
-                case RepositoryCategoryType.Installed:
+                case PackageOperationType.Uninstall:
                     return true;
-                case RepositoryCategoryType.Online:
+                case PackageOperationType.Install:
                     return false;
-                case RepositoryCategoryType.Update:
+                case PackageOperationType.Update:
                     return true;
             }
 

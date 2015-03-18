@@ -62,15 +62,15 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             get
             {
-                switch (NamedRepository.RepositoryCategory)
+                switch (NamedRepository.AllwedOperation)
                 {
-                    case RepositoryCategoryType.Installed:
+                    case PackageOperationType.Uninstall:
                         return "Search in Installed";
 
-                    case RepositoryCategoryType.Online:
+                    case PackageOperationType.Install:
                         return "Search Online";
 
-                    case RepositoryCategoryType.Update:
+                    case PackageOperationType.Update:
                         return "Search in Updates";
                 }
 
@@ -82,13 +82,13 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             get
             {
-                switch (NamedRepository.RepositoryCategory)
+                switch (NamedRepository.AllwedOperation)
                 {
-                    case RepositoryCategoryType.Installed:
+                    case PackageOperationType.Uninstall:
                         return true;
 
-                    case RepositoryCategoryType.Online:
-                    case RepositoryCategoryType.Update:
+                    case PackageOperationType.Install:
+                    case PackageOperationType.Update:
                         return _isPrereleaseAllowed;
                 }
 
@@ -111,13 +111,13 @@ namespace Orc.NuGetExplorer.ViewModels
                     return false;
                 }
 
-                switch (NamedRepository.RepositoryCategory)
+                switch (NamedRepository.AllwedOperation)
                 {
-                    case RepositoryCategoryType.Installed:
+                    case PackageOperationType.Uninstall:
                         return false;
-                    case RepositoryCategoryType.Online:
-                        return true;
-                    case RepositoryCategoryType.Update:
+
+                    case PackageOperationType.Install:
+                    case PackageOperationType.Update:
                         return true;
                 }
                 // Blocking call!
@@ -151,7 +151,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             if (NamedRepository != null)
             {
-                ActionName = _packageActionService.GetActionName(NamedRepository.RepositoryCategory);
+                ActionName = _packageActionService.GetActionName(NamedRepository.AllwedOperation);
             }
             await UpdateRepository();
         }
@@ -221,8 +221,10 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task OnPackageActionExecute()
         {
-            await _packageActionService.Execute(NamedRepository.RepositoryCategory, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
-            if (_packageActionService.IsRefreshReqired(NamedRepository.RepositoryCategory))
+            var operation = NamedRepository.AllwedOperation;
+
+            await _packageActionService.Execute(operation, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
+            if (_packageActionService.IsRefreshReqired(operation))
             {
                 await Search();
             }
@@ -241,13 +243,13 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             foreach (var package in AvailablePackages)
             {
-                _packageActionService.CanExecute(NamedRepository.RepositoryCategory, package);
+                _packageActionService.CanExecute(NamedRepository.AllwedOperation, package);
             }
         }
 
         private bool OnPackageActionCanExecute()
         {
-            return _packageActionService.CanExecute(NamedRepository.RepositoryCategory, SelectedPackage);
+            return _packageActionService.CanExecute(NamedRepository.AllwedOperation, SelectedPackage);
         }
         #endregion
     }

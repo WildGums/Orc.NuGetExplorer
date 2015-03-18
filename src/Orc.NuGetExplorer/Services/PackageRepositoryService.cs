@@ -50,23 +50,23 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IDictionary<string, IPackageRepository> GetRepositories(RepositoryCategoryType category)
+        public IDictionary<string, IPackageRepository> GetRepositories(PackageOperationType packageOperationType)
         {
             var packageSources = GetPackageSources();
             var result = new Dictionary<string, IPackageRepository>();
-            switch (category)
+            switch (packageOperationType)
             {
-                case RepositoryCategoryType.Installed:
+                case PackageOperationType.Uninstall:
                     result[RepoName.All] = GetLocalRepository();
                     break;
 
-                case RepositoryCategoryType.Online:
+                case PackageOperationType.Install:
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
                     var remoteRepositories = GetRemoteRepositories();
                     result.AddRange(remoteRepositories);
                     break;
 
-                case RepositoryCategoryType.Update:
+                case PackageOperationType.Update:
                     result[RepoName.All] = GetAggeregateUpdateRepository();
                     var updateRepositories = GetUpdateRepositories();
                     result.AddRange(updateRepositories);
