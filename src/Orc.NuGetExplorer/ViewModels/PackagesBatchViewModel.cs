@@ -50,14 +50,25 @@ namespace Orc.NuGetExplorer.ViewModels
             await base.Initialize();
 
             RefreshCanExecute();
+
+            SetTitle();
         }
 
-        private void RefreshCanExecute()
+        private void SetTitle()
         {
-            foreach (var package in PackagesBatch.PackageList)
+            switch (PackagesBatch.OperationType)
             {
-                package.IsActionExecuted = null;
-                _packageActionService.CanExecute(PackagesBatch.OperationType, package);                
+                case PackageOperationType.Install:
+                    Title = "Installing packages";
+                    break;
+
+                case PackageOperationType.Uninstall:
+                    Title = "Uninstalling packages";
+                    break;
+
+                case PackageOperationType.Update:
+                    Title = "Updating packages";
+                    break;
             }
         }
         #endregion
@@ -75,6 +86,15 @@ namespace Orc.NuGetExplorer.ViewModels
         private bool OnPackageActionCanExecute()
         {
             return _packageActionService.CanExecute(PackagesBatch.OperationType, SelectedPackage);
+        }
+
+        private void RefreshCanExecute()
+        {
+            foreach (var package in PackagesBatch.PackageList)
+            {
+                package.IsActionExecuted = null;
+                _packageActionService.CanExecute(PackagesBatch.OperationType, package);
+            }
         }
         #endregion
     }

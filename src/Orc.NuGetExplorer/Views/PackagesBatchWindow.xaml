@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:ClassModifier="internal">
-    <Grid Width="300" Height="400">
+    <Grid Width="500" Height="550">
         <views:PackageListView ItemsSource="{Binding PackageList}"
                                PackageCommand="{Binding PackageAction}"
                                ButtonHeader="{Binding ActionName}"
