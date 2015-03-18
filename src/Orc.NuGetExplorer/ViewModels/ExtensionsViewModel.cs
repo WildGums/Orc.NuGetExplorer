@@ -132,19 +132,26 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             await base.Initialize();
 
-            await Search();
-
-            RefreshCanExecuteForEachItem();
-        }
+            await SearchAndRefreshPackages();
+        }       
 
         private async void OnIsPrereleaseAllowedChanged()
         {
             await UpdateRepository();
+
+            RefreshCanExecute();
         }
 
         private async void OnPackagesToSkipChanged()
         {
+            await SearchAndRefreshPackages();
+        }
+
+        private async Task SearchAndRefreshPackages()
+        {
             await Search();
+
+            RefreshCanExecute();
         }
 
         private async void OnNamedRepositoryChanged()
@@ -156,11 +163,15 @@ namespace Orc.NuGetExplorer.ViewModels
                 ActionName = _packageActionService.GetActionName(NamedRepository.AllwedOperation);
             }
             await UpdateRepository();
+
+            RefreshCanExecute();
         }
 
         private async void OnSearchFilterChanged()
         {
             await UpdateRepository();
+
+            RefreshCanExecute();
         }
 
         [Time]
@@ -187,8 +198,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
 
                 await Search();
-
-                RefreshCanExecuteForEachItem();
             }
         }
 
@@ -231,10 +240,10 @@ namespace Orc.NuGetExplorer.ViewModels
                 await Search();
             }
 
-            RefreshCanExecuteForEachItem();
+            RefreshCanExecute();
         }
 
-        private void RefreshCanExecuteForEachItem()
+        private void RefreshCanExecute()
         {
             foreach (var package in AvailablePackages)
             {
