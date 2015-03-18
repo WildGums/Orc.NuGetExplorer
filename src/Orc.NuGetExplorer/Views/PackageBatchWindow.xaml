@@ -5,9 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             x:ClassModifier="internal">
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" x:ClassModifier="internal">
+    
     <Grid Width="500" Height="550">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,4 +19,5 @@
                                ButtonHeader="{Binding ActionName}"
                                SelectedPackage="{Binding SelectedPackage}"/>
     </Grid>
+    
 </catel:DataWindow>
