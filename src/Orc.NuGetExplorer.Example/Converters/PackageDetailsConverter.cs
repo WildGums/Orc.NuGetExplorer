@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer.Example.Converters
 {
     using System;
@@ -10,6 +12,7 @@ namespace Orc.NuGetExplorer.Example.Converters
 
     public class PackageDetailsConverter : ValueConverterBase
     {
+        #region Methods
         protected override object Convert(object value, Type targetType, object parameter)
         {
             var packageDetails = value as IPackageDetails;
@@ -20,5 +23,6 @@ namespace Orc.NuGetExplorer.Example.Converters
 
             return packageDetails.FullName;
         }
+        #endregion
     }
 }

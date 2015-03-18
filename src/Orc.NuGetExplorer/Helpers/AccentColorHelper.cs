@@ -3,6 +3,8 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using System.Windows;
@@ -10,8 +12,11 @@ namespace Orc.NuGetExplorer
 
     internal class AccentColorHelper
     {
+        #region Fields
         private static bool _isAccentColorResourceDictionaryCreated;
+        #endregion
 
+        #region Methods
         public static void CreateAccentColorResourceDictionary()
         {
             if (_isAccentColorResourceDictionaryCreated)
@@ -34,5 +39,6 @@ namespace Orc.NuGetExplorer
             }
             return new SolidColorBrush(Color.FromArgb(255, 0, 122, 204));
         }
+        #endregion
     }
 }

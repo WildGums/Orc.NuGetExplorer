@@ -7,12 +7,10 @@
 
 namespace Orc.NuGetExplorer.Example.ViewModels
 {
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Collections;
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
@@ -21,26 +19,24 @@ namespace Orc.NuGetExplorer.Example.ViewModels
     public class MainViewModel : ViewModelBase
     {
         #region Fields
-        private readonly IPackagesUIService _packagesUiService;
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
-        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackagesBatchService _packagesBatchService;
+        private readonly IPackagesUIService _packagesUiService;
+        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         #endregion
 
         #region Constructors
         public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            IPleaseWaitService pleaseWaitService, IPackagesBatchService packagesBatchService)
+            IPackagesBatchService packagesBatchService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packagesBatchService);
 
             _packagesUiService = packagesUiService;
@@ -48,7 +44,6 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             _feedVerificationService = feedVerificationService;
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
-            _pleaseWaitService = pleaseWaitService;
             _packagesBatchService = packagesBatchService;
 
             Echo = echoService.GetPackageManagementEcho();
@@ -69,10 +64,8 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         public PackageManagementEcho Echo { get; private set; }
 
         public bool? AllowPrerelease { get; set; }
-
         public string PackageSourceName { get; set; }
         public string PackageSourceUrl { get; set; }
-
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
         #endregion
 
@@ -113,7 +106,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         }
 
         private bool OnAdddPackageSourceCanExecute()
-        {           
+        {
             return !string.IsNullOrWhiteSpace(PackageSourceName) && !string.IsNullOrWhiteSpace(PackageSourceUrl);
         }
 
