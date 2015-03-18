@@ -115,7 +115,6 @@
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Extensions\InlineExtensions.cs" />
-    <Compile Include="Extensions\INuGetPackageManagerNotifierExtensions.cs" />
     <Compile Include="Extensions\IPackageExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -130,9 +129,11 @@
     <Compile Include="NuGet\Interfaces\INuGetPackageManagerNotifier.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
     <Compile Include="Services\Extensions\IPackagesBatchServiceExtensions.cs" />
+    <Compile Include="Services\INestedOperationContextService.cs" />
+    <Compile Include="Services\NestedOperationContextService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
-    <Compile Include="Services\EventArgs\NuGetOperationsBatchEventArgs.cs" />
+    <Compile Include="Services\EventArgs\NuGetOperationBatchEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageBatchService.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationSilencerService.cs" />

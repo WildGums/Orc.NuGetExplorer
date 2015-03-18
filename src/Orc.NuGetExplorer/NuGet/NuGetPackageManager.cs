@@ -32,38 +32,38 @@ namespace Orc.NuGetExplorer
         public NuGetPackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
-            this.PackageInstalling += (sender, args) => NotifyOperationStarted(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
-            this.PackageInstalled += (sender, args) => NotifyOperationFinished(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Install);
+            this.PackageInstalling += (sender, args) => NotifyOperationStarted(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
+            this.PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
 
-            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
-            this.PackageUninstalled += (sender, args) => NotifyOperationFinished(_packageCacheService.GetPackageDetails(args.Package), args.InstallPath, PackageOperationType.Uninstall);
+            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
+            this.PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
         }
         #endregion
 
         #region Methods
-        public event EventHandler<NuGetOperationsBatchEventArgs> OperationsBatchStarted;
-        public event EventHandler<NuGetOperationsBatchEventArgs> OperationsBatchFinished;
+        public event EventHandler<NuGetOperationBatchEventArgs> OperationsBatchStarted;
+        public event EventHandler<NuGetOperationBatchEventArgs> OperationsBatchFinished;
         public event EventHandler<NuGetPackageOperationEventArgs> OperationStarted;
         public event EventHandler<NuGetPackageOperationEventArgs> OperationFinished;
 
-        public void NotifyOperationFinished(IPackageDetails packageDetails, string installPath, PackageOperationType operationType)
+        public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
             OperationFinished.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
-        public void NotifyOperationStarted(IPackageDetails packageDetails, string installPath, PackageOperationType operationType)
+        public void NotifyOperationStarted(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
             OperationStarted.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
-        public void NotifyOperationsBatchStarted(IPackageDetails packageDetails, PackageOperationType operationType)
+        public void NotifyOperationBatchStarted(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            OperationsBatchStarted.SafeInvoke(this, new NuGetOperationsBatchEventArgs(packageDetails, operationType));
+            OperationsBatchStarted.SafeInvoke(this, new NuGetOperationBatchEventArgs(operationType, packages));
         }
 
-        public void NotifyOperationsBatchFinished(IPackageDetails packageDetails, PackageOperationType operationType)
+        public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            OperationsBatchFinished.SafeInvoke(this, new NuGetOperationsBatchEventArgs(packageDetails, operationType));
+            OperationsBatchFinished.SafeInvoke(this, new NuGetOperationBatchEventArgs(operationType, packages));
         }
         #endregion
     }

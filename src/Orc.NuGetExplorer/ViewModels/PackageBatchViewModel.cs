@@ -17,15 +17,18 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private readonly IPackageActionService _packageActionService;
+        private readonly INestedOperationContextService _nestedOperationContextService;
         #endregion
 
         #region Constructors
-        public PackageBatchViewModel(PackagesBatch packagesBatch, IPackageActionService packageActionService)
+        public PackageBatchViewModel(PackagesBatch packagesBatch, IPackageActionService packageActionService, INestedOperationContextService nestedOperationContextService)
         {
             Argument.IsNotNull(() => packagesBatch);
             Argument.IsNotNull(() => packageActionService);
+            Argument.IsNotNull(() => nestedOperationContextService);
 
             _packageActionService = packageActionService;
+            _nestedOperationContextService = nestedOperationContextService;
 
             PackagesBatch = packagesBatch;
             AccentColorHelper.CreateAccentColorResourceDictionary();
@@ -82,10 +85,15 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task OnApplyAllExecute()
         {
-            foreach (var package in PackagesBatch.PackageList.Where(p => _packageActionService.CanExecute(PackagesBatch.OperationType, p)))
+            var packages = PackagesBatch.PackageList.Where(p => _packageActionService.CanExecute(PackagesBatch.OperationType, p)).Cast<IPackageDetails>().ToArray();
+            using (_nestedOperationContextService.OperationContext(PackagesBatch.OperationType, packages))
             {
-                await _packageActionService.Execute(PackagesBatch.OperationType, package);
-            }
+                foreach (var package in packages.OfType<PackageDetails>())
+                {
+                    await _packageActionService.Execute(PackagesBatch.OperationType, package);
+                    RefreshCanExecute();
+                }
+            }            
         }
 
         private bool OnApplyAllCanExecute()

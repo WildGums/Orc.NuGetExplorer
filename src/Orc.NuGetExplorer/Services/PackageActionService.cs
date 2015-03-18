@@ -20,25 +20,29 @@ namespace Orc.NuGetExplorer
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _packageManager;
         private readonly IPackageQueryService _packageQueryService;
+        private readonly INestedOperationContextService _nestedOperationContextService;
         private readonly IPackageRepositoryService _packageRepositoryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
         public PackageActionService(IPleaseWaitService pleaseWaitService, INuGetPackageManager packageManager,
-            IPackageRepositoryService packageRepositoryService, ILogger logger, IPackageQueryService packageQueryService)
+            IPackageRepositoryService packageRepositoryService, ILogger logger, IPackageQueryService packageQueryService,
+            INestedOperationContextService nestedOperationContextService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageQueryService);
+            Argument.IsNotNull(() => nestedOperationContextService);
 
             _pleaseWaitService = pleaseWaitService;
             _packageManager = packageManager;
             _packageRepositoryService = packageRepositoryService;
             _logger = logger;
             _packageQueryService = packageQueryService;
+            _nestedOperationContextService = nestedOperationContextService;
 
             _localRepository = packageRepositoryService.LocalRepository;
 
@@ -161,7 +165,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Uninstall))
+            using (_nestedOperationContextService.OperationContext(PackageOperationType.Uninstall, packageDetails))
             {
                 var dependentsResolver = new DependentsWalker(_localRepository, null);
 
@@ -190,7 +194,7 @@ namespace Orc.NuGetExplorer
                 sourceRepository = _packageRepositoryService.GetSourceAggregateRepository();
             }
 
-            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Install))
+            using (_nestedOperationContextService.OperationContext(PackageOperationType.Install, packageDetails))
             {
                 var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease,
                     DependencyVersion);
@@ -212,7 +216,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Update))
+            using (_nestedOperationContextService.OperationContext(PackageOperationType.Update, packageDetails))
             {
                 try
                 {

@@ -24,11 +24,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        protected virtual void OnOperationsBatchFinished(object sender, NuGetOperationsBatchEventArgs e)
+        protected virtual void OnOperationsBatchFinished(object sender, NuGetOperationBatchEventArgs e)
         {
         }
 
-        protected virtual void OnOperationsBatchStarted(object sender, NuGetOperationsBatchEventArgs e)
+        protected virtual void OnOperationsBatchStarted(object sender, NuGetOperationBatchEventArgs e)
         {
         }
 

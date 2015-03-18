@@ -42,6 +42,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();
         serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
         serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
+        serviceLocator.RegisterType<INestedOperationContextService, NestedOperationContextService>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 
