@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IPackagesBatchService _packagesBatchService;
+        private readonly IPackageBatchService _packageBatchService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         #endregion
@@ -30,21 +30,21 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #region Constructors
         public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            IPackagesBatchService packagesBatchService)
+            IPackageBatchService packageBatchService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => packagesBatchService);
+            Argument.IsNotNull(() => packageBatchService);
 
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
             _feedVerificationService = feedVerificationService;
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
-            _packagesBatchService = packagesBatchService;
+            _packageBatchService = packageBatchService;
 
             Echo = echoService.GetPackageManagementEcho();
 
@@ -74,7 +74,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnOpenUpdateWindowExecute()
         {
-            await _packagesBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
+            await _packageBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
         }
 
         private bool OnOpenUpdateWindowCanExecute()

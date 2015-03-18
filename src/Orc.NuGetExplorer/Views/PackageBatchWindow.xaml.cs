@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesBatchWindow.xaml.cs" company="Wild Gums">
+// <copyright file="PackageBatchWindow.xaml.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,17 +11,17 @@ namespace Orc.NuGetExplorer.Views
     using ViewModels;
 
     /// <summary>
-    /// Interaction logic for PackagesBatchWindow.xaml
+    /// Interaction logic for PackageBatchWindow.xaml
     /// </summary>
-    internal partial class PackagesBatchWindow
+    internal partial class PackageBatchWindow
     {
         #region Constructors
-        public PackagesBatchWindow()
+        public PackageBatchWindow()
             : this(null)
         {
         }
 
-        public PackagesBatchWindow(PackagesBatchViewModel viewModel)
+        public PackageBatchWindow(PackageBatchViewModel viewModel)
             : base(viewModel, DataWindowMode.Close)
         {
             InitializeComponent();

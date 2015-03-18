@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesBatchViewModel.cs" company="Wild Gums">
+// <copyright file="PackageBatchViewModel.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,19 +7,20 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
     using Catel.MVVM;
 
-    internal class PackagesBatchViewModel : ViewModelBase
+    internal class PackageBatchViewModel : ViewModelBase
     {
         #region Fields
         private readonly IPackageActionService _packageActionService;
         #endregion
 
         #region Constructors
-        public PackagesBatchViewModel(PackagesBatch packagesBatch, IPackageActionService packageActionService)
+        public PackageBatchViewModel(PackagesBatch packagesBatch, IPackageActionService packageActionService)
         {
             Argument.IsNotNull(() => packagesBatch);
             Argument.IsNotNull(() => packageActionService);
@@ -30,8 +31,10 @@ namespace Orc.NuGetExplorer.ViewModels
             AccentColorHelper.CreateAccentColorResourceDictionary();
 
             ActionName = _packageActionService.GetActionName(packagesBatch.OperationType);
+            PluralActionName = _packageActionService.GetPluralActionName(packagesBatch.OperationType);
 
             PackageAction = new TaskCommand(OnPackageActionExecute, OnPackageActionCanExecute);
+            ApplyAll = new TaskCommand(OnApplyAllExecute, OnApplyAllCanExecute);
         }
         #endregion
 
@@ -41,6 +44,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public PackagesBatch PackagesBatch { get; set; }
 
         public string ActionName { get; private set; }
+        public string PluralActionName { get; private set; }
         public PackageDetails SelectedPackage { get; set; }
         #endregion
 
@@ -74,6 +78,21 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Commands
+        public TaskCommand ApplyAll { get; private set; }
+
+        private async Task OnApplyAllExecute()
+        {
+            foreach (var package in PackagesBatch.PackageList.Where(p => _packageActionService.CanExecute(PackagesBatch.OperationType, p)))
+            {
+                await _packageActionService.Execute(PackagesBatch.OperationType, package);
+            }
+        }
+
+        private bool OnApplyAllCanExecute()
+        {
+            return PackagesBatch.PackageList.All(p => _packageActionService.CanExecute(PackagesBatch.OperationType, p));
+        }
+
         public TaskCommand PackageAction { get; set; }
 
         private async Task OnPackageActionExecute()

@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.PackagesBatchWindow"
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.PackageBatchWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,7 +9,13 @@
              d:DesignHeight="300" d:DesignWidth="300"
              x:ClassModifier="internal">
     <Grid Width="500" Height="550">
-        <views:PackageListView ItemsSource="{Binding PackageList}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Height="45" Content="{Binding PluralActionName}" Command="{Binding ApplyAll}"/>
+        <views:PackageListView Grid.Row="1"
+                               ItemsSource="{Binding PackageList}"
                                PackageCommand="{Binding PackageAction}"
                                ButtonHeader="{Binding ActionName}"
                                SelectedPackage="{Binding SelectedPackage}"/>

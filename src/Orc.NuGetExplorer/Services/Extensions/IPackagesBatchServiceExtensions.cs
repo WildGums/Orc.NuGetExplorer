@@ -14,11 +14,11 @@ namespace Orc.NuGetExplorer
     public static class IPackagesBatchServiceExtensions
     {
         #region Methods
-        public static async Task ShowPackagesBatchAsync(this IPackagesBatchService packagesBatchService, IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
+        public static async Task ShowPackagesBatchAsync(this IPackageBatchService packageBatchService, IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
         {
-            Argument.IsNotNull(() => packagesBatchService);
+            Argument.IsNotNull(() => packageBatchService);
 
-            await Task.Factory.StartNew(() => packagesBatchService.ShowPackagesBatch(packageDetails, operationType));
+            await Task.Factory.StartNew(() => packageBatchService.ShowPackagesBatch(packageDetails, operationType));
         }
         #endregion
     }

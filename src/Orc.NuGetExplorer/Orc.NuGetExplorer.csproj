@@ -130,19 +130,19 @@
     <Compile Include="NuGet\Interfaces\INuGetPackageManagerNotifier.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
     <Compile Include="Services\Extensions\IPackagesBatchServiceExtensions.cs" />
-    <Compile Include="Services\PackagesBatchService.cs" />
+    <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
     <Compile Include="Services\EventArgs\NuGetOperationsBatchEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
-    <Compile Include="Services\Interfaces\IPackagesBatchService.cs" />
+    <Compile Include="Services\Interfaces\IPackageBatchService.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationSilencerService.cs" />
     <Compile Include="Services\Interfaces\IPackagesUpdatesSearcherService.cs" />
     <Compile Include="Services\Interfaces\IImageResolveService.cs" />
     <Compile Include="Services\ImageResolveService.cs" />
     <Compile Include="Services\PackagesUpdatesSearcherService.cs" />
-    <Compile Include="ViewModels\PackagesBatchViewModel.cs" />
-    <Compile Include="Views\PackagesBatchWindow.xaml.cs">
-      <DependentUpon>PackagesBatchWindow.xaml</DependentUpon>
+    <Compile Include="ViewModels\PackageBatchViewModel.cs" />
+    <Compile Include="Views\PackageBatchWindow.xaml.cs">
+      <DependentUpon>PackageBatchWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Watchers\DeletemeWatcher.cs" />
     <Compile Include="Watchers\Base\PackageManagerWatcherBase.cs" />
@@ -243,7 +243,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PackagesBatchWindow.xaml">
+    <Page Include="Views\PackageBatchWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
