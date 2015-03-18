@@ -47,13 +47,13 @@ namespace Orc.NuGetExplorer.Views
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public PackageDetails SelectedPackage
+        public IPackageDetails SelectedPackage
         {
-            get { return (PackageDetails) GetValue(SelectedPackageProperty); }
+            get { return (IPackageDetails) GetValue(SelectedPackageProperty); }
             set { SetValue(SelectedPackageProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage", typeof(PackageDetails),
+        public static readonly DependencyProperty SelectedPackageProperty = DependencyProperty.Register("SelectedPackage", typeof(IPackageDetails),
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         
 

@@ -30,10 +30,9 @@ namespace Orc.NuGetExplorer.ViewModels
 
             _repositoryNavigationService = repositoryNavigationService;
 
-            Navigator = _repositoryNavigationService.GetNavigator();
-
-            var accentColor = GetAccentColorBrush().Color;
-            accentColor.CreateAccentColorResourceDictionary();
+            Navigator = _repositoryNavigationService.GetNavigator();  
+          
+            AccentColorHelper.CreateAccentColorResourceDictionary();
         }
         #endregion
 
@@ -58,17 +57,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 selectedRepositoryCategory.IsSelected = true;
                 SelectedNamedRepository = selectedRepositoryCategory.Repos.FirstOrDefault();
             }
-        }
-
-        private SolidColorBrush GetAccentColorBrush()
-        {
-            var accentColorBrush = Application.Current.TryFindResource("AccentColorBrush") as SolidColorBrush;
-            if (accentColorBrush != null)
-            {
-                return accentColorBrush;
-            }
-            return new SolidColorBrush(Color.FromArgb(255, 0, 122, 204));
-        }
+        }        
         #endregion
     }
 }

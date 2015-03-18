@@ -2,9 +2,14 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
+                  xmlns:converters="clr-namespace:Orc.NuGetExplorer.Example.Converters"
                   ShowInTaskbar="True" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" 
                   WindowStartupLocation="CenterScreen" WindowState="Normal">
 
+    <catel:DataWindow.Resources>
+        <converters:PackageDetailsConverter x:Key="PackageDetailsConverter"/>
+    </catel:DataWindow.Resources>
+        
     <catel:StackGrid>
         <catel:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -55,6 +60,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <Grid.ColumnDefinitions>
@@ -64,7 +70,14 @@
                 
                 <Button Grid.Row="0" Grid.Column="0" Content="Check for updates" Command="{Binding CheckForUpdates}"/>
                 <CheckBox Grid.Row="0" Grid.Column="1" Content="allow prereleases" IsThreeState="True" IsChecked="{Binding AllowPrerelease}"/>
-                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding AvailableUpdates}"/>
+                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding AvailableUpdates}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource PackageDetailsConverter}}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Open in update window" Command="{Binding OpenUpdateWindow}"/>
             </Grid>
         </Grid>
     </catel:StackGrid>

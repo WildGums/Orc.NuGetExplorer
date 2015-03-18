@@ -108,6 +108,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Converters\PackageDetailsConverter.cs" />
     <Compile Include="Models\PackageManagementEcho.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="PackageManagement\LogListeners\SimpleLogListener.cs" />
