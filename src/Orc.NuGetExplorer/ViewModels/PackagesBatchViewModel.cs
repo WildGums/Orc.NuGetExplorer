@@ -27,6 +27,8 @@ namespace Orc.NuGetExplorer.ViewModels
             PackagesBatch = packagesBatch;
             AccentColorHelper.CreateAccentColorResourceDictionary();
 
+            ActionName = _packageActionService.GetActionName(packagesBatch.OperationType);
+
             PackageAction = new TaskCommand(OnPackageActionExecute, OnPackageActionCanExecute);
         }
         #endregion
@@ -35,6 +37,10 @@ namespace Orc.NuGetExplorer.ViewModels
         [Model]
         [Expose("PackageList")]
         public PackagesBatch PackagesBatch { get; set; }
+
+        public string ActionName { get; private set; }
+
+        public PackageDetails SelectedPackage { get; set; }
         #endregion
 
         #region Commands
@@ -42,12 +48,12 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task OnPackageActionExecute()
         {
-            //_packageActionService.Execute()
+            await _packageActionService.Execute(PackagesBatch.OperationType, SelectedPackage);
         }
 
         private bool OnPackageActionCanExecute()
         {
-            return true;
+            return _packageActionService.CanExecute(PackagesBatch.OperationType, SelectedPackage);
         }
         #endregion
     }

@@ -223,7 +223,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             var operation = NamedRepository.AllwedOperation;
 
-            await _packageActionService.Execute(operation, NamedRepository.Value, SelectedPackage, IsPrereleaseAllowed);
+            await _packageActionService.Execute(operation, SelectedPackage, NamedRepository.Value, IsPrereleaseAllowed);
             if (_packageActionService.IsRefreshReqired(operation))
             {
                 await Search();

@@ -19,6 +19,7 @@ namespace Orc.NuGetExplorer
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _packageManager;
+        private readonly IPackageRepositoryService _packageRepositoryService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
@@ -35,6 +36,7 @@ namespace Orc.NuGetExplorer
 
             _pleaseWaitService = pleaseWaitService;
             _packageManager = packageManager;
+            _packageRepositoryService = packageRepositoryService;
             _logger = logger;
             _packageQueryService = packageQueryService;
 
@@ -51,12 +53,10 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetActionName(PackageOperationType operationType)
         {
-            return Enum.GetName(typeof(PackageOperationType), operationType);
-            
-            return string.Empty;
+            return Enum.GetName(typeof(PackageOperationType), operationType);           
         }
 
-        public async Task Execute(PackageOperationType operationType, IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
+        public async Task Execute(PackageOperationType operationType, PackageDetails packageDetails, IPackageRepository sourceRepository = null, bool allowedPrerelease = false)
         {
             Argument.IsNotNull(() => packageDetails);
 
@@ -67,10 +67,10 @@ namespace Orc.NuGetExplorer
                     switch (operationType)
                     {
                         case PackageOperationType.Uninstall:
-                            UninstallPackage(remoteRepository, packageDetails);
+                            UninstallPackage(packageDetails);
                             break;
                         case PackageOperationType.Install:
-                            InstallPackage(remoteRepository, packageDetails, allowedPrerelease);
+                            InstallPackage(packageDetails, allowedPrerelease, sourceRepository);
                             break;
                         case PackageOperationType.Update:
                             UpdatePackages(packageDetails, allowedPrerelease);
@@ -118,13 +118,13 @@ namespace Orc.NuGetExplorer
             return false;
         }
 
-        private void UninstallPackage(IPackageRepository remoteRepository, PackageDetails packageDetails)
+        private void UninstallPackage(PackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);
 
             using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Uninstall))
             {
-                var dependentsResolver = new DependentsWalker(remoteRepository, null);
+                var dependentsResolver = new DependentsWalker(_localRepository, null);
 
                 var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
                     _logger, true, false);
@@ -142,14 +142,18 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        private void InstallPackage(IPackageRepository remoteRepository, PackageDetails packageDetails, bool allowedPrerelease)
+        private void InstallPackage(PackageDetails packageDetails, bool allowedPrerelease, IPackageRepository sourceRepository = null)
         {
-            Argument.IsNotNull(() => remoteRepository);
             Argument.IsNotNull(() => packageDetails);
+
+            if (sourceRepository == null)
+            {
+                sourceRepository = _packageRepositoryService.GetSourceAggregateRepository();
+            }
 
             using (_packageManager.OperationsBatchContext(packageDetails, PackageOperationType.Install))
             {
-                var walker = new InstallWalker(_localRepository, remoteRepository, null, _logger, false, allowedPrerelease,
+                var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease,
                     DependencyVersion);
 
                 try

@@ -18,10 +18,10 @@ namespace Orc.NuGetExplorer
 
         #region Methods
         IDictionary<string, IPackageRepository> GetRepositories(PackageOperationType packageOperationType);
-        IDictionary<string, IPackageRepository> GetRemoteRepositories();
-        IPackageRepository GetAggregateRepository();
+        IDictionary<string, IPackageRepository> GetSourceRepositories();
+        IPackageRepository GetSourceAggregateRepository();
         IDictionary<string, IPackageRepository> GetUpdateRepositories();
-        IPackageRepository GetAggeregateUpdateRepository();
+        IPackageRepository GetUpdateAggeregateRepository();
         #endregion
     }
 }

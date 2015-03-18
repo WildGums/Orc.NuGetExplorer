@@ -64,7 +64,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty ButtonHeaderProperty = DependencyProperty.Register("ButtonHeader",
-            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
+            typeof(string), typeof(PackageListView), new FrameworkPropertyMetadata(null));        
 
         public ICommand PackageCommand
         {

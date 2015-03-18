@@ -11,6 +11,7 @@
     <Grid Width="300" Height="400">
         <views:PackageListView ItemsSource="{Binding PackageList}"
                                PackageCommand="{Binding PackageAction}"
-                               ButtonHeader="{Binding ActionName}"/>
+                               ButtonHeader="{Binding ActionName}"
+                               SelectedPackage="{Binding SelectedPackage}"/>
     </Grid>
 </catel:DataWindow>

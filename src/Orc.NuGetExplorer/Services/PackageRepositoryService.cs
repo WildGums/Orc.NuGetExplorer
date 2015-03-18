@@ -62,12 +62,12 @@ namespace Orc.NuGetExplorer
 
                 case PackageOperationType.Install:
                     result[RepoName.All] = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-                    var remoteRepositories = GetRemoteRepositories();
+                    var remoteRepositories = GetSourceRepositories();
                     result.AddRange(remoteRepositories);
                     break;
 
                 case PackageOperationType.Update:
-                    result[RepoName.All] = GetAggeregateUpdateRepository();
+                    result[RepoName.All] = GetUpdateAggeregateRepository();
                     var updateRepositories = GetUpdateRepositories();
                     result.AddRange(updateRepositories);
                     break;
@@ -79,16 +79,16 @@ namespace Orc.NuGetExplorer
         public IDictionary<string, IPackageRepository> GetUpdateRepositories()
         {
             var localRepository = GetLocalRepository();
-            return GetRemoteRepositories().ToDictionary(x => x.Key, x => (IPackageRepository) new UpdateRepository(localRepository, x.Value));
+            return GetSourceRepositories().ToDictionary(x => x.Key, x => (IPackageRepository) new UpdateRepository(localRepository, x.Value));
         }
 
-        public IPackageRepository GetAggregateRepository()
+        public IPackageRepository GetSourceAggregateRepository()
         {
             var packageSources = GetPackageSources();
             return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
         }
 
-        public IDictionary<string, IPackageRepository> GetRemoteRepositories()
+        public IDictionary<string, IPackageRepository> GetSourceRepositories()
         {
             var result = new Dictionary<string, IPackageRepository>();
             var packageSources = GetPackageSources();
@@ -102,7 +102,7 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        public IPackageRepository GetAggeregateUpdateRepository()
+        public IPackageRepository GetUpdateAggeregateRepository()
         {
             var localRepository = GetLocalRepository();
             var packageSources = GetPackageSources();

@@ -18,7 +18,7 @@ namespace Orc.NuGetExplorer
         #region Constructors
         public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
             ILogger logger, IPackageCacheService packageCacheService)
-            : this(packageRepositoryService.GetAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
+            : this(packageRepositoryService.GetSourceAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => nuGetConfigurationService);
