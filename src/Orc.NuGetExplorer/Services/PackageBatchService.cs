@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesBatchService.cs" company="Wild Gums">
+// <copyright file="PackageBatchService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     using NuGet;
     using ViewModels;
 
-    internal class PackagesBatchService : IPackagesBatchService
+    internal class PackageBatchService : IPackageBatchService
     {
         #region Fields
         private readonly IDispatcherService _dispatcherService;
@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackagesBatchService(IUIVisualizerService uiVisualizerService, IDispatcherService dispatcherService)
+        public PackageBatchService(IUIVisualizerService uiVisualizerService, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => dispatcherService);
@@ -38,7 +38,7 @@ namespace Orc.NuGetExplorer
             var packagesBatch = new PackagesBatch {OperationType = PackageOperationType.Update};
             packagesBatch.PackageList.AddRange(packageDetails.Cast<PackageDetails>());
 
-            _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackagesBatchViewModel>(packagesBatch));
+            _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackageBatchViewModel>(packagesBatch));
         }
         #endregion
     }

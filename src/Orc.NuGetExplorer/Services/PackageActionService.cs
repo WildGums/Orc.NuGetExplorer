@@ -129,6 +129,11 @@ namespace Orc.NuGetExplorer
             return false;
         }
 
+        public string GetPluralActionName(PackageOperationType operationType)
+        {
+            return string.Format("{0} all", Enum.GetName(typeof (PackageOperationType), operationType));
+        }
+
         private bool CanInstall(PackageDetails package)
         {
             Argument.IsNotNull(() => package);
