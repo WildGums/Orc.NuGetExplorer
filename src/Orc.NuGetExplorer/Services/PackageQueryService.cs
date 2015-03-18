@@ -32,6 +32,12 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+        public int CountPackages(IPackageRepository packageRepository, IPackageDetails packageDetails)
+        {
+            var count = packageRepository.GetPackages().Count(x => string.Equals(x.GetFullName(), packageDetails.FullName));
+            return count;
+        }
+
         public int CountPackages(IPackageRepository packageRepository, string packageId)
         {
             var count = packageRepository.GetPackages().Count(x => string.Equals(x.Id, packageId));

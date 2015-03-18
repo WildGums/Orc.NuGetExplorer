@@ -133,6 +133,8 @@ namespace Orc.NuGetExplorer.ViewModels
             await base.Initialize();
 
             await Search();
+
+            RefreshCanExecuteForEachItem();
         }
 
         private async void OnIsPrereleaseAllowedChanged()
@@ -228,13 +230,6 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 await Search();
             }
-            else
-            {
-                foreach (var package in AvailablePackages)
-                {
-                    package.IsActionExecuted = null;
-                }
-            }
 
             RefreshCanExecuteForEachItem();
         }
@@ -243,6 +238,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             foreach (var package in AvailablePackages)
             {
+                package.IsActionExecuted = null;
                 _packageActionService.CanExecute(NamedRepository.AllwedOperation, package);
             }
         }

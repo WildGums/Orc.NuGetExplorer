@@ -14,11 +14,13 @@ namespace Orc.NuGetExplorer.ViewModels
 
     internal class PackagesBatchViewModel : ViewModelBase
     {
+        #region Fields
         private readonly IPackageActionService _packageActionService;
+        #endregion
 
         #region Constructors
         public PackagesBatchViewModel(PackagesBatch packagesBatch, IPackageActionService packageActionService)
-        {            
+        {
             Argument.IsNotNull(() => packagesBatch);
             Argument.IsNotNull(() => packageActionService);
 
@@ -39,8 +41,25 @@ namespace Orc.NuGetExplorer.ViewModels
         public PackagesBatch PackagesBatch { get; set; }
 
         public string ActionName { get; private set; }
-
         public PackageDetails SelectedPackage { get; set; }
+        #endregion
+
+        #region Methods
+        protected override async Task Initialize()
+        {
+            await base.Initialize();
+
+            RefreshCanExecute();
+        }
+
+        private void RefreshCanExecute()
+        {
+            foreach (var package in PackagesBatch.PackageList)
+            {
+                package.IsActionExecuted = null;
+                _packageActionService.CanExecute(PackagesBatch.OperationType, package);                
+            }
+        }
         #endregion
 
         #region Commands
@@ -49,6 +68,8 @@ namespace Orc.NuGetExplorer.ViewModels
         private async Task OnPackageActionExecute()
         {
             await _packageActionService.Execute(PackagesBatch.OperationType, SelectedPackage);
+
+            RefreshCanExecute();
         }
 
         private bool OnPackageActionCanExecute()

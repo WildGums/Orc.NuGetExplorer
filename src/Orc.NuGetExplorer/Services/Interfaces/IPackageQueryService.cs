@@ -21,6 +21,7 @@ namespace Orc.NuGetExplorer
 
         int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions);
         int CountPackages(IPackageRepository packageRepository, string packageId);
+        int CountPackages(IPackageRepository packageRepository, IPackageDetails packageDetails);
         #endregion
     }
 }

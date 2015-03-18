@@ -78,28 +78,58 @@ namespace Orc.NuGetExplorer
                     }
                 }
             });
+
+            packageDetails.IsActionExecuted = null;
         }
 
-        public bool CanExecute(PackageOperationType operationType, PackageDetails packageDetails)
+        public bool CanExecute(PackageOperationType operationType, PackageDetails package)
         {
-            if (packageDetails == null)
+            if (package == null)
             {
                 return false;
             }
 
-            if (operationType == PackageOperationType.Install)
+            if (package.IsActionExecuted == null)
             {
-                if (packageDetails.IsActionExecuted == null)
+                switch (operationType)
                 {
-                    var count = _packageQueryService.CountPackages(_localRepository, packageDetails.Id);
-                    packageDetails.IsActionExecuted = count != 0;
-                    return count == 0;
-                }
+                    case PackageOperationType.Install:
+                        package.IsActionExecuted = !CanInstall(package);
+                        break;
 
-                return !packageDetails.IsActionExecuted.Value;
+                    case PackageOperationType.Update:
+                        package.IsActionExecuted = !CanUpdate(package);
+                        break;
+
+                    case PackageOperationType.Uninstall:
+                        package.IsActionExecuted = !CanUninstall(package);
+                        break;
+
+                    default:
+                        package.IsActionExecuted = null;
+                        break;
+                }
             }
 
-            packageDetails.IsActionExecuted = null;
+            return !(package.IsActionExecuted ?? true);
+        }
+
+        private bool CanInstall(PackageDetails package)
+        {
+            var count = _packageQueryService.CountPackages(_localRepository, package.Id);
+
+            return count == 0;
+        }
+
+        private bool CanUpdate(PackageDetails package)
+        {
+            var count = _packageQueryService.CountPackages(_localRepository, package);
+
+            return count == 0;
+        }
+
+        private bool CanUninstall(PackageDetails package)
+        {
             return true;
         }
 
