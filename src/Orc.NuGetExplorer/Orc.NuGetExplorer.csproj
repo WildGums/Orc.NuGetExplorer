@@ -37,11 +37,11 @@
   <ItemGroup>
     <Reference Include="Catel.Core, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Catel.Core.4.1.0-unstable0134\lib\net40\Catel.Core.dll</HintPath>
+      <HintPath>..\..\lib\Catel.Core.4.1.0\lib\net40\Catel.Core.dll</HintPath>
     </Reference>
     <Reference Include="Catel.Extensions.Controls, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Catel.Extensions.Controls.4.1.0-unstable0134\lib\net40\Catel.Extensions.Controls.dll</HintPath>
+      <HintPath>..\..\lib\Catel.Extensions.Controls.4.1.0\lib\net40\Catel.Extensions.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Catel.Fody.Attributes, Version=2.5.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -49,7 +49,7 @@
     </Reference>
     <Reference Include="Catel.MVVM, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Catel.MVVM.4.1.0-unstable0134\lib\net40\Catel.MVVM.dll</HintPath>
+      <HintPath>..\..\lib\Catel.MVVM.4.1.0\lib\net40\Catel.MVVM.dll</HintPath>
     </Reference>
     <Reference Include="MethodTimer">
       <HintPath>..\..\lib\MethodTimer.Fody.1.15.2.0\Lib\portable-net4+sl5+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\MethodTimer.dll</HintPath>
@@ -90,9 +90,8 @@
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\..\lib\Catel.MVVM.4.1.0-unstable0134\lib\net40\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Catel.MVVM.4.1.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -124,13 +123,17 @@
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
+    <Compile Include="Models\PackageOperationContext.cs" />
     <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
+    <Compile Include="Services\Interfaces\IPackageOperationService.cs" />
+    <Compile Include="Services\PackageOperationService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationNotificationService.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
     <Compile Include="Services\Extensions\IPackagesBatchServiceExtensions.cs" />
-    <Compile Include="Services\Interfaces\INestedOperationContextService.cs" />
-    <Compile Include="Services\NestedOperationContextService.cs" />
+    <Compile Include="Services\Interfaces\IPackageOperationContextService.cs" />
+    <Compile Include="Services\Interfaces\IRollbackPackageOperationService.cs" />
+    <Compile Include="Services\PackageOperationContextService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
     <Compile Include="Services\EventArgs\PackageOperationBatchEventArgs.cs" />
@@ -141,6 +144,7 @@
     <Compile Include="Services\Interfaces\IImageResolveService.cs" />
     <Compile Include="Services\ImageResolveService.cs" />
     <Compile Include="Services\PackagesUpdatesSearcherService.cs" />
+    <Compile Include="Services\RollbackPackageOperationService.cs" />
     <Compile Include="ViewModels\PackageBatchViewModel.cs" />
     <Compile Include="Views\PackageBatchWindow.xaml.cs">
       <DependentUpon>PackageBatchWindow.xaml</DependentUpon>
@@ -195,11 +199,11 @@
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
-    <Compile Include="Services\Interfaces\IPackageActionService.cs" />
+    <Compile Include="Services\Interfaces\IPackageCommandService.cs" />
     <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\NuGetFeedVerificationService.cs" />
-    <Compile Include="Services\PackageActionService.cs" />
+    <Compile Include="Services\PackageCommandService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
@@ -228,6 +232,7 @@
     <Compile Include="Views\PagingView.xaml.cs">
       <DependentUpon>PagingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Watchers\RollbackWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

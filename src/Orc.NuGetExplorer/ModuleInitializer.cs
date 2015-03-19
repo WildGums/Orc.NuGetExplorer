@@ -30,7 +30,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageManager, PackageManager>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();
-        serviceLocator.RegisterType<IPackageActionService, PackageActionService>();
+        serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
         serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
@@ -44,7 +44,9 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();
         serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
         serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
-        serviceLocator.RegisterType<INestedOperationContextService, NestedOperationContextService>();
+        serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
+        serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
+        serviceLocator.RegisterType<IPackageOperationService, IPackageOperationService>();
 
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 
@@ -58,6 +60,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranstalor>();
     }
 }

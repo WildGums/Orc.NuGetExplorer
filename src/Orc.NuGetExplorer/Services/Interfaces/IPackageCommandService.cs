@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageActionService.cs" company="Wild Gums">
+// <copyright file="IPackageCommandService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using NuGet;
 
-    internal interface IPackageActionService
+    internal interface IPackageCommandService
     {
         #region Methods
         string GetActionName(PackageOperationType operationType);
