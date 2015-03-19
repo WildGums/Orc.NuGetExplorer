@@ -46,14 +46,14 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetDestinationFolder()
         {
-            return _configurationService.GetValue(Settings.DestFolder, _defaultDestinationFolder);
+            return _configurationService.GetValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
         }
 
         public void SetDestinationFolder(string value)
         {
             Argument.IsNotNullOrWhitespace(() => value);
 
-            _configurationService.SetValue(Settings.DestFolder, value);
+            _configurationService.SetValue(Settings.NuGet.DestinationFolder, value);
         }
 
         public IEnumerable<IPackageSource> LoadPackageSources()
