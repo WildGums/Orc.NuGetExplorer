@@ -12,31 +12,31 @@ namespace Orc.NuGetExplorer
     public abstract class PackageManagerWatcherBase
     {
         #region Constructors
-        public PackageManagerWatcherBase(INuGetPackageManagerNotifier nuGetPackageManagerNotifier)
+        public PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => nuGetPackageManagerNotifier);
+            Argument.IsNotNull(() => packageOperationNotificationService);
 
-            nuGetPackageManagerNotifier.OperationStarted += OnOperationStarted;
-            nuGetPackageManagerNotifier.OperationFinished += OnOperationFinished;
-            nuGetPackageManagerNotifier.OperationsBatchStarted += OnOperationsBatchStarted;
-            nuGetPackageManagerNotifier.OperationsBatchFinished += OnOperationsBatchFinished;
+            packageOperationNotificationService.OperationStarted += OnOperationStarted;
+            packageOperationNotificationService.OperationFinished += OnOperationFinished;
+            packageOperationNotificationService.OperationsBatchStarted += OnOperationsBatchStarted;
+            packageOperationNotificationService.OperationsBatchFinished += OnOperationsBatchFinished;
         }
         #endregion
 
         #region Methods
-        protected virtual void OnOperationsBatchFinished(object sender, NuGetOperationBatchEventArgs e)
+        protected virtual void OnOperationsBatchFinished(object sender, PackageOperationBatchEventArgs e)
         {
         }
 
-        protected virtual void OnOperationsBatchStarted(object sender, NuGetOperationBatchEventArgs e)
+        protected virtual void OnOperationsBatchStarted(object sender, PackageOperationBatchEventArgs e)
         {
         }
 
-        protected virtual void OnOperationFinished(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
         }
 
-        protected virtual void OnOperationStarted(object sender, NuGetPackageOperationEventArgs e)
+        protected virtual void OnOperationStarted(object sender, PackageOperationEventArgs e)
         {
         }
         #endregion

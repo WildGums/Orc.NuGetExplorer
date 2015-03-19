@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetPackageOperationEventArgs.cs" company="Wild Gums">
+// <copyright file="PackageOperationEventArgs.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,10 +10,10 @@ namespace Orc.NuGetExplorer
     using System.ComponentModel;
     using Catel;
 
-    public class NuGetPackageOperationEventArgs : CancelEventArgs
+    public class PackageOperationEventArgs : CancelEventArgs
     {
         #region Constructors
-        internal NuGetPackageOperationEventArgs(IPackageDetails packageDetails, string installPath, PackageOperationType packageOperationType)
+        internal PackageOperationEventArgs(IPackageDetails packageDetails, string installPath, PackageOperationType packageOperationType)
         {
             Argument.IsNotNull(() => packageDetails);
 

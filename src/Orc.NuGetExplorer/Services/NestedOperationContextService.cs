@@ -8,32 +8,44 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Catel;
 
     internal class NestedOperationContextService : INestedOperationContextService
     {
         #region Fields
-        private readonly INuGetPackageManagerNotifier _nuGetPackageManagerNotifier;
+        private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private static readonly object Sync = new object();
         #endregion
 
         #region Constructors
-        public NestedOperationContextService(INuGetPackageManagerNotifier nuGetPackageManagerNotifier)
+        public NestedOperationContextService(IPackageOperationNotificationService packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => nuGetPackageManagerNotifier);
+            Argument.IsNotNull(() => packageOperationNotificationService);
 
-            _nuGetPackageManagerNotifier = nuGetPackageManagerNotifier;
+            _packageOperationNotificationService = packageOperationNotificationService;
         }
         #endregion
 
         private int _contextsCounter;
-
+        private IList<Exception> _exceptions = new List<Exception>();
         #region Methods
+        public IEnumerable<Exception> CatchesExceptions
+        {
+            get { return _exceptions.AsEnumerable(); }
+        }
+
         public IDisposable OperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             return new DisposableToken(null,
                 token => IncrementOperationContexCounter(operationType, packages),
                 token => DecrementOperationContexCounter(operationType, packages));
+        }
+
+        public void AddCatchedException(Exception exception)
+        {
+            _exceptions.Add(exception);
         }
 
         private void IncrementOperationContexCounter(PackageOperationType operationType, params IPackageDetails[] packages)
@@ -42,7 +54,8 @@ namespace Orc.NuGetExplorer
             {
                 if (_contextsCounter == 0)
                 {
-                    _nuGetPackageManagerNotifier.NotifyOperationBatchStarted(operationType, packages);
+                    _exceptions.Clear();
+                    _packageOperationNotificationService.NotifyOperationBatchStarted(operationType, packages);
                 }
 
                 _contextsCounter++;
@@ -57,7 +70,7 @@ namespace Orc.NuGetExplorer
 
                 if (_contextsCounter == 0)
                 {
-                    _nuGetPackageManagerNotifier.NotifyOperationBatchFinished(operationType, packages);
+                    _packageOperationNotificationService.NotifyOperationBatchFinished(operationType, packages);
                 }
             }
         }

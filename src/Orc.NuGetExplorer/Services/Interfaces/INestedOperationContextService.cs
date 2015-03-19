@@ -8,11 +8,17 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
 
     internal interface INestedOperationContextService
     {
+        #region Properties
+        IEnumerable<Exception> CatchesExceptions { get; }
+        #endregion
+
         #region Methods
         IDisposable OperationContext(PackageOperationType operationType, params IPackageDetails[] packages);
+        void AddCatchedException(Exception exception);
         #endregion
     }
 }

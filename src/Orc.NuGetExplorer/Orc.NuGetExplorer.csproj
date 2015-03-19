@@ -126,14 +126,14 @@
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
     <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
-    <Compile Include="NuGet\Interfaces\INuGetPackageManagerNotifier.cs" />
+    <Compile Include="Services\Interfaces\IPackageOperationNotificationService.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
     <Compile Include="Services\Extensions\IPackagesBatchServiceExtensions.cs" />
-    <Compile Include="Services\INestedOperationContextService.cs" />
+    <Compile Include="Services\Interfaces\INestedOperationContextService.cs" />
     <Compile Include="Services\NestedOperationContextService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
-    <Compile Include="Services\EventArgs\NuGetOperationBatchEventArgs.cs" />
+    <Compile Include="Services\EventArgs\PackageOperationBatchEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageBatchService.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationSilencerService.cs" />
@@ -171,7 +171,7 @@
     <Compile Include="Models\NamedRepository.cs" />
     <Compile Include="Models\RepositoryNavigator.cs" />
     <Compile Include="Models\PagingItemInfo.cs" />
-    <Compile Include="NuGet\Interfaces\INuGetPackageManager.cs" />
+    <Compile Include="NuGet\Interfaces\IPackageManager.cs" />
     <Compile Include="NuGet\NuGetPackageSource.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Providers\NuGetPackageSourceProvider.cs" />
@@ -181,7 +181,7 @@
     <Compile Include="Providers\AuthenticationProvider.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\FeedVerificationResult.cs" />
-    <Compile Include="Services\EventArgs\NuGetPackageOperationEventArgs.cs" />
+    <Compile Include="Services\EventArgs\PackageOperationEventArgs.cs" />
     <Compile Include="Services\Extensions\INuGetConfigurationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\INuGetFeedVerificationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
@@ -203,7 +203,7 @@
     <Compile Include="Services\PackageCacheService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
-    <Compile Include="NuGet\NuGetPackageManager.cs" />
+    <Compile Include="NuGet\PackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\PagingService.cs" />

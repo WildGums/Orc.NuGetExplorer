@@ -3,6 +3,8 @@ using Catel.Logging;
 using Catel.Services;
 using Orc.NuGetExplorer;
 using NuGet;
+using IPackageManager = Orc.NuGetExplorer.IPackageManager;
+using PackageManager = Orc.NuGetExplorer.PackageManager;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
@@ -25,7 +27,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<INuGetPackageManager, NuGetPackageManager>();
+        serviceLocator.RegisterType<IPackageManager, PackageManager>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();
         serviceLocator.RegisterType<IPackageActionService, PackageActionService>();
@@ -52,8 +54,8 @@ public static class ModuleInitializer
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
 
-        var nuGetPackageManager = serviceLocator.ResolveType<INuGetPackageManager>();
-        serviceLocator.RegisterInstance(typeof(INuGetPackageManagerNotifier), nuGetPackageManager);
+        var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
+        serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranstalor>();

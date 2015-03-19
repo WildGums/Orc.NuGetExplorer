@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetOperationBatchEventArgs.cs" company="Wild Gums">
+// <copyright file="PackageOperationBatchEventArgs.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,10 +10,10 @@ namespace Orc.NuGetExplorer
     using System.ComponentModel;
     using Catel;
 
-    public class NuGetOperationBatchEventArgs : CancelEventArgs
+    public class PackageOperationBatchEventArgs : CancelEventArgs
     {
         #region Constructors
-        internal NuGetOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
+        internal PackageOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             Argument.IsNotNullOrEmptyArray(() => packages);
 

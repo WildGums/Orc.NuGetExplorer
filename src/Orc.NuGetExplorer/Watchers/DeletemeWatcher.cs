@@ -13,13 +13,13 @@ namespace Orc.NuGetExplorer
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
         #region Constructors
-        public DeletemeWatcher(INuGetPackageManagerNotifier nuGetPackageManagerNotifier) : base(nuGetPackageManagerNotifier)
+        public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService) : base(packageOperationNotificationService)
         {
         }
         #endregion
 
         #region Methods
-        protected override void OnOperationFinished(object sender, NuGetPackageOperationEventArgs e)
+        protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
             if (e.PackageOperationType != PackageOperationType.Uninstall)
             {

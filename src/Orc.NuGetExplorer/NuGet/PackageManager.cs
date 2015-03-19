@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetPackageManager.cs" company="Wild Gums">
+// <copyright file="PackageManager.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,12 +11,12 @@ namespace Orc.NuGetExplorer
     using Catel;
     using NuGet;
 
-    internal class NuGetPackageManager : PackageManager, INuGetPackageManager
+    internal class PackageManager : NuGet.PackageManager, IPackageManager
     {
         private readonly IPackageCacheService _packageCacheService;
 
         #region Constructors
-        public NuGetPackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
+        public PackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
             ILogger logger, IPackageCacheService packageCacheService)
             : this(packageRepositoryService.GetSourceAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
         {
@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer
             Logger = logger;
         }
 
-        public NuGetPackageManager(IPackageRepository sourceRepository, string path)
+        public PackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
             this.PackageInstalling += (sender, args) => NotifyOperationStarted(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
@@ -41,29 +41,29 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public event EventHandler<NuGetOperationBatchEventArgs> OperationsBatchStarted;
-        public event EventHandler<NuGetOperationBatchEventArgs> OperationsBatchFinished;
-        public event EventHandler<NuGetPackageOperationEventArgs> OperationStarted;
-        public event EventHandler<NuGetPackageOperationEventArgs> OperationFinished;
+        public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarted;
+        public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
+        public event EventHandler<PackageOperationEventArgs> OperationStarted;
+        public event EventHandler<PackageOperationEventArgs> OperationFinished;
 
         public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            OperationFinished.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
+            OperationFinished.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyOperationStarted(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            OperationStarted.SafeInvoke(this, new NuGetPackageOperationEventArgs(packageDetails, installPath, operationType));
+            OperationStarted.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyOperationBatchStarted(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            OperationsBatchStarted.SafeInvoke(this, new NuGetOperationBatchEventArgs(operationType, packages));
+            OperationsBatchStarted.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
 
         public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            OperationsBatchFinished.SafeInvoke(this, new NuGetOperationBatchEventArgs(operationType, packages));
+            OperationsBatchFinished.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
         #endregion
     }

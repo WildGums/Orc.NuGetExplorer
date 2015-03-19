@@ -18,7 +18,7 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
-        private readonly INuGetPackageManager _packageManager;
+        private readonly IPackageManager _packageManager;
         private readonly IPackageQueryService _packageQueryService;
         private readonly INestedOperationContextService _nestedOperationContextService;
         private readonly IPackageRepositoryService _packageRepositoryService;
@@ -26,7 +26,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageActionService(IPleaseWaitService pleaseWaitService, INuGetPackageManager packageManager,
+        public PackageActionService(IPleaseWaitService pleaseWaitService, IPackageManager packageManager,
             IPackageRepositoryService packageRepositoryService, ILogger logger, IPackageQueryService packageQueryService,
             INestedOperationContextService nestedOperationContextService)
         {
@@ -181,6 +181,7 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
+                    _nestedOperationContextService.AddCatchedException(exception);
                 }
             }
         }
@@ -208,6 +209,7 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
+                    _nestedOperationContextService.AddCatchedException(exception);
                 }
             }
         }
@@ -225,6 +227,7 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
+                    _nestedOperationContextService.AddCatchedException(exception);
                 }
             }
         }
