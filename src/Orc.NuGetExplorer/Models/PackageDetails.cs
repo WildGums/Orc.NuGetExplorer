@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer
             Package = package;
             Version = package.Version.Version;
             Id = package.Id;
-            Title = package.Title;
+            Title = string.IsNullOrWhiteSpace(package.Title) ? package.Id : package.Title;
             FullName = package.GetFullName();
             Description = package.Description;
             IconUrl = package.IconUrl;

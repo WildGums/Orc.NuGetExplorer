@@ -20,44 +20,55 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
-        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
-        serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
-        serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
-        serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();
+        // Services        
+        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();       
+        serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();        
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
-        serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPackageManager, PackageManager>();
-        serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
-        serviceLocator.RegisterType<IPagingService, PagingService>();
-        serviceLocator.RegisterType<IPackageActionService, PackageActionService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
-        serviceLocator.RegisterType<ISettings, NuGetSettings>();
-        serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+        serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
+        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
+        serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
+        serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();        
+        serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
+        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();        
+        serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
+        serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
+        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();        
+        serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
+        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
+        serviceLocator.RegisterType<IPagingService, PagingService>();        
+        serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();
+        serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
+        serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
+        serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
+        serviceLocator.RegisterType<IFIleSystemService, FIleSystemService>();        
+
+        serviceLocator.RegisterType<ILogger, NuGetLogger>();
+
+        serviceLocator.RegisterType<IPackageManager, PackageManager>();
+
+        serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
+        serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
+
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
         serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
+        serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
-        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
-        serviceLocator.RegisterType<ILogger, NuGetLogger>();
-        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
-        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();
-        serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
-        serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
-        serviceLocator.RegisterType<INestedOperationContextService, NestedOperationContextService>();
 
-        serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
+        serviceLocator.RegisterType<ISettings, NuGetSettings>();
+       
+        var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
+        serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
         Log.Debug("Forcing the loading of assembly Catel by the following types");
         Log.Debug("  * {0}", typeof(DispatcherService).Name);
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
-        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
-
-        var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
-        serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
+        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();        
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranstalor>();
     }
 }

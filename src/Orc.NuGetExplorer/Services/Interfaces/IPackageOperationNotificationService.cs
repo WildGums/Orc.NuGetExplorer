@@ -12,17 +12,17 @@ namespace Orc.NuGetExplorer
     public interface IPackageOperationNotificationService
     {
         #region Events
-        event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarted;
+        event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
-        event EventHandler<PackageOperationEventArgs> OperationStarted;
+        event EventHandler<PackageOperationEventArgs> OperationStarting;
         event EventHandler<PackageOperationEventArgs> OperationFinished;
         #endregion
 
         #region Methods
-        void NotifyOperationBatchStarted(PackageOperationType operationType, params IPackageDetails[] packages);
+        void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
-        void NotifyOperationStarted(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
         #endregion
     }
 }

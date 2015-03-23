@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static bool _updatingRepository;
         private readonly IDispatcherService _dispatcherService;
-        private readonly IPackageActionService _packageActionService;
+        private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         private bool _isPrereleaseAllowed;
@@ -31,17 +31,17 @@ namespace Orc.NuGetExplorer.ViewModels
 
         #region Constructors
         public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
-            IPleaseWaitService pleaseWaitService, IPackageActionService packageActionService)
+            IPleaseWaitService pleaseWaitService, IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
             Argument.IsNotNull(() => pleaseWaitService);
-            Argument.IsNotNull(() => packageActionService);
+            Argument.IsNotNull(() => packageCommandService);
 
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
             _pleaseWaitService = pleaseWaitService;
-            _packageActionService = packageActionService;
+            _packageCommandService = packageCommandService;
 
             AvailablePackages = new FastObservableCollection<PackageDetails>();
 
@@ -160,7 +160,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             if (NamedRepository != null)
             {
-                ActionName = _packageActionService.GetActionName(NamedRepository.AllwedOperation);
+                ActionName = _packageCommandService.GetActionName(NamedRepository.AllwedOperation);
             }
             await UpdateRepository();
 
@@ -234,8 +234,8 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             var operation = NamedRepository.AllwedOperation;
 
-            await _packageActionService.Execute(operation, package, NamedRepository.Value, IsPrereleaseAllowed);
-            if (_packageActionService.IsRefreshReqired(operation))
+            await _packageCommandService.Execute(operation, package, NamedRepository.Value, IsPrereleaseAllowed);
+            if (_packageCommandService.IsRefreshReqired(operation))
             {
                 await Search();
             }
@@ -248,13 +248,13 @@ namespace Orc.NuGetExplorer.ViewModels
             foreach (var package in AvailablePackages)
             {
                 package.IsActionExecuted = null;
-                _packageActionService.CanExecute(NamedRepository.AllwedOperation, package);
+                _packageCommandService.CanExecute(NamedRepository.AllwedOperation, package);
             }
         }
 
         private bool OnPackageActionCanExecute(PackageDetails parameter)
         {
-            return _packageActionService.CanExecute(NamedRepository.AllwedOperation, parameter);
+            return _packageCommandService.CanExecute(NamedRepository.AllwedOperation, parameter);
         }
         #endregion
     }

@@ -16,9 +16,9 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
 
-            packageOperationNotificationService.OperationStarted += OnOperationStarted;
+            packageOperationNotificationService.OperationStarting += OnOperationStarting;
             packageOperationNotificationService.OperationFinished += OnOperationFinished;
-            packageOperationNotificationService.OperationsBatchStarted += OnOperationsBatchStarted;
+            packageOperationNotificationService.OperationsBatchStarting += OnOperationsBatchStarting;
             packageOperationNotificationService.OperationsBatchFinished += OnOperationsBatchFinished;
         }
         #endregion
@@ -28,7 +28,7 @@ namespace Orc.NuGetExplorer
         {
         }
 
-        protected virtual void OnOperationsBatchStarted(object sender, PackageOperationBatchEventArgs e)
+        protected virtual void OnOperationsBatchStarting(object sender, PackageOperationBatchEventArgs e)
         {
         }
 
@@ -36,7 +36,7 @@ namespace Orc.NuGetExplorer
         {
         }
 
-        protected virtual void OnOperationStarted(object sender, PackageOperationEventArgs e)
+        protected virtual void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
         }
         #endregion
