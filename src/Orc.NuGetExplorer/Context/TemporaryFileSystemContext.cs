@@ -9,19 +9,26 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.IO;
+    using Catel;
     using Catel.Logging;
     using Catel.Reflection;
 
     public class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
+        private readonly IFIleSystemService _fIleSystemService;
+
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly string _rootDirectory;
         #endregion
 
         #region Constructors
-        public TemporaryFileSystemContext()
+        public TemporaryFileSystemContext(IFIleSystemService fIleSystemService)
         {
+            Argument.IsNotNull(() => fIleSystemService);
+
+            _fIleSystemService = fIleSystemService;
+
             var assembly = AssemblyHelper.GetEntryAssembly();
 
             _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
@@ -43,16 +50,13 @@ namespace Orc.NuGetExplorer
         {
             Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
-            try
+            if(!_fIleSystemService.DeleteDirectory(_rootDirectory))
             {
-                if (Directory.Exists(_rootDirectory))
-                {
-                    Directory.Delete(_rootDirectory, true);
-                }
+                Log.Error("Failed to delete temporary files");
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, "Failed to delete temporary files");
+                Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
             }
         }
 
