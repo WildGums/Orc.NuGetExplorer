@@ -9,21 +9,25 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
+    using Catel.IoC;
 
     internal class PackageOperationContextService : IPackageOperationContextService
     {
         #region Fields
         private static readonly object Sync = new object();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+        private readonly ITypeFactory _typeFactory;
         private PackageOperationContext _rootContext;
         #endregion
 
         #region Constructors
-        public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService)
+        public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
+            Argument.IsNotNull(() => typeFactory);
 
             _packageOperationNotificationService = packageOperationNotificationService;
+            _typeFactory = typeFactory;
         }
         #endregion
 
@@ -36,7 +40,8 @@ namespace Orc.NuGetExplorer
 
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext {OperationType = operationType, Packages = packages, FileSystemContext = new TemporaryFileSystemContext()},
+            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext {OperationType = operationType, Packages = packages, FileSystemContext = context},
                 token => ApplyOperationContext(token.Instance),
                 token => CloseCurrentOperationContext(token.Instance));
         }

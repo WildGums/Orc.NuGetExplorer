@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     public interface IFIleSystemService
     {
-        void DeleteDirectory(string path);
+        bool DeleteDirectory(string path);
         void CopyDirectory(string sourceDirectory, string destinationDirectory);
     }
 }

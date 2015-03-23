@@ -11,8 +11,6 @@ using PackageManager = Orc.NuGetExplorer.PackageManager;
 /// </summary>
 public static class ModuleInitializer
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
     /// <summary>
     /// Initializes the module.
     /// </summary>
@@ -61,8 +59,8 @@ public static class ModuleInitializer
         var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
         serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
-        Log.Debug("Forcing the loading of assembly Catel by the following types");
-        Log.Debug("  * {0}", typeof(DispatcherService).Name);
+/*        Log.Debug("Forcing the loading of assembly Catel by the following types");
+        Log.Debug("  * {0}", typeof(DispatcherService).Name);*/
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();        
