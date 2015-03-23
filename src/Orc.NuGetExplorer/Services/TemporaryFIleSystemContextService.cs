@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageOperationContextService.cs" company="Wild Gums">
+// <copyright file="TemporaryFIleSystemContextService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,15 +8,19 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using Catel;
 
-    internal interface IPackageOperationContextService
+    public class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
     {
         #region Properties
-        PackageOperationContext CurrentContext { get; }
+        public ITemporaryFileSystemContext Context { get; private set; }
         #endregion
 
         #region Methods
-        IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages);
+        public IDisposable UseTemporaryFIleSystemContext()
+        {
+            return new DisposableToken<ITemporaryFileSystemContext>(new TemporaryFileSystemContext(), token => { }, token => { });
+        }
         #endregion
     }
 }

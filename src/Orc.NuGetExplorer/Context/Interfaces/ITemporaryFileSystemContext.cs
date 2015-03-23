@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRollbackPackageOperationService.cs" company="Wild Gums">
+// <copyright file="ITemporaryFileSystemContext.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,8 +9,15 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    internal interface IRollbackPackageOperationService
+    public interface ITemporaryFileSystemContext : IDisposable
     {
-        void PushRollbackAction(Action rollbackAction);
+        #region Properties
+        string RootDirectory { get; }
+        #endregion
+
+        #region Methods
+        string GetDirectory(string relativeDirectoryName);
+        string GetFile(string relativeFilePath);
+        #endregion
     }
 }

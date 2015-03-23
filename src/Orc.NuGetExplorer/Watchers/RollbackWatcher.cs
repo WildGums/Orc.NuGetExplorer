@@ -9,32 +9,49 @@ namespace Orc.NuGetExplorer
 {
     using Catel;
 
-    public sealed class RollbackWatcher : PackageManagerWatcherBase
+    internal class RollbackWatcher : PackageManagerWatcherBase
     {
+        #region Fields
+        private readonly IBackupFileSystemService _backupFileSystemService;
+        private readonly IFIleSystemService _fIleSystemService;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
+        #endregion
 
         #region Constructors
-        internal RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService) 
+        public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
+            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFIleSystemService fIleSystemService)
             : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => rollbackPackageOperationService);
+            Argument.IsNotNull(() => backupFileSystemService);
+            Argument.IsNotNull(() => fIleSystemService);
 
             _packageOperationContextService = packageOperationContextService;
             _rollbackPackageOperationService = rollbackPackageOperationService;
+            _backupFileSystemService = backupFileSystemService;
+            _fIleSystemService = fIleSystemService;
         }
         #endregion
 
-        protected override void OnOperationStarted(object sender, PackageOperationEventArgs e)
+        #region Methods
+        protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
-            base.OnOperationStarted(sender, e);
-        }
+            if (e.PackageOperationType == PackageOperationType.Uninstall)
+            {
+                _backupFileSystemService.BackupFolder(e.InstallPath);
+                _rollbackPackageOperationService.PushRollbackAction(() => _backupFileSystemService.Restore(e.InstallPath));
+                return;
+            }
 
-        protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
-        {
-            base.OnOperationFinished(sender, e);
+            if (e.PackageOperationType == PackageOperationType.Install)
+            {
+                _rollbackPackageOperationService.PushRollbackAction(() => _fIleSystemService.DeleteDirectory(e.InstallPath));
+            }
+
+            base.OnOperationStarting(sender, e);
         }
+        #endregion
     }
 }

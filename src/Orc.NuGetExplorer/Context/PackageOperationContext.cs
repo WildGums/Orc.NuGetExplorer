@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using NuGet;
 
@@ -20,16 +21,18 @@ namespace Orc.NuGetExplorer
         public PackageOperationContext()
         {
             Id = _contextCounter++;
+            CatchedExceptions = new List<Exception>();
         }
         #endregion
 
         #region Properties
         public int Id { get; private set; }
-        public bool CanCrashParentContext { get; set; }
         public IPackageRepository Repository { get; set; }
         public IPackageDetails[] Packages { get; set; }
         public PackageOperationType OperationType { get; set; }
         public PackageOperationContext Parent { get; set; }
+        public IList<Exception> CatchedExceptions { get; private set; }
+        public ITemporaryFileSystemContext FileSystemContext { get; set; }
         #endregion
     }
 }

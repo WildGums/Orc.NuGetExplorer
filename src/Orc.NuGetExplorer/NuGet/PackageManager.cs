@@ -32,18 +32,18 @@ namespace Orc.NuGetExplorer
         public PackageManager(IPackageRepository sourceRepository, string path)
             : base(sourceRepository, path)
         {
-            this.PackageInstalling += (sender, args) => NotifyOperationStarted(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
+            this.PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
             this.PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
 
-            this.PackageUninstalling += (sender, args) => NotifyOperationStarted(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
+            this.PackageUninstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
             this.PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
         }
         #endregion
 
         #region Methods
-        public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarted;
+        public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
-        public event EventHandler<PackageOperationEventArgs> OperationStarted;
+        public event EventHandler<PackageOperationEventArgs> OperationStarting;
         public event EventHandler<PackageOperationEventArgs> OperationFinished;
 
         public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
@@ -51,14 +51,14 @@ namespace Orc.NuGetExplorer
             OperationFinished.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
-        public void NotifyOperationStarted(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            OperationStarted.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+            OperationStarting.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
-        public void NotifyOperationBatchStarted(PackageOperationType operationType, params IPackageDetails[] packages)
+        public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            OperationsBatchStarted.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+            OperationsBatchStarting.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
 
         public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)

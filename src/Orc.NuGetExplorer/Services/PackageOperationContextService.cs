@@ -16,7 +16,6 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly object Sync = new object();
-        private readonly IList<Exception> _exceptions = new List<Exception>();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private PackageOperationContext _rootContext;
         #endregion
@@ -31,25 +30,15 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        public IEnumerable<Exception> CatchedExceptions
-        {
-            get { return _exceptions.AsEnumerable(); }
-        }
-
         public PackageOperationContext CurrentContext { get; private set; }
         #endregion
 
         #region Methods
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages }, 
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = new TemporaryFileSystemContext()}, 
                 token => ApplyOperationContext(token.Instance),
                 token => CloseCurrentOperationContext(token.Instance));
-        }
-
-        public void AddCatchedException(Exception exception)
-        {
-            _exceptions.Add(exception);
         }
 
         private void ApplyOperationContext(PackageOperationContext context)
@@ -58,11 +47,11 @@ namespace Orc.NuGetExplorer
             {
                 if (_rootContext == null)
                 {
-                    _exceptions.Clear();
+                    context.CatchedExceptions.Clear();
 
-                    _rootContext = new PackageOperationContext();
-                    CurrentContext = _rootContext;
-                    _packageOperationNotificationService.NotifyOperationBatchStarted(context.OperationType, context.Packages);
+                    _rootContext = context;
+                    CurrentContext = context;
+                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages);
                 }
                 else
                 {
@@ -76,13 +65,14 @@ namespace Orc.NuGetExplorer
         {
             lock (Sync)
             {
-                CurrentContext = CurrentContext.Parent;
-
-                if (CurrentContext == null)
+                if (CurrentContext.Parent == null)
                 {
                     _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages);
+                    context.FileSystemContext.Dispose();
                     _rootContext = null;
                 }
+
+                CurrentContext = CurrentContext.Parent;
             }
         }
         #endregion

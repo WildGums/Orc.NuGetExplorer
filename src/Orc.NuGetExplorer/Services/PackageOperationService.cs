@@ -63,10 +63,9 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.AddCatchedException(exception);
+                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
                 }
-            }
-        }
+            }        }
 
         public void InstallPackage(IPackageDetails package, bool allowedPrerelease)
         {
@@ -88,7 +87,7 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.AddCatchedException(exception);
+                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
                 }
             }
         }
@@ -108,7 +107,7 @@ namespace Orc.NuGetExplorer
                 catch (Exception exception)
                 {
                     _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.AddCatchedException(exception);
+                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
                 }
             }
         }

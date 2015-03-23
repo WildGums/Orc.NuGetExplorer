@@ -109,6 +109,8 @@
     <Compile Include="Behaviors\UpdateSelectedItemSourceBehavior.cs" />
     <Compile Include="Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Context\Interfaces\ITemporaryFileSystemContext.cs" />
+    <Compile Include="Context\TemporaryFileSystemContext.cs" />
     <Compile Include="Controls\BindableRichTextBox.cs" />
     <Compile Include="Converters\PackageImageConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
@@ -123,10 +125,15 @@
     <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
-    <Compile Include="Models\PackageOperationContext.cs" />
+    <Compile Include="Context\PackageOperationContext.cs" />
     <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
+    <Compile Include="Services\BackupFileSystemService.cs" />
+    <Compile Include="Services\FIleSystemService.cs" />
+    <Compile Include="Services\IFIleSystemService.cs" />
+    <Compile Include="Services\Interfaces\IBackupFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationService.cs" />
+    <Compile Include="Services\Interfaces\ITemporaryFIleSystemContextService.cs" />
     <Compile Include="Services\PackageOperationService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationNotificationService.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
@@ -145,6 +152,7 @@
     <Compile Include="Services\ImageResolveService.cs" />
     <Compile Include="Services\PackagesUpdatesSearcherService.cs" />
     <Compile Include="Services\RollbackPackageOperationService.cs" />
+    <Compile Include="Services\TemporaryFIleSystemContextService.cs" />
     <Compile Include="ViewModels\PackageBatchViewModel.cs" />
     <Compile Include="Views\PackageBatchWindow.xaml.cs">
       <DependentUpon>PackageBatchWindow.xaml</DependentUpon>

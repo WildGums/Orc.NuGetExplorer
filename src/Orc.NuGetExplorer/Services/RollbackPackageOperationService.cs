@@ -7,7 +7,16 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
+    using System.Collections.Generic;
+
     internal class RollbackPackageOperationService : IRollbackPackageOperationService
     {
+        private readonly Stack<Action> _rollbackActions = new Stack<Action>();
+
+        public void PushRollbackAction(Action rollbackAction)
+        {
+            _rollbackActions.Push(rollbackAction);
+        }
     }
 }
