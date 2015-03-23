@@ -7,6 +7,8 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
@@ -23,6 +25,8 @@ namespace Orc.NuGetExplorer.ViewModels
         private static bool _updatingRepository;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageCommandService _packageCommandService;
+        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
+        private readonly IPackageBatchService _packageBatchService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         private bool _isPrereleaseAllowed;
@@ -31,21 +35,29 @@ namespace Orc.NuGetExplorer.ViewModels
 
         #region Constructors
         public ExtensionsViewModel(IPackageQueryService packageQueryService, IDispatcherService dispatcherService,
-            IPleaseWaitService pleaseWaitService, IPackageCommandService packageCommandService)
+            IPleaseWaitService pleaseWaitService, IPackageCommandService packageCommandService,
+            IPackagesUpdatesSearcherService packagesUpdatesSearcherService, IPackageBatchService packageBatchService)
         {
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => dispatcherService);
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageCommandService);
+            Argument.IsNotNull(() => packagesUpdatesSearcherService);
+            Argument.IsNotNull(() => packageBatchService);
 
             _packageQueryService = packageQueryService;
             _dispatcherService = dispatcherService;
             _pleaseWaitService = pleaseWaitService;
             _packageCommandService = packageCommandService;
+            _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
+            _packageBatchService = packageBatchService;
 
             AvailablePackages = new FastObservableCollection<PackageDetails>();
+            AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             PackageAction = new TaskCommand<PackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
+            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
+            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
         }
         #endregion
 
@@ -57,6 +69,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
+        public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
 
         public string FilterWatermark
         {
@@ -75,6 +88,26 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
 
                 return "Search";
+            }
+        }
+
+        public bool ShowUpdates
+        {
+            get
+            {
+                switch (NamedRepository.AllwedOperation)
+                {
+                    case PackageOperationType.Uninstall:
+                        return false;
+
+                    case PackageOperationType.Install:
+                        return false;
+
+                    case PackageOperationType.Update:
+                        return true;
+                }
+
+                return false;
             }
         }
 
@@ -255,6 +288,33 @@ namespace Orc.NuGetExplorer.ViewModels
         private bool OnPackageActionCanExecute(PackageDetails parameter)
         {
             return _packageCommandService.CanExecute(NamedRepository.AllwedOperation, parameter);
+        }
+
+        public TaskCommand CheckForUpdates { get; private set; }
+
+        private async Task OnCheckForUpdatesExecute()
+        {
+            AvailableUpdates.Clear();
+            using (_pleaseWaitService.WaitingScope())
+            {
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(IsPrereleaseAllowed, false);
+
+                // TODO: AddRange doesn't refresh button state. neeed to fix later
+                AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+            }
+            await OnOpenUpdateWindowExecute();
+        }
+
+        public TaskCommand OpenUpdateWindow { get; private set; }
+
+        private async Task OnOpenUpdateWindowExecute()
+        {
+            await _packageBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
+        }
+
+        private bool OnOpenUpdateWindowCanExecute()
+        {
+            return AvailableUpdates.Any();
         }
         #endregion
     }

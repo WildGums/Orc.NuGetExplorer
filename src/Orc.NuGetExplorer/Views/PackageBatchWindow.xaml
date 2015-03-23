@@ -6,18 +6,35 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" x:ClassModifier="internal">
+
+    <catel:DataWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </catel:DataWindow.Resources>
     
-    <Grid Width="500" Height="550">
+    <Grid Width="500" Height="480">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Row="0" Height="45" Content="{Binding PluralActionName}" Command="{Binding ApplyAll}"/>
-        <views:PackageListView Grid.Row="1"
-                               ItemsSource="{Binding PackageList}"
-                               PackageCommand="{Binding PackageAction}"
-                               ButtonHeader="{Binding ActionName}"
-                               SelectedPackage="{Binding SelectedPackage}"/>
+        <StackPanel>
+            <DockPanel HorizontalAlignment="Stretch">
+                <Button Height="25" Width="70" Content="{Binding PluralActionName}" Command="{Binding ApplyAll}" 
+                        DockPanel.Dock="Right" Margin="10 10 12 10"
+                        Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}}"/>
+                <TextBlock Text="Available Updates" Margin="20 10 10 10" FontSize="16" Foreground="Gray" />
+            </DockPanel>
+            <GridSplitter Style="{StaticResource HorizontalGridSplitterStyle}" IsEnabled="False"/>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <views:PackageListView ItemsSource="{Binding PackageList}"
+                                   PackageCommand="{Binding PackageAction}"
+                                   ButtonHeader="{Binding ActionName}"
+                                   SelectedPackage="{Binding SelectedPackage}"/>
+        </Grid>
     </Grid>
     
 </catel:DataWindow>
