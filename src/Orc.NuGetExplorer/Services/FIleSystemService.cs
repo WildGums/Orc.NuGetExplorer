@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.IO;
+    using Catel;
     using Catel.Logging;
 
     public class FIleSystemService : IFIleSystemService
@@ -20,6 +21,8 @@ namespace Orc.NuGetExplorer
         #region Methods
         public void DeleteDirectory(string directory)
         {
+            Argument.IsNotNullOrEmpty(() => directory);
+
             var files = Directory.GetFiles(directory);
             var subDirectories = Directory.GetDirectories(directory);
 
@@ -54,6 +57,9 @@ namespace Orc.NuGetExplorer
 
         public void CopyDirectory(string sourceDirectory, string destinationDirectory)
         {
+            Argument.IsNotNullOrEmpty(() => sourceDirectory);
+            Argument.IsNotNullOrEmpty(() => destinationDirectory);
+
             foreach (var dirPath in Directory.GetDirectories(sourceDirectory, "*", SearchOption.AllDirectories))
             {
                 var newDir = dirPath.Replace(sourceDirectory, destinationDirectory);

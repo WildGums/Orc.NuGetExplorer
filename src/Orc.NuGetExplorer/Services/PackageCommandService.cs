@@ -19,20 +19,23 @@ namespace Orc.NuGetExplorer
         private readonly IPackageRepository _localRepository;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackageOperationService _packageOperationService;
+        private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
         public PackageCommandService(IPleaseWaitService pleaseWaitService, IPackageRepositoryService packageRepositoryService, 
-            IPackageQueryService packageQueryService, IPackageOperationService packageOperationService)
+            IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => packageOperationService);
+            Argument.IsNotNull(() => packageOperationContextService);
 
             _pleaseWaitService = pleaseWaitService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
+            _packageOperationContextService = packageOperationContextService;
 
             _localRepository = packageRepositoryService.LocalRepository;
         }
@@ -51,7 +54,9 @@ namespace Orc.NuGetExplorer
             await Task.Factory.StartNew(() =>
             {
                 using (_pleaseWaitService.WaitingScope())
+                using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
                 {
+                    _packageOperationContextService.CurrentContext.Repository = sourceRepository;
                     switch (operationType)
                     {
                         case PackageOperationType.Uninstall:

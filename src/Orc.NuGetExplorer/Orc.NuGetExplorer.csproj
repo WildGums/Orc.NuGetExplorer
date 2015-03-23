@@ -129,6 +129,7 @@
     <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
     <Compile Include="Services\BackupFileSystemService.cs" />
+    <Compile Include="Services\EventArgs\OperationContextEventArgs.cs" />
     <Compile Include="Services\FIleSystemService.cs" />
     <Compile Include="Services\IFIleSystemService.cs" />
     <Compile Include="Services\Interfaces\IBackupFileSystemService.cs" />

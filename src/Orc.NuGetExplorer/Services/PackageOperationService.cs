@@ -16,8 +16,8 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
-        private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IPackageManager _packageManager;
+        private readonly IPackageOperationContextService _packageOperationContextService;
         #endregion
 
         #region Constructors
@@ -39,7 +39,9 @@ namespace Orc.NuGetExplorer
         }
         #endregion
 
+        #region Properties
         internal DependencyVersion DependencyVersion { get; set; }
+        #endregion
 
         #region Methods
         public void UninstallPackage(IPackageDetails package)
@@ -47,68 +49,60 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof (PackageDetails));
 
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, package))
+            var dependentsResolver = new DependentsWalker(_localRepository, null);
+
+            var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
+                _logger, true, false);
+
+            try
             {
-                var dependentsResolver = new DependentsWalker(_localRepository, null);
-
-                var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
-                    _logger, true, false);
-
-                try
-                {
-                    var nuGetPackage = ((PackageDetails) package).Package;
-                    var operations = walker.ResolveOperations(nuGetPackage);
-                    _packageManager.UninstallPackage(nuGetPackage, false, true);
-                }
-                catch (Exception exception)
-                {
-                    _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
-                }
-            }        }
+                var nuGetPackage = ((PackageDetails) package).Package;
+                var operations = walker.ResolveOperations(nuGetPackage);
+                _packageManager.UninstallPackage(nuGetPackage, false, true);
+            }
+            catch (Exception exception)
+            {
+                _logger.Log(MessageLevel.Error, exception.Message);
+                _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
+            }
+        }
 
         public void InstallPackage(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(PackageDetails));
+            Argument.IsOfType(() => package, typeof (PackageDetails));
 
             var sourceRepository = _packageOperationContextService.CurrentContext.Repository;
 
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, package))
-            {
-                var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease, DependencyVersion);
+            var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease, DependencyVersion);
 
-                try
-                {
-                    var nuGetPackage = ((PackageDetails)package).Package;
-                    var operations = walker.ResolveOperations(nuGetPackage);
-                    _packageManager.InstallPackage(nuGetPackage, false, allowedPrerelease, false);
-                }
-                catch (Exception exception)
-                {
-                    _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
-                }
+            try
+            {
+                var nuGetPackage = ((PackageDetails) package).Package;
+                var operations = walker.ResolveOperations(nuGetPackage);
+                _packageManager.InstallPackage(nuGetPackage, false, allowedPrerelease, false);
+            }
+            catch (Exception exception)
+            {
+                _logger.Log(MessageLevel.Error, exception.Message);
+                _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
             }
         }
 
         public void UpdatePackages(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(PackageDetails));
+            Argument.IsOfType(() => package, typeof (PackageDetails));
 
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, package))
+            try
             {
-                try
-                {
-                    var nuGetPackage = ((PackageDetails)package).Package;
-                    _packageManager.UpdatePackage(nuGetPackage, true, allowedPrerelease);
-                }
-                catch (Exception exception)
-                {
-                    _logger.Log(MessageLevel.Error, exception.Message);
-                    _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
-                }
+                var nuGetPackage = ((PackageDetails) package).Package;
+                _packageManager.UpdatePackage(nuGetPackage, true, allowedPrerelease);
+            }
+            catch (Exception exception)
+            {
+                _logger.Log(MessageLevel.Error, exception.Message);
+                _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
             }
         }
         #endregion

@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.Linq;
     using Catel;
 
     internal class RollbackWatcher : PackageManagerWatcherBase
@@ -32,26 +33,44 @@ namespace Orc.NuGetExplorer
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
             _fIleSystemService = fIleSystemService;
+
+            packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
+        }
+
+        private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
+        {
+            var context = e.PackageOperationContext;
+            if (context.CatchedExceptions.Any())
+            {
+                _rollbackPackageOperationService.Rollback(context);
+            }
+            else
+            {
+                _rollbackPackageOperationService.ClearRollbackActions(context);
+            }
         }
         #endregion
 
         #region Methods
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
+            var context = _packageOperationContextService.CurrentContext;
             if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
                 _backupFileSystemService.BackupFolder(e.InstallPath);
-                _rollbackPackageOperationService.PushRollbackAction(() => _backupFileSystemService.Restore(e.InstallPath));
+                _rollbackPackageOperationService.PushRollbackAction(() => _backupFileSystemService.Restore(e.InstallPath), context);
                 return;
             }
 
             if (e.PackageOperationType == PackageOperationType.Install)
             {
-                _rollbackPackageOperationService.PushRollbackAction(() => _fIleSystemService.DeleteDirectory(e.InstallPath));
+                _rollbackPackageOperationService.PushRollbackAction(() => _fIleSystemService.DeleteDirectory(e.InstallPath), context);
             }
 
             base.OnOperationStarting(sender, e);
         }
+
+
         #endregion
     }
 }

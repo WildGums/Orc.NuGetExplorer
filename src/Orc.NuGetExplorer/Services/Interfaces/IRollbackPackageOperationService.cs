@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer
 
     internal interface IRollbackPackageOperationService
     {
-        void PushRollbackAction(Action rollbackAction);
+        void PushRollbackAction(Action rollbackAction, PackageOperationContext context);
+        void Rollback(PackageOperationContext context);
+        void ClearRollbackActions(PackageOperationContext context);
     }
 }

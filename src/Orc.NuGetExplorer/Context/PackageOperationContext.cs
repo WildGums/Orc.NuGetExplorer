@@ -34,5 +34,23 @@ namespace Orc.NuGetExplorer
         public IList<Exception> CatchedExceptions { get; private set; }
         public ITemporaryFileSystemContext FileSystemContext { get; set; }
         #endregion
+
+        #region Methods
+        public override bool Equals(object obj)
+        {
+            var context = obj as PackageOperationContext;
+            if (context == null)
+            {
+                return false;
+            }
+
+            return Id.Equals(context.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+        #endregion
     }
 }

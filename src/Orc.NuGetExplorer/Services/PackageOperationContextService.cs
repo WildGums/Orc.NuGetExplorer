@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="packageOperationContextService.cs" company="Wild Gums">
+// <copyright file="PackageOperationContextService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,8 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Catel;
 
     internal class PackageOperationContextService : IPackageOperationContextService
@@ -34,9 +32,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+        public event EventHandler<OperationContextEventArgs> OperationContextDisposing;
+
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = new TemporaryFileSystemContext()}, 
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext {OperationType = operationType, Packages = packages, FileSystemContext = new TemporaryFileSystemContext()},
                 token => ApplyOperationContext(token.Instance),
                 token => CloseCurrentOperationContext(token.Instance));
         }
@@ -67,8 +67,10 @@ namespace Orc.NuGetExplorer
             {
                 if (CurrentContext.Parent == null)
                 {
-                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages);
+                    OperationContextDisposing.SafeInvoke(this, new OperationContextEventArgs(context));
                     context.FileSystemContext.Dispose();
+
+                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages);
                     _rootContext = null;
                 }
 
