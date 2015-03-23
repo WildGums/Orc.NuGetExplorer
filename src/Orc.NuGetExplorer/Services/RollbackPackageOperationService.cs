@@ -20,17 +20,24 @@ namespace Orc.NuGetExplorer
         #region Methods
         public void PushRollbackAction(Action rollbackAction, PackageOperationContext context)
         {
-            _rollbackActions[context].Push(rollbackAction);
+            Stack<Action> stack;
+            if (!_rollbackActions.TryGetValue(context, out stack))
+            {
+                stack = new Stack<Action>();
+                _rollbackActions.Add(context, stack);
+            }
+
+            stack.Push(rollbackAction);
         }
 
         public void Rollback(PackageOperationContext context)
         {
-            Stack<Action> satck;
-            if (_rollbackActions.TryGetValue(context, out satck))
+            Stack<Action> stack;
+            if (_rollbackActions.TryGetValue(context, out stack))
             {
-                while (satck.Any())
+                while (stack.Any())
                 {
-                    var action = satck.Pop();
+                    var action = stack.Pop();
                     action();
                 }
             }
@@ -38,10 +45,10 @@ namespace Orc.NuGetExplorer
 
         public void ClearRollbackActions(PackageOperationContext context)
         {
-            Stack<Action> satck;
-            if (_rollbackActions.TryGetValue(context, out satck))
+            Stack<Action> stack;
+            if (_rollbackActions.TryGetValue(context, out stack))
             {
-                satck.Clear();
+                stack.Clear();
                 _rollbackActions.Remove(context);
             }
         }
