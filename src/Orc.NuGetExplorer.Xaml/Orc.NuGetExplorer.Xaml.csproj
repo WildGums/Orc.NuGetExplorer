@@ -99,6 +99,7 @@
     <Compile Include="Converters\PackageImageConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Extensions\InlineCollectionExtensions.cs" />
     <Compile Include="Extensions\InlineExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factories\Interfaces\IRepositoryNavigationFactory.cs" />

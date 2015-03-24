@@ -29,27 +29,27 @@ namespace Orc.NuGetExplorer
             var paragraph = new Paragraph() {FontSize = 12};
 
             var autors = GetDetailsRecord("Created by: ", package.Authors.ToArray());
-            paragraph.Inlines.Add(autors);
+            paragraph.Inlines.AddIfNotNull(autors);
 
             var id = GetDetailsRecord("Id: ", package.Id);
-            paragraph.Inlines.Add(id);
+            paragraph.Inlines.AddIfNotNull(id);
 
             var version = GetDetailsRecord("Version: ", package.Version.ToString());
-            paragraph.Inlines.Add(version);
+            paragraph.Inlines.AddIfNotNull(version);
 
             if (package.Published != null)
             {
                 var published = GetDetailsRecord("Published: ", package.Published.Value.ToLocalTime().ToString());
-                paragraph.Inlines.Add(published);
+                paragraph.Inlines.AddIfNotNull(published);
             }
 
             var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
-            paragraph.Inlines.Add(downloads);
+            paragraph.Inlines.AddIfNotNull(downloads);
 
             if (!string.IsNullOrWhiteSpace(package.Dependencies))
             {
                 var dependencies = GetDetailsRecord("Dependencies: ", package.Dependencies);
-                paragraph.Inlines.Add(dependencies);
+                paragraph.Inlines.AddIfNotNull(dependencies);
             }
 
             result.Blocks.Add(paragraph);

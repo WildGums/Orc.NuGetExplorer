@@ -112,7 +112,6 @@
     <Compile Include="Extensions\IPackageExtensions.cs" />
     <Compile Include="Extensions\IRepositoryExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
-    <Compile Include="Extensions\InlineCollectionExtensions.cs" />
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="Factories\PackageSourceFactory.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
