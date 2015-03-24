@@ -19,6 +19,13 @@ namespace Orc.NuGetExplorer
 
             return !string.IsNullOrWhiteSpace(package.Version.SpecialVersion);
         }
+
+        public static string GetKeyForCache(this IPackage package)
+        {
+            Argument.IsNotNull(() => package);
+
+            return string.Format("{0}_{1}", package.GetType().Name, package.GetFullName());
+        }
         #endregion
     }
 }
