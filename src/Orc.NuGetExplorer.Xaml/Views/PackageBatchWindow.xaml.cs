@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public PackageBatchWindow(PackageBatchViewModel viewModel)
-            : base(viewModel, DataWindowMode.Close)
+            : base(viewModel, DataWindowMode.Custom)
         {
             InitializeComponent();
         }

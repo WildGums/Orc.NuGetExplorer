@@ -26,11 +26,28 @@
             <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
 
-        <catel:WatermarkTextBox Grid.Row="0" Grid.Column="0" Margin="4" VerticalContentAlignment="Center" Watermark="{Binding FilterWatermark}" Text="{Binding SearchFilter}">
-            <i:Interaction.Behaviors>
-                <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
-            </i:Interaction.Behaviors>
-        </catel:WatermarkTextBox>
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Button Width="70" Height="25" Margin="4 4 12 4" DockPanel.Dock="Right"
+                    Visibility="{Binding ShowUpdates, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                    Command="{Binding CheckForUpdates}">
+                <Button.Content>
+                    <DockPanel>
+                        <Viewbox Width="12" Height="12" Margin="0 4 4 0" DockPanel.Dock="Left">
+                            <Path x:Name="ArrowPath" Stretch="Fill" Fill="#575757"
+                                  Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                        </Viewbox>
+                        <TextBlock Text="Updates"/>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+            <catel:WatermarkTextBox Margin="4" VerticalContentAlignment="Center" Watermark="{Binding FilterWatermark}"
+                                    Text="{Binding SearchFilter}">
+                <i:Interaction.Behaviors>
+                    <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
+                </i:Interaction.Behaviors>
+            </catel:WatermarkTextBox>
+        </DockPanel>
+        
 
         <views:PackageListView Grid.Row="1" Grid.Column="0"
                                ItemsSource="{Binding AvailablePackages, Mode=OneWay}"
