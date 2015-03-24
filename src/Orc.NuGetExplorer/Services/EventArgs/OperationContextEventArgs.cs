@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    internal class OperationContextEventArgs : EventArgs
+    public class OperationContextEventArgs : EventArgs
     {
         #region Constructors
         public OperationContextEventArgs(PackageOperationContext packageOperationContext)

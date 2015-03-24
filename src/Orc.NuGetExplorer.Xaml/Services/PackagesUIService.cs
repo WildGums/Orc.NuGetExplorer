@@ -12,33 +12,22 @@ namespace Orc.NuGetExplorer
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
-    using NuGet;
     using ViewModels;
 
     internal class PackagesUIService : IPackagesUIService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        //   private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
         #region Constructors
-        public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory,
-            IPackageRepositoryFactory packageRepositoryFactory)
+        public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => packageRepositoryFactory);
 
             _uiVisualizerService = uiVisualizerService;
-            _packageRepositoryFactory = packageRepositoryFactory;
-
-            var repositoryFactory = packageRepositoryFactory as PackageRepositoryFactory;
-            if (repositoryFactory != null)
-            {
-            }
         }
         #endregion
 

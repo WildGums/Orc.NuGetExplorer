@@ -8,20 +8,19 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using NuGet;
 
-    internal interface IPackageRepositoryService
+    public interface IPackageRepositoryService
     {
         #region Properties
-        IPackageRepository LocalRepository { get; }
+        IRepository LocalRepository { get; }
         #endregion
 
         #region Methods
-        IDictionary<string, IPackageRepository> GetRepositories(PackageOperationType packageOperationType);
-        IDictionary<string, IPackageRepository> GetSourceRepositories();
-        IPackageRepository GetSourceAggregateRepository();
-        IDictionary<string, IPackageRepository> GetUpdateRepositories();
-        IPackageRepository GetUpdateAggeregateRepository();
+        IDictionary<string, IRepository> GetRepositories(PackageOperationType packageOperationType);
+        IDictionary<string, IRepository> GetSourceRepositories();
+        IRepository GetSourceAggregateRepository();
+        IDictionary<string, IRepository> GetUpdateRepositories();
+        IRepository GetUpdateAggeregateRepository();
         #endregion
     }
 }

@@ -48,7 +48,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public string ActionName { get; private set; }
         public string PluralActionName { get; private set; }
-        public PackageDetails SelectedPackage { get; set; }
+        public IPackageDetails SelectedPackage { get; set; }
         #endregion
 
         #region Methods
@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.ViewModels
             var packages = PackagesBatch.PackageList.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).Cast<IPackageDetails>().ToArray();
             using (_packageOperationContextService.UseOperationContext(PackagesBatch.OperationType, packages))
             {
-                foreach (var package in packages.OfType<PackageDetails>())
+                foreach (var package in packages)
                 {
                     await _packageCommandService.Execute(PackagesBatch.OperationType, package);
                     RefreshCanExecute();
@@ -119,7 +119,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             foreach (var package in PackagesBatch.PackageList)
             {
-                package.IsActionExecuted = null;
+                package.IsInstalled = null;
                 _packageCommandService.CanExecute(PackagesBatch.OperationType, package);
             }
         }

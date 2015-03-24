@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Windows.Documents;
 
-    internal static class InlineExtensions
+    public static class InlineExtensions
     {
         #region Methods
         public static Bold Bold(this Inline inline)

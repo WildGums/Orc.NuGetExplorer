@@ -19,7 +19,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
-        public PackageDetailsViewModel(PackageDetails package, IPackageDetailsService packageDetailsService)
+        public PackageDetailsViewModel(IPackageDetails package, IPackageDetailsService packageDetailsService)
         {
             Argument.IsNotNull(() => package);
             Argument.IsNotNull(() => packageDetailsService);
@@ -32,7 +32,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         #region Properties
         [Model(SupportIEditableObject = false)]
-        public PackageDetails Package { get; private set; }
+        public IPackageDetails Package { get; private set; }
 
         public FlowDocument PackageSummary { get; private set; }
         #endregion
@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             await base.Initialize();
 
-            PackageSummary = await _packageDetailsService.PackageToFlowDocument(Package.Package);
+            PackageSummary = await _packageDetailsService.PackageToFlowDocument(Package);
         }
         #endregion
     }

@@ -23,20 +23,14 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();        
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
-        serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
-        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
-        serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
-        serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();        
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();        
+        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();                       
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
         serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();        
         serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
         serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
-        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();        
-        serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
-        serviceLocator.RegisterType<IPagingService, PagingService>();        
-        serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();
+        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();                
+        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();                      
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
@@ -45,8 +39,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
 
         serviceLocator.RegisterType<IPackageManager, PackageManager>();
-
-        serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
+        
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();

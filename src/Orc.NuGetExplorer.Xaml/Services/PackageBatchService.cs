@@ -8,10 +8,9 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Catel;
+    using Catel.Collections;
     using Catel.Services;
-    using NuGet;
     using ViewModels;
 
     internal class PackageBatchService : IPackageBatchService
@@ -36,7 +35,7 @@ namespace Orc.NuGetExplorer
         public void ShowPackagesBatch(IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
         {
             var packagesBatch = new PackagesBatch {OperationType = PackageOperationType.Update};
-            packagesBatch.PackageList.AddRange(packageDetails.Cast<PackageDetails>());
+            packagesBatch.PackageList.AddRange(packageDetails);
 
             _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackageBatchViewModel>(packagesBatch));
         }

@@ -1,26 +1,26 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageListViewModel.cs" company="Wild Gums">
+// <copyright file="NamedRepository.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer
 {
-    using System.Collections.ObjectModel;
-    using Catel.MVVM;
+    using Catel.Data;
 
-    internal class PackageListViewModel : ViewModelBase
+    internal class NamedRepository : ModelBase
     {
         #region Constructors
-        public PackageListViewModel()
+        public NamedRepository()
         {
         }
         #endregion
 
         #region Properties
-        public ObservableCollection<PackageDetails> ItemsSource { get; set; }
-        public PackageDetails SelectedPackage { get; set; }
+        public string Name { get; set; }
+        public IRepository Value { get; set; }
+        public PackageOperationType AllwedOperation { get; set; }
         #endregion
     }
 }

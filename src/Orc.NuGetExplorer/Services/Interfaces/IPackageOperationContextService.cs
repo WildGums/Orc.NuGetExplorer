@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    internal interface IPackageOperationContextService
+    public interface IPackageOperationContextService
     {
         #region Properties
         PackageOperationContext CurrentContext { get; }

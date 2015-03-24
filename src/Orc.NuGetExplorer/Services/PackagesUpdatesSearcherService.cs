@@ -39,9 +39,9 @@ namespace Orc.NuGetExplorer
 
             using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
-                var packageRepository = _packageRepositoryService.GetSourceAggregateRepository();
+                var packageRepository = _packageRepositoryService.GetSourceAggregateRepository().ToNuGetRepository();
 
-                var packages = _packageRepositoryService.LocalRepository.GetPackages();
+                var packages = _packageRepositoryService.LocalRepository.ToNuGetRepository().GetPackages();
 
                 foreach (var package in packages)
                 {

@@ -14,7 +14,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.MVVM;
     using Catel.Services;
     using MethodTimer;
-    using NuGet;
 
     internal class ExtensionsViewModel : ViewModelBase
     {
@@ -26,7 +25,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         private bool _isPrereleaseAllowed;
-        private IPackageRepository _packageRepository;
+        private IRepository _packageRepository;
         #endregion
 
         #region Constructors
@@ -43,17 +42,17 @@ namespace Orc.NuGetExplorer.ViewModels
             _pleaseWaitService = pleaseWaitService;
             _packageCommandService = packageCommandService;
 
-            AvailablePackages = new FastObservableCollection<PackageDetails>();
+            AvailablePackages = new FastObservableCollection<IPackageDetails>();
 
-            PackageAction = new TaskCommand<PackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
+            PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
         }
         #endregion
 
         #region Properties
         public NamedRepository NamedRepository { get; set; }
         public string SearchFilter { get; set; }
-        public PackageDetails SelectedPackage { get; set; }
-        public FastObservableCollection<PackageDetails> AvailablePackages { get; private set; }
+        public IPackageDetails SelectedPackage { get; set; }
+        public FastObservableCollection<IPackageDetails> AvailablePackages { get; private set; }
         public int TotalPackagesCount { get; set; }
         public int PackagesToSkip { get; set; }
         public string ActionName { get; set; }
@@ -228,9 +227,9 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Commands
-        public TaskCommand<PackageDetails> PackageAction { get; private set; }
+        public TaskCommand<IPackageDetails> PackageAction { get; private set; }
 
-        private async Task OnPackageActionExecute(PackageDetails package)
+        private async Task OnPackageActionExecute(IPackageDetails package)
         {
             var operation = NamedRepository.AllwedOperation;
 
@@ -247,12 +246,12 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             foreach (var package in AvailablePackages)
             {
-                package.IsActionExecuted = null;
+                package.IsInstalled = null;
                 _packageCommandService.CanExecute(NamedRepository.AllwedOperation, package);
             }
         }
 
-        private bool OnPackageActionCanExecute(PackageDetails parameter)
+        private bool OnPackageActionCanExecute(IPackageDetails parameter)
         {
             return _packageCommandService.CanExecute(NamedRepository.AllwedOperation, parameter);
         }

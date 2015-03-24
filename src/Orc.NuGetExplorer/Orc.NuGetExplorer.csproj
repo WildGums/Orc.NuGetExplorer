@@ -105,29 +105,21 @@
     <Compile Include="..\SolutionAssemblyInfo.cs">
       <Link>Properties\SolutionAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Behaviors\FocusOnVisibleBehavior.cs" />
-    <Compile Include="Behaviors\UpdateSelectedItemSourceBehavior.cs" />
-    <Compile Include="Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Context\Interfaces\ITemporaryFileSystemContext.cs" />
     <Compile Include="Context\TemporaryFileSystemContext.cs" />
-    <Compile Include="Controls\BindableRichTextBox.cs" />
-    <Compile Include="Converters\PackageImageConverter.cs" />
-    <Compile Include="Extensions\ColorExtensions.cs" />
-    <Compile Include="Extensions\FrameworkElementExtensions.cs" />
-    <Compile Include="Extensions\InlineExtensions.cs" />
+    <Compile Include="Extensions\IPackageDetailsExtensions.cs" />
     <Compile Include="Extensions\IPackageExtensions.cs" />
+    <Compile Include="Extensions\IRepositoryExtensions.cs" />
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="Factories\PackageSourceFactory.cs" />
-    <Compile Include="Helpers\AccentColorHelper.cs" />
-    <Compile Include="Helpers\DataContextSpy.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
     <Compile Include="Context\PackageOperationContext.cs" />
-    <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
+    <Compile Include="Repositories\Interfaces\IRepository.cs" />
+    <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Services\BackupFileSystemService.cs" />
     <Compile Include="Services\EventArgs\OperationContextEventArgs.cs" />
     <Compile Include="Services\FIleSystemService.cs" />
@@ -142,7 +134,6 @@
     <Compile Include="Services\Interfaces\IPackageOperationContextService.cs" />
     <Compile Include="Services\Interfaces\IRollbackPackageOperationService.cs" />
     <Compile Include="Services\PackageOperationContextService.cs" />
-    <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\Enums\PackageOperationType.cs" />
     <Compile Include="Services\EventArgs\PackageOperationBatchEventArgs.cs" />
     <Compile Include="Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
@@ -154,16 +145,11 @@
     <Compile Include="Services\PackagesUpdatesSearcherService.cs" />
     <Compile Include="Services\RollbackPackageOperationService.cs" />
     <Compile Include="Services\TemporaryFIleSystemContextService.cs" />
-    <Compile Include="ViewModels\PackageBatchViewModel.cs" />
-    <Compile Include="Views\PackageBatchWindow.xaml.cs">
-      <DependentUpon>PackageBatchWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Watchers\DeletemeWatcher.cs" />
     <Compile Include="Watchers\Base\PackageManagerWatcherBase.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\AuthenticationCredentials.cs" />
     <Compile Include="Models\Interfaces\IPackageDetails.cs" />
-    <Compile Include="Models\Pager.cs" />
     <Compile Include="Native\CredentialsPrompter.cs" />
     <Compile Include="Native\CredUi.cs" />
     <Compile Include="Native\Exceptions\CredentialException.cs" />
@@ -179,18 +165,13 @@
     <Compile Include="Providers\Interfaces\IDefaultPackageSourcesProvider.cs" />
     <Compile Include="Providers\Interfaces\IAuthenticationProvider.cs" />
     <Compile Include="NuGet\Interfaces\IPackageSource.cs" />
-    <Compile Include="Models\RepositoryCategory.cs" />
     <Compile Include="Models\PackageDetails.cs" />
-    <Compile Include="Models\NamedRepository.cs" />
-    <Compile Include="Models\RepositoryNavigator.cs" />
-    <Compile Include="Models\PagingItemInfo.cs" />
     <Compile Include="NuGet\Interfaces\IPackageManager.cs" />
     <Compile Include="NuGet\NuGetPackageSource.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Providers\NuGetPackageSourceProvider.cs" />
     <Compile Include="Configuration\NuGetSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Factories\Interfaces\IRepositoryNavigationFactory.cs" />
     <Compile Include="Providers\AuthenticationProvider.cs" />
     <Compile Include="Repositories\UpdateRepository.cs" />
     <Compile Include="Services\Enums\FeedVerificationResult.cs" />
@@ -202,45 +183,15 @@
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
-    <Compile Include="Factories\RepositoryNavigationFactory.cs" />
-    <Compile Include="Services\Interfaces\IRepositoryNavigationService.cs" />
     <Compile Include="Services\Interfaces\INuGetConfigurationService.cs" />
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
-    <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
-    <Compile Include="Services\Interfaces\IPagingService.cs" />
-    <Compile Include="Services\Interfaces\IPackageCommandService.cs" />
     <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\NuGetFeedVerificationService.cs" />
-    <Compile Include="Services\PackageCommandService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
-    <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackageRepositoryService.cs" />
     <Compile Include="NuGet\PackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
-    <Compile Include="Services\PackagesUIService.cs" />
-    <Compile Include="Services\PagingService.cs" />
-    <Compile Include="Services\RepositoryNavigationService.cs" />
-    <Compile Include="ViewModels\ExplorerViewModel.cs" />
-    <Compile Include="ViewModels\ExtensionsViewModel.cs" />
-    <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
-    <Compile Include="ViewModels\PackageListViewModel.cs" />
-    <Compile Include="ViewModels\PagingViewModel.cs" />
-    <Compile Include="Views\ExplorerWindow.xaml.cs">
-      <DependentUpon>ExplorerWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ExtensionsView.xaml.cs">
-      <DependentUpon>ExtensionsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PackageDetailsView.xaml.cs">
-      <DependentUpon>PackageDetailsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PackageListView.xaml.cs">
-      <DependentUpon>PackageListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PagingView.xaml.cs">
-      <DependentUpon>PagingView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Watchers\RollbackWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -250,41 +201,6 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
-    <Resource Include="Resources\Images\packageDefaultIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Themes\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PackageBatchWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ExplorerWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ExtensionsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PackageDetailsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PackageListView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PagingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

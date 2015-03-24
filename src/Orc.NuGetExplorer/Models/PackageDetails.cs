@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
     using Catel;
     using Catel.Data;
     using NuGet;
@@ -37,6 +38,41 @@ namespace Orc.NuGetExplorer
         #region Properties
         public string Id { get; private set; }
         public string Title { get; private set; }
+
+        public IEnumerable<string> Authors
+        {
+            get { return Package.Authors; }
+        }
+
+        DateTimeOffset? IPackageDetails.Published
+        {
+            get
+            {
+                var dataServicePackage = Package as DataServicePackage;
+                return dataServicePackage == null ? null : dataServicePackage.Published;
+            }
+        }
+
+        public int? DownloadCount
+        {
+            get
+            {
+                var dataServicePackage = Package as DataServicePackage;
+                return dataServicePackage == null ? null : (int?)dataServicePackage.DownloadCount;
+            }
+        }
+
+        public string Dependencies
+        {
+            get
+            {
+                var dataServicePackage = Package as DataServicePackage;
+                return dataServicePackage == null ? null : dataServicePackage.Dependencies;
+            }
+        }
+
+        public bool? IsInstalled { get; set; }
+
         public string FullName { get; private set; }
         public string Description { get; private set; }
         public Uri IconUrl { get; private set; }
@@ -47,7 +83,6 @@ namespace Orc.NuGetExplorer
         public bool IsAbsoluteLatestVersion { get; private set; }
         public bool IsLatestVersion { get; private set; }
         public bool IsPrerelease { get; private set; }
-        public bool? IsActionExecuted { get; set; }
         #endregion
     }
 } 

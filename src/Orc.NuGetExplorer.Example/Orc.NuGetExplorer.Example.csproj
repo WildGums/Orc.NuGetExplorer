@@ -132,6 +132,10 @@
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Orc.NuGetExplorer.Xaml\Orc.NuGetExplorer.Xaml.csproj">
+      <Project>{914b0ae5-94a7-4575-b99c-3e718aa3b4a9}</Project>
+      <Name>Orc.NuGetExplorer.Xaml</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Orc.NuGetExplorer\Orc.NuGetExplorer.csproj">
       <Project>{7e8f0c02-141a-4824-9066-2a544601654c}</Project>
       <Name>Orc.NuGetExplorer</Name>

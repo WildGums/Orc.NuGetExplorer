@@ -33,7 +33,7 @@ namespace Orc.NuGetExplorer
             _logger = logger;
             _packageManager = packageManager;
 
-            _localRepository = packageRepositoryService.LocalRepository;
+            _localRepository = packageRepositoryService.LocalRepository.ToNuGetRepository();
 
             DependencyVersion = DependencyVersion.Lowest;
         }
@@ -72,7 +72,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof (PackageDetails));
 
-            var sourceRepository = _packageOperationContextService.CurrentContext.Repository;
+            var sourceRepository = _packageOperationContextService.CurrentContext.Repository.ToNuGetRepository();
 
             var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease, DependencyVersion);
 

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Repositories
+namespace Orc.NuGetExplorer
 {
     using System.Linq;
     using Catel;

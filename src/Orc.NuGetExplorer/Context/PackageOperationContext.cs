@@ -9,9 +9,8 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
-    using NuGet;
 
-    internal class PackageOperationContext
+    public class PackageOperationContext
     {
         #region Fields
         private static int _contextCounter;
@@ -27,7 +26,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public int Id { get; private set; }
-        public IPackageRepository Repository { get; set; }
+        public IRepository Repository { get; set; }
         public IPackageDetails[] Packages { get; set; }
         public PackageOperationType OperationType { get; set; }
         public PackageOperationContext Parent { get; set; }

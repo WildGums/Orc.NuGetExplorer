@@ -11,12 +11,11 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
-    using NuGet;
 
     internal class PackageCommandService : IPackageCommandService
     {
         #region Fields
-        private readonly IPackageRepository _localRepository;
+        private readonly IRepository _localRepository;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackageOperationService _packageOperationService;
         private readonly IPackageOperationContextService _packageOperationContextService;
@@ -46,8 +45,8 @@ namespace Orc.NuGetExplorer
         {
             return Enum.GetName(typeof (PackageOperationType), operationType);
         }
-
-        public async Task Execute(PackageOperationType operationType, PackageDetails packageDetails, IPackageRepository sourceRepository = null, bool allowedPrerelease = false)
+        
+        public async Task Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
         {
             Argument.IsNotNull(() => packageDetails);
 
@@ -72,39 +71,29 @@ namespace Orc.NuGetExplorer
                 }
             });
 
-            packageDetails.IsActionExecuted = null;
+            packageDetails.IsInstalled = null;
         }
 
-        public bool CanExecute(PackageOperationType operationType, PackageDetails package)
+        public bool CanExecute(PackageOperationType operationType, IPackageDetails package)
         {
             if (package == null)
             {
                 return false;
             }
 
-            if (package.IsActionExecuted == null)
-            {
                 switch (operationType)
                 {
                     case PackageOperationType.Install:
-                        package.IsActionExecuted = !CanInstall(package);
-                        break;
+                        return CanInstall(package);
 
                     case PackageOperationType.Update:
-                        package.IsActionExecuted = !CanUpdate(package);
-                        break;
+                        return CanUpdate(package);
 
                     case PackageOperationType.Uninstall:
-                        package.IsActionExecuted = !CanUninstall(package);
-                        break;
-
-                    default:
-                        package.IsActionExecuted = null;
-                        break;
+                        return CanUninstall(package);;
                 }
-            }
 
-            return !(package.IsActionExecuted ?? true);
+            return false;
         }
 
         public bool IsRefreshReqired(PackageOperationType operationType)
@@ -127,25 +116,33 @@ namespace Orc.NuGetExplorer
             return string.Format("{0} all", Enum.GetName(typeof (PackageOperationType), operationType));
         }
 
-        private bool CanInstall(PackageDetails package)
+        private bool CanInstall(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            var count = _packageQueryService.CountPackages(_localRepository, package.Id);
+            if (package.IsInstalled == null)
+            {
+                var count = _packageQueryService.CountPackages(_localRepository, package.Id);
+                package.IsInstalled = count != 0;
+            }
 
-            return count == 0;
+            return !package.IsInstalled.Value;
         }
 
-        private bool CanUpdate(PackageDetails package)
+        private bool CanUpdate(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            var count = _packageQueryService.CountPackages(_localRepository, package);
+            if (package.IsInstalled == null)
+            {
+                var count = _packageQueryService.CountPackages(_localRepository, package);
+                package.IsInstalled = count != 0;
+            }
 
-            return count == 0;
+            return !package.IsInstalled.Value;
         }
 
-        private bool CanUninstall(PackageDetails package)
+        private bool CanUninstall(IPackageDetails package)
         {
             return true;
         }                        

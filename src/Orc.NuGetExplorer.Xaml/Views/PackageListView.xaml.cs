@@ -31,19 +31,19 @@ namespace Orc.NuGetExplorer.Views
         {
             InitializeComponent();
 
-            ItemsSource = new ObservableCollection<PackageDetails>();
+            ItemsSource = new ObservableCollection<IPackageDetails>();
         }
         #endregion
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public ObservableCollection<PackageDetails> ItemsSource
+        public ObservableCollection<IPackageDetails> ItemsSource
         {
-            get { return (ObservableCollection<PackageDetails>) GetValue(ItemsSourceProperty); }
+            get { return (ObservableCollection<IPackageDetails>) GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<PackageDetails>),
+        public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<IPackageDetails>),
             typeof(PackageListView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));        
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]

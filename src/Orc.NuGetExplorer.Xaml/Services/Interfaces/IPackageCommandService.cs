@@ -8,14 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using System.Threading.Tasks;
-    using NuGet;
 
     internal interface IPackageCommandService
     {
         #region Methods
         string GetActionName(PackageOperationType operationType);
-        Task Execute(PackageOperationType operationType, PackageDetails packageDetails, IPackageRepository sourceRepository = null, bool allowedPrerelease = false);
-        bool CanExecute(PackageOperationType operationType, PackageDetails package);
+        Task Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false);
+        bool CanExecute(PackageOperationType operationType, IPackageDetails package);
         bool IsRefreshReqired(PackageOperationType operationType);
         string GetPluralActionName(PackageOperationType operationType);
         #endregion

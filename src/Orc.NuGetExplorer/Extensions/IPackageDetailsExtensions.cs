@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StringExtensions.cs" company="Wild Gums">
+// <copyright file="IPackageDetailsExtensions.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,15 +7,13 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Windows.Documents;
+    using NuGet;
 
-    internal static class StringExtensions
+    public static class IPackageDetailsExtensions
     {
-        #region Methods
-        public static Inline ToInline(this string text)
+        public static IPackage ToNuGetPackage(this IPackageDetails package)
         {
-            return new Run(text);
+            return ((PackageDetails) package).Package;
         }
-        #endregion
     }
 }

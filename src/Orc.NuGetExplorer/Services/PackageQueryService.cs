@@ -32,30 +32,30 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public int CountPackages(IPackageRepository packageRepository, IPackageDetails packageDetails)
+        public int CountPackages(IRepository packageRepository, IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var count = packageRepository.GetPackages().Count(x => string.Equals(x.GetFullName(), packageDetails.FullName));
+            var count = packageRepository.ToNuGetRepository().GetPackages().Count(x => string.Equals(x.GetFullName(), packageDetails.FullName));
             return count;
         }
 
-        public int CountPackages(IPackageRepository packageRepository, string packageId)
+        public int CountPackages(IRepository packageRepository, string packageId)
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var count = packageRepository.GetPackages().Count(x => string.Equals(x.Id, packageId));
+            var count = packageRepository.ToNuGetRepository().GetPackages().Count(x => string.Equals(x.Id, packageId));
             return count;
         }
 
         [Time]
-        public int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        public int CountPackages(IRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
             Argument.IsNotNull(() => packageRepository);
 
             try
             {
-                var queryable = packageRepository.BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
+                var queryable = packageRepository.ToNuGetRepository().BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
                 var count = queryable.Count();
                 return count;
             }
@@ -65,7 +65,7 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public IEnumerable<PackageDetails> GetPackages(IPackageRepository packageRepository, bool allowPrereleaseVersions,
+        public IEnumerable<IPackageDetails> GetPackages(IRepository packageRepository, bool allowPrereleaseVersions,
             string filter = null, int skip = 0, int take = 10)
         {
             Argument.IsNotNull(() => packageRepository);
@@ -74,7 +74,7 @@ namespace Orc.NuGetExplorer
             {
                 Log.Debug("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
 
-                return packageRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
+                return packageRepository.ToNuGetRepository().FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));
             }
             catch (Exception exception)
@@ -85,14 +85,13 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public IEnumerable<PackageDetails> GetVersionsOfPackage(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions,
-            ref int skip, int minimalTake = 10)
+        public IEnumerable<IPackageDetails> GetVersionsOfPackage(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, ref int skip, int minimalTake = 10)
         {
             Argument.IsNotNull(() => packageRepository);
 
             try
             {
-                return packageRepository.FindPackageVersions(package, allowPrereleaseVersions, ref skip, minimalTake)
+                return packageRepository.ToNuGetRepository().FindPackageVersions(package.ToNuGetPackage(), allowPrereleaseVersions, ref skip, minimalTake)
                     .Select(p => _packageCacheService.GetPackageDetails(p));
             }
             catch (Exception exception)

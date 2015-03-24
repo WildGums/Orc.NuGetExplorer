@@ -29,8 +29,8 @@ namespace Orc.NuGetExplorer
             Logger = logger;
         }
 
-        public PackageManager(IPackageRepository sourceRepository, string path)
-            : base(sourceRepository, path)
+        public PackageManager(IRepository sourceRepository, string path)
+            : base(sourceRepository.ToNuGetRepository(), path)
         {
             this.PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
             this.PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));

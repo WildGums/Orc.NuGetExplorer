@@ -1,20 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageDetailsService.cs" company="Wild Gums">
+// <copyright file="IRepositoryExtensions.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-
 namespace Orc.NuGetExplorer
 {
-    using System.Threading.Tasks;
-    using System.Windows.Documents;
     using NuGet;
 
-    internal interface IPackageDetailsService
+    public static class IRepositoryExtensions
     {
-        #region Methods
-        Task<FlowDocument> PackageToFlowDocument(IPackage package);
-        #endregion
+        public static IPackageRepository ToNuGetRepository(this IRepository repository)
+        {
+            return ((Repository) repository).NuGetRepository;
+        }
     }
 }

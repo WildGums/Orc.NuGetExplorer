@@ -23,6 +23,11 @@ namespace Orc.NuGetExplorer
         bool IsLatestVersion { get; }
         bool IsPrerelease { get; }
         string Title { get; }
+        IEnumerable<string> Authors { get; }
+        DateTimeOffset? Published { get; }
+        int? DownloadCount { get; }
+        string Dependencies { get; }
+        bool? IsInstalled { get; set; }
         #endregion
     }
 }

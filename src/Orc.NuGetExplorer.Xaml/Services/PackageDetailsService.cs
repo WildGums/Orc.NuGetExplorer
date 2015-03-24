@@ -12,7 +12,6 @@ namespace Orc.NuGetExplorer
     using System.Windows.Documents;
     using Catel;
     using Catel.Logging;
-    using NuGet;
 
     internal class PackageDetailsService : IPackageDetailsService
     {
@@ -21,7 +20,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public async Task<FlowDocument> PackageToFlowDocument(IPackage package)
+        public async Task<FlowDocument> PackageToFlowDocument(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
@@ -38,27 +37,20 @@ namespace Orc.NuGetExplorer
             var version = GetDetailsRecord("Version: ", package.Version.ToString());
             paragraph.Inlines.Add(version);
 
-            var dataServicePackage = package as DataServicePackage;
-            if (dataServicePackage != null)
+            if (package.Published != null)
             {
-                if (dataServicePackage.Published != null)
-                {
-                    var published = GetDetailsRecord("Published: ", dataServicePackage.Published.Value.ToLocalTime().ToString());
-                    paragraph.Inlines.Add(published);
-                }
-
-                var downloads = GetDetailsRecord("Downloads: ", dataServicePackage.DownloadCount.ToString());
-                paragraph.Inlines.Add(downloads);
-
-                if (!string.IsNullOrWhiteSpace(dataServicePackage.Dependencies))
-                {
-                    var dependencies = GetDetailsRecord("Dependencies: ", dataServicePackage.Dependencies);
-                    paragraph.Inlines.Add(dependencies);
-                }
+                var published = GetDetailsRecord("Published: ", package.Published.Value.ToLocalTime().ToString());
+                paragraph.Inlines.Add(published);
             }
 
-            //var description = GetDetailsRecord("Description: ", package.Description);
-            //paragraph.Inlines.Add(description);
+            var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
+            paragraph.Inlines.Add(downloads);
+
+            if (!string.IsNullOrWhiteSpace(package.Dependencies))
+            {
+                var dependencies = GetDetailsRecord("Dependencies: ", package.Dependencies);
+                paragraph.Inlines.Add(dependencies);
+            }
 
             result.Blocks.Add(paragraph);
             return result;
@@ -68,12 +60,19 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNullOrWhitespace(() => title);
 
-            if (stringLines == null || !stringLines.Any())
+            if (stringLines == null)
             {
                 return null;
             }
 
-            var inlines = stringLines.Select(line => line.ToInline().Append(new LineBreak())).ToList();
+            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+
+            if (!valuableLines.Any())
+            {
+                return null;
+            }
+
+            var inlines = valuableLines.Select(line => line.ToInline().Append(new LineBreak())).ToList();
 
             var resultInline = title.ToInline().Bold().AppendRange(inlines);
             return resultInline;
