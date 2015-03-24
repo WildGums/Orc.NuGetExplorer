@@ -19,8 +19,7 @@ public static class ModuleInitializer
         var serviceLocator = ServiceLocator.Default;
 
         // Services        
-        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();       
-        serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();        
+        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();                    
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();        

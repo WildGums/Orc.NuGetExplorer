@@ -58,7 +58,7 @@ namespace Orc.NuGetExplorer
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? null : (int?)dataServicePackage.DownloadCount;
+                return dataServicePackage == null ? null : (int?) dataServicePackage.DownloadCount;
             }
         }
 
@@ -72,7 +72,6 @@ namespace Orc.NuGetExplorer
         }
 
         public bool? IsInstalled { get; set; }
-
         public string FullName { get; private set; }
         public string Description { get; private set; }
         public Uri IconUrl { get; private set; }
@@ -85,4 +84,4 @@ namespace Orc.NuGetExplorer
         public bool IsPrerelease { get; private set; }
         #endregion
     }
-} 
+}

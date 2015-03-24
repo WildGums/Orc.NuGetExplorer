@@ -13,7 +13,9 @@ namespace Orc.NuGetExplorer
 
     internal class PackageManager : NuGet.PackageManager, IPackageManager
     {
+        #region Fields
         private readonly IPackageCacheService _packageCacheService;
+        #endregion
 
         #region Constructors
         public PackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
@@ -24,7 +26,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageCacheService);
-            
+
             _packageCacheService = packageCacheService;
             Logger = logger;
         }

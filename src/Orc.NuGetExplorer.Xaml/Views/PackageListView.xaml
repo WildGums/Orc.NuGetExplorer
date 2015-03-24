@@ -73,9 +73,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <CheckBox Grid.RowSpan="2" Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsActionExecuted}"
+                                <CheckBox Grid.RowSpan="2" Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsInstalled}"
                                           IsEnabled="False" Margin="4 12 8 0" VerticalAlignment="Top"
-                                          Visibility="{Binding IsActionExecuted, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
+                                          Visibility="{Binding IsInstalled, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
                                 <Image Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Source="{Binding IconUrl, Converter={StaticResource ImageConverter}}"
                                        Width="32" Height="32" VerticalAlignment="Top" Margin="4 4 14 0" />
 
@@ -88,7 +88,7 @@
                                             Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
                                             Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
                                             CommandParameter="{Binding }" 
-                                            IsEnabled="{Binding IsActionExecuted, Converter={StaticResource BooleanToOpposite}}"/>
+                                            IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}"/>
 
                                     <TextBlock Text="Prerelease" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
                                            Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" />

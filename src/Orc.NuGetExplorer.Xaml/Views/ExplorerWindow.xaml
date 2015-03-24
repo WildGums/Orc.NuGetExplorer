@@ -11,7 +11,7 @@
     <catel:DataWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Orc.NuGetExplorer;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>

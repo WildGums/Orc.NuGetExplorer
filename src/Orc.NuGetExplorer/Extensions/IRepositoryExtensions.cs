@@ -3,15 +3,19 @@
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
+
 namespace Orc.NuGetExplorer
 {
     using NuGet;
 
     public static class IRepositoryExtensions
     {
+        #region Methods
         public static IPackageRepository ToNuGetRepository(this IRepository repository)
         {
             return ((Repository) repository).NuGetRepository;
         }
+        #endregion
     }
 }

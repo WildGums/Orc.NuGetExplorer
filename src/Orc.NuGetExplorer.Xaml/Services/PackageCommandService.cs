@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="packageCommandService.cs" company="Wild Gums">
+// <copyright file="PackageCommandService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,14 +16,14 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IRepository _localRepository;
-        private readonly IPackageQueryService _packageQueryService;
-        private readonly IPackageOperationService _packageOperationService;
         private readonly IPackageOperationContextService _packageOperationContextService;
+        private readonly IPackageOperationService _packageOperationService;
+        private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IPackageRepositoryService packageRepositoryService, 
+        public PackageCommandService(IPleaseWaitService pleaseWaitService, IPackageRepositoryService packageRepositoryService,
             IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
@@ -45,7 +45,7 @@ namespace Orc.NuGetExplorer
         {
             return Enum.GetName(typeof (PackageOperationType), operationType);
         }
-        
+
         public async Task Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
         {
             Argument.IsNotNull(() => packageDetails);
@@ -53,20 +53,22 @@ namespace Orc.NuGetExplorer
             await Task.Factory.StartNew(() =>
             {
                 using (_pleaseWaitService.WaitingScope())
-                using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
                 {
-                    _packageOperationContextService.CurrentContext.Repository = sourceRepository;
-                    switch (operationType)
+                    using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
                     {
-                        case PackageOperationType.Uninstall:
-                            _packageOperationService.UninstallPackage(packageDetails);
-                            break;
-                        case PackageOperationType.Install:
-                            _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
-                            break;
-                        case PackageOperationType.Update:
-                            _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
-                            break;
+                        _packageOperationContextService.CurrentContext.Repository = sourceRepository;
+                        switch (operationType)
+                        {
+                            case PackageOperationType.Uninstall:
+                                _packageOperationService.UninstallPackage(packageDetails);
+                                break;
+                            case PackageOperationType.Install:
+                                _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
+                                break;
+                            case PackageOperationType.Update:
+                                _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
+                                break;
+                        }
                     }
                 }
             });
@@ -81,17 +83,18 @@ namespace Orc.NuGetExplorer
                 return false;
             }
 
-                switch (operationType)
-                {
-                    case PackageOperationType.Install:
-                        return CanInstall(package);
+            switch (operationType)
+            {
+                case PackageOperationType.Install:
+                    return CanInstall(package);
 
-                    case PackageOperationType.Update:
-                        return CanUpdate(package);
+                case PackageOperationType.Update:
+                    return CanUpdate(package);
 
-                    case PackageOperationType.Uninstall:
-                        return CanUninstall(package);;
-                }
+                case PackageOperationType.Uninstall:
+                    return CanUninstall(package);
+                    ;
+            }
 
             return false;
         }
@@ -145,7 +148,7 @@ namespace Orc.NuGetExplorer
         private bool CanUninstall(IPackageDetails package)
         {
             return true;
-        }                        
+        }
         #endregion
     }
 }

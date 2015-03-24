@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer
 
     public interface IPackageBatchService
     {
+        #region Methods
         void ShowPackagesBatch(IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType);
+        #endregion
     }
 }

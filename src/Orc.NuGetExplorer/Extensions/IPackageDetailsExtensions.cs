@@ -11,9 +11,11 @@ namespace Orc.NuGetExplorer
 
     public static class IPackageDetailsExtensions
     {
+        #region Methods
         public static IPackage ToNuGetPackage(this IPackageDetails package)
         {
             return ((PackageDetails) package).Package;
         }
+        #endregion
     }
 }

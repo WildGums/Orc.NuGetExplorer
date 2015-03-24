@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
     internal class ImageResolveService : IImageResolveService
     {
         #region Fields
-        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer;component/Resources/Images/packageDefaultIcon.png";
+        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
         private static readonly object Sync = new object();
         private readonly ICacheStorage<string, ImageSource> _packageDetailsCache = new CacheStorage<string, ImageSource>();
         #endregion

@@ -36,7 +36,9 @@ namespace Orc.NuGetExplorer
 
             packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
         }
+        #endregion
 
+        #region Methods
         private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
@@ -49,9 +51,7 @@ namespace Orc.NuGetExplorer
                 _rollbackPackageOperationService.ClearRollbackActions(context);
             }
         }
-        #endregion
 
-        #region Methods
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
             var context = _packageOperationContextService.CurrentContext;
@@ -69,8 +69,6 @@ namespace Orc.NuGetExplorer
 
             base.OnOperationStarting(sender, e);
         }
-
-
         #endregion
     }
 }

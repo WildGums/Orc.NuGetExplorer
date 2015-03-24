@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
         public static IRepository ToPublicRepository(this IPackageRepository packageRepository)
         {
             return new Repository(packageRepository);
-        }        
+        }
 
         public static async Task<IEnumerable<IPackage>> FindAllAsync(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)

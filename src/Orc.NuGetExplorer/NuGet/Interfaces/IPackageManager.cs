@@ -7,8 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using NuGet;
-
     internal interface IPackageManager : NuGet.IPackageManager, IPackageOperationNotificationService
     {
     }

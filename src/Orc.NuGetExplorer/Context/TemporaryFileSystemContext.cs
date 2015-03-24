@@ -15,10 +15,9 @@ namespace Orc.NuGetExplorer
 
     public class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
-        private readonly IFIleSystemService _fIleSystemService;
-
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly IFIleSystemService _fIleSystemService;
         private readonly string _rootDirectory;
         #endregion
 
@@ -50,7 +49,7 @@ namespace Orc.NuGetExplorer
         {
             Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
-            if(!_fIleSystemService.DeleteDirectory(_rootDirectory))
+            if (!_fIleSystemService.DeleteDirectory(_rootDirectory))
             {
                 Log.Error("Failed to delete temporary files");
             }

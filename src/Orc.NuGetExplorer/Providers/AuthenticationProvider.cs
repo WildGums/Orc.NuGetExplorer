@@ -17,9 +17,9 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPleaseWaitService _pleaseWaitService;
-        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         #endregion
 
         #region Constructors

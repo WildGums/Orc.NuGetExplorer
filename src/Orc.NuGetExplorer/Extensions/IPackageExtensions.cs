@@ -12,11 +12,13 @@ namespace Orc.NuGetExplorer
 
     internal static class IPackageExtensions
     {
+        #region Methods
         public static bool IsPrerelease(this IPackage package)
         {
             Argument.IsNotNull(() => package);
 
             return !string.IsNullOrWhiteSpace(package.Version.SpecialVersion);
         }
+        #endregion
     }
 }
