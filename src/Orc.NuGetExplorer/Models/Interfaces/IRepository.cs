@@ -10,8 +10,8 @@ namespace Orc.NuGetExplorer
     public interface IRepository
     {
         #region Properties
-        string Source { get; }
-        bool SupportsPrereleasePackages { get; }
+        string Name { get; }
+        PackageOperationType OperationType { get; }
         #endregion
     }
 }

@@ -19,8 +19,8 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
-            ILogger logger, IPackageCacheService packageCacheService)
-            : this(packageRepositoryService.GetSourceAggregateRepository(), nuGetConfigurationService.GetDestinationFolder())
+            ILogger logger, IPackageCacheService packageCacheService, IRepositoryCacheService repositoryCacheService)
+            : this(packageRepositoryService.GetSourceAggregateRepository(), repositoryCacheService, nuGetConfigurationService.GetDestinationFolder())
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => nuGetConfigurationService);
@@ -31,8 +31,8 @@ namespace Orc.NuGetExplorer
             Logger = logger;
         }
 
-        public PackageManager(IRepository sourceRepository, string path)
-            : base(sourceRepository.ToNuGetRepository(), path)
+        public PackageManager(IRepository sourceRepository, IRepositoryCacheService repositoryCacheService, string path)
+            : base(repositoryCacheService.GetNuGetRepository(sourceRepository), path)
         {
             this.PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
             this.PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));

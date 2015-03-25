@@ -3,8 +3,8 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
-                  xmlns:local="clr-namespace:Orc.NuGetExplorer"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
                   Width="900" Height="500" SizeToContent="Manual"
                   x:ClassModifier="internal">
 
@@ -12,11 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
-            <SolidColorBrush x:Key="Expander.Static.Arrow.Stroke" Color="Black"/>
-            <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+            </ResourceDictionary.MergedDictionaries>            
         </ResourceDictionary>
     </catel:DataWindow.Resources>
 
@@ -27,99 +23,67 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" 
-                 Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0" Margin="0 6 0 0">
-            <ListBox.Resources>
-                <local:DataContextSpy x:Key="dataContextSpy" />
-            </ListBox.Resources>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <views:RepositoryNavigationView Grid.Row="0" />
 
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-                    <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" 
-                                        BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
-                                        Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="true">
-                                        <Setter Property="Background" TargetName="Bd" Value="WhiteSmoke"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
+            <CheckBox Grid.Row="1" IsChecked="{Binding IsPrereleaseAllowed, Converter={converters:NullableBooleanTrueConverter}}" 
+                      IsEnabled="{Binding IsPrereleaseAllowed, Converter={catel:ReferenceToBooleanConverter}}"
+                      Content="Include prerelease" Margin="8 8 8 4" />
+        </Grid>
+        
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <DockPanel>
-                            <Path x:Name="arrow" HorizontalAlignment="Left" Fill="Transparent" 
-                                  Stroke="{StaticResource Expander.Static.Arrow.Stroke}" StrokeThickness="1" VerticalAlignment="Top"  
-                                  Data="{StaticResource ExpanderToggleButtonArrow}" Height="4.5" Stretch="Fill" Width="8" 
-                                  RenderTransformOrigin="0.5,0.5" Margin="4,10,0,0">
-                                <Path.RenderTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="90"/>
-                                        <TranslateTransform X="0.18" Y="0.43"/>
-                                    </TransformGroup>
-                                </Path.RenderTransform>
-                            </Path>
-                            <TextBlock Text="{Binding Name}" Margin="5 5 0 5"/>
-                        </DockPanel>
-
-                        <ListBox BorderThickness="0" ItemsSource="{Binding Repos}" HorizontalAlignment="Stretch"
-                                 SelectionMode="Single" SelectedIndex="0" Margin="0"
-                                 SelectedItem="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.SelectedNamedRepository, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
-                                 Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
-                            <i:Interaction.Behaviors>
-                                <local:FocusOnVisibleBehavior/>
-                                <local:UpdateSourceOnVisibleBehavior/>
-                                <local:UpdateSelectedItemSourceBehavior/>
-                            </i:Interaction.Behaviors>
-
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" Margin="15,5,0,5"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
-                            <Setter Property="Margin" TargetName="arrow" Value="4,12,0,0"/>
-                            <Setter Property="RenderTransform" TargetName="arrow">
-                                <Setter.Value>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="135"/>
-                                        <TranslateTransform X="0.18" Y="0.43"/>
-                                    </TransformGroup>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Fill" TargetName="arrow" Value="{StaticResource Expander.Static.Arrow.Stroke}"/>
-                        </DataTrigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <views:ExtensionsView Grid.Row="0" Grid.Column="1"  NamedRepository="{Binding SelectedNamedRepository}" />
-
-        <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}"
+        <GridSplitter Grid.Row="0" Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}"
                       HorizontalAlignment="Right" IsEnabled="False"/>
+
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0">
+                <Button Width="70" Height="25" Margin="4 4 12 4" DockPanel.Dock="Right"
+                    Visibility="{Binding ShowUpdates, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                    Command="{Binding CheckForUpdates}">
+                    <Button.Content>
+                        <DockPanel>
+                            <Viewbox Width="12" Height="12" Margin="0 4 4 0" DockPanel.Dock="Left">
+                                <Path x:Name="ArrowPath" Stretch="Fill" Fill="#575757"
+                                  Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                            </Viewbox>
+                            <TextBlock Text="Updates"/>
+                        </DockPanel>
+                    </Button.Content>
+                </Button>
+                <catel:WatermarkTextBox Margin="4" VerticalContentAlignment="Center" Watermark="{Binding FilterWatermark}"
+                                    Text="{Binding SearchFilter}">
+                    <i:Interaction.Behaviors>
+                        <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
+                    </i:Interaction.Behaviors>
+                </catel:WatermarkTextBox>
+            </DockPanel>
+            <views:PackageListView Grid.Row="1" Grid.Column="0"
+                               ItemsSource="{Binding PackageList, Mode=OneWay}"
+                               SelectedPackage="{Binding SelectedPackage}" 
+                               ButtonHeader="{Binding ActionName}"
+                               PackageCommand="{Binding PackageAction}"/>
+            <views:PagingView Grid.Row="2" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Margin="0 0 20 0"
+                              ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
+        </Grid>        
+
+        <GridSplitter Grid.Row="0" Grid.Column="3" Style="{StaticResource VerticalGridSplitterStyle}" 
+                      HorizontalAlignment="Left" IsEnabled="False" />
+
+        <views:PackageDetailsView Grid.Row="0" Grid.Column="4" DataContext="{Binding SelectedPackage}" />
     </Grid>
 </catel:DataWindow>

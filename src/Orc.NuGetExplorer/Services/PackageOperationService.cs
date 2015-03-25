@@ -17,23 +17,26 @@ namespace Orc.NuGetExplorer
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
         private readonly IPackageManager _packageManager;
+        private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageOperationContextService _packageOperationContextService;
         #endregion
 
         #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, IPackageManager packageManager,
-            IPackageRepositoryService packageRepositoryService)
+            IPackageRepositoryService packageRepositoryService, IRepositoryCacheService repositoryCacheService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => repositoryCacheService);
 
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
             _packageManager = packageManager;
+            _repositoryCacheService = repositoryCacheService;
 
-            _localRepository = packageRepositoryService.LocalRepository.ToNuGetRepository();
+            _localRepository = repositoryCacheService.GetNuGetRepository(packageRepositoryService.LocalRepository);
 
             DependencyVersion = DependencyVersion.Lowest;
         }
@@ -72,7 +75,8 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof (PackageDetails));
 
-            var sourceRepository = _packageOperationContextService.CurrentContext.Repository.ToNuGetRepository();
+            var repository = _packageOperationContextService.CurrentContext.Repository;
+            var sourceRepository = _repositoryCacheService.GetNuGetRepository(repository);
 
             var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease, DependencyVersion);
 

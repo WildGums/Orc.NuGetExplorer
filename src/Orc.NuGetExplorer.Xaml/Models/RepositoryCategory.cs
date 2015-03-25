@@ -36,14 +36,14 @@ namespace Orc.NuGetExplorer
                     break;
             }
 
-            Repos = new ObservableCollection<NamedRepository>();
+            Repositories = new ObservableCollection<IRepository>();
         }
         #endregion
 
         #region Properties
         public bool IsSelected { get; set; }
         public string Name { get; set; }
-        public IList<NamedRepository> Repos { get; private set; }
+        public IList<IRepository> Repositories { get; private set; }
         #endregion
     }
 }

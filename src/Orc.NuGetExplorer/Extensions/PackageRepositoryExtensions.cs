@@ -18,11 +18,6 @@ namespace Orc.NuGetExplorer
     internal static class PackageRepositoryExtensions
     {
         #region Methods
-        public static IRepository ToPublicRepository(this IPackageRepository packageRepository)
-        {
-            return new Repository(packageRepository);
-        }
-
         public static async Task<IEnumerable<IPackage>> FindAllAsync(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
@@ -51,7 +46,8 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => packageRepository);
 
             var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
-            return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
+            var result = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
+            return result;
         }
 
         public static async Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)

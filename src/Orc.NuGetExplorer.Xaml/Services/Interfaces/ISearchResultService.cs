@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepositoryExtensions.cs" company="Wild Gums">
+// <copyright file="ISearchResultService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,15 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
-    using NuGet;
-
-    public static class IRepositoryExtensions
+    internal interface ISearchResultService
     {
-        #region Methods
-        public static IPackageRepository ToNuGetRepository(this IRepository repository)
-        {
-            return ((Repository) repository).NuGetRepository;
-        }
-        #endregion
+        SearchResult SearchResult { get; }
     }
 }

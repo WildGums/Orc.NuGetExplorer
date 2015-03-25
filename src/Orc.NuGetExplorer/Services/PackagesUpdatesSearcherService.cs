@@ -17,18 +17,22 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageCacheService _packageCacheService;
+        private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageRepositoryService _packageRepositoryService;
         #endregion
 
         #region Constructors
-        public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService, IPackageCacheService packageCacheService)
+        public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService, IPackageCacheService packageCacheService,
+            IRepositoryCacheService repositoryCacheService)
         {
             Argument.IsNotNull(() => packageRepositoryService);
             Argument.IsNotNull(() => authenticationSilencerService);
+            Argument.IsNotNull(() => repositoryCacheService);
 
             _packageRepositoryService = packageRepositoryService;
             _authenticationSilencerService = authenticationSilencerService;
             _packageCacheService = packageCacheService;
+            _repositoryCacheService = repositoryCacheService;
         }
         #endregion
 
@@ -39,9 +43,9 @@ namespace Orc.NuGetExplorer
 
             using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
-                var packageRepository = _packageRepositoryService.GetSourceAggregateRepository().ToNuGetRepository();
+                var packageRepository = _repositoryCacheService.GetNuGetRepository(_packageRepositoryService.GetSourceAggregateRepository());
 
-                var packages = _packageRepositoryService.LocalRepository.ToNuGetRepository().GetPackages();
+                var packages = _repositoryCacheService.GetNuGetRepository(_packageRepositoryService.LocalRepository).GetPackages();
 
                 foreach (var package in packages)
                 {

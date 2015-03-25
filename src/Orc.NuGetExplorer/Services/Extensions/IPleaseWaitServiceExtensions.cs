@@ -16,7 +16,18 @@ namespace Orc.NuGetExplorer
         #region Methods
         public static IDisposable WaitingScope(this IPleaseWaitService pleaseWaitService)
         {
-            return new DisposableToken<IPleaseWaitService>(pleaseWaitService, token => token.Instance.Push(), token => token.Instance.Pop());
+            return new DisposableToken<IPleaseWaitService>(pleaseWaitService, token =>
+            {
+                // TODO: need ti fix this hack
+            /*    try
+                {*/
+                    token.Instance.Push();
+               /* }
+                catch
+                {
+                    token.Instance.Push();
+                }*/
+            }, token => token.Instance.Pop());
         }
         #endregion
     }

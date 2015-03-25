@@ -20,14 +20,17 @@ namespace Orc.NuGetExplorer
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IPackageCacheService _packageCacheService;
+        private readonly IRepositoryCacheService _repositoryCacheService;
         #endregion
 
         #region Constructors
-        public PackageQueryService(IPackageCacheService packageCacheService)
+        public PackageQueryService(IPackageCacheService packageCacheService, IRepositoryCacheService repositoryCacheService)
         {
             Argument.IsNotNull(() => packageCacheService);
+            Argument.IsNotNull(() => repositoryCacheService);
 
             _packageCacheService = packageCacheService;
+            _repositoryCacheService = repositoryCacheService;
         }
         #endregion
 
@@ -36,7 +39,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var count = packageRepository.ToNuGetRepository().GetPackages().Count(x => string.Equals(x.GetFullName(), packageDetails.FullName));
+            var count = _repositoryCacheService.GetNuGetRepository(packageRepository).GetPackages().Count(x => string.Equals(x.GetFullName(), packageDetails.FullName));
             return count;
         }
 
@@ -44,7 +47,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var count = packageRepository.ToNuGetRepository().GetPackages().Count(x => string.Equals(x.Id, packageId));
+            var count = _repositoryCacheService.GetNuGetRepository(packageRepository).GetPackages().Count(x => string.Equals(x.Id, packageId));
             return count;
         }
 
@@ -55,7 +58,9 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                var queryable = packageRepository.ToNuGetRepository().BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
+                var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+
+                var queryable = nuGetRepository.BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
                 var count = queryable.Count();
                 return count;
             }
@@ -74,7 +79,9 @@ namespace Orc.NuGetExplorer
             {
                 Log.Debug("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
 
-                return packageRepository.ToNuGetRepository().FindFiltered(filter, allowPrereleaseVersions, skip, take)
+                var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+
+                return nuGetRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
                     .Select(package => _packageCacheService.GetPackageDetails(package));
             }
             catch (Exception exception)
@@ -91,7 +98,9 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                return packageRepository.ToNuGetRepository().FindPackageVersions(package.ToNuGetPackage(), allowPrereleaseVersions, ref skip, minimalTake)
+                var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+
+                return nuGetRepository.FindPackageVersions(package.ToNuGetPackage(), allowPrereleaseVersions, ref skip, minimalTake)
                     .Select(p => _packageCacheService.GetPackageDetails(p));
             }
             catch (Exception exception)
