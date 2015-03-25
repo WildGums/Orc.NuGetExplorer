@@ -14,5 +14,10 @@ namespace Orc.NuGetExplorer.Converters
         {
             return value ?? true;
         }
+
+        protected override object ConvertBack(object value, Type targetType, object parameter)
+        {
+            return (bool?)value;
+        }
     }
 }
