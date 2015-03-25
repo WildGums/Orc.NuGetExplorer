@@ -8,8 +8,8 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static bool _updatingRepository;
+        private static bool _countingAndSearching;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageBatchService _packageBatchService;
         private readonly IPackageCommandService _packageCommandService;
@@ -189,15 +189,13 @@ namespace Orc.NuGetExplorer.ViewModels
         protected override async Task Initialize()
         {
             await base.Initialize();
-            
+
             await SearchAndRefreshPackages();
         }
 
         private async void OnIsPrereleaseAllowedChanged()
         {
-            await UpdateRepository();
-
-            RefreshCanExecute();
+            await SearchAndRefreshPackages();
         }
 
         private async void OnPackagesToSkipChanged()
@@ -207,7 +205,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task SearchAndRefreshPackages()
         {
-            await Search();
+            await CountAndSearch();
 
             RefreshCanExecute();
         }
@@ -225,64 +223,37 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository.OperationType);
             }
-            await UpdateRepository();
 
-            RefreshCanExecute();
+            await SearchAndRefreshPackages();
         }
 
         private async void OnSearchFilterChanged()
         {
-            await UpdateRepository();
-
-            RefreshCanExecute();
+            await SearchAndRefreshPackages();
         }
 
         [Time]
-        private async Task UpdateRepository()
+        private async Task CountAndSearch()
         {
-            if (_updatingRepository || Navigator.SelectedRepository == null)
+            var selectedRepository = Navigator.SelectedRepository;
+
+            if (_countingAndSearching || selectedRepository == null || AvailablePackages == null)
             {
                 return;
             }
 
             try
-            {
-                using (_pleaseWaitService.WaitingScope())
-                {
-                    using (new DisposableToken(this, x => _updatingRepository = true, x => _updatingRepository = false))
-                    {
-                        PackagesToSkip = 0;
-
-                        TotalPackagesCount = await _packageQueryService.CountPackagesAsync(Navigator.SelectedRepository, SearchFilter, IsPrereleaseAllowed);
-                    }
-
-                    await Search();
-                }
-            }
-            catch (Exception exception)
-            {
-                
-            }
-            
-        }
-
-        [Time]
-        private async Task Search()
-        {
-            if (_updatingRepository || Navigator.SelectedRepository == null || AvailablePackages == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var selectedRepository = Navigator.SelectedRepository;
-
-                if (selectedRepository != null)
+            {                
+                using (new DisposableToken(this, x => _countingAndSearching = true, x => _countingAndSearching = false))
                 {
                     using (_pleaseWaitService.WaitingScope())
                     {
-                        var packages = await _packageQueryService.GetPackagesAsync(selectedRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip);
+                        PackagesToSkip = 0;
+
+                        TotalPackagesCount = await _packageQueryService.CountPackagesAsync(selectedRepository, SearchFilter, IsPrereleaseAllowed);
+
+                        var packageDetailses = await _packageQueryService.GetPackagesAsync(selectedRepository, IsPrereleaseAllowed, SearchFilter, PackagesToSkip);
+                        var packages = packageDetailses;
 
                         _dispatcherService.BeginInvoke(() =>
                         {
@@ -295,11 +266,12 @@ namespace Orc.NuGetExplorer.ViewModels
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Log.Error(ex, "Failed to search packages.");
+                Log.Error(exception, "Failed to search packages.");
             }
         }
+
         #endregion
 
         #region Commands
@@ -317,7 +289,7 @@ namespace Orc.NuGetExplorer.ViewModels
             await _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed);
             if (_packageCommandService.IsRefreshReqired(operation))
             {
-                await Search();
+                await CountAndSearch();
             }
 
             RefreshCanExecute();
