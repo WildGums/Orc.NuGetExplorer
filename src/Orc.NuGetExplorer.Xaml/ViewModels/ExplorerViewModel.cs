@@ -23,9 +23,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepositoryNavigatorService repositoryNavigatorService)
-        {
+        public ExplorerViewModel(IRepositoryNavigatorService repositoryNavigatorService, ISearchSettingsService searchSettingsService)
+        {            
             Argument.IsNotNull(() => repositoryNavigatorService);
+            Argument.IsNotNull(() => searchSettingsService);
+
+            SearchSettings = searchSettingsService.SearchSettings;
 
             Navigator = repositoryNavigatorService.Navigator;
           
@@ -38,6 +41,12 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("RepoCategories")]
         [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
+
+        [Model]
+        [Expose("IsPrereleaseAllowed")]
+        [Expose("SearchFilter")]
+        [Expose("FilterWatermark")]
+        public SearchSettings SearchSettings { get; private set; }
         #endregion
     }
 }

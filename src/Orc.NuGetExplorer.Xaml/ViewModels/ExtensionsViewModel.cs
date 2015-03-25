@@ -178,8 +178,7 @@ namespace Orc.NuGetExplorer.ViewModels
                     case PackageOperationType.Update:
                         return true;
                 }
-                // Blocking call!
-                //return SelectedRepository.Value.SupportsPrereleasePackages;
+
                 return false;
             }
         }
