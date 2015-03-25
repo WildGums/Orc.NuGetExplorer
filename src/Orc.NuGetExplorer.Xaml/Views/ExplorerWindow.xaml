@@ -4,6 +4,7 @@
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
                   Width="900" Height="500" SizeToContent="Manual"
                   x:ClassModifier="internal">
 
@@ -34,8 +35,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <views:RepositoryNavigationView Grid.Row="0" />
-            
-            <CheckBox Grid.Row="1" IsChecked="{Binding IsPrereleaseAllowed}" IsEnabled="{Binding IsPrereleaseSupported}"
+
+            <CheckBox Grid.Row="1" IsChecked="{Binding IsPrereleaseAllowed, Converter={converters:NullableBooleanTrueConverter}}" 
+                      IsEnabled="{Binding IsPrereleaseAllowed, Converter={catel:ReferenceToBooleanConverter}}"
                       Content="Include prerelease" Margin="8 8 8 4" />
         </Grid>
         

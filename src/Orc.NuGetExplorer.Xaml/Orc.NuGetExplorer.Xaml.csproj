@@ -96,6 +96,7 @@
     <Compile Include="Behaviors\UpdateSelectedItemSourceBehavior.cs" />
     <Compile Include="Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="Controls\BindableRichTextBox.cs" />
+    <Compile Include="Converters\NullableBooleanTrueConverter.cs" />
     <Compile Include="Converters\PackageImageConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\FrameworkElementExtensions.cs" />
@@ -131,7 +132,6 @@
     <Compile Include="Services\SearchResultService.cs" />
     <Compile Include="Services\SearchSettingsService.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
-    <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageBatchViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="ViewModels\PackageListViewModel.cs" />
@@ -139,9 +139,6 @@
     <Compile Include="ViewModels\RepositoryNavigationViewModel.cs" />
     <Compile Include="Views\ExplorerWindow.xaml.cs">
       <DependentUpon>ExplorerWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ExtensionsView.xaml.cs">
-      <DependentUpon>ExtensionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PackageBatchWindow.xaml.cs">
       <DependentUpon>PackageBatchWindow.xaml</DependentUpon>
@@ -177,10 +174,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ExplorerWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ExtensionsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

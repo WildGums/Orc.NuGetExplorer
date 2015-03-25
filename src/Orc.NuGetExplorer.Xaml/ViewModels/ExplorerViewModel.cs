@@ -23,13 +23,14 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static bool _countingAndSearching;
-        private readonly IPackageCommandService _packageCommandService;
-        private readonly IPleaseWaitService _pleaseWaitService;
-        private readonly IPackageQueryService _packageQueryService;
+        private static bool _searchingAndRefreshing;
         private readonly IDispatcherService _dispatcherService;
-        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IPackageBatchService _packageBatchService;
+        private readonly IPackageCommandService _packageCommandService;
+        private readonly IPackageQueryService _packageQueryService;
+        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
+        private readonly IPleaseWaitService _pleaseWaitService;
+        private bool _isPrereleaseAllowed;
         #endregion
 
         #region Constructors
@@ -74,19 +75,22 @@ namespace Orc.NuGetExplorer.ViewModels
         public RepositoryNavigator Navigator { get; private set; }
 
         [Model]
-        [Expose("IsPrereleaseAllowed")]
         [Expose("SearchFilter")]
         [Expose("PackagesToSkip")]
         public SearchSettings SearchSettings { get; private set; }
+
+        [ViewModelToModel("SearchSettings")]
+        public bool? IsPrereleaseAllowed { get; set; }
 
         [Model]
         [Expose("TotalPackagesCount")]
         [Expose("PackageList")]
         public SearchResult SearchResult { get; private set; }
 
-        public string ActionName { get; set; }
-        public string FilterWatermark { get; set; }
-        
+        public string ActionName { get; private set; }
+        public string FilterWatermark { get; private set; }
+        public bool ShowUpdates { get; private set; }
+        public IPackageDetails SelectedPackage { get; set; }
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
         #endregion
 
@@ -95,46 +99,120 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             await base.Initialize();
 
-            await SearchAndRefreshPackages();
+            await SearchAndRefresh();
         }
 
         private async void OnIsPrereleaseAllowedChanged()
         {
-            await SearchAndRefreshPackages();
+            if (!_searchingAndRefreshing && IsPrereleaseAllowed != null)
+            {
+                _isPrereleaseAllowed = IsPrereleaseAllowed.Value;
+            }
+
+            await SearchAndRefresh();
         }
 
         private async void OnPackagesToSkipChanged()
         {
-            await SearchAndRefreshPackages();
+            await SearchAndRefresh();
         }
 
-        private async Task SearchAndRefreshPackages()
+        private async Task SearchAndRefresh()
         {
-            await CountAndSearch();
-
-            RefreshCanExecute();
-        }
-
-        private async void OnSelectedRepositoryChanged()
-        {
-            if (SearchResult.PackageList == null || Navigator.SelectedRepository == null)
+            if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
             {
                 return;
             }
 
-            SearchResult.PackageList.Clear();
-
-            if (Navigator.SelectedRepository != null)
+            using (new DisposableToken(this, x => _searchingAndRefreshing = true, x => _searchingAndRefreshing = false))
             {
-                ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository.OperationType);
+                SetFilterWatermark();
+                SetShowUpdates();
+                SetActionName();
+                SetIsPrereleaseAllowed();
+                await CountAndSearch();
+                RefreshCanExecute();
+            }
+        }
+
+        private void SetIsPrereleaseAllowed()
+        {
+            switch (Navigator.SelectedRepository.OperationType)
+            {
+                case PackageOperationType.Install:
+                case PackageOperationType.Update:
+                    IsPrereleaseAllowed = _isPrereleaseAllowed;
+                    break;
+
+                default:
+                    IsPrereleaseAllowed = null;
+                    break;
+            }
+        }
+
+        private void SetActionName()
+        {
+            ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository.OperationType);
+        }
+
+        private async void OnSelectedRepositoryChanged()
+        {
+            await SearchAndRefresh();
+        }
+
+        private void SetShowUpdates()
+        {
+            switch (Navigator.SelectedRepository.OperationType)
+            {
+                case PackageOperationType.Uninstall:
+                    ShowUpdates = false;
+                    break;
+
+                case PackageOperationType.Install:
+                    ShowUpdates = false;
+                    break;
+
+                case PackageOperationType.Update:
+                    ShowUpdates = true;
+                    break;
+                default:
+                    ShowUpdates = false;
+                    break;
+            }
+        }
+
+        private void SetFilterWatermark()
+        {
+            const string defaultWatermark = "Search";
+
+            if (Navigator.SelectedRepository == null)
+            {
+                FilterWatermark = defaultWatermark;
+                return;
             }
 
-            await SearchAndRefreshPackages();
+            switch (Navigator.SelectedRepository.OperationType)
+            {
+                case PackageOperationType.Uninstall:
+                    FilterWatermark = "Search in Installed";
+                    break;
+
+                case PackageOperationType.Install:
+                    FilterWatermark = "Search Online";
+                    break;
+
+                case PackageOperationType.Update:
+                    FilterWatermark = "Search in Updates";
+                    break;
+                default:
+                    FilterWatermark = defaultWatermark;
+                    break;
+            }
         }
 
         private async void OnSearchFilterChanged()
         {
-            await SearchAndRefreshPackages();
+            await SearchAndRefresh();
         }
 
         [Time]
@@ -142,33 +220,26 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             var selectedRepository = Navigator.SelectedRepository;
 
-            if (_countingAndSearching || selectedRepository == null || SearchResult.PackageList == null)
-            {
-                return;
-            }
-
             try
             {
-                using (new DisposableToken(this, x => _countingAndSearching = true, x => _countingAndSearching = false))
+                _dispatcherService.BeginInvoke(() => SearchResult.PackageList.Clear());
+
+                using (_pleaseWaitService.WaitingScope())
                 {
-                    using (_pleaseWaitService.WaitingScope())
+                    SearchSettings.PackagesToSkip = 0;
+
+                    SearchResult.TotalPackagesCount = await _packageQueryService.CountPackagesAsync(selectedRepository, SearchSettings.SearchFilter, IsPrereleaseAllowed ?? true);
+
+                    var packageDetailses = await _packageQueryService.GetPackagesAsync(selectedRepository, IsPrereleaseAllowed ?? true, SearchSettings.SearchFilter, SearchSettings.PackagesToSkip);
+                    var packages = packageDetailses;
+
+                    _dispatcherService.BeginInvoke(() =>
                     {
-                        SearchSettings.PackagesToSkip = 0;
-
-                        SearchResult.TotalPackagesCount = await _packageQueryService.CountPackagesAsync(selectedRepository, SearchSettings.SearchFilter, SearchSettings.IsPrereleaseAllowed ?? true);
-
-                        var packageDetailses = await _packageQueryService.GetPackagesAsync(selectedRepository, SearchSettings.IsPrereleaseAllowed??true, SearchSettings.SearchFilter, SearchSettings.PackagesToSkip);
-                        var packages = packageDetailses;
-
-                        _dispatcherService.BeginInvoke(() =>
+                        using (SearchResult.PackageList.SuspendChangeNotifications())
                         {
-                            SearchResult.PackageList.Clear();
-                            using (SearchResult.PackageList.SuspendChangeNotifications())
-                            {
-                                SearchResult.PackageList.AddRange(packages);
-                            }
-                        });
-                    }
+                            SearchResult.PackageList.AddRange(packages);
+                        }
+                    });
                 }
             }
             catch (Exception exception)
@@ -190,7 +261,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             var operation = Navigator.SelectedRepository.OperationType;
 
-            await _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, SearchSettings.IsPrereleaseAllowed ?? true);
+            await _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true);
             if (_packageCommandService.IsRefreshReqired(operation))
             {
                 await CountAndSearch();
@@ -201,11 +272,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void RefreshCanExecute()
         {
-            if (Navigator.SelectedRepository == null || SearchResult.PackageList == null)
-            {
-                return;
-            }
-
             foreach (var package in SearchResult.PackageList)
             {
                 package.IsInstalled = null;
@@ -235,7 +301,7 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailableUpdates.Clear();
             using (_pleaseWaitService.WaitingScope())
             {
-                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(SearchSettings.IsPrereleaseAllowed ?? true, false);
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(IsPrereleaseAllowed ?? true, false);
 
                 // TODO: AddRange doesn't refresh button state. neeed to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
