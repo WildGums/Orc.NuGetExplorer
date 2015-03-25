@@ -328,7 +328,7 @@ namespace Orc.NuGetExplorer.ViewModels
             }
 
             AvailableUpdates.Clear();
-            //  using (_pleaseWaitService.WaitingScope())
+            using (_pleaseWaitService.WaitingScope())
             {
                 var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(IsPrereleaseAllowed, false);
 

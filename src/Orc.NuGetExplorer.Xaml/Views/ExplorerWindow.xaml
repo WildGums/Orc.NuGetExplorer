@@ -71,7 +71,7 @@
                 </catel:WatermarkTextBox>
             </DockPanel>
             <views:PackageListView Grid.Row="1" Grid.Column="0"
-                               ItemsSource="{Binding AvailablePackages, Mode=OneWay}"
+                               ItemsSource="{Binding PackageList, Mode=OneWay}"
                                SelectedPackage="{Binding SelectedPackage}" 
                                ButtonHeader="{Binding ActionName}"
                                PackageCommand="{Binding PackageAction}"/>

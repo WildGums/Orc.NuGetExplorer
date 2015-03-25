@@ -110,6 +110,7 @@
     <Compile Include="Models\PagingItemInfo.cs" />
     <Compile Include="Models\RepositoryCategory.cs" />
     <Compile Include="Models\RepositoryNavigator.cs" />
+    <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Models\SearchSettings.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
     <Compile Include="Services\Interfaces\IRepositoryNavigatorService.cs" />
+    <Compile Include="Services\Interfaces\ISearchResultService.cs" />
     <Compile Include="Services\ISearchSettingsService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\PackageCommandService.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\PagingService.cs" />
     <Compile Include="Services\RepositoryNavigatorService.cs" />
+    <Compile Include="Services\SearchResultService.cs" />
     <Compile Include="Services\SearchSettingsService.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
