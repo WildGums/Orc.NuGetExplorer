@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer.Views
         }
         #endregion
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+       /* [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public IRepository SelectedRepository
         {
             get { return (IRepository)GetValue(SelectedRepositoryProperty); }
@@ -32,7 +32,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty SelectedRepositoryProperty = DependencyProperty.Register("SelectedRepository", typeof(IRepository),
-            typeof(RepositoryNavigationView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            typeof(RepositoryNavigationView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));*/
 
     }
 }

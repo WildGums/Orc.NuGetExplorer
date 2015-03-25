@@ -3,8 +3,6 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
-                  xmlns:local="clr-namespace:Orc.NuGetExplorer"
-                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                   Width="900" Height="500" SizeToContent="Manual"
                   x:ClassModifier="internal">
 
@@ -23,14 +21,15 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <views:RepositoryNavigationView Grid.Row="0" Grid.Column="0" x:Name="NavigationView"/>
 
-        <views:ExtensionsView Grid.Row="0" Grid.Column="1"  SelectedRepository="{Binding SelectedRepository, ElementName=NavigationView}" />
-
-        <GridSplitter Grid.Row="0" Grid.Column="0" Style="{StaticResource VerticalGridSplitterStyle}"
+        <GridSplitter Grid.Row="0" Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}"
                       HorizontalAlignment="Right" IsEnabled="False"/>
+        
+        <views:ExtensionsView Grid.Row="0" Grid.Column="2" />        
     </Grid>
 </catel:DataWindow>

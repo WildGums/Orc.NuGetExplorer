@@ -7,6 +7,8 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
     using Catel.MVVM;
@@ -27,6 +29,19 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("RepoCategories")]
         [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
-        #endregion        
+        #endregion
+
+        protected override async Task Initialize()
+        {
+            await base.Initialize();
+
+            Navigator.SelectedRepositoryCategory = Navigator.RepoCategories.FirstOrDefault();
+            var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
+            if (selectedRepositoryCategory != null)
+            {
+                selectedRepositoryCategory.IsSelected = true;
+                Navigator.SelectedRepository = selectedRepositoryCategory.Repositories.FirstOrDefault();
+            }
+        }
     }
 }

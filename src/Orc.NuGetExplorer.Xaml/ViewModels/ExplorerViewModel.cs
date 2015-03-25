@@ -39,20 +39,5 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
         #endregion
-
-        #region Methods
-        protected override async Task Initialize()
-        {
-            await base.Initialize();
-
-            Navigator.SelectedRepositoryCategory = Navigator.RepoCategories.FirstOrDefault();
-            var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
-            if (selectedRepositoryCategory != null)
-            {
-                selectedRepositoryCategory.IsSelected = true;
-                Navigator.SelectedRepository = selectedRepositoryCategory.Repositories.FirstOrDefault();
-            }
-        }        
-        #endregion
     }
 }

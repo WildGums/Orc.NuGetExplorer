@@ -6,7 +6,6 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:local="clr-namespace:Orc.NuGetExplorer"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
                    x:ClassModifier="internal">
@@ -26,9 +25,6 @@
     <Grid x:Name="grid">
         <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" 
                  Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0" Margin="0 6 0 0">
-<!--            <ListBox.Resources>
-                <local:DataContextSpy x:Key="dataContextSpy" />
-            </ListBox.Resources>-->
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -78,7 +74,7 @@
 
                         <ListBox BorderThickness="0" ItemsSource="{Binding Repositories}" HorizontalAlignment="Stretch" x:Name="listBox"
                                  SelectionMode="Single" SelectedIndex="0" Margin="0"
-                                 SelectedItem="{Binding Path=SelectedRepository, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:RepositoryNavigationView}}, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
+                                 SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
                                 <local:FocusOnVisibleBehavior/>
