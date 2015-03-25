@@ -123,7 +123,7 @@
     <Compile Include="Services\BackupFileSystemService.cs" />
     <Compile Include="Services\EventArgs\OperationContextEventArgs.cs" />
     <Compile Include="Services\FIleSystemService.cs" />
-    <Compile Include="Services\IFIleSystemService.cs" />
+    <Compile Include="Services\Interfaces\IFIleSystemService.cs" />
     <Compile Include="Services\Interfaces\IBackupFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationService.cs" />
     <Compile Include="Services\Interfaces\IRepositoryCacheService.cs" />

@@ -19,10 +19,10 @@ namespace Orc.NuGetExplorer
             return new DisposableToken<IPleaseWaitService>(pleaseWaitService, token =>
             {
                 // TODO: need ti fix this hack
-            /*    try
+                /*    try
                 {*/
-                    token.Instance.Push();
-               /* }
+                token.Instance.Push();
+                /* }
                 catch
                 {
                     token.Instance.Push();

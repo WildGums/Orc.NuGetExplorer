@@ -17,8 +17,8 @@ namespace Orc.NuGetExplorer
         private readonly IPackageRepository _localRepository;
         private readonly ILogger _logger;
         private readonly IPackageManager _packageManager;
-        private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageOperationContextService _packageOperationContextService;
+        private readonly IRepositoryCacheService _repositoryCacheService;
         #endregion
 
         #region Constructors

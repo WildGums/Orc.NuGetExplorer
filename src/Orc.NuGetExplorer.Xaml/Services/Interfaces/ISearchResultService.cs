@@ -9,6 +9,8 @@ namespace Orc.NuGetExplorer
 {
     internal interface ISearchResultService
     {
+        #region Properties
         SearchResult SearchResult { get; }
+        #endregion
     }
 }

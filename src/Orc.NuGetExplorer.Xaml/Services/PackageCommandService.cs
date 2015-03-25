@@ -52,7 +52,7 @@ namespace Orc.NuGetExplorer
 
             await Task.Factory.StartNew(() =>
             {
-               // using (_pleaseWaitService.WaitingScope())
+                using (_pleaseWaitService.WaitingScope())
                 {
                     using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
                     {

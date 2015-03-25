@@ -246,6 +246,10 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 Log.Error(exception, "Failed to search packages.");
             }
+            finally
+            {
+                Navigator.SelectedRepository = selectedRepository;
+            }
         }
         #endregion
 

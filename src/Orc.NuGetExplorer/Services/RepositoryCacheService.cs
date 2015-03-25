@@ -9,9 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Catel;
-    using Catel.Caching;
     using Catel.Logging;
     using NuGet;
 
@@ -19,50 +17,46 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly ICacheStorage<string, Tuple<IRepository, IPackageRepository>> _repositoryCache = new CacheStorage<string, Tuple<IRepository, IPackageRepository>>();
+        private static int _idCounter;
+        private readonly IDictionary<int, Tuple<IRepository, IPackageRepository>> _idTupleDictionary = new Dictionary<int, Tuple<IRepository, IPackageRepository>>();
+        private readonly IDictionary<string, int> _keyIdDictionary = new Dictionary<string, int>();
         #endregion
-
-        HashSet<Tuple<IRepository, IPackageRepository>> _cache = new HashSet<Tuple<IRepository, IPackageRepository>>();
 
         #region Methods
         public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, IPackageRepository packageRepository)
         {
+            Argument.IsNotNullOrEmpty(() => name);
             Argument.IsNotNull(() => packageRepository);
 
             var key = GetKey(operationType, name);
 
-            var tuple = _cache.SingleOrDefault(x => x.Item2.Equals(packageRepository));
-
-            if (tuple == null)
+            int id;
+            if (_keyIdDictionary.TryGetValue(key, out id))
             {
-                var repository = new Repository
-                {
-                    Name = name,
-                    OperationType = operationType
-                };
-
-                tuple = new Tuple<IRepository, IPackageRepository>(repository, packageRepository);
-                _cache.Add(tuple);
+                return _idTupleDictionary[id].Item1;
             }
-            return tuple.Item1;
-            return _repositoryCache.GetFromCacheOrFetch(key, () =>
-            {
-                var repository = new Repository
-                {
-                    Name = name,
-                    OperationType = operationType
-                };
 
-                return new Tuple<IRepository, IPackageRepository>(repository, packageRepository);
-            }).Item1;
+            id = _idCounter++;
+            var repository = new Repository
+            {
+                Id = id,
+                Name = name,
+                OperationType = operationType
+            };
+
+            _keyIdDictionary.Add(key, id);
+            _idTupleDictionary.Add(id, new Tuple<IRepository, IPackageRepository>(repository, packageRepository));
+
+            return repository;
         }
 
         public IPackageRepository GetNuGetRepository(IRepository repository)
         {
-            return _cache.Single(x => x.Item1.Equals(repository)).Item2;
-            var key = GetKey(repository.OperationType, repository.Name);
+            Argument.IsNotNull(() => repository);
 
-            return _repositoryCache.Get(key).Item2;
+            var id = ((Repository) repository).Id;
+
+            return _idTupleDictionary[id].Item2;
         }
 
         private static string GetKey(PackageOperationType operationType, string name)

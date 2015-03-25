@@ -17,8 +17,8 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageCacheService _packageCacheService;
-        private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageRepositoryService _packageRepositoryService;
+        private readonly IRepositoryCacheService _repositoryCacheService;
         #endregion
 
         #region Constructors

@@ -122,7 +122,7 @@
     <Compile Include="Services\Interfaces\IPagingService.cs" />
     <Compile Include="Services\Interfaces\IRepositoryNavigatorService.cs" />
     <Compile Include="Services\Interfaces\ISearchResultService.cs" />
-    <Compile Include="Services\ISearchSettingsService.cs" />
+    <Compile Include="Services\Interfaces\ISearchSettingsService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\PackageCommandService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
