@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExtensionsView.xaml.cs" company="Wild Gums">
+// <copyright file="RepositoryNavigationView.xaml.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,30 +7,23 @@
 
 namespace Orc.NuGetExplorer.Views
 {
+    using System;
     using System.Windows;
+    using System.Windows.Controls;
     using Catel.MVVM.Views;
 
     /// <summary>
-    /// Interaction logic for ExtensionsView.xaml.
+    /// Interaction logic for RepositoryNavigationView.xaml
     /// </summary>
-    internal partial class ExtensionsView
+    internal partial class RepositoryNavigationView
     {
         #region Constructors
-        static ExtensionsView()
-        {
-            typeof (ExtensionsView).AutoDetectViewPropertiesToSubscribe();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExtensionsView"/> class.
-        /// </summary>
-        public ExtensionsView()
+        public RepositoryNavigationView()
         {
             InitializeComponent();
         }
         #endregion
 
-        #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public IRepository SelectedRepository
         {
@@ -39,7 +32,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty SelectedRepositoryProperty = DependencyProperty.Register("SelectedRepository", typeof(IRepository),
-            typeof(ExtensionsView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        #endregion
+            typeof(RepositoryNavigationView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
     }
 }

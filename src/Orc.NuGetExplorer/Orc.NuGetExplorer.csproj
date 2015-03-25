@@ -84,6 +84,7 @@
     <Reference Include="System.Runtime">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
@@ -117,15 +118,17 @@
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
     <Compile Include="Context\PackageOperationContext.cs" />
     <Compile Include="Native\Enums\DownlevelTextMode.cs" />
-    <Compile Include="Repositories\Interfaces\IRepository.cs" />
-    <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="Models\Interfaces\IRepository.cs" />
+    <Compile Include="Models\Repository.cs" />
     <Compile Include="Services\BackupFileSystemService.cs" />
     <Compile Include="Services\EventArgs\OperationContextEventArgs.cs" />
     <Compile Include="Services\FIleSystemService.cs" />
     <Compile Include="Services\IFIleSystemService.cs" />
     <Compile Include="Services\Interfaces\IBackupFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationService.cs" />
+    <Compile Include="Services\Interfaces\IRepositoryCacheService.cs" />
     <Compile Include="Services\Interfaces\ITemporaryFIleSystemContextService.cs" />
+    <Compile Include="Services\RepositoryCacheService.cs" />
     <Compile Include="Services\PackageOperationService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationNotificationService.cs" />
     <Compile Include="Services\AuthenticationSilencerService.cs" />
@@ -195,7 +198,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Repositories\Interfaces\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>

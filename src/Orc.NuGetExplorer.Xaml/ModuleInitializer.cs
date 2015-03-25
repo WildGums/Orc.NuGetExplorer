@@ -19,7 +19,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>(); 
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
         serviceLocator.RegisterType<IPagingService, PagingService>();  
-        serviceLocator.RegisterType<IRepositoryNavigationService, RepositoryNavigationService>();        
+        serviceLocator.RegisterType<IRepositoryNavigatorService, RepositoryNavigatorService>();        
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
     }

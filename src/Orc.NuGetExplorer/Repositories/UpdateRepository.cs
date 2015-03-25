@@ -19,6 +19,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
+        public UpdateRepository(IRepository destinationRepository, IRepository sourceRepository, IRepositoryCacheService repositoryCacheService)
+            : this(repositoryCacheService.GetNuGetRepository(destinationRepository), repositoryCacheService.GetNuGetRepository(sourceRepository))
+        {
+        }
+
         public UpdateRepository(IPackageRepository destinationRepository, IPackageRepository sourceRepository)
         {
             Argument.IsNotNull(() => destinationRepository);

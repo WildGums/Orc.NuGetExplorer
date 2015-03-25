@@ -16,10 +16,10 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        IDictionary<string, IRepository> GetRepositories(PackageOperationType packageOperationType);
-        IDictionary<string, IRepository> GetSourceRepositories();
+        IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
+        IEnumerable<IRepository> GetSourceRepositories();
         IRepository GetSourceAggregateRepository();
-        IDictionary<string, IRepository> GetUpdateRepositories();
+        IEnumerable<IRepository> GetUpdateRepositories();
         IRepository GetUpdateAggeregateRepository();
         #endregion
     }

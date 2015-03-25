@@ -42,12 +42,7 @@ namespace Orc.NuGetExplorer
 
             foreach (var repository in _packageRepositoryService.GetRepositories(packageOperationType))
             {
-                repoCategory.Repos.Add(new NamedRepository
-                {
-                    Name = repository.Key,
-                    Value = repository.Value, 
-                    AllwedOperation = packageOperationType
-                });
+                repoCategory.Repositories.Add(repository);
             }
 
             return repoCategory;

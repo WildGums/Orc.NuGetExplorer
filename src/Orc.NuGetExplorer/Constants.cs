@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    public static class RepoName
+    public static class RepositoryName
     {
         #region Fields
         public const string All = "All";

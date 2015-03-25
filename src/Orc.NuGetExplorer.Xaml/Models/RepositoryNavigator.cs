@@ -9,8 +9,9 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using Catel.Collections;
+    using Catel.Data;
 
-    internal class RepositoryNavigator //(cannot be inherited from ModelBase)
+    internal class RepositoryNavigator : ModelBase
     {
         #region Constructors
         public RepositoryNavigator()
@@ -21,7 +22,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public IList<RepositoryCategory> RepoCategories { get; private set; }
-        public NamedRepository SelectedNamedRepository { get; set; }
+        public IRepository SelectedRepository { get; set; }
         public RepositoryCategory SelectedRepositoryCategory { get; set; }
         #endregion
     }

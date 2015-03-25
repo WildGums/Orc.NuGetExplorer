@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using System.Linq;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet;
 
@@ -20,44 +21,53 @@ namespace Orc.NuGetExplorer
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageRepositoryFactory _repositoryFactory;
+        private readonly IRepositoryCacheService _repositoryCacheService;
+        private readonly ITypeFactory _typeFactory;
         #endregion
 
         #region Constructors
-        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory)
+        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory,
+            IRepositoryCacheService repositoryCacheService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => packageRepositoryFactory);
+            Argument.IsNotNull(() => nuGetConfigurationService);
+            Argument.IsNotNull(() => repositoryCacheService);
+            Argument.IsNotNull(() => typeFactory);
 
             _nuGetConfigurationService = nuGetConfigurationService;
             _repositoryFactory = packageRepositoryFactory;
+            _repositoryCacheService = repositoryCacheService;
+            _typeFactory = typeFactory;
 
             LocalRepository = GetLocalRepository();
+            LocalNuGetRepository = _repositoryCacheService.GetNuGetRepository(LocalRepository);
         }
         #endregion
 
         #region Properties
         public IRepository LocalRepository { get; private set; }
+        private IPackageRepository LocalNuGetRepository { get; set; }
         #endregion
 
         #region Methods
-        public IDictionary<string, IRepository> GetRepositories(PackageOperationType packageOperationType)
+        public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
         {
             var packageSources = GetPackageSources();
-            var result = new Dictionary<string, IRepository>();
+            var result = new List<IRepository>();
             switch (packageOperationType)
             {
                 case PackageOperationType.Uninstall:
-                    result[RepoName.All] = LocalRepository;
+                    result.Add(LocalRepository);
                     break;
 
                 case PackageOperationType.Install:
-                    result[RepoName.All] = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true).ToPublicRepository();
+                    result.Add(GetSourceAggregateRepository());
                     var remoteRepositories = GetSourceRepositories();
                     result.AddRange(remoteRepositories);
                     break;
 
                 case PackageOperationType.Update:
-                    result[RepoName.All] = GetUpdateAggeregateRepository();
+                    result.Add(GetUpdateAggeregateRepository());
                     var updateRepositories = GetUpdateRepositories();
                     result.AddRange(updateRepositories);
                     break;
@@ -66,38 +76,39 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        public IDictionary<string, IRepository> GetUpdateRepositories()
+        public IEnumerable<IRepository> GetUpdateRepositories()
         {
-            var localRepository = GetLocalRepository();
-            return GetSourceRepositories().ToDictionary(x => x.Key, x => new UpdateRepository(localRepository.ToNuGetRepository(), x.Value.ToNuGetRepository()).ToPublicRepository());
+            return GetSourceRepositories().Select(sourceRepository =>
+            {
+                var updateRepository = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<UpdateRepository>(LocalRepository, sourceRepository);
+                return _repositoryCacheService.GetSerialisableRepository(sourceRepository.Name, PackageOperationType.Update, updateRepository);
+            });
         }
 
         public IRepository GetSourceAggregateRepository()
         {
             var packageSources = GetPackageSources();
-            return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true).ToPublicRepository();
+            var repository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Install, repository);
         }
 
-        public IDictionary<string, IRepository> GetSourceRepositories()
+        public IEnumerable<IRepository> GetSourceRepositories()
         {
-            var result = new Dictionary<string, IRepository>();
             var packageSources = GetPackageSources();
             foreach (var packageSource in packageSources)
             {
-                var repo = _repositoryFactory.CreateRepository(packageSource.Source);
+                var repository = _repositoryFactory.CreateRepository(packageSource.Source);
 
-                result.Add(packageSource.Name, repo.ToPublicRepository());
+                yield return _repositoryCacheService.GetSerialisableRepository(packageSource.Name, PackageOperationType.Install, repository);
             }
-
-            return result;
         }
 
         public IRepository GetUpdateAggeregateRepository()
         {
-            var localRepository = GetLocalRepository();
             var packageSources = GetPackageSources();
             var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-            return new UpdateRepository(localRepository.ToNuGetRepository(), sourceRepository).ToPublicRepository();
+            var updateRepository = new UpdateRepository(LocalNuGetRepository, sourceRepository);
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Update, updateRepository);
         }
 
         private IEnumerable<IPackageSource> GetPackageSources()
@@ -114,7 +125,7 @@ namespace Orc.NuGetExplorer
                 Directory.CreateDirectory(path);
             }
 
-            return new LocalPackageRepository(path, true).ToPublicRepository();
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Uninstall, new LocalPackageRepository(path, true));
         }
         #endregion
     }

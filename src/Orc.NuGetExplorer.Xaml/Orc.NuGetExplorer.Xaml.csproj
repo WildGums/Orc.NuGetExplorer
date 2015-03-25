@@ -106,7 +106,6 @@
     <Compile Include="Factories\RepositoryNavigationFactory.cs" />
     <Compile Include="Helpers\AccentColorHelper.cs" />
     <Compile Include="Helpers\DataContextSpy.cs" />
-    <Compile Include="Models\NamedRepository.cs" />
     <Compile Include="Models\PackagesBatch.cs" />
     <Compile Include="Models\Pager.cs" />
     <Compile Include="Models\PagingItemInfo.cs" />
@@ -119,19 +118,20 @@
     <Compile Include="Services\Interfaces\IPackageCommandService.cs" />
     <Compile Include="Services\Interfaces\IPackageDetailsService.cs" />
     <Compile Include="Services\Interfaces\IPagingService.cs" />
-    <Compile Include="Services\Interfaces\IRepositoryNavigationService.cs" />
+    <Compile Include="Services\Interfaces\IRepositoryNavigatorService.cs" />
     <Compile Include="Services\PackageBatchService.cs" />
     <Compile Include="Services\PackageCommandService.cs" />
     <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\PagingService.cs" />
-    <Compile Include="Services\RepositoryNavigationService.cs" />
+    <Compile Include="Services\RepositoryNavigatorService.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\ExtensionsViewModel.cs" />
     <Compile Include="ViewModels\PackageBatchViewModel.cs" />
     <Compile Include="ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="ViewModels\PackageListViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryNavigationViewModel.cs" />
     <Compile Include="Views\ExplorerWindow.xaml.cs">
       <DependentUpon>ExplorerWindow.xaml</DependentUpon>
     </Compile>
@@ -149,6 +149,9 @@
     </Compile>
     <Compile Include="Views\PagingView.xaml.cs">
       <DependentUpon>PagingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RepositoryNavigationView.xaml.cs">
+      <DependentUpon>RepositoryNavigationView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +194,10 @@
     <Page Include="Views\PagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RepositoryNavigationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

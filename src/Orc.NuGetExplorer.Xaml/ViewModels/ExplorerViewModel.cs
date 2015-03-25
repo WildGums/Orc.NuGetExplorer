@@ -20,17 +20,14 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IRepositoryNavigationService _repositoryNavigationService;
         #endregion
 
         #region Constructors
-        public ExplorerViewModel(IRepositoryNavigationService repositoryNavigationService)
+        public ExplorerViewModel(IRepositoryNavigatorService repositoryNavigatorService)
         {
-            Argument.IsNotNull(() => repositoryNavigationService);
+            Argument.IsNotNull(() => repositoryNavigatorService);
 
-            _repositoryNavigationService = repositoryNavigationService;
-
-            Navigator = _repositoryNavigationService.GetNavigator();  
+            Navigator = repositoryNavigatorService.Navigator;
           
             AccentColorHelper.CreateAccentColorResourceDictionary();
         }
@@ -39,10 +36,8 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Properties
         [Model]
         [Expose("RepoCategories")]
+        [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
-
-        [ViewModelToModel("Navigator")]
-        public NamedRepository SelectedNamedRepository { get; set; }
         #endregion
 
         #region Methods
@@ -55,7 +50,7 @@ namespace Orc.NuGetExplorer.ViewModels
             if (selectedRepositoryCategory != null)
             {
                 selectedRepositoryCategory.IsSelected = true;
-                SelectedNamedRepository = selectedRepositoryCategory.Repos.FirstOrDefault();
+                Navigator.SelectedRepository = selectedRepositoryCategory.Repositories.FirstOrDefault();
             }
         }        
         #endregion
