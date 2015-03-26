@@ -74,7 +74,7 @@ namespace Orc.NuGetExplorer.ViewModels
                     break;
 
                 case PackageOperationType.Update:
-                    Title = "Updating packages";
+                    Title = "Package updates";
                     break;
             }
         }

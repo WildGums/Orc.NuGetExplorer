@@ -25,7 +25,7 @@
                 <Button Height="25" Width="70" Content="{Binding PluralActionName}" Command="{Binding ApplyAll}" 
                         DockPanel.Dock="Right" Margin="10 10 12 10"
                         Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}}"/>
-                <TextBlock Text="Available Updates" Margin="20 10 10 10" FontSize="16" Foreground="Gray" />
+                <TextBlock Text="Available Updates" Margin="20 10 10 10" FontSize="16" />
             </DockPanel>
             <GridSplitter Style="{StaticResource HorizontalGridSplitterStyle}" IsEnabled="False"/>
         </StackPanel>
@@ -34,6 +34,9 @@
                                    PackageCommand="{Binding PackageAction}"
                                    ButtonHeader="{Binding ActionName}"
                                    SelectedPackage="{Binding SelectedPackage}"/>
+            <TextBlock Text="No updates available" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
+                       VerticalAlignment="Top" Margin="0 30 0 0"
+                       Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}"/>
         </Grid>
     </Grid>
     

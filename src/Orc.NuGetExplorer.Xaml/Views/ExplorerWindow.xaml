@@ -57,7 +57,7 @@
                     Command="{Binding CheckForUpdates}">
                     <Button.Content>
                         <DockPanel>
-                            <Viewbox Width="12" Height="12" Margin="0 4 4 0" DockPanel.Dock="Left">
+                            <Viewbox Width="12" Height="12" Margin="0 4 2 0" DockPanel.Dock="Left">
                                 <Path x:Name="ArrowPath" Stretch="Fill" Fill="#575757"
                                   Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
                             </Viewbox>
