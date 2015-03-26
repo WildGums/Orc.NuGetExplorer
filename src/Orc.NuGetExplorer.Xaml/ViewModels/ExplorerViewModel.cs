@@ -62,7 +62,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
+            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute);
 
             AccentColorHelper.CreateAccentColorResourceDictionary();
         }
@@ -328,15 +328,6 @@ namespace Orc.NuGetExplorer.ViewModels
             await _packageBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
         }
 
-        private bool OnOpenUpdateWindowCanExecute()
-        {
-            if (AvailableUpdates == null)
-            {
-                return false;
-            }
-
-            return AvailableUpdates.Any();
-        }
         #endregion
     }
 }
