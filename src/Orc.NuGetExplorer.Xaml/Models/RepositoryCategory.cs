@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Catel.Data;
@@ -15,23 +14,8 @@ namespace Orc.NuGetExplorer
     internal class RepositoryCategory : ModelBase
     {
         #region Constructors
-        public RepositoryCategory(PackageOperationType packageOperationType)
+        public RepositoryCategory()
         {
-            switch (packageOperationType)
-            {
-                case PackageOperationType.Install:
-                    Name = "Online";
-                    break;
-                
-                case PackageOperationType.Uninstall:
-                    Name = "Installed";
-                    break;
-                
-                case PackageOperationType.Update:
-                    Name = "Update";
-                    break;
-            }
-
             Repositories = new ObservableCollection<IRepository>();
         }
         #endregion

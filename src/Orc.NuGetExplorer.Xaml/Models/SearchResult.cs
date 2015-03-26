@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
 
         #region Properties
         public int TotalPackagesCount { get; set; }
-        public FastObservableCollection<IPackageDetails> PackageList { get; private set; }
+        public FastObservableCollection<IPackageDetails> PackageList { get; set; }
         #endregion
     }
 }

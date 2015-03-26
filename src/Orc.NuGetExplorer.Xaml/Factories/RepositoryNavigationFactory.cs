@@ -38,7 +38,22 @@ namespace Orc.NuGetExplorer
 
         private RepositoryCategory CreateRepositoryCategory(PackageOperationType packageOperationType)
         {
-            var repoCategory = new RepositoryCategory(packageOperationType);
+            var repoCategory = new RepositoryCategory();
+
+            switch (packageOperationType)
+            {
+                case PackageOperationType.Install:
+                    repoCategory.Name = "Online";
+                    break;
+
+                case PackageOperationType.Uninstall:
+                    repoCategory.Name = "Installed";
+                    break;
+
+                case PackageOperationType.Update:
+                    repoCategory.Name = "Update";
+                    break;
+            }
 
             foreach (var repository in _repositoryService.GetRepositories(packageOperationType))
             {
