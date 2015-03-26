@@ -62,9 +62,11 @@ namespace Orc.NuGetExplorer
                             case PackageOperationType.Uninstall:
                                 _packageOperationService.UninstallPackage(packageDetails);
                                 break;
+
                             case PackageOperationType.Install:
                                 _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
                                 break;
+
                             case PackageOperationType.Update:
                                 _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
                                 break;
@@ -93,7 +95,6 @@ namespace Orc.NuGetExplorer
 
                 case PackageOperationType.Uninstall:
                     return CanUninstall(package);
-                    ;
             }
 
             return false;
@@ -105,8 +106,10 @@ namespace Orc.NuGetExplorer
             {
                 case PackageOperationType.Uninstall:
                     return true;
+
                 case PackageOperationType.Install:
                     return false;
+
                 case PackageOperationType.Update:
                     return true;
             }

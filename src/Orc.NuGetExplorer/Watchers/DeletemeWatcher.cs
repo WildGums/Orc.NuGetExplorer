@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System.IO;
+    using Catel;
     using Path = Catel.IO.Path;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
@@ -21,6 +22,8 @@ namespace Orc.NuGetExplorer
         #region Methods
         protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
+            Argument.IsNotNull(() => e);
+
             if (e.PackageOperationType != PackageOperationType.Uninstall)
             {
                 return;

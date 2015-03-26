@@ -175,6 +175,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 case PackageOperationType.Update:
                     ShowUpdates = true;
                     break;
+
                 default:
                     ShowUpdates = false;
                     break;
@@ -204,6 +205,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 case PackageOperationType.Update:
                     FilterWatermark = "Search in Updates";
                     break;
+
                 default:
                     FilterWatermark = defaultWatermark;
                     break;
