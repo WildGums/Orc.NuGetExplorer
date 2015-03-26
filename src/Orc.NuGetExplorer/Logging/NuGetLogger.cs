@@ -15,16 +15,16 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IDispatcherService _dispatcherService;
-        private readonly INuGetLogListeningSevice _logListeningSevice;
+        private readonly INuGetLogListeningSevice _logListeningService;
         #endregion
 
         #region Constructors
-        public NuGetLogger(INuGetLogListeningSevice logListeningSevice, IDispatcherService dispatcherService)
+        public NuGetLogger(INuGetLogListeningSevice logListeningService, IDispatcherService dispatcherService)
         {
-            Argument.IsNotNull(() => logListeningSevice);
+            Argument.IsNotNull(() => logListeningService);
             Argument.IsNotNull(() => dispatcherService);
 
-            _logListeningSevice = logListeningSevice;
+            _logListeningService = logListeningService;
             _dispatcherService = dispatcherService;
         }
         #endregion
@@ -42,16 +42,19 @@ namespace Orc.NuGetExplorer
                 switch (level)
                 {
                     case MessageLevel.Debug:
-                        _logListeningSevice.SendDebug(string.Format(message, args));
+                        _logListeningService.SendDebug(string.Format(message, args));
                         break;
+
                     case MessageLevel.Info:
-                        _logListeningSevice.SendInfo(string.Format(message, args));
+                        _logListeningService.SendInfo(string.Format(message, args));
                         break;
+
                     case MessageLevel.Error:
-                        _logListeningSevice.SendError(string.Format(message, args));
+                        _logListeningService.SendError(string.Format(message, args));
                         break;
+
                     case MessageLevel.Warning:
-                        _logListeningSevice.SendWarning(string.Format(message, args));
+                        _logListeningService.SendWarning(string.Format(message, args));
                         break;
                 }
             });

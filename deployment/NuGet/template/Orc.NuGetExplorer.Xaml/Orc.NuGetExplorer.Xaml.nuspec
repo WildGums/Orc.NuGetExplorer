@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Orc.NuGetExplorer</id>
+    <id>Orc.NuGetExplorer.Xaml</id>
     <version>[VERSION]</version>
-    <title>Orc.NuGetExplorer</title>
+    <title>Orc.NuGetExplorer.Xaml</title>
     <authors>OrchestraDevs</authors>
     <owners>OrchestraDevs</owners>
 
 	<description>
-	  This library provides a custom NuGet explorer manager.
+	  This library provides a xaml implementation around Orc.NuGetExplorer.
 	</description>
 	<summary>
 	</summary>
@@ -24,7 +24,8 @@
 	<!--<iconUrl>http://www.catenalogic.com/catel.png</iconUrl>-->
     
     <dependencies>
-      <dependency id="Catel.MVVM" version="[replaced]" />
+	  <dependency id="Orc.NuGetExplorer" version="[VERSION]" />
+      <dependency id="Catel.Extensions.Controls" version="[replaced]" />
     </dependencies>
   </metadata>
 </package>
