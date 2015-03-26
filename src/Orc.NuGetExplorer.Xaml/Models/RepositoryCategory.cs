@@ -14,10 +14,6 @@ namespace Orc.NuGetExplorer
 
     internal class RepositoryCategory : ModelBase
     {
-        #region Fields
-        private int _selectedIndex;
-        #endregion
-
         #region Constructors
         public RepositoryCategory(PackageOperationType packageOperationType)
         {
