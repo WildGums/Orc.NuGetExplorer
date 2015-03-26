@@ -14,25 +14,25 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IBackupFileSystemService _backupFileSystemService;
-        private readonly IFIleSystemService _fIleSystemService;
+        private readonly IFileSystemService _fileSystemService;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
         #endregion
 
         #region Constructors
         public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFIleSystemService fIleSystemService)
+            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService)
             : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => rollbackPackageOperationService);
             Argument.IsNotNull(() => backupFileSystemService);
-            Argument.IsNotNull(() => fIleSystemService);
+            Argument.IsNotNull(() => fileSystemService);
 
             _packageOperationContextService = packageOperationContextService;
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
-            _fIleSystemService = fIleSystemService;
+            _fileSystemService = fileSystemService;
 
             packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
         }
@@ -64,7 +64,7 @@ namespace Orc.NuGetExplorer
 
             if (e.PackageOperationType == PackageOperationType.Install)
             {
-                _rollbackPackageOperationService.PushRollbackAction(() => _fIleSystemService.DeleteDirectory(e.InstallPath), context);
+                _rollbackPackageOperationService.PushRollbackAction(() => _fileSystemService.DeleteDirectory(e.InstallPath), context);
             }
 
             base.OnOperationStarting(sender, e);

@@ -15,18 +15,18 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IFIleSystemService _fIleSystemService;
+        private readonly IFileSystemService _fileSystemService;
         private readonly IPackageOperationContextService _operationContextService;
         #endregion
 
         #region Constructors
-        public BackupFileSystemService(IPackageOperationContextService operationContextService, IFIleSystemService fIleSystemService)
+        public BackupFileSystemService(IPackageOperationContextService operationContextService, IFileSystemService fileSystemService)
         {
             Argument.IsNotNull(() => operationContextService);
-            Argument.IsNotNull(() => fIleSystemService);
+            Argument.IsNotNull(() => fileSystemService);
 
             _operationContextService = operationContextService;
-            _fIleSystemService = fIleSystemService;
+            _fileSystemService = fileSystemService;
         }
         #endregion
 
@@ -41,7 +41,7 @@ namespace Orc.NuGetExplorer
                 var directoryName = Catel.IO.Path.GetRelativePath(fullPath, parentDirectory);
                 var destinationDirectory = _operationContextService.CurrentContext.FileSystemContext.GetDirectory(directoryName);
 
-                _fIleSystemService.CopyDirectory(fullPath, destinationDirectory);
+                _fileSystemService.CopyDirectory(fullPath, destinationDirectory);
             }
             catch (Exception exception)
             {
@@ -59,7 +59,7 @@ namespace Orc.NuGetExplorer
                 var directoryName = Catel.IO.Path.GetRelativePath(fullPath, parentDirectory);
                 var sourceDirectory = _operationContextService.CurrentContext.FileSystemContext.GetDirectory(directoryName);
 
-                _fIleSystemService.CopyDirectory(sourceDirectory, fullPath);
+                _fileSystemService.CopyDirectory(sourceDirectory, fullPath);
             }
             catch (Exception exception)
             {

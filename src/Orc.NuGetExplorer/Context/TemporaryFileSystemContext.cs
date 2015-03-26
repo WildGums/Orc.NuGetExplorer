@@ -17,16 +17,16 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IFIleSystemService _fIleSystemService;
+        private readonly IFileSystemService _fileSystemService;
         private readonly string _rootDirectory;
         #endregion
 
         #region Constructors
-        public TemporaryFileSystemContext(IFIleSystemService fIleSystemService)
+        public TemporaryFileSystemContext(IFileSystemService fileSystemService)
         {
-            Argument.IsNotNull(() => fIleSystemService);
+            Argument.IsNotNull(() => fileSystemService);
 
-            _fIleSystemService = fIleSystemService;
+            _fileSystemService = fileSystemService;
 
             var assembly = AssemblyHelper.GetEntryAssembly();
 
@@ -49,7 +49,7 @@ namespace Orc.NuGetExplorer
         {
             Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
-            if (!_fIleSystemService.DeleteDirectory(_rootDirectory))
+            if (!_fileSystemService.DeleteDirectory(_rootDirectory))
             {
                 Log.Error("Failed to delete temporary files");
             }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IFIleSystemService.cs" company="Wild Gums">
+// <copyright file="IFileSystemService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    public interface IFIleSystemService
+    public interface IFileSystemService
     {
         #region Methods
         bool DeleteDirectory(string path);

@@ -34,7 +34,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
-        serviceLocator.RegisterType<IFIleSystemService, FIleSystemService>();        
+        serviceLocator.RegisterType<IFileSystemService, FileSystemService>();        
 
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
 

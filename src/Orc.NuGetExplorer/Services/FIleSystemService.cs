@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FIleSystemService.cs" company="Wild Gums">
+// <copyright file="fileSystemService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Logging;
 
-    internal class FIleSystemService : IFIleSystemService
+    internal class FileSystemService : IFileSystemService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
