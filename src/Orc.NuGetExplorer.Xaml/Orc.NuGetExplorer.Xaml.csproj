@@ -120,6 +120,7 @@
     <Compile Include="Models\SearchSettings.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Extensions\IPleaseWaitServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IImageResolveService.cs" />
     <Compile Include="Services\ImageResolveService.cs" />
     <Compile Include="Services\Interfaces\IPackageCommandService.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Services\PackageDetailsService.cs" />
     <Compile Include="Services\PackagesUIService.cs" />
     <Compile Include="Services\PagingService.cs" />
+    <Compile Include="Services\PleaseWaitInterruptService.cs" />
     <Compile Include="Services\RepositoryNavigatorService.cs" />
     <Compile Include="Services\SearchResultService.cs" />
     <Compile Include="Services\SearchSettingsService.cs" />

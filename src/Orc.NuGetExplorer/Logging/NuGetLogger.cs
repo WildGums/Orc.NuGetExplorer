@@ -14,18 +14,15 @@ namespace Orc.NuGetExplorer
     internal class NuGetLogger : ILogger
     {
         #region Fields
-        private readonly IDispatcherService _dispatcherService;
         private readonly INuGetLogListeningSevice _logListeningService;
         #endregion
 
         #region Constructors
-        public NuGetLogger(INuGetLogListeningSevice logListeningService, IDispatcherService dispatcherService)
+        public NuGetLogger(INuGetLogListeningSevice logListeningService)
         {
             Argument.IsNotNull(() => logListeningService);
-            Argument.IsNotNull(() => dispatcherService);
 
             _logListeningService = logListeningService;
-            _dispatcherService = dispatcherService;
         }
         #endregion
 
@@ -37,27 +34,24 @@ namespace Orc.NuGetExplorer
 
         public void Log(MessageLevel level, string message, params object[] args)
         {
-            _dispatcherService.Invoke(() =>
+            switch (level)
             {
-                switch (level)
-                {
-                    case MessageLevel.Debug:
-                        _logListeningService.SendDebug(string.Format(message, args));
-                        break;
+                case MessageLevel.Debug:
+                    _logListeningService.SendDebug(string.Format(message, args));
+                    break;
 
-                    case MessageLevel.Info:
-                        _logListeningService.SendInfo(string.Format(message, args));
-                        break;
+                case MessageLevel.Info:
+                    _logListeningService.SendInfo(string.Format(message, args));
+                    break;
 
-                    case MessageLevel.Error:
-                        _logListeningService.SendError(string.Format(message, args));
-                        break;
+                case MessageLevel.Error:
+                    _logListeningService.SendError(string.Format(message, args));
+                    break;
 
-                    case MessageLevel.Warning:
-                        _logListeningService.SendWarning(string.Format(message, args));
-                        break;
-                }
-            });
+                case MessageLevel.Warning:
+                    _logListeningService.SendWarning(string.Format(message, args));
+                    break;
+            }
         }
         #endregion
     }
