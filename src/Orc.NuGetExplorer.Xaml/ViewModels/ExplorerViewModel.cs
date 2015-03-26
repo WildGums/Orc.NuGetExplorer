@@ -308,7 +308,7 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailableUpdates.Clear();
             using (_pleaseWaitService.WaitingScope())
             {
-                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(IsPrereleaseAllowed, false);
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(null, false);
 
                 // TODO: AddRange doesn't refresh button state. neeed to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
