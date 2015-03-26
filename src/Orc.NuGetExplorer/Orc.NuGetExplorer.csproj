@@ -47,10 +47,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Catel.Fody.2.5.0\lib\portable-net4+sl4+wp7+win8+wpa81+MonoAndroid14+MonoTouch40\Catel.Fody.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.MVVM, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Catel.MVVM.4.2.0-unstable0012\lib\net40\Catel.MVVM.dll</HintPath>
-    </Reference>
     <Reference Include="MethodTimer">
       <HintPath>..\..\lib\MethodTimer.Fody.1.15.2.0\Lib\portable-net4+sl5+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\MethodTimer.dll</HintPath>
       <Private>False</Private>
@@ -94,9 +90,6 @@
       <HintPath>..\..\lib\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Catel.MVVM.4.2.0-unstable0012\lib\net40\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -118,6 +111,7 @@
     <Compile Include="Extensions\PackageRepositoryExtensions.cs" />
     <Compile Include="Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="Factories\PackageSourceFactory.cs" />
+    <Compile Include="Helpers\DispatchHelper.cs" />
     <Compile Include="Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="Logging\NuGetToCatelLogTranstalor.cs" />
     <Compile Include="Context\PackageOperationContext.cs" />
@@ -130,6 +124,7 @@
     <Compile Include="Services\Interfaces\IFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IBackupFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IPackageOperationService.cs" />
+    <Compile Include="Services\Interfaces\IPleaseWaitInterruptService.cs" />
     <Compile Include="Services\Interfaces\IRepositoryCacheService.cs" />
     <Compile Include="Services\Interfaces\ITemporaryFIleSystemContextService.cs" />
     <Compile Include="Services\RepositoryCacheService.cs" />
@@ -183,7 +178,6 @@
     <Compile Include="Services\Extensions\INuGetConfigurationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\INuGetFeedVerificationServiceExtensions.cs" />
     <Compile Include="Services\Extensions\IPackageQueryServiceExtensions.cs" />
-    <Compile Include="Services\Extensions\IPleaseWaitServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
     <Compile Include="Services\Interfaces\IRepositoryService.cs" />

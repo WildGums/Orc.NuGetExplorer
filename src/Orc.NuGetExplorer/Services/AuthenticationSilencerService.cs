@@ -12,18 +12,22 @@ namespace Orc.NuGetExplorer
 
     internal class AuthenticationSilencerService : IAuthenticationSilencerService
     {
+        public AuthenticationSilencerService()
+        {
+        }
+
         #region Properties
-        public bool IsAuthenticationRequired { get; set; }
+        public bool? IsAuthenticationRequired { get; private set; }
         #endregion
 
         #region Methods
         public IDisposable AuthenticationRequiredScope(bool authenticateIfRequired = true)
         {
-            return new DisposableToken<bool>(IsAuthenticationRequired, token => SetIsAuthenticationRequired(authenticateIfRequired),
+            return new DisposableToken<bool?>(IsAuthenticationRequired, token => SetIsAuthenticationRequired(authenticateIfRequired),
                 token => SetIsAuthenticationRequired(token.Instance));
         }
 
-        private void SetIsAuthenticationRequired(bool authenticateIfRequired)
+        private void SetIsAuthenticationRequired(bool? authenticateIfRequired)
         {
             IsAuthenticationRequired = authenticateIfRequired;
         }

@@ -21,7 +21,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPagingService, PagingService>();  
         serviceLocator.RegisterType<IRepositoryNavigatorService, RepositoryNavigatorService>();
         serviceLocator.RegisterType<ISearchSettingsService, SearchSettingsService>();
-        serviceLocator.RegisterType<ISearchResultService, SearchResultService>();        
+        serviceLocator.RegisterType<ISearchResultService, SearchResultService>();
+        serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();        
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
     }

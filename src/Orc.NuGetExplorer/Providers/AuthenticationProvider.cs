@@ -9,8 +9,8 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
-    using Catel.Services;
     using Native;
 
     internal class AuthenticationProvider : IAuthenticationProvider
@@ -18,22 +18,33 @@ namespace Orc.NuGetExplorer
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
-        private readonly IDispatcherService _dispatcherService;
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IServiceLocator _serviceLocator;
+        private IPleaseWaitInterruptService _pleaseWaitInterruptService;
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IDispatcherService dispatcherService, IPleaseWaitService pleaseWaitService, IAuthenticationSilencerService authenticationSilencerService)
+        public AuthenticationProvider(IAuthenticationSilencerService authenticationSilencerService, IServiceLocator serviceLocator)
         {
-            Argument.IsNotNull(() => dispatcherService);
-            Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => authenticationSilencerService);
+            Argument.IsNotNull(() => serviceLocator);
 
-            _dispatcherService = dispatcherService;
-            _pleaseWaitService = pleaseWaitService;
             _authenticationSilencerService = authenticationSilencerService;
+            _serviceLocator = serviceLocator;
         }
         #endregion
+
+        private IPleaseWaitInterruptService PleaseWaitInterruptService
+        {
+            get
+            {
+                if (_pleaseWaitInterruptService == null)
+                {
+                    _pleaseWaitInterruptService = _serviceLocator.ResolveType<IPleaseWaitInterruptService>();
+                }
+
+                return _pleaseWaitInterruptService;
+            }
+        }
 
         #region Methods
         public AuthenticationCredentials GetCredentials(Uri uri, bool previousCredentialsFailed)
@@ -44,9 +55,11 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-            using (_pleaseWaitService.HideTemporarily())
+
+
+            using (PleaseWaitInterruptService.InterruptTemporarily())
             {
-                _dispatcherService.Invoke(() =>
+                DispatchHelper.DispatchIfNecessary(() =>
                 {
                     var uriString = uri.ToString().ToLower();
 
@@ -60,7 +73,7 @@ namespace Orc.NuGetExplorer
                         WindowTitle = "Credentials required",
                         MainInstruction = "Credentials are required to access this feed",
                         Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
-                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired
+                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired??true
                     };
 
                     result = credentialsPrompter.ShowDialog();
