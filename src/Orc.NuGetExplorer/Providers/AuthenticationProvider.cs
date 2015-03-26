@@ -73,7 +73,7 @@ namespace Orc.NuGetExplorer
                         WindowTitle = "Credentials required",
                         MainInstruction = "Credentials are required to access this feed",
                         Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
-                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired
+                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired??true
                     };
 
                     result = credentialsPrompter.ShowDialog();

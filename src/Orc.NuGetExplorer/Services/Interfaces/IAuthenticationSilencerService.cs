@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     internal interface IAuthenticationSilencerService
     {
         #region Properties
-        bool IsAuthenticationRequired { get; set; }
+        bool? IsAuthenticationRequired { get; }
         #endregion
 
         #region Methods
