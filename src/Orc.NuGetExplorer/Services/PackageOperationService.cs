@@ -23,12 +23,12 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, IPackageManager packageManager,
-            IPackageRepositoryService packageRepositoryService, IRepositoryCacheService repositoryCacheService)
+            IRepositoryService repositoryService, IRepositoryCacheService repositoryCacheService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageManager);
-            Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => repositoryCacheService);
 
             _packageOperationContextService = packageOperationContextService;
@@ -36,7 +36,7 @@ namespace Orc.NuGetExplorer
             _packageManager = packageManager;
             _repositoryCacheService = repositoryCacheService;
 
-            _localRepository = repositoryCacheService.GetNuGetRepository(packageRepositoryService.LocalRepository);
+            _localRepository = repositoryCacheService.GetNuGetRepository(repositoryService.LocalRepository);
 
             DependencyVersion = DependencyVersion.Lowest;
         }

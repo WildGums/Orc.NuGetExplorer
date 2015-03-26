@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    public interface ITemporaryFIleSystemContextService
+    internal interface ITemporaryFIleSystemContextService
     {
         #region Properties
         ITemporaryFileSystemContext Context { get; }

@@ -248,6 +248,7 @@ namespace Orc.NuGetExplorer.ViewModels
             }
             finally
             {
+                // TODO: this is hack. Need to fix it.
                 Navigator.SelectedRepository = selectedRepository;
             }
         }

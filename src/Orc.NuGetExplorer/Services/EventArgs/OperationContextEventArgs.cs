@@ -12,14 +12,14 @@ namespace Orc.NuGetExplorer
     public class OperationContextEventArgs : EventArgs
     {
         #region Constructors
-        public OperationContextEventArgs(PackageOperationContext packageOperationContext)
+        public OperationContextEventArgs(IPackageOperationContext packageOperationContext)
         {
             PackageOperationContext = packageOperationContext;
         }
         #endregion
 
         #region Properties
-        public PackageOperationContext PackageOperationContext { get; private set; }
+        public IPackageOperationContext PackageOperationContext { get; private set; }
         #endregion
     }
 }

@@ -12,9 +12,9 @@ namespace Orc.NuGetExplorer
     internal interface IRollbackPackageOperationService
     {
         #region Methods
-        void PushRollbackAction(Action rollbackAction, PackageOperationContext context);
-        void Rollback(PackageOperationContext context);
-        void ClearRollbackActions(PackageOperationContext context);
+        void PushRollbackAction(Action rollbackAction, IPackageOperationContext context);
+        void Rollback(IPackageOperationContext context);
+        void ClearRollbackActions(IPackageOperationContext context);
         #endregion
     }
 }

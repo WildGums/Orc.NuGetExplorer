@@ -32,7 +32,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        public PackageOperationContext CurrentContext { get; private set; }
+        public IPackageOperationContext CurrentContext { get; private set; }
         #endregion
 
         #region Methods

@@ -27,7 +27,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
         serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();        
         serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
-        serviceLocator.RegisterType<IPackageRepositoryService, PackageRepositoryService>();
+        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
         serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();                
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
         serviceLocator.RegisterType<IRepositoryCacheService, RepositoryCacheService>();  

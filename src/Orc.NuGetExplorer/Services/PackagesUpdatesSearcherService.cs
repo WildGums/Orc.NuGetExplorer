@@ -17,19 +17,19 @@ namespace Orc.NuGetExplorer
         #region Fields
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageCacheService _packageCacheService;
-        private readonly IPackageRepositoryService _packageRepositoryService;
+        private readonly IRepositoryService _repositoryService;
         private readonly IRepositoryCacheService _repositoryCacheService;
         #endregion
 
         #region Constructors
-        public PackagesUpdatesSearcherService(IPackageRepositoryService packageRepositoryService, IAuthenticationSilencerService authenticationSilencerService, IPackageCacheService packageCacheService,
+        public PackagesUpdatesSearcherService(IRepositoryService repositoryService, IAuthenticationSilencerService authenticationSilencerService, IPackageCacheService packageCacheService,
             IRepositoryCacheService repositoryCacheService)
         {
-            Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => authenticationSilencerService);
             Argument.IsNotNull(() => repositoryCacheService);
 
-            _packageRepositoryService = packageRepositoryService;
+            _repositoryService = repositoryService;
             _authenticationSilencerService = authenticationSilencerService;
             _packageCacheService = packageCacheService;
             _repositoryCacheService = repositoryCacheService;
@@ -43,9 +43,9 @@ namespace Orc.NuGetExplorer
 
             using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
-                var packageRepository = _repositoryCacheService.GetNuGetRepository(_packageRepositoryService.GetSourceAggregateRepository());
+                var packageRepository = _repositoryCacheService.GetNuGetRepository(_repositoryService.GetSourceAggregateRepository());
 
-                var packages = _repositoryCacheService.GetNuGetRepository(_packageRepositoryService.LocalRepository).GetPackages();
+                var packages = _repositoryCacheService.GetNuGetRepository(_repositoryService.LocalRepository).GetPackages();
 
                 foreach (var package in packages)
                 {

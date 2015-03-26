@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
 
-    public class PackageOperationContext
+    internal class PackageOperationContext : IPackageOperationContext
     {
         #region Fields
         private static int _contextCounter;
@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer
         public IRepository Repository { get; set; }
         public IPackageDetails[] Packages { get; set; }
         public PackageOperationType OperationType { get; set; }
-        public PackageOperationContext Parent { get; set; }
+        public IPackageOperationContext Parent { get; set; }
         public IList<Exception> CatchedExceptions { get; private set; }
         public ITemporaryFileSystemContext FileSystemContext { get; set; }
         #endregion

@@ -14,11 +14,11 @@ namespace Orc.NuGetExplorer
     internal class RollbackPackageOperationService : IRollbackPackageOperationService
     {
         #region Fields
-        private readonly IDictionary<PackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<PackageOperationContext, Stack<Action>>();
+        private readonly IDictionary<IPackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<IPackageOperationContext, Stack<Action>>();
         #endregion
 
         #region Methods
-        public void PushRollbackAction(Action rollbackAction, PackageOperationContext context)
+        public void PushRollbackAction(Action rollbackAction, IPackageOperationContext context)
         {
             Stack<Action> stack;
             if (!_rollbackActions.TryGetValue(context, out stack))
@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer
             stack.Push(rollbackAction);
         }
 
-        public void Rollback(PackageOperationContext context)
+        public void Rollback(IPackageOperationContext context)
         {
             Stack<Action> stack;
             if (_rollbackActions.TryGetValue(context, out stack))
@@ -43,7 +43,7 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public void ClearRollbackActions(PackageOperationContext context)
+        public void ClearRollbackActions(IPackageOperationContext context)
         {
             Stack<Action> stack;
             if (_rollbackActions.TryGetValue(context, out stack))

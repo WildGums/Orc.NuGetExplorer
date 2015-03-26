@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     public interface IPackageOperationContextService
     {
         #region Properties
-        PackageOperationContext CurrentContext { get; }
+        IPackageOperationContext CurrentContext { get; }
         #endregion
 
         #region Methods

@@ -18,11 +18,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageManager(IPackageRepositoryService packageRepositoryService, INuGetConfigurationService nuGetConfigurationService,
+        public PackageManager(IRepositoryService repositoryService, INuGetConfigurationService nuGetConfigurationService,
             ILogger logger, IPackageCacheService packageCacheService, IRepositoryCacheService repositoryCacheService)
-            : this(packageRepositoryService.GetSourceAggregateRepository(), repositoryCacheService, nuGetConfigurationService.GetDestinationFolder())
+            : this(repositoryService.GetSourceAggregateRepository(), repositoryCacheService, nuGetConfigurationService.GetDestinationFolder())
         {
-            Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageCacheService);

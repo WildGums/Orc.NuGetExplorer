@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="Context\Interfaces\ITemporaryFileSystemContext.cs" />
+    <Compile Include="Context\Interfaces\IPackageOperationContext.cs" />
     <Compile Include="Context\TemporaryFileSystemContext.cs" />
     <Compile Include="Extensions\IPackageDetailsExtensions.cs" />
     <Compile Include="Extensions\IPackageExtensions.cs" />
@@ -182,14 +183,14 @@
     <Compile Include="Services\Extensions\IPleaseWaitServiceExtensions.cs" />
     <Compile Include="Services\Interfaces\IPackageQueryService.cs" />
     <Compile Include="Services\Interfaces\IPackageCacheService.cs" />
-    <Compile Include="Services\Interfaces\IPackageRepositoryService.cs" />
+    <Compile Include="Services\Interfaces\IRepositoryService.cs" />
     <Compile Include="Services\Interfaces\INuGetConfigurationService.cs" />
     <Compile Include="Services\Interfaces\IPackagesUIService.cs" />
     <Compile Include="Services\Interfaces\INuGetFeedVerificationService.cs" />
     <Compile Include="Services\NuGetConfigurationService.cs" />
     <Compile Include="Services\NuGetFeedVerificationService.cs" />
     <Compile Include="Services\PackageCacheService.cs" />
-    <Compile Include="Services\PackageRepositoryService.cs" />
+    <Compile Include="Services\RepositoryService.cs" />
     <Compile Include="NuGet\PackageManager.cs" />
     <Compile Include="Services\PackageQueryService.cs" />
     <Compile Include="Watchers\RollbackWatcher.cs" />

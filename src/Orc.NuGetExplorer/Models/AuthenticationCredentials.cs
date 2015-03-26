@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Data;
 
-    public class AuthenticationCredentials : ModelBase
+    internal class AuthenticationCredentials : ModelBase
     {
         #region Constructors
         public AuthenticationCredentials(Uri uri)

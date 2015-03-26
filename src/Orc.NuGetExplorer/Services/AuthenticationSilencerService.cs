@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System;
     using Catel;
 
-    public class AuthenticationSilencerService : IAuthenticationSilencerService
+    internal class AuthenticationSilencerService : IAuthenticationSilencerService
     {
         #region Properties
         public bool IsAuthenticationRequired { get; set; }

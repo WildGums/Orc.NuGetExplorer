@@ -12,15 +12,15 @@ namespace Orc.NuGetExplorer
     internal class RepositoryNavigationFactory : IRepositoryNavigationFactory
     {
         #region Fields
-        private readonly IPackageRepositoryService _packageRepositoryService;
+        private readonly IRepositoryService _repositoryService;
         #endregion
 
         #region Constructors
-        public RepositoryNavigationFactory(IPackageRepositoryService packageRepositoryService)
+        public RepositoryNavigationFactory(IRepositoryService repositoryService)
         {
-            Argument.IsNotNull(() => packageRepositoryService);
+            Argument.IsNotNull(() => repositoryService);
 
-            _packageRepositoryService = packageRepositoryService;
+            _repositoryService = repositoryService;
         }
         #endregion
 
@@ -40,7 +40,7 @@ namespace Orc.NuGetExplorer
         {
             var repoCategory = new RepositoryCategory(packageOperationType);
 
-            foreach (var repository in _packageRepositoryService.GetRepositories(packageOperationType))
+            foreach (var repository in _repositoryService.GetRepositories(packageOperationType))
             {
                 repoCategory.Repositories.Add(repository);
             }

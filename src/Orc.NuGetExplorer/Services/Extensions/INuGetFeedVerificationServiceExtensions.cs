@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
 
-    public static class AuthenticationRequiredExtensions
+    public static class INuGetFeedVerificationServiceExtensions
     {
         #region Methods
         public static async Task<FeedVerificationResult> VerifyFeedAsync(this INuGetFeedVerificationService nuGetFeedVerificationService,

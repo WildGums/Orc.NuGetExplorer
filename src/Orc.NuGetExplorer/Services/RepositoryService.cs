@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageRepositoryService.cs" company="Wild Gums">
+// <copyright file="repositoryService.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ namespace Orc.NuGetExplorer
     using Catel.Logging;
     using NuGet;
 
-    internal class PackageRepositoryService : IPackageRepositoryService
+    internal class RepositoryService : IRepositoryService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -26,7 +26,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageRepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory,
+        public RepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory,
             IRepositoryCacheService repositoryCacheService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);

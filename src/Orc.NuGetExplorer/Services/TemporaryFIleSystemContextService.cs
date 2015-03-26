@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.IoC;
 
-    public class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
+    internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
     {
         #region Fields
         private readonly ITypeFactory _typeFactory;

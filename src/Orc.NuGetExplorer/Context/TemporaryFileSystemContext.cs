@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     using Catel.Logging;
     using Catel.Reflection;
 
-    public class TemporaryFileSystemContext : ITemporaryFileSystemContext
+    internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();

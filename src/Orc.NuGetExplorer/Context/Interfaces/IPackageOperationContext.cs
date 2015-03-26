@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IAuthenticationProvider.cs" company="Wild Gums">
+// <copyright file="IPackageOperationContext.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,11 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
 
-    internal interface IAuthenticationProvider
+    public interface IPackageOperationContext
     {
-        #region Methods
-        AuthenticationCredentials GetCredentials(Uri uri, bool previousCredentialsFailed);
-        #endregion
+        ITemporaryFileSystemContext FileSystemContext { get; set; }
+        IList<Exception> CatchedExceptions { get; }
+        IPackageOperationContext Parent { get; set; }
+        IRepository Repository { get; set; }
     }
 }

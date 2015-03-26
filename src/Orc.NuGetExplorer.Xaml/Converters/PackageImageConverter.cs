@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer.Converters
     using Catel.IoC;
     using Catel.MVVM.Converters;
 
-    public class PackageImageConverter : ValueConverterBase
+    internal class PackageImageConverter : ValueConverterBase
     {
         #region Fields
         private IImageResolveService _imageResolveService;
