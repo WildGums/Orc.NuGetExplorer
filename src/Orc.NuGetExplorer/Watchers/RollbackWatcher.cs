@@ -41,8 +41,6 @@ namespace Orc.NuGetExplorer
         #region Methods
         private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
-            Argument.IsNotNull(() => e);
-
             var context = e.PackageOperationContext;
             if (context.CatchedExceptions.Any())
             {
@@ -56,8 +54,6 @@ namespace Orc.NuGetExplorer
 
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
-            Argument.IsNotNull(() => e);
-
             var context = _packageOperationContextService.CurrentContext;
             if (e.PackageOperationType == PackageOperationType.Uninstall)
             {

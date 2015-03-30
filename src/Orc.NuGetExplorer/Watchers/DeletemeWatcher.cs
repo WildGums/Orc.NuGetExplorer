@@ -22,8 +22,6 @@ namespace Orc.NuGetExplorer
         #region Methods
         protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
-            Argument.IsNotNull(() => e);
-
             if (e.PackageOperationType != PackageOperationType.Uninstall)
             {
                 return;

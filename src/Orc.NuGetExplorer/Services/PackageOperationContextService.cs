@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     internal class PackageOperationContextService : IPackageOperationContextService
     {
         #region Fields
-        private readonly object _sync = new object();
+        private readonly object _lockObject = new object();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly ITypeFactory _typeFactory;
         private PackageOperationContext _rootContext;
@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => context);
 
-            lock (_sync)
+            lock (_lockObject)
             {
                 if (_rootContext == null)
                 {
@@ -72,7 +72,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => context);
 
-            lock (_sync)
+            lock (_lockObject)
             {
                 if (CurrentContext.Parent == null)
                 {

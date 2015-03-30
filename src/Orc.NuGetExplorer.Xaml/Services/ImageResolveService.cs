@@ -17,7 +17,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
-        private readonly object _sync = new object();
+        private readonly object _lockObject = new object();
         private readonly ICacheStorage<string, ImageSource> _packageDetailsCache = new CacheStorage<string, ImageSource>();
         #endregion
 
@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer
                 return GetDefaultImage();
             }
 
-            lock (_sync)
+            lock (_lockObject)
             {
                 return _packageDetailsCache.GetFromCacheOrFetch(uri.AbsoluteUri, () => CreateImage(uri));
             }
@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer
                 return GetDefaultImage();
             }
 
-            lock (_sync)
+            lock (_lockObject)
             {
                 return _packageDetailsCache.GetFromCacheOrFetch(uriString, () => CreateImage(new Uri(uriString)));
             }
