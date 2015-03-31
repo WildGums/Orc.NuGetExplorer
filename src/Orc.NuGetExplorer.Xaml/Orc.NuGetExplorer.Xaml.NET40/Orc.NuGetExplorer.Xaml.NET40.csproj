@@ -98,6 +98,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="..\Orc.NuGetExplorer.Xaml.Shared\Resources\Images\packageDefaultIcon.png">
+      <Link>Resources\Images\packageDefaultIcon.png</Link>
+    </Resource>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
