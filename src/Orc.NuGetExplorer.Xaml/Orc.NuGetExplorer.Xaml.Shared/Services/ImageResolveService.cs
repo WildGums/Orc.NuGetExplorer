@@ -8,7 +8,10 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Linq;
     using System.Net;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Catel.Caching;
@@ -16,7 +19,6 @@ namespace Orc.NuGetExplorer
     internal class ImageResolveService : IImageResolveService
     {
         #region Fields
-        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
         private readonly object _lockObject = new object();
         private readonly ICacheStorage<string, ImageSource> _packageDetailsCache = new CacheStorage<string, ImageSource>();
         #endregion
@@ -50,7 +52,7 @@ namespace Orc.NuGetExplorer
 
         private ImageSource CreateImage(Uri uri)
         {
-            if (uri == null || (!string.Equals(DefaultPackageUrl, uri.AbsoluteUri) && !RemoteFileExists(uri.AbsoluteUri)))
+            if (uri == null ||  !RemoteFileExists(uri.AbsoluteUri))
             {
                 return GetDefaultImage();
             }
@@ -58,9 +60,35 @@ namespace Orc.NuGetExplorer
             return new BitmapImage(uri);
         }
 
+        private BitmapImage _defaultImage;
+
         private ImageSource GetDefaultImage()
         {
-            return ResolveImageFromString(DefaultPackageUrl);
+            if (_defaultImage != null)
+            {
+                return _defaultImage;
+            }
+
+            var assembly = GetType().Assembly;
+            var bitmapImage = new BitmapImage();
+            var manifestResourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains("packageDefaultIcon.png"));
+            if (string.IsNullOrEmpty(manifestResourceName))
+            {
+                return bitmapImage;
+            }
+            using (var stream = assembly.GetManifestResourceStream(manifestResourceName))
+            {
+                if (stream != null)
+                {
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.StreamSource = stream;
+                    bitmapImage.EndInit();
+                }
+            }
+            _defaultImage = bitmapImage;
+
+            return _defaultImage;
         }
 
         private bool RemoteFileExists(string url)
