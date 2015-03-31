@@ -102,6 +102,33 @@ namespace Orc.NuGetExplorer
 
             _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
         }
+
+        public void SetIsPrereleaseAllowed(bool value, IRepository repository)
+        {
+            Argument.IsNotNull(() => repository);
+
+            var key = GetIsPrereleaseAllowedKey(repository);
+            _configurationService.SetValue(key, value);
+        }
+
+        public bool GetIsPrereleaseAllowed(IRepository repository)
+        {
+            var key = GetIsPrereleaseAllowedKey(repository);
+            var stringValue = _configurationService.GetValue(key, false.ToString());
+
+            bool value;
+            if(bool.TryParse(stringValue, out value))
+            {
+                return value;
+            }
+
+            return false;
+        }
+
+        private string GetIsPrereleaseAllowedKey(IRepository repository)
+        {
+            return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}.{1}", repository.OperationType, repository.Name);
+        }
         #endregion
     }
 }

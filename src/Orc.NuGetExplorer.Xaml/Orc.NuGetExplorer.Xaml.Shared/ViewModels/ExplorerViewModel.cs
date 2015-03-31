@@ -26,17 +26,17 @@ namespace Orc.NuGetExplorer.ViewModels
         private static bool _searchingAndRefreshing;
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageBatchService _packageBatchService;
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IPleaseWaitService _pleaseWaitService;
-        private bool _isPrereleaseAllowed;
         #endregion
 
         #region Constructors
         public ExplorerViewModel(IRepositoryNavigatorService repositoryNavigatorService, ISearchSettingsService searchSettingsService, IPackageCommandService packageCommandService,
             IPleaseWaitService pleaseWaitService, IPackageQueryService packageQueryService, ISearchResultService searchResultService, IDispatcherService dispatcherService,
-            IPackagesUpdatesSearcherService packagesUpdatesSearcherService, IPackageBatchService packageBatchService)
+            IPackagesUpdatesSearcherService packagesUpdatesSearcherService, IPackageBatchService packageBatchService, INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => repositoryNavigatorService);
             Argument.IsNotNull(() => searchSettingsService);
@@ -47,6 +47,7 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => dispatcherService);
             Argument.IsNotNull(() => packagesUpdatesSearcherService);
             Argument.IsNotNull(() => packageBatchService);
+            Argument.IsNotNull(() => nuGetConfigurationService);
 
             _packageCommandService = packageCommandService;
             _pleaseWaitService = pleaseWaitService;
@@ -54,6 +55,7 @@ namespace Orc.NuGetExplorer.ViewModels
             _dispatcherService = dispatcherService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
             _packageBatchService = packageBatchService;
+            _nuGetConfigurationService = nuGetConfigurationService;
 
             SearchSettings = searchSettingsService.SearchSettings;
             SearchResult = searchResultService.SearchResult;
@@ -104,9 +106,9 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnIsPrereleaseAllowedChanged()
         {
-            if (!_searchingAndRefreshing && IsPrereleaseAllowed != null)
+            if (!_searchingAndRefreshing && IsPrereleaseAllowed != null && Navigator.SelectedRepository != null)
             {
-                _isPrereleaseAllowed = IsPrereleaseAllowed.Value;
+                _nuGetConfigurationService.SetIsPrereleaseAllowed(IsPrereleaseAllowed.Value, Navigator.SelectedRepository);
             }
 
             await SearchAndRefresh();
@@ -141,7 +143,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 case PackageOperationType.Install:
                 case PackageOperationType.Update:
-                    IsPrereleaseAllowed = _isPrereleaseAllowed;
+                    IsPrereleaseAllowed = _nuGetConfigurationService.GetIsPrereleaseAllowed(Navigator.SelectedRepository);
                     break;
 
                 default:
