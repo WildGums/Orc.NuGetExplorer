@@ -23,10 +23,10 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, IPackageRepository packageRepository)
+        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory)
         {
             Argument.IsNotNullOrEmpty(() => name);
-            Argument.IsNotNull(() => packageRepository);
+            Argument.IsNotNull(() => packageRepositoryFactory);
 
             var key = GetKey(operationType, name);
 
@@ -45,7 +45,7 @@ namespace Orc.NuGetExplorer
             };
 
             _keyIdDictionary.Add(key, id);
-            _idTupleDictionary.Add(id, new Tuple<IRepository, IPackageRepository>(repository, packageRepository));
+            _idTupleDictionary.Add(id, new Tuple<IRepository, IPackageRepository>(repository, packageRepositoryFactory()));
 
             return repository;
         }

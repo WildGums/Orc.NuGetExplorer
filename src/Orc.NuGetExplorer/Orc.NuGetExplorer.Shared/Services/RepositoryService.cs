@@ -80,16 +80,19 @@ namespace Orc.NuGetExplorer
         {
             return GetSourceRepositories().Select(sourceRepository =>
             {
-                var updateRepository = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<UpdateRepository>(LocalRepository, sourceRepository);
-                return _repositoryCacheService.GetSerialisableRepository(sourceRepository.Name, PackageOperationType.Update, updateRepository);
+                return _repositoryCacheService.GetSerialisableRepository(sourceRepository.Name, PackageOperationType.Update, 
+                    () => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<UpdateRepository>(LocalRepository, sourceRepository));
             });
         }
 
         public IRepository GetSourceAggregateRepository()
-        {
-            var packageSources = GetPackageSources();
-            var repository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Install, repository);
+        {            
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Install,
+                () =>
+                {
+                    var packageSources = GetPackageSources();
+                    return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
+                });
         }
 
         public IEnumerable<IRepository> GetSourceRepositories()
@@ -97,18 +100,19 @@ namespace Orc.NuGetExplorer
             var packageSources = GetPackageSources();
             foreach (var packageSource in packageSources)
             {
-                var repository = _repositoryFactory.CreateRepository(packageSource.Source);
-
-                yield return _repositoryCacheService.GetSerialisableRepository(packageSource.Name, PackageOperationType.Install, repository);
+                var source = packageSource;
+                yield return _repositoryCacheService.GetSerialisableRepository(packageSource.Name, PackageOperationType.Install, () => _repositoryFactory.CreateRepository(source.Source));
             }
         }
 
         public IRepository GetUpdateAggeregateRepository()
-        {
-            var packageSources = GetPackageSources();
-            var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-            var updateRepository = new UpdateRepository(LocalNuGetRepository, sourceRepository);
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Update, updateRepository);
+        {            
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Update, () =>
+            {
+                var packageSources = GetPackageSources();
+                var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
+                return new UpdateRepository(LocalNuGetRepository, sourceRepository);
+            });
         }
 
         private IEnumerable<IPackageSource> GetPackageSources()
@@ -118,14 +122,16 @@ namespace Orc.NuGetExplorer
 
         private IRepository GetLocalRepository()
         {
-            var path = _nuGetConfigurationService.GetDestinationFolder();
-
-            if (!Directory.Exists(path))
+            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Uninstall, () =>
             {
-                Directory.CreateDirectory(path);
-            }
+                var path = _nuGetConfigurationService.GetDestinationFolder();
 
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Uninstall, new LocalPackageRepository(path, true));
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return new LocalPackageRepository(path, true);
+            });
         }
         #endregion
     }
