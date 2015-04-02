@@ -17,7 +17,7 @@ namespace Orc.NuGetExplorer
         IEnumerable<IPackageSource> LoadPackageSources();
         bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true);
         void DeletePackageSource(string name, string source);
-        void SetIsPrereleaseAllowed(bool value, IRepository repository);
+        void SetIsPrereleaseAllowed(IRepository repository, bool value);
         bool GetIsPrereleaseAllowed(IRepository repository);
         #endregion
     }

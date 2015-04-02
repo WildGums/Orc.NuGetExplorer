@@ -103,7 +103,7 @@ namespace Orc.NuGetExplorer
             _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
         }
 
-        public void SetIsPrereleaseAllowed(bool value, IRepository repository)
+        public void SetIsPrereleaseAllowed(IRepository repository, bool value)
         {
             Argument.IsNotNull(() => repository);
 

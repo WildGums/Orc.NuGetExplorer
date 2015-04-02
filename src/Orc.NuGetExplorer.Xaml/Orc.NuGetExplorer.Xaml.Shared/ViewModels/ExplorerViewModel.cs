@@ -108,7 +108,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             if (!_searchingAndRefreshing && IsPrereleaseAllowed != null && Navigator.SelectedRepository != null)
             {
-                _nuGetConfigurationService.SetIsPrereleaseAllowed(IsPrereleaseAllowed.Value, Navigator.SelectedRepository);
+                _nuGetConfigurationService.SetIsPrereleaseAllowed(Navigator.SelectedRepository, IsPrereleaseAllowed.Value);
             }
 
             await SearchAndRefresh();
