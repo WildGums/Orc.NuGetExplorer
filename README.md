@@ -1,6 +1,8 @@
 Orc.NuGetExplorer
 ==================
 
+[![Join the chat at https://gitter.im/WildGums/Orc.NuGetExplorer](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/WildGums/Orc.NuGetExplorer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This library provides everything you need to explore and download packages from the NuGet gallery as well as any private feed.
 
 It can be used as part of a plugin system for your application.
