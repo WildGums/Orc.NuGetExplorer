@@ -26,7 +26,7 @@ NuGet Packages
 library consists of two NuGet packages:
 
 -  **[Orc.NuGetExplorer](http://www.nuget.org/packages/Orc.NuGetExplorer/)** => Core logic, which can be used to work in the background.
--  **[Orc.NuGetExplorer.Xaml](http://www.nuget.org/packages/Orc.NuGetExplorer.Xaml)** => Provides the UI for  **Orc.NuGetExplorer**
+-  **[Orc.NuGetExplorer.Xaml](http://www.nuget.org/packages/Orc.NuGetExplorer.Xaml)** => Provides the UI for  *Orc.NuGetExplorer*
 
 Screenshots
 ------------
@@ -58,4 +58,55 @@ NuGetExplorer is made up of several services:
 - **IRepositoryService** => Used to get acces to specific repositories. Can be used in conjunction with *IPackageQueryService*
 
 Watcher:
+
 - **PackageManagerWatcherBase** => Abstract class, which is used to create a watcher for package management operations
+
+
+Examples
+---------
+
+Usage of *IPackagesUIService* for showing NuGetExplorer dialog box
+
+```C#
+public class NuGetManager
+{
+    private readonly IPackagesUIService _packagesUiService;
+    
+    public NuGetManager(IPackagesUIService packagesUiService)
+    {
+        Argument.IsNotNull(() => packagesUiService);
+        
+        _packagesUiService = packagesUiService;
+    }
+    
+    private async Task ShowNuGetDialog()
+    {
+	    await _packagesUiService.ShowPackagesExplorer();
+    }
+}
+```
+Use *IPackageBatchService* and *IPackagesUpdatesSearcherService* for checking for updates
+
+```C#
+public class SmartUpdater
+{
+    private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
+    private readonly IPackageBatchService _packageBatchService;
+    
+    public SmartUpdater(IPackageBatchService packageBatchService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService)
+    {
+        Argument.IsNotNull(() => packageBatchService);
+        Argument.IsNotNull(() => packagesUpdatesSearcherService);
+        
+        _packageBatchService = packageBatchService;
+        _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
+    }
+    
+    private async Task ShowRecoomenedUpdates()
+    {
+        var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(false);
+	    await _packageBatchService.ShowPackagesBatchAsync(packages, PackageOperationType.Update);
+    }
+}
+```
+ 
