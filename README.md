@@ -102,7 +102,7 @@ public class SmartUpdater
         _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
     }
     
-    private async Task ShowRecoomenedUpdates()
+    private async Task ShowRecommenedUpdates()
     {
         var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(false);
 	    await _packageBatchService.ShowPackagesBatchAsync(packages, PackageOperationType.Update);
