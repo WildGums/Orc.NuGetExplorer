@@ -55,7 +55,7 @@ NuGetExplorer is made up of several services:
 - **IPackageQueryService** => Can be used to search packages in the background
 - **IPackagesUIService** => Show the NuGetExplorer window
 - **IPackagesUpdatesSearcherService** => Used for searching updates with the options of release/prerelease/recommended
-- **IRepositoryService** => Used to get acces to specific repositories. Can be used in conjunction with *IPackageQueryService*
+- **IRepositoryService** => Used to get access to specific repositories. Can be used in conjunction with *IPackageQueryService*
 
 Watcher:
 
