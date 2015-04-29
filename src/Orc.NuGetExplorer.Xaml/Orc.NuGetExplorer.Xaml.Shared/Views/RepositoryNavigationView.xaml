@@ -23,7 +23,7 @@
     </UserControl.Resources>
     
     <Grid x:Name="grid">
-        <ListBox ItemsSource="{Binding RepoCategories}" SelectedItem="{Binding SelectedRepositoryCategory}" 
+        <ListBox ItemsSource="{Binding RepositoryCategories}" 
                  Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0" Margin="0 6 0 0">
 
             <ListBox.ItemContainerStyle>
@@ -74,7 +74,7 @@
 
                         <ListBox BorderThickness="0" ItemsSource="{Binding Repositories}" HorizontalAlignment="Stretch" x:Name="listBox"
                                  SelectionMode="Single" SelectedIndex="0" Margin="0"
-                                 SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
+                                 SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
                                 <local:FocusOnVisibleBehavior/>

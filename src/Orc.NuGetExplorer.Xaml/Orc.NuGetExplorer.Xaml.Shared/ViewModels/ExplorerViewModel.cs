@@ -13,6 +13,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
+    using Catel.Configuration;
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
@@ -27,6 +28,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageBatchService _packageBatchService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+        private readonly IConfigurationService _configurationService;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
@@ -36,7 +38,8 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Constructors
         public ExplorerViewModel(IRepositoryNavigatorService repositoryNavigatorService, ISearchSettingsService searchSettingsService, IPackageCommandService packageCommandService,
             IPleaseWaitService pleaseWaitService, IPackageQueryService packageQueryService, ISearchResultService searchResultService, IDispatcherService dispatcherService,
-            IPackagesUpdatesSearcherService packagesUpdatesSearcherService, IPackageBatchService packageBatchService, INuGetConfigurationService nuGetConfigurationService)
+            IPackagesUpdatesSearcherService packagesUpdatesSearcherService, IPackageBatchService packageBatchService, INuGetConfigurationService nuGetConfigurationService,
+            IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => repositoryNavigatorService);
             Argument.IsNotNull(() => searchSettingsService);
@@ -48,6 +51,7 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => packagesUpdatesSearcherService);
             Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => nuGetConfigurationService);
+            Argument.IsNotNull(() => configurationService);
 
             _packageCommandService = packageCommandService;
             _pleaseWaitService = pleaseWaitService;
@@ -56,6 +60,7 @@ namespace Orc.NuGetExplorer.ViewModels
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
             _packageBatchService = packageBatchService;
             _nuGetConfigurationService = nuGetConfigurationService;
+            _configurationService = configurationService;
 
             SearchSettings = searchSettingsService.SearchSettings;
             SearchResult = searchResultService.SearchResult;
@@ -72,7 +77,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         #region Properties
         [Model]
-        [Expose("RepoCategories")]
+        [Expose("RepositoryCategories")]
         [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
 
@@ -159,6 +164,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnSelectedRepositoryChanged()
         {
+            if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
+            {
+                return;
+            }            
+
             await SearchAndRefresh();
         }
 

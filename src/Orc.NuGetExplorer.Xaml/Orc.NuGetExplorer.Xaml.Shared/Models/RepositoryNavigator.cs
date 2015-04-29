@@ -7,8 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Collections.Generic;
-    using Catel.Collections;
+    using System.ComponentModel;
     using Catel.Data;
 
     internal class RepositoryNavigator : ModelBase
@@ -16,14 +15,32 @@ namespace Orc.NuGetExplorer
         #region Constructors
         public RepositoryNavigator()
         {
-            RepoCategories = new FastObservableCollection<RepositoryCategory>();
+            // used BindingList because it implements IRaiseItemChangedEvents
+            RepositoryCategories = new BindingList<RepositoryCategory>();
+            RepositoryCategories.ListChanged += OnRepositoryCategoriesChanged;
         }
         #endregion
 
         #region Properties
-        public IList<RepositoryCategory> RepoCategories { get; private set; }
+        public BindingList<RepositoryCategory> RepositoryCategories { get; private set; }
         public IRepository SelectedRepository { get; set; }
         public RepositoryCategory SelectedRepositoryCategory { get; set; }
+        #endregion
+
+        #region Methods
+        private void OnRepositoryCategoriesChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType != ListChangedType.ItemChanged || e.PropertyDescriptor.Name != "IsSelected")
+            {
+                return;
+            }
+
+            var repositoryCategory = RepositoryCategories[e.NewIndex];
+            if (repositoryCategory.IsSelected)
+            {
+                SelectedRepositoryCategory = repositoryCategory;
+            }
+        }
         #endregion
     }
 }

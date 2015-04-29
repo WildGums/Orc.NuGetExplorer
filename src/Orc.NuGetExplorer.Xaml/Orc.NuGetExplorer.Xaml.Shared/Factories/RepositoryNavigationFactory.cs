@@ -29,9 +29,9 @@ namespace Orc.NuGetExplorer
         {
             var navigator = new RepositoryNavigator();
 
-            navigator.RepoCategories.Add(CreateRepositoryCategory(PackageOperationType.Uninstall));
-            navigator.RepoCategories.Add(CreateRepositoryCategory(PackageOperationType.Install));
-            navigator.RepoCategories.Add(CreateRepositoryCategory(PackageOperationType.Update));
+            navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Uninstall));
+            navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Install));
+            navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Update));
 
             return navigator;
         }
@@ -43,15 +43,15 @@ namespace Orc.NuGetExplorer
             switch (packageOperationType)
             {
                 case PackageOperationType.Install:
-                    repoCategory.Name = "Online";
+                    repoCategory.Name = RepositoryCategoryName.Online;
                     break;
 
                 case PackageOperationType.Uninstall:
-                    repoCategory.Name = "Installed";
+                    repoCategory.Name = RepositoryCategoryName.Installed;
                     break;
 
                 case PackageOperationType.Update:
-                    repoCategory.Name = "Update";
+                    repoCategory.Name = RepositoryCategoryName.Update;
                     break;
             }
 

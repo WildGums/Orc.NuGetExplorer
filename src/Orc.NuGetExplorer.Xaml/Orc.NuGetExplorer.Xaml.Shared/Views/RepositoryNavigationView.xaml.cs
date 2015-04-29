@@ -23,16 +23,5 @@ namespace Orc.NuGetExplorer.Views
             InitializeComponent();
         }
         #endregion
-
-       /* [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public IRepository SelectedRepository
-        {
-            get { return (IRepository)GetValue(SelectedRepositoryProperty); }
-            set { SetValue(SelectedRepositoryProperty, value); }
-        }
-
-        public static readonly DependencyProperty SelectedRepositoryProperty = DependencyProperty.Register("SelectedRepository", typeof(IRepository),
-            typeof(RepositoryNavigationView), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));*/
-
     }
 }
