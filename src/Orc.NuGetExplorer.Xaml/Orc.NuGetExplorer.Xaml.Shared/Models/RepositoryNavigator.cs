@@ -17,9 +17,18 @@ namespace Orc.NuGetExplorer
         {
             // used BindingList because it implements IRaiseItemChangedEvents
             RepositoryCategories = new BindingList<RepositoryCategory>();
-            RepositoryCategories.ListChanged += OnRepositoryCategoriesChanged;
+            
         }
         #endregion
+
+        public bool Initialized { get; private set; }
+
+        public void Initialize()
+        {
+            RepositoryCategories.ListChanged += OnRepositoryCategoriesChanged;
+
+            Initialized = true;
+        }
 
         #region Properties
         public BindingList<RepositoryCategory> RepositoryCategories { get; private set; }

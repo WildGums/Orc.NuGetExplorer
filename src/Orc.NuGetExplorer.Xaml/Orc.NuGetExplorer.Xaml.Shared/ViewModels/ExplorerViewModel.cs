@@ -29,6 +29,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private readonly IPackageBatchService _packageBatchService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IConfigurationService _configurationService;
+        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
@@ -53,6 +54,8 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => configurationService);
 
+
+            _repositoryNavigatorService = repositoryNavigatorService;
             _packageCommandService = packageCommandService;
             _pleaseWaitService = pleaseWaitService;
             _packageQueryService = packageQueryService;
@@ -64,7 +67,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             SearchSettings = searchSettingsService.SearchSettings;
             SearchResult = searchResultService.SearchResult;
-            Navigator = repositoryNavigatorService.Navigator;
+            
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
@@ -105,6 +108,13 @@ namespace Orc.NuGetExplorer.ViewModels
         protected override async Task Initialize()
         {
             await base.Initialize();
+
+            Navigator = _repositoryNavigatorService.Navigator;
+
+            if (!Navigator.Initialized)
+            {
+                Navigator.Initialize();
+            }
 
             await SearchAndRefresh();
         }
@@ -167,7 +177,18 @@ namespace Orc.NuGetExplorer.ViewModels
             if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
             {
                 return;
-            }            
+            }
+
+            // TODO: saving selected repo, must be moved to RepositoryNavigationViewModel.OnSelectedRepositoryChanged()
+            var selectedRepository = Navigator.SelectedRepository;
+            var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
+
+            if (selectedRepositoryCategory == null || selectedRepository == null)
+            {
+                return;
+            }
+
+            _configurationService.SetLastRepository(selectedRepositoryCategory, selectedRepository);
 
             await SearchAndRefresh();
         }

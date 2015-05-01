@@ -73,7 +73,7 @@
                         </DockPanel>
 
                         <ListBox BorderThickness="0" ItemsSource="{Binding Repositories}" HorizontalAlignment="Stretch" x:Name="listBox"
-                                 SelectionMode="Single" SelectedIndex="0" Margin="0"
+                                 SelectionMode="Single" Margin="0"
                                  SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>

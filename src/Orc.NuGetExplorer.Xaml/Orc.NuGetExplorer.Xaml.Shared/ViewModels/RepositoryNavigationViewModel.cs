@@ -16,17 +16,19 @@ namespace Orc.NuGetExplorer.ViewModels
 
     internal class RepositoryNavigationViewModel : ViewModelBase
     {
+        #region Fields
         private readonly IConfigurationService _configurationService;
+        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
+        #endregion
 
         #region Constructors
         public RepositoryNavigationViewModel(IRepositoryNavigatorService repositoryNavigatorService, IConfigurationService configurationService)
-        {            
+        {
             Argument.IsNotNull(() => repositoryNavigatorService);
             Argument.IsNotNull(() => configurationService);
 
+            _repositoryNavigatorService = repositoryNavigatorService;
             _configurationService = configurationService;
-
-            Navigator = repositoryNavigatorService.Navigator;
         }
         #endregion
 
@@ -38,18 +40,28 @@ namespace Orc.NuGetExplorer.ViewModels
         public RepositoryNavigator Navigator { get; private set; }
         #endregion
 
+        #region Methods
         protected override async Task Initialize()
         {
             await base.Initialize();
+
+            Navigator = _repositoryNavigatorService.Navigator;
+
+            if (!Navigator.Initialized)
+            {
+                Navigator.Initialize();
+            }
 
             var lastRepositoryCategory = _configurationService.GetLastRepositoryCategory();
 
             var selectedRepositoryCategory = Navigator.RepositoryCategories.FirstOrDefault(x => string.Equals(x.Name, lastRepositoryCategory));
 
-            if (selectedRepositoryCategory != null)
+            if (selectedRepositoryCategory == null)
             {
-                selectedRepositoryCategory.IsSelected = true;              
+                return;
             }
+
+            selectedRepositoryCategory.IsSelected = true;
         }
 
         private void OnSelectedRepositoryCategoryChanged()
@@ -86,17 +98,6 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        private void OnSelectedRepositoryChanged()
-        {
-            var selectedRepository = Navigator.SelectedRepository;
-            var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
-
-            if (selectedRepositoryCategory == null || selectedRepository == null)
-            {
-                return;
-            }
-
-            _configurationService.SetLastRepository(selectedRepositoryCategory, selectedRepository);
-        }
+        #endregion
     }
 }

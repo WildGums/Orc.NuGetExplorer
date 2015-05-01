@@ -29,11 +29,18 @@ namespace Orc.NuGetExplorer
         {
             var navigator = new RepositoryNavigator();
 
+            InitializeRepositoryCategories(navigator);
+
+            return navigator;
+        }
+
+        private void InitializeRepositoryCategories(RepositoryNavigator navigator)
+        {
+            Argument.IsNotNull(() => navigator);
+
             navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Uninstall));
             navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Install));
             navigator.RepositoryCategories.Add(CreateRepositoryCategory(PackageOperationType.Update));
-
-            return navigator;
         }
 
         private RepositoryCategory CreateRepositoryCategory(PackageOperationType packageOperationType)
