@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer.ViewModels
         private FeedVerificationResult _feedVerificationResult = FeedVerificationResult.Unknown;
         private bool _isSourceVerified;
         private bool _isVerifying;
-        private string _sourceToVerify;
+        private EditablePackageSource _sourceToVerify;
         #endregion
 
         #region Constructors
@@ -48,6 +48,9 @@ namespace Orc.NuGetExplorer.ViewModels
         [Expose("Name")]
         [Expose("Source")]
         public EditablePackageSource SelectedPackageSource { get; set; }
+
+        public string DefaultFeed { get; set; }
+        public string DefaultSourceName { get; set; }
         #endregion
 
         #region Methods
@@ -68,6 +71,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnSourceChanged()
         {
+            if (SelectedPackageSource == null)
+            {
+                return;
+            }
+
             _isSourceVerified = false;
         }
 
@@ -80,28 +88,23 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            var packageSource = SelectedPackageSource.Source;
-
-            if (string.IsNullOrWhiteSpace(packageSource))
+            if (string.IsNullOrWhiteSpace(SelectedPackageSource.Source))
             {
-                validationResults.Add(FieldValidationResult.CreateError("Source", "The package source is required."));
+                var fieldValidationResult = FieldValidationResult.CreateError("Source", "The package source is required.");
+                validationResults.Add(fieldValidationResult);
+                SelectedPackageSource.AddFieldValidationResult(fieldValidationResult, true);
                 return;
             }
 
             if (!_isSourceVerified)
             {
-                ValidatePackageSource(packageSource);
-                validationResults.Add(FieldValidationResult.CreateError("Source", "Unknown feed verification result."));
+                ValidatePackageSource(SelectedPackageSource);
+                validationResults.Add(FieldValidationResult.CreateWarning("Source", "Feed verification in progress."));
                 return;
-            }
-
-            if (_feedVerificationResult == FeedVerificationResult.Invalid || _feedVerificationResult == FeedVerificationResult.Unknown)
-            {
-                validationResults.Add(FieldValidationResult.CreateError("Source", "The package source is invalid."));
             }
         }
 
-        private void ValidatePackageSource(string packageSource)
+        private void ValidatePackageSource(EditablePackageSource packageSource)
         {
             _sourceToVerify = packageSource;
 
@@ -119,11 +122,15 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             using (new DisposableToken(null, x => _isVerifying = true, x => _isVerifying = false))
             {
-                while (!string.IsNullOrWhiteSpace(_sourceToVerify))
+                while (_sourceToVerify != null)
                 {
                     var feed = _sourceToVerify;
-                    _sourceToVerify = string.Empty;
-                    _feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feed, false);
+                    _sourceToVerify = null;
+                    _feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, false);
+                    if (_feedVerificationResult == FeedVerificationResult.Invalid || _feedVerificationResult == FeedVerificationResult.Unknown)
+                    {
+                        feed.AddFieldValidationResult(FieldValidationResult.CreateError("Source", "The package source is invalid."), true);
+                    }
                 }
 
                 _isSourceVerified = true;
@@ -141,8 +148,8 @@ namespace Orc.NuGetExplorer.ViewModels
             var packageSource = new EditablePackageSource
             {
                 IsEnabled = true,
-                Name = "New package source",
-                Source = "Feed url"
+                Name = DefaultSourceName,
+                Source = DefaultFeed
             };
 
             PackageSources.Add(packageSource);

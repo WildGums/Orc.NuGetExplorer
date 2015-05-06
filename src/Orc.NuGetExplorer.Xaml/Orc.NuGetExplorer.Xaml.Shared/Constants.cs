@@ -14,6 +14,12 @@ namespace Orc.NuGetExplorer
         public const string Update = "Update";
     }
 
+    internal static class DefaultName
+    {
+        public const string PackageSourceFeed = "https://www.nuget.org/api/v2/";
+        public const string PackageSourceName = "PackageSource";
+    }
+
     internal static class AppSettings
     {
         public class NuGetExplorer
