@@ -6,7 +6,7 @@
     <SharedGUID>b2b53f58-61f7-4a2a-944a-9d18214f633d</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Orc.NuGetExplorer.Xaml</Import_RootNamespace>
+    <Import_RootNamespace>Orc.NuGetExplorer</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />
@@ -57,6 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageBatchViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageSourceSettingViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PagingViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RepositoryNavigationViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\ExplorerWindow.xaml.cs">
@@ -70,6 +71,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\PackageListView.xaml.cs">
       <DependentUpon>PackageListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingView.xaml.cs">
+      <DependentUpon>PackageSourceSettingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\PagingView.xaml.cs">
       <DependentUpon>PagingView.xaml</DependentUpon>
@@ -100,6 +104,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\PackageListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

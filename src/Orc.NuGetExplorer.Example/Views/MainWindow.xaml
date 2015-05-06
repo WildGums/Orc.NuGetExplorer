@@ -18,7 +18,7 @@
             <RowDefinition Height="*" />
         </catel:StackGrid.RowDefinitions>
 
-        <TextBlock Text="{Binding Title}" />
+        <Button Content="Settings" Command="{Binding Settings}"/>
         <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
         
         <catel:StackGrid>

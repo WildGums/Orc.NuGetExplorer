@@ -1,19 +1,28 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RepositoryNavigationView.xaml.cs" company="Wild Gums">
+// <copyright file="SettingsWindow.xaml.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Views
+namespace Orc.NuGetExplorer.Example.Views
 {
+    using Catel.Windows;
+    using ViewModels;
+
     /// <summary>
-    /// Interaction logic for RepositoryNavigationView.xaml
+    /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    internal partial class RepositoryNavigationView
+    public partial class SettingsWindow
     {
         #region Constructors
-        public RepositoryNavigationView()
+        public SettingsWindow()
+            : this(null)
+        {
+        }
+
+        public SettingsWindow(SettingsViewModel viewModel)
+            : base(viewModel, DataWindowMode.OkCancelApply)
         {
             InitializeComponent();
         }

@@ -25,12 +25,13 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         private readonly IPackageBatchService _packageBatchService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
+        private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
         #region Constructors
         public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            IPackageBatchService packageBatchService)
+            IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
@@ -38,6 +39,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
             Argument.IsNotNull(() => packageBatchService);
+            Argument.IsNotNull(() => uiVisualizerService);
 
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
@@ -45,6 +47,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
             _packageBatchService = packageBatchService;
+            _uiVisualizerService = uiVisualizerService;
 
             Echo = echoService.GetPackageManagementEcho();
 
@@ -55,6 +58,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
             OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
+            Settings = new TaskCommand(OnSettingsExecute);
         }
         #endregion
 
@@ -70,6 +74,13 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #endregion
 
         #region Commands
+        public TaskCommand Settings { get; private set; }
+
+        private async Task OnSettingsExecute()
+        {
+            await _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+        }
+
         public TaskCommand OpenUpdateWindow { get; private set; }
 
         private async Task OnOpenUpdateWindowExecute()
