@@ -21,7 +21,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding EditablePackageSources}" SelectedItem="{Binding SelectedPackageSource}" Margin="6">
+        <ListBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding EditablePackageSources, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+                 SelectedItem="{Binding SelectedPackageSource}" Margin="6">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

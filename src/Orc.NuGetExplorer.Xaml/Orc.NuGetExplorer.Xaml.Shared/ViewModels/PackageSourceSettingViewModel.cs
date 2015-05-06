@@ -97,6 +97,19 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.ValidateFields(validationResults);
 
+            if (EditablePackageSources != null)
+            {
+                var errorsCount = EditablePackageSources.
+                    Select(packageSource => packageSource.GetValidationContext()).
+                    Select(validationContext => validationContext.GetErrorCount()).
+                    Sum();
+
+                if (errorsCount > 0)
+                {
+                    validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are invalid."));
+                }
+            }
+
             if (SelectedPackageSource == null || _isSourceVerified)
             {
                 return;
@@ -108,7 +121,8 @@ namespace Orc.NuGetExplorer.ViewModels
             }
 
             ValidatePackageSource(SelectedPackageSource);
-            validationResults.Add(FieldValidationResult.CreateWarning("Source", "Feed verification in progress."));
+            validationResults.Add(FieldValidationResult.CreateWarning("Source", string.Format("Verification of package source '{0}'", SelectedPackageSource.Source)));
+            validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are not verified."));
         }
 
         private void ValidatePackageSource(EditablePackageSource packageSource)
@@ -136,7 +150,7 @@ namespace Orc.NuGetExplorer.ViewModels
                     _feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, false);
                     if (_feedVerificationResult == FeedVerificationResult.Invalid || _feedVerificationResult == FeedVerificationResult.Unknown)
                     {
-                        feed.AddFieldValidationResult(FieldValidationResult.CreateError("Source", "The package source is invalid."), true);
+                        feed.AddFieldValidationResult(FieldValidationResult.CreateError("Source", string.Format("The package source '{0}' is invalid.", feed.Source)), true);
                     }
                 }
 
