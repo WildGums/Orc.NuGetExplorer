@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -96,7 +97,22 @@ namespace Orc.NuGetExplorer
             return true;
         }
 
+        public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
+        {
+            Argument.IsNotNull(() => packageSources);
+
+            _packageSourceProvider.SavePackageSources(packageSources.Cast<PackageSource>());
+        }
+
+        [Obsolete("Use DisablePackageSource")]
         public void DeletePackageSource(string name, string source)
+        {
+            Argument.IsNotNullOrWhitespace(() => name);
+
+            _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
+        }
+
+        public void DisablePackageSource(string name, string source)
         {
             Argument.IsNotNullOrWhitespace(() => name);
 

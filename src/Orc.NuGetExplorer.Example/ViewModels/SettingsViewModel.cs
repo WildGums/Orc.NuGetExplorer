@@ -38,6 +38,13 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
             return base.Initialize();
         }
+
+        protected override async Task<bool> Save()
+        {
+            _nuGetConfigurationService.SavePackageSources(PackageSources);
+
+            return await base.Save();
+        }
         #endregion
     }
 }
