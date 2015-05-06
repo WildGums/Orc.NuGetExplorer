@@ -1,5 +1,8 @@
 ﻿using Catel.IoC;
+using Catel.MVVM;
 using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.ViewModels;
+using Orc.NuGetExplorer.Views;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
@@ -25,5 +28,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();        
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
+
+        var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
+        viewModelLocator.Register(typeof(PackageSourceSettingControl), typeof(PackageSourceSettingViewModel));
     }
 }

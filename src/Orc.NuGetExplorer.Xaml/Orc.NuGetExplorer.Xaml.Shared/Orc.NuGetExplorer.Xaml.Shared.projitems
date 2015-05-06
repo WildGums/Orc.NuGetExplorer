@@ -26,6 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Factories\Interfaces\IRepositoryNavigationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factories\RepositoryNavigationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\AccentColorHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EditablePackageSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\PackagesBatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Pager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\PagingItemInfo.cs" />
@@ -72,8 +73,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\PackageListView.xaml.cs">
       <DependentUpon>PackageListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingView.xaml.cs">
-      <DependentUpon>PackageSourceSettingView.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingControl.xaml.cs">
+      <DependentUpon>PackageSourceSettingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\PagingView.xaml.cs">
       <DependentUpon>PagingView.xaml</DependentUpon>
@@ -107,7 +108,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingView.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\PackageSourceSettingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
