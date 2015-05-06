@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer.Views
         public static readonly DependencyProperty PackageSourcesProperty =
             DependencyProperty.Register("PackageSources", typeof (IEnumerable<IPackageSource>), typeof (PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
 
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
         public IEnumerable<IPackageSource> PackageSources
         {
             get { return (IEnumerable<IPackageSource>) GetValue(PackageSourcesProperty); }

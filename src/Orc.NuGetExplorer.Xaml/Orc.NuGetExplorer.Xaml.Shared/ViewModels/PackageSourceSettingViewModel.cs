@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         protected override async Task<bool> Save()
         {
-            PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false));
+            PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false)).ToArray();
 
             return await base.Save();
         }

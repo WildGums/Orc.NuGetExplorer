@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Catel;
@@ -42,11 +43,19 @@ namespace Orc.NuGetExplorer
             return await Task.Factory.StartNew(() => nuGetConfigurationService.SavePackageSource(name, source, isEnabled, isOfficial));
         }
 
+        [Obsolete("Use DisablePackageSourceAsync")]
         public static async Task DeletePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            await Task.Factory.StartNew(() => nuGetConfigurationService.DeletePackageSource(name, source));
+            await Task.Factory.StartNew(() => nuGetConfigurationService.DisablePackageSource(name, source));
+        }
+
+        public static async Task DisablePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
+        {
+            Argument.IsNotNull(() => nuGetConfigurationService);
+
+            await Task.Factory.StartNew(() => nuGetConfigurationService.DisablePackageSource(name, source));
         }
         #endregion
     }
