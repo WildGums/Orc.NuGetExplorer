@@ -11,10 +11,10 @@ namespace Orc.NuGetExplorer
 
     internal class EditablePackageSource : ModelBase
     {
+        #region Properties
         public bool IsEnabled { get; set; }
-
         public string Name { get; set; }
-
         public string Source { get; set; }
+        #endregion
     }
 }

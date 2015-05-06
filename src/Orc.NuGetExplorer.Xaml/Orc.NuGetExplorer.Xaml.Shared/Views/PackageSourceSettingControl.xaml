@@ -5,6 +5,7 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    mc:Ignorable="d"
                    d:DesignHeight="300"
                    d:DesignWidth="400">
@@ -47,11 +48,16 @@
         </StackPanel>
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Name:" HorizontalAlignment="Right" Margin="6"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="6" Text="{Binding Path=SelectedPackageSource.Name, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="6" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Source:" HorizontalAlignment="Right" Margin="6"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="6" Text="{Binding Path=SelectedPackageSource.Source, UpdateSourceTrigger=PropertyChanged}"
-                 IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="6" Text="{Binding Path=Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+                 IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}">
+            <i:Interaction.Behaviors>
+                <catel:UpdateBindingOnTextChanged UpdateDelay="1000" />
+            </i:Interaction.Behaviors>
+        </TextBox>
+        
     </Grid>
 </catel:UserControl>
