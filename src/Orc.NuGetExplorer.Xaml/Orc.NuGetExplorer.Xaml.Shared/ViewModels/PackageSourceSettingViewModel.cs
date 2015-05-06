@@ -19,8 +19,8 @@ namespace Orc.NuGetExplorer.ViewModels
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
         #region Fields
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
+        private readonly IPackageSourceFactory _packageSourceFactory;
         private FeedVerificationResult _feedVerificationResult = FeedVerificationResult.Unknown;
         private bool _isSourceVerified;
         private bool _isVerifying;
@@ -28,13 +28,13 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
-        public PackageSourceSettingViewModel(INuGetConfigurationService nuGetConfigurationService, INuGetFeedVerificationService nuGetFeedVerificationService)
+        public PackageSourceSettingViewModel(INuGetFeedVerificationService nuGetFeedVerificationService, IPackageSourceFactory packageSourceFactory)
         {
-            Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => nuGetFeedVerificationService);
+            Argument.IsNotNull(() => packageSourceFactory);
 
-            _nuGetConfigurationService = nuGetConfigurationService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
+            _packageSourceFactory = packageSourceFactory;
 
             Add = new TaskCommand(OnAddExecute);
             Remove = new TaskCommand(OnRemoveExecute, OnRemoveCanExecute);
@@ -42,9 +42,10 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        public IList<EditablePackageSource> PackageSources { get; private set; }
+        public IList<EditablePackageSource> EditablePackageSources { get; private set; }
+        public IEnumerable<IPackageSource> PackageSources { get; set; }
 
-        [Model]
+        [Model(SupportIEditableObject = false)]
         [Expose("Name")]
         [Expose("Source")]
         public EditablePackageSource SelectedPackageSource { get; set; }
@@ -56,17 +57,23 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Methods
         protected override async Task Initialize()
         {
-            var loadPackageSources = _nuGetConfigurationService.LoadPackageSources();
+            if (PackageSources != null)
+            {
+                OnPackageSourcesChanged();
+            }
 
-            PackageSources = new FastObservableCollection<EditablePackageSource>(loadPackageSources.Select(x =>
+            await base.Initialize();
+        }
+
+        private void OnPackageSourcesChanged()
+        {
+            EditablePackageSources = new FastObservableCollection<EditablePackageSource>(PackageSources.Select(x =>
                 new EditablePackageSource
                 {
                     IsEnabled = x.IsEnabled,
                     Name = x.Name,
                     Source = x.Source
                 }));
-
-            await base.Initialize();
         }
 
         private void OnSourceChanged()
@@ -79,29 +86,29 @@ namespace Orc.NuGetExplorer.ViewModels
             _isSourceVerified = false;
         }
 
+        protected override async Task<bool> Save()
+        {
+            PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false));
+
+            return await base.Save();
+        }
+
         protected override void ValidateFields(List<IFieldValidationResult> validationResults)
         {
             base.ValidateFields(validationResults);
 
-            if (SelectedPackageSource == null)
+            if (SelectedPackageSource == null || _isSourceVerified)
             {
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(SelectedPackageSource.Source))
+            if (_isSourceVerified)
             {
-                var fieldValidationResult = FieldValidationResult.CreateError("Source", "The package source is required.");
-                validationResults.Add(fieldValidationResult);
-                SelectedPackageSource.AddFieldValidationResult(fieldValidationResult, true);
                 return;
             }
 
-            if (!_isSourceVerified)
-            {
-                ValidatePackageSource(SelectedPackageSource);
-                validationResults.Add(FieldValidationResult.CreateWarning("Source", "Feed verification in progress."));
-                return;
-            }
+            ValidatePackageSource(SelectedPackageSource);
+            validationResults.Add(FieldValidationResult.CreateWarning("Source", "Feed verification in progress."));
         }
 
         private void ValidatePackageSource(EditablePackageSource packageSource)
@@ -152,7 +159,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 Source = DefaultFeed
             };
 
-            PackageSources.Add(packageSource);
+            EditablePackageSources.Add(packageSource);
             SelectedPackageSource = packageSource;
         }
 
@@ -165,21 +172,21 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            var index = PackageSources.IndexOf(SelectedPackageSource);
+            var index = EditablePackageSources.IndexOf(SelectedPackageSource);
             if (index < 0)
             {
                 return;
             }
 
-            PackageSources.RemoveAt(index);
+            EditablePackageSources.RemoveAt(index);
 
-            if (index < PackageSources.Count)
+            if (index < EditablePackageSources.Count)
             {
-                SelectedPackageSource = PackageSources[index];
+                SelectedPackageSource = EditablePackageSources[index];
             }
             else
             {
-                SelectedPackageSource = PackageSources.LastOrDefault();
+                SelectedPackageSource = EditablePackageSources.LastOrDefault();
             }
         }
 

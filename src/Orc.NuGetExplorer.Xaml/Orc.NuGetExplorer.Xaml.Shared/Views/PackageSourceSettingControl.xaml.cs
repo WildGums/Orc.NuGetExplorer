@@ -7,6 +7,8 @@
 
 namespace Orc.NuGetExplorer.Views
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Windows;
     using Catel.MVVM.Views;
 
@@ -36,13 +38,23 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty DefaultSourceNameProperty =
-            DependencyProperty.Register("DefaultSourceName", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
+            DependencyProperty.Register("DefaultSourceName", typeof (string), typeof (PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultSourceName
         {
-            get { return (string)GetValue(DefaultSourceNameProperty); }
+            get { return (string) GetValue(DefaultSourceNameProperty); }
             set { SetValue(DefaultSourceNameProperty, value); }
+        }
+
+        public static readonly DependencyProperty PackageSourcesProperty =
+            DependencyProperty.Register("PackageSources", typeof (IEnumerable<IPackageSource>), typeof (PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        public IEnumerable<IPackageSource> PackageSources
+        {
+            get { return (IEnumerable<IPackageSource>) GetValue(PackageSourcesProperty); }
+            set { SetValue(PackageSourcesProperty, value); }
         }
         #endregion
     }

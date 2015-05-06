@@ -7,9 +7,37 @@
 
 namespace Orc.NuGetExplorer.Example.ViewModels
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Catel;
     using Catel.MVVM;
 
     public class SettingsViewModel : ViewModelBase
     {
+        #region Fields
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
+        #endregion
+
+        #region Constructors
+        public SettingsViewModel(INuGetConfigurationService nuGetConfigurationService)
+        {
+            Argument.IsNotNull(() => nuGetConfigurationService);
+
+            _nuGetConfigurationService = nuGetConfigurationService;
+        }
+        #endregion
+
+        #region Properties
+        public IEnumerable<IPackageSource> PackageSources { get; set; }
+        #endregion
+
+        #region Methods
+        protected override Task Initialize()
+        {
+            PackageSources = _nuGetConfigurationService.LoadPackageSources();
+
+            return base.Initialize();
+        }
+        #endregion
     }
 }

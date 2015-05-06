@@ -8,6 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Height="500" Width="400">
-        <views:PackageSourceSettingControl />
+        <views:PackageSourceSettingControl PackageSources="{Binding PackageSources}"/>
     </Grid>
 </catel:DataWindow>
