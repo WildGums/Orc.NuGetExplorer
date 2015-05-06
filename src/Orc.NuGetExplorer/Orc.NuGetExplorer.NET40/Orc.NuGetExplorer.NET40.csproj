@@ -102,12 +102,11 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Annotations.cs" />
+    <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="..\Orc.NuGetExplorer.Shared\Orc.NuGetExplorer.Shared.projitems" Label="Shared" Condition="Exists('..\Orc.NuGetExplorer.Shared\Orc.NuGetExplorer.Shared.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
