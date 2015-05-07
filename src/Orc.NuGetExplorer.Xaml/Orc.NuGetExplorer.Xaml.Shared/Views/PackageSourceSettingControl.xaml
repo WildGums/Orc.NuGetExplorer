@@ -149,8 +149,12 @@
         </ListBox>
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Name:" HorizontalAlignment="Right" Margin="6"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="6" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
-                 IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="6" Text="{Binding Path=Name, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+                 IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}">
+            <i:Interaction.Behaviors>
+                <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
+            </i:Interaction.Behaviors>
+        </TextBox>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Source:" HorizontalAlignment="Right" Margin="6"/>
         <TextBox Grid.Row="3" Grid.Column="1" Margin="6" Text="{Binding Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"

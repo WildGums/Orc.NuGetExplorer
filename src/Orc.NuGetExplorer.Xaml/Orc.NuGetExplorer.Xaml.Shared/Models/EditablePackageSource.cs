@@ -17,8 +17,30 @@ namespace Orc.NuGetExplorer
         public string Name { get; set; }
         public string Source { get; set; }
         public string PreviousSourceValue { get; set; }
+
+        public bool? IsValid
+        {
+            get
+            {
+                if (IsValidName == null || IsValidSource == null)
+                {
+                    return null;
+                }
+
+                return IsValidName.Value && IsValidSource.Value;
+            }
+            set
+            {
+                IsValidName = value;
+                IsValidSource = value;
+            }
+        }
+
         [DefaultValue(true)]
-        public bool? IsValid { get; set; }
+        public bool? IsValidName { get; set; }
+
+        [DefaultValue(true)]
+        public bool? IsValidSource { get; set; }
         #endregion
     }
 }

@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.OnModelPropertyChanged(sender, e);
 
-            if (string.Equals(e.PropertyName, "Source"))
+            if (string.Equals(e.PropertyName, "Source") || string.Equals(e.PropertyName, "Name"))
             {
                 var selectedPackageSource = SelectedPackageSource;
                 if (selectedPackageSource == null)
@@ -103,7 +103,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 selectedPackageSource.IsValid = false;
 #pragma warning disable 4014
-                VerifyPackageSource(selectedPackageSource);
+                VerifyPackageSource(selectedPackageSource, string.Equals(e.PropertyName, "Name"));
 #pragma warning restore 4014
             }
         }
@@ -129,7 +129,15 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            validationResults.Add(FieldValidationResult.CreateError("Source", "Package source '{0}' is invalid.", SelectedPackageSource.Source));
+            if (!(SelectedPackageSource.IsValidName ?? false))
+            {
+                validationResults.Add(FieldValidationResult.CreateError("Name", "Package source name '{0}' is empty or not unique.", SelectedPackageSource.Name));
+            }
+
+            if (!(SelectedPackageSource.IsValidSource ?? false))
+            {
+                validationResults.Add(FieldValidationResult.CreateError("Source", "Package source '{0}' is invalid.", SelectedPackageSource.Source));
+            }            
         }
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
@@ -142,14 +150,14 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        private async Task VerifyPackageSource(EditablePackageSource packageSource)
+        private async Task VerifyPackageSource(EditablePackageSource packageSource, bool force = false)
         {
             if (packageSource == null || packageSource.IsValid == null)
             {
                 return;
             }
 
-            if (string.Equals(packageSource.Source, packageSource.PreviousSourceValue))
+            if (!force && string.Equals(packageSource.Source, packageSource.PreviousSourceValue))
             {
                 return;
             }
@@ -157,19 +165,29 @@ namespace Orc.NuGetExplorer.ViewModels
             packageSource.IsValid = null;
 
             string feedToValidate;
-            bool isValid;
+            string nameToValidate;
+            bool isValidUrl;
+            bool isValidName;
 
             do
             {
                 feedToValidate = packageSource.Source;
+                nameToValidate = packageSource.Name;
+
+                var namesCount = EditablePackageSources.Count(x => string.Equals(nameToValidate, x.Name));
+
+                isValidName = !string.IsNullOrWhiteSpace(nameToValidate) && namesCount == 1;
 
                 var feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feedToValidate, false);
 
-                isValid = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
-            } while (!string.Equals(feedToValidate, packageSource.Source));
+                isValidUrl = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
+
+            } while (!string.Equals(feedToValidate, packageSource.Source) 
+                && !string.Equals(nameToValidate, packageSource.Name));
 
             packageSource.PreviousSourceValue = packageSource.Source;
-            packageSource.IsValid = isValid;
+            packageSource.IsValidSource = isValidUrl;
+            packageSource.IsValidName = isValidName;
 
             ValidateViewModel(true);
         }
@@ -253,7 +271,7 @@ namespace Orc.NuGetExplorer.ViewModels
             SelectedPackageSource = packageSource;
 
 #pragma warning disable 4014
-            VerifyPackageSource(packageSource);
+            VerifyPackageSource(packageSource, true);
 #pragma warning restore 4014
         }
 
