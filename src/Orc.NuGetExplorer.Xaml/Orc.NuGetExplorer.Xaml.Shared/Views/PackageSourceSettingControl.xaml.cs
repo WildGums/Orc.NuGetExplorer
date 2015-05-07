@@ -17,43 +17,46 @@ namespace Orc.NuGetExplorer.Views
         #region Constructors
         static PackageSourceSettingControl()
         {
-            typeof (PackageSourceSettingControl).AutoDetectViewPropertiesToSubscribe();
+            typeof(PackageSourceSettingControl).AutoDetectViewPropertiesToSubscribe();
         }
 
         public PackageSourceSettingControl()
         {
+            CreateWarningAndErrorValidatorForViewModel = true;
+            SkipSearchingForInfoBarMessageControl = false;
+
             this.InitializeComponent();
         }
         #endregion
 
         #region DependencyProperty
         public static readonly DependencyProperty DefaultFeedProperty =
-            DependencyProperty.Register("DefaultFeed", typeof (string), typeof (PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceFeed));
+            DependencyProperty.Register("DefaultFeed", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceFeed));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultFeed
         {
-            get { return (string) GetValue(DefaultFeedProperty); }
+            get { return (string)GetValue(DefaultFeedProperty); }
             set { SetValue(DefaultFeedProperty, value); }
         }
 
         public static readonly DependencyProperty DefaultSourceNameProperty =
-            DependencyProperty.Register("DefaultSourceName", typeof (string), typeof (PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
+            DependencyProperty.Register("DefaultSourceName", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultSourceName
         {
-            get { return (string) GetValue(DefaultSourceNameProperty); }
+            get { return (string)GetValue(DefaultSourceNameProperty); }
             set { SetValue(DefaultSourceNameProperty, value); }
         }
 
         public static readonly DependencyProperty PackageSourcesProperty =
-            DependencyProperty.Register("PackageSources", typeof (IEnumerable<IPackageSource>), typeof (PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
+            DependencyProperty.Register("PackageSources", typeof(IEnumerable<IPackageSource>), typeof(PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
         public IEnumerable<IPackageSource> PackageSources
         {
-            get { return (IEnumerable<IPackageSource>) GetValue(PackageSourcesProperty); }
+            get { return (IEnumerable<IPackageSource>)GetValue(PackageSourcesProperty); }
             set { SetValue(PackageSourcesProperty, value); }
         }
         #endregion

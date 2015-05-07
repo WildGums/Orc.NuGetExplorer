@@ -35,6 +35,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
             Add = new TaskCommand(OnAddExecute);
             Remove = new TaskCommand(OnRemoveExecute, OnRemoveCanExecute);
+
+            SuspendValidation = false;
         }
         #endregion
 
@@ -117,22 +119,27 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.ValidateFields(validationResults);
 
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == false))
-            {
-                validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are invalid."));
-            }
-
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
-            {
-                validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are not verified."));
-            }
-
             if (SelectedPackageSource == null || (SelectedPackageSource.IsValid??true))
             {
                 return;
             }
 
             validationResults.Add(FieldValidationResult.CreateError("Source", string.Format("Package source '{0}' is invalid.", SelectedPackageSource.Source)));
+        }
+
+        protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
+        {
+            base.ValidateBusinessRules(validationResults);
+
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == false))
+            {
+                validationResults.Add(BusinessRuleValidationResult.CreateError("Some package sources are invalid."));
+            }
+
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
+            {
+                validationResults.Add(BusinessRuleValidationResult.CreateError("Some package sources are not verified."));
+            }
         }
 
         private async Task VerifyPackageSource(EditablePackageSource packageSource)
