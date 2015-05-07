@@ -82,8 +82,12 @@ namespace Orc.NuGetExplorer.ViewModels
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnModelPropertyChanged(sender, e);
+            if (string.Equals(e.PropertyName, "Name"))
+            {
+                VerifyAll();
+            }
 
-            if (string.Equals(e.PropertyName, "Source") || string.Equals(e.PropertyName, "Name"))
+            if (string.Equals(e.PropertyName, "Source"))
             {
                 var selectedPackageSource = SelectedPackageSource;
                 if (selectedPackageSource == null)
@@ -98,7 +102,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 selectedPackageSource.IsValid = false;
 #pragma warning disable 4014
-                VerifyPackageSource(selectedPackageSource, string.Equals(e.PropertyName, "Name"));
+                VerifyPackageSource(selectedPackageSource);
 #pragma warning restore 4014
             }
         }
