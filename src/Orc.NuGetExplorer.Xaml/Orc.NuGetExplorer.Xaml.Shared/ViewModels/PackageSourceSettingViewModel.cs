@@ -76,13 +76,8 @@ namespace Orc.NuGetExplorer.ViewModels
                     Source = x.Source
                 }));
 
-            foreach (var packageSource in EditablePackageSources)
-            {
-#pragma warning disable 4014
-                VerifyPackageSource(packageSource);
-#pragma warning restore 4014
-            }
-        }
+            VerifyAll();
+        }        
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -228,6 +223,16 @@ namespace Orc.NuGetExplorer.ViewModels
 
             SelectedPackageSource = selectedPackageSource;
         }
+
+        private void VerifyAll()
+        {
+            foreach (var packageSource in EditablePackageSources)
+            {
+#pragma warning disable 4014
+                VerifyPackageSource(packageSource, true);
+#pragma warning restore 4014
+            }
+        }
         #endregion
 
         #region Commands
@@ -270,9 +275,7 @@ namespace Orc.NuGetExplorer.ViewModels
             EditablePackageSources.Add(packageSource);
             SelectedPackageSource = packageSource;
 
-#pragma warning disable 4014
-            VerifyPackageSource(packageSource, true);
-#pragma warning restore 4014
+            VerifyAll();
         }
 
         public TaskCommand Remove { get; private set; }
@@ -300,6 +303,8 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 SelectedPackageSource = EditablePackageSources.LastOrDefault();
             }
+
+            VerifyAll();
         }
 
         private bool OnRemoveCanExecute()
