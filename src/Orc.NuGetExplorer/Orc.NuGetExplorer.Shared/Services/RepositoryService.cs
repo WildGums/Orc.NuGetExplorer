@@ -117,7 +117,7 @@ namespace Orc.NuGetExplorer
 
         private IEnumerable<IPackageSource> GetPackageSources()
         {
-            return _nuGetConfigurationService.LoadPackageSources();
+            return _nuGetConfigurationService.LoadPackageSources(true);
         }
 
         private IRepository GetLocalRepository()

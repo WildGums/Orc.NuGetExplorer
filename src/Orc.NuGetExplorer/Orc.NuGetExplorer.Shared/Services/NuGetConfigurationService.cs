@@ -57,9 +57,16 @@ namespace Orc.NuGetExplorer
             _configurationService.SetValue(Settings.NuGet.DestinationFolder, value);
         }
 
-        public IEnumerable<IPackageSource> LoadPackageSources()
+        public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
         {
-            return _packageSourceProvider.LoadPackageSources().ToPackageSourceInterfaces();
+            var packageSources = _packageSourceProvider.LoadPackageSources();
+
+            if (onlyEnabled)
+            {
+                packageSources = packageSources.Where(x => x.IsEnabled);
+            }
+
+            return packageSources.ToPackageSourceInterfaces();
         }
 
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
