@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory)
+        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false)
         {
             Argument.IsNotNullOrEmpty(() => name);
             Argument.IsNotNull(() => packageRepositoryFactory);
@@ -33,19 +33,33 @@ namespace Orc.NuGetExplorer
             int id;
             if (_keyIdDictionary.TryGetValue(key, out id))
             {
-                return _idTupleDictionary[id].Item1;
+                if (!renew)
+                {
+                    return _idTupleDictionary[id].Item1;
+                }
+
+                return CreateSerialisableRepository(name, operationType, packageRepositoryFactory, id);
             }
 
             id = _idCounter++;
+            _keyIdDictionary.Add(key, id);
+
+            return CreateSerialisableRepository(name, operationType, packageRepositoryFactory, id);
+        }
+
+        private IRepository CreateSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, int id)
+        {
+            Argument.IsNotNullOrEmpty(() => name);
+            Argument.IsNotNull(() => packageRepositoryFactory);
+
             var repository = new Repository
             {
                 Id = id,
                 Name = name,
                 OperationType = operationType
             };
-
-            _keyIdDictionary.Add(key, id);
-            _idTupleDictionary.Add(id, new Tuple<IRepository, IPackageRepository>(repository, packageRepositoryFactory()));
+            
+            _idTupleDictionary[id] = new Tuple<IRepository, IPackageRepository>(repository, packageRepositoryFactory());
 
             return repository;
         }

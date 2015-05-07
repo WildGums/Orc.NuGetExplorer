@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     internal interface IRepositoryCacheService
     {
         #region Methods
-        IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory);
+        IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false);
         IPackageRepository GetNuGetRepository(IRepository repository);
         #endregion
     }

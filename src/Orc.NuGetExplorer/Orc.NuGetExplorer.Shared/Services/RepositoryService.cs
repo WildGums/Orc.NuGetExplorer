@@ -92,7 +92,7 @@ namespace Orc.NuGetExplorer
                 {
                     var packageSources = GetPackageSources();
                     return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-                });
+                }, true);
         }
 
         public IEnumerable<IRepository> GetSourceRepositories()
@@ -112,7 +112,7 @@ namespace Orc.NuGetExplorer
                 var packageSources = GetPackageSources();
                 var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
                 return new UpdateRepository(LocalNuGetRepository, sourceRepository);
-            });
+            }, true);
         }
 
         private IEnumerable<IPackageSource> GetPackageSources()
