@@ -109,6 +109,8 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             await base.Initialize();
 
+            _repositoryNavigatorService.Initialize();
+
             Navigator = _repositoryNavigatorService.Navigator;
 
             if (!Navigator.Initialized)
