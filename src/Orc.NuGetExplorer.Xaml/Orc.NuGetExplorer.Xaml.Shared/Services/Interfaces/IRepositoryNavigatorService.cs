@@ -12,5 +12,7 @@ namespace Orc.NuGetExplorer
         #region Properties
         RepositoryNavigator Navigator { get; }
         #endregion
+
+        void Initialize();
     }
 }
