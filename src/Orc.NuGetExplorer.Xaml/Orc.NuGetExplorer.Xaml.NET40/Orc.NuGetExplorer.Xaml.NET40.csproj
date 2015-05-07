@@ -103,6 +103,9 @@
     <Resource Include="..\Orc.NuGetExplorer.Xaml.Shared\Resources\Images\packageDefaultIcon.png">
       <Link>Resources\Images\packageDefaultIcon.png</Link>
     </Resource>
+    <Resource Include="..\Orc.NuGetExplorer.Xaml.Shared\Resources\Images\Loading.gif">
+      <Link>Resources\Images\Loading.gif</Link>
+    </Resource>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
