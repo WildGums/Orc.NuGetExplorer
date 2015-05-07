@@ -29,11 +29,11 @@ namespace Orc.NuGetExplorer
             await Task.Factory.StartNew(() => nuGetConfigurationService.SetDestinationFolder(value));
         }
 
-        public static async Task<IEnumerable<IPackageSource>> LoadPackageSourcesAsync(this INuGetConfigurationService nuGetConfigurationService)
+        public static async Task<IEnumerable<IPackageSource>> LoadPackageSourcesAsync(this INuGetConfigurationService nuGetConfigurationService, bool onlyEnabled = false)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            return await Task.Factory.StartNew(() => nuGetConfigurationService.LoadPackageSources());
+            return await Task.Factory.StartNew(() => nuGetConfigurationService.LoadPackageSources(onlyEnabled));
         }
 
         public static async Task<bool> SavePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source, bool isEnabled = true, bool isOfficial = true)

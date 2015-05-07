@@ -13,14 +13,17 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IRepositoryNavigationFactory _repositoryNavigationFactory;
+        private readonly IRepositoryService _repositoryService;
         #endregion
 
         #region Constructors
-        public RepositoryNavigatorService(IRepositoryNavigationFactory repositoryNavigationFactory)
+        public RepositoryNavigatorService(IRepositoryNavigationFactory repositoryNavigationFactory, IRepositoryService repositoryService)
         {
             Argument.IsNotNull(() => repositoryNavigationFactory);
+            Argument.IsNotNull(() => repositoryService);
 
             _repositoryNavigationFactory = repositoryNavigationFactory;
+            _repositoryService = repositoryService;
         }
         #endregion
 

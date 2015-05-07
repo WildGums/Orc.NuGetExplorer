@@ -15,7 +15,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         string GetDestinationFolder();
         void SetDestinationFolder(string value);
-        IEnumerable<IPackageSource> LoadPackageSources();
+        IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
         bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true);
         [Obsolete("Use DisablePackageSource")]
         void DeletePackageSource(string name, string source);
