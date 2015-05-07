@@ -51,8 +51,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public string DefaultFeed { get; set; }
         public string DefaultSourceName { get; set; }
-
-        public bool IsValidatingFeeds { get; private set; }
         #endregion
 
         #region Methods
@@ -111,7 +109,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         protected override async Task<bool> Save()
         {
-            if (IsValidatingFeeds)
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
             {
                 return false;
             }
@@ -160,8 +158,6 @@ namespace Orc.NuGetExplorer.ViewModels
             string feedToValidate;
             bool isValid;
 
-            IsValidatingFeeds = true;
-
             do
             {
                 feedToValidate = packageSource.Source;
@@ -171,8 +167,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 isValid = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
 
             } while (!string.Equals(feedToValidate, packageSource.Source));
-
-            IsValidatingFeeds = false;
 
             packageSource.PreviousSourceValue = packageSource.Source;
             packageSource.IsValid = isValid;
