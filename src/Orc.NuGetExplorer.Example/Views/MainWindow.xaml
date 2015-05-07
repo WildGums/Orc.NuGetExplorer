@@ -41,6 +41,7 @@
                 
                 <TextBlock Text="Package source name"/>
                 <TextBox Text="{Binding PackageSourceName, UpdateSourceTrigger=PropertyChanged}"/>
+                
                 <TextBlock Text="Package source feed"/>
                 <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
             </catel:StackGrid>
@@ -56,6 +57,7 @@
             </Grid.ColumnDefinitions>
             
             <ListBox Grid.Column="0" ItemsSource="{Binding Lines}"/>
+            
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -77,6 +79,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                
                 <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Open in update window" Command="{Binding OpenUpdateWindow}"/>
             </Grid>
         </Grid>

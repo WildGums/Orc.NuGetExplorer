@@ -7,9 +7,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
-                   mc:Ignorable="d"
-                   d:DesignHeight="300"
-                   d:DesignWidth="400">
+                   mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
+    
     <catel:UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -58,8 +57,8 @@
                 </Setter>
             </Style>
         </ResourceDictionary>
-        
     </catel:UserControl.Resources>
+    
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -75,7 +74,8 @@
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" LastChildFill="False"  Margin="2 6 6 0">
             <TextBlock Text="Available package sources" HorizontalAlignment="Left" Margin="6 0 0 0"/>
-            <Button Width="25" Height="25" Margin="4 0 0 0" DockPanel.Dock="Right">
+            
+            <!--<Button Width="25" Height="25" Margin="4 0 0 0" DockPanel.Dock="Right">
                 <Grid>
                     <Viewbox Height="18" Width="18">
                         <Path Data="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
@@ -95,7 +95,7 @@
                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"/>
                     </Viewbox>
                 </Grid>
-            </Button>
+            </Button>-->
             
             <Button Command="{Binding Remove}" Width="25" Height="25" Margin="4 0 0 0" DockPanel.Dock="Right">
                 <Grid>
@@ -160,4 +160,5 @@
             </i:Interaction.Behaviors>
         </TextBox>
     </Grid>
+    
 </catel:UserControl>

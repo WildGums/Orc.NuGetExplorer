@@ -51,6 +51,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public string DefaultFeed { get; set; }
         public string DefaultSourceName { get; set; }
+
+        public bool IsValidatingFeeds { get; private set; }
         #endregion
 
         #region Methods
@@ -89,7 +91,6 @@ namespace Orc.NuGetExplorer.ViewModels
             if (string.Equals(e.PropertyName, "Source"))
             {
                 var selectedPackageSource = SelectedPackageSource;
-
                 if (selectedPackageSource == null)
                 {
                     return;
@@ -110,6 +111,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
         protected override async Task<bool> Save()
         {
+            if (IsValidatingFeeds)
+            {
+                return false;
+            }
+
             PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false)).ToArray();
 
             return await base.Save();
@@ -119,26 +125,21 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.ValidateFields(validationResults);
 
-            if (SelectedPackageSource == null || (SelectedPackageSource.IsValid??true))
+            if (SelectedPackageSource == null || (SelectedPackageSource.IsValid ?? true))
             {
                 return;
             }
 
-            validationResults.Add(FieldValidationResult.CreateError("Source", string.Format("Package source '{0}' is invalid.", SelectedPackageSource.Source)));
+            validationResults.Add(FieldValidationResult.CreateError("Source", "Package source '{0}' is invalid.", SelectedPackageSource.Source));
         }
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
         {
             base.ValidateBusinessRules(validationResults);
 
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == false))
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid.HasValue && !x.IsValid.Value))
             {
                 validationResults.Add(BusinessRuleValidationResult.CreateError("Some package sources are invalid."));
-            }
-
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
-            {
-                validationResults.Add(BusinessRuleValidationResult.CreateError("Some package sources are not verified."));
             }
         }
 
@@ -152,13 +153,14 @@ namespace Orc.NuGetExplorer.ViewModels
             if (string.Equals(packageSource.Source, packageSource.PreviousSourceValue))
             {
                 return;
-            }            
+            }
 
             packageSource.IsValid = null;
 
             string feedToValidate;
-
             bool isValid;
+
+            IsValidatingFeeds = true;
 
             do
             {
@@ -170,10 +172,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
             } while (!string.Equals(feedToValidate, packageSource.Source));
 
-            packageSource.PreviousSourceValue = packageSource.Source;
+            IsValidatingFeeds = false;
 
+            packageSource.PreviousSourceValue = packageSource.Source;
             packageSource.IsValid = isValid;
-            
+
             ValidateViewModel(true);
         }
         #endregion

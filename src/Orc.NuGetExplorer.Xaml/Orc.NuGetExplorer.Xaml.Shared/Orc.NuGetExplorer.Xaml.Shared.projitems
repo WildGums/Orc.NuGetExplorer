@@ -124,6 +124,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Resources\Images\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Validators\" />
   </ItemGroup>
 </Project>
