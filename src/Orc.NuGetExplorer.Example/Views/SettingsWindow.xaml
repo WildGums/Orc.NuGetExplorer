@@ -7,7 +7,7 @@
              xmlns:views="clr-namespace:Orc.NuGetExplorer.Views;assembly=Orc.NuGetExplorer.Xaml"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Height="500" Width="400">
+    <Grid Height="500" Width="500">
         <views:PackageSourceSettingControl PackageSources="{Binding PackageSources, Mode=TwoWay}"/>
     </Grid>
 </catel:DataWindow>
