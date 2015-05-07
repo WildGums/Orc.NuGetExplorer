@@ -187,11 +187,16 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 IsEnabled = true,
                 Name = DefaultSourceName,
-                Source = DefaultFeed
+                Source = DefaultFeed,
+                IsValid = true
             };
 
             EditablePackageSources.Add(packageSource);
             SelectedPackageSource = packageSource;
+
+#pragma warning disable 4014
+            VerifyPackageSource(packageSource);
+#pragma warning restore 4014
         }
 
         public TaskCommand Remove { get; private set; }
