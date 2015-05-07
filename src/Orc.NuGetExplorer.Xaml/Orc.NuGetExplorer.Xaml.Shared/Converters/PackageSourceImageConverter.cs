@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageImageConverter.cs" company="Wild Gums">
+// <copyright file="PackageSourceImageConverter.cs" company="Wild Gums">
 //   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,10 +11,9 @@ namespace Orc.NuGetExplorer.Converters
     using Catel.IoC;
     using Catel.MVVM.Converters;
 
-    internal class PackageImageConverter : ValueConverterBase
+    internal class PackageSourceImageConverter : ValueConverterBase<EditablePackageSource>
     {
         #region Fields
-        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
         private IImageResolveService _imageResolveService;
         #endregion
 
@@ -33,11 +32,15 @@ namespace Orc.NuGetExplorer.Converters
         }
         #endregion
 
-        #region Methods
-        protected override object Convert(object value, Type targetType, object parameter)
+
+        protected override object Convert(EditablePackageSource value, Type targetType, object parameter)
         {
-            return ImageResolveService.ResolveImageFromUri(value as Uri, DefaultPackageUrl);
+            if (value == null)
+            {
+                return ImageResolveService.ResolveImageFromUri(new Uri("pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png"), null);
+            }
+
+            return false;
         }
-        #endregion
     }
 }

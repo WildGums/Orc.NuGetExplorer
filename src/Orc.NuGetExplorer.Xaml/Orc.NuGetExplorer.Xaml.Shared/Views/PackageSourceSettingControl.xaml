@@ -6,22 +6,27 @@
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
                    mc:Ignorable="d"
                    d:DesignHeight="300"
                    d:DesignWidth="400">
-    
+    <catel:UserControl.Resources>
+        <converters:PackageSourceImageConverter x:Key="ImageConverter"/>
+    </catel:UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding EditablePackageSources, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+        
+        <ListBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding EditablePackageSources, NotifyOnValidationError=True}" 
                  SelectedItem="{Binding SelectedPackageSource}" Margin="6">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -30,14 +35,19 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Margin="0,0,5,0" IsChecked="{Binding IsEnabled}"/>
                         
+                        <CheckBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" Margin="0,0,5,0" IsChecked="{Binding IsEnabled}"/>
+
                         <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" />
                         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"/>
+                        
+                        <Image Grid.Column="2" Grid.RowSpan="2" Source="{Binding Converter={StaticResource ImageConverter}}"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -53,10 +63,10 @@
                  IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Source:" HorizontalAlignment="Right" Margin="6"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="6" Text="{Binding Path=Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="6" Text="{Binding Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
                  IsEnabled="{Binding SelectedPackageSource, Converter={catel:ReferenceToBooleanConverter}}">
             <i:Interaction.Behaviors>
-                <catel:UpdateBindingOnTextChanged UpdateDelay="1000" />
+                <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
             </i:Interaction.Behaviors>
         </TextBox>
         

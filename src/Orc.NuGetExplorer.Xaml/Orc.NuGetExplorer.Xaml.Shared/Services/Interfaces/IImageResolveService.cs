@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     public interface IImageResolveService
     {
         #region Methods
-        ImageSource ResolveImageFromUri(Uri uri);
+        ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null);
         #endregion
     }
 }

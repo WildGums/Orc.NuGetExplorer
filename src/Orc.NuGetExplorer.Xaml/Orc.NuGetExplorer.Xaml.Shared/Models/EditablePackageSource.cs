@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.ComponentModel;
     using Catel.Data;
 
     internal class EditablePackageSource : ModelBase
@@ -15,6 +16,9 @@ namespace Orc.NuGetExplorer
         public bool IsEnabled { get; set; }
         public string Name { get; set; }
         public string Source { get; set; }
+        public string PreviousSourceValue { get; set; }
+        [DefaultValue(true)]
+        public bool? IsValid { get; set; }
         #endregion
     }
 }

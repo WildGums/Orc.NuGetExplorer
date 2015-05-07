@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
@@ -21,10 +22,6 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Fields
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageSourceFactory _packageSourceFactory;
-        private FeedVerificationResult _feedVerificationResult = FeedVerificationResult.Unknown;
-        private bool _isSourceVerified;
-        private bool _isVerifying;
-        private EditablePackageSource _sourceToVerify;
         #endregion
 
         #region Constructors
@@ -74,16 +71,39 @@ namespace Orc.NuGetExplorer.ViewModels
                     Name = x.Name,
                     Source = x.Source
                 }));
+
+            foreach (var packageSource in EditablePackageSources)
+            {
+#pragma warning disable 4014
+                VerifyPackageSource(packageSource);
+#pragma warning restore 4014
+            }
         }
 
-        private void OnSourceChanged()
+        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (SelectedPackageSource == null)
-            {
-                return;
-            }
+            base.OnModelPropertyChanged(sender, e);
 
-            _isSourceVerified = false;
+            if (string.Equals(e.PropertyName, "Source"))
+            {
+                var selectedPackageSource = SelectedPackageSource;
+
+                if (selectedPackageSource == null)
+                {
+                    return;
+                }
+
+                if (selectedPackageSource.IsValid == null)
+                {
+                    return;
+                }
+
+                selectedPackageSource.IsValid = false;
+#pragma warning disable 4014
+                VerifyPackageSource(selectedPackageSource);
+#pragma warning restore 4014
+
+            }
         }
 
         protected override async Task<bool> Save()
@@ -97,66 +117,56 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.ValidateFields(validationResults);
 
-            if (EditablePackageSources != null)
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == false))
             {
-                var errorsCount = EditablePackageSources.
-                    Select(packageSource => packageSource.GetValidationContext()).
-                    Select(validationContext => validationContext.GetErrorCount()).
-                    Sum();
-
-                if (errorsCount > 0)
-                {
-                    validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are invalid."));
-                }
+                validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are invalid."));
             }
 
-            if (SelectedPackageSource == null || _isSourceVerified)
+            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
+            {
+                validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are not verified."));
+            }
+
+            if (SelectedPackageSource == null || (SelectedPackageSource.IsValid??true))
             {
                 return;
             }
 
-            if (_isSourceVerified)
-            {
-                return;
-            }
-
-            ValidatePackageSource(SelectedPackageSource);
-            validationResults.Add(FieldValidationResult.CreateWarning("Source", string.Format("Verification of package source '{0}'", SelectedPackageSource.Source)));
-            validationResults.Add(FieldValidationResult.CreateError("EditablePackageSources", "Some package sources are not verified."));
+            validationResults.Add(FieldValidationResult.CreateError("Source", string.Format("Package source '{0}' is invalid.", SelectedPackageSource.Source)));
         }
 
-        private void ValidatePackageSource(EditablePackageSource packageSource)
+        private async Task VerifyPackageSource(EditablePackageSource packageSource)
         {
-            _sourceToVerify = packageSource;
-
-            if (_isVerifying)
+            if (packageSource == null || packageSource.IsValid == null)
             {
                 return;
             }
 
-#pragma warning disable 4014
-            VerifyPackageSource();
-#pragma warning restore 4014
-        }
-
-        private async Task VerifyPackageSource()
-        {
-            using (new DisposableToken(null, x => _isVerifying = true, x => _isVerifying = false))
+            if (string.Equals(packageSource.Source, packageSource.PreviousSourceValue))
             {
-                while (_sourceToVerify != null)
-                {
-                    var feed = _sourceToVerify;
-                    _sourceToVerify = null;
-                    _feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, false);
-                    if (_feedVerificationResult == FeedVerificationResult.Invalid || _feedVerificationResult == FeedVerificationResult.Unknown)
-                    {
-                        feed.AddFieldValidationResult(FieldValidationResult.CreateError("Source", string.Format("The package source '{0}' is invalid.", feed.Source)), true);
-                    }
-                }
+                return;
+            }            
 
-                _isSourceVerified = true;
-            }
+            packageSource.IsValid = null;
 
+            string feedToValidate;
+
+            bool isValid;
+
+            do
+            {
+                feedToValidate = packageSource.Source;
+
+                var feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feedToValidate, false);
+
+                isValid = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
+
+            } while (!string.Equals(feedToValidate, packageSource.Source));
+
+            packageSource.PreviousSourceValue = packageSource.Source;
+
+            packageSource.IsValid = isValid;
+            
             ValidateViewModel(true);
         }
         #endregion
