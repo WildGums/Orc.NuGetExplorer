@@ -35,6 +35,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
             Add = new TaskCommand(OnAddExecute);
             Remove = new TaskCommand(OnRemoveExecute, OnRemoveCanExecute);
+            MoveUp = new TaskCommand(OnMoveUpExecute, OnMoveUpCanExecute);
+            MoveDown = new TaskCommand(OnMoveDownExecute, OnMoveDownCanExecute);
 
             SuspendValidation = false;
         }
@@ -103,7 +105,6 @@ namespace Orc.NuGetExplorer.ViewModels
 #pragma warning disable 4014
                 VerifyPackageSource(selectedPackageSource);
 #pragma warning restore 4014
-
             }
         }
 
@@ -165,7 +166,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 var feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feedToValidate, false);
 
                 isValid = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
-
             } while (!string.Equals(feedToValidate, packageSource.Source));
 
             packageSource.PreviousSourceValue = packageSource.Source;
@@ -173,9 +173,70 @@ namespace Orc.NuGetExplorer.ViewModels
 
             ValidateViewModel(true);
         }
+
+        private bool CanMoveToStep(int step)
+        {
+            var selectedPackageSource = SelectedPackageSource;
+
+            if (selectedPackageSource == null)
+            {
+                return false;
+            }
+
+            var editablePackageSources = EditablePackageSources;
+
+            var index = editablePackageSources.IndexOf(selectedPackageSource);
+
+            var newIndex = index + step;
+
+            return newIndex >= 0 && newIndex < editablePackageSources.Count;
+        }
+
+        private void MoveToStep(int step)
+        {
+            var selectedPackageSource = SelectedPackageSource;
+
+            if (selectedPackageSource == null)
+            {
+                return;
+            }
+
+            var editablePackageSources = EditablePackageSources;
+
+            var index = editablePackageSources.IndexOf(selectedPackageSource);
+
+            EditablePackageSources.RemoveAt(index);
+            EditablePackageSources.Insert(index + step, selectedPackageSource);
+
+            SelectedPackageSource = selectedPackageSource;
+        }
         #endregion
 
         #region Commands
+        public TaskCommand MoveUp { get; private set; }
+
+        private async Task OnMoveUpExecute()
+        {
+            MoveToStep(-1);
+        }
+
+        private bool OnMoveUpCanExecute()
+        {
+            return CanMoveToStep(-1);
+        }
+
+        public TaskCommand MoveDown { get; private set; }
+
+        private async Task OnMoveDownExecute()
+        {
+            MoveToStep(1);
+        }
+
+        private bool OnMoveDownCanExecute()
+        {
+            return CanMoveToStep(1);
+        }
+
         public TaskCommand Add { get; private set; }
 
         private async Task OnAddExecute()
