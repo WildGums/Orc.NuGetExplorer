@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
     using System.Net;
     using Catel;
@@ -60,6 +61,10 @@ namespace Orc.NuGetExplorer
                     {
                         result = FeedVerificationResult.Invalid;
                     }
+                }
+                catch (UriFormatException)
+                {
+                    result = FeedVerificationResult.Invalid;
                 }
                 catch
                 {

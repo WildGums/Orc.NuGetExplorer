@@ -140,7 +140,7 @@ namespace Orc.NuGetExplorer
             var stringValue = _configurationService.GetValue(key, false.ToString());
 
             bool value;
-            if(bool.TryParse(stringValue, out value))
+            if (bool.TryParse(stringValue, out value))
             {
                 return value;
             }
