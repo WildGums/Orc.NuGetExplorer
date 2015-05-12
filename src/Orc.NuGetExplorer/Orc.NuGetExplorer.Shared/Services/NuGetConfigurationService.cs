@@ -150,7 +150,7 @@ namespace Orc.NuGetExplorer
 
         private string GetIsPrereleaseAllowedKey(IRepository repository)
         {
-            return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}.{1}", repository.OperationType, repository.Name);
+            return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
         }
         #endregion
     }
