@@ -24,6 +24,8 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             Argument.IsNotNull(() => nuGetConfigurationService);
 
             _nuGetConfigurationService = nuGetConfigurationService;
+
+            Title = "Package source settings";
         }
         #endregion
 
