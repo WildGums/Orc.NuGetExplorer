@@ -52,12 +52,12 @@ namespace Orc.NuGetExplorer
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType != PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Published: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Published: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType == PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Installed: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Installed: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
             var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
