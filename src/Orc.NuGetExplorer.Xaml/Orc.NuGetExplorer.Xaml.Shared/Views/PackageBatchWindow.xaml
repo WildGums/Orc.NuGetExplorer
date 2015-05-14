@@ -29,15 +29,10 @@
             </DockPanel>
             <GridSplitter Style="{StaticResource HorizontalGridSplitterStyle}" IsEnabled="False"/>
         </StackPanel>
-        <Grid Grid.Row="1">
-            <views:PackageListView ItemsSource="{Binding PackageList}"
-                                   PackageCommand="{Binding PackageAction}"
-                                   ButtonHeader="{Binding ActionName}"
-                                   SelectedPackage="{Binding SelectedPackage}"/>
-            <TextBlock Text="No updates available" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
-                       VerticalAlignment="Top" Margin="0 30 0 0"
-                       Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}"/>
-        </Grid>
+        <views:PackageListView  Grid.Row="1" ItemsSource="{Binding PackageList}"
+                                PackageCommand="{Binding PackageAction}"
+                                ButtonHeader="{Binding ActionName}"
+                                SelectedPackage="{Binding SelectedPackage}"/>
     </Grid>
     
 </catel:DataWindow>

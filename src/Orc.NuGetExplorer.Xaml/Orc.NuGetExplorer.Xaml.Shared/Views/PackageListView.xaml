@@ -18,7 +18,9 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">No packages found</TextBlock>
+                                <TextBlock Text="No packages found" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
+                                           VerticalAlignment="Top" Margin="0 30 0 0"
+                                           Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}"/>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
