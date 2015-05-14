@@ -27,6 +27,7 @@ namespace Orc.NuGetExplorer
             FullName = package.GetFullName();
             Description = package.Description;
             IconUrl = package.IconUrl;
+
             Published = package.Published == null ? (DateTime?) null : package.Published.Value.LocalDateTime;
             SpecialVersion = package.Version.SpecialVersion;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
@@ -49,7 +50,7 @@ namespace Orc.NuGetExplorer
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? null : dataServicePackage.Published;
+                return dataServicePackage == null ? ((PackageDetails)this).Published : dataServicePackage.Published;
             }
         }
 

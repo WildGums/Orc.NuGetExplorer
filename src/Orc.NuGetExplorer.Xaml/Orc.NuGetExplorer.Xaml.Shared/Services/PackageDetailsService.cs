@@ -7,6 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Documents;
@@ -15,6 +17,15 @@ namespace Orc.NuGetExplorer
 
     internal class PackageDetailsService : IPackageDetailsService
     {
+        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
+
+        public PackageDetailsService(IRepositoryNavigatorService repositoryNavigatorService)
+        {
+            Argument.IsNotNull(() => repositoryNavigatorService);
+
+            _repositoryNavigatorService = repositoryNavigatorService;
+        }
+
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         #endregion
@@ -34,13 +45,19 @@ namespace Orc.NuGetExplorer
             var id = GetDetailsRecord("Id: ", package.Id);
             paragraph.Inlines.AddIfNotNull(id);
 
-            var version = GetDetailsRecord("Version: ", package.Version.ToString());
+            var version = GetDetailsRecord("Version: ", GetVersion(package));
             paragraph.Inlines.AddIfNotNull(version);
 
-            if (package.Published != null)
+            var published = package.Published;
+
+            if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType != PackageOperationType.Uninstall)
             {
-                var published = GetDetailsRecord("Published: ", package.Published.Value.ToLocalTime().ToString());
-                paragraph.Inlines.AddIfNotNull(published);
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Published: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture)));
+            }
+
+            if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType == PackageOperationType.Uninstall)
+            {
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Installed: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture)));
             }
 
             var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
@@ -54,6 +71,16 @@ namespace Orc.NuGetExplorer
 
             result.Blocks.Add(paragraph);
             return result;
+        }
+
+        private static string GetVersion(IPackageDetails package)
+        {
+            if (!package.IsPrerelease)
+            {
+                return package.Version.ToString();
+            }
+
+            return string.Format("{0}-{1}", package.Version, package.SpecialVersion);
         }
 
         private Inline GetDetailsRecord(string title, params string[] stringLines)
