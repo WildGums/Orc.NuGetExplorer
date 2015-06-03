@@ -10,15 +10,16 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Threading;
 
     public static class IPackagesBatchServiceExtensions
     {
         #region Methods
-        public static async Task ShowPackagesBatchAsync(this IPackageBatchService packageBatchService, IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
+        public static Task ShowPackagesBatchAsync(this IPackageBatchService packageBatchService, IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
         {
             Argument.IsNotNull(() => packageBatchService);
 
-            await Task.Factory.StartNew(() => packageBatchService.ShowPackagesBatch(packageDetails, operationType));
+            return TaskHelper.Run(() => packageBatchService.ShowPackagesBatch(packageDetails, operationType));
         }
         #endregion
     }

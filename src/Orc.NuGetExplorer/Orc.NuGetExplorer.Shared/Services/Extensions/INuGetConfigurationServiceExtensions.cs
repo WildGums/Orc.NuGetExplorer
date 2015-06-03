@@ -11,51 +11,52 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Threading;
 
     public static class INuGetConfigurationServiceExtensions
     {
         #region Methods
-        public static async Task<string> GetDestinationFolderAsync(this INuGetConfigurationService nuGetConfigurationService)
+        public static Task<string> GetDestinationFolderAsync(this INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            return await Task.Factory.StartNew(() => nuGetConfigurationService.GetDestinationFolder());
+            return TaskHelper.Run(() => nuGetConfigurationService.GetDestinationFolder());
         }
 
-        public static async Task SetDestinationFolderAsync(this INuGetConfigurationService nuGetConfigurationService, string value)
+        public static Task SetDestinationFolderAsync(this INuGetConfigurationService nuGetConfigurationService, string value)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            await Task.Factory.StartNew(() => nuGetConfigurationService.SetDestinationFolder(value));
+            return TaskHelper.Run(() => nuGetConfigurationService.SetDestinationFolder(value));
         }
 
-        public static async Task<IEnumerable<IPackageSource>> LoadPackageSourcesAsync(this INuGetConfigurationService nuGetConfigurationService, bool onlyEnabled = false)
+        public static Task<IEnumerable<IPackageSource>> LoadPackageSourcesAsync(this INuGetConfigurationService nuGetConfigurationService, bool onlyEnabled = false)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            return await Task.Factory.StartNew(() => nuGetConfigurationService.LoadPackageSources(onlyEnabled));
+            return TaskHelper.Run(() => nuGetConfigurationService.LoadPackageSources(onlyEnabled));
         }
 
-        public static async Task<bool> SavePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source, bool isEnabled = true, bool isOfficial = true)
+        public static Task<bool> SavePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source, bool isEnabled = true, bool isOfficial = true)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            return await Task.Factory.StartNew(() => nuGetConfigurationService.SavePackageSource(name, source, isEnabled, isOfficial));
+            return TaskHelper.Run(() => nuGetConfigurationService.SavePackageSource(name, source, isEnabled, isOfficial));
         }
 
         [Obsolete("Use DisablePackageSourceAsync")]
-        public static async Task DeletePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
+        public static Task DeletePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            await Task.Factory.StartNew(() => nuGetConfigurationService.DisablePackageSource(name, source));
+            return TaskHelper.Run(() => nuGetConfigurationService.DisablePackageSource(name, source));
         }
 
-        public static async Task DisablePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
+        public static Task DisablePackageSourceAsync(this INuGetConfigurationService nuGetConfigurationService, string name, string source)
         {
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            await Task.Factory.StartNew(() => nuGetConfigurationService.DisablePackageSource(name, source));
+            return TaskHelper.Run(() => nuGetConfigurationService.DisablePackageSource(name, source));
         }
         #endregion
     }

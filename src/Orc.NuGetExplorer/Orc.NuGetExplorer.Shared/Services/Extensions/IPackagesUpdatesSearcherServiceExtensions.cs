@@ -10,15 +10,16 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Threading;
 
     public static class IPackagesUpdatesSearcherServiceExtensions
     {
         #region Methods
-        public static async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(this IPackagesUpdatesSearcherService packagesUpdatesSearcherService, bool? allowPrerelease = null, bool authenticateIfRequired = true)
+        public static Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(this IPackagesUpdatesSearcherService packagesUpdatesSearcherService, bool? allowPrerelease = null, bool authenticateIfRequired = true)
         {
             Argument.IsNotNull(() => packagesUpdatesSearcherService);
 
-            return await Task.Factory.StartNew(() => packagesUpdatesSearcherService.SearchForUpdates(allowPrerelease, authenticateIfRequired));
+            return TaskHelper.Run(() => packagesUpdatesSearcherService.SearchForUpdates(allowPrerelease, authenticateIfRequired));
         }
         #endregion
     }

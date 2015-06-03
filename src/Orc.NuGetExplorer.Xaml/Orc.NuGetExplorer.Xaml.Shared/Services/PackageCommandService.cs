@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
+    using Catel.Threading;
 
     internal class PackageCommandService : IPackageCommandService
     {
@@ -50,7 +51,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            await Task.Factory.StartNew(() =>
+            await TaskHelper.Run(() =>
             {
                 using (_pleaseWaitService.WaitingScope())
                 {
