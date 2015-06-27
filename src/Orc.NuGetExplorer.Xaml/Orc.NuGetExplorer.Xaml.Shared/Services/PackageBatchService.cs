@@ -37,7 +37,7 @@ namespace Orc.NuGetExplorer
             var packagesBatch = new PackagesBatch {OperationType = PackageOperationType.Update};
             packagesBatch.PackageList.AddRange(packageDetails);
 
-            _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackageBatchViewModel>(packagesBatch));
+            _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackageBatchViewModel>(packagesBatch), true);
         }
         #endregion
     }
