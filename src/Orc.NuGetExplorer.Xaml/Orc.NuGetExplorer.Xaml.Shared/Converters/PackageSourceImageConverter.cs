@@ -27,6 +27,7 @@ namespace Orc.NuGetExplorer.Converters
                     var serviceLocator = this.GetServiceLocator();
                     _imageResolveService = serviceLocator.ResolveType<IImageResolveService>();
                 }
+
                 return _imageResolveService;
             }
         }

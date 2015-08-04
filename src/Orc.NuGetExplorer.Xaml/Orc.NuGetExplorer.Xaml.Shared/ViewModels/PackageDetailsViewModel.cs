@@ -38,11 +38,11 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        protected override async Task Initialize()
+        protected override async Task InitializeAsync()
         {
-            await base.Initialize();
+            await base.InitializeAsync();
 
-            PackageSummary = await _packageDetailsService.PackageToFlowDocument(Package);
+            PackageSummary = _packageDetailsService.PackageToFlowDocument(Package);
         }
         #endregion
     }

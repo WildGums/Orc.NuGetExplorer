@@ -8,10 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
-    using Catel.Threading;
 
     internal class PackageCommandService : IPackageCommandService
     {
@@ -44,37 +42,34 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetActionName(PackageOperationType operationType)
         {
-            return Enum.GetName(typeof (PackageOperationType), operationType);
+            return Enum.GetName(typeof(PackageOperationType), operationType);
         }
 
-        public async Task Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
+        public void Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
         {
             Argument.IsNotNull(() => packageDetails);
 
-            await TaskHelper.Run(() =>
+            using (_pleaseWaitService.WaitingScope())
             {
-                using (_pleaseWaitService.WaitingScope())
+                using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
                 {
-                    using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
+                    _packageOperationContextService.CurrentContext.Repository = sourceRepository;
+                    switch (operationType)
                     {
-                        _packageOperationContextService.CurrentContext.Repository = sourceRepository;
-                        switch (operationType)
-                        {
-                            case PackageOperationType.Uninstall:
-                                _packageOperationService.UninstallPackage(packageDetails);
-                                break;
+                        case PackageOperationType.Uninstall:
+                            _packageOperationService.UninstallPackage(packageDetails);
+                            break;
 
-                            case PackageOperationType.Install:
-                                _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
-                                break;
+                        case PackageOperationType.Install:
+                            _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
+                            break;
 
-                            case PackageOperationType.Update:
-                                _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
-                                break;
-                        }
+                        case PackageOperationType.Update:
+                            _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
+                            break;
                     }
                 }
-            });
+            }
 
             packageDetails.IsInstalled = null;
         }
@@ -101,7 +96,7 @@ namespace Orc.NuGetExplorer
             return false;
         }
 
-        public bool IsRefreshReqired(PackageOperationType operationType)
+        public bool IsRefreshRequired(PackageOperationType operationType)
         {
             switch (operationType)
             {
@@ -120,7 +115,7 @@ namespace Orc.NuGetExplorer
 
         public string GetPluralActionName(PackageOperationType operationType)
         {
-            return string.Format("{0} all", Enum.GetName(typeof (PackageOperationType), operationType));
+            return string.Format("{0} all", Enum.GetName(typeof(PackageOperationType), operationType));
         }
 
         private bool CanInstall(IPackageDetails package)

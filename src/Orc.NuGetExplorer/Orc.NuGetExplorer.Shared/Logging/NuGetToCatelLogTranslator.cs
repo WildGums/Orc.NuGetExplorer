@@ -9,14 +9,14 @@ namespace Orc.NuGetExplorer
 {
     using Catel.Logging;
 
-    public class NuGetToCatelLogTranstalor : PackageManagerLogListenerBase
+    public class NuGetToCatelLogTranslator : PackageManagerLogListenerBase
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         #endregion
 
         #region Constructors
-        public NuGetToCatelLogTranstalor(INuGetLogListeningSevice nuGetLogListeningSevice)
+        public NuGetToCatelLogTranslator(INuGetLogListeningSevice nuGetLogListeningSevice)
             : base(nuGetLogListeningSevice)
         {
         }

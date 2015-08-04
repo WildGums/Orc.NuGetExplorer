@@ -26,7 +26,7 @@ namespace Orc.NuGetExplorer.Views
             SkipSearchingForInfoBarMessageControl = false;
             AccentColorHelper.CreateAccentColorResourceDictionary();
 
-            this.InitializeComponent();
+            InitializeComponent();
         }
         #endregion
 

@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using Catel;
-    using Catel.Services;
     using NuGet;
 
     internal class NuGetLogger : ILogger

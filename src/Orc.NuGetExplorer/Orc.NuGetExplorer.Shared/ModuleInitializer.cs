@@ -60,6 +60,6 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranstalor>();
+        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
     }
 }

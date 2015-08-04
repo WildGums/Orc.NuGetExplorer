@@ -14,6 +14,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
+    using Catel.Threading;
     using Models;
 
     public class MainViewModel : ViewModelBase
@@ -53,7 +54,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
-            ShowExplorer = new TaskCommand(OnShowExplorerExecute);
+            ShowExplorer = new Command(OnShowExplorerExecute);
             AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
             VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
@@ -78,14 +79,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnSettingsExecute()
         {
-            await _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+            _uiVisualizerService.ShowDialog<SettingsViewModel>();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }
 
         private async Task OnOpenUpdateWindowExecute()
         {
-            await _packageBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
+            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update));
         }
 
         private bool OnOpenUpdateWindowCanExecute()
@@ -99,7 +100,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         {
             AvailableUpdates.Clear();
 
-            var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease, false);
+            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false));
 
             // TODO: AddRange doesn't refresh button state. neeed to fix later
             AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
@@ -109,7 +110,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnAdddPackageSourceExecute()
         {
-            var packageSourceSaved = await _nuGetConfigurationService.SavePackageSourceAsync(PackageSourceName, PackageSourceUrl);
+            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl));
             if (!packageSourceSaved)
             {
                 await _messageService.ShowWarning("Feed is invalid or unknown");
@@ -125,7 +126,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnVerifyFeedExecute()
         {
-            var result = await _feedVerificationService.VerifyFeedAsync(PackageSourceUrl);
+            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl));
         }
 
         private bool OnVerifyFeedCanExecute()
@@ -136,14 +137,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         /// <summary>
         /// Gets the ShowExplorer command.
         /// </summary>
-        public TaskCommand ShowExplorer { get; private set; }
+        public Command ShowExplorer { get; private set; }
 
         /// <summary>
         /// Method to invoke when the ShowExplorer command is executed.
         /// </summary>
-        private async Task OnShowExplorerExecute()
+        private void OnShowExplorerExecute()
         {
-            await _packagesUiService.ShowPackagesExplorer();
+            _packagesUiService.ShowPackagesExplorer();
         }
         #endregion
     }

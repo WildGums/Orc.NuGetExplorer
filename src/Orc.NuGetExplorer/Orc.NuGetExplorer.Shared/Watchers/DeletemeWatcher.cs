@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System.IO;
-    using Catel;
     using Path = Catel.IO.Path;
 
     public class DeletemeWatcher : PackageManagerWatcherBase

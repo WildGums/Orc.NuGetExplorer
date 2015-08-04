@@ -19,12 +19,6 @@ namespace Orc.NuGetExplorer
     internal static class PackageRepositoryExtensions
     {
         #region Methods
-        public static Task<IEnumerable<IPackage>> FindAllAsync(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
-            int skip = 0, int take = 10)
-        {
-            return TaskHelper.Run(() => FindAll(packageRepository, allowPrereleaseVersions, skip, take));
-        }
-
         [Time]
         public static IEnumerable<IPackage> FindAll(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
@@ -32,12 +26,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => packageRepository);
 
             return packageRepository.FindFiltered(string.Empty, allowPrereleaseVersions, skip, take);
-        }
-
-        public static Task<IEnumerable<IPackage>> FindFilteredAsync(this IPackageRepository packageRepository, string filter,
-            bool allowPrereleaseVersions, int skip = 0, int take = 10)
-        {
-            return TaskHelper.Run(() => FindFiltered(packageRepository, filter, allowPrereleaseVersions, skip, take));
         }
 
         [Time]
@@ -49,11 +37,6 @@ namespace Orc.NuGetExplorer
             var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
             var result = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
             return result;
-        }
-
-        public static Task<IEnumerable<IPackage>> FindPackageVersionsAsync(this IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions, int skip, int minimalTake = 10)
-        {
-            return TaskHelper.Run(() => FindPackageVersions(packageRepository, package, allowPrereleaseVersions, ref skip, minimalTake));
         }
 
         [Time]

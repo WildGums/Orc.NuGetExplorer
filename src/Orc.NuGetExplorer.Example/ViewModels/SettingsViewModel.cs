@@ -34,18 +34,18 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #endregion
 
         #region Methods
-        protected override Task Initialize()
+        protected override Task InitializeAsync()
         {
             PackageSources = _nuGetConfigurationService.LoadPackageSources();
 
-            return base.Initialize();
+            return base.InitializeAsync();
         }
 
-        protected override async Task<bool> Save()
+        protected override async Task<bool> SaveAsync()
         {
             _nuGetConfigurationService.SavePackageSources(PackageSources);
 
-            return await base.Save();
+            return await base.SaveAsync();
         }
         #endregion
     }

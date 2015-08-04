@@ -55,8 +55,6 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-
-
             using (PleaseWaitInterruptService.InterruptTemporarily())
             {
                 DispatchHelper.DispatchIfNecessary(() =>

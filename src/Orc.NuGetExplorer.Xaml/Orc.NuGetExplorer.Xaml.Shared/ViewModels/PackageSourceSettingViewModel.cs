@@ -16,6 +16,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Data;
     using Catel.Fody;
     using Catel.MVVM;
+    using Catel.Threading;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
@@ -33,10 +34,10 @@ namespace Orc.NuGetExplorer.ViewModels
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
             _packageSourceFactory = packageSourceFactory;
 
-            Add = new TaskCommand(OnAddExecute);
-            Remove = new TaskCommand(OnRemoveExecute, OnRemoveCanExecute);
-            MoveUp = new TaskCommand(OnMoveUpExecute, OnMoveUpCanExecute);
-            MoveDown = new TaskCommand(OnMoveDownExecute, OnMoveDownCanExecute);
+            Add = new Command(OnAddExecute);
+            Remove = new Command(OnRemoveExecute, OnRemoveCanExecute);
+            MoveUp = new Command(OnMoveUpExecute, OnMoveUpCanExecute);
+            MoveDown = new Command(OnMoveDownExecute, OnMoveDownCanExecute);
 
             SuspendValidation = false;
         }
@@ -56,14 +57,14 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        protected override async Task Initialize()
+        protected override async Task InitializeAsync()
         {
             if (PackageSources != null)
             {
                 OnPackageSourcesChanged();
             }
 
-            await base.Initialize();
+            await base.InitializeAsync();
         }
 
         private void OnPackageSourcesChanged()
@@ -77,7 +78,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 }));
 
             VerifyAll();
-        }        
+        }
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -101,13 +102,14 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
 
                 selectedPackageSource.IsValid = false;
+
 #pragma warning disable 4014
-                VerifyPackageSource(selectedPackageSource);
+                VerifyPackageSourceAsync(selectedPackageSource);
 #pragma warning restore 4014
             }
         }
 
-        protected override async Task<bool> Save()
+        protected override async Task<bool> SaveAsync()
         {
             if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
             {
@@ -116,7 +118,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false)).ToArray();
 
-            return await base.Save();
+            return await base.SaveAsync();
         }
 
         protected override void ValidateFields(List<IFieldValidationResult> validationResults)
@@ -136,7 +138,7 @@ namespace Orc.NuGetExplorer.ViewModels
             if (!(SelectedPackageSource.IsValidSource ?? false))
             {
                 validationResults.Add(FieldValidationResult.CreateError("Source", "Package source '{0}' is invalid.", SelectedPackageSource.Source));
-            }            
+            }
         }
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
@@ -149,7 +151,7 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        private async Task VerifyPackageSource(EditablePackageSource packageSource, bool force = false)
+        private async Task VerifyPackageSourceAsync(EditablePackageSource packageSource, bool force = false)
         {
             if (packageSource == null || packageSource.IsValid == null)
             {
@@ -177,12 +179,12 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 isValidName = !string.IsNullOrWhiteSpace(nameToValidate) && namesCount == 1;
 
-                var feedVerificationResult = await _nuGetFeedVerificationService.VerifyFeedAsync(feedToValidate, false);
+                var validate = feedToValidate;
+                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, false));
 
                 isValidUrl = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
 
-            } while (!string.Equals(feedToValidate, packageSource.Source) 
-                && !string.Equals(nameToValidate, packageSource.Name));
+            } while (!string.Equals(feedToValidate, packageSource.Source) && !string.Equals(nameToValidate, packageSource.Name));
 
             packageSource.PreviousSourceValue = packageSource.Source;
             packageSource.IsValidSource = isValidUrl;
@@ -194,7 +196,6 @@ namespace Orc.NuGetExplorer.ViewModels
         private bool CanMoveToStep(int step)
         {
             var selectedPackageSource = SelectedPackageSource;
-
             if (selectedPackageSource == null)
             {
                 return false;
@@ -212,7 +213,6 @@ namespace Orc.NuGetExplorer.ViewModels
         private void MoveToStep(int step)
         {
             var selectedPackageSource = SelectedPackageSource;
-
             if (selectedPackageSource == null)
             {
                 return;
@@ -233,16 +233,16 @@ namespace Orc.NuGetExplorer.ViewModels
             foreach (var packageSource in EditablePackageSources)
             {
 #pragma warning disable 4014
-                VerifyPackageSource(packageSource, true);
+                VerifyPackageSourceAsync(packageSource, true);
 #pragma warning restore 4014
             }
         }
         #endregion
 
         #region Commands
-        public TaskCommand MoveUp { get; private set; }
+        public Command MoveUp { get; private set; }
 
-        private async Task OnMoveUpExecute()
+        private void OnMoveUpExecute()
         {
             MoveToStep(-1);
         }
@@ -252,9 +252,9 @@ namespace Orc.NuGetExplorer.ViewModels
             return CanMoveToStep(-1);
         }
 
-        public TaskCommand MoveDown { get; private set; }
+        public Command MoveDown { get; private set; }
 
-        private async Task OnMoveDownExecute()
+        private void OnMoveDownExecute()
         {
             MoveToStep(1);
         }
@@ -264,9 +264,9 @@ namespace Orc.NuGetExplorer.ViewModels
             return CanMoveToStep(1);
         }
 
-        public TaskCommand Add { get; private set; }
+        public Command Add { get; private set; }
 
-        private async Task OnAddExecute()
+        private void OnAddExecute()
         {
             var packageSource = new EditablePackageSource
             {
@@ -282,9 +282,9 @@ namespace Orc.NuGetExplorer.ViewModels
             VerifyAll();
         }
 
-        public TaskCommand Remove { get; private set; }
+        public Command Remove { get; private set; }
 
-        private async Task OnRemoveExecute()
+        private void OnRemoveExecute()
         {
             if (SelectedPackageSource == null)
             {

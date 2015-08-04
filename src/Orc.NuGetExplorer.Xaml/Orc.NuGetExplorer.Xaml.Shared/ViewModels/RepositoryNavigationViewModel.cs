@@ -41,21 +41,20 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        protected override async Task Initialize()
+        protected override async Task InitializeAsync()
         {
-            await base.Initialize();
+            await base.InitializeAsync();
 
-            Navigator = _repositoryNavigatorService.Navigator;
-
-            if (!Navigator.Initialized)
+            var navigator = _repositoryNavigatorService.Navigator;
+            if (!navigator.Initialized)
             {
-                Navigator.Initialize();
+                navigator.Initialize();
             }
 
+            Navigator = navigator;
+
             var lastRepositoryCategory = _configurationService.GetLastRepositoryCategory();
-
             var selectedRepositoryCategory = Navigator.RepositoryCategories.FirstOrDefault(x => string.Equals(x.Name, lastRepositoryCategory));
-
             if (selectedRepositoryCategory == null)
             {
                 return;

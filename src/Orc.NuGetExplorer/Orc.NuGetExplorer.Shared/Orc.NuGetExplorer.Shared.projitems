@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DispatchHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\NuGetLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Logging\NuGetToCatelLogTranstalor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\NuGetToCatelLogTranslator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MethodTimeLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AuthenticationCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IPackageDetails.cs" />
@@ -99,8 +99,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Watchers\Base\PackageManagerWatcherBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Watchers\DeletemeWatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Watchers\RollbackWatcher.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Repositories\Interfaces\" />
   </ItemGroup>
 </Project>

@@ -36,8 +36,8 @@ namespace Orc.NuGetExplorer.ViewModels
             ActionName = _packageCommandService.GetActionName(packagesBatch.OperationType);
             PluralActionName = _packageCommandService.GetPluralActionName(packagesBatch.OperationType);
 
-            PackageAction = new TaskCommand(OnPackageActionExecute, OnPackageActionCanExecute);
-            ApplyAll = new TaskCommand(OnApplyAllExecute, OnApplyAllCanExecute);
+            PackageAction = new Command(OnPackageActionExecute, OnPackageActionCanExecute);
+            ApplyAll = new Command(OnApplyAllExecute, OnApplyAllCanExecute);
         }
         #endregion
 
@@ -52,9 +52,9 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        protected override async Task Initialize()
+        protected override async Task InitializeAsync()
         {
-            await base.Initialize();
+            await base.InitializeAsync();
 
             RefreshCanExecute();
 
@@ -81,16 +81,17 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Commands
-        public TaskCommand ApplyAll { get; private set; }
+        public Command ApplyAll { get; private set; }
 
-        private async Task OnApplyAllExecute()
+        private void OnApplyAllExecute()
         {
             var packages = PackagesBatch.PackageList.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).Cast<IPackageDetails>().ToArray();
             using (_packageOperationContextService.UseOperationContext(PackagesBatch.OperationType, packages))
             {
                 foreach (var package in packages)
                 {
-                    await _packageCommandService.Execute(PackagesBatch.OperationType, package);
+                    _packageCommandService.Execute(PackagesBatch.OperationType, package);
+
                     RefreshCanExecute();
                 }
             }            
@@ -101,11 +102,11 @@ namespace Orc.NuGetExplorer.ViewModels
             return PackagesBatch.PackageList.All(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p));
         }
 
-        public TaskCommand PackageAction { get; set; }
+        public Command PackageAction { get; set; }
 
-        private async Task OnPackageActionExecute()
+        private void OnPackageActionExecute()
         {
-            await _packageCommandService.Execute(PackagesBatch.OperationType, SelectedPackage);
+            _packageCommandService.Execute(PackagesBatch.OperationType, SelectedPackage);
 
             RefreshCanExecute();
         }

@@ -7,10 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Globalization;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Windows.Documents;
     using Catel;
     using Catel.Logging;
@@ -31,13 +29,16 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public async Task<FlowDocument> PackageToFlowDocument(IPackageDetails package)
+        public FlowDocument PackageToFlowDocument(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
             var result = new FlowDocument();
 
-            var paragraph = new Paragraph() {FontSize = 12};
+            var paragraph = new Paragraph
+            {
+                FontSize = 12
+            };
 
             var autors = GetDetailsRecord("Created by: ", package.Authors.ToArray());
             paragraph.Inlines.AddIfNotNull(autors);
@@ -93,7 +94,6 @@ namespace Orc.NuGetExplorer
             }
 
             var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
             if (!valuableLines.Any())
             {
                 return null;

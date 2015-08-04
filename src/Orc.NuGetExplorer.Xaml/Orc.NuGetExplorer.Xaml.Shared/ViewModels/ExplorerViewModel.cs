@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
@@ -18,6 +17,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
+    using Catel.Threading;
     using MethodTimer;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -54,7 +54,6 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => configurationService);
 
-
             _repositoryNavigatorService = repositoryNavigatorService;
             _packageCommandService = packageCommandService;
             _pleaseWaitService = pleaseWaitService;
@@ -70,9 +69,9 @@ namespace Orc.NuGetExplorer.ViewModels
             
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
-            PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecute, OnPackageActionCanExecute);
+            PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecuteAsync, OnPackageActionCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute);
+            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync);
 
             AccentColorHelper.CreateAccentColorResourceDictionary();
         }
@@ -105,9 +104,9 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Methods
-        protected override async Task Initialize()
+        protected override async Task InitializeAsync()
         {
-            await base.Initialize();
+            await base.InitializeAsync();
 
             _repositoryNavigatorService.Initialize();
 
@@ -118,7 +117,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 Navigator.Initialize();
             }
 
-            await SearchAndRefresh();
+            await SearchAndRefreshAsync();
         }
 
         private async void OnIsPrereleaseAllowedChanged()
@@ -128,15 +127,15 @@ namespace Orc.NuGetExplorer.ViewModels
                 _nuGetConfigurationService.SetIsPrereleaseAllowed(Navigator.SelectedRepository, IsPrereleaseAllowed.Value);
             }
 
-            await SearchAndRefresh();
+            await SearchAndRefreshAsync();
         }
 
         private async void OnPackagesToSkipChanged()
         {
-            await SearchAndRefresh();
+            await SearchAndRefreshAsync();
         }
 
-        private async Task SearchAndRefresh()
+        private async Task SearchAndRefreshAsync()
         {
             if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
             {
@@ -149,7 +148,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 SetShowUpdates();
                 SetActionName();
                 SetIsPrereleaseAllowed();
-                await CountAndSearch();
+                await CountAndSearchAsync();
                 RefreshCanExecute();
             }
         }
@@ -192,7 +191,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             _configurationService.SetLastRepository(selectedRepositoryCategory, selectedRepository);
 
-            await SearchAndRefresh();
+            await SearchAndRefreshAsync();
         }
 
         private void SetShowUpdates()
@@ -249,11 +248,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async void OnSearchFilterChanged()
         {
-            await SearchAndRefresh();
+            await SearchAndRefreshAsync();
         }
 
         [Time]
-        private async Task CountAndSearch()
+        private async Task CountAndSearchAsync()
         {
             var selectedRepository = Navigator.SelectedRepository;
 
@@ -263,12 +262,13 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 using (_pleaseWaitService.WaitingScope())
                 {
-                    SearchSettings.PackagesToSkip = 0;
+                    var searchSettings = SearchSettings;
+                    searchSettings.PackagesToSkip = 0;
 
-                    SearchResult.TotalPackagesCount = await _packageQueryService.CountPackagesAsync(selectedRepository, SearchSettings.SearchFilter, IsPrereleaseAllowed ?? true);
+                    SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true));
 
-                    var packageDetailses = await _packageQueryService.GetPackagesAsync(selectedRepository, IsPrereleaseAllowed ?? true, SearchSettings.SearchFilter, SearchSettings.PackagesToSkip);
-                    var packages = packageDetailses;
+                    var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip));
+                    var packages = packageDetails;
 
                     _dispatcherService.BeginInvoke(() =>
                     {
@@ -294,7 +294,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #region Commands
         public TaskCommand<IPackageDetails> PackageAction { get; private set; }
 
-        private async Task OnPackageActionExecute(IPackageDetails package)
+        private async Task OnPackageActionExecuteAsync(IPackageDetails package)
         {
             if (Navigator.SelectedRepository == null)
             {
@@ -303,10 +303,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
             var operation = Navigator.SelectedRepository.OperationType;
 
-            await _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true);
-            if (_packageCommandService.IsRefreshReqired(operation))
+            await TaskHelper.Run(() => _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true));
+
+            if (_packageCommandService.IsRefreshRequired(operation))
             {
-                await CountAndSearch();
+                await CountAndSearchAsync();
             }
 
             RefreshCanExecute();
@@ -343,24 +344,24 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailableUpdates.Clear();
             using (_pleaseWaitService.WaitingScope())
             {
-                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(null, false);
+                var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates());
 
                 // TODO: AddRange doesn't refresh button state. neeed to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
             }
-            await OnOpenUpdateWindowExecute();
+            await OnOpenUpdateWindowExecuteAsync();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }
 
-        private async Task OnOpenUpdateWindowExecute()
+        private async Task OnOpenUpdateWindowExecuteAsync()
         {
             if (AvailableUpdates == null)
             {
                 return;
             }
 
-            await _packageBatchService.ShowPackagesBatchAsync(AvailableUpdates, PackageOperationType.Update);
+            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update));
         }
 
         #endregion
