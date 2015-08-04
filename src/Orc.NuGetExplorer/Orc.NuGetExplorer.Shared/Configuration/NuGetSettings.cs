@@ -66,6 +66,22 @@ namespace Orc.NuGetExplorer
             SetNuGetValues(section, new[] {new KeyValuePair<string, string>(key, value)});
         }
 
+        public void SetValues(string section, IList<SettingValue> values)
+        {
+            foreach (var value in values)
+            {
+                SetValue(section, value.Key, value.Value);
+            }
+        }
+
+        public void UpdateSections(string section, IList<SettingValue> values)
+        {
+            foreach (var value in values)
+            {
+                SetValue(section, value.Key, value.Value);
+            }
+        }
+
         public void SetValues(string section, IList<KeyValuePair<string, string>> values)
         {
             Argument.IsNotNullOrWhitespace(() => section);
