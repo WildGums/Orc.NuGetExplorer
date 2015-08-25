@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
@@ -47,7 +48,7 @@ namespace Orc.NuGetExplorer
         }
 
         #region Methods
-        public AuthenticationCredentials GetCredentials(Uri uri, bool previousCredentialsFailed)
+        public async Task<AuthenticationCredentials> GetCredentialsAsync(Uri uri, bool previousCredentialsFailed)
         {
             Log.Debug("Requesting credentials for '{0}'", uri);
 
@@ -57,9 +58,7 @@ namespace Orc.NuGetExplorer
 
             using (PleaseWaitInterruptService.InterruptTemporarily())
             {
-                
-
-                DispatchHelper.DispatchIfNecessary(() =>
+                await DispatchHelper.DispatchIfNecessaryAsync(() =>
                 {
                     var uriString = uri.ToString().ToLower();
 

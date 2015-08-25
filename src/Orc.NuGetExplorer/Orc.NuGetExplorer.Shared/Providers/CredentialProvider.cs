@@ -39,7 +39,9 @@ namespace Orc.NuGetExplorer
                 return null;
             }
 
-            var credentials = _authenticationProvider.GetCredentials(uri, retrying);
+            // Note: this might cause deadlock, but NuGet is sync while we need async, so keep it this way
+            var credentialsTask = _authenticationProvider.GetCredentialsAsync(uri, retrying);
+            var credentials = credentialsTask.Result;
             if (credentials == null)
             {
                 _cancelledUris.Add(uri);
