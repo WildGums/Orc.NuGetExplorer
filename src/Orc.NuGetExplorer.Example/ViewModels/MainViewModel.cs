@@ -86,7 +86,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnOpenUpdateWindowExecute()
         {
-            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update));
+            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         private bool OnOpenUpdateWindowCanExecute()
@@ -100,9 +100,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         {
             AvailableUpdates.Clear();
 
-            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false));
+            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
 
-            // TODO: AddRange doesn't refresh button state. neeed to fix later
+            // TODO: AddRange doesn't refresh button state. need to fix later
             AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
         }
 
@@ -110,10 +110,10 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnAdddPackageSourceExecute()
         {
-            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl));
+            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl), true);
             if (!packageSourceSaved)
             {
-                await _messageService.ShowWarning("Feed is invalid or unknown");
+                await _messageService.ShowWarningAsync("Feed is invalid or unknown");
             }
         }
 
@@ -126,7 +126,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnVerifyFeedExecute()
         {
-            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl));
+            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl), true);
         }
 
         private bool OnVerifyFeedCanExecute()

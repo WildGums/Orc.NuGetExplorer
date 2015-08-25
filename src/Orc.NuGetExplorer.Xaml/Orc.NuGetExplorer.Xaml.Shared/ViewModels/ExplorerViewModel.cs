@@ -265,9 +265,9 @@ namespace Orc.NuGetExplorer.ViewModels
                     var searchSettings = SearchSettings;
                     searchSettings.PackagesToSkip = 0;
 
-                    SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true));
+                    SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true), true);
 
-                    var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip));
+                    var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip), true);
                     var packages = packageDetails;
 
                     _dispatcherService.BeginInvoke(() =>
@@ -303,7 +303,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             var operation = Navigator.SelectedRepository.OperationType;
 
-            await TaskHelper.Run(() => _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true));
+            await TaskHelper.Run(() => _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true), true);
 
             if (_packageCommandService.IsRefreshRequired(operation))
             {
@@ -344,9 +344,9 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailableUpdates.Clear();
             using (_pleaseWaitService.WaitingScope())
             {
-                var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates());
+                var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(), true);
 
-                // TODO: AddRange doesn't refresh button state. neeed to fix later
+                // TODO: AddRange doesn't refresh button state. need to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
             }
             await OnOpenUpdateWindowExecuteAsync();
@@ -361,7 +361,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update));
+            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         #endregion

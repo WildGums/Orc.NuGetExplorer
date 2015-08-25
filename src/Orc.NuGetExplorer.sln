@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{BD04453D-295
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{57D12309-E3F7-4E10-ACD7-847B9DB96E7A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Example", "Orc.NuGetExplorer.Example\Orc.NuGetExplorer.Example.csproj", "{2487CA27-DD19-4BEE-ABB3-A3E9BA7BEAC6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Tests.NET40", "Orc.NuGetExplorer.Tests\Orc.NuGetExplorer.Tests.NET40\Orc.NuGetExplorer.Tests.NET40.csproj", "{9ED7F24B-4E0E-4737-AC26-8E33F7A49392}"

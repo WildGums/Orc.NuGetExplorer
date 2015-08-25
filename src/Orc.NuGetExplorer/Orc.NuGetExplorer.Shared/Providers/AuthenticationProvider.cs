@@ -57,6 +57,8 @@ namespace Orc.NuGetExplorer
 
             using (PleaseWaitInterruptService.InterruptTemporarily())
             {
+                
+
                 DispatchHelper.DispatchIfNecessary(() =>
                 {
                     var uriString = uri.ToString().ToLower();

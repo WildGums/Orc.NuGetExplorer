@@ -180,7 +180,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 isValidName = !string.IsNullOrWhiteSpace(nameToValidate) && namesCount == 1;
 
                 var validate = feedToValidate;
-                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, false));
+                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, false), true);
 
                 isValidUrl = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
 
