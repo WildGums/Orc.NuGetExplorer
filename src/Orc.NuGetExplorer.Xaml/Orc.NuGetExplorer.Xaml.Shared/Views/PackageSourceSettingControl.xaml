@@ -5,6 +5,7 @@
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:orc="http://www.wildgums.net.au/orc"
                    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
     
     <catel:UserControl.Resources>
@@ -34,8 +35,8 @@
                                           VerticalAlignment="Center"/>
                                     </Grid>
                                 </Viewbox>
-                                <catel:AnimatedGif x:Name="LoadingGif" Width="16" Height="16" HorizontalAlignment="Center"
-                                               GifSource="pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/Loading.gif" />
+                                <orc:AnimatedGif x:Name="LoadingGif" Width="16" Height="16" HorizontalAlignment="Center"
+                                                 GifSource="pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/Loading.gif" />
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IsValid}" Value="True">
