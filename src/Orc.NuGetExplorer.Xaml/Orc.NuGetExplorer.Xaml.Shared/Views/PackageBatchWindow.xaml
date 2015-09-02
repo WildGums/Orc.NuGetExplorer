@@ -1,0 +1,38 @@
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.PackageBatchWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:catel="http://catel.codeplex.com"
+             xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" x:ClassModifier="internal">
+
+    <catel:DataWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </catel:DataWindow.Resources>
+    
+    <Grid Width="500" Height="480">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <DockPanel HorizontalAlignment="Stretch">
+                <Button Height="25" Width="70" Content="{Binding PluralActionName}" Command="{Binding ApplyAll}" 
+                        DockPanel.Dock="Right" Margin="10 10 12 10"
+                        Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}}"/>
+                <TextBlock Text="Available Updates" Margin="20 10 10 10" FontSize="16" />
+            </DockPanel>
+            <GridSplitter Style="{StaticResource HorizontalGridSplitterStyle}" IsEnabled="False"/>
+        </StackPanel>
+        <views:PackageListView  Grid.Row="1" ItemsSource="{Binding PackageList}"
+                                PackageCommand="{Binding PackageAction}"
+                                ButtonHeader="{Binding ActionName}"
+                                SelectedPackage="{Binding SelectedPackage}"/>
+    </Grid>
+    
+</catel:DataWindow>
