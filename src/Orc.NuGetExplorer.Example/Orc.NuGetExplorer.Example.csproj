@@ -69,8 +69,9 @@
       <HintPath>..\..\lib\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Orc.Controls">
-      <HintPath>..\..\lib\Orc.Controls.1.0.0-unstable0338\lib\net40\Orc.Controls.dll</HintPath>
+    <Reference Include="Orc.Controls, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Orc.Controls.1.1.0\lib\net40\Orc.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
