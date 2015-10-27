@@ -33,8 +33,8 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("0.1")]
-[assembly: AssemblyInformationalVersion("0.1, manual release via Visual Studio build")]
+[assembly: AssemblyVersion("1.1")]
+[assembly: AssemblyInformationalVersion("1.1, manual release via Visual Studio build")]
 
 #if DEBUG
 

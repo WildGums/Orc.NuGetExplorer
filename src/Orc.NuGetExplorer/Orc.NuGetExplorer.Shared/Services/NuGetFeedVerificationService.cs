@@ -10,12 +10,18 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using Catel;
+    using Catel.Logging;
+    using MethodTimer;
     using NuGet;
+    using RestSharp;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         #endregion
@@ -32,20 +38,27 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+        [Time]
         public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
             var result = FeedVerificationResult.Valid;
+
+            Log.Debug("Verifying feed '{0}'", source);
 
             using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
             {
                 try
                 {
                     var repository = _packageRepositoryFactory.CreateRepository(source);
-                    var packagesCount = repository.GetPackages().Take(1).Count();
+                    var anyExists = repository.GetPackages().Take(1).Count();
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    if ((int) ((HttpWebResponse) ex.Response).StatusCode == 403)
+                    {
+                        result = FeedVerificationResult.Valid;
+                    }
+                    else if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
                         if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
@@ -62,15 +75,22 @@ namespace Orc.NuGetExplorer
                         result = FeedVerificationResult.Invalid;
                     }
                 }
-                catch (UriFormatException)
+                catch (UriFormatException ex)
                 {
+                    Log.Debug(ex, "Failed to verify feed '{0}', a UriFormatException occurred", source);
+
                     result = FeedVerificationResult.Invalid;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Debug(ex, "Failed to verify feed '{0}'", source);
+
                     result = FeedVerificationResult.Invalid;
                 }
             }
+
+            Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
+
             return result;
         }
         #endregion
