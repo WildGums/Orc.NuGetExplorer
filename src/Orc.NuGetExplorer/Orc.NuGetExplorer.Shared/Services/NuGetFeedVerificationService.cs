@@ -10,12 +10,10 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Linq;
     using System.Net;
-    using System.Net.Sockets;
     using Catel;
     using Catel.Logging;
     using MethodTimer;
     using NuGet;
-    using RestSharp;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {

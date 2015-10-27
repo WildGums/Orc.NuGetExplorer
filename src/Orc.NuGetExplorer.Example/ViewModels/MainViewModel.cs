@@ -110,7 +110,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         private async Task OnAdddPackageSourceExecute()
         {
-            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl), true);
+            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
             if (!packageSourceSaved)
             {
                 await _messageService.ShowWarningAsync("Feed is invalid or unknown");
