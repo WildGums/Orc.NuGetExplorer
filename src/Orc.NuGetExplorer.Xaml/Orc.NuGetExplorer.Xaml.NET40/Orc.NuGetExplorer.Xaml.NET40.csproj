@@ -110,7 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="..\Orc.NuGetExplorer.Xaml.Shared\Resources\Images\packageDefaultIcon.png">
@@ -127,8 +129,36 @@
       <Name>Orc.NuGetExplorer.NET40</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.de.resx">
+      <Link>Properties\Resources.de.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.es.resx">
+      <Link>Properties\Resources.es.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.fr.resx">
+      <Link>Properties\Resources.fr.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.nl.resx">
+      <Link>Properties\Resources.nl.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.NET40.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.ru.resx">
+      <Link>Properties\Resources.ru.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Orc.NuGetExplorer.Xaml.Shared\Properties\Resources.NET40.Designer.cs">
+      <Link>Properties\Resources.NET40.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="..\Orc.NuGetExplorer.Xaml.Shared\Orc.NuGetExplorer.Xaml.Shared.projitems" Label="Shared" Condition="Exists('..\Orc.NuGetExplorer.Xaml.Shared\Orc.NuGetExplorer.Xaml.Shared.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

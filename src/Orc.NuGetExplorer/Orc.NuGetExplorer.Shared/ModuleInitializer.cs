@@ -1,6 +1,7 @@
 ﻿using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
+using Catel.Services.Models;
 using Orc.NuGetExplorer;
 using NuGet;
 using IPackageManager = Orc.NuGetExplorer.IPackageManager;
@@ -61,5 +62,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+
+        var languageService = serviceLocator.ResolveType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
     }
 }

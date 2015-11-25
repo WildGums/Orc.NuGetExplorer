@@ -1,5 +1,7 @@
 ﻿using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
+using Catel.Services.Models;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.ViewModels;
 using Orc.NuGetExplorer.Views;
@@ -31,5 +33,8 @@ public static class ModuleInitializer
 
         var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
         viewModelLocator.Register(typeof(PackageSourceSettingControl), typeof(PackageSourceSettingViewModel));
+
+        var languageService = serviceLocator.ResolveType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
     }
 }

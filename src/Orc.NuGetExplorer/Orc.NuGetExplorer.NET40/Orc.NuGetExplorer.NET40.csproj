@@ -109,11 +109,39 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.de.resx">
+      <Link>Properties\Resources.de.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.es.resx">
+      <Link>Properties\Resources.es.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.fr.resx">
+      <Link>Properties\Resources.fr.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.nl.resx">
+      <Link>Properties\Resources.nl.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.NET40.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.ru.resx">
+      <Link>Properties\Resources.ru.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Orc.NuGetExplorer.Shared\Properties\Resources.NET40.Designer.cs">
+      <Link>Properties\Resources.NET40.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="..\Orc.NuGetExplorer.Shared\Orc.NuGetExplorer.Shared.projitems" Label="Shared" Condition="Exists('..\Orc.NuGetExplorer.Shared\Orc.NuGetExplorer.Shared.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
