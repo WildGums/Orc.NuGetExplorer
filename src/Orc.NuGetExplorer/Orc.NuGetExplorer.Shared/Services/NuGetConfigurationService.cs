@@ -14,6 +14,7 @@ namespace Orc.NuGetExplorer
     using Catel.Configuration;
     using Catel.IO;
     using Catel.Logging;
+    using MethodTimer;
     using NuGet;
 
     internal class NuGetConfigurationService : INuGetConfigurationService
@@ -69,17 +70,27 @@ namespace Orc.NuGetExplorer
             return packageSources.ToPackageSourceInterfaces();
         }
 
+        [ObsoleteEx(ReplacementTypeOrMember = "SavePackageSource(string, string, bool, bool, bool)", TreatAsErrorFromVersion = "1.0", RemoveInVersion = "2.0")]
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
+        {
+            return SavePackageSource(name, source, isEnabled, isOfficial, true);
+        }
+
+        [Time]
+        public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)
         {
             Argument.IsNotNullOrWhitespace(() => name);
             Argument.IsNotNullOrWhitespace(() => source);
 
             try
             {
-                var verificationResult = _feedVerificationService.VerifyFeed(source, false);
-                if (verificationResult == FeedVerificationResult.Invalid || verificationResult == FeedVerificationResult.Unknown)
+                if (verifyFeed)
                 {
-                    return false;
+                    var verificationResult = _feedVerificationService.VerifyFeed(source, false);
+                    if (verificationResult == FeedVerificationResult.Invalid || verificationResult == FeedVerificationResult.Unknown)
+                    {
+                        return false;
+                    }
                 }
 
                 var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
@@ -104,6 +115,7 @@ namespace Orc.NuGetExplorer
             return true;
         }
 
+        [Time]
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Weavers VerifyAssembly="true">
-  <ModuleInit/>
+  <ModuleInit />
   <Costura>
     <IncludeAssemblies>
       NuGet.Core
       Microsoft.Web.XmlTransform
     </IncludeAssemblies>
   </Costura>
-  <MethodTimer/>
-  <Catel/>
+  <MethodTimer />
+  <Catel />
+  <Obsolete />
 </Weavers>
