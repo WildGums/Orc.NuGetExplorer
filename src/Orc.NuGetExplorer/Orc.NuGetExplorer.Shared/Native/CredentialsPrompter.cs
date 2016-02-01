@@ -11,9 +11,12 @@ namespace Orc.NuGetExplorer.Native
     using System.Runtime.InteropServices;
     using System.Text;
     using Catel;
+    using Catel.Logging;
 
     internal class CredentialsPrompter
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         #region Fields
         private string _confirmTarget;
         private bool _isSaveChecked;
@@ -42,10 +45,6 @@ namespace Orc.NuGetExplorer.Native
         #region Methods
         public bool ShowDialog()
         {
-            var credUiInfo = new CredUi.CredUiInfo();
-            credUiInfo.pszCaptionText = "";
-            credUiInfo.pszMessageText = "";
-
             var windowHandle = User32.GetActiveWindow();
             return PromptForCredentialsCredUIWin(windowHandle, true);
         }
@@ -54,9 +53,13 @@ namespace Orc.NuGetExplorer.Native
         {
             if (AllowStoredCredentials)
             {
+                Log.Debug("Stored credentials are allowed");
+
                 var credentials = ReadCredential(Target);
                 if (credentials != null)
                 {
+                    Log.Debug("Successfully read stored credentials, user name is '{0}'", credentials.UserName);
+
                     UserName = credentials.UserName;
                     Password = credentials.Password;
                     return true;
@@ -65,6 +68,7 @@ namespace Orc.NuGetExplorer.Native
 
             if (!IsAuthenticationRequired)
             {
+                Log.Debug("No authentication is required, no need to prompt for credentials");
                 return false;
             }
 
@@ -83,19 +87,23 @@ namespace Orc.NuGetExplorer.Native
                 uint inBufferSize = 0;
                 if (UserName.Length > 0)
                 {
+                    // First call is only to get the required buffer size
                     CredUi.CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
                     if (inBufferSize > 0)
                     {
                         inBuffer = Marshal.AllocCoTaskMem((int) inBufferSize);
                         if (!CredUi.CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                         {
-                            throw new CredentialException(Marshal.GetLastWin32Error());
+                            throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
+                                "Failed to create the authentication buffer before prompting");
                         }
                     }
                 }
 
                 uint outBufferSize = 0;
                 uint package = 0;
+
+                Log.Debug("Prompting user for credentials");
 
                 var result = CredUi.CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
                     out outBuffer, out outBufferSize, ref _isSaveChecked, flags);
@@ -109,11 +117,14 @@ namespace Orc.NuGetExplorer.Native
                         uint domainSize = 0;
                         if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
                         {
-                            throw new CredentialException(Marshal.GetLastWin32Error());
+                            throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
+                                "Failed to create the authentication buffer after prompting");
                         }
 
                         UserName = userName.ToString();
                         Password = password.ToString();
+
+                        Log.Debug("User entered credentials with username '{0}'", UserName);
 
                         if (ShowSaveCheckBox)
                         {
@@ -131,13 +142,16 @@ namespace Orc.NuGetExplorer.Native
                                 WriteCredential(Target, UserName, Password);
                             }
                         }
+
                         return true;
 
                     case CredUi.CredUiReturnCodes.ERROR_CANCELLED:
+                        Log.Debug("User canceled the credentials prompt");
                         return false;
 
                     default:
-                        throw new CredentialException((int) result);
+                        throw Log.ErrorAndCreateException(x => new CredentialException((int) result),
+                            "Failed to prompt for credentials, error code '{0}'", result);
                 }
             }
             finally
@@ -158,6 +172,8 @@ namespace Orc.NuGetExplorer.Native
         {
             IntPtr nCredPtr;
 
+            Log.Debug("Trying to read credentials for key '{0}'", key);
+
             var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out nCredPtr);
             var lastError = Marshal.GetLastWin32Error();
 
@@ -165,11 +181,12 @@ namespace Orc.NuGetExplorer.Native
             {
                 if (lastError == (int) CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
                 {
+                    Log.Debug("Failed to read credentials, credentials are not found");
                     return null;
                 }
                 else
                 {
-                    throw new CredentialException(lastError);
+                    throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
                 }
             }
 
@@ -191,14 +208,16 @@ namespace Orc.NuGetExplorer.Native
             var byteArray = Encoding.Unicode.GetBytes(secret);
             if (byteArray.Length > 512)
             {
-                throw new ArgumentOutOfRangeException("secret", "The secret message has exceeded 512 bytes.");
+                throw Log.ErrorAndCreateException(x => new ArgumentOutOfRangeException("secret", x), "The secret message has exceeded 512 bytes.");
             }
+
+            Log.Debug("Writing credentials with username '{0}' for key '{1}'", userName, key);
 
             var cred = new CredUi.Credential();
             cred.TargetName = key;
             cred.UserName = userName;
             cred.CredentialBlob = secret;
-            cred.CredentialBlobSize = (UInt32) Encoding.Unicode.GetBytes(secret).Length;
+            cred.CredentialBlobSize = (uint) Encoding.Unicode.GetBytes(secret).Length;
             cred.AttributeCount = 0;
             cred.Attributes = IntPtr.Zero;
             cred.Comment = null;
@@ -211,9 +230,11 @@ namespace Orc.NuGetExplorer.Native
             var lastError = Marshal.GetLastWin32Error();
             if (!written)
             {
-                var message = string.Format("CredWrite failed with the error code {0}.", lastError);
-                throw new CredentialException(lastError, message);
+                throw Log.ErrorAndCreateException(x => new CredentialException(lastError, x),
+                    "CredWrite failed with the error code '{0}'", lastError);
             }
+
+            Log.Debug("Successfully written credentials for key '{0}'", key);
 
             return true;
         }
@@ -224,8 +245,12 @@ namespace Orc.NuGetExplorer.Native
 
             var found = false;
 
+            Log.Debug("Deleting credentials with key '{0}'", key);
+
             if (CredUi.CredDelete(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0))
             {
+                Log.Debug("Successfully deleted credentials");
+
                 found = true;
             }
             else
@@ -233,7 +258,8 @@ namespace Orc.NuGetExplorer.Native
                 var error = Marshal.GetLastWin32Error();
                 if (error != (int) CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
                 {
-                    throw new CredentialException(error);
+                    throw Log.ErrorAndCreateException(x => new CredentialException(error),
+                        "Failed to delete credentials, error code '{0}'", error);
                 }
             }
 
