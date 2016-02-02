@@ -18,6 +18,9 @@ namespace Orc.NuGetExplorer
         public string Source { get; set; }
         public string PreviousSourceValue { get; set; }
 
+        [DefaultValue(FeedVerificationResult.Unknown)]
+        public FeedVerificationResult FeedVerificationResult { get; set; }
+
         public bool? IsValid
         {
             get

@@ -12,13 +12,14 @@ namespace Orc.NuGetExplorer
         #region Properties
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Source { get; set; }
         public PackageOperationType OperationType { get; set; }
         #endregion
 
         #region Methods
         private bool Equals(Repository other)
         {
-            return Id == other.Id && string.Equals(Name, other.Name) && OperationType == other.OperationType;
+            return Id == other.Id && string.Equals(Name, other.Name) && string.Equals(Source, other.Source) && OperationType == other.OperationType;
         }
 
         public override int GetHashCode()
@@ -26,8 +27,9 @@ namespace Orc.NuGetExplorer
             unchecked
             {
                 var hashCode = Id;
-                hashCode = (hashCode*397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (int) OperationType;
+                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Source != null ? Source.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int)OperationType;
                 return hashCode;
             }
         }

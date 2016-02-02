@@ -16,13 +16,17 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Data;
     using Catel.Fody;
     using Catel.MVVM;
+    using Catel.Scoping;
     using Catel.Threading;
+    using Scopes;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
         #region Fields
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageSourceFactory _packageSourceFactory;
+
+        private bool _ignoreNextPackageUpdate;
         #endregion
 
         #region Constructors
@@ -77,6 +81,11 @@ namespace Orc.NuGetExplorer.ViewModels
                     Source = x.Source
                 }));
 
+            if (_ignoreNextPackageUpdate)
+            {
+                return;
+            }
+
             VerifyAll();
         }
 
@@ -111,12 +120,27 @@ namespace Orc.NuGetExplorer.ViewModels
 
         protected override async Task<bool> SaveAsync()
         {
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid == null))
+            var editablePackageSource = EditablePackageSources;
+            if (editablePackageSource == null)
             {
                 return false;
             }
 
-            PackageSources = EditablePackageSources.Select(x => _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false)).ToArray();
+            if (editablePackageSource.Any(x => x.IsValid == null))
+            {
+                return false;
+            }
+
+            _ignoreNextPackageUpdate = true;
+
+            PackageSources = editablePackageSource.Select(x =>
+            {
+                using (ScopeManager<AuthenticationScope>.GetScopeManager(x.Source.GetSafeScopeName(), () => new AuthenticationScope(false)))
+                {
+                    var packageSource = _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false);
+                    return packageSource;
+                }
+            }).ToArray();
 
             return await base.SaveAsync();
         }
@@ -180,8 +204,9 @@ namespace Orc.NuGetExplorer.ViewModels
                 isValidName = !string.IsNullOrWhiteSpace(nameToValidate) && namesCount == 1;
 
                 var validate = feedToValidate;
-                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, false), true);
+                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, true), true);
 
+                packageSource.FeedVerificationResult = feedVerificationResult;
                 isValidUrl = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
 
             } while (!string.Equals(feedToValidate, packageSource.Source) && !string.Equals(nameToValidate, packageSource.Name));

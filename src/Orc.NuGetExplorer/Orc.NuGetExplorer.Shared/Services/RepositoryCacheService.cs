@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false)
+        public IRepository GetSerializableRepository(string name, string source, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false)
         {
             Argument.IsNotNullOrEmpty(() => name);
             Argument.IsNotNull(() => packageRepositoryFactory);
@@ -38,24 +38,32 @@ namespace Orc.NuGetExplorer
                     return _idTupleDictionary[id].Item1;
                 }
 
-                return CreateSerialisableRepository(name, operationType, packageRepositoryFactory, id);
+                return CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
             }
 
             id = _idCounter++;
             _keyIdDictionary.Add(key, id);
 
-            return CreateSerialisableRepository(name, operationType, packageRepositoryFactory, id);
+            return CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
         }
 
-        private IRepository CreateSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, int id)
+        [ObsoleteEx(ReplacementTypeOrMember = "GetSerializableRepository", TreatAsErrorFromVersion = "1.1", RemoveInVersion = "2.0")]
+        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false)
+        {
+            return GetSerializableRepository(name, string.Empty, operationType, packageRepositoryFactory, renew);
+        }
+
+        private IRepository CreateSerializableRepository(int id, string name, string source, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory)
         {
             Argument.IsNotNullOrEmpty(() => name);
+            Argument.IsNotNullOrEmpty(() => source);
             Argument.IsNotNull(() => packageRepositoryFactory);
 
             var repository = new Repository
             {
                 Id = id,
                 Name = name,
+                Source = source,
                 OperationType = operationType
             };
             

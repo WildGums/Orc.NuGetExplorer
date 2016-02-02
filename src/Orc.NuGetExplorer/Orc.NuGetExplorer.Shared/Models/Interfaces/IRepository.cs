@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     {
         #region Properties
         string Name { get; }
+        string Source { get; }
         PackageOperationType OperationType { get; }
         #endregion
     }

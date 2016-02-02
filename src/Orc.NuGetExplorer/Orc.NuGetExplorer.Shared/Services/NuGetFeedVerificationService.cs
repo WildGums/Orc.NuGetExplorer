@@ -12,26 +12,25 @@ namespace Orc.NuGetExplorer
     using System.Net;
     using Catel;
     using Catel.Logging;
+    using Catel.Scoping;
     using MethodTimer;
     using NuGet;
+    using Scopes;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         #endregion
 
         #region Constructors
-        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory, IAuthenticationSilencerService authenticationSilencerService)
+        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory)
         {
             Argument.IsNotNull(() => packageRepositoryFactory);
-            Argument.IsNotNull(() => authenticationSilencerService);
 
             _packageRepositoryFactory = packageRepositoryFactory;
-            _authenticationSilencerService = authenticationSilencerService;
         }
         #endregion
 
@@ -43,7 +42,7 @@ namespace Orc.NuGetExplorer
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
+            using (ScopeManager<AuthenticationScope>.GetScopeManager(source.GetSafeScopeName(), () => new AuthenticationScope(authenticateIfRequired)))
             {
                 try
                 {
@@ -52,7 +51,7 @@ namespace Orc.NuGetExplorer
                 }
                 catch (WebException ex)
                 {
-                    if ((int) ((HttpWebResponse) ex.Response).StatusCode == 403)
+                    if ((int)((HttpWebResponse)ex.Response).StatusCode == 403)
                     {
                         result = FeedVerificationResult.Valid;
                     }

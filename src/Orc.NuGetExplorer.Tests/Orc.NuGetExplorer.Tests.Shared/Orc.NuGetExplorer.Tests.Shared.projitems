@@ -6,7 +6,7 @@
     <SharedGUID>0586a579-d9e6-44f9-9536-8befee8ce231</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Orc.NuGetExplorer.Tests.Shared</Import_RootNamespace>
+    <Import_RootNamespace>Orc.NuGetExplorer.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />

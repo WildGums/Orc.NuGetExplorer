@@ -12,24 +12,23 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
+    using Catel.Scoping;
     using Native;
+    using Scopes;
 
     internal class AuthenticationProvider : IAuthenticationProvider
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IServiceLocator _serviceLocator;
         private IPleaseWaitInterruptService _pleaseWaitInterruptService;
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IAuthenticationSilencerService authenticationSilencerService, IServiceLocator serviceLocator)
+        public AuthenticationProvider(IServiceLocator serviceLocator)
         {
-            Argument.IsNotNull(() => authenticationSilencerService);
             Argument.IsNotNull(() => serviceLocator);
 
-            _authenticationSilencerService = authenticationSilencerService;
             _serviceLocator = serviceLocator;
         }
         #endregion
@@ -62,24 +61,35 @@ namespace Orc.NuGetExplorer
                 {
                     var uriString = uri.ToString().ToLower();
 
-                    var credentialsPrompter = new CredentialsPrompter
+                    using (var scopeManager = ScopeManager<AuthenticationScope>.GetScopeManager(uriString.GetSafeScopeName(), () => new AuthenticationScope()))
                     {
-                        Target = uriString,
-                        UserName = string.Empty,
-                        Password = string.Empty,
-                        AllowStoredCredentials = !previousCredentialsFailed,
-                        ShowSaveCheckBox = true,
-                        WindowTitle = "Credentials required",
-                        MainInstruction = "Credentials are required to access this feed",
-                        Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
-                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired??true
-                    };
+                        var authenticationScope = scopeManager.ScopeObject;
 
-                    result = credentialsPrompter.ShowDialog();
-                    if (result ?? false)
-                    {
-                        credentials.UserName = credentialsPrompter.UserName;
-                        credentials.Password = credentialsPrompter.Password;
+                        var credentialsPrompter = new CredentialsPrompter
+                        {
+                            Target = uriString,
+                            UserName = string.Empty,
+                            Password = string.Empty,
+                            AllowStoredCredentials = !previousCredentialsFailed,
+                            ShowSaveCheckBox = true,
+                            WindowTitle = "Credentials required",
+                            MainInstruction = "Credentials are required to access this feed",
+                            Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
+                            IsAuthenticationRequired = authenticationScope.CanPromptForAuthentication
+                        };
+
+                        authenticationScope.HasPromptedForAuthentication = true;
+
+                        result = credentialsPrompter.ShowDialog();
+                        if (result ?? false)
+                        {
+                            credentials.UserName = credentialsPrompter.UserName;
+                            credentials.Password = credentialsPrompter.Password;
+                        }
+                        else
+                        {
+                            credentials.StoreCredentials = false;
+                        }
                     }
                 });
             }

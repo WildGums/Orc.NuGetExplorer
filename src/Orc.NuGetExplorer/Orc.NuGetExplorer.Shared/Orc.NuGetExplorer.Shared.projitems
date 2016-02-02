@@ -6,7 +6,7 @@
     <SharedGUID>8bb74962-3076-4665-a3a7-21a0e97e609b</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Orc.NuGetExplorer.Shared</Import_RootNamespace>
+    <Import_RootNamespace>Orc.NuGetExplorer</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />
@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IPackageDetailsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IPackageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PackageRepositoryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factories\PackageSourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DispatchHelper.cs" />
@@ -51,7 +52,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\NuGetPackageSourceProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\NuGetSettingsCredentialProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\UpdateRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\AuthenticationSilencerService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scopes\AuthenticationScope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BackupFileSystemService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Enums\FeedVerificationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Enums\PackageOperationType.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Extensions\IPackagesBatchServiceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Extensions\IPackagesUpdatesSearcherServiceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\FileSystemService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IAuthenticationSilencerService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IBackupFileSystemService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IFileSystemService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\INuGetConfigurationService.cs" />
