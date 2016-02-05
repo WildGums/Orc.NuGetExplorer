@@ -6,7 +6,7 @@
 
 #if DEBUG
 // Double protection, only allowed in debug mode
-#define LOG_SENSITIVE_INFO
+//#define LOG_SENSITIVE_INFO
 #endif
 
 namespace Orc.NuGetExplorer.Native
