@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredentialsPrompter.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="CredentialsPrompter.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ namespace Orc.NuGetExplorer.Native
                 var credentials = ReadCredential(Target);
                 if (credentials != null)
                 {
-                    Log.Debug("Successfully read stored credentials, user name is '{0}'", credentials.UserName);
+                    Log.Debug("Successfully read stored credentials: '{0}'", credentials);
 
                     UserName = credentials.UserName;
                     Password = credentials.Password;
@@ -184,10 +184,8 @@ namespace Orc.NuGetExplorer.Native
                     Log.Debug("Failed to read credentials, credentials are not found");
                     return null;
                 }
-                else
-                {
-                    throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
-                }
+
+                throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
             }
 
             var credential = new CredUi.SimpleCredentials();
@@ -195,6 +193,8 @@ namespace Orc.NuGetExplorer.Native
             using (var criticalCredentialHandle = new CredUi.CriticalCredentialHandle(nCredPtr))
             {
                 var cred = criticalCredentialHandle.GetCredential();
+
+                Log.Debug("Retrieved credentials: {0}", cred);
 
                 credential.UserName = cred.UserName;
                 credential.Password = cred.CredentialBlob;
@@ -224,6 +224,8 @@ namespace Orc.NuGetExplorer.Native
             cred.TargetAlias = null;
             cred.Type = CredUi.CredTypes.CRED_TYPE_GENERIC;
             cred.Persist = CredUi.IsWindowsVistaOrEarlier ? CredUi.CredPersistance.Session : CredUi.CredPersistance.LocalMachine;
+
+            Log.Debug("Persisting credentials as '{0}'", cred.Persist);
 
             var ncred = CredUi.NativeCredential.GetNativeCredential(cred);
             var written = CredUi.CredWrite(ref ncred, 0);

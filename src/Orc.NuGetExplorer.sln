@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.NET40", "Orc.NuGetExplorer\Orc.NuGetExplorer.NET40\Orc.NuGetExplorer.NET40.csproj", "{7E8F0C02-141A-4824-9066-2A544601654C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{BD04453D-295F-4526-8EF7-469DAF18EB04}"
-	ProjectSection(SolutionItems) = preProject
-		..\lib\repositories.config = ..\lib\repositories.config
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}"
 EndProject
