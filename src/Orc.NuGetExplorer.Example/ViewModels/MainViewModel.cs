@@ -77,9 +77,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private async Task OnSettingsExecute()
+        private Task OnSettingsExecute()
         {
-            _uiVisualizerService.ShowDialog<SettingsViewModel>();
+            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }

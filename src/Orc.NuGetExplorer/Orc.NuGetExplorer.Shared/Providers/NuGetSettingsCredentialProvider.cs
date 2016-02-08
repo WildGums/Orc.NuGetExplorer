@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using NuGet;
 
-    internal class NuGetSettingsCredentialProvider : SettingsCredentialProvider
+    public class NuGetSettingsCredentialProvider : SettingsCredentialProvider
     {
         #region Constructors
         public NuGetSettingsCredentialProvider(ICredentialProvider credentialProvider, IPackageSourceProvider packageSourceProvider)

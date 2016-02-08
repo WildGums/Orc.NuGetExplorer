@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Scoping;
@@ -20,31 +21,26 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IServiceLocator _serviceLocator;
-        private IPleaseWaitInterruptService _pleaseWaitInterruptService;
+        
+        private readonly IConfigurationService _configurationService;
+
+        // Ideally we would inject this, but some classes are constructed in ModuleInitializer which don't allow
+        // any other assemblies to implement their own version
+        private readonly Lazy<IPleaseWaitInterruptService> _pleaseWaitInterruptService = new Lazy<IPleaseWaitInterruptService>(() =>
+        {
+            var serviceLocator = ServiceLocator.Default;
+            return serviceLocator.ResolveType<IPleaseWaitInterruptService>();
+        });
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IServiceLocator serviceLocator)
+        public AuthenticationProvider(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => serviceLocator);
+            Argument.IsNotNull(() => configurationService);
 
-            _serviceLocator = serviceLocator;
+            _configurationService = configurationService;
         }
         #endregion
-
-        private IPleaseWaitInterruptService PleaseWaitInterruptService
-        {
-            get
-            {
-                if (_pleaseWaitInterruptService == null)
-                {
-                    _pleaseWaitInterruptService = _serviceLocator.ResolveType<IPleaseWaitInterruptService>();
-                }
-
-                return _pleaseWaitInterruptService;
-            }
-        }
 
         #region Methods
         public async Task<AuthenticationCredentials> GetCredentialsAsync(Uri uri, bool previousCredentialsFailed)
@@ -55,7 +51,7 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-            using (PleaseWaitInterruptService.InterruptTemporarily())
+            using (_pleaseWaitInterruptService.Value.InterruptTemporarily())
             {
                 await DispatchHelper.DispatchIfNecessaryAsync(() =>
                 {
@@ -65,7 +61,7 @@ namespace Orc.NuGetExplorer
                     {
                         var authenticationScope = scopeManager.ScopeObject;
 
-                        var credentialsPrompter = new CredentialsPrompter
+                        var credentialsPrompter = new CredentialsPrompter(_configurationService)
                         {
                             Target = uriString,
                             UserName = string.Empty,

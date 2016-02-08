@@ -11,16 +11,26 @@ namespace Orc.NuGetExplorer.Native
     using System.Runtime.InteropServices;
     using System.Text;
     using Catel;
+    using Catel.Configuration;
     using Catel.Logging;
 
     internal class CredentialsPrompter
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
+        private readonly IConfigurationService _configurationService;
+
         #region Fields
         private string _confirmTarget;
         private bool _isSaveChecked;
         #endregion
+
+        public CredentialsPrompter(IConfigurationService configurationService)
+        {
+            Argument.IsNotNull(() => configurationService);
+
+            _configurationService = configurationService;
+        }
 
         #region Properties
         public string Target { get; set; }
@@ -55,7 +65,7 @@ namespace Orc.NuGetExplorer.Native
             {
                 Log.Debug("Stored credentials are allowed");
 
-                var credentials = ReadCredential(Target);
+                var credentials = ReadCredential(Target, true);
                 if (credentials != null)
                 {
                     Log.Debug("Successfully read stored credentials: '{0}'", credentials);
@@ -91,7 +101,7 @@ namespace Orc.NuGetExplorer.Native
                     CredUi.CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
                     if (inBufferSize > 0)
                     {
-                        inBuffer = Marshal.AllocCoTaskMem((int) inBufferSize);
+                        inBuffer = Marshal.AllocCoTaskMem((int)inBufferSize);
                         if (!CredUi.CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                         {
                             throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
@@ -112,8 +122,8 @@ namespace Orc.NuGetExplorer.Native
                     case CredUi.CredUiReturnCodes.NO_ERROR:
                         var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
                         var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
-                        var userNameSize = (uint) userName.Capacity;
-                        var passwordSize = (uint) password.Capacity;
+                        var userNameSize = (uint)userName.Capacity;
+                        var passwordSize = (uint)password.Capacity;
                         uint domainSize = 0;
                         if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
                         {
@@ -150,7 +160,7 @@ namespace Orc.NuGetExplorer.Native
                         return false;
 
                     default:
-                        throw Log.ErrorAndCreateException(x => new CredentialException((int) result),
+                        throw Log.ErrorAndCreateException(x => new CredentialException((int)result),
                             "Failed to prompt for credentials, error code '{0}'", result);
                 }
             }
@@ -168,7 +178,25 @@ namespace Orc.NuGetExplorer.Native
             }
         }
 
-        private static CredUi.SimpleCredentials ReadCredential(string key)
+        private static string GetEncryptionKey(string key, string username)
+        {
+            // Note: slightly different than the configuration key so it's not exactly the same
+            var encryptionKey = string.Format("{0}_{1}", key, username);
+            encryptionKey = EncryptionHelper.GetMd5Hash(encryptionKey);
+
+            return encryptionKey;
+        }
+
+        private static string GetPasswordConfigurationKey(string key, string username)
+        {
+            var configurationKeyPostfix = string.Format("{0}__{1}", key, username);
+            configurationKeyPostfix = EncryptionHelper.GetMd5Hash(configurationKeyPostfix);
+            
+            var configurationKey = string.Format("NuGet.FeedInfo.{0}", configurationKeyPostfix);
+            return configurationKey;
+        }
+
+        private CredUi.SimpleCredentials ReadCredential(string key, bool allowConfigurationFallback)
         {
             IntPtr nCredPtr;
 
@@ -179,7 +207,7 @@ namespace Orc.NuGetExplorer.Native
 
             if (!read)
             {
-                if (lastError == (int) CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                if (lastError == (int)CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
                 {
                     Log.Debug("Failed to read credentials, credentials are not found");
                     return null;
@@ -198,12 +226,45 @@ namespace Orc.NuGetExplorer.Native
 
                 credential.UserName = cred.UserName;
                 credential.Password = cred.CredentialBlob;
+
+                // Some company policies don't allow us reading the credentials, so
+                // that results in an empty password being returned
+                if (string.IsNullOrWhiteSpace(credential.Password))
+                {
+                    if (allowConfigurationFallback)
+                    {
+                        try
+                        {
+                            var configurationKey = GetPasswordConfigurationKey(key, credential.UserName);
+                            var encryptionKey = GetEncryptionKey(key, credential.UserName);
+
+                            Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
+
+                            var encryptedPassword = _configurationService.GetValue(configurationKey, string.Empty);
+                            if (!string.IsNullOrWhiteSpace(encryptedPassword))
+                            {
+                                var decryptedPassword = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
+                                credential.Password = decryptedPassword;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Failed to read credentials from alternative configuration");
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(credential.Password))
+                    {
+                        // We failed to read credentials from both vault and configuration
+                        return null;
+                    }
+                }
             }
 
             return credential;
         }
 
-        private static bool WriteCredential(string key, string userName, string secret)
+        private bool WriteCredential(string key, string userName, string secret)
         {
             var byteArray = Encoding.Unicode.GetBytes(secret);
             if (byteArray.Length > 512)
@@ -217,7 +278,7 @@ namespace Orc.NuGetExplorer.Native
             cred.TargetName = key;
             cred.UserName = userName;
             cred.CredentialBlob = secret;
-            cred.CredentialBlobSize = (uint) Encoding.Unicode.GetBytes(secret).Length;
+            cred.CredentialBlobSize = (uint)Encoding.Unicode.GetBytes(secret).Length;
             cred.AttributeCount = 0;
             cred.Attributes = IntPtr.Zero;
             cred.Comment = null;
@@ -232,8 +293,20 @@ namespace Orc.NuGetExplorer.Native
             var lastError = Marshal.GetLastWin32Error();
             if (!written)
             {
-                throw Log.ErrorAndCreateException(x => new CredentialException(lastError, x),
-                    "CredWrite failed with the error code '{0}'", lastError);
+                throw Log.ErrorAndCreateException(x => new CredentialException(lastError, x), "CredWrite failed with the error code '{0}'", lastError);
+            }
+
+            // Note: immediately read it for ORCOMP-229
+            var credential = ReadCredential(key, false);
+            if (credential == null || string.IsNullOrWhiteSpace(credential.Password))
+            {
+                var configurationKey = GetPasswordConfigurationKey(key, cred.UserName);
+                var encryptionKey = GetEncryptionKey(key, cred.UserName);
+
+                Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
+
+                var encryptedPassword = EncryptionHelper.Encrypt(secret, encryptionKey);
+                _configurationService.SetValue(configurationKey, encryptedPassword);
             }
 
             Log.Debug("Successfully written credentials for key '{0}'", key);
@@ -241,7 +314,7 @@ namespace Orc.NuGetExplorer.Native
             return true;
         }
 
-        private static bool DeleteCredential(string key)
+        private bool DeleteCredential(string key)
         {
             Argument.IsNotNullOrWhitespace(() => key);
 
@@ -258,7 +331,7 @@ namespace Orc.NuGetExplorer.Native
             else
             {
                 var error = Marshal.GetLastWin32Error();
-                if (error != (int) CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
+                if (error != (int)CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
                 {
                     throw Log.ErrorAndCreateException(x => new CredentialException(error),
                         "Failed to delete credentials, error code '{0}'", error);

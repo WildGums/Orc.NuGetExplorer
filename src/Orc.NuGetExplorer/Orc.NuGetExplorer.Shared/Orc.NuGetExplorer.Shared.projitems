@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Factories\Interfaces\IPackageSourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factories\PackageSourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DispatchHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EncryptionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\Base\PackageManagerLogListenerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\NuGetLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\NuGetToCatelLogTranslator.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\PackageOperationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\PackageQueryService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\PackagesUpdatesSearcherService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\PleaseWaitInterruptService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryCacheService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RollbackPackageOperationService.cs" />

@@ -35,6 +35,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
+        serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
 
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
 
@@ -51,9 +52,6 @@ public static class ModuleInitializer
 
         var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
         serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
-
-        /*        Log.Debug("Forcing the loading of assembly Catel by the following types");
-                Log.Debug("  * {0}", typeof(DispatcherService).Name);*/
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
