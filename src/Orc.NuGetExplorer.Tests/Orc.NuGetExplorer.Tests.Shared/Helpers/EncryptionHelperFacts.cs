@@ -4,6 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+#if !NET40
 
 namespace Orc.NuGetExplorer.Tests
 {
@@ -27,3 +28,5 @@ namespace Orc.NuGetExplorer.Tests
         }
     }
 }
+
+#endif
