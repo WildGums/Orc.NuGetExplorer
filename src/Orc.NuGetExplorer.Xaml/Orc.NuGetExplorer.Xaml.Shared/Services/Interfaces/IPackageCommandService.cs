@@ -7,9 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Threading.Tasks;
-
-    internal interface IPackageCommandService
+    public interface IPackageCommandService
     {
         #region Methods
         string GetActionName(PackageOperationType operationType);
