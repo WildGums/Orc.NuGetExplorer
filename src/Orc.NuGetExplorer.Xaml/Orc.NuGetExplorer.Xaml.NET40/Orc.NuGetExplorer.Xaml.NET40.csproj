@@ -172,6 +172,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ModuleInitializer.cs" />
   </ItemGroup>
   <Import Project="..\Orc.NuGetExplorer.Xaml.Shared\Orc.NuGetExplorer.Xaml.Shared.projitems" Label="Shared" Condition="Exists('..\Orc.NuGetExplorer.Xaml.Shared\Orc.NuGetExplorer.Xaml.Shared.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
