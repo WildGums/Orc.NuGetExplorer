@@ -354,6 +354,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 // TODO: AddRange doesn't refresh button state. need to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
             }
+
             await OnOpenUpdateWindowExecuteAsync();
         }
 
