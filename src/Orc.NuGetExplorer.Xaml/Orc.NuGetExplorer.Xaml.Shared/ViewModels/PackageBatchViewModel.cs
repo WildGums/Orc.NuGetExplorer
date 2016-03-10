@@ -94,7 +94,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
                     RefreshCanExecute();
                 }
-            }            
+            }
         }
 
         private bool OnApplyAllCanExecute()

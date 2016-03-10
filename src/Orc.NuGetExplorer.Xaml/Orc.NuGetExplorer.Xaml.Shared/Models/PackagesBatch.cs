@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Collections.ObjectModel;
     using Catel.Collections;
 
-    internal class PackagesBatch
+    public class PackagesBatch
     {
         #region Constructors
         public PackagesBatch()
