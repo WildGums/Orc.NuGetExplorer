@@ -240,7 +240,7 @@ namespace Orc.NuGetExplorer.Native
 
                             Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
 
-                            var encryptedPassword = _configurationService.GetValue(configurationKey, string.Empty);
+                            var encryptedPassword = _configurationService.GetRoamingValue(configurationKey, string.Empty);
                             if (!string.IsNullOrWhiteSpace(encryptedPassword))
                             {
                                 var decryptedPassword = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
@@ -306,7 +306,7 @@ namespace Orc.NuGetExplorer.Native
                 Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
 
                 var encryptedPassword = EncryptionHelper.Encrypt(secret, encryptionKey);
-                _configurationService.SetValue(configurationKey, encryptedPassword);
+                _configurationService.SetRoamingValue(configurationKey, encryptedPassword);
             }
 
             Log.Debug("Successfully written credentials for key '{0}'", key);

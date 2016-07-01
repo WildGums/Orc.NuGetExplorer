@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
     using Catel;
@@ -278,7 +279,7 @@ namespace Orc.NuGetExplorer.ViewModels
                         {
                             using (SearchResult.PackageList.SuspendChangeNotifications())
                             {
-                                SearchResult.PackageList.AddRange(packages);
+                                ((ICollection<IPackageDetails>)SearchResult.PackageList).AddRange(packages);
                             }
                         });
                     }

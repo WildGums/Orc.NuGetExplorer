@@ -34,8 +34,12 @@ namespace Orc.NuGetExplorer
         #region Methods
         public void ShowPackagesBatch(IEnumerable<IPackageDetails> packageDetails, PackageOperationType operationType)
         {
-            var packagesBatch = new PackagesBatch { OperationType = PackageOperationType.Update };
-            packagesBatch.PackageList.AddRange(packageDetails);
+            var packagesBatch = new PackagesBatch
+            {
+                OperationType = PackageOperationType.Update
+            };
+
+            ((ICollection<IPackageDetails>)packagesBatch.PackageList).AddRange(packageDetails);
 
             _dispatcherService.Invoke(() => _uiVisualizerService.ShowDialogAsync<PackageBatchViewModel>(packagesBatch), true);
         }
