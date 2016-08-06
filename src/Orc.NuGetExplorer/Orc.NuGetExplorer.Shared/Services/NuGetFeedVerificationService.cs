@@ -51,26 +51,7 @@ namespace Orc.NuGetExplorer
                 }
                 catch (WebException ex)
                 {
-                    if ((int)((HttpWebResponse)ex.Response).StatusCode == 403)
-                    {
-                        result = FeedVerificationResult.Valid;
-                    }
-                    else if (ex.Status == WebExceptionStatus.ProtocolError)
-                    {
-                        var response = ex.Response as HttpWebResponse;
-                        if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            result = FeedVerificationResult.AuthenticationRequired;
-                        }
-                        else
-                        {
-                            result = FeedVerificationResult.Invalid;
-                        }
-                    }
-                    else
-                    {
-                        result = FeedVerificationResult.Invalid;
-                    }
+                    result = HandleWebException(ex, source);
                 }
                 catch (UriFormatException ex)
                 {
@@ -89,6 +70,36 @@ namespace Orc.NuGetExplorer
             Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
 
             return result;
+        }
+
+        private static FeedVerificationResult HandleWebException(WebException exception, string source)
+        {
+            try
+            {
+                var httpWebResponse = (HttpWebResponse)exception.Response;
+                if (ReferenceEquals(httpWebResponse, null))
+                {
+                    return FeedVerificationResult.Invalid;
+                }
+
+                if ((int)httpWebResponse.StatusCode == 403)
+                {
+                    return FeedVerificationResult.Valid;
+                }
+
+                if (exception.Status == WebExceptionStatus.ProtocolError)
+                {
+                    return httpWebResponse.StatusCode == HttpStatusCode.Unauthorized
+                        ? FeedVerificationResult.AuthenticationRequired
+                        : FeedVerificationResult.Invalid;
+                }                
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "Failed to verify feed '{0}'", source);
+            }
+
+            return FeedVerificationResult.Invalid;
         }
         #endregion
     }
