@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IConfigurationServiceExtensions.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="IConfigurationServiceExtensions.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => configurationService);
 
-            var value = configurationService.GetValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, AppSettings.NuGetExplorer.LastRepositoryCaregoryDefaultValue);
+            var value = configurationService.GetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, AppSettings.NuGetExplorer.LastRepositoryCaregoryDefaultValue);
 
             return value;
         }
@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => configurationService);
 
-            configurationService.SetValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
+            configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
         }
 
         public static string GetLastRepository(this IConfigurationService configurationService, RepositoryCategory repositoryCategory)
@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => repositoryCategory);
 
             var key = GetLastRepositoryKey(repositoryCategory);
-            var value = configurationService.GetValue(key, AppSettings.NuGetExplorer.LastRepositoryDefaultValue);
+            var value = configurationService.GetRoamingValue(key, AppSettings.NuGetExplorer.LastRepositoryDefaultValue);
 
             return value;
         }
@@ -46,7 +46,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => repository);
 
             var key = GetLastRepositoryKey(repositoryCategory);
-            configurationService.SetValue(key, repository.Name);
+            configurationService.SetRoamingValue(key, repository.Name);
         }
 
         private static string GetLastRepositoryKey(RepositoryCategory repositoryCategory)

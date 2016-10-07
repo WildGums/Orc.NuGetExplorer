@@ -27,7 +27,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRepositoryNavigatorService, RepositoryNavigatorService>();
         serviceLocator.RegisterType<ISearchSettingsService, SearchSettingsService>();
         serviceLocator.RegisterType<ISearchResultService, SearchResultService>();
-        serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();        
+        serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();        
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
 

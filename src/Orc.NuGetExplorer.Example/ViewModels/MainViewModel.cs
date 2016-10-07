@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainViewModel.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="MainViewModel.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -77,9 +77,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private async Task OnSettingsExecute()
+        private Task OnSettingsExecute()
         {
-            _uiVisualizerService.ShowDialog<SettingsViewModel>();
+            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }

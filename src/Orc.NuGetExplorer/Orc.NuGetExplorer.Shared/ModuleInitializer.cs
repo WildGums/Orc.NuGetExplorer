@@ -19,28 +19,28 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        // Services        
-        serviceLocator.RegisterType<IAuthenticationSilencerService, AuthenticationSilencerService>();                    
+        // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();        
-        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();                       
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
-        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();        
+        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
         serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
         serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
-        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();                
+        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
-        serviceLocator.RegisterType<IRepositoryCacheService, RepositoryCacheService>();  
+        serviceLocator.RegisterType<IRepositoryCacheService, RepositoryCacheService>();
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
-        serviceLocator.RegisterType<IFileSystemService, FileSystemService>();        
+        serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
+        serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
 
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
 
         serviceLocator.RegisterType<IPackageManager, PackageManager>();
-        
+
         serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
@@ -49,15 +49,12 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
 
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
-       
+
         var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
         serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
-/*        Log.Debug("Forcing the loading of assembly Catel by the following types");
-        Log.Debug("  * {0}", typeof(DispatcherService).Name);*/
-
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
-        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();        
+        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExplorerViewModel.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="ExplorerViewModel.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
     using Catel;
@@ -16,9 +17,11 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Scoping;
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
+    using Scopes;
 
     internal class ExplorerViewModel : ViewModelBase
     {
@@ -66,7 +69,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
             SearchSettings = searchSettingsService.SearchSettings;
             SearchResult = searchResultService.SearchResult;
-            
+
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecuteAsync, OnPackageActionCanExecute);
@@ -260,23 +263,26 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _dispatcherService.BeginInvoke(() => SearchResult.PackageList.Clear());
 
-                using (_pleaseWaitService.WaitingScope())
+                using (ScopeManager<AuthenticationScope>.GetScopeManager(selectedRepository.Source.GetSafeScopeName(), () => new AuthenticationScope()))
                 {
-                    var searchSettings = SearchSettings;
-                    searchSettings.PackagesToSkip = 0;
-
-                    SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true), true);
-
-                    var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip), true);
-                    var packages = packageDetails;
-
-                    _dispatcherService.BeginInvoke(() =>
+                    using (_pleaseWaitService.WaitingScope())
                     {
-                        using (SearchResult.PackageList.SuspendChangeNotifications())
+                        var searchSettings = SearchSettings;
+                        searchSettings.PackagesToSkip = 0;
+
+                        SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true), true);
+
+                        var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip), true);
+                        var packages = packageDetails;
+
+                        _dispatcherService.BeginInvoke(() =>
                         {
-                            SearchResult.PackageList.AddRange(packages);
-                        }
-                    });
+                            using (SearchResult.PackageList.SuspendChangeNotifications())
+                            {
+                                ((ICollection<IPackageDetails>)SearchResult.PackageList).AddRange(packages);
+                            }
+                        });
+                    }
                 }
             }
             catch (Exception exception)
@@ -349,6 +355,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 // TODO: AddRange doesn't refresh button state. need to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
             }
+
             await OnOpenUpdateWindowExecuteAsync();
         }
 

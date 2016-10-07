@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AuthenticationProvider.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="AuthenticationProvider.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,42 +10,37 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
+    using Catel.Scoping;
     using Native;
+    using Scopes;
 
     internal class AuthenticationProvider : IAuthenticationProvider
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IAuthenticationSilencerService _authenticationSilencerService;
-        private readonly IServiceLocator _serviceLocator;
-        private IPleaseWaitInterruptService _pleaseWaitInterruptService;
+        
+        private readonly IConfigurationService _configurationService;
+
+        // Ideally we would inject this, but some classes are constructed in ModuleInitializer which don't allow
+        // any other assemblies to implement their own version
+        private readonly Lazy<IPleaseWaitInterruptService> _pleaseWaitInterruptService = new Lazy<IPleaseWaitInterruptService>(() =>
+        {
+            var serviceLocator = ServiceLocator.Default;
+            return serviceLocator.ResolveType<IPleaseWaitInterruptService>();
+        });
         #endregion
 
         #region Constructors
-        public AuthenticationProvider(IAuthenticationSilencerService authenticationSilencerService, IServiceLocator serviceLocator)
+        public AuthenticationProvider(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => authenticationSilencerService);
-            Argument.IsNotNull(() => serviceLocator);
+            Argument.IsNotNull(() => configurationService);
 
-            _authenticationSilencerService = authenticationSilencerService;
-            _serviceLocator = serviceLocator;
+            _configurationService = configurationService;
         }
         #endregion
-
-        private IPleaseWaitInterruptService PleaseWaitInterruptService
-        {
-            get
-            {
-                if (_pleaseWaitInterruptService == null)
-                {
-                    _pleaseWaitInterruptService = _serviceLocator.ResolveType<IPleaseWaitInterruptService>();
-                }
-
-                return _pleaseWaitInterruptService;
-            }
-        }
 
         #region Methods
         public async Task<AuthenticationCredentials> GetCredentialsAsync(Uri uri, bool previousCredentialsFailed)
@@ -56,30 +51,41 @@ namespace Orc.NuGetExplorer
 
             var credentials = new AuthenticationCredentials(uri);
 
-            using (PleaseWaitInterruptService.InterruptTemporarily())
+            using (_pleaseWaitInterruptService.Value.InterruptTemporarily())
             {
                 await DispatchHelper.DispatchIfNecessaryAsync(() =>
                 {
                     var uriString = uri.ToString().ToLower();
 
-                    var credentialsPrompter = new CredentialsPrompter
+                    using (var scopeManager = ScopeManager<AuthenticationScope>.GetScopeManager(uriString.GetSafeScopeName(), () => new AuthenticationScope()))
                     {
-                        Target = uriString,
-                        UserName = string.Empty,
-                        Password = string.Empty,
-                        AllowStoredCredentials = !previousCredentialsFailed,
-                        ShowSaveCheckBox = true,
-                        WindowTitle = "Credentials required",
-                        MainInstruction = "Credentials are required to access this feed",
-                        Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
-                        IsAuthenticationRequired = _authenticationSilencerService.IsAuthenticationRequired??true
-                    };
+                        var authenticationScope = scopeManager.ScopeObject;
 
-                    result = credentialsPrompter.ShowDialog();
-                    if (result ?? false)
-                    {
-                        credentials.UserName = credentialsPrompter.UserName;
-                        credentials.Password = credentialsPrompter.Password;
+                        var credentialsPrompter = new CredentialsPrompter(_configurationService)
+                        {
+                            Target = uriString,
+                            UserName = string.Empty,
+                            Password = string.Empty,
+                            AllowStoredCredentials = !previousCredentialsFailed,
+                            ShowSaveCheckBox = true,
+                            WindowTitle = "Credentials required",
+                            MainInstruction = "Credentials are required to access this feed",
+                            Content = string.Format("In order to continue, please enter the credentials for {0} below.", uri),
+                            IsAuthenticationRequired = authenticationScope.CanPromptForAuthentication
+                        };
+
+                        authenticationScope.HasPromptedForAuthentication = true;
+
+                        result = credentialsPrompter.ShowDialog();
+                        if (result ?? false)
+                        {
+                            credentials.UserName = credentialsPrompter.UserName;
+                            credentials.Password = credentialsPrompter.Password;
+                        }
+                        else
+                        {
+                            credentials.StoreCredentials = false;
+                        }
                     }
                 });
             }

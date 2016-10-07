@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PleaseWaitInterruptService.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="PleaseWaitInterruptService.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,14 +11,14 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Services;
 
-    internal class PleaseWaitInterruptService : IPleaseWaitInterruptService
+    internal class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
     {
         #region Fields
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
-        public PleaseWaitInterruptService(IPleaseWaitService pleaseWaitService)
+        public XamlPleaseWaitInterruptService(IPleaseWaitService pleaseWaitService)
         {
             Argument.IsNotNull(() => pleaseWaitService);
 

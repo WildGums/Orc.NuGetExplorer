@@ -1,9 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredUi.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="CredUi.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+#if DEBUG
+// Double protection, only allowed in debug mode
+//#define LOG_SENSITIVE_INFO
+#endif
 
 namespace Orc.NuGetExplorer.Native
 {
@@ -11,10 +15,14 @@ namespace Orc.NuGetExplorer.Native
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
     using System.Text;
+    using Catel;
+    using Catel.Logging;
     using Microsoft.Win32.SafeHandles;
 
     internal static class CredUi
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         #region Delegates
         [Flags]
         public enum CredUiFlags
@@ -165,7 +173,7 @@ namespace Orc.NuGetExplorer.Native
                 }
 
                 // Get the Credential from the mem location
-                var ncred = (NativeCredential) Marshal.PtrToStructure(handle, typeof (NativeCredential));
+                var ncred = (NativeCredential)Marshal.PtrToStructure(handle, typeof(NativeCredential));
 
                 // Create a managed Credential type and fill it with data from the native counterpart.
                 var cred = new Credential();
@@ -175,7 +183,7 @@ namespace Orc.NuGetExplorer.Native
                 cred.TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias);
                 cred.Type = ncred.Type;
                 cred.Flags = ncred.Flags;
-                cred.Persist = (CredPersistance) ncred.Persist;
+                cred.Persist = (CredPersistance)ncred.Persist;
 
                 byte[] encryptedPassword = new byte[ncred.CredentialBlobSize];
                 Marshal.Copy(ncred.CredentialBlob, encryptedPassword, 0, encryptedPassword.Length);
@@ -214,6 +222,17 @@ namespace Orc.NuGetExplorer.Native
             public string UserName { get; set; }
             public string Password { get; set; }
             #endregion
+
+            public override string ToString()
+            {
+                var value = string.Format("Username = '{0}'", UserName);
+
+#if LOG_SENSITIVE_INFO
+                value += string.Format(", Password = '{0}'", Password);
+#endif
+
+                return value;
+            }
         }
 
         internal enum CredUiReturnCodes
@@ -249,8 +268,10 @@ namespace Orc.NuGetExplorer.Native
             #region Fields
             public int cbSize;
             public IntPtr hwndParent;
-            [MarshalAs(UnmanagedType.LPWStr)] public string pszMessageText;
-            [MarshalAs(UnmanagedType.LPWStr)] public string pszCaptionText;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszMessageText;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszCaptionText;
             public IntPtr hbmBanner;
             #endregion
         }
@@ -286,16 +307,17 @@ namespace Orc.NuGetExplorer.Native
                 ncred.Comment = IntPtr.Zero;
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
-                ncred.Persist = (UInt32) cred.Persist;
+                ncred.Persist = (UInt32)cred.Persist;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
 
                 var encryptedPassword = EncryptPassword(cred.CredentialBlob);
+
                 try
                 {
                     ncred.CredentialBlob = Marshal.AllocHGlobal(encryptedPassword.Length);
                     Marshal.Copy(encryptedPassword, 0, ncred.CredentialBlob, encryptedPassword.Length);
-                    ncred.CredentialBlobSize = (uint) encryptedPassword.Length;
-                    ncred.Type = CredUi.CredTypes.CRED_TYPE_GENERIC;
+                    ncred.CredentialBlobSize = (uint)encryptedPassword.Length;
+                    ncred.Type = CredTypes.CRED_TYPE_GENERIC;
                 }
                 finally
                 {
@@ -323,6 +345,28 @@ namespace Orc.NuGetExplorer.Native
             public IntPtr Attributes;
             public string TargetAlias;
             public string UserName;
+
+            public override string ToString()
+            {
+                var result = "[Credential info] ";
+
+                result += string.Join(", ", new[]
+                {
+                    string.Format("User name = '{0}'", UserName),
+                    string.Format("Target name = '{0}'", TargetName),
+                    string.Format("Type = '{0}'", Type),
+                    string.Format("Blob size = '{0}'", CredentialBlobSize),
+                });
+
+#if LOG_SENSITIVE_INFO
+                result += string.Join(", ", new[]
+                {
+                    string.Format("Blob = '{0}'", CredentialBlob),
+                });
+#endif
+
+                return result;
+            }
         }
     }
 }

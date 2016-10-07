@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetFeedVerificationService.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="NuGetFeedVerificationService.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -12,26 +12,25 @@ namespace Orc.NuGetExplorer
     using System.Net;
     using Catel;
     using Catel.Logging;
+    using Catel.Scoping;
     using MethodTimer;
     using NuGet;
+    using Scopes;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IAuthenticationSilencerService _authenticationSilencerService;
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         #endregion
 
         #region Constructors
-        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory, IAuthenticationSilencerService authenticationSilencerService)
+        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory)
         {
             Argument.IsNotNull(() => packageRepositoryFactory);
-            Argument.IsNotNull(() => authenticationSilencerService);
 
             _packageRepositoryFactory = packageRepositoryFactory;
-            _authenticationSilencerService = authenticationSilencerService;
         }
         #endregion
 
@@ -43,7 +42,7 @@ namespace Orc.NuGetExplorer
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            using (_authenticationSilencerService.AuthenticationRequiredScope(authenticateIfRequired))
+            using (ScopeManager<AuthenticationScope>.GetScopeManager(source.GetSafeScopeName(), () => new AuthenticationScope(authenticateIfRequired)))
             {
                 try
                 {
@@ -52,26 +51,7 @@ namespace Orc.NuGetExplorer
                 }
                 catch (WebException ex)
                 {
-                    if ((int) ((HttpWebResponse) ex.Response).StatusCode == 403)
-                    {
-                        result = FeedVerificationResult.Valid;
-                    }
-                    else if (ex.Status == WebExceptionStatus.ProtocolError)
-                    {
-                        var response = ex.Response as HttpWebResponse;
-                        if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            result = FeedVerificationResult.AuthenticationRequired;
-                        }
-                        else
-                        {
-                            result = FeedVerificationResult.Invalid;
-                        }
-                    }
-                    else
-                    {
-                        result = FeedVerificationResult.Invalid;
-                    }
+                    result = HandleWebException(ex, source);
                 }
                 catch (UriFormatException ex)
                 {
@@ -90,6 +70,36 @@ namespace Orc.NuGetExplorer
             Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
 
             return result;
+        }
+
+        private static FeedVerificationResult HandleWebException(WebException exception, string source)
+        {
+            try
+            {
+                var httpWebResponse = (HttpWebResponse)exception.Response;
+                if (ReferenceEquals(httpWebResponse, null))
+                {
+                    return FeedVerificationResult.Invalid;
+                }
+
+                if ((int)httpWebResponse.StatusCode == 403)
+                {
+                    return FeedVerificationResult.Valid;
+                }
+
+                if (exception.Status == WebExceptionStatus.ProtocolError)
+                {
+                    return httpWebResponse.StatusCode == HttpStatusCode.Unauthorized
+                        ? FeedVerificationResult.AuthenticationRequired
+                        : FeedVerificationResult.Invalid;
+                }                
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "Failed to verify feed '{0}'", source);
+            }
+
+            return FeedVerificationResult.Invalid;
         }
         #endregion
     }

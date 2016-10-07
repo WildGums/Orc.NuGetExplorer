@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetSettings.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="NuGetSettings.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ namespace Orc.NuGetExplorer
             try
             {
                 var valuesListKey = GetSectionValuesListKey(section);
-                var keysString = _configurationService.GetValue<string>(valuesListKey);
+                var keysString = _configurationService.GetRoamingValue<string>(valuesListKey);
                 if (string.IsNullOrEmpty(keysString))
                 {
                     return true;
@@ -113,10 +113,10 @@ namespace Orc.NuGetExplorer
 
                 var newKeys = keysString.Split(Separator).Where(x => !string.Equals(x, key));
                 keysString = string.Join(Separator.ToString(), newKeys);
-                _configurationService.SetValue(valuesListKey, keysString);
+                _configurationService.SetRoamingValue(valuesListKey, keysString);
 
                 var valueKey = GetSectionValueKey(section, key);
-                _configurationService.SetValue(valueKey, string.Empty);
+                _configurationService.SetRoamingValue(valueKey, string.Empty);
             }
             catch
             {
@@ -135,7 +135,7 @@ namespace Orc.NuGetExplorer
             try
             {
                 var sectionListKey = GetSectionListKey();
-                var sectionsString = _configurationService.GetValue<string>(sectionListKey);
+                var sectionsString = _configurationService.GetRoamingValue<string>(sectionListKey);
                 if (string.IsNullOrEmpty(sectionsString))
                 {
                     return true;
@@ -143,7 +143,7 @@ namespace Orc.NuGetExplorer
 
                 var newSections = sectionsString.Split(Separator).Where(x => !string.Equals(x, section));
                 sectionsString = string.Join(Separator.ToString(), newSections);
-                _configurationService.SetValue(sectionListKey, sectionsString);
+                _configurationService.SetRoamingValue(sectionListKey, sectionsString);
 
                 var values = GetValues(section, false);
                 if (values == null)
@@ -183,13 +183,13 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => section);
 
             var sectionListKey = GetSectionListKey();
-            var sectionsString = _configurationService.GetValue(sectionListKey, string.Empty);
+            var sectionsString = _configurationService.GetRoamingValue(sectionListKey, string.Empty);
             var sections = sectionsString.Split(new[] {Separator}, StringSplitOptions.RemoveEmptyEntries).ToList();
             if (!sections.Contains(section))
             {
                 sections.Add(section);
                 sectionsString = string.Join(Separator.ToString(), sections);
-                _configurationService.SetValue(sectionListKey, sectionsString);
+                _configurationService.SetRoamingValue(sectionListKey, sectionsString);
             }
         }
 
@@ -210,13 +210,13 @@ namespace Orc.NuGetExplorer
 
         private void UpdateKeysList(IList<KeyValuePair<string, string>> values, string valuesListKey)
         {
-            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
+            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
 
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
             var keysToSave = values.Select(x => x.Key);
 
             var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
-            _configurationService.SetValue(valuesListKey, newValueKeysString);
+            _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
         }
 
         private string ConvertToFullPath(string result)
@@ -229,7 +229,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => section);
 
             var valuesListKey = GetSectionValuesListKey(section);
-            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
+            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             if (string.IsNullOrEmpty(valueKeysString))
             {
                 return null;
@@ -245,7 +245,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => subsection);
 
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            var valueKeysString = _configurationService.GetValue<string>(valuesListKey);
+            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             if (string.IsNullOrEmpty(valueKeysString))
             {
                 return null;
@@ -262,7 +262,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => key);
 
             var combinedKey = GetSectionValueKey(section, key);
-            var value = _configurationService.GetValue<string>(combinedKey);
+            var value = _configurationService.GetRoamingValue<string>(combinedKey);
 
             if (isPath)
             {
@@ -279,7 +279,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => key);
 
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
-            var value = _configurationService.GetValue<string>(combinedKey);
+            var value = _configurationService.GetRoamingValue<string>(combinedKey);
 
             if (isPath)
             {
@@ -295,7 +295,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => key);
 
             var combinedKey = GetSectionValueKey(section, key);
-            _configurationService.SetValue(combinedKey, value);
+            _configurationService.SetRoamingValue(combinedKey, value);
         }
 
         private void SetNuGetValue(string section, string subsection, string key, string value)
@@ -305,7 +305,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNullOrWhitespace(() => key);
 
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
-            _configurationService.SetValue(combinedKey, value);
+            _configurationService.SetRoamingValue(combinedKey, value);
         }
 
         private string GetSectionValueKey(string section, string key)

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="repositoryService.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="repositoryService.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -80,14 +80,14 @@ namespace Orc.NuGetExplorer
         {
             return GetSourceRepositories().Select(sourceRepository =>
             {
-                return _repositoryCacheService.GetSerialisableRepository(sourceRepository.Name, PackageOperationType.Update, 
+                return _repositoryCacheService.GetSerializableRepository(sourceRepository.Name, sourceRepository.Source, PackageOperationType.Update, 
                     () => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<UpdateRepository>(LocalRepository, sourceRepository));
             });
         }
 
         public IRepository GetSourceAggregateRepository()
         {            
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Install,
+            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Install,
                 () =>
                 {
                     var packageSources = GetPackageSources();
@@ -101,13 +101,13 @@ namespace Orc.NuGetExplorer
             foreach (var packageSource in packageSources)
             {
                 var source = packageSource;
-                yield return _repositoryCacheService.GetSerialisableRepository(packageSource.Name, PackageOperationType.Install, () => _repositoryFactory.CreateRepository(source.Source));
+                yield return _repositoryCacheService.GetSerializableRepository(packageSource.Name, packageSource.Source, PackageOperationType.Install, () => _repositoryFactory.CreateRepository(source.Source));
             }
         }
 
         public IRepository GetUpdateAggeregateRepository()
         {            
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Update, () =>
+            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Update, () =>
             {
                 var packageSources = GetPackageSources();
                 var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
@@ -122,7 +122,7 @@ namespace Orc.NuGetExplorer
 
         private IRepository GetLocalRepository()
         {
-            return _repositoryCacheService.GetSerialisableRepository(RepositoryName.All, PackageOperationType.Uninstall, () =>
+            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Uninstall, () =>
             {
                 var path = _nuGetConfigurationService.GetDestinationFolder();
 

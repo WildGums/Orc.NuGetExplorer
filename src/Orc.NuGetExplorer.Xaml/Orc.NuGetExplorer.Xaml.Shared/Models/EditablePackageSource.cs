@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EditablePackageSource.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="EditablePackageSource.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -17,6 +17,9 @@ namespace Orc.NuGetExplorer
         public string Name { get; set; }
         public string Source { get; set; }
         public string PreviousSourceValue { get; set; }
+
+        [DefaultValue(FeedVerificationResult.Unknown)]
+        public FeedVerificationResult FeedVerificationResult { get; set; }
 
         public bool? IsValid
         {

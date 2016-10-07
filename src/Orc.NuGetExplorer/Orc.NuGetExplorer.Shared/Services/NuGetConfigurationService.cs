@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetConfigurationService.cs" company="Wild Gums">
-//   Copyright (c) 2008 - 2015 Wild Gums. All rights reserved.
+// <copyright file="NuGetConfigurationService.cs" company="WildGums">
+//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -48,14 +48,14 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetDestinationFolder()
         {
-            return _configurationService.GetValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+            return _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
         }
 
         public void SetDestinationFolder(string value)
         {
             Argument.IsNotNullOrWhitespace(() => value);
 
-            _configurationService.SetValue(Settings.NuGet.DestinationFolder, value);
+            _configurationService.SetRoamingValue(Settings.NuGet.DestinationFolder, value);
         }
 
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
@@ -143,13 +143,13 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => repository);
 
             var key = GetIsPrereleaseAllowedKey(repository);
-            _configurationService.SetValue(key, value);
+            _configurationService.SetRoamingValue(key, value);
         }
 
         public bool GetIsPrereleaseAllowed(IRepository repository)
         {
             var key = GetIsPrereleaseAllowedKey(repository);
-            var stringValue = _configurationService.GetValue(key, false.ToString());
+            var stringValue = _configurationService.GetRoamingValue(key, false.ToString());
 
             bool value;
             if (bool.TryParse(stringValue, out value))

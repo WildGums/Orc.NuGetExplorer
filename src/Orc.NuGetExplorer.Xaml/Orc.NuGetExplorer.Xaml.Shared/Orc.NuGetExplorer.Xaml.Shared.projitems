@@ -51,7 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\PackageDetailsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\PackagesUIService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\PagingService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\PleaseWaitInterruptService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\XamlPleaseWaitInterruptService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RepositoryNavigatorService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SearchResultService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SearchSettingsService.cs" />
