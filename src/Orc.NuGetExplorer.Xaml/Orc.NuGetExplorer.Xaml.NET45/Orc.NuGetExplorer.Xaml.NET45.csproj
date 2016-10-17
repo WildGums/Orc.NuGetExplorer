@@ -106,7 +106,13 @@
   <ItemGroup>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Analyzer Include="..\..\..\lib\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
+    <Analyzer Include="..\..\..\lib\PublicApiAnalyzer.1.0.0-alpha001\analyzers\dotnet\cs\PublicApiAnalyzer.CodeFixes.dll" />
+    <Analyzer Include="..\..\..\lib\PublicApiAnalyzer.1.0.0-alpha001\analyzers\dotnet\cs\PublicApiAnalyzer.dll" />
+    <Analyzer Include="..\..\..\lib\WpfAnalyzers.0.2.3.2-dev\analyzers\dotnet\cs\WpfAnalyzers.Analyzers.dll" />
+    <Analyzer Include="..\..\..\lib\WpfAnalyzers.0.2.3.2-dev\analyzers\dotnet\cs\WpfAnalyzers.CodeFixes.dll" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Orc.NuGetExplorer\Orc.NuGetExplorer.NET45\Orc.NuGetExplorer.NET45.csproj">
       <Project>{f58e66b1-c005-429e-a51b-3ba3ad134b60}</Project>
