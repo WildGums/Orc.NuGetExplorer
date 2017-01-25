@@ -22,11 +22,11 @@ namespace Orc.NuGetExplorer.Controls
 
         public static readonly DependencyProperty BindableDocumentProperty =
             DependencyProperty.Register("BindableDocument", typeof(FlowDocument),
-                typeof(BindableRichTextBox), new PropertyMetadata(OnDocumentChanged));
+                typeof(BindableRichTextBox), new PropertyMetadata(OnBindableDocumentChanged));
         #endregion
 
         #region Methods
-        private static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBindableDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var thisControl = (RichTextBox) d;
 
