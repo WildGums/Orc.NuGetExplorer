@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />
+	<Compile Include="$(MSBuildThisFileDirectory)..\..\GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\FocusOnVisibleBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\UpdateSelectedItemSourceBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\UpdateSourceOnVisibleBehavior.cs" />

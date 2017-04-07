@@ -73,7 +73,7 @@ namespace Orc.NuGetExplorer.ViewModels
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             PackageAction = new TaskCommand<IPackageDetails>(OnPackageActionExecuteAsync, OnPackageActionCanExecute);
-            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
+            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecuteAsync);
             OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync);
 
             AccentColorHelper.CreateAccentColorResourceDictionary();
@@ -123,19 +123,23 @@ namespace Orc.NuGetExplorer.ViewModels
             await SearchAndRefreshAsync();
         }
 
-        private async void OnIsPrereleaseAllowedChanged()
+        private void OnIsPrereleaseAllowedChanged()
         {
             if (!_searchingAndRefreshing && IsPrereleaseAllowed != null && Navigator.SelectedRepository != null)
             {
                 _nuGetConfigurationService.SetIsPrereleaseAllowed(Navigator.SelectedRepository, IsPrereleaseAllowed.Value);
             }
 
-            await SearchAndRefreshAsync();
+#pragma warning disable 4014
+            SearchAndRefreshAsync();
+#pragma warning restore 4014
         }
 
-        private async void OnPackagesToSkipChanged()
+        private void OnPackagesToSkipChanged()
         {
-            await SearchAndRefreshAsync();
+#pragma warning disable 4014
+            SearchAndRefreshAsync();
+#pragma warning restore 4014
         }
 
         private async Task SearchAndRefreshAsync()
@@ -176,7 +180,7 @@ namespace Orc.NuGetExplorer.ViewModels
             ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository.OperationType);
         }
 
-        private async void OnSelectedRepositoryChanged()
+        private void OnSelectedRepositoryChanged()
         {
             if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
             {
@@ -194,7 +198,9 @@ namespace Orc.NuGetExplorer.ViewModels
 
             _configurationService.SetLastRepository(selectedRepositoryCategory, selectedRepository);
 
-            await SearchAndRefreshAsync();
+#pragma warning disable 4014
+            SearchAndRefreshAsync();
+#pragma warning restore 4014
         }
 
         private void SetShowUpdates()
@@ -249,9 +255,11 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        private async void OnSearchFilterChanged()
+        private void OnSearchFilterChanged()
         {
-            await SearchAndRefreshAsync();
+#pragma warning disable 4014
+            SearchAndRefreshAsync();
+#pragma warning restore 4014
         }
 
         [Time]
@@ -285,9 +293,9 @@ namespace Orc.NuGetExplorer.ViewModels
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.Error(exception, "Failed to search packages.");
+                Log.Error(ex, "Failed to search packages");
             }
             finally
             {
@@ -340,7 +348,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public TaskCommand CheckForUpdates { get; private set; }
 
-        private async Task OnCheckForUpdatesExecute()
+        private async Task OnCheckForUpdatesExecuteAsync()
         {
             if (AvailableUpdates == null)
             {
@@ -348,6 +356,7 @@ namespace Orc.NuGetExplorer.ViewModels
             }
 
             AvailableUpdates.Clear();
+
             using (_pleaseWaitService.WaitingScope())
             {
                 var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(), true);

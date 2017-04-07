@@ -6,7 +6,7 @@
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                   xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
-                  Width="900" Height="500" SizeToContent="Manual"
+                  Width="900" Height="555" SizeToContent="Manual"
                   x:ClassModifier="internal">
 
     <catel:DataWindow.Resources>
@@ -73,12 +73,16 @@
                     </i:Interaction.Behaviors>
                 </orc:WatermarkTextBox>
             </DockPanel>
-            <views:PackageListView Grid.Row="1" Grid.Column="0"
-                               ItemsSource="{Binding PackageList, Mode=OneWay}"
-                               SelectedPackage="{Binding SelectedPackage}" 
-                               ButtonHeader="{Binding ActionName}"
-                               PackageCommand="{Binding PackageAction}"/>
-            <views:PagingView Grid.Row="2" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Margin="0 0 20 0"
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    BorderThickness="0,0,0,1" BorderBrush="LightGray">
+                <views:PackageListView ItemsSource="{Binding PackageList, Mode=OneWay}"
+                                       SelectedPackage="{Binding SelectedPackage}"
+                                       ButtonHeader="{Binding ActionName}"
+                                       PackageCommand="{Binding PackageAction}" />
+            </Border>
+            
+            <views:PagingView Grid.Row="2" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Margin="0 10 20 0"
                               ItemIndex="{Binding PackagesToSkip, Mode=TwoWay}" ItemsCount="{Binding TotalPackagesCount}" />
         </Grid>        
 
