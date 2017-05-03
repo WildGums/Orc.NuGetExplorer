@@ -60,6 +60,8 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
             OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
             Settings = new TaskCommand(OnSettingsExecute);
+
+            Title = "Orc.NuGetExplorer example";
         }
         #endregion
 

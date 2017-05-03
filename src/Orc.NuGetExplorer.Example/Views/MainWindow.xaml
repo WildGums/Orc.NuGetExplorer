@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:converters="clr-namespace:Orc.NuGetExplorer.Example.Converters"
+                  xmlns:orc="http://www.wildgums.net.au/orc"
                   ShowInTaskbar="True" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" 
                   WindowStartupLocation="CenterScreen" WindowState="Normal">
 
@@ -10,45 +11,45 @@
         <converters:PackageDetailsConverter x:Key="PackageDetailsConverter"/>
     </catel:DataWindow.Resources>
         
-    <catel:StackGrid>
-        <catel:StackGrid.RowDefinitions>
+    <orc:StackGrid>
+        <orc:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-        </catel:StackGrid.RowDefinitions>
+        </orc:StackGrid.RowDefinitions>
 
         <Button Content="Settings" Command="{Binding Settings}"/>
         <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
         
-        <catel:StackGrid>
-            <catel:StackGrid.RowDefinitions>
+        <orc:StackGrid>
+            <orc:StackGrid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-            </catel:StackGrid.RowDefinitions>
+            </orc:StackGrid.RowDefinitions>
             
-            <catel:StackGrid >
-                <catel:StackGrid.ColumnDefinitions>
+            <orc:StackGrid >
+                <orc:StackGrid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                </catel:StackGrid.ColumnDefinitions>
+                </orc:StackGrid.ColumnDefinitions>
                 
-                <catel:StackGrid.RowDefinitions>
+                <orc:StackGrid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                </catel:StackGrid.RowDefinitions>
+                </orc:StackGrid.RowDefinitions>
                 
                 <TextBlock Text="Package source name"/>
                 <TextBox Text="{Binding PackageSourceName, UpdateSourceTrigger=PropertyChanged}"/>
                 
                 <TextBlock Text="Package source feed"/>
                 <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
-            </catel:StackGrid>
+            </orc:StackGrid>
             
             <Button Content="verify feed" Command="{Binding VerifyFeed}"/>
             <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
-        </catel:StackGrid>
+        </orc:StackGrid>
         
         <Grid>
             <Grid.ColumnDefinitions>
@@ -83,5 +84,132 @@
                 <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Open in update window" Command="{Binding OpenUpdateWindow}"/>
             </Grid>
         </Grid>
-    </catel:StackGrid>
+    </orc:StackGrid>
 </catel:DataWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
