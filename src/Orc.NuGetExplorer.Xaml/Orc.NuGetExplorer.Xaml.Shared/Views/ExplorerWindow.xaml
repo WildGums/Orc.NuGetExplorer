@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExplorerWindow"
+<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExplorerWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
@@ -39,7 +39,7 @@
 
             <CheckBox Grid.Row="1" IsChecked="{Binding IsPrereleaseAllowed, Converter={converters:NullableBooleanTrueConverter}}" 
                       IsEnabled="{Binding IsPrereleaseAllowed, Converter={catel:ReferenceToBooleanConverter}}"
-                      Content="Include prerelease" Margin="8 8 8 4" />
+                      Content="{catel:LanguageBinding NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease}" Margin="8 8 8 4" />
         </Grid>
         
 
@@ -62,7 +62,7 @@
                                 <Path x:Name="ArrowPath" Stretch="Fill" Fill="#575757"
                                   Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
                             </Viewbox>
-                            <TextBlock Text="Recommended updates"/>
+                            <TextBlock Text="{catel:LanguageBinding NuGetExplorer_ExplorerWindow_TextBlock_Text_RecommendedUpdates}"/>
                         </DockPanel>
                     </Button.Content>
                 </Button>
