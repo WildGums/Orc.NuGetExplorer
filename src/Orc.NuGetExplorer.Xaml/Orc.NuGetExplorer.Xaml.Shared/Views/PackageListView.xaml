@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageListView"
+<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageListView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
@@ -18,7 +18,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <TextBlock Text="No packages found" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
+                                <TextBlock Text="{catel:LanguageBinding NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound}" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
                                            VerticalAlignment="Top" Margin="0 30 0 0"
                                            Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}"/>
                             </ControlTemplate>
@@ -106,7 +106,7 @@
                                             CommandParameter="{Binding }" 
                                             IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}"/>
 
-                                    <TextBlock Text="Prerelease" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
+                                    <TextBlock Text="{catel:LanguageBinding NuGetExplorer_PackageListView_TextBlock_Text_Prerelease}" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
                                            Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" />
                                 </StackPanel>
                             </Grid>
