@@ -7,10 +7,12 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.Threading.Tasks;
+
     public interface IPackagesUIService
     {
         #region Methods
-        void ShowPackagesExplorer();
+        Task ShowPackagesExplorerAsync();
         #endregion
     }
 }

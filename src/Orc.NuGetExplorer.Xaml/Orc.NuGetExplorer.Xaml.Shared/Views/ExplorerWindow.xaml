@@ -1,7 +1,7 @@
 <catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExplorerWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:catel="http://schemas.catelproject.com"
                   xmlns:orc="http://www.wildgums.net.au/orc"
                   xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"

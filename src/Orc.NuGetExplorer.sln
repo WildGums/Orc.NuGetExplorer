@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26020.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.NET40", "Orc.NuGetExplorer\Orc.NuGetExplorer.NET40\Orc.NuGetExplorer.NET40.csproj", "{7E8F0C02-141A-4824-9066-2A544601654C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.NET47", "Orc.NuGetExplorer\Orc.NuGetExplorer.NET47\Orc.NuGetExplorer.NET47.csproj", "{7E8F0C02-141A-4824-9066-2A544601654C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{005F94F0-662A-4FE1-95AF-5D1C22DA8BF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Example", "Orc.NuGetExplorer.Example\Orc.NuGetExplorer.Example.csproj", "{2487CA27-DD19-4BEE-ABB3-A3E9BA7BEAC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Tests.NET40", "Orc.NuGetExplorer.Tests\Orc.NuGetExplorer.Tests.NET40\Orc.NuGetExplorer.Tests.NET40.csproj", "{9ED7F24B-4E0E-4737-AC26-8E33F7A49392}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Tests.NET47", "Orc.NuGetExplorer.Tests\Orc.NuGetExplorer.Tests.NET47\Orc.NuGetExplorer.Tests.NET47.csproj", "{9ED7F24B-4E0E-4737-AC26-8E33F7A49392}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{B179BD9A-424F-4254-802E-C2D45D7D83F2}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{B179BD9A-4
 		SolutionAssemblyInfo.cs = SolutionAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Xaml.NET40", "Orc.NuGetExplorer.Xaml\Orc.NuGetExplorer.Xaml.NET40\Orc.NuGetExplorer.Xaml.NET40.csproj", "{914B0AE5-94A7-4575-B99C-3E718AA3B4A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orc.NuGetExplorer.Xaml.NET47", "Orc.NuGetExplorer.Xaml\Orc.NuGetExplorer.Xaml.NET47\Orc.NuGetExplorer.Xaml.NET47.csproj", "{914B0AE5-94A7-4575-B99C-3E718AA3B4A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{C51EE041-02FF-4906-985C-A9C22E1DAEB0}"
 EndProject
