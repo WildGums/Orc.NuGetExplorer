@@ -1,7 +1,6 @@
 ﻿using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
-using Catel.Services.Models;
 using Orc.NuGetExplorer;
 using NuGet;
 using IPackageManager = Orc.NuGetExplorer.IPackageManager;

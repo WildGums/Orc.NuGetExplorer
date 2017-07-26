@@ -1,7 +1,6 @@
 ﻿using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
-using Catel.Services.Models;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.ViewModels;
 using Orc.NuGetExplorer.Views;

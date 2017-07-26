@@ -42,8 +42,6 @@ namespace Orc.NuGetExplorer.ViewModels
             Remove = new Command(OnRemoveExecute, OnRemoveCanExecute);
             MoveUp = new Command(OnMoveUpExecute, OnMoveUpCanExecute);
             MoveDown = new Command(OnMoveDownExecute, OnMoveDownCanExecute);
-
-            SuspendValidation = false;
         }
         #endregion
 
@@ -215,7 +213,7 @@ namespace Orc.NuGetExplorer.ViewModels
             packageSource.IsValidSource = isValidUrl;
             packageSource.IsValidName = isValidName;
 
-            ValidateViewModel(true);
+            Validate(true);
         }
 
         private bool CanMoveToStep(int step)

@@ -70,12 +70,6 @@ namespace Orc.NuGetExplorer
             return packageSources.ToPackageSourceInterfaces();
         }
 
-        [ObsoleteEx(ReplacementTypeOrMember = "SavePackageSource(string, string, bool, bool, bool)", TreatAsErrorFromVersion = "1.0", RemoveInVersion = "2.0")]
-        public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true)
-        {
-            return SavePackageSource(name, source, isEnabled, isOfficial, true);
-        }
-
         [Time]
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)
         {

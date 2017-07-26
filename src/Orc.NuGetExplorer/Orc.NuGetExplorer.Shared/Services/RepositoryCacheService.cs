@@ -47,12 +47,6 @@ namespace Orc.NuGetExplorer
             return CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
         }
 
-        [ObsoleteEx(ReplacementTypeOrMember = "GetSerializableRepository", TreatAsErrorFromVersion = "1.1", RemoveInVersion = "2.0")]
-        public IRepository GetSerialisableRepository(string name, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory, bool renew = false)
-        {
-            return GetSerializableRepository(name, string.Empty, operationType, packageRepositoryFactory, renew);
-        }
-
         private IRepository CreateSerializableRepository(int id, string name, string source, PackageOperationType operationType, Func<IPackageRepository> packageRepositoryFactory)
         {
             Argument.IsNotNullOrEmpty(() => name);

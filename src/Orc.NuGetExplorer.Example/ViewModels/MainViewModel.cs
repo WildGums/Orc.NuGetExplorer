@@ -54,7 +54,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
-            ShowExplorer = new Command(OnShowExplorerExecute);
+            ShowExplorer = new TaskCommand(OnShowExplorerExecuteAsync);
             AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
             VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
@@ -139,14 +139,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         /// <summary>
         /// Gets the ShowExplorer command.
         /// </summary>
-        public Command ShowExplorer { get; private set; }
+        public TaskCommand ShowExplorer { get; private set; }
 
         /// <summary>
         /// Method to invoke when the ShowExplorer command is executed.
         /// </summary>
-        private void OnShowExplorerExecute()
+        private async Task OnShowExplorerExecuteAsync()
         {
-            _packagesUiService.ShowPackagesExplorer();
+            await _packagesUiService.ShowPackagesExplorerAsync();
         }
         #endregion
     }

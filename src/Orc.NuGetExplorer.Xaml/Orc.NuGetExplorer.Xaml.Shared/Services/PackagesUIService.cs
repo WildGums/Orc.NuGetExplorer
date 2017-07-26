@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
@@ -31,9 +32,9 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public void ShowPackagesExplorer()
+        public async Task ShowPackagesExplorerAsync()
         {
-            _uiVisualizerService.ShowDialog<ExplorerViewModel>();
+            await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
         }
         #endregion
     }
