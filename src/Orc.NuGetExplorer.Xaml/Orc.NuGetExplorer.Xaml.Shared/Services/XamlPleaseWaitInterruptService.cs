@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Services;
 
-    internal class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
+    public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
     {
         #region Fields
         private readonly IPleaseWaitService _pleaseWaitService;
