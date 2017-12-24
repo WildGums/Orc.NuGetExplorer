@@ -28,6 +28,9 @@ namespace Orc.NuGetExplorer
         int? DownloadCount { get; }
         string Dependencies { get; }
         bool? IsInstalled { get; set; }
+        List<string> ApiValidations { get; set; }
         #endregion
+
+    
     }
 }

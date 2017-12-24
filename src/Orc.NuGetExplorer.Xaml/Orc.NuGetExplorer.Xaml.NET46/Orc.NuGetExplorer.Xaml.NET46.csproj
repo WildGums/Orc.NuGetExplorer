@@ -85,6 +85,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Orc.NuGetExplorer\Orc.NuGetExplorer.NET45\Orc.NuGetExplorer.NET45.csproj">
+      <Project>{F58E66B1-C005-429E-A51B-3BA3AD134B60}</Project>
+      <Name>Orc.NuGetExplorer.NET45</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Orc.NuGetExplorer\Orc.NuGetExplorer.NET46\Orc.NuGetExplorer.NET46.csproj">
       <Project>{d762edfd-1c8c-40ce-a43a-d0811cab3ccd}</Project>
       <Name>Orc.NuGetExplorer.NET46</Name>

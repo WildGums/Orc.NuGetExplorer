@@ -10,12 +10,14 @@ namespace Orc.NuGetExplorer
     using System;
     using Catel;
     using Catel.Services;
+    using Orc.NuGetExplorer.Services;
 
     internal class PackageCommandService : IPackageCommandService
     {
         #region Fields
         private readonly IRepository _localRepository;
         private readonly IPackageOperationContextService _packageOperationContextService;
+        private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageOperationService _packageOperationService;
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPleaseWaitService _pleaseWaitService;
@@ -23,17 +25,19 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService,
-            IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService)
+            IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => packageOperationService);
             Argument.IsNotNull(() => packageOperationContextService);
+            Argument.IsNotNull(() => apiPackageRegistry);
 
             _pleaseWaitService = pleaseWaitService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
+            _apiPackageRegistry = apiPackageRegistry;
 
             _localRepository = repositoryService.LocalRepository;
         }
@@ -116,7 +120,7 @@ namespace Orc.NuGetExplorer
         public string GetPluralActionName(PackageOperationType operationType)
         {
             return string.Format("{0} all", Enum.GetName(typeof(PackageOperationType), operationType));
-        }
+        }                          
 
         private bool CanInstall(IPackageDetails package)
         {
@@ -126,9 +130,10 @@ namespace Orc.NuGetExplorer
             {
                 var count = _packageQueryService.CountPackages(_localRepository, package.Id);
                 package.IsInstalled = count != 0;
+                _apiPackageRegistry.Validate(package);
             }
 
-            return !package.IsInstalled.Value;
+            return !package.IsInstalled.Value && package.ApiValidations.Count == 0;
         }
 
         private bool CanUpdate(IPackageDetails package)
@@ -139,15 +144,18 @@ namespace Orc.NuGetExplorer
             {
                 var count = _packageQueryService.CountPackages(_localRepository, package);
                 package.IsInstalled = count != 0;
+                _apiPackageRegistry.Validate(package);
             }
 
-            return !package.IsInstalled.Value;
+            return !package.IsInstalled.Value && package.ApiValidations.Count == 0;
         }
 
         private bool CanUninstall(IPackageDetails package)
         {
             return true;
         }
+
+
         #endregion
     }
 }

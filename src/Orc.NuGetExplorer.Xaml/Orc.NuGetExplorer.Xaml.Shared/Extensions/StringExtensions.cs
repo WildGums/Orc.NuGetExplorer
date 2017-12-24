@@ -8,13 +8,18 @@
 namespace Orc.NuGetExplorer
 {
     using System.Windows.Documents;
+    using System.Windows.Media;
 
     public static class StringExtensions
     {
         #region Methods
-        public static Inline ToInline(this string text)
+        public static Inline ToInline(this string text, Brush brush = null)
         {
-            return new Run(text);
+            var inline = new Run(text)
+            {
+                Foreground = brush ?? Brushes.Black
+            };
+            return inline;
         }
         #endregion
     }

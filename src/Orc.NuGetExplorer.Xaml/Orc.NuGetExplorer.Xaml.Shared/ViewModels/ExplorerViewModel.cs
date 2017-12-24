@@ -21,6 +21,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
+    using Orc.NuGetExplorer.Services;
     using Scopes;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -332,6 +333,7 @@ namespace Orc.NuGetExplorer.ViewModels
             foreach (var package in SearchResult.PackageList)
             {
                 package.IsInstalled = null;
+
                 _packageCommandService.CanExecute(Navigator.SelectedRepository.OperationType, package);
             }
         }

@@ -9,7 +9,9 @@ namespace Orc.NuGetExplorer
 {
     using System.Globalization;
     using System.Linq;
+    using System.Windows;
     using System.Windows.Documents;
+    using System.Windows.Media;
     using Catel;
     using Catel.Logging;
 
@@ -70,6 +72,15 @@ namespace Orc.NuGetExplorer
                 paragraph.Inlines.AddIfNotNull(dependencies);
             }
 
+            if (package.ApiValidations.Count > 0)
+            {
+                var validations = GetAlertRecords("Errors: ", package.ApiValidations.Select(s => " - " + s).ToArray());
+                paragraph.Inlines.AddIfNotNull(validations);
+                paragraph.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add("You must update the shell in order to apply this update".ToInline(Brushes.Red));
+                paragraph.Inlines.Add(new LineBreak());
+            }
+
             result.Blocks.Add(paragraph);
             return result;
         }
@@ -82,6 +93,27 @@ namespace Orc.NuGetExplorer
             }
 
             return string.Format("{0}-{1}", package.Version, package.SpecialVersion);
+        }
+
+        private Inline GetAlertRecords(string title, params string[] stringLines)
+        {
+            Argument.IsNotNullOrWhitespace(() => title);
+
+            if (stringLines == null)
+            {
+                return null;
+            }
+
+            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+            if (!valuableLines.Any())
+            {
+                return null;
+            }
+
+            var inlines = valuableLines.Select(line => line.ToInline(Brushes.Red).Append(new LineBreak())).ToList();
+            var inline = title.ToInline().Append(new LineBreak());
+            var resultInline = inline.Bold().AppendRange(inlines);
+            return resultInline;
         }
 
         private Inline GetDetailsRecord(string title, params string[] stringLines)
@@ -101,7 +133,8 @@ namespace Orc.NuGetExplorer
 
             var inlines = valuableLines.Select(line => line.ToInline().Append(new LineBreak())).ToList();
 
-            var resultInline = title.ToInline().Bold().AppendRange(inlines);
+            var inline = title.ToInline();
+            var resultInline = inline.Bold().AppendRange(inlines);
             return resultInline;
         }
         #endregion

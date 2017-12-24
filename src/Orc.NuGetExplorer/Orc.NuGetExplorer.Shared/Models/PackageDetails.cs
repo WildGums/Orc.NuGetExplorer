@@ -37,20 +37,18 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        public string Id { get; private set; }
-        public string Title { get; private set; }
+        public List<string> ApiValidations { get; set; } = new List<string>();
+        public string Id { get; }
+        public string Title { get; }
 
-        public IEnumerable<string> Authors
-        {
-            get { return Package.Authors; }
-        }
+        public IEnumerable<string> Authors => Package.Authors;
 
         DateTimeOffset? IPackageDetails.Published
         {
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? ((PackageDetails)this).Published : dataServicePackage.Published;
+                return dataServicePackage == null ? Published : dataServicePackage.Published;
             }
         }
 
@@ -73,16 +71,17 @@ namespace Orc.NuGetExplorer
         }
 
         public bool? IsInstalled { get; set; }
-        public string FullName { get; private set; }
-        public string Description { get; private set; }
-        public Uri IconUrl { get; private set; }
-        internal IPackage Package { get; private set; }
-        public DateTime? Published { get; private set; }
-        public Version Version { get; private set; }
-        public string SpecialVersion { get; private set; }
-        public bool IsAbsoluteLatestVersion { get; private set; }
+
+        public string FullName { get; }
+        public string Description { get; }
+        public Uri IconUrl { get; }
+        internal IPackage Package { get; }
+        public DateTime? Published { get; }
+        public Version Version { get; }
+        public string SpecialVersion { get; }
+        public bool IsAbsoluteLatestVersion { get; }
         public bool IsLatestVersion { get; private set; }
-        public bool IsPrerelease { get; private set; }
+        public bool IsPrerelease { get; }
         #endregion
     }
 }
