@@ -21,7 +21,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
-    using Orc.NuGetExplorer.Services;
     using Scopes;
 
     internal class ExplorerViewModel : ViewModelBase

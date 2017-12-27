@@ -12,7 +12,6 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using NuGet;
-    using Orc.NuGetExplorer.Services;
 
     internal class PackageOperationService : IPackageOperationService
     {
@@ -88,13 +87,8 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                _apiPackageRegistry.Validate(package);
-                if (package.ApiValidations.Count > 0)
-                {
-                    throw new ApiValidationException(package.ApiValidations.First());
-                }
-
-                var nuGetPackage = EnsurePackageDependencies(((PackageDetails) package).Package);
+                ValidatePackage(package);
+                var nuGetPackage = EnsurePackageDependencies(((PackageDetails)package).Package);
                 var operations = walker.ResolveOperations(nuGetPackage);
                 _packageManager.InstallPackage(nuGetPackage, false, allowedPrerelease, false);
             }
@@ -108,23 +102,30 @@ namespace Orc.NuGetExplorer
         public void UpdatePackages(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof (PackageDetails));
+            Argument.IsOfType(() => package, typeof(PackageDetails));
 
             try
             {
-                _apiPackageRegistry.Validate(package);
-                if (package.ApiValidations.Count > 0)
-                {
-                    throw new ApiValidationException(package.ApiValidations.First());
-                }
-
-                var nuGetPackage = EnsurePackageDependencies(((PackageDetails) package).Package);
+                ValidatePackage(package);
+                var nuGetPackage = EnsurePackageDependencies(((PackageDetails)package).Package);
                 _packageManager.UpdatePackage(nuGetPackage, true, allowedPrerelease);
             }
             catch (Exception exception)
             {
                 _logger.Log(MessageLevel.Error, exception.Message);
                 _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
+            }
+        }
+
+        private void ValidatePackage(IPackageDetails package)
+        {
+            package.BeginValidation();
+            _apiPackageRegistry.Validate(package);
+            package.EndValidation();
+
+            if (package.GetErrorCount("API") > 0)
+            {
+                throw new ApiValidationException(package.GetErrors("API").First().Message);
             }
         }
 

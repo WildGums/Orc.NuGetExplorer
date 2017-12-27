@@ -23,8 +23,16 @@ namespace Orc.NuGetExplorer
             // change this because we already took a dependency on this, but next time please follow the naming conventions so we
             // know to what extension / Orc.* package a setting belongs to
             public const string DestinationFolder = "DestFolder";
+
             public const string PackageSources = "PackageSources";
             #endregion
         }
+    }
+
+    public static class ValidationTags
+    {
+        #region Fields
+        public const string Api = "API";
+        #endregion
     }
 }

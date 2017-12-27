@@ -15,15 +15,18 @@ namespace Orc.NuGetExplorer
         {
         }
 
-        public ApiValidationException(string message) : base(message)
+        public ApiValidationException(string message)
+            : base(message)
         {
         }
 
-        public ApiValidationException(string message, Exception innerException) : base(message, innerException)
+        public ApiValidationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected ApiValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ApiValidationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

@@ -9,21 +9,25 @@ namespace Orc.NuGetExplorer
 {
     using System.Globalization;
     using System.Linq;
-    using System.Windows;
     using System.Windows.Documents;
     using System.Windows.Media;
     using Catel;
     using Catel.Logging;
+    using Catel.Services;
 
     internal class PackageDetailsService : IPackageDetailsService
     {
         private readonly IRepositoryNavigatorService _repositoryNavigatorService;
 
-        public PackageDetailsService(IRepositoryNavigatorService repositoryNavigatorService)
+        private readonly ILanguageService _languageService;
+
+        public PackageDetailsService(IRepositoryNavigatorService repositoryNavigatorService, ILanguageService languageService)
         {
             Argument.IsNotNull(() => repositoryNavigatorService);
+            Argument.IsNotNull(() => languageService);
 
             _repositoryNavigatorService = repositoryNavigatorService;
+            _languageService = languageService;
         }
 
         #region Fields
@@ -42,42 +46,43 @@ namespace Orc.NuGetExplorer
                 FontSize = 12
             };
 
-            var autors = GetDetailsRecord("Created by: ", package.Authors.ToArray());
+            var autors = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_CreatedBy"), package.Authors.ToArray());
             paragraph.Inlines.AddIfNotNull(autors);
 
-            var id = GetDetailsRecord("Id: ", package.Id);
+            var id = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id"), package.Id);
             paragraph.Inlines.AddIfNotNull(id);
 
-            var version = GetDetailsRecord("Version: ", GetVersion(package));
+            var version = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Version"), GetVersion(package));
             paragraph.Inlines.AddIfNotNull(version);
 
             var published = package.Published;
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType != PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Published: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType == PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Installed: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
-            var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
+            var downloads = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downloads"), package.DownloadCount.ToString());
             paragraph.Inlines.AddIfNotNull(downloads);
 
             if (!string.IsNullOrWhiteSpace(package.Dependencies))
             {
-                var dependencies = GetDetailsRecord("Dependencies: ", package.Dependencies);
+                var dependencies = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Dependencies"), package.Dependencies);
                 paragraph.Inlines.AddIfNotNull(dependencies);
             }
 
-            if (package.ApiValidations.Count > 0)
+            if (package.GetErrorCount(ValidationTags.Api) > 0)
             {
-                var validations = GetAlertRecords("Errors: ", package.ApiValidations.Select(s => " - " + s).ToArray());
+                var validations = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"), package.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
                 paragraph.Inlines.AddIfNotNull(validations);
                 paragraph.Inlines.Add(new LineBreak());
-                paragraph.Inlines.Add("You must update the shell in order to apply this update".ToInline(Brushes.Red));
+
+                paragraph.Inlines.Add(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_Message").ToInline(Brushes.Red));
                 paragraph.Inlines.Add(new LineBreak());
             }
 
