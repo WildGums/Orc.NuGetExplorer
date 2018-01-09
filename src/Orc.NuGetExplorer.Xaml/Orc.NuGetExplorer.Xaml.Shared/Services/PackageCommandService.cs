@@ -137,14 +137,13 @@ namespace Orc.NuGetExplorer
                 ValidatePackage(package);
             }
 
-            return package.IsInstalled != null && !package.IsInstalled.Value && package.GetErrorCount(ValidationTags.Api) == 0;
+            return package.IsInstalled != null && !package.IsInstalled.Value && package.ValidationContext?.GetErrorCount(ValidationTags.Api) == 0;
         }
 
         private void ValidatePackage(IPackageDetails package)
         {
-            package.BeginValidation();
+            package.ResetValidationContext();
             _apiPackageRegistry.Validate(package);
-            package.EndValidation();
         }
 
         private bool CanUpdate(IPackageDetails package)
@@ -159,7 +158,7 @@ namespace Orc.NuGetExplorer
                 ValidatePackage(package);
             }
 
-            return !package.IsInstalled.Value && package.GetErrorCount(ValidationTags.Api) == 0;
+            return !package.IsInstalled.Value && package.ValidationContext?.GetErrorCount(ValidationTags.Api) == 0;
         }
 
         private bool CanUninstall(IPackageDetails package)

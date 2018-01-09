@@ -119,13 +119,13 @@ namespace Orc.NuGetExplorer
 
         private void ValidatePackage(IPackageDetails package)
         {
-            package.BeginValidation();
-            _apiPackageRegistry.Validate(package);
-            package.EndValidation();
+            package.ResetValidationContext();
 
-            if (package.GetErrorCount("API") > 0)
+            _apiPackageRegistry.Validate(package);
+
+            if (package.ValidationContext?.GetErrorCount(ValidationTags.Api) > 0)
             {
-                throw new ApiValidationException(package.GetErrors("API").First().Message);
+                throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
             }
         }
 

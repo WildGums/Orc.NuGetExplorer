@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
 
     using Catel.Data;
 
-    public interface IPackageDetails : IValidationContext
+    public interface IPackageDetails
     {
         #region Properties
         string Id { get; }
@@ -44,12 +44,12 @@ namespace Orc.NuGetExplorer
         string Dependencies { get; }
 
         bool? IsInstalled { get; set; }
+
+        IValidationContext ValidationContext { get; }
         #endregion
 
         #region Methods
-        void BeginValidation();
-
-        void EndValidation();
+        void ResetValidationContext();
         #endregion
     }
 }
