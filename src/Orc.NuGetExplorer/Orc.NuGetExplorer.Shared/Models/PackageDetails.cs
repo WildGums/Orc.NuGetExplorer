@@ -9,12 +9,19 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+
     using Catel;
     using Catel.Data;
+    using Catel.Logging;
+
     using NuGet;
 
     internal class PackageDetails : ModelBase, IPackageDetails
     {
+        #region Fields
+
+        #endregion
+
         #region Constructors
         internal PackageDetails(IPackage package)
         {
@@ -28,29 +35,31 @@ namespace Orc.NuGetExplorer
             Description = package.Description;
             IconUrl = package.IconUrl;
 
-            Published = package.Published == null ? (DateTime?) null : package.Published.Value.LocalDateTime;
+            Published = package.Published == null ? (DateTime?)null : package.Published.Value.LocalDateTime;
             SpecialVersion = package.Version.SpecialVersion;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
 
+            ValidationContext = new ValidationContext();
             IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
         }
         #endregion
 
         #region Properties
-        public string Id { get; private set; }
-        public string Title { get; private set; }
 
-        public IEnumerable<string> Authors
-        {
-            get { return Package.Authors; }
-        }
+        public IValidationContext ValidationContext { get; private set; }
+
+        public string Id { get; }
+
+        public string Title { get; }
+
+        public IEnumerable<string> Authors => Package.Authors;
 
         DateTimeOffset? IPackageDetails.Published
         {
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? ((PackageDetails)this).Published : dataServicePackage.Published;
+                return dataServicePackage == null ? Published : dataServicePackage.Published;
             }
         }
 
@@ -59,7 +68,7 @@ namespace Orc.NuGetExplorer
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? null : (int?) dataServicePackage.DownloadCount;
+                return dataServicePackage == null ? null : (int?)dataServicePackage.DownloadCount;
             }
         }
 
@@ -73,16 +82,34 @@ namespace Orc.NuGetExplorer
         }
 
         public bool? IsInstalled { get; set; }
-        public string FullName { get; private set; }
-        public string Description { get; private set; }
-        public Uri IconUrl { get; private set; }
-        internal IPackage Package { get; private set; }
-        public DateTime? Published { get; private set; }
-        public Version Version { get; private set; }
-        public string SpecialVersion { get; private set; }
-        public bool IsAbsoluteLatestVersion { get; private set; }
+
+        public string FullName { get; }
+
+        public string Description { get; }
+
+        public Uri IconUrl { get; }
+
+        internal IPackage Package { get; }
+
+        public DateTime? Published { get; }
+
+        public Version Version { get; }
+
+        public string SpecialVersion { get; }
+
+        public bool IsAbsoluteLatestVersion { get; }
+
         public bool IsLatestVersion { get; private set; }
-        public bool IsPrerelease { get; private set; }
+
+        public bool IsPrerelease { get; }
+        #endregion
+
+        #region Methods
+        public void ResetValidationContext()
+        {
+            ValidationContext = new ValidationContext();
+        }
+
         #endregion
     }
 }

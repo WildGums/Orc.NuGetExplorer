@@ -8,32 +8,40 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+
     using Catel;
     using Catel.Services;
 
     internal class PackageCommandService : IPackageCommandService
     {
         #region Fields
+        private readonly IApiPackageRegistry _apiPackageRegistry;
+
         private readonly IRepository _localRepository;
+
         private readonly IPackageOperationContextService _packageOperationContextService;
+
         private readonly IPackageOperationService _packageOperationService;
+
         private readonly IPackageQueryService _packageQueryService;
+
         private readonly IPleaseWaitService _pleaseWaitService;
         #endregion
 
         #region Constructors
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService,
-            IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService)
+        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => packageOperationService);
             Argument.IsNotNull(() => packageOperationContextService);
+            Argument.IsNotNull(() => apiPackageRegistry);
 
             _pleaseWaitService = pleaseWaitService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
+            _apiPackageRegistry = apiPackageRegistry;
 
             _localRepository = repositoryService.LocalRepository;
         }
@@ -126,9 +134,16 @@ namespace Orc.NuGetExplorer
             {
                 var count = _packageQueryService.CountPackages(_localRepository, package.Id);
                 package.IsInstalled = count != 0;
+                ValidatePackage(package);
             }
 
-            return !package.IsInstalled.Value;
+            return package.IsInstalled != null && !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
+        }
+
+        private void ValidatePackage(IPackageDetails package)
+        {
+            package.ResetValidationContext();
+            _apiPackageRegistry.Validate(package);
         }
 
         private bool CanUpdate(IPackageDetails package)
@@ -139,9 +154,11 @@ namespace Orc.NuGetExplorer
             {
                 var count = _packageQueryService.CountPackages(_localRepository, package);
                 package.IsInstalled = count != 0;
+
+                ValidatePackage(package);
             }
 
-            return !package.IsInstalled.Value;
+            return !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
         }
 
         private bool CanUninstall(IPackageDetails package)

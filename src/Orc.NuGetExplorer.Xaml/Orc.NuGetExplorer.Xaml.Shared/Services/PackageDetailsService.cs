@@ -10,18 +10,24 @@ namespace Orc.NuGetExplorer
     using System.Globalization;
     using System.Linq;
     using System.Windows.Documents;
+    using System.Windows.Media;
     using Catel;
     using Catel.Logging;
+    using Catel.Services;
 
     internal class PackageDetailsService : IPackageDetailsService
     {
         private readonly IRepositoryNavigatorService _repositoryNavigatorService;
 
-        public PackageDetailsService(IRepositoryNavigatorService repositoryNavigatorService)
+        private readonly ILanguageService _languageService;
+
+        public PackageDetailsService(IRepositoryNavigatorService repositoryNavigatorService, ILanguageService languageService)
         {
             Argument.IsNotNull(() => repositoryNavigatorService);
+            Argument.IsNotNull(() => languageService);
 
             _repositoryNavigatorService = repositoryNavigatorService;
+            _languageService = languageService;
         }
 
         #region Fields
@@ -40,34 +46,44 @@ namespace Orc.NuGetExplorer
                 FontSize = 12
             };
 
-            var autors = GetDetailsRecord("Created by: ", package.Authors.ToArray());
+            var autors = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_CreatedBy"), package.Authors.ToArray());
             paragraph.Inlines.AddIfNotNull(autors);
 
-            var id = GetDetailsRecord("Id: ", package.Id);
+            var id = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id"), package.Id);
             paragraph.Inlines.AddIfNotNull(id);
 
-            var version = GetDetailsRecord("Version: ", GetVersion(package));
+            var version = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Version"), GetVersion(package));
             paragraph.Inlines.AddIfNotNull(version);
 
             var published = package.Published;
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType != PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Published: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
             if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType == PackageOperationType.Uninstall)
             {
-                paragraph.Inlines.AddIfNotNull(GetDetailsRecord("Installed: ", published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
+                paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
-            var downloads = GetDetailsRecord("Downloads: ", package.DownloadCount.ToString());
+            var downloads = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downloads"), package.DownloadCount.ToString());
             paragraph.Inlines.AddIfNotNull(downloads);
 
             if (!string.IsNullOrWhiteSpace(package.Dependencies))
             {
-                var dependencies = GetDetailsRecord("Dependencies: ", package.Dependencies);
+                var dependencies = GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Dependencies"), package.Dependencies);
                 paragraph.Inlines.AddIfNotNull(dependencies);
+            }
+
+            if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
+            {
+                var validations = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"), package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
+                paragraph.Inlines.AddIfNotNull(validations);
+                paragraph.Inlines.Add(new LineBreak());
+
+                paragraph.Inlines.Add(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_Message").ToInline(Brushes.Red));
+                paragraph.Inlines.Add(new LineBreak());
             }
 
             result.Blocks.Add(paragraph);
@@ -82,6 +98,27 @@ namespace Orc.NuGetExplorer
             }
 
             return string.Format("{0}-{1}", package.Version, package.SpecialVersion);
+        }
+
+        private Inline GetAlertRecords(string title, params string[] stringLines)
+        {
+            Argument.IsNotNullOrWhitespace(() => title);
+
+            if (stringLines == null)
+            {
+                return null;
+            }
+
+            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+            if (!valuableLines.Any())
+            {
+                return null;
+            }
+
+            var inlines = valuableLines.Select(line => line.ToInline(Brushes.Red).Append(new LineBreak())).ToList();
+            var inline = title.ToInline().Append(new LineBreak());
+            var resultInline = inline.Bold().AppendRange(inlines);
+            return resultInline;
         }
 
         private Inline GetDetailsRecord(string title, params string[] stringLines)
@@ -101,7 +138,8 @@ namespace Orc.NuGetExplorer
 
             var inlines = valuableLines.Select(line => line.ToInline().Append(new LineBreak())).ToList();
 
-            var resultInline = title.ToInline().Bold().AppendRange(inlines);
+            var inline = title.ToInline();
+            var resultInline = inline.Bold().AppendRange(inlines);
             return resultInline;
         }
         #endregion

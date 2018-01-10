@@ -1,0 +1,108 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ApiPackageRegistry.cs" company="WildGums">
+//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+namespace Orc.NuGetExplorer
+{
+    using System;
+    using System.Collections.Generic;
+
+    using Catel;
+    using Catel.Data;
+    using Catel.Logging;
+    using Catel.Services;
+
+    using NuGet;
+
+    internal sealed class ApiPackageRegistry : IApiPackageRegistry
+    {
+        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private readonly Dictionary<string, SemanticVersion> _apiPackages = new Dictionary<string, SemanticVersion>();
+
+        private readonly ILanguageService _languageService;
+
+        private readonly object _syncObj = new object();
+        #endregion
+
+        #region Constructors
+        public ApiPackageRegistry(ILanguageService languageService)
+        {
+            Argument.IsNotNull(() => languageService);
+
+            _languageService = languageService;
+        }
+        #endregion
+
+        #region Methods
+        public void Register(string packageName, string version)
+        {
+            Argument.IsNotNullOrWhitespace(() => packageName);
+
+            var semanticVersion = SemanticVersion.Parse(version);
+
+            lock (_syncObj)
+            {
+                if (_apiPackages.TryGetValue(packageName, out var storedSemanticVersion))
+                {
+                    throw Log.ErrorAndCreateException<ArgumentException>("The api package '{0}' is already registered with version '{1}'", packageName, storedSemanticVersion);
+                }
+
+                _apiPackages.Add(packageName, semanticVersion);
+            }
+        }
+
+        public bool IsRegistered(string packageName)
+        {
+            lock (_syncObj)
+            {
+                return _apiPackages.ContainsKey(packageName);
+            }
+        }
+
+        public void Validate(IPackageDetails package)
+        {
+            Argument.IsNotNull(() => package);
+            Argument.IsOfType(() => package, typeof(PackageDetails));
+
+            var innerPackage = ((PackageDetails)package).Package;
+
+            lock (_syncObj)
+            {
+                foreach (var dependencySet in innerPackage.DependencySets)
+                {
+                    foreach (var dependency in dependencySet.Dependencies)
+                    {
+                        if (_apiPackages.TryGetValue(dependency.Id, out var currentVersion))
+                        {
+                            if (dependency.VersionSpec.IsMinInclusive && currentVersion < dependency.VersionSpec.MinVersion)
+                            {
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                            }
+
+                            if (!dependency.VersionSpec.IsMinInclusive && currentVersion <= dependency.VersionSpec.MinVersion)
+                            {
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                            }
+
+                            if (dependency.VersionSpec.IsMaxInclusive && currentVersion > dependency.VersionSpec.MaxVersion)
+                            {
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                            }
+
+                            if (!dependency.VersionSpec.IsMaxInclusive && currentVersion >= dependency.VersionSpec.MaxVersion)
+                            {
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+    }
+}

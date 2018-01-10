@@ -332,6 +332,7 @@ namespace Orc.NuGetExplorer.ViewModels
             foreach (var package in SearchResult.PackageList)
             {
                 package.IsInstalled = null;
+
                 _packageCommandService.CanExecute(Navigator.SelectedRepository.OperationType, package);
             }
         }

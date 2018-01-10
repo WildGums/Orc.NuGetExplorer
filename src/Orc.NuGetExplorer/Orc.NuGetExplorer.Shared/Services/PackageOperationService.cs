@@ -8,6 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using NuGet;
 
@@ -19,22 +21,25 @@ namespace Orc.NuGetExplorer
         private readonly IPackageManager _packageManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryCacheService _repositoryCacheService;
+        private readonly IApiPackageRegistry _apiPackageRegistry;
         #endregion
 
         #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, IPackageManager packageManager,
-            IRepositoryService repositoryService, IRepositoryCacheService repositoryCacheService)
+            IRepositoryService repositoryService, IRepositoryCacheService repositoryCacheService, IApiPackageRegistry apiPackageRegistry)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => packageManager);
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => repositoryCacheService);
+            Argument.IsNotNull(() => apiPackageRegistry);
 
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
             _packageManager = packageManager;
             _repositoryCacheService = repositoryCacheService;
+            _apiPackageRegistry = apiPackageRegistry;
 
             _localRepository = repositoryCacheService.GetNuGetRepository(repositoryService.LocalRepository);
 
@@ -82,7 +87,8 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                var nuGetPackage = ((PackageDetails) package).Package;
+                ValidatePackage(package);
+                var nuGetPackage = EnsurePackageDependencies(((PackageDetails)package).Package);
                 var operations = walker.ResolveOperations(nuGetPackage);
                 _packageManager.InstallPackage(nuGetPackage, false, allowedPrerelease, false);
             }
@@ -96,11 +102,12 @@ namespace Orc.NuGetExplorer
         public void UpdatePackages(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof (PackageDetails));
+            Argument.IsOfType(() => package, typeof(PackageDetails));
 
             try
             {
-                var nuGetPackage = ((PackageDetails) package).Package;
+                ValidatePackage(package);
+                var nuGetPackage = EnsurePackageDependencies(((PackageDetails)package).Package);
                 _packageManager.UpdatePackage(nuGetPackage, true, allowedPrerelease);
             }
             catch (Exception exception)
@@ -108,6 +115,29 @@ namespace Orc.NuGetExplorer
                 _logger.Log(MessageLevel.Error, exception.Message);
                 _packageOperationContextService.CurrentContext.CatchedExceptions.Add(exception);
             }
+        }
+
+        private void ValidatePackage(IPackageDetails package)
+        {
+            package.ResetValidationContext();
+
+            _apiPackageRegistry.Validate(package);
+
+            if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
+            {
+                throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
+            }
+        }
+
+        private PackageWrapper EnsurePackageDependencies(IPackage nuGetPackage)
+        {
+            List<PackageDependencySet> dependencySets = new List<PackageDependencySet>();
+            foreach (PackageDependencySet dependencySet in nuGetPackage.DependencySets)
+            {
+                dependencySets.Add(new PackageDependencySet(dependencySet.TargetFramework, dependencySet.Dependencies.Where(dependency => !_apiPackageRegistry.IsRegistered(dependency.Id))));
+            }
+
+            return new PackageWrapper(nuGetPackage, dependencySets);
         }
         #endregion
     }
