@@ -19,7 +19,7 @@ namespace Orc.NuGetExplorer.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,42 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        /// </summary>
+        internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1 {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version greater than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        /// </summary>
+        internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2 {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        /// </summary>
+        internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3 {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version lower than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        /// </summary>
+        internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4 {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Include prerelease.
         /// </summary>
         internal static string NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease {
@@ -84,6 +120,94 @@ namespace Orc.NuGetExplorer.Properties {
         internal static string NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates {
             get {
                 return ResourceManager.GetString("NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created by:.
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_CreatedBy {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Create" +
+                        "dBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dependencies: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Dependencies {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Depend" +
+                        "encies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloads: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downloads {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downlo" +
+                        "ads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Instal" +
+                        "led", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Published: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Publis" +
+                        "hed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version: .
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Version {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Versio" +
+                        "n", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must update the shell in order to apply this update.
+        /// </summary>
+        internal static string NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_Message {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_" +
+                        "Message", resourceCulture);
             }
         }
         

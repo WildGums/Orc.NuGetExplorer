@@ -1,5 +1,4 @@
 ﻿using Catel.IoC;
-using Catel.Logging;
 using Catel.Services;
 using Orc.NuGetExplorer;
 using NuGet;
@@ -61,5 +60,7 @@ public static class ModuleInitializer
 
         var languageService = serviceLocator.ResolveType<ILanguageService>();
         languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
+
+        serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
     }
 }
