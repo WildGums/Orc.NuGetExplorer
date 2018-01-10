@@ -123,7 +123,7 @@ namespace Orc.NuGetExplorer
 
             _apiPackageRegistry.Validate(package);
 
-            if (package.ValidationContext?.GetErrorCount(ValidationTags.Api) > 0)
+            if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
             }

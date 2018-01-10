@@ -42,6 +42,7 @@ namespace Orc.NuGetExplorer
         public void Register(string packageName, string version)
         {
             Argument.IsNotNullOrWhitespace(() => packageName);
+
             var semanticVersion = SemanticVersion.Parse(version);
 
             lock (_syncObj)
@@ -69,9 +70,10 @@ namespace Orc.NuGetExplorer
             Argument.IsOfType(() => package, typeof(PackageDetails));
 
             var innerPackage = ((PackageDetails)package).Package;
+
             lock (_syncObj)
             {
-            foreach (var dependencySet in innerPackage.DependencySets)
+                foreach (var dependencySet in innerPackage.DependencySets)
                 {
                     foreach (var dependency in dependencySet.Dependencies)
                     {
@@ -79,22 +81,22 @@ namespace Orc.NuGetExplorer
                         {
                             if (dependency.VersionSpec.IsMinInclusive && currentVersion < dependency.VersionSpec.MinVersion)
                             {
-                                package.ValidationContext?.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
                             }
 
                             if (!dependency.VersionSpec.IsMinInclusive && currentVersion <= dependency.VersionSpec.MinVersion)
                             {
-                                package.ValidationContext?.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
                             }
 
                             if (dependency.VersionSpec.IsMaxInclusive && currentVersion > dependency.VersionSpec.MaxVersion)
                             {
-                                package.ValidationContext?.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
                             }
 
                             if (!dependency.VersionSpec.IsMaxInclusive && currentVersion >= dependency.VersionSpec.MaxVersion)
                             {
-                                package.ValidationContext?.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
                             }
                         }
                     }

@@ -39,6 +39,7 @@ namespace Orc.NuGetExplorer
             SpecialVersion = package.Version.SpecialVersion;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
 
+            ValidationContext = new ValidationContext();
             IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
         }
         #endregion

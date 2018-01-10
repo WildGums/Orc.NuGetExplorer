@@ -56,6 +56,7 @@ namespace Orc.NuGetExplorer
     public class static StringExtensions
     {
         public static System.Windows.Documents.Inline ToInline(this string text) { }
+        public static System.Windows.Documents.Inline ToInline(this string text, System.Windows.Media.Brush brush) { }
     }
     public class XamlPleaseWaitInterruptService : Orc.NuGetExplorer.IPleaseWaitInterruptService
     {

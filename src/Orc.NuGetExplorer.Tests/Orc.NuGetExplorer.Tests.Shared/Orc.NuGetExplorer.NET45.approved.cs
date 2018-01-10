@@ -17,6 +17,13 @@ public class static ModuleInitializer
 namespace Orc.NuGetExplorer
 {
     
+    public class ApiValidationException : System.Exception
+    {
+        public ApiValidationException() { }
+        public ApiValidationException(string message) { }
+        public ApiValidationException(string message, System.Exception innerException) { }
+        protected ApiValidationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+    }
     public class DeletemeWatcher : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
         public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
@@ -32,6 +39,12 @@ namespace Orc.NuGetExplorer
         Valid = 1,
         AuthenticationRequired = 2,
         Invalid = 3,
+    }
+    public interface IApiPackageRegistry
+    {
+        bool IsRegistered(string packageName);
+        void Register(string packageName, string version);
+        void Validate(Orc.NuGetExplorer.IPackageDetails package);
     }
     public interface IDefaultPackageSourcesProvider
     {
@@ -90,7 +103,9 @@ namespace Orc.NuGetExplorer
         System.Nullable<System.DateTimeOffset> Published { get; }
         string SpecialVersion { get; }
         string Title { get; }
+        Catel.Data.IValidationContext ValidationContext { get; }
         System.Version Version { get; }
+        void ResetValidationContext();
     }
     public interface IPackageOperationContext
     {
@@ -233,6 +248,41 @@ namespace Orc.NuGetExplorer
         Uninstall = 1,
         Update = 2,
     }
+    public class PackageWrapper : NuGet.IPackage, NuGet.IPackageMetadata, NuGet.IPackageName, NuGet.IServerPackageMetadata
+    {
+        public PackageWrapper(NuGet.IPackage package, System.Collections.Generic.IEnumerable<NuGet.PackageDependencySet> dependencySets) { }
+        public System.Collections.Generic.IEnumerable<NuGet.IPackageAssemblyReference> AssemblyReferences { get; }
+        public System.Collections.Generic.IEnumerable<string> Authors { get; }
+        public string Copyright { get; }
+        public System.Collections.Generic.IEnumerable<NuGet.PackageDependencySet> DependencySets { get; }
+        public string Description { get; }
+        public bool DevelopmentDependency { get; }
+        public int DownloadCount { get; }
+        public System.Collections.Generic.IEnumerable<NuGet.FrameworkAssemblyReference> FrameworkAssemblies { get; }
+        public System.Uri IconUrl { get; }
+        public string Id { get; }
+        public bool IsAbsoluteLatestVersion { get; }
+        public bool IsLatestVersion { get; }
+        public string Language { get; }
+        public System.Uri LicenseUrl { get; }
+        public bool Listed { get; }
+        public System.Version MinClientVersion { get; }
+        public System.Collections.Generic.IEnumerable<string> Owners { get; }
+        public System.Collections.Generic.ICollection<NuGet.PackageReferenceSet> PackageAssemblyReferences { get; }
+        public System.Uri ProjectUrl { get; }
+        public System.Nullable<System.DateTimeOffset> Published { get; }
+        public string ReleaseNotes { get; }
+        public System.Uri ReportAbuseUrl { get; }
+        public bool RequireLicenseAcceptance { get; }
+        public string Summary { get; }
+        public string Tags { get; }
+        public string Title { get; }
+        public NuGet.SemanticVersion Version { get; }
+        public void ExtractContents(NuGet.IFileSystem fileSystem, string extractPath) { }
+        public System.Collections.Generic.IEnumerable<NuGet.IPackageFile> GetFiles() { }
+        public System.IO.Stream GetStream() { }
+        public System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> GetSupportedFrameworks() { }
+    }
     public class Repository : Orc.NuGetExplorer.IRepository
     {
         public Repository() { }
@@ -258,6 +308,10 @@ namespace Orc.NuGetExplorer
     public class static StringExtensions
     {
         public static string GetSafeScopeName(this string value) { }
+    }
+    public class static ValidationTags
+    {
+        public const string Api = "API";
     }
 }
 namespace Orc.NuGetExplorer.Native

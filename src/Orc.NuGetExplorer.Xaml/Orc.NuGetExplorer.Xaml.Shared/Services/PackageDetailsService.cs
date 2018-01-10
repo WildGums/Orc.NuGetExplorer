@@ -76,7 +76,7 @@ namespace Orc.NuGetExplorer
                 paragraph.Inlines.AddIfNotNull(dependencies);
             }
 
-            if (package.ValidationContext?.GetErrorCount(ValidationTags.Api) > 0)
+            if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
             {
                 var validations = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"), package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
                 paragraph.Inlines.AddIfNotNull(validations);
