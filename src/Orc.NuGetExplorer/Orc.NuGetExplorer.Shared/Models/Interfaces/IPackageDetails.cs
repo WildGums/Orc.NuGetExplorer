@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     using Catel.Data;
 
@@ -44,6 +45,10 @@ namespace Orc.NuGetExplorer
         string Dependencies { get; }
 
         bool? IsInstalled { get; set; }
+
+        IList<string> AvailableVersions { get; }
+
+        string SelectedVersion { get; set; }
 
         IValidationContext ValidationContext { get; }
         #endregion

@@ -41,11 +41,12 @@ namespace Orc.NuGetExplorer
         public PackageManager(IRepository sourceRepository, IRepositoryCacheService repositoryCacheService, string path)
             : base(repositoryCacheService.GetNuGetRepository(sourceRepository), path)
         {
-            PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
-            PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(args.Package));
+            
+            PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
+            PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
 
-            PackageUninstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
-            PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(args.Package));
+            PackageUninstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
+            PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
         }
         #endregion
 

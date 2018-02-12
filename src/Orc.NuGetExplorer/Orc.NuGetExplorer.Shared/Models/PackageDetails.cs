@@ -9,26 +9,28 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Catel;
     using Catel.Data;
-    using Catel.Logging;
 
     using NuGet;
 
     internal class PackageDetails : ModelBase, IPackageDetails
     {
-        #region Fields
+        private readonly IEnumerable<string> _availableVersionsEnumeration;
 
-        #endregion
+        private IList<string> _availableVersions;
 
         #region Constructors
-        internal PackageDetails(IPackage package)
+        internal PackageDetails(IPackage package, IEnumerable<string> availableVersions)
         {
             Argument.IsNotNull(() => package);
+            Argument.IsNotNull(() => availableVersions);
 
             Package = package;
             Version = package.Version.Version;
+
             Id = package.Id;
             Title = string.IsNullOrWhiteSpace(package.Title) ? package.Id : package.Title;
             FullName = package.GetFullName();
@@ -41,10 +43,13 @@ namespace Orc.NuGetExplorer
 
             ValidationContext = new ValidationContext();
             IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
+
+            _availableVersionsEnumeration = availableVersions;
         }
         #endregion
 
         #region Properties
+        public string SelectedVersion { get; set; }
 
         public IValidationContext ValidationContext { get; private set; }
 
@@ -83,6 +88,23 @@ namespace Orc.NuGetExplorer
 
         public bool? IsInstalled { get; set; }
 
+        public IList<string> AvailableVersions
+        {
+            get
+            {
+                if (_availableVersions == null)
+                {
+                    _availableVersions = _availableVersionsEnumeration.OrderByDescending(version => 
+                        version.Contains("-")
+                            ? version.Replace("-unstable", "-1").Replace("-beta", "-3").Replace("-alpha", "-2") : 
+                            version + "-4").Take(200).ToList();
+                    SelectedVersion = _availableVersions.FirstOrDefault(version => !version.Contains("-")) ?? _availableVersions.FirstOrDefault();
+                }
+
+                return _availableVersions;
+            }
+        }
+
         public string FullName { get; }
 
         public string Description { get; }
@@ -109,7 +131,6 @@ namespace Orc.NuGetExplorer
         {
             ValidationContext = new ValidationContext();
         }
-
         #endregion
     }
 }
