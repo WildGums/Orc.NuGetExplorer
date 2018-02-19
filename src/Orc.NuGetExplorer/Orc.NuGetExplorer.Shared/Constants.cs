@@ -25,6 +25,9 @@ namespace Orc.NuGetExplorer
             public const string DestinationFolder = "DestFolder";
 
             public const string PackageSources = "PackageSources";
+
+            public const int PackageCount = 200;
+
             #endregion
         }
     }

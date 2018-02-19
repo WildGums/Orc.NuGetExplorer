@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.ComponentModel;
     using System.IO.Packaging;
     using System.Threading.Tasks;
     using System.Windows.Documents;
@@ -57,7 +58,8 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 modelBase.PropertyChanged += (sender, args) =>
                     {
-                        if (args.PropertyName == nameof(Package.SelectedVersion))
+                        var selectedVersionPropertyName = nameof(Package.SelectedVersion);
+                        if (args.HasPropertyChanged(selectedVersionPropertyName))
                         {
                             BuildPackageSummary();
                         }
