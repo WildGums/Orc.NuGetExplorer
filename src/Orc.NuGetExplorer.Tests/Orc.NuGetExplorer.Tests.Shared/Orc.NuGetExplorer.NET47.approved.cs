@@ -90,6 +90,7 @@ namespace Orc.NuGetExplorer
     public interface IPackageDetails
     {
         System.Collections.Generic.IEnumerable<string> Authors { get; }
+        System.Collections.Generic.IList<string> AvailableVersions { get; }
         string Dependencies { get; }
         string Description { get; }
         System.Nullable<int> DownloadCount { get; }
@@ -101,6 +102,7 @@ namespace Orc.NuGetExplorer
         bool IsLatestVersion { get; }
         bool IsPrerelease { get; }
         System.Nullable<System.DateTimeOffset> Published { get; }
+        string SelectedVersion { get; set; }
         string SpecialVersion { get; }
         string Title { get; }
         Catel.Data.IValidationContext ValidationContext { get; }
@@ -142,6 +144,7 @@ namespace Orc.NuGetExplorer
         int CountPackages(Orc.NuGetExplorer.IRepository packageRepository, string filter, bool allowPrereleaseVersions);
         int CountPackages(Orc.NuGetExplorer.IRepository packageRepository, string packageId);
         int CountPackages(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails packageDetails);
+        Orc.NuGetExplorer.IPackageDetails GetPackage(Orc.NuGetExplorer.IRepository packageRepository, string packageId, string version);
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails> GetPackages(Orc.NuGetExplorer.IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10);
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails> GetVersionsOfPackage(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails package, bool allowPrereleaseVersions, ref int skip, int minimalTake = 10);
     }
@@ -302,6 +305,7 @@ namespace Orc.NuGetExplorer
         public class static NuGet
         {
             public const string DestinationFolder = "DestFolder";
+            public const int PackageCount = 200;
             public const string PackageSources = "PackageSources";
         }
     }
