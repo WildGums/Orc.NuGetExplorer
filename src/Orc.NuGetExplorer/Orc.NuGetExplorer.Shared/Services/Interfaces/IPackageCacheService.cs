@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     internal interface IPackageCacheService
     {
         #region Methods
-        PackageDetails GetPackageDetails(IPackage package);
+        PackageDetails GetPackageDetails(IPackageRepository packageRepository, IPackage package);
         #endregion
     }
 }

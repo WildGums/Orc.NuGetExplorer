@@ -63,7 +63,7 @@ namespace Orc.NuGetExplorer
                 {
                     var prerelease = allowPrerelease ?? package.IsPrerelease();
 
-                    var packageUpdates = packageRepository.GetUpdates(new[] { package }, prerelease, false).Select(x => _packageCacheService.GetPackageDetails(x));
+                    var packageUpdates = packageRepository.GetUpdates(new[] { package }, prerelease, false).Select(x => _packageCacheService.GetPackageDetails(packageRepository, x));
                     availableUpdates.AddRange(packageUpdates);
                 }
 
