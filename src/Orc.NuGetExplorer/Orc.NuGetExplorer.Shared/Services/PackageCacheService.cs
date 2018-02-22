@@ -32,11 +32,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public PackageDetails GetPackageDetails(IPackageRepository packageRepository, IPackage package)
+        public PackageDetails GetPackageDetails(IPackageRepository packageRepository, IPackage package, bool allowPrereleaseVersions)
         {
             Argument.IsNotNull(() => package);
 
-            return _packageDetailsCache.GetFromCacheOrFetch(package.GetKeyForCache(), () => new PackageDetails(package, packageRepository.FindPackagesById(package.Id).Select(p => p.Version.ToString())));
+            return _packageDetailsCache.GetFromCacheOrFetch(package.GetKeyForCache(allowPrereleaseVersions), () => new PackageDetails(package, packageRepository.FindPackagesById(package.Id).Select(p => p.Version.ToString()).Where(p => allowPrereleaseVersions || !p.Contains("-"))));
         }
         #endregion
     }

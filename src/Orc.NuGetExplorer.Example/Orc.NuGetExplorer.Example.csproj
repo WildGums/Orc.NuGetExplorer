@@ -53,8 +53,8 @@
       <HintPath>..\..\lib\Expression.Blend.Sdk.WPF.1.0.1\lib\net45\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Orc.Controls, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Orc.Controls.2.0.0\lib\net47\Orc.Controls.dll</HintPath>
+    <Reference Include="Orc.Controls, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Orc.Controls.2.1.0-unstable0029\lib\net47\Orc.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Orc.FileSystem, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Orc.FileSystem.2.0.0\lib\net46\Orc.FileSystem.dll</HintPath>

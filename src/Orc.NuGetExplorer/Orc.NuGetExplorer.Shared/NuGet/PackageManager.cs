@@ -42,11 +42,11 @@ namespace Orc.NuGetExplorer
             : base(repositoryCacheService.GetNuGetRepository(sourceRepository), path)
         {
             
-            PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
-            PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
+            PackageInstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package, true));
+            PackageInstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Install, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package, true));
 
-            PackageUninstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
-            PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package));
+            PackageUninstalling += (sender, args) => NotifyOperationStarting(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package, true));
+            PackageUninstalled += (sender, args) => NotifyOperationFinished(args.InstallPath, PackageOperationType.Uninstall, _packageCacheService.GetPackageDetails(repositoryCacheService.GetNuGetRepository(sourceRepository), args.Package, true));
         }
         #endregion
 

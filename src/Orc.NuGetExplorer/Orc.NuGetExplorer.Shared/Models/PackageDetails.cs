@@ -10,9 +10,11 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Windows.Input;
 
     using Catel;
     using Catel.Data;
+    using Catel.MVVM;
 
     using NuGet;
 
@@ -45,13 +47,23 @@ namespace Orc.NuGetExplorer
             IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
 
             _availableVersionsEnumeration = availableVersions;
+
+            SelectPackageVersionCommand = new Command<string>(Execute);
         }
+
+        private void Execute(string version)
+        {
+            SelectedVersion = version;
+        }
+
         #endregion
 
         #region Properties
         public string SelectedVersion { get; set; }
 
         public IValidationContext ValidationContext { get; private set; }
+
+        public ICommand SelectPackageVersionCommand { get; }
 
         public string Id { get; }
 
@@ -98,6 +110,7 @@ namespace Orc.NuGetExplorer
                         version.Contains("-")
                             ? version.Replace("-unstable", "-1").Replace("-beta", "-3").Replace("-alpha", "-2") : 
                             version + "-4").Take(Settings.NuGet.PackageCount).ToList();
+
                     SelectedVersion = _availableVersions.FirstOrDefault(version => !version.Contains("-")) ?? _availableVersions.FirstOrDefault();
                 }
 
