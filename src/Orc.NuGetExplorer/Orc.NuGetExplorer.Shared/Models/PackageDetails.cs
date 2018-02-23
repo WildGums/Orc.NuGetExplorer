@@ -10,11 +10,9 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Windows.Input;
 
     using Catel;
     using Catel.Data;
-    using Catel.MVVM;
 
     using NuGet;
 
@@ -47,13 +45,6 @@ namespace Orc.NuGetExplorer
             IsPrerelease = !string.IsNullOrWhiteSpace(SpecialVersion);
 
             _availableVersionsEnumeration = availableVersions;
-
-            SelectPackageVersionCommand = new Command<string>(Execute);
-        }
-
-        private void Execute(string version)
-        {
-            SelectedVersion = version;
         }
 
         #endregion
@@ -62,8 +53,6 @@ namespace Orc.NuGetExplorer
         public string SelectedVersion { get; set; }
 
         public IValidationContext ValidationContext { get; private set; }
-
-        public ICommand SelectPackageVersionCommand { get; }
 
         public string Id { get; }
 

@@ -44,9 +44,6 @@
     <Reference Include="Catel.Fody.Attributes, Version=2.19.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\lib\Catel.Fody.2.19.0\lib\netstandard1.0\Catel.Fody.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.MVVM">
-      <HintPath>..\..\..\lib\Catel.MVVM.5.0.0\lib\net45\Catel.MVVM.dll</HintPath>
-    </Reference>
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\..\..\lib\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>

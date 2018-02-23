@@ -12,6 +12,8 @@
         <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter" />
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite" />
         <converters:PackageImageConverter x:Key="ImageConverter" />
+        <converters:PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter x:Key="PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter" />
+        <converters:SelectablePackageDetailsViewModelToPackageDetailsConverter x:Key="SelectablePackageDetailsViewModelToPackageDetailsConverter" />
 
         <Style TargetType="ListBox"
                BasedOn="{StaticResource {x:Type ListBox}}">
@@ -88,8 +90,8 @@
         </Grid.RowDefinitions>
 
         <ListBox Grid.Row="0"
-                 ItemsSource="{Binding ItemsSource}"
-                 SelectedItem="{Binding SelectedPackage}"
+                 ItemsSource="{Binding ItemsSource, Converter={StaticResource PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter}}"
+                 SelectedItem="{Binding SelectedPackage, Converter={StaticResource SelectablePackageDetailsViewModelToPackageDetailsConverter}}"
                  HorizontalContentAlignment="Stretch"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  BorderThickness="0">
@@ -152,7 +154,7 @@
                                             Orientation="Horizontal">
                                     <orc:DropDownButton Header="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
                                                         Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
-                                                        CommandParameter="{Binding}" 
+                                                        CommandParameter="{Binding PackageDetails}" 
                                                         IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}">
                                         <orc:DropDownButton.Resources>
                                             <Style x:Key="ScrollableContextMenu"
