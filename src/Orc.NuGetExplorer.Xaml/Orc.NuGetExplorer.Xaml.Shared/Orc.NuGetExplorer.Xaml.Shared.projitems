@@ -10,13 +10,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\SolutionAssemblyInfo.cs" />
-	<Compile Include="$(MSBuildThisFileDirectory)..\..\GlobalSuppressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\FocusOnVisibleBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\UpdateSelectedItemSourceBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\UpdateSourceOnVisibleBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\BindableRichTextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NullableBooleanTrueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\SelectablePackageDetailsViewModelToPackageDetailsConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PackageImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PackageSourceImageConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\SearchSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ExplorerViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageBatchViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SelectablePackageDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageListViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PackageSourceSettingViewModel.cs" />

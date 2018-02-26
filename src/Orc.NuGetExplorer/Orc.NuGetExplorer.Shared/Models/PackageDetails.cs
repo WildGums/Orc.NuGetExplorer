@@ -46,6 +46,7 @@ namespace Orc.NuGetExplorer
 
             _availableVersionsEnumeration = availableVersions;
         }
+
         #endregion
 
         #region Properties
@@ -98,6 +99,7 @@ namespace Orc.NuGetExplorer
                         version.Contains("-")
                             ? version.Replace("-unstable", "-1").Replace("-beta", "-3").Replace("-alpha", "-2") : 
                             version + "-4").Take(Settings.NuGet.PackageCount).ToList();
+
                     SelectedVersion = _availableVersions.FirstOrDefault(version => !version.Contains("-")) ?? _availableVersions.FirstOrDefault();
                 }
 

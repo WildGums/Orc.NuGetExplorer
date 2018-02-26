@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     using Catel.Data;
 
@@ -51,6 +50,7 @@ namespace Orc.NuGetExplorer
         string SelectedVersion { get; set; }
 
         IValidationContext ValidationContext { get; }
+
         #endregion
 
         #region Methods
