@@ -53,33 +53,35 @@ namespace Orc.NuGetExplorer
             return Enum.GetName(typeof(PackageOperationType), operationType);
         }
 
-        public void Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
+        public void Execute(PackageOperationType operationType, IPackageDetails package, IRepository sourceRepository = null, bool allowedPrerelease = false)
         {
-            Argument.IsNotNull(() => packageDetails);
+            Argument.IsNotNull(() => package);
+
+            var selectedPackage = GetPackageDetailsFromSelectedVersion(package, sourceRepository ?? _localRepository) ?? package;
 
             using (_pleaseWaitService.WaitingScope())
             {
-                using (_packageOperationContextService.UseOperationContext(operationType, packageDetails))
+                using (_packageOperationContextService.UseOperationContext(operationType, selectedPackage))
                 {
                     _packageOperationContextService.CurrentContext.Repository = sourceRepository;
                     switch (operationType)
                     {
                         case PackageOperationType.Uninstall:
-                            _packageOperationService.UninstallPackage(packageDetails);
+                            _packageOperationService.UninstallPackage(selectedPackage);
                             break;
 
                         case PackageOperationType.Install:
-                            _packageOperationService.InstallPackage(packageDetails, allowedPrerelease);
+                            _packageOperationService.InstallPackage(selectedPackage, allowedPrerelease);
                             break;
 
                         case PackageOperationType.Update:
-                            _packageOperationService.UpdatePackages(packageDetails, allowedPrerelease);
+                            _packageOperationService.UpdatePackages(selectedPackage, allowedPrerelease);
                             break;
                     }
                 }
             }
 
-            packageDetails.IsInstalled = null;
+            package.IsInstalled = null;
         }
 
         public bool CanExecute(PackageOperationType operationType, IPackageDetails package)
@@ -89,16 +91,18 @@ namespace Orc.NuGetExplorer
                 return false;
             }
 
+            var selectedPackage = GetPackageDetailsFromSelectedVersion(package, _localRepository) ?? package;
+
             switch (operationType)
             {
                 case PackageOperationType.Install:
-                    return CanInstall(package);
+                    return CanInstall(selectedPackage);
 
                 case PackageOperationType.Update:
-                    return CanUpdate(package);
+                    return CanUpdate(selectedPackage);
 
                 case PackageOperationType.Uninstall:
-                    return CanUninstall(package);
+                    return CanUninstall(selectedPackage);
             }
 
             return false;
@@ -124,6 +128,16 @@ namespace Orc.NuGetExplorer
         public string GetPluralActionName(PackageOperationType operationType)
         {
             return string.Format("{0} all", Enum.GetName(typeof(PackageOperationType), operationType));
+        }
+
+        private IPackageDetails GetPackageDetailsFromSelectedVersion(IPackageDetails packageDetails, IRepository repository)
+        {
+            if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
+            {
+                packageDetails = _packageQueryService.GetPackage(repository, packageDetails.Id, packageDetails.SelectedVersion);
+            }
+
+            return packageDetails;
         }
 
         private bool CanInstall(IPackageDetails package)

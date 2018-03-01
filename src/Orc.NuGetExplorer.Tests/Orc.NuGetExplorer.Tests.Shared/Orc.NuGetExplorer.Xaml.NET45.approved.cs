@@ -15,6 +15,17 @@ namespace Orc.NuGetExplorer.Converters
         protected override object Convert(System.Nullable<bool> value, System.Type targetType, object parameter) { }
         protected override object ConvertBack(object value, System.Type targetType, object parameter) { }
     }
+    public class PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter : Catel.MVVM.Converters.ValueConverterBase<System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails>, System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>>
+    {
+        public PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter() { }
+        protected override object Convert(System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails> packageDetailsCollection, System.Type targetType, object parameter) { }
+    }
+    public class SelectablePackageDetailsViewModelToPackageDetailsConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.IPackageDetails, Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>
+    {
+        public SelectablePackageDetailsViewModelToPackageDetailsConverter() { }
+        protected override object Convert(Orc.NuGetExplorer.IPackageDetails value, System.Type targetType, object parameter) { }
+        protected override object ConvertBack(Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel value, System.Type targetType, object parameter) { }
+    }
 }
 namespace Orc.NuGetExplorer
 {
@@ -62,6 +73,22 @@ namespace Orc.NuGetExplorer
     {
         public XamlPleaseWaitInterruptService(Catel.Services.IPleaseWaitService pleaseWaitService) { }
         public System.IDisposable InterruptTemporarily() { }
+    }
+}
+namespace Orc.NuGetExplorer.ViewModels
+{
+    
+    public class SelectablePackageDetailsViewModel : Catel.MVVM.ViewModelBase
+    {
+        public SelectablePackageDetailsViewModel(Orc.NuGetExplorer.IPackageDetails packageDetails) { }
+        public System.Collections.Generic.IList<string> AvailableVersions { get; }
+        public string Description { get; }
+        public System.Uri IconUrl { get; }
+        public System.Nullable<bool> IsInstalled { get; set; }
+        public Orc.NuGetExplorer.IPackageDetails PackageDetails { get; }
+        public string SelectedVersion { get; set; }
+        public System.Windows.Input.ICommand SelectPackageVersionCommand { get; }
+        public override string Title { get; }
     }
 }
 namespace Orc.NuGetExplorer.Views

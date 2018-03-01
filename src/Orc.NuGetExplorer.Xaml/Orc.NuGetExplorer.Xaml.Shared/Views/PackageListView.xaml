@@ -4,23 +4,32 @@
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                    xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
+                   xmlns:orc="http://www.wildgums.net.au/orc"
                    x:ClassModifier="internal">
 
     <catel:UserControl.Resources>
-        <catel:BooleanToHidingVisibilityConverter x:Key="HidingVisibilityConverter"/>
-        <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter"/>
-        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite"/>
-        <converters:PackageImageConverter x:Key="ImageConverter"/>
+        <catel:BooleanToHidingVisibilityConverter x:Key="HidingVisibilityConverter" />
+        <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter" />
+        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite" />
+        <converters:PackageImageConverter x:Key="ImageConverter" />
+        <converters:PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter x:Key="PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter" />
+        <converters:SelectablePackageDetailsViewModelToPackageDetailsConverter x:Key="SelectablePackageDetailsViewModelToPackageDetailsConverter" />
 
-        <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Style TargetType="ListBox"
+               BasedOn="{StaticResource {x:Type ListBox}}">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">
+                <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}"
+                             Value="0">
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <TextBlock Text="{catel:LanguageBinding NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound}" FontSize="18" Foreground="LightGray" HorizontalAlignment="Center"
-                                           VerticalAlignment="Top" Margin="0 30 0 0"
-                                           Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}"/>
+                                <TextBlock Text="{catel:LanguageBinding NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound}"
+                                           FontSize="18"
+                                           Foreground="LightGray"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Top"
+                                           Margin="0 30 0 0"
+                                           Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -30,29 +39,41 @@
 
         <Style TargetType="{x:Type ListBoxItem}">
             <Style.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="Transparent" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"
+                                 Color="Transparent" />
             </Style.Resources>
             <Style.Triggers>
-                <Trigger Property="ListBoxItem.IsSelected" Value="True" >
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                <Trigger Property="ListBoxItem.IsSelected"
+                         Value="True">
+                    <Setter Property="Foreground"
+                            Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="GreenCheckBoxStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="Padding" Value="5,0,0,0"/>
+        <Style x:Key="GreenCheckBoxStyle"
+               TargetType="{x:Type CheckBox}">
+            <Setter Property="Padding"
+                    Value="5,0,0,0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Viewbox x:Name="CheckMark" Width="16" Height="16">
-                                <Path x:Name="Checkmark" Stretch="Fill"
-                                        Data="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                                        Fill="LimeGreen" />
+                        <Viewbox x:Name="CheckMark"
+                                 Width="16"
+                                 Height="16">
+                            <Path x:Name="Checkmark"
+                                  Stretch="Fill"
+                                  Data="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
+                                  Fill="LimeGreen" />
                         </Viewbox>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="CheckMark" Property="Visibility" Value="Hidden"/>
+                            <Trigger Property="IsChecked"
+                                     Value="False">
+                                <Setter TargetName="CheckMark"
+                                        Property="Visibility"
+                                        Value="Hidden" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -68,60 +89,127 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox  Grid.Row="0" ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding SelectedPackage}"
-                  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  BorderThickness="0">
+        <ListBox Grid.Row="0"
+                 ItemsSource="{Binding ItemsSource, Converter={StaticResource PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter}}"
+                 SelectedItem="{Binding SelectedPackage, Converter={StaticResource SelectablePackageDetailsViewModelToPackageDetailsConverter}}"
+                 HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 BorderThickness="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Border" BorderBrush="WhiteSmoke" BorderThickness="0 0 0 1" Background="Transparent" Margin="-2 0 0 0">
-                        <Border x:Name="Container" BorderBrush="Transparent" BorderThickness="3" Background="Transparent" 
-                                Padding="4" Margin="0">
+                    <Border x:Name="Border"
+                            BorderBrush="WhiteSmoke"
+                            BorderThickness="0 0 0 1"
+                            Background="Transparent"
+                            Margin="-2 0 0 0" ToolTip="{Binding Title}">
+                        <Border x:Name="Container"
+                                BorderBrush="Transparent"
+                                BorderThickness="3"
+                                Background="Transparent"
+                                Padding="4"
+                                Margin="0">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="24"/>
+                                    <RowDefinition Height="24" />
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <CheckBox Grid.RowSpan="2" Style="{StaticResource GreenCheckBoxStyle}" IsChecked="{Binding IsInstalled}"
-                                          IsEnabled="False" Margin="4 12 8 0" VerticalAlignment="Top"
-                                          Visibility="{Binding IsInstalled, Converter={StaticResource ReferenceToHidingVisibilityConverter}}"/>
-                                <Image Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Source="{Binding IconUrl, Converter={StaticResource ImageConverter}}"
-                                       Width="32" Height="32" VerticalAlignment="Top" Margin="4 4 14 0" />
+                                <CheckBox Grid.RowSpan="2"
+                                          Style="{StaticResource GreenCheckBoxStyle}"
+                                          IsChecked="{Binding IsInstalled}"
+                                          IsEnabled="False"
+                                          Margin="4 12 8 0"
+                                          VerticalAlignment="Top"
+                                          Visibility="{Binding IsInstalled, Converter={StaticResource ReferenceToHidingVisibilityConverter}}" />
+                                <Image Grid.Column="1"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="2"
+                                       Source="{Binding IconUrl, Converter={StaticResource ImageConverter}}"
+                                       Width="32"
+                                       Height="32"
+                                       VerticalAlignment="Top"
+                                       Margin="4 4 14 0" />
 
-                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Title}" FontWeight="Bold" />
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Description}" TextWrapping="Wrap" 
-                                           TextTrimming="WordEllipsis" Margin="0 4 0 2"/>
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="2"
+                                           Text="{Binding Title}"
+                                           FontWeight="Bold" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="2"
+                                           Grid.ColumnSpan="2"
+                                           Text="{Binding Description}"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="WordEllipsis"
+                                           Margin="0 4 0 2" />
 
-                                <StackPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
-                                    <Button VerticalAlignment="Top" Width="70" Height="25" Margin="4"
-                                            Content="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
-                                            Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
-                                            CommandParameter="{Binding }" 
-                                            IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}"/>
+                                <StackPanel Grid.Column="3"
+                                            Grid.Row="0"
+                                            Orientation="Horizontal">
+                                    <orc:DropDownButton Header="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
+                                                        Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
+                                                        CommandParameter="{Binding PackageDetails}" 
+                                                        IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}">
+                                        <orc:DropDownButton.Resources>
+                                            <Style x:Key="ScrollableContextMenu"
+                                                   TargetType="ContextMenu" >
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ContextMenu}">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <ScrollViewer Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                                                              CanContentScroll="True">
+                                                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                                    Margin="{TemplateBinding Padding}"
+                                                                                    KeyboardNavigation.DirectionalNavigation="Cycle" />
 
-                                    <TextBlock Text="{catel:LanguageBinding NuGetExplorer_PackageListView_TextBlock_Text_Prerelease}" FontSize="11" FontStyle="Italic" Margin="0" HorizontalAlignment="Center"
-                                           Visibility="{Binding IsPrerelease, Converter={catel:BooleanToHidingVisibilityConverter}}" />
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </orc:DropDownButton.Resources>
+                                        <orc:DropDownButton.DropDown>
+                                            <ContextMenu ItemsSource="{Binding AvailableVersions}"
+                                                         MaxHeight="200" Style="{StaticResource ScrollableContextMenu}">
+                                                <ContextMenu.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <MenuItem Header="{Binding}" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}, Path=DataContext.SelectPackageVersionCommand}" CommandParameter="{Binding}" />
+                                                    </DataTemplate>
+                                                </ContextMenu.ItemTemplate>
+                                            </ContextMenu>
+                                        </orc:DropDownButton.DropDown>
+                                    </orc:DropDownButton>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </Border>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
-                            <Setter Property="BorderBrush" TargetName="Container" Value="{StaticResource AccentColorBrush4}"/>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                     Value="True">
+                            <Setter Property="BorderBrush"
+                                    TargetName="Container"
+                                    Value="{StaticResource AccentColorBrush4}" />
                         </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True" />
-                                <Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False" />
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                           Value="True" />
+                                <Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                           Value="False" />
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="BorderBrush" TargetName="Container" Value="WhiteSmoke"/>
+                            <Setter Property="BorderBrush"
+                                    TargetName="Container"
+                                    Value="WhiteSmoke" />
                         </MultiDataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>

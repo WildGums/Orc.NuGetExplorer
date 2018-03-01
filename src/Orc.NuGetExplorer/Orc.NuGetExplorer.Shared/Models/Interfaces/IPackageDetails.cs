@@ -45,7 +45,12 @@ namespace Orc.NuGetExplorer
 
         bool? IsInstalled { get; set; }
 
+        IList<string> AvailableVersions { get; }
+
+        string SelectedVersion { get; set; }
+
         IValidationContext ValidationContext { get; }
+
         #endregion
 
         #region Methods

@@ -43,6 +43,21 @@ namespace Orc.NuGetExplorer
             return count;
         }
 
+        public IPackageDetails GetPackage(IRepository packageRepository, string packageId, string version)
+        {
+            Argument.IsNotNull(() => packageRepository);
+
+            var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+            var semanticVersion = SemanticVersion.Parse(version);
+            var package = nuGetRepository.FindPackage(packageId, semanticVersion);
+            if (package != null)
+            {
+                return _packageCacheService.GetPackageDetails(nuGetRepository, package, !string.IsNullOrWhiteSpace(semanticVersion.SpecialVersion));
+            }
+
+            return null;
+        }
+
         public int CountPackages(IRepository packageRepository, string packageId)
         {
             Argument.IsNotNull(() => packageRepository);
@@ -81,8 +96,7 @@ namespace Orc.NuGetExplorer
 
                 var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
 
-                return nuGetRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take)
-                    .Select(package => _packageCacheService.GetPackageDetails(package));
+                return nuGetRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take).Select(package => _packageCacheService.GetPackageDetails(nuGetRepository, package, allowPrereleaseVersions));
             }
             catch (Exception exception)
             {
@@ -101,7 +115,7 @@ namespace Orc.NuGetExplorer
                 var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
 
                 return nuGetRepository.FindPackageVersions(package.ToNuGetPackage(), allowPrereleaseVersions, ref skip, minimalTake)
-                    .Select(p => _packageCacheService.GetPackageDetails(p));
+                    .Select(p => _packageCacheService.GetPackageDetails(nuGetRepository, p, allowPrereleaseVersions));
             }
             catch (Exception exception)
             {

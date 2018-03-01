@@ -66,8 +66,8 @@
       <HintPath>..\..\..\lib\Obsolete.Fody.4.3.2\Lib\dotnet\Obsolete.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Orc.Controls, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\lib\Orc.Controls.2.0.0\lib\net45\Orc.Controls.dll</HintPath>
+    <Reference Include="Orc.Controls, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\Orc.Controls.2.1.0-unstable0029\lib\net45\Orc.Controls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

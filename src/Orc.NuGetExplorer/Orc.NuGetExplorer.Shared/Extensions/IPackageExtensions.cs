@@ -20,11 +20,11 @@ namespace Orc.NuGetExplorer
             return !string.IsNullOrWhiteSpace(package.Version.SpecialVersion);
         }
 
-        public static string GetKeyForCache(this IPackage package)
+        public static string GetKeyForCache(this IPackage package, bool allowPrereleaseVersions)
         {
             Argument.IsNotNull(() => package);
 
-            return string.Format("{0}_{1}", package.GetType().Name, package.GetFullName());
+            return string.Format("{0}_{1}_{2}", package.GetType().Name, package.GetFullName(), allowPrereleaseVersions);
         }
         #endregion
     }
