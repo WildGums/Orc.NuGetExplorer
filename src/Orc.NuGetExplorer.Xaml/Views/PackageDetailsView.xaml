@@ -1,0 +1,12 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageDetailsView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://schemas.catelproject.com"
+                   xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls"
+                   x:ClassModifier="internal">
+    
+    <controls:BindableRichTextBox BindableDocument="{Binding PackageSummary}" IsReadOnly="True" BorderThickness="0"
+                                  TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"
+                                  VerticalScrollBarVisibility="Auto" Margin="4 8 4 4"/>
+    
+</catel:UserControl>
