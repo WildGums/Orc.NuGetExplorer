@@ -1,11 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguageAttribute("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Orc.NuGetExplorer.Tests")]
 [assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.6", FrameworkDisplayName=".NET Framework 4.6")]
-public class static MethodTimeLogger
-{
-    public static void Log(System.Reflection.MethodBase methodBase, long milliseconds) { }
-    public static void Log(System.Type type, string methodName, long milliseconds) { }
-}
 public class static ModuleInitializer
 {
     public static void Initialize() { }
