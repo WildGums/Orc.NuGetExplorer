@@ -76,6 +76,8 @@ namespace Orc.NuGetExplorer
 
         public void UpdateSections(string section, IList<SettingValue> values)
         {
+            DeleteSection(section);
+
             foreach (var value in values)
             {
                 SetValue(section, value.Key, value.Value);
