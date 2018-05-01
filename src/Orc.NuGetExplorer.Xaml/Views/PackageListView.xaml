@@ -4,7 +4,7 @@
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
                    xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
-                   xmlns:orc="http://www.wildgums.net.au/orc"
+                   xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
                    x:ClassModifier="internal">
 
     <catel:UserControl.Resources>
@@ -152,11 +152,11 @@
                                 <StackPanel Grid.Column="3"
                                             Grid.Row="0"
                                             Orientation="Horizontal">
-                                    <orc:DropDownButton Header="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
+                                    <orccontrols:DropDownButton Header="{Binding ButtonHeader, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}" 
                                                         Command="{Binding PackageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:PackageListView}}}"
                                                         CommandParameter="{Binding PackageDetails}" 
                                                         IsEnabled="{Binding IsInstalled, Converter={StaticResource BooleanToOpposite}}">
-                                        <orc:DropDownButton.Resources>
+                                        <orccontrols:DropDownButton.Resources>
                                             <Style x:Key="ScrollableContextMenu"
                                                    TargetType="ContextMenu" >
                                                 <Setter Property="Template">
@@ -177,8 +177,8 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
-                                        </orc:DropDownButton.Resources>
-                                        <orc:DropDownButton.DropDown>
+                                        </orccontrols:DropDownButton.Resources>
+                                        <orccontrols:DropDownButton.DropDown>
                                             <ContextMenu ItemsSource="{Binding AvailableVersions}"
                                                          MaxHeight="200" Style="{StaticResource ScrollableContextMenu}">
                                                 <ContextMenu.ItemTemplate>
@@ -187,8 +187,8 @@
                                                     </DataTemplate>
                                                 </ContextMenu.ItemTemplate>
                                             </ContextMenu>
-                                        </orc:DropDownButton.DropDown>
-                                    </orc:DropDownButton>
+                                        </orccontrols:DropDownButton.DropDown>
+                                    </orccontrols:DropDownButton>
                                 </StackPanel>
                             </Grid>
                         </Border>
