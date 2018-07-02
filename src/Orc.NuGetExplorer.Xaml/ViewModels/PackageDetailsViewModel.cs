@@ -70,7 +70,6 @@ namespace Orc.NuGetExplorer.ViewModels
         private void BuildPackageSummary()
         {
             //// Fix: Required since available versions aren't available until dropdown button is displayed.
-            var packageAvailableVersions = Package.AvailableVersions;
             if (!string.IsNullOrWhiteSpace(Package.SelectedVersion) && Package.Version.ToString() != Package.SelectedVersion)
             {
                 var packageSummary = _packageQueryService.GetPackage(_repositoryNavigatorService.Navigator.SelectedRepository, Package.Id, Package.SelectedVersion);

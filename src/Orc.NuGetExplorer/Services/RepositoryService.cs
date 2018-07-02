@@ -50,7 +50,6 @@ namespace Orc.NuGetExplorer
         #region Methods
         public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
         {
-            var packageSources = GetPackageSources();
             var result = new List<IRepository>();
             switch (packageOperationType)
             {
