@@ -8,6 +8,7 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.Serialization;
     using System.Windows.Input;
 
     using Catel;
@@ -21,6 +22,10 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
+        private SelectablePackageDetailsViewModel(SerializationInfo info, StreamingContext context)
+        {
+        }
+
         public SelectablePackageDetailsViewModel(IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);

@@ -14,7 +14,6 @@ namespace Orc.NuGetExplorer.Converters
     internal class PackageImageConverter : ValueConverterBase
     {
         #region Fields
-        private const string DefaultPackageUrl = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
         private IImageResolveService _imageResolveService;
         #endregion
 
@@ -36,7 +35,7 @@ namespace Orc.NuGetExplorer.Converters
         #region Methods
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            return ImageResolveService.ResolveImageFromUri(value as Uri, DefaultPackageUrl);
+            return ImageResolveService.ResolveImageFromUri(value as Uri, ResourcePaths.PackageDefaultIcon);
         }
         #endregion
     }
