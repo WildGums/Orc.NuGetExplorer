@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer.Converters
     public class PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter : Catel.MVVM.Converters.ValueConverterBase<System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails>, System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>>
     {
         public PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter() { }
-        protected override object Convert(System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails> packageDetailsCollection, System.Type targetType, object parameter) { }
+        protected override object Convert(System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails> value, System.Type targetType, object parameter) { }
     }
     public class SelectablePackageDetailsViewModelToPackageDetailsConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.IPackageDetails, Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>
     {

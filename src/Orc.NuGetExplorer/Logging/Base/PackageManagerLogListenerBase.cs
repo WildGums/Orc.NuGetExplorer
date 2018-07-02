@@ -11,16 +11,10 @@ namespace Orc.NuGetExplorer
 
     public abstract class PackageManagerLogListenerBase
     {
-        #region Fields
-        private readonly INuGetLogListeningSevice _nuGetLogListeningSevice;
-        #endregion
-
         #region Constructors
-        public PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
+        protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => nuGetLogListeningSevice);
-
-            _nuGetLogListeningSevice = nuGetLogListeningSevice;
 
             nuGetLogListeningSevice.Error += OnError;
             nuGetLogListeningSevice.Info += OnInfo;

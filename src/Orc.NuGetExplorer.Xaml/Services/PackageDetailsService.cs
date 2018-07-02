@@ -12,7 +12,6 @@ namespace Orc.NuGetExplorer
     using System.Windows.Documents;
     using System.Windows.Media;
     using Catel;
-    using Catel.Logging;
     using Catel.Services;
 
     internal class PackageDetailsService : IPackageDetailsService
@@ -29,10 +28,6 @@ namespace Orc.NuGetExplorer
             _repositoryNavigatorService = repositoryNavigatorService;
             _languageService = languageService;
         }
-
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
 
         #region Methods
         public FlowDocument PackageToFlowDocument(IPackageDetails package)

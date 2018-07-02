@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Runtime.Serialization;
 
+    [Serializable]
     public class ApiValidationException : Exception
     {
         public ApiValidationException()

@@ -9,23 +9,22 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlTypes;
+    using Catel;
 
-    internal class PackageOperationContext : IPackageOperationContext
+    internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
     {
-        #region Fields
-        private static int _contextCounter;
-        #endregion
-
         #region Constructors
         public PackageOperationContext()
         {
-            Id = _contextCounter++;
+            UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
             CatchedExceptions = new List<Exception>();
         }
         #endregion
 
         #region Properties
-        public int Id { get; private set; }
+        //public int Id { get; private set; }
+        public int UniqueIdentifier { get; }
         public IRepository Repository { get; set; }
         public IPackageDetails[] Packages { get; set; }
         public PackageOperationType OperationType { get; set; }
@@ -43,12 +42,12 @@ namespace Orc.NuGetExplorer
                 return false;
             }
 
-            return Id.Equals(context.Id);
+            return UniqueIdentifier.Equals(context.UniqueIdentifier);
         }
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return UniqueIdentifier.GetHashCode();
         }
         #endregion
     }

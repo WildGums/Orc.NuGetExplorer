@@ -47,6 +47,12 @@ namespace Orc.NuGetExplorer
         #region Methods
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
             if (!_fileSystemService.DeleteDirectory(_rootDirectory))

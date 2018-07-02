@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="NuGetConfigurationService.cs" company="WildGums">
 //   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
@@ -13,15 +13,12 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
-    using Catel.Logging;
     using MethodTimer;
     using NuGet;
 
     internal class NuGetConfigurationService : INuGetConfigurationService
     {
         #region Fields
-        private const char Separator = '|';
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
         private readonly INuGetFeedVerificationService _feedVerificationService;
@@ -120,9 +117,7 @@ namespace Orc.NuGetExplorer
         [Obsolete("Use DisablePackageSource")]
         public void DeletePackageSource(string name, string source)
         {
-            Argument.IsNotNullOrWhitespace(() => name);
-
-            _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
+            DisablePackageSource(name, source);
         }
 
         public void DisablePackageSource(string name, string source)

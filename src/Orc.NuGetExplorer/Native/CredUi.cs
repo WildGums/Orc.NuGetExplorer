@@ -15,14 +15,10 @@ namespace Orc.NuGetExplorer.Native
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Catel;
-    using Catel.Logging;
     using Microsoft.Win32.SafeHandles;
 
     internal static class CredUi
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         #region Delegates
         [Flags]
         public enum CredUiFlags
@@ -104,19 +100,6 @@ namespace Orc.NuGetExplorer.Native
             var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
             return protectedBytes;
         }
-
-        //[DllImport("credui.dll", CharSet = CharSet.Unicode)]
-        //internal static extern CredUiReturnCodes CredUIPromptForCredentials(
-        //    ref CredUiInfo pUiInfo,
-        //    string targetName,
-        //    IntPtr Reserved,
-        //    int dwAuthError,
-        //    StringBuilder pszUserName,
-        //    uint ulUserNameMaxChars,
-        //    StringBuilder pszPassword,
-        //    uint ulPaswordMaxChars,
-        //    [MarshalAs(UnmanagedType.Bool), In(), Out()] ref bool pfSave,
-        //    CredUiFlags dwFlags);
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode)]
         public static extern CredUiReturnCodes CredUIPromptForWindowsCredentials(
@@ -225,7 +208,7 @@ namespace Orc.NuGetExplorer.Native
 
             public override string ToString()
             {
-                var value = string.Format("Username = '{0}'", UserName);
+                var value = $"Username = '{UserName}'";
 
 #if LOG_SENSITIVE_INFO
                 value += string.Format(", Password = '{0}'", Password);

@@ -21,44 +21,44 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public bool DeleteDirectory(string directory)
+        public bool DeleteDirectory(string path)
         {
-            Argument.IsNotNullOrEmpty(() => directory);
+            Argument.IsNotNullOrEmpty(() => path);
 
-            Log.Info("Deleting directory {0}", directory);
+            Log.Info("Deleting directory {0}", path);
 
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(path))
             {
-                Log.Warning("Directory {0} does not exists", directory);
+                Log.Warning("Directory {0} does not exists", path);
                 return true;
             }
 
-            var files = Directory.GetFiles(directory);
-            var subDirectories = Directory.GetDirectories(directory);
+            var files = Directory.GetFiles(path);
+            var subDirectories = Directory.GetDirectories(path);
 
             var failedDirectories = new HashSet<string>();
 
             var success = DeleteFiles(files, failedDirectories);
 
             var directories = subDirectories.Except(failedDirectories);
-            success = success && DeleteDirectories(directory, directories);
+            success = success && DeleteDirectories(path, directories);
 
             if (success)
             {
                 try
                 {
-                    Directory.Delete(directory, false);
+                    Directory.Delete(path, false);
                 }
                 catch (Exception exception)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to delete directory {0}", directory);
+                    Log.Error(exception, "Failed to delete directory {0}", path);
                 }
             }
 
             if (success)
             {
-                Log.Info("Directory {0} has been successfully deleted", directory);
+                Log.Info("Directory {0} has been successfully deleted", path);
             }
 
             return success;

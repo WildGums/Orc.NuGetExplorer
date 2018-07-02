@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer
 
     internal static class AppSettings
     {
-        public class NuGetExplorer
+        internal static class NuGetExplorer
         {
             public const string LastRepositoryCaregory = "NuGetExplorer.LastRepositoryCaregory";
             public const string LastRepositoryCaregoryDefaultValue = RepositoryCategoryName.Installed;
