@@ -4,6 +4,7 @@
     <AssemblyName>Orc.NuGetExplorer.Example.NET</AssemblyName>
     <RootNamespace>Orc.NuGetExplorer.Example</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
 
   <PropertyGroup>

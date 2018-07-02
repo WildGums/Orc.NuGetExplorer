@@ -10,6 +10,11 @@
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec;xaml;wpf</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- SonarQube requires a project guid -->
+    <ProjectGuid>FF1311A4-D83A-4F96-B28A-C29F8D758728</ProjectGuid>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="MethodTimer.Fody" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="MSBuild.Sdk.Extras" Version="1.5.4" PrivateAssets="all" />
