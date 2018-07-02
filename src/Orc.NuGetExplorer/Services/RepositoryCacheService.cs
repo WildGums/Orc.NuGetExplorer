@@ -16,8 +16,6 @@ namespace Orc.NuGetExplorer
     internal class RepositoryCacheService : IRepositoryCacheService
     {
         #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static int _idCounter;
         private readonly IDictionary<int, Tuple<IRepository, IPackageRepository>> _idTupleDictionary = new Dictionary<int, Tuple<IRepository, IPackageRepository>>();
         private readonly IDictionary<string, int> _keyIdDictionary = new Dictionary<string, int>();
         #endregion
@@ -30,18 +28,14 @@ namespace Orc.NuGetExplorer
 
             var key = GetKey(operationType, name);
 
-            int id;
-            if (_keyIdDictionary.TryGetValue(key, out id))
+            if (_keyIdDictionary.TryGetValue(key, out var id))
             {
-                if (!renew)
-                {
-                    return _idTupleDictionary[id].Item1;
-                }
-
-                return CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
+                return !renew 
+                    ? _idTupleDictionary[id].Item1 
+                    : CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
             }
 
-            id = _idCounter++;
+            id = UniqueIdentifierHelper.GetUniqueIdentifier<RepositoryCacheService>();
             _keyIdDictionary.Add(key, id);
 
             return CreateSerializableRepository(id, name, source, operationType, packageRepositoryFactory);
@@ -77,7 +71,7 @@ namespace Orc.NuGetExplorer
 
         private static string GetKey(PackageOperationType operationType, string name)
         {
-            return string.Format("{0}_{1}", operationType, name);
+            return $"{operationType}_{name}";
         }
         #endregion
     }

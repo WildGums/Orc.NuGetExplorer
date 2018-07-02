@@ -27,7 +27,7 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static bool _searchingAndRefreshing;
+        
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageBatchService _packageBatchService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
@@ -37,6 +37,8 @@ namespace Orc.NuGetExplorer.ViewModels
         private readonly IPackageQueryService _packageQueryService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IPleaseWaitService _pleaseWaitService;
+
+        private bool _searchingAndRefreshing;
         #endregion
 
         #region Constructors
