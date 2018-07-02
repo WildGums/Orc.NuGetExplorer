@@ -12,13 +12,11 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
     using Catel.IoC;
-    using Catel.Logging;
     using NuGet;
 
     internal class RepositoryService : IRepositoryService
     {
         #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageRepositoryFactory _repositoryFactory;

@@ -10,7 +10,6 @@ namespace Orc.NuGetExplorer
     using System;
     using System.Collections.Generic;
     using Catel;
-    using Catel.Logging;
     using NuGet;
 
     internal class RepositoryCacheService : IRepositoryCacheService

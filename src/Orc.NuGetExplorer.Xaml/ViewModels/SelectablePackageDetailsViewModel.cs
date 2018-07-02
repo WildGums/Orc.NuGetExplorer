@@ -13,10 +13,11 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel;
     using Catel.MVVM;
 
-    public class SelectablePackageDetailsViewModel : ViewModelBase
+    [Serializable]
+    public sealed class SelectablePackageDetailsViewModel : ViewModelBase
     {
         #region Fields
-        private IPackageDetails _packageDetails;
+        private readonly IPackageDetails _packageDetails;
         #endregion
 
         #region Constructors

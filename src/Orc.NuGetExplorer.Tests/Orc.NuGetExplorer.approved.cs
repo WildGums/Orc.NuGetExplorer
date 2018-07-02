@@ -218,7 +218,7 @@ namespace Orc.NuGetExplorer
     }
     public abstract class PackageManagerWatcherBase
     {
-        public PackageManagerWatcherBase(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
+        protected PackageManagerWatcherBase(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
         protected virtual void OnOperationFinished(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
         protected virtual void OnOperationsBatchFinished(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
         protected virtual void OnOperationsBatchStarting(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }

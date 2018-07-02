@@ -8,19 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Runtime.CompilerServices;
     using Catel;
-    using Catel.Logging;
     using NuGet;
 
     internal class PackageManager : NuGet.PackageManager, IPackageManager
     {
         #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         private readonly IPackageCacheService _packageCacheService;
-
-        private readonly ConditionalWeakTable<IPackageDetails, IWeakEventListener> _packageEvents = new ConditionalWeakTable<IPackageDetails, IWeakEventListener>();
         #endregion
 
         #region Constructors

@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlTypes;
     using Catel;
 
     internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
@@ -23,7 +22,6 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        //public int Id { get; private set; }
         public int UniqueIdentifier { get; }
         public IRepository Repository { get; set; }
         public IPackageDetails[] Packages { get; set; }
@@ -36,8 +34,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         public override bool Equals(object obj)
         {
-            var context = obj as PackageOperationContext;
-            if (context == null)
+            if (!(obj is PackageOperationContext context))
             {
                 return false;
             }

@@ -20,10 +20,8 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private readonly IPackageDetailsService _packageDetailsService;
-
-        private IPackageQueryService _packageQueryService;
-
-        private IRepositoryNavigatorService _repositoryNavigatorService;
+        private readonly IPackageQueryService _packageQueryService;
+        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
         #endregion
 
         #region Constructors

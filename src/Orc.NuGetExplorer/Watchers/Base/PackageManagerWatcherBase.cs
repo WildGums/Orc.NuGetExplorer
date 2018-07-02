@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     public abstract class PackageManagerWatcherBase
     {
         #region Constructors
-        public PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
+        protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
 
