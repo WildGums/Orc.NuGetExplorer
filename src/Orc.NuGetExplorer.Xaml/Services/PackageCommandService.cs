@@ -53,11 +53,11 @@ namespace Orc.NuGetExplorer
             return Enum.GetName(typeof(PackageOperationType), operationType);
         }
 
-        public void Execute(PackageOperationType operationType, IPackageDetails package, IRepository sourceRepository = null, bool allowedPrerelease = false)
+        public void Execute(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
         {
-            Argument.IsNotNull(() => package);
+            Argument.IsNotNull(() => packageDetails);
 
-            var selectedPackage = GetPackageDetailsFromSelectedVersion(package, sourceRepository ?? _localRepository) ?? package;
+            var selectedPackage = GetPackageDetailsFromSelectedVersion(packageDetails, sourceRepository ?? _localRepository) ?? packageDetails;
 
             using (_pleaseWaitService.WaitingScope())
             {
@@ -81,7 +81,7 @@ namespace Orc.NuGetExplorer
                 }
             }
 
-            package.IsInstalled = null;
+            packageDetails.IsInstalled = null;
         }
 
         public bool CanExecute(PackageOperationType operationType, IPackageDetails package)

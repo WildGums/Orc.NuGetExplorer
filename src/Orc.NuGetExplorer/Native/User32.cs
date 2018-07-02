@@ -10,11 +10,11 @@ namespace Orc.NuGetExplorer.Native
     using System;
     using System.Runtime.InteropServices;
 
-    public static class User32
+    internal static class User32
     {
         #region Methods
         [DllImport("user32.dll")]
-        public static extern IntPtr GetActiveWindow();
+        internal static extern IntPtr GetActiveWindow();
         #endregion
     }
 }

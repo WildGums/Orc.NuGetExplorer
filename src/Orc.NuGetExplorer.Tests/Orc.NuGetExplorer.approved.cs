@@ -210,7 +210,7 @@ namespace Orc.NuGetExplorer
     }
     public abstract class PackageManagerLogListenerBase
     {
-        public PackageManagerLogListenerBase(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
+        protected PackageManagerLogListenerBase(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
         protected virtual void OnDebug(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
         protected virtual void OnError(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
         protected virtual void OnInfo(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
@@ -276,7 +276,7 @@ namespace Orc.NuGetExplorer
         public System.IO.Stream GetStream() { }
         public System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> GetSupportedFrameworks() { }
     }
-    public class Repository : Orc.NuGetExplorer.IRepository
+    public sealed class Repository : Orc.NuGetExplorer.IRepository
     {
         public Repository() { }
         public int Id { get; set; }
@@ -318,10 +318,6 @@ namespace Orc.NuGetExplorer.Native
         public CredentialException(int error, string message) { }
         public CredentialException(string message, System.Exception innerException) { }
         protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-    }
-    public class static User32
-    {
-        public static System.IntPtr GetActiveWindow() { }
     }
 }
 namespace Orc.NuGetExplorer.Scopes

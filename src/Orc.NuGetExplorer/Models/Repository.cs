@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    public class Repository : IRepository
+    public sealed class Repository : IRepository
     {
         #region Properties
         public int Id { get; set; }

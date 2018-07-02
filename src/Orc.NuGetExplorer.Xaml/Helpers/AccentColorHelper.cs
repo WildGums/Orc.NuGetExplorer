@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using System.Windows.Media;
 
-    internal class AccentColorHelper
+    internal static class AccentColorHelper
     {
         #region Fields
         private static bool _isAccentColorResourceDictionaryCreated;

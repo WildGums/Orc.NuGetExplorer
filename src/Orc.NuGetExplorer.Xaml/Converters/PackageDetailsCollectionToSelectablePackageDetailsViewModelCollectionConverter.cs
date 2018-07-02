@@ -20,15 +20,15 @@ namespace Orc.NuGetExplorer.Converters
     public class PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter : ValueConverterBase<ObservableCollection<IPackageDetails>, ObservableCollection<SelectablePackageDetailsViewModel>>
     {
         #region Methods
-        protected override object Convert(ObservableCollection<IPackageDetails> packageDetailsCollection, Type targetType, object parameter)
+        protected override object Convert(ObservableCollection<IPackageDetails> value, Type targetType, object parameter)
         {
             var selectablePackageDetailsViewModelCollection = new ObservableCollection<SelectablePackageDetailsViewModel>();
-            packageDetailsCollection.CollectionChanged += (sender, args) =>
+            value.CollectionChanged += (sender, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Reset)
                     {
                         selectablePackageDetailsViewModelCollection.Clear();
-                        selectablePackageDetailsViewModelCollection.AddRange(packageDetailsCollection.Select(packageDetails => new SelectablePackageDetailsViewModel(packageDetails)));
+                        selectablePackageDetailsViewModelCollection.AddRange(value.Select(packageDetails => new SelectablePackageDetailsViewModel(packageDetails)));
                     }
                     else if (args.Action == NotifyCollectionChangedAction.Add)
                     {
