@@ -8,13 +8,10 @@ namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
     using System.Windows.Input;
-
     using Catel;
     using Catel.MVVM;
 
-    [Serializable]
     public sealed class SelectablePackageDetailsViewModel : ViewModelBase
     {
         #region Fields
@@ -22,15 +19,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Constructors
-        private SelectablePackageDetailsViewModel(SerializationInfo info, StreamingContext context)
-        {
-        }
-
         public SelectablePackageDetailsViewModel(IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);
 
             _packageDetails = packageDetails;
+
             SelectPackageVersionCommand = new Command<string>(Execute);
         }
         #endregion

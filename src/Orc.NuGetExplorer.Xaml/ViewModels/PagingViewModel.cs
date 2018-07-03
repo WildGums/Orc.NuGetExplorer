@@ -62,7 +62,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnItemsCountChanged()
         {
-            Pager.ItemsCount = ItemsCount; // TODO: this is temporary (doesn't refresh automatically)
+            Pager.ItemsCount = ItemsCount; // Note: doesn't refresh automatically
             _pagingService.UpdatePagingItems(Pager);
         }
 

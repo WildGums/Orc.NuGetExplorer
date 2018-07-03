@@ -104,7 +104,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
             var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
 
-            // TODO: AddRange doesn't refresh button state. need to fix later
+            // Note: AddRange doesn't refresh button state
             AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
         }
 

@@ -189,7 +189,6 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            // TODO: saving selected repo, must be moved to RepositoryNavigationViewModel.OnSelectedRepositoryChanged()
             var selectedRepository = Navigator.SelectedRepository;
             var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
 
@@ -301,7 +300,7 @@ namespace Orc.NuGetExplorer.ViewModels
             }
             finally
             {
-                // TODO: this is hack. Need to fix it.
+                // Note: this is hack
                 Navigator.SelectedRepository = selectedRepository;
             }
         }
@@ -364,7 +363,6 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(), true);
 
-                // TODO: AddRange doesn't refresh button state. need to fix later
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
             }
 
