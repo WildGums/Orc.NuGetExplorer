@@ -20,10 +20,8 @@ namespace Orc.NuGetExplorer.ViewModels
     {
         #region Fields
         private readonly IPackageDetailsService _packageDetailsService;
-
-        private IPackageQueryService _packageQueryService;
-
-        private IRepositoryNavigatorService _repositoryNavigatorService;
+        private readonly IPackageQueryService _packageQueryService;
+        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
         #endregion
 
         #region Constructors
@@ -72,7 +70,6 @@ namespace Orc.NuGetExplorer.ViewModels
         private void BuildPackageSummary()
         {
             //// Fix: Required since available versions aren't available until dropdown button is displayed.
-            var packageAvailableVersions = Package.AvailableVersions;
             if (!string.IsNullOrWhiteSpace(Package.SelectedVersion) && Package.Version.ToString() != Package.SelectedVersion)
             {
                 var packageSummary = _packageQueryService.GetPackage(_repositoryNavigatorService.Navigator.SelectedRepository, Package.Id, Package.SelectedVersion);

@@ -51,7 +51,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => pager);
 
             pager.ItemIndex = GetLastPageIndex(pager);
-            ;
         }
 
         public bool IsLastPage(Pager pager)

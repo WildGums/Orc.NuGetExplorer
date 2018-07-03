@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
 
     internal static class EncryptionHelper
     {
-        private static readonly byte[] IV = { 240, 3, 45, 29, 0, 76, 173, 59 };
+        private static readonly byte[] IV = new byte[16]{ 210, 10, 56, 110, 98, 189, 66, 77, 83, 120, 86, 44, 67, 111, 98, 66 };
 
         public static string GetMd5Hash(string s)
         {
@@ -70,15 +70,17 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        private static TripleDESCryptoServiceProvider CreateCryptoServiceProvider(Encoding encoding, string key)
+        private static Aes CreateCryptoServiceProvider(Encoding encoding, string key)
         {
-            var des = new TripleDESCryptoServiceProvider();
+            var aes = Aes.Create() ?? new AesCryptoServiceProvider();
             var md5 = new MD5CryptoServiceProvider();
 
-            des.Key = md5.ComputeHash(encoding.GetBytes(key));
-            des.IV = IV;
+            aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+            aes.IV = IV;
+            aes.Padding = PaddingMode.PKCS7;
+            aes.Mode = CipherMode.CBC;
 
-            return des;
+            return aes;
         }
 
         private static Encoding GetEncoding()

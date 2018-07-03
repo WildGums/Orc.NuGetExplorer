@@ -14,45 +14,10 @@
     </UserControl.Resources>
 
     <StackPanel Orientation="Horizontal" Margin="5 5 5 10">
-
-        <!--<Button Content="&lt;&lt;" Command="{Binding MoveToFirst}" Style="{StaticResource ArrowButtonStyle}"/>-->
         <Button Content="{catel:LanguageBinding NuGetExplorer_PagingView_Button_Content_Back}" Command="{Binding MoveBack}" Style="{StaticResource HyperLinkButtonStyle}" Margin="0 0 5 0"
                 Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToHidingVisibilityConverter}}"/>
 
-        <!--<ItemsControl ItemsSource="{Binding LeftPages}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Style="{StaticResource HyperLinkButtonStyle}" Content="{Binding Header}" 
-                            Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.MoveToPage}"
-                            CommandParameter="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>-->
-
-        <!--<TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" Style="{StaticResource HyperLinkTextBlockStyle}" />-->
-
-        <!--<ItemsControl ItemsSource="{Binding RightPages}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Style="{StaticResource HyperLinkButtonStyle}" Content="{Binding Header}" 
-                            Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.MoveToPage}"
-                            CommandParameter="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>-->
-
         <Button Content="{catel:LanguageBinding NuGetExplorer_PagingView_Button_Content_Next}" Command="{Binding MoveForward}" Style="{StaticResource HyperLinkButtonStyle}"
                 Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToHidingVisibilityConverter}}"/>
-        <!--<Button Content="&gt;&gt;" Command="{Binding MoveToLast}" Style="{StaticResource ArrowButtonStyle}"/>-->
     </StackPanel>
 </catel:UserControl>

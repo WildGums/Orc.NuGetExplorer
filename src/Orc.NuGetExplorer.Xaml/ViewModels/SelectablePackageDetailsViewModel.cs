@@ -9,14 +9,13 @@ namespace Orc.NuGetExplorer.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Windows.Input;
-
     using Catel;
     using Catel.MVVM;
 
-    public class SelectablePackageDetailsViewModel : ViewModelBase
+    public sealed class SelectablePackageDetailsViewModel : ViewModelBase
     {
         #region Fields
-        private IPackageDetails _packageDetails;
+        private readonly IPackageDetails _packageDetails;
         #endregion
 
         #region Constructors
@@ -25,6 +24,7 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => packageDetails);
 
             _packageDetails = packageDetails;
+
             SelectPackageVersionCommand = new Command<string>(Execute);
         }
         #endregion

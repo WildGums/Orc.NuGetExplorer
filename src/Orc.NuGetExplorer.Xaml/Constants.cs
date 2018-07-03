@@ -20,6 +20,11 @@ namespace Orc.NuGetExplorer
         public const string PackageSourceName = "PackageSource";
     }
 
+    internal static class ResourcePaths
+    {
+        public const string PackageDefaultIcon = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png";
+    }
+
     internal static class AppSettings
     {
         internal static class NuGetExplorer

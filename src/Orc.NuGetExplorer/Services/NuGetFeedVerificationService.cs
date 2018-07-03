@@ -47,7 +47,7 @@ namespace Orc.NuGetExplorer
                 try
                 {
                     var repository = _packageRepositoryFactory.CreateRepository(source);
-                    var anyExists = repository.GetPackages().Take(1).Count();
+                    repository.GetPackages().Take(1).Count();
                 }
                 catch (WebException ex)
                 {

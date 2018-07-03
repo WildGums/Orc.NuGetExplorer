@@ -142,42 +142,11 @@ namespace Orc.NuGetExplorer.Native
 
             var result = CredUi.CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
                 out outBuffer, out var outBufferSize, ref _isSaveChecked, flags);
+
             switch (result)
             {
                 case CredUi.CredUiReturnCodes.NO_ERROR:
-                    var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
-                    var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
-                    var userNameSize = (uint)userName.Capacity;
-                    var passwordSize = (uint)password.Capacity;
-                    uint domainSize = 0;
-                    if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
-                    {
-                        throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
-                            "Failed to create the authentication buffer after prompting");
-                    }
-
-                    UserName = userName.ToString();
-                    Password = password.ToString();
-
-                    Log.Debug("User entered credentials with username '{0}'", UserName);
-
-                    if (!ShowSaveCheckBox)
-                    {
-                        return true;
-                    }
-
-                    // If the NativeCredential was stored previously but the user has now cleared the save checkbox,
-                    // we want to delete the NativeCredential.
-                    if (storedCredentials && !IsSaveChecked)
-                    {
-                        DeleteCredential(Target);
-                    }
-
-                    if (IsSaveChecked)
-                    {
-                        WriteCredential(Target, UserName, Password);
-                    }
-
+                    ManageCredentialsStorage(outBuffer, outBufferSize, storedCredentials);
                     return true;
 
                 case CredUi.CredUiReturnCodes.ERROR_CANCELLED:
@@ -187,6 +156,42 @@ namespace Orc.NuGetExplorer.Native
                 default:
                     throw Log.ErrorAndCreateException(x => new CredentialException((int)result),
                         "Failed to prompt for credentials, error code '{0}'", result);
+            }
+        }
+
+        private void ManageCredentialsStorage(IntPtr outBuffer, uint outBufferSize, bool storedCredentials)
+        {
+            var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
+            var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
+            var userNameSize = (uint)userName.Capacity;
+            var passwordSize = (uint)password.Capacity;
+            uint domainSize = 0;
+            if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
+            {
+                throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
+                    "Failed to create the authentication buffer after prompting");
+            }
+
+            UserName = userName.ToString();
+            Password = password.ToString();
+
+            Log.Debug("User entered credentials with username '{0}'", UserName);
+
+            if (!ShowSaveCheckBox)
+            {
+                return;
+            }
+
+            // If the NativeCredential was stored previously but the user has now cleared the save checkbox,
+            // we want to delete the NativeCredential.
+            if (storedCredentials && !IsSaveChecked)
+            {
+                DeleteCredential(Target);
+            }
+
+            if (IsSaveChecked)
+            {
+                WriteCredential(Target, UserName, Password);
             }
         }
 

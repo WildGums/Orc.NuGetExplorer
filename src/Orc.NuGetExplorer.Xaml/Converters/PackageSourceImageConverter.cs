@@ -38,7 +38,7 @@ namespace Orc.NuGetExplorer.Converters
         {
             if (value == null)
             {
-                return ImageResolveService.ResolveImageFromUri(new Uri("pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/packageDefaultIcon.png"), null);
+                return ImageResolveService.ResolveImageFromUri(new Uri(ResourcePaths.PackageDefaultIcon), null);
             }
 
             return false;

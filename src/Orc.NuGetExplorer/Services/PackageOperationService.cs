@@ -65,7 +65,7 @@ namespace Orc.NuGetExplorer
             try
             {
                 var nuGetPackage = ((PackageDetails) package).Package;
-                var operations = walker.ResolveOperations(nuGetPackage);
+                walker.ResolveOperations(nuGetPackage);
                 _packageManager.UninstallPackage(nuGetPackage, false, true);
             }
             catch (Exception exception)
@@ -89,7 +89,7 @@ namespace Orc.NuGetExplorer
             {
                 ValidatePackage(package);
                 var nuGetPackage = EnsurePackageDependencies(((PackageDetails)package).Package);
-                var operations = walker.ResolveOperations(nuGetPackage);
+                walker.ResolveOperations(nuGetPackage);
                 _packageManager.InstallPackage(nuGetPackage, false, allowedPrerelease, false);
             }
             catch (Exception exception)

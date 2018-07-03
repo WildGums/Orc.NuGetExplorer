@@ -102,7 +102,7 @@ namespace Orc.NuGetExplorer
                     return CanUpdate(selectedPackage);
 
                 case PackageOperationType.Uninstall:
-                    return CanUninstall(selectedPackage);
+                    return true;
             }
 
             return false;
@@ -127,7 +127,7 @@ namespace Orc.NuGetExplorer
 
         public string GetPluralActionName(PackageOperationType operationType)
         {
-            return string.Format("{0} all", Enum.GetName(typeof(PackageOperationType), operationType));
+            return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
         }
 
         private IPackageDetails GetPackageDetailsFromSelectedVersion(IPackageDetails packageDetails, IRepository repository)
@@ -173,11 +173,6 @@ namespace Orc.NuGetExplorer
             }
 
             return !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
-        }
-
-        private bool CanUninstall(IPackageDetails package)
-        {
-            return true;
         }
         #endregion
     }

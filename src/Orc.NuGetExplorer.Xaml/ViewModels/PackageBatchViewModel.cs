@@ -85,7 +85,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnApplyAllExecute()
         {
-            var packages = PackagesBatch.PackageList.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).Cast<IPackageDetails>().ToArray();
+            var packages = PackagesBatch.PackageList.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).ToArray();
             using (_packageOperationContextService.UseOperationContext(PackagesBatch.OperationType, packages))
             {
                 foreach (var package in packages)

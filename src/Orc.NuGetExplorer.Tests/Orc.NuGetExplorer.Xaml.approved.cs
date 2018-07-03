@@ -80,7 +80,7 @@ namespace Orc.NuGetExplorer
 }
 namespace Orc.NuGetExplorer.ViewModels
 {
-    public class SelectablePackageDetailsViewModel : Catel.MVVM.ViewModelBase
+    public sealed class SelectablePackageDetailsViewModel : Catel.MVVM.ViewModelBase
     {
         public SelectablePackageDetailsViewModel(Orc.NuGetExplorer.IPackageDetails packageDetails) { }
         public System.Collections.Generic.IList<string> AvailableVersions { get; }
