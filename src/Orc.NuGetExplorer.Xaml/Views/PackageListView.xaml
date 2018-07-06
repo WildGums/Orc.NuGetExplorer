@@ -8,8 +8,6 @@
                    x:ClassModifier="internal">
 
     <catel:UserControl.Resources>
-        <catel:BooleanToHidingVisibilityConverter x:Key="HidingVisibilityConverter" />
-        <catel:ReferenceToHidingVisibilityConverter x:Key="ReferenceToHidingVisibilityConverter" />
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite" />
         <converters:PackageImageConverter x:Key="ImageConverter" />
         <converters:PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter x:Key="PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter" />
@@ -29,7 +27,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Top"
                                            Margin="0 30 0 0"
-                                           Visibility="{Binding PackageList, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}" />
+                                           Visibility="{Binding ItemsSource, Converter={catel:CollectionToCollapsingVisibilityConverter}, ConverterParameter=True}" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -127,7 +125,7 @@
                                           IsEnabled="False"
                                           Margin="4 12 8 0"
                                           VerticalAlignment="Top"
-                                          Visibility="{Binding IsInstalled, Converter={StaticResource ReferenceToHidingVisibilityConverter}}" />
+                                          Visibility="{Binding IsInstalled, Converter={catel:ReferenceToHidingVisibilityConverter}}" />
                                 <Image Grid.Column="1"
                                        Grid.Row="0"
                                        Grid.RowSpan="2"

@@ -11,11 +11,9 @@ namespace Orc.NuGetExplorer.Converters
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Linq;
-
     using Catel.Collections;
     using Catel.MVVM.Converters;
-
-    using Orc.NuGetExplorer.ViewModels;
+    using ViewModels;
 
     public class PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter : ValueConverterBase<ObservableCollection<IPackageDetails>, ObservableCollection<SelectablePackageDetailsViewModel>>
     {
@@ -23,21 +21,25 @@ namespace Orc.NuGetExplorer.Converters
         protected override object Convert(ObservableCollection<IPackageDetails> value, Type targetType, object parameter)
         {
             var selectablePackageDetailsViewModelCollection = new ObservableCollection<SelectablePackageDetailsViewModel>();
+            selectablePackageDetailsViewModelCollection.AddRange(value.Select(packageDetails => new SelectablePackageDetailsViewModel(packageDetails)));
+
             value.CollectionChanged += (sender, args) =>
+            {
+                switch (args.Action)
                 {
-                    if (args.Action == NotifyCollectionChangedAction.Reset)
-                    {
+                    case NotifyCollectionChangedAction.Reset:
                         selectablePackageDetailsViewModelCollection.Clear();
                         selectablePackageDetailsViewModelCollection.AddRange(value.Select(packageDetails => new SelectablePackageDetailsViewModel(packageDetails)));
-                    }
-                    else if (args.Action == NotifyCollectionChangedAction.Add)
-                    {
+                        break;
+
+                    case NotifyCollectionChangedAction.Add:
                         foreach (IPackageDetails newItem in args.NewItems)
                         {
                             selectablePackageDetailsViewModelCollection.Add(new SelectablePackageDetailsViewModel(newItem));
                         }
-                    }
-                };
+                        break;
+                }
+            };
 
             return selectablePackageDetailsViewModelCollection;
         }
