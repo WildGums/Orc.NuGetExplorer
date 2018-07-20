@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="fr" original="ORC.NUGETEXPLORER.XAML/PROPERTIES/RESOURCES.RESX" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
+    <header>
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.6900.0" tool-company="Microsoft" />
+    </header>
+    <body>
+      <group id="ORC.NUGETEXPLORER.XAML/PROPERTIES/RESOURCES.RESX" datatype="resx">
+        <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1" translate="yes" xml:space="preserve">
+          <source>The packageDetails '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</source>
+          <target state="needs-review-translation">The package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2" translate="yes" xml:space="preserve">
+          <source>The packageDetails '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</source>
+          <target state="needs-review-translation">The package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3" translate="yes" xml:space="preserve">
+          <source>The packageDetails '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</source>
+          <target state="needs-review-translation">The package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4" translate="yes" xml:space="preserve">
+          <source>The packageDetails '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</source>
+          <target state="needs-review-translation">The package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease" translate="yes" xml:space="preserve">
+          <source>Include prerelease</source>
+          <target state="needs-review-translation">Include prerelease</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerWindow_TextBlock_Text_RecommendedUpdates" translate="yes" xml:space="preserve">
+          <source>Recommended updates</source>
+          <target state="needs-review-translation">Recommended updates</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates" translate="yes" xml:space="preserve">
+          <source>Available Updates</source>
+          <target state="needs-review-translation">Available Updates</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors" translate="yes" xml:space="preserve">
+          <source>Errors: </source>
+          <target state="needs-review-translation">Errors: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_CreatedBy" translate="yes" xml:space="preserve">
+          <source>Created by:</source>
+          <target state="needs-review-translation">Created by:</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Dependencies" translate="yes" xml:space="preserve">
+          <source>Dependencies: </source>
+          <target state="needs-review-translation">Dependencies: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downloads" translate="yes" xml:space="preserve">
+          <source>Downloads: </source>
+          <target state="needs-review-translation">Downloads: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id" translate="yes" xml:space="preserve">
+          <source>Id: </source>
+          <target state="needs-review-translation">Id: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed" translate="yes" xml:space="preserve">
+          <source>Installed: </source>
+          <target state="needs-review-translation">Installed: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published" translate="yes" xml:space="preserve">
+          <source>Published: </source>
+          <target state="needs-review-translation">Published: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Version" translate="yes" xml:space="preserve">
+          <source>Version: </source>
+          <target state="needs-review-translation">Version: </target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_Message" translate="yes" xml:space="preserve">
+          <source>You must update the shell in order to apply this update</source>
+          <target state="needs-review-translation">You must update the shell in order to apply this update</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound" translate="yes" xml:space="preserve">
+          <source>No packageDetailss found</source>
+          <target state="needs-review-translation">No packages found</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageListView_TextBlock_Text_Prerelease" translate="yes" xml:space="preserve">
+          <source>Prerelease</source>
+          <target state="needs-review-translation">Prerelease</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources" translate="yes" xml:space="preserve">
+          <source>Available packageDetails sources</source>
+          <target state="needs-review-translation">Available package sources</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Name" translate="yes" xml:space="preserve">
+          <source>Name:</source>
+          <target state="needs-review-translation">Name:</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source" translate="yes" xml:space="preserve">
+          <source>Source:</source>
+          <target state="needs-review-translation">Source:</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PagingView_Button_Content_Back" translate="yes" xml:space="preserve">
+          <source>Back</source>
+          <target state="needs-review-translation">Back</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PagingView_Button_Content_Next" translate="yes" xml:space="preserve">
+          <source>Next</source>
+          <target state="needs-review-translation">Next</target>
+          <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1" xml:space="preserve">
+    <value>The package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</value>
+  </data>
+  <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2" xml:space="preserve">
+    <value>The package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</value>
+  </data>
+  <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3" xml:space="preserve">
+    <value>The package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</value>
+  </data>
+  <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4" xml:space="preserve">
+    <value>The package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease" xml:space="preserve">
+    <value>Include prerelease</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerWindow_TextBlock_Text_RecommendedUpdates" xml:space="preserve">
+    <value>Recommended updates</value>
+  </data>
+  <data name="NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates" xml:space="preserve">
+    <value>Available Updates</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors" xml:space="preserve">
+    <value>Errors: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_CreatedBy" xml:space="preserve">
+    <value>Created by:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Dependencies" xml:space="preserve">
+    <value>Dependencies: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Downloads" xml:space="preserve">
+    <value>Downloads: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Id" xml:space="preserve">
+    <value>Id: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed" xml:space="preserve">
+    <value>Installed: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published" xml:space="preserve">
+    <value>Published: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Version" xml:space="preserve">
+    <value>Version: </value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsService_PackageToFlowDocument_Update_The_Shell_Error_Message" xml:space="preserve">
+    <value>You must update the shell in order to apply this update</value>
+  </data>
+  <data name="NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound" xml:space="preserve">
+    <value>No packages found</value>
+  </data>
+  <data name="NuGetExplorer_PackageListView_TextBlock_Text_Prerelease" xml:space="preserve">
+    <value>Prerelease</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources" xml:space="preserve">
+    <value>Available package sources</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source" xml:space="preserve">
+    <value>Source:</value>
+  </data>
+  <data name="NuGetExplorer_PagingView_Button_Content_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="NuGetExplorer_PagingView_Button_Content_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+</root>

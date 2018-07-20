@@ -1,0 +1,110 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.RepositoryNavigationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:local="clr-namespace:Orc.NuGetExplorer"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+                   x:ClassModifier="internal">
+   
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="CollapsingVisibilityConverter"/>
+            <SolidColorBrush x:Key="Expander.Static.Arrow.Stroke" Color="Black"/>
+            <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid x:Name="grid">
+        <ListBox ItemsSource="{Binding RepositoryCategories}" 
+                 Grid.Column="0" HorizontalContentAlignment="Stretch" SelectionMode="Single" BorderThickness="0" Margin="0 6 0 0">
+
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
+                                        Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter Property="Background" TargetName="Bd" Value="WhiteSmoke"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <DockPanel>
+                            <Path x:Name="arrow" HorizontalAlignment="Left" Fill="Transparent" 
+                                  Stroke="{StaticResource Expander.Static.Arrow.Stroke}" StrokeThickness="1" VerticalAlignment="Top"  
+                                  Data="{StaticResource ExpanderToggleButtonArrow}" Height="4.5" Stretch="Fill" Width="8" 
+                                  RenderTransformOrigin="0.5,0.5" Margin="4,10,0,0">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform X="0.18" Y="0.43"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Text="{Binding Name}" Margin="5 5 0 5"/>
+                        </DockPanel>
+
+                        <ListBox BorderThickness="0" ItemsSource="{Binding Repositories}" HorizontalAlignment="Stretch" x:Name="listBox"
+                                 SelectionMode="Single" Margin="0"
+                                 SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                 Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
+                            <i:Interaction.Behaviors>
+                                <local:FocusOnVisibleBehavior/>
+                                <local:UpdateSourceOnVisibleBehavior/>
+                                <local:UpdateSelectedItemSourceBehavior/>
+                            </i:Interaction.Behaviors>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" Margin="15,5,0,5"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                            <Setter Property="Margin" TargetName="arrow" Value="4,12,0,0"/>
+                            <Setter Property="RenderTransform" TargetName="arrow">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="135"/>
+                                        <TranslateTransform X="0.18" Y="0.43"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Fill" TargetName="arrow" Value="{StaticResource Expander.Static.Arrow.Stroke}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</catel:UserControl>
