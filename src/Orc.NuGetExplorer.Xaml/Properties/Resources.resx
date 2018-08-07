@@ -166,7 +166,7 @@
     <value>You must update the shell in order to apply this update</value>
   </data>
   <data name="NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound" xml:space="preserve">
-    <value>No packageDetailss found</value>
+    <value>No package details found</value>
   </data>
   <data name="NuGetExplorer_PackageListView_TextBlock_Text_Prerelease" xml:space="preserve">
     <value>Prerelease</value>

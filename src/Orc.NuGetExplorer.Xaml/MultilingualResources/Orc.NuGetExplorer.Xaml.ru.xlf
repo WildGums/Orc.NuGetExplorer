@@ -87,7 +87,7 @@
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
         <trans-unit id="NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound" translate="yes" xml:space="preserve">
-          <source>No packageDetailss found</source>
+          <source>No package details found</source>
           <target state="needs-review-translation">No packages found</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
