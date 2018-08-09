@@ -20,6 +20,11 @@ namespace Orc.NuGetExplorer.Converters
         #region Methods
         protected override object Convert(ObservableCollection<IPackageDetails> value, Type targetType, object parameter)
         {
+            if (value is null)
+            {
+                return null;
+            }
+
             var selectablePackageDetailsViewModelCollection = new ObservableCollection<SelectablePackageDetailsViewModel>();
             selectablePackageDetailsViewModelCollection.AddRange(value.Select(packageDetails => new SelectablePackageDetailsViewModel(packageDetails)));
 
