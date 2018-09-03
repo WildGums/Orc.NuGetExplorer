@@ -61,7 +61,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The packageDetails &apos;{0}&apos; depends on API &apos;{1}&apos; min version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1 {
             get {
@@ -70,7 +70,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version greater than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The packageDetails &apos;{0}&apos; depends on API &apos;{1}&apos; min version greater than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2 {
             get {
@@ -79,7 +79,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The packageDetails &apos;{0}&apos; depends on API &apos;{1}&apos; max version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3 {
             get {
@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version lower than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to The packageDetails &apos;{0}&apos; depends on API &apos;{1}&apos; max version lower than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4 {
             get {
@@ -212,7 +212,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No packages found.
+        ///   Looks up a localized string similar to No package details found.
         /// </summary>
         internal static string NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound {
             get {
@@ -230,7 +230,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Available package sources.
+        ///   Looks up a localized string similar to Available packageDetails sources.
         /// </summary>
         internal static string NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources {
             get {
