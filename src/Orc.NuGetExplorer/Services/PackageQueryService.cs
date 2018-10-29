@@ -75,7 +75,7 @@ namespace Orc.NuGetExplorer
             {
                 var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
 
-                var queryable = nuGetRepository.Search(filter, allowPrereleaseVersions);
+                var queryable = nuGetRepository.FindFiltered(filter, allowPrereleaseVersions);
                 var count = queryable.Count();
                 return count;
             }

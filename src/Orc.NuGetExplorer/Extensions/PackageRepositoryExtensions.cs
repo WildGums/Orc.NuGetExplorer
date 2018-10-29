@@ -8,11 +8,8 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using System.Threading.Tasks;
     using Catel;
-    using Catel.Threading;
     using MethodTimer;
     using NuGet;
 
@@ -34,9 +31,52 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
-            var result = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
-            return result;
+            switch (packageRepository)
+            {
+                case LazyLocalPackageRepository _:
+                case LocalPackageRepository _:
+                case AggregateRepository _:
+                    return packageRepository.FindFilteredManually(filter, allowPrereleaseVersions);
+
+                default:
+                {
+                    var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
+
+                    return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take);
+                }
+            }
+        }
+        
+        private static IEnumerable<IPackage> FindFilteredManually(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
+            int skip = 0, int take = 10)
+        {
+            Argument.IsNotNull(() => packageRepository);
+
+            IEnumerable<string> names;
+
+            if (packageRepository is AggregateRepository aggregateRepository)
+            {
+                names = aggregateRepository.Repositories.SelectMany(x => x.Search(filter, allowPrereleaseVersions)).Select(x => x.Id);
+            }
+            else
+            {
+                names = packageRepository.Search(filter, allowPrereleaseVersions).Select(x => x.Id);
+            }
+
+            var packageNames = new HashSet<string>(names.Distinct().Skip(skip).Take(take));
+
+            foreach (var packageName in packageNames)
+            {
+                var packagesById = packageRepository.FindPackagesById(packageName);
+                if (!allowPrereleaseVersions)
+                {
+                    packagesById = packagesById.Where(x => string.IsNullOrEmpty(x.Version.SpecialVersion));
+                }
+
+                var latestVersion = packagesById.Max(x => x.Version);
+
+                yield return packageRepository.FindPackage(packageName, latestVersion);
+            }
         }
 
         [Time]
