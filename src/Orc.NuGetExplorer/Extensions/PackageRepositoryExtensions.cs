@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
-            var queryable = BuildQueryForSingleVersion(packageRepository, filter, allowPrereleaseVersions);
+            var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
             var result = queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
             return result;
         }
@@ -77,37 +77,6 @@ namespace Orc.NuGetExplorer
             }
 
             return result;
-        }
-
-        public static IQueryable<IPackage> BuildQueryForSingleVersion(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
-        {
-            Argument.IsNotNull(() => packageRepository);
-
-            var queryable = packageRepository.GetPackages();
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                filter = filter.Trim();
-                var localPackageRepository = packageRepository as LocalPackageRepository;
-                if (localPackageRepository == null)
-                {
-                    queryable = queryable.Where(x => x.Title.ToUpper().Contains(filter.ToUpper()));
-                }
-                else
-                {
-                    queryable = queryable.Where(x => CultureInfo.InvariantCulture.CompareInfo.IndexOf(x.Id, filter, CompareOptions.IgnoreCase) != -1);
-                }
-            }
-
-            if (allowPrereleaseVersions)
-            {
-                queryable = queryable.Where(x => x.IsAbsoluteLatestVersion);
-            }
-            else
-            {
-                queryable = queryable.Where(x => x.IsLatestVersion);
-            }
-
-            return queryable;
         }
         #endregion
     }

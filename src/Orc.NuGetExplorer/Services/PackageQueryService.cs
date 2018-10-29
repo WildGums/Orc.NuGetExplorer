@@ -75,7 +75,7 @@ namespace Orc.NuGetExplorer
             {
                 var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
 
-                var queryable = nuGetRepository.BuildQueryForSingleVersion(filter, allowPrereleaseVersions);
+                var queryable = nuGetRepository.Search(filter, allowPrereleaseVersions);
                 var count = queryable.Count();
                 return count;
             }
@@ -93,7 +93,6 @@ namespace Orc.NuGetExplorer
             try
             {
                 Log.Debug("Getting {0} packages starting from {1}, which contains \"{2}\"", take, skip, filter);
-
                 var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
 
                 return nuGetRepository.FindFiltered(filter, allowPrereleaseVersions, skip, take).Select(package => _packageCacheService.GetPackageDetails(nuGetRepository, package, allowPrereleaseVersions));
