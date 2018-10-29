@@ -99,6 +99,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public bool? IsPrereleaseAllowed { get; set; }
 
         [Model]
+        [Expose("TotalPackagesCount")]
         [Expose("PackageList")]
         public SearchResult SearchResult { get; private set; }
 
@@ -279,6 +280,8 @@ namespace Orc.NuGetExplorer.ViewModels
                     {
                         var searchSettings = SearchSettings;
                         searchSettings.PackagesToSkip = 0;
+
+                        SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true), true);
 
                         var packageDetails = await TaskHelper.Run(() => _packageQueryService.GetPackages(selectedRepository, IsPrereleaseAllowed ?? true, searchSettings.SearchFilter, searchSettings.PackagesToSkip), true);
                         var packages = packageDetails;
