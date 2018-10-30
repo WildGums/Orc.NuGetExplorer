@@ -71,13 +71,33 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageRepository);
 
+            var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+
+            return CountPackages(nuGetRepository, filter, allowPrereleaseVersions);
+        }
+
+        private int CountPackages(IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        {
+            Argument.IsNotNull(() => packageRepository);
+
             try
             {
-                var nuGetRepository = _repositoryCacheService.GetNuGetRepository(packageRepository);
+                switch (packageRepository)
+                {
+                    case LazyLocalPackageRepository _:
+                    case LocalPackageRepository _:
+                        return packageRepository.Search(filter, allowPrereleaseVersions).Distinct(PackageEqualityComparer.Id).Count();
 
-                var queryable = nuGetRepository.FindFiltered(filter, allowPrereleaseVersions);
-                var count = queryable.Count();
-                return count;
+                    case AggregateRepository aggregateRepository:
+                        return aggregateRepository.Repositories.Select(x => CountPackages(x, filter, allowPrereleaseVersions)).Sum();
+
+                    default:
+                    {
+                        var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
+
+                        return queryable.Count();
+                    }
+                }
             }
             catch
             {

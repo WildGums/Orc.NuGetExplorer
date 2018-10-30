@@ -36,7 +36,7 @@ namespace Orc.NuGetExplorer
                 case LazyLocalPackageRepository _:
                 case LocalPackageRepository _:
                 case AggregateRepository _:
-                    return packageRepository.FindFilteredManually(filter, allowPrereleaseVersions);
+                    return packageRepository.FindFilteredManually(filter, allowPrereleaseVersions, skip, take);
 
                 default:
                 {
