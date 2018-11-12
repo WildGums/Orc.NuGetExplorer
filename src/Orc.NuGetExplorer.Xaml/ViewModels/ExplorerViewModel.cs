@@ -10,9 +10,9 @@ namespace Orc.NuGetExplorer.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Collections;
     using Catel.Configuration;
     using Catel.Fody;
     using Catel.Logging;
@@ -21,7 +21,9 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
+    using NuGet;
     using Scopes;
+    using CollectionExtensions = Catel.Collections.CollectionExtensions;
 
     internal class ExplorerViewModel : ViewModelBase
     {
@@ -288,7 +290,7 @@ namespace Orc.NuGetExplorer.ViewModels
                         {
                             using (SearchResult.PackageList.SuspendChangeNotifications())
                             {
-                                ((ICollection<IPackageDetails>)SearchResult.PackageList).AddRange(packages);
+                                CollectionExtensions.AddRange(((ICollection<IPackageDetails>)SearchResult.PackageList), packages);
                             }
                         });
                     }
@@ -304,6 +306,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 Navigator.SelectedRepository = selectedRepository;
             }
         }
+
         #endregion
 
         #region Commands
