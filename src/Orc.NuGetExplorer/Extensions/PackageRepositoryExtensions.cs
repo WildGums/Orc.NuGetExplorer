@@ -7,6 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -17,7 +18,7 @@ namespace Orc.NuGetExplorer
     {
         #region Methods
         [Time]
-        public static IEnumerable<IPackage> FindAll(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
+        public static IReadOnlyList<IPackage> FindAll(this IPackageRepository packageRepository, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
             Argument.IsNotNull(() => packageRepository);
@@ -26,7 +27,7 @@ namespace Orc.NuGetExplorer
         }
 
         [Time]
-        public static IEnumerable<IPackage> FindFiltered(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
+        public static IReadOnlyList<IPackage> FindFiltered(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
             Argument.IsNotNull(() => packageRepository);
@@ -36,35 +37,43 @@ namespace Orc.NuGetExplorer
                 case LazyLocalPackageRepository _:
                 case LocalPackageRepository _:
                 case AggregateRepository _:
-                    return packageRepository.FindFilteredManually(filter, allowPrereleaseVersions, skip, take);
+                case DataServicePackageRepository _:
+                    return packageRepository.FindFilteredManually(filter, allowPrereleaseVersions, skip, take).ToList();
 
                 default:
                 {
                     var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
 
-                    return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take);
+                    return queryable.OrderByDescending(x => x.DownloadCount).Skip(skip).Take(take).ToList();
                 }
             }
         }
-        
+
         private static IEnumerable<IPackage> FindFilteredManually(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
             int skip = 0, int take = 10)
         {
             Argument.IsNotNull(() => packageRepository);
 
-            IEnumerable<string> names;
+            IEnumerable<IPackage> packages;
 
-            if (packageRepository is AggregateRepository aggregateRepository)
+            switch (packageRepository)
             {
-                names = aggregateRepository.Repositories.SelectMany(x => x.Search(filter, allowPrereleaseVersions)).Select(x => x.Id);
-            }
-            else
-            {
-                names = packageRepository.Search(filter, allowPrereleaseVersions).Select(x => x.Id);
+                case AggregateRepository aggregateRepository:
+                    packages = aggregateRepository.Repositories
+                        .SelectMany(x => x.CreateSearchQuery(filter, allowPrereleaseVersions, skip, take))
+                        .OrderByDescending(x => x.DownloadCount)
+                        .ToList();
+                    break;
+
+                default:
+                    packages = packageRepository.CreateSearchQuery(filter, allowPrereleaseVersions, skip, take)
+                        .ToList();
+                    break;
             }
 
-            var packageNames = new HashSet<string>(names.Distinct().Skip(skip).Take(take));
-
+            var packageNames = packages
+                .Select(x => x.Id).Distinct();
+                
             foreach (var packageName in packageNames)
             {
                 var packagesById = packageRepository.FindPackagesById(packageName);
@@ -77,6 +86,18 @@ namespace Orc.NuGetExplorer
 
                 yield return packageRepository.FindPackage(packageName, latestVersion);
             }
+        }
+
+        private static IQueryable<IPackage> CreateSearchQuery(this IPackageRepository packageRepository, string filter, bool allowPrereleaseVersions,
+            int skip = 0, int take = 10)
+        {
+            var queryable = packageRepository.Search(filter, allowPrereleaseVersions)
+                .Where(x => x.IsAbsoluteLatestVersion || x.IsLatestVersion);
+
+            return queryable
+                .OrderByDescending(x => x.DownloadCount)
+                .Skip(skip)
+                .Take(take);
         }
 
         [Time]
