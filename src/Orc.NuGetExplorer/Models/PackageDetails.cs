@@ -37,7 +37,7 @@ namespace Orc.NuGetExplorer
             Description = package.Description;
             IconUrl = package.IconUrl;
 
-            Published = package.Published == null ? (DateTime?)null : package.Published.Value.LocalDateTime;
+            Published = package.Published?.LocalDateTime;
             SpecialVersion = package.Version.SpecialVersion;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
 

@@ -191,6 +191,8 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
+            SearchSettings.PackagesToSkip = 0;
+
             var selectedRepository = Navigator.SelectedRepository;
             var selectedRepositoryCategory = Navigator.SelectedRepositoryCategory;
 
@@ -279,7 +281,6 @@ namespace Orc.NuGetExplorer.ViewModels
                     using (_pleaseWaitService.WaitingScope())
                     {
                         var searchSettings = SearchSettings;
-                        searchSettings.PackagesToSkip = 0;
 
                         SearchResult.TotalPackagesCount = await TaskHelper.Run(() => _packageQueryService.CountPackages(selectedRepository, searchSettings.SearchFilter, IsPrereleaseAllowed ?? true), true);
 
