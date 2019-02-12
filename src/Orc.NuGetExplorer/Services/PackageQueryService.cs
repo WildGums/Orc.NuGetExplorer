@@ -84,16 +84,13 @@ namespace Orc.NuGetExplorer
             {
                 switch (packageRepository)
                 {
-                    case LazyLocalPackageRepository _:
-                    case LocalPackageRepository _:
-                        return packageRepository.Search(filter, allowPrereleaseVersions).Distinct(PackageEqualityComparer.Id).Count();
-
                     case AggregateRepository aggregateRepository:
                         return aggregateRepository.Repositories.Select(x => CountPackages(x, filter, allowPrereleaseVersions)).Sum();
 
                     default:
                     {
-                        var queryable = packageRepository.Search(filter, allowPrereleaseVersions);
+                        var queryable = packageRepository.Search(filter, allowPrereleaseVersions)
+                            .Where(x => x.IsAbsoluteLatestVersion || x.IsLatestVersion);
 
                         return queryable.Count();
                     }
