@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Weavers VerifyAssembly="true" VerifyIgnoreCodes="0x80131869">
-  <ModuleInit/>
+<Weavers VerifyAssembly="true" VerifyIgnoreCodes="0x80131869" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <ModuleInit />
   <LoadAssembliesOnStartup>
     <ExcludeAssemblies>
         Microsoft.Web.XmlTransform
     </ExcludeAssemblies>
   </LoadAssembliesOnStartup>
-  <Catel/>
+  <Catel />
 </Weavers>

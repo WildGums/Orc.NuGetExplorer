@@ -17,28 +17,28 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNullOrEmpty(() => message);
 
-            Info.SafeInvoke(this, new NuGetLogRecordEventArgs(message));
+            Info?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
         public void SendWarning(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
 
-            Warning.SafeInvoke(this, new NuGetLogRecordEventArgs(message));
+            Warning?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
         public void SendDebug(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
 
-            Debug.SafeInvoke(this, new NuGetLogRecordEventArgs(message));
+            Debug?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
         public void SendError(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
 
-            Error.SafeInvoke(this, new NuGetLogRecordEventArgs(message));
+            Error?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
         public event EventHandler<NuGetLogRecordEventArgs> Info;
