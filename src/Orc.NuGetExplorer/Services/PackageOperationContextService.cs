@@ -76,7 +76,7 @@ namespace Orc.NuGetExplorer
             {
                 if (CurrentContext.Parent == null)
                 {
-                    OperationContextDisposing.SafeInvoke(this, new OperationContextEventArgs(context));
+                    OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
                     context.FileSystemContext.Dispose();
 
                     _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages);
