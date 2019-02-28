@@ -74,7 +74,7 @@ namespace Orc.NuGetExplorer
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? null : (int?)dataServicePackage.DownloadCount;
+                return dataServicePackage?.DownloadCount;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Orc.NuGetExplorer
             get
             {
                 var dataServicePackage = Package as DataServicePackage;
-                return dataServicePackage == null ? null : dataServicePackage.Dependencies;
+                return dataServicePackage?.Dependencies;
             }
         }
 
@@ -98,7 +98,8 @@ namespace Orc.NuGetExplorer
                     _availableVersions = _availableVersionsEnumeration.OrderByDescending(version => 
                         version.Contains("-")
                             ? version.Replace("-unstable", "-1").Replace("-beta", "-3").Replace("-alpha", "-2") : 
-                            version + "-4").Take(Settings.NuGet.PackageCount).ToList();
+                            version + "-4")
+                        .Distinct().Take(Settings.NuGet.PackageCount).ToList();
 
                     SelectedVersion = _availableVersions.FirstOrDefault(version => !version.Contains("-")) ?? _availableVersions.FirstOrDefault();
                 }
