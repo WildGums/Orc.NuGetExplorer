@@ -53,28 +53,28 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageDetails);
 
-            OperationStarting.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+            OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);
 
-            OperationFinished.SafeInvoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+            OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             Argument.IsNotNullOrEmptyArray(() => packages);
 
-            OperationsBatchStarting.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+            OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
 
         public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             Argument.IsNotNullOrEmptyArray(() => packages);
 
-            OperationsBatchFinished.SafeInvoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+            OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
         #endregion
     }
