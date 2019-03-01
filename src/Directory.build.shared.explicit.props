@@ -58,13 +58,13 @@
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
     <Compile Update="**\*.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
     <Compile Update="$(IntermediateOutputPath)**\*.g.cs" Visible="false" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup Condition="'$(OutputType)' == 'WinExe'">
     <ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
     <Compile Update="App.xaml.cs" SubType="Designer" DependentUpon="%(Filename)" />
     <Compile Update="$(IntermediateOutputPath)**\App.g.cs" Visible="false" />
-  </ItemGroup>-->
+  </ItemGroup>
   
   <ItemGroup>
     <Compile Remove="Platforms\**\*.cs;Resources\**\*.cs" />
