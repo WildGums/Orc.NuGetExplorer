@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net46;net47</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer</AssemblyName>
@@ -18,7 +18,6 @@
   <ItemGroup>
     <PackageReference Include="MethodTimer.Fody" Version="2.3.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.2" />
-    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.5.4" PrivateAssets="all" />
     <PackageReference Include="Catel.Core" Version="5.9.0" />
     <PackageReference Include="Catel.Fody" Version="3.9.0" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="4.0.2" PrivateAssets="all">
@@ -51,7 +50,6 @@
     <PackageReference Update="NETStandard.Library" Version="2.0.1" />
   </ItemGroup>
 
-  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
 </Project>

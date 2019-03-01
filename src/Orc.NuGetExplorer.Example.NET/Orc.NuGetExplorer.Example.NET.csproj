@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net462</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Example.NET</AssemblyName>
@@ -14,14 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.5.4" PrivateAssets="All" />
     <PackageReference Include="Catel.Core" Version="5.9.0" />
     <PackageReference Include="Catel.MVVM" Version="5.9.0" />
     <PackageReference Include="Catel.Fody" Version="3.9.0" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="4.0.2" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="3.0.3" PrivateAssets="all" />
+    <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="3.0.5" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="1.9.0" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="4.4.3" PrivateAssets="all" />
     <PackageReference Include="Orchestra.Core" Version="5.1.5" />
@@ -53,11 +52,5 @@
     </EmbeddedResource>
   </ItemGroup>
   
-  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
-  <ItemGroup>
-    <ApplicationDefinition Update="C:\source\Orc.NuGetExplorer\src\Orc.NuGetExplorer.Example.NET/App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
-  </ItemGroup>
 </Project>
