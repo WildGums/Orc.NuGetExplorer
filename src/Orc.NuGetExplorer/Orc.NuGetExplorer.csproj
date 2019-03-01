@@ -1,6 +1,6 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net46;net47</TargetFrameworks>
+    <TargetFrameworks>net46;net47;netcoreapp3.0</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer</AssemblyName>
     <RootNamespace>Orc.NuGetExplorer</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -8,6 +8,7 @@
     <PackageVersion>1.0.0-alpha0001</PackageVersion>
     <Description>NuGet explorer library.</Description>
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec</PackageTags>
+    <UseWpf>true</UseWpf>
   </PropertyGroup>
 
   <PropertyGroup>

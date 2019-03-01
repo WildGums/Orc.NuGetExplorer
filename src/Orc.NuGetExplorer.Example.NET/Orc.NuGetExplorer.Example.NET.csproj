@@ -1,6 +1,6 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Example.NET</AssemblyName>
     <RootNamespace>Orc.NuGetExplorer.Example</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -11,6 +11,7 @@
     <OutputType>WinExe</OutputType>
     <StartupObject />
     <NoWarn>$(NoWarn);SA1652</NoWarn>
+    <UseWpf>true</UseWpf>
   </PropertyGroup>
 
   <ItemGroup>
