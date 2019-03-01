@@ -3,7 +3,7 @@
   <ModuleInit />
   <LoadAssembliesOnStartup>
     <ExcludeAssemblies>
-        Microsoft.Web.XmlTransform
+      Microsoft.Web.XmlTransform
     </ExcludeAssemblies>
   </LoadAssembliesOnStartup>
   <Catel />
