@@ -7,6 +7,7 @@
 [assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Views")]
 [assembly: System.Windows.Markup.XmlnsPrefixAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "orcnugetexplorer")]
 [assembly: System.Windows.ThemeInfoAttribute(System.Windows.ResourceDictionaryLocation.SourceAssembly, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
+public class static LoadAssembliesOnStartup { }
 public class static ModuleInitializer
 {
     public static void Initialize() { }
