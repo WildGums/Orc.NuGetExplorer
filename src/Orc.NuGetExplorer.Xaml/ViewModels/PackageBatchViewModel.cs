@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        [Model]
+        [Model(SupportIEditableObject = false)]
         [Expose("PackageList")]
         public PackagesBatch PackagesBatch { get; set; }
 
