@@ -85,12 +85,12 @@ namespace Orc.NuGetExplorer.ViewModels
         #endregion
 
         #region Properties
-        [Model]
+        [Model(SupportIEditableObject = false)]
         [Expose("RepositoryCategories")]
         [Expose("SelectedRepository")]
         public RepositoryNavigator Navigator { get; private set; }
 
-        [Model]
+        [Model(SupportIEditableObject = false)]
         [Expose("SearchFilter")]
         [Expose("PackagesToSkip")]
         public SearchSettings SearchSettings { get; private set; }
@@ -98,7 +98,7 @@ namespace Orc.NuGetExplorer.ViewModels
         [ViewModelToModel("SearchSettings")]
         public bool? IsPrereleaseAllowed { get; set; }
 
-        [Model]
+        [Model(SupportIEditableObject = false)]
         [Expose("TotalPackagesCount")]
         [Expose("PackageList")]
         public SearchResult SearchResult { get; private set; }
