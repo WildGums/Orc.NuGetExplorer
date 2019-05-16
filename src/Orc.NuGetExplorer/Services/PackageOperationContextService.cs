@@ -58,7 +58,7 @@ namespace Orc.NuGetExplorer
 
                     _rootContext = context;
                     CurrentContext = context;
-                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages);
+                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages??new IPackageDetails[0]);
                 }
                 else
                 {
@@ -79,7 +79,7 @@ namespace Orc.NuGetExplorer
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
                     context.FileSystemContext.Dispose();
 
-                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages);
+                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages??new IPackageDetails[0]);
                     _rootContext = null;
                 }
 
