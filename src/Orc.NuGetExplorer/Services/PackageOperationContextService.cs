@@ -58,7 +58,7 @@ namespace Orc.NuGetExplorer
 
                     _rootContext = context;
                     CurrentContext = context;
-                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages);
+                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages??new IPackageDetails[0]);
                 }
                 else
                 {
