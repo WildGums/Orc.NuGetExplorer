@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net462</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Example.NET</AssemblyName>
@@ -11,6 +11,7 @@
     <OutputType>WinExe</OutputType>
     <StartupObject />
     <NoWarn>$(NoWarn);SA1652</NoWarn>
+    <UseWpf>true</UseWpf>
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,11 +54,5 @@
     </EmbeddedResource>
   </ItemGroup>
   
-  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
-  <ItemGroup>
-    <ApplicationDefinition Update="C:\source\Orc.NuGetExplorer\src\Orc.NuGetExplorer.Example.NET/App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
-  </ItemGroup>
 </Project>
