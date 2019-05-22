@@ -129,9 +129,11 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnIsPrereleaseAllowedChanged()
         {
-            if (!_searchingAndRefreshing && IsPrereleaseAllowed != null && Navigator.SelectedRepository != null)
+            var selectedRepository = Navigator?.SelectedRepository;
+
+            if (!_searchingAndRefreshing && IsPrereleaseAllowed != null && selectedRepository != null)
             {
-                _nuGetConfigurationService.SetIsPrereleaseAllowed(Navigator.SelectedRepository, IsPrereleaseAllowed.Value);
+                _nuGetConfigurationService.SetIsPrereleaseAllowed(selectedRepository, IsPrereleaseAllowed.Value);
             }
 
 #pragma warning disable 4014
