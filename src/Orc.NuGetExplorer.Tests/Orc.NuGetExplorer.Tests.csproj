@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net46</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Tests</AssemblyName>
@@ -25,7 +25,6 @@
     <PackageReference Include="ModuleInit.Fody" Version="1.9.0" PrivateAssets="all" />
     <PackageReference Include="Mono.Cecil" Version="0.10.0" PrivateAssets="all" />
     <PackageReference Include="NUnit" Version="3.11.0" PrivateAssets="all" />
-    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.5.4" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="4.4.3" PrivateAssets="all" />
     <PackageReference Include="PublicApiGenerator" Version="7.1.0" PrivateAssets="all" />    
     <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" PrivateAssets="all" />
