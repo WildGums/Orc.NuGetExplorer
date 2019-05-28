@@ -17,7 +17,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="4.0.0" />
+    <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="4.1.0" />
     <PackageReference Include="MethodTimer.Fody" Version="3.0.0" PrivateAssets="all" />
     <PackageReference Include="Catel.Core" Version="5.10.0" />
     <PackageReference Include="Catel.Fody" Version="4.0.0" PrivateAssets="all" />
