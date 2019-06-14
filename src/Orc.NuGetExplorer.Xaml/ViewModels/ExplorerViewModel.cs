@@ -155,7 +155,9 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            using (new DisposableToken(this, x => _searchingAndRefreshing = true, x => _searchingAndRefreshing = false))
+            _searchingAndRefreshing = true;
+
+            try
             {
                 SetFilterWatermark();
                 SetShowUpdates();
@@ -164,11 +166,19 @@ namespace Orc.NuGetExplorer.ViewModels
                 await CountAndSearchAsync();
                 RefreshCanExecute();
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed search and refresh");
+            }
+            finally
+            {
+                _searchingAndRefreshing = false;
+            }
         }
 
         private void SetIsPrereleaseAllowed()
         {
-            switch (Navigator.SelectedRepository.OperationType)
+            switch (Navigator.SelectedRepository?.OperationType)
             {
                 case PackageOperationType.Install:
                 case PackageOperationType.Update:
@@ -183,7 +193,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void SetActionName()
         {
-            ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository.OperationType);
+            ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository?.OperationType??PackageOperationType.None);
         }
 
         private void OnSelectedRepositoryChanged()
@@ -212,7 +222,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void SetShowUpdates()
         {
-            switch (Navigator.SelectedRepository.OperationType)
+            switch (Navigator.SelectedRepository?.OperationType ?? PackageOperationType.None)
             {
                 case PackageOperationType.Uninstall:
                     ShowUpdates = false;
@@ -226,6 +236,10 @@ namespace Orc.NuGetExplorer.ViewModels
                     ShowUpdates = true;
                     break;
 
+                case PackageOperationType.None:
+                    ShowUpdates = false;
+                    break;
+
                 default:
                     ShowUpdates = false;
                     break;
@@ -236,13 +250,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             const string defaultWatermark = "Search";
 
-            if (Navigator.SelectedRepository == null)
-            {
-                FilterWatermark = defaultWatermark;
-                return;
-            }
-
-            switch (Navigator.SelectedRepository.OperationType)
+            switch (Navigator.SelectedRepository?.OperationType)
             {
                 case PackageOperationType.Uninstall:
                     FilterWatermark = "Search in Installed";
@@ -254,6 +262,10 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 case PackageOperationType.Update:
                     FilterWatermark = "Search in Updates";
+                    break;
+
+                case PackageOperationType.None:
+                    FilterWatermark = defaultWatermark;
                     break;
 
                 default:
@@ -273,6 +285,10 @@ namespace Orc.NuGetExplorer.ViewModels
         private async Task CountAndSearchAsync()
         {
             var selectedRepository = Navigator.SelectedRepository;
+            if (selectedRepository is null)
+            {
+                return;
+            }
 
             try
             {
@@ -317,14 +333,15 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task OnPackageActionExecuteAsync(IPackageDetails package)
         {
-            if (Navigator.SelectedRepository == null)
+            var selectedRepository = Navigator.SelectedRepository;
+            if (selectedRepository is null)
             {
                 return;
             }
 
-            var operation = Navigator.SelectedRepository.OperationType;
+            var operation = selectedRepository.OperationType;
 
-            await TaskHelper.Run(() => _packageCommandService.Execute(operation, package, Navigator.SelectedRepository, IsPrereleaseAllowed ?? true), true);
+            await TaskHelper.Run(() => _packageCommandService.Execute(operation, package, selectedRepository, IsPrereleaseAllowed ?? true), true);
 
             if (_packageCommandService.IsRefreshRequired(operation))
             {
@@ -336,22 +353,29 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void RefreshCanExecute()
         {
+            var selectedRepository = Navigator.SelectedRepository;
+            if (selectedRepository is null)
+            {
+                return;
+            }
+
             foreach (var package in SearchResult.PackageList)
             {
                 package.IsInstalled = null;
 
-                _packageCommandService.CanExecute(Navigator.SelectedRepository.OperationType, package);
+                _packageCommandService.CanExecute(selectedRepository.OperationType, package);
             }
         }
 
         private bool OnPackageActionCanExecute(IPackageDetails parameter)
         {
-            if (Navigator.SelectedRepository == null)
+            var selectedRepository = Navigator.SelectedRepository;
+            if (selectedRepository == null)
             {
                 return false;
             }
 
-            return _packageCommandService.CanExecute(Navigator.SelectedRepository.OperationType, parameter);
+            return _packageCommandService.CanExecute(selectedRepository.OperationType, parameter);
         }
 
         public TaskCommand CheckForUpdates { get; private set; }
