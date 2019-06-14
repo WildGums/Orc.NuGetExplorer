@@ -52,12 +52,14 @@ namespace Orc.NuGetExplorer
 
             var published = package.Published;
 
-            if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType != PackageOperationType.Uninstall)
+            var selectedRepository = _repositoryNavigatorService.Navigator.SelectedRepository;
+
+            if (published != null && selectedRepository?.OperationType != PackageOperationType.Uninstall)
             {
                 paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Published"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
 
-            if (published != null && _repositoryNavigatorService.Navigator.SelectedRepository.OperationType == PackageOperationType.Uninstall)
+            if (published != null && selectedRepository?.OperationType == PackageOperationType.Uninstall)
             {
                 paragraph.Inlines.AddIfNotNull(GetDetailsRecord(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetDetailsRecord_Installed"), published.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat)));
             }
