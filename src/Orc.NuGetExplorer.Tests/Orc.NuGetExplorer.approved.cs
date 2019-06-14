@@ -237,9 +237,10 @@ namespace Orc.NuGetExplorer
     }
     public enum PackageOperationType
     {
-        Install = 0,
-        Uninstall = 1,
-        Update = 2,
+        None = 0,
+        Install = 1,
+        Uninstall = 2,
+        Update = 3,
     }
     public class PackageWrapper : NuGet.IPackage, NuGet.IPackageMetadata, NuGet.IPackageName, NuGet.IServerPackageMetadata
     {
