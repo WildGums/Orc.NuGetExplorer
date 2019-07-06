@@ -150,7 +150,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private async Task SearchAndRefreshAsync()
         {
-            if (_searchingAndRefreshing || SearchResult.PackageList == null || Navigator.SelectedRepository == null)
+            if (_searchingAndRefreshing || SearchResult?.PackageList == null || Navigator?.SelectedRepository == null)
             {
                 return;
             }
