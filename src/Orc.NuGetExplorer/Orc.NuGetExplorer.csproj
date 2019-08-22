@@ -26,7 +26,7 @@
     <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="4.2.0" />
     <PackageReference Include="MethodTimer.Fody" Version="3.1.0" PrivateAssets="all" />    
     <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.2" />
-    <PackageReference Include="ModuleInit.Fody" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="NuGet.Core" Version="2.14.0" />
     <PackageReference Include="NuGet.Protocol.Core.v2" Version="3.5.0" />
     <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />
