@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Example
+namespace Orc.old_NuGetExplorer.Example
 {
     using System.Globalization;
     using System.Windows;

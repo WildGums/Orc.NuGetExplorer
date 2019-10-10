@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Example.Converters
+namespace Orc.old_NuGetExplorer.Example.Converters
 {
     using System;
     using Catel.MVVM.Converters;

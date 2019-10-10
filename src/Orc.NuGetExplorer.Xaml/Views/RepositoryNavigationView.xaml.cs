@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Views
+namespace Orc.old_NuGetExplorer.Views
 {
     /// <summary>
     /// Interaction logic for RepositoryNavigationView.xaml

@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.NuGetExplorer
+namespace Orc.old_NuGetExplorer
 {
     public interface IApiPackageRegistry
     {

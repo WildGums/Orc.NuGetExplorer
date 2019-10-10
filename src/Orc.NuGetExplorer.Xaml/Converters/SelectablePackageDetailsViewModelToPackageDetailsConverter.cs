@@ -4,13 +4,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.NuGetExplorer.Converters
+namespace Orc.old_NuGetExplorer.Converters
 {
     using System;
 
     using Catel.MVVM.Converters;
-
-    using Orc.NuGetExplorer.ViewModels;
+    using ViewModels;
 
     public class SelectablePackageDetailsViewModelToPackageDetailsConverter : ValueConverterBase<IPackageDetails, SelectablePackageDetailsViewModel>
     {

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Example.Models
+namespace Orc.old_NuGetExplorer.Example.Models
 {
     using System;
     using System.Collections.Generic;

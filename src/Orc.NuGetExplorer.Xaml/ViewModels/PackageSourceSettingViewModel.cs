@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.old_NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
     using System.ComponentModel;

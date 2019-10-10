@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Example.ViewModels
+namespace Orc.old_NuGetExplorer.Example.ViewModels
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;

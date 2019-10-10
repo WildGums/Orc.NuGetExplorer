@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Tests
+namespace Orc.old_NuGetExplorer.Tests
 {
     using System.Runtime.CompilerServices;
     using ApiApprover;

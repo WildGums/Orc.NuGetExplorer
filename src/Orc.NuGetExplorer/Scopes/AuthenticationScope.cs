@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Scopes
+namespace Orc.old_NuGetExplorer.Scopes
 {
     using Catel;
 

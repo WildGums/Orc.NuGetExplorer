@@ -1,9 +1,9 @@
 ﻿using Catel.IoC;
 using Catel.Services;
-using Orc.NuGetExplorer;
+using Orc.old_NuGetExplorer;
 using NuGet;
-using IPackageManager = Orc.NuGetExplorer.IPackageManager;
-using PackageManager = Orc.NuGetExplorer.PackageManager;
+using IPackageManager = Orc.old_NuGetExplorer.IPackageManager;
+using PackageManager = Orc.old_NuGetExplorer.PackageManager;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.

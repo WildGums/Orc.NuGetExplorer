@@ -21,10 +21,10 @@ using System.Windows.Markup;
 [assembly: InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
 
 [assembly: XmlnsPrefix("http://schemas.wildgums.com/orc/nugetexplorer", "orcnugetexplorer")]
-[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer")]
-[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Controls")]
-[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Converters")]
-[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Views")]
+[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.old_NuGetExplorer")]
+[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.old_NuGetExplorer.Controls")]
+[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.old_NuGetExplorer.Converters")]
+[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.old_NuGetExplorer.Views")]
 
 
 [assembly: ThemeInfo(

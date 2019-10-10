@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.NuGetExplorer
+namespace Orc.old_NuGetExplorer
 {
     using System;
     using System.Runtime.Serialization;

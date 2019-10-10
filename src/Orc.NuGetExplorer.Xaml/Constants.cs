@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer
+namespace Orc.old_NuGetExplorer
 {
     internal static class RepositoryCategoryName
     {

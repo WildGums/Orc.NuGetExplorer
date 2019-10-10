@@ -1,6 +1,6 @@
 ﻿using Catel.IoC;
-using Orc.NuGetExplorer;
-using Orc.NuGetExplorer.Example;
+using Orc.old_NuGetExplorer;
+using Orc.old_NuGetExplorer.Example;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.

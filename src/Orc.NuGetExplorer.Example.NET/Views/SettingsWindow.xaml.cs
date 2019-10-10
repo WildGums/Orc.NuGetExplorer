@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.Example.Views
+namespace Orc.old_NuGetExplorer.Example.Views
 {
     using Catel.Windows;
     using ViewModels;
