@@ -1,215 +1,124 @@
-﻿<catel:DataWindow x:Class="Orc.old_NuGetExplorer.Example.Views.MainWindow"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://schemas.catelproject.com"
-                  xmlns:converters="clr-namespace:Orc.old_NuGetExplorer.Example.Converters"
-                  xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
-                  ShowInTaskbar="True" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" 
-                  WindowStartupLocation="CenterScreen" WindowState="Normal">
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.MainWindow"
+        xmlns:catel="http://schemas.catelproject.com"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:orc ="http://schemas.wildgums.com/orc/controls"
+        xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
+        mc:Ignorable="d"
+        xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
+        Title="MainWindow" d:DesignWidth="1000">
+    <i:Interaction.Behaviors>
+        <behaviors:AnimatedOverlayBehavior IsEnabled="False">
+            <behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
+                <!--container for content shown by overlay-->
+                <Grid x:Name="PART_ActiveContainer"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Panel.ZIndex="5"
+                    FocusVisualStyle="{x:Null}" />
+            </behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
+            <behaviors:AnimatedOverlayBehavior.OverlayGrid>
+                <!--  overlay effect container  -->
+                <Grid x:Name="PART_OverlayBox"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Panel.ZIndex="4"
+                    Background="Black"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    Opacity="0"/>
+            </behaviors:AnimatedOverlayBehavior.OverlayGrid>
+            <behaviors:AnimatedOverlayBehavior.OverlayContent>
+                <Viewbox Height="60" Width="60"
+                         Margin="0 8 0 0">
+                    <Canvas Name="indicatorCanvas" Width="60" Height="60"
+                            RenderTransformOrigin="0.5, 0.5">
+                        <Canvas.RenderTransform>
+                            <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                        </Canvas.RenderTransform>
+                        <Ellipse    Canvas.Left="0" 
+                                    Width="60" Height="60"
+                                    StrokeThickness="2" 
+                                    Stroke="{DynamicResource AccentColorBrush}" 
+                                    StrokeStartLineCap="Round" 
+                                    StrokeDashArray="12 10"
+                                    StrokeEndLineCap="Round">
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard >
+                                            <DoubleAnimation Storyboard.TargetName="indicatorCanvas"
+                                                Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
+                                                                     To="-360" 
+                                                                     Duration="0:0:0.8" RepeatBehavior="Forever"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </Canvas>
+                </Viewbox>
+            </behaviors:AnimatedOverlayBehavior.OverlayContent>
+        </behaviors:AnimatedOverlayBehavior>
+    </i:Interaction.Behaviors>
 
-    <catel:DataWindow.Resources>
-        <converters:PackageDetailsConverter x:Key="PackageDetailsConverter"/>
-    </catel:DataWindow.Resources>
-        
-    <orccontrols:StackGrid>
-        <orccontrols:StackGrid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </orccontrols:StackGrid.RowDefinitions>
+    <Grid Width="1100" Margin="0 0 0 30" Name="TopGrid">
 
-        <Button Content="Settings" Command="{Binding Settings}"/>
-        <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
-        
-        <orccontrols:StackGrid>
-            <orccontrols:StackGrid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </orccontrols:StackGrid.RowDefinitions>
-            
-            <orccontrols:StackGrid >
-                <orccontrols:StackGrid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </orccontrols:StackGrid.ColumnDefinitions>
-                
-                <orccontrols:StackGrid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </orccontrols:StackGrid.RowDefinitions>
-                
-                <TextBlock Text="Package source name"/>
-                <TextBox Text="{Binding PackageSourceName, UpdateSourceTrigger=PropertyChanged}"/>
-                
-                <TextBlock Text="Package source feed"/>
-                <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
-            </orccontrols:StackGrid>
-            
-            <Button Content="verify feed" Command="{Binding VerifyFeed}"/>
-            <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
-        </orccontrols:StackGrid>
-        
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="0.5*"/>
-            </Grid.ColumnDefinitions>
-            
-            <ListBox Grid.Column="0" ItemsSource="{Binding Lines}"/>
-            
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
-                <Button Grid.Row="0" Grid.Column="0" Content="Check for updates" Command="{Binding CheckForUpdates}"/>
-                <CheckBox Grid.Row="0" Grid.Column="1" Content="allow prereleases" IsThreeState="True" IsChecked="{Binding AllowPrerelease}"/>
-                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding AvailableUpdates}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource PackageDetailsConverter}}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Open in update window" Command="{Binding OpenUpdateWindow}"/>
-            </Grid>
-        </Grid>
-    </orccontrols:StackGrid>
+        <Grid.Resources>
+            <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.6*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <local:ExplorerTopBarView Grid.ColumnSpan="2" x:Name="TopBar"
+                                      UsedOn="{Binding ElementName=ExplorerPagesTabControl}"
+                                      DataContext="{Binding Settings}"/>
+
+        <orc:TabControl Name="ExplorerPagesTabControl"
+                        Grid.Column="0" Grid.Row="1"
+                        MinHeight="800"
+                        Margin="10 0 0 0"
+                        LoadTabItems="LazyLoading"
+                        ItemsSource="{Binding ExplorerPages}">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                    <Setter Property="IsSelected" Value="{Binding IsActive}"/>
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type TabItem}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Title}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </orc:TabControl>
+
+        <!--detail of current selected package -->
+        <local:PackageDetailsView DataContext="{Binding SelectedPackageItem}" 
+                                      Visibility="{Binding Path=., Converter={catel:ReferenceToHidingVisibilityConverter}}"
+                                      Grid.Row="1" Grid.Column="1"
+                                      MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}"/>
+
+    </Grid>
 </catel:DataWindow>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,25 @@
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.ExtensiblesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+        xmlns:catel="http://schemas.catelproject.com"
+        mc:Ignorable="d"
+        Title="ExtensiblesWindow" MinHeight="450" MinWidth="200">
+    <Grid>
+        <ListBox ItemsSource="{Binding ExtensiblesCollection}">
+            <ListBox.ItemTemplate>
+                
+                <DataTemplate DataType="{x:Type ListBoxItem}">
+
+                    <CheckBox Content="{Binding Value}" 
+                              IsChecked="{Binding IsChecked}">
+                    </CheckBox>
+
+                </DataTemplate>
+
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</catel:DataWindow>

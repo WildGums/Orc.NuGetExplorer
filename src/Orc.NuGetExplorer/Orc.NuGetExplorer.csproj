@@ -15,7 +15,7 @@
     <!-- SonarQube requires a project guid -->
     <ProjectGuid>A02EE7B2-0EA4-4BD6-B2AF-2BC53FEB87F0</ProjectGuid>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Catel.Analyzers" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Catel.Core" Version="5.11.2" />
@@ -32,6 +32,14 @@
     <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
     <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.de.xlf" />
+    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.es.xlf" />
+    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.fr.xlf" />
+    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.nl.xlf" />
+    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.ru.xlf" />
   </ItemGroup>
 
   <ItemGroup>

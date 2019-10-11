@@ -7,6 +7,7 @@
 
 namespace Orc.old_NuGetExplorer
 {
+    using NuGet.Protocol.Core;
     using System;
     using System.Collections.Generic;
     using System.Linq;

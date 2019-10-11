@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Themes.Animations">
+    <Storyboard x:Key="FastFadeIn"
+                        AccelerationRatio=".97"
+                        BeginTime="0:0:0"
+                        SpeedRatio="2.7"
+                        Storyboard.TargetProperty="Opacity">
+        <DoubleAnimation To=".7" />
+    </Storyboard>
+    <Storyboard x:Key="FastFadeOut"
+                        AccelerationRatio=".97"
+                        BeginTime="0:0:0"
+                        SpeedRatio="2.7"
+                        Storyboard.TargetProperty="Opacity">
+        <DoubleAnimation To="0.0" />
+    </Storyboard>
+</ResourceDictionary>

@@ -1,153 +1,113 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+using Orc.NuGetExplorer.Models;
+using Orc.NuGetExplorer.Providers;
+using Orc.NuGetExplorer.Services;
 
-
-namespace Orc.old_NuGetExplorer.Example.ViewModels
+namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Catel;
-    using Catel.Fody;
+    using Catel.Configuration;
+    using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
-    using Catel.Threading;
-    using Models;
+    using NuGet.Protocol.Core.Types;
+    using NuGetExplorer.Models;
+    using NuGetExplorer.Providers;
+    using NuGetExplorer.Services;
+    using System.Collections.ObjectModel;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
 
     public class MainViewModel : ViewModelBase
     {
-        #region Fields
-        private readonly INuGetFeedVerificationService _feedVerificationService;
-        private readonly IMessageService _messageService;
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IPackageBatchService _packageBatchService;
-        private readonly IPackagesUIService _packagesUiService;
-        private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
-        private readonly IUIVisualizerService _uiVisualizerService;
-        #endregion
+        private readonly IUIVisualizerService _uIVisualizerService;
+        private readonly NugetConfigurationService _configurationService;
 
-        #region Constructors
-        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
-            INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
+        private readonly ITypeFactory _typeFactory;
+
+
+        public MainViewModel(ITypeFactory typeFactory, IUIVisualizerService service, ICommandManager commandManager,
+            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => packagesUiService);
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => packageBatchService);
-            Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => service);
+            Argument.IsNotNull(() => typeFactory);
+            Argument.IsNotNull(() => commandManager);
+            Argument.IsNotNull(() => settingsProvider);
+            Argument.IsNotNull(() => configurationService);
+            Argument.IsOfType(() => configurationService, typeof(NugetConfigurationService));
 
-            _packagesUiService = packagesUiService;
-            _nuGetConfigurationService = nuGetConfigurationService;
-            _feedVerificationService = feedVerificationService;
-            _messageService = messageService;
-            _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
-            _packageBatchService = packageBatchService;
-            _uiVisualizerService = uiVisualizerService;
+            _uIVisualizerService = service;
+            _typeFactory = typeFactory;
 
-            Echo = echoService.GetPackageManagementEcho();
+            _configurationService = configurationService as NugetConfigurationService;
 
-            AvailableUpdates = new ObservableCollection<IPackageDetails>();
+            CreateApplicationWideCommands(commandManager);
 
-            ShowExplorer = new TaskCommand(OnShowExplorerExecuteAsync);
-            AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
-            VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
-            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
-            Settings = new TaskCommand(OnSettingsExecute);
-
-            Title = "Orc.NuGetExplorer example";
-        }
-        #endregion
-
-        #region Properties
-        [Model]
-        [Expose("Lines")]
-        public PackageManagementEcho Echo { get; private set; }
-
-        public bool? AllowPrerelease { get; set; }
-        public string PackageSourceName { get; set; }
-        public string PackageSourceUrl { get; set; }
-        public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
-        #endregion
-
-        #region Commands
-        public TaskCommand Settings { get; private set; }
-
-        private Task OnSettingsExecute()
-        {
-            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+            Settings = settingsProvider.Model;
         }
 
-        public TaskCommand OpenUpdateWindow { get; private set; }
-
-        private async Task OnOpenUpdateWindowExecute()
+        protected override Task InitializeAsync()
         {
-            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
+            ExplorerPages = new ObservableCollection<ExplorerPageViewModel>();
+
+            CreatePages();
+            return base.InitializeAsync();
         }
 
-        private bool OnOpenUpdateWindowCanExecute()
+        public ExplorerSettingsContainer Settings { get; set; }
+
+        public IPackageSearchMetadata SelectedPackageMetadata { get; set; }
+
+        private IViewModel _selectedPackageItem;
+        public IViewModel SelectedPackageItem
         {
-            return AvailableUpdates.Any();
-        }
-
-        public TaskCommand CheckForUpdates { get; private set; }
-
-        private async Task OnCheckForUpdatesExecute()
-        {
-            AvailableUpdates.Clear();
-
-            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
-
-            // Note: AddRange doesn't refresh button state
-            AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
-        }
-
-        public TaskCommand AdddPackageSource { get; private set; }
-
-        private async Task OnAdddPackageSourceExecute()
-        {
-            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
-            if (!packageSourceSaved)
+            get { return _selectedPackageItem; }
+            set
             {
-                await _messageService.ShowWarningAsync("Feed is invalid or unknown");
+                _selectedPackageItem = null;
+                RaisePropertyChanged(() => SelectedPackageItem);
+                _selectedPackageItem = value;
+                RaisePropertyChanged(() => SelectedPackageItem);
+
             }
         }
 
-        private bool OnAdddPackageSourceCanExecute()
+        public ObservableCollection<ExplorerPageViewModel> ExplorerPages { get; set; }
+
+        private void CreatePages()
         {
-            return !string.IsNullOrWhiteSpace(PackageSourceName) && !string.IsNullOrWhiteSpace(PackageSourceUrl);
+            string[] pageNames = new string[] { "Browse", "Installed", "Updates" };
+
+            for (int i = 0; i < pageNames.Length; i++)
+            {
+                var newPage = CreatePage(pageNames[i]);
+
+                if (newPage != null)
+                {
+                    ExplorerPages.Add(newPage);
+                }
+            }
+
+            ExplorerPageViewModel CreatePage(string title)
+            {
+                return _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, title);
+            }
         }
 
-        public TaskCommand VerifyFeed { get; private set; }
-
-        private async Task OnVerifyFeedExecute()
+        protected override Task OnClosingAsync()
         {
-            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl), true);
+            //update selected feed
+            for (int i = 0; i < Settings.NuGetFeeds.Count; i++)
+            {
+                _configurationService.SetRoamingValueWithDefaultIdGenerator(Settings.NuGetFeeds[i]);
+            }
+
+            return base.OnClosingAsync();
         }
 
-        private bool OnVerifyFeedCanExecute()
+        private void CreateApplicationWideCommands(ICommandManager cm)
         {
-            return !string.IsNullOrWhiteSpace(PackageSourceUrl);
+            //move to initializer
+            cm.CreateCommand("RefreshCurrentPage", new Catel.Windows.Input.InputGesture(Key.F5));
         }
-
-        /// <summary>
-        /// Gets the ShowExplorer command.
-        /// </summary>
-        public TaskCommand ShowExplorer { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the ShowExplorer command is executed.
-        /// </summary>
-        private async Task OnShowExplorerExecuteAsync()
-        {
-            await _packagesUiService.ShowPackagesExplorerAsync();
-        }
-        #endregion
     }
 }
