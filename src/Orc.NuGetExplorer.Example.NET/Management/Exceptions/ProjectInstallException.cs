@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    extern alias NewNuGet;
-    using NewNuGet::NuGet.Packaging.Core;
+    using NuGet.Packaging.Core;
     using System;
     using System.Collections.Generic;
 

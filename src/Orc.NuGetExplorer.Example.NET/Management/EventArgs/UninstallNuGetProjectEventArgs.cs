@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management.EventArgs
 {
-    extern alias NewNuGet;
-    using NewNuGet::NuGet.Packaging.Core;
+    using NuGet.Packaging.Core;
 
     public class UninstallNuGetProjectEventArgs : NuGetProjectEventArgs
     {

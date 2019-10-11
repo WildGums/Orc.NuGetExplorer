@@ -1,16 +1,13 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿using Catel;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Orc.NuGetExplorer.Management.EventArgs;
+
+namespace Orc.NuGetExplorer.Management
 {
-    extern alias NewNuGet;
-
-    using Catel;
-    using NuGet.Packaging;
-    using NewNuGet::NuGet.Packaging.Core;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Orc.NuGetExplorer.Management.EventArgs;
-
-
     public interface INuGetExtensibleProjectManager
     {
         Task InstallPackageForProject(IExtensibleProject project, PackageIdentity package, CancellationToken token);
