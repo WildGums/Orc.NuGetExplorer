@@ -1,7 +1,6 @@
-﻿using NuGet.Protocol.Core.Types;
-
-namespace Orc.NuGetExplorer.Cache
+﻿namespace Orc.NuGetExplorer.Cache
 {
+    using NuGet.Protocol.Core.Types;
     public interface INuGetCacheManager
     {
         bool ClearAll();
