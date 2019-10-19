@@ -18,7 +18,7 @@
 
         private readonly IconCache _iconCache;
 
-        private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Example.NET;component/Resources/default-package-icon.png";
+        private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {

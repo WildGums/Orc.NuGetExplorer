@@ -7,7 +7,7 @@
 
     public class HttpSource
     {
-        static HttpClient _httpClient;
+        static HttpClient HttpClient;
 
         // Only one thread may re-create the http client at a time.
         private readonly SemaphoreSlim _httpClientLock = new SemaphoreSlim(1, 1);
@@ -15,16 +15,16 @@
         public async Task EnsureHttpClientAsync()
         {
             // Create the http client on the first call
-            if (_httpClient == null)
+            if (HttpClient == null)
             {
                 await _httpClientLock.WaitAsync();
 
                 try
                 {
                     // Double check
-                    if (_httpClient == null)
+                    if (HttpClient == null)
                     {
-                        _httpClient = await CreateHttpClientAsync();
+                        HttpClient = await CreateHttpClientAsync();
                     }
                 }
                 finally

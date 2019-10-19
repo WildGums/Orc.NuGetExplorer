@@ -5,20 +5,20 @@
 
     public class NuGetActionTarget : ModelBase
     {
-        private List<IExtensibleProject> extensibleProjects = new List<IExtensibleProject>();
+        private readonly List<IExtensibleProject> _extensibleProjects = new List<IExtensibleProject>();
 
-        public IReadOnlyList<IExtensibleProject> TargetProjects => extensibleProjects;
+        public IReadOnlyList<IExtensibleProject> TargetProjects => _extensibleProjects;
 
         public void Add(IExtensibleProject project)
         {
-            extensibleProjects.Add(project);
+            _extensibleProjects.Add(project);
 
             RaisePropertyChanged(() => TargetProjects);
         }
 
         public void Remove(IExtensibleProject project)
         {
-            extensibleProjects.Remove(project);
+            _extensibleProjects.Remove(project);
 
             RaisePropertyChanged(() => TargetProjects);
         }
@@ -29,7 +29,7 @@
         {
             if (string.Equals(e.PropertyName, nameof(TargetProjects)))
             {
-                IsValid = extensibleProjects.Count > 0;
+                IsValid = _extensibleProjects.Count > 0;
             }
         }
     }

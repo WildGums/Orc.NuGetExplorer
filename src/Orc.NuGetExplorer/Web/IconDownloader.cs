@@ -9,7 +9,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        int count = 0;
+        private int _count = 0;
 
         public IconDownloader()
         {
@@ -21,9 +21,9 @@
 
         public async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
         {
-            count += 1;
+            _count += 1;
 
-            Log.Debug($"Begin webclient request {count} on {uri}");
+            Log.Debug($"Begin webclient request {_count} on {uri}");
 
             //while (client.IsBusy)
             //{
@@ -32,7 +32,7 @@
             //}
             var array = await client.DownloadDataTaskAsync(uri);
 
-            Log.Debug($"Webclient request {count} ended");
+            Log.Debug($"Webclient request {_count} ended");
 
             return array;
         }

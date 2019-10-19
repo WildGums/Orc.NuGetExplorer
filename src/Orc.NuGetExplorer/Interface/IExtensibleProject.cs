@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+    using Orc.NuGetExplorer.Models;
+
     public interface IExtensibleProject
     {
         string Name { get; }

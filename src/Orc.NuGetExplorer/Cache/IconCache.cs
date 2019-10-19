@@ -8,23 +8,23 @@
 
     public class IconCache
     {
-        private readonly CacheStorage<string, byte[]> Cache = new CacheStorage<string, byte[]>();
-
         private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30));
 
-        public BitmapImage FallbackValue { get; set; }
+        private readonly CacheStorage<string, byte[]> _cache = new CacheStorage<string, byte[]>();
+
 
         public IconCache(ExpirationPolicy cacheItemPolicy = null)
         {
             StoringPolicy = cacheItemPolicy ?? DefaultStoringPolicy;
         }
 
+        public BitmapImage FallbackValue { get; set; }
 
         public ExpirationPolicy StoringPolicy { get; private set; }
 
         public void SaveToCache(Uri iconUri, byte[] streamContent)
         {
-            Cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
+            _cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
         }
 
         public BitmapImage GetFromCache(Uri iconUri)
@@ -36,7 +36,7 @@
             }
 
             string key = iconUri.ToString();
-            var cachedItem = Cache.Get(key);
+            var cachedItem = _cache.Get(key);
 
             if (cachedItem == null)
             {

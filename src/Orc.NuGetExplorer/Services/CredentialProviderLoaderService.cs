@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using Catel.Configuration;
@@ -11,7 +9,7 @@ namespace Orc.NuGetExplorer.Services
 
     public class CredentialProviderLoaderService : ICredentialProviderLoaderService
     {
-        private IConfigurationService _configurationService;
+        private readonly IConfigurationService _configurationService;
 
         public CredentialProviderLoaderService(IConfigurationService configurationService)
         {

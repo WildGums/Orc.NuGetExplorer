@@ -1,18 +1,14 @@
-﻿using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
     using Catel;
     using Catel.Collections;
     using Catel.Configuration;
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
-    using NuGetExplorer.Models;
-    using NuGetExplorer.Providers;
-    using NuGetExplorer.Services;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -21,7 +17,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
     public class SettingsControlViewModel : ViewModelBase
     {
-        private static readonly ILog _log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly NugetConfigurationService _configurationService;
 
