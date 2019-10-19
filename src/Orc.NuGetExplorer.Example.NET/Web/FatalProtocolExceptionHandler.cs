@@ -9,7 +9,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly IHttpExceptionHandler<WebException> webExceptionHandler = new HttpWebExceptionHandler();
+        private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
 
         public FeedVerificationResult HandleException(FatalProtocolException exception, string source)
         {
@@ -33,7 +33,7 @@
                 {
                     if (innerException is WebException)
                     {
-                        webExceptionHandler.HandleException(innerException as WebException, source);
+                        WebExceptionHandler.HandleException(innerException as WebException, source);
                     }
                 }
 

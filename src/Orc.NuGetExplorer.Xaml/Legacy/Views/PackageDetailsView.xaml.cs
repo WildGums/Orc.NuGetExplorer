@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.Views
+namespace Orc.NuGetExplorer.Views
 {
     /// <summary>
     /// Interaction logic for PackageDetailsView.xaml.

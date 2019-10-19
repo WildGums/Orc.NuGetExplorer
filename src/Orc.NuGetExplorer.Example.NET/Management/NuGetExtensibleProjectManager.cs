@@ -1,10 +1,9 @@
-﻿using Orc.NuGetExplorer.Management.EventArgs;
-using Orc.NuGetExplorer.Packaging;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management
 {
+    using Orc.NuGetExplorer.Management.EventArgs;
+    using Orc.NuGetExplorer.Packaging;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
     using Catel;
     using Catel.Logging;
     using NuGet.Configuration;
@@ -14,10 +13,6 @@ namespace Orc.NuGetExplorer.Management
     using NuGet.ProjectManagement;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using NuGetExplorer.Management.EventArgs;
-    using NuGetExplorer.Packaging;
-    using NuGetExplorer.Providers;
-    using NuGetExplorer.Services;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -34,12 +29,11 @@ namespace Orc.NuGetExplorer.Management
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly ISourceRepositoryProvider _repositoryProvider;
+        private const string MetadataTargetFramework = "TargetFramework";
+        private const string MetadataName = "Name";
 
-        const string MetadataTargetFramework = "TargetFramework";
-        const string MetadataName = "Name";
-
-        private BatchOperationToken batchToken;
-        private BatchUpdateToken updateToken;
+        private BatchOperationToken _batchToken;
+        private BatchUpdateToken _updateToken;
 
         public NuGetExtensibleProjectManager(IPackageInstallationService packageInstallationService, IFrameworkNameProvider frameworkNameProvider,
             INuGetProjectContextProvider nuGetProjectContextProvider, ISourceRepositoryProvider repositoryProvider)
@@ -57,19 +51,19 @@ namespace Orc.NuGetExplorer.Management
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
 
-        async Task OnInstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
+        private async Task OnInstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
             var args = new InstallNuGetProjectEventArgs(project, package, result);
 
-            if (batchToken != null && !batchToken.IsDisposed)
+            if (_batchToken != null && !_batchToken.IsDisposed)
             {
-                batchToken.Add(new BatchedInstallNuGetProjectEventArgs(args));
+                _batchToken.Add(new BatchedInstallNuGetProjectEventArgs(args));
                 return;
             }
 
-            if (updateToken != null && !updateToken.IsDisposed)
+            if (_updateToken != null && !_updateToken.IsDisposed)
             {
-                updateToken.Add(args);
+                _updateToken.Add(args);
                 return;
             }
 
@@ -78,19 +72,19 @@ namespace Orc.NuGetExplorer.Management
 
         public event AsyncEventHandler<UninstallNuGetProjectEventArgs> Uninstall;
 
-        async Task OnUninstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
+        private async Task OnUninstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
             var args = new UninstallNuGetProjectEventArgs(project, package, result);
 
-            if (batchToken != null && !batchToken.IsDisposed)
+            if (_batchToken != null && !_batchToken.IsDisposed)
             {
-                batchToken.Add(new BatchedUninstallNuGetProjectEventArgs(args));
+                _batchToken.Add(new BatchedUninstallNuGetProjectEventArgs(args));
                 return;
             }
 
-            if (updateToken != null && !updateToken.IsDisposed)
+            if (_updateToken != null && !_updateToken.IsDisposed)
             {
-                updateToken.Add(args);
+                _updateToken.Add(args);
                 return;
             }
 
@@ -99,11 +93,11 @@ namespace Orc.NuGetExplorer.Management
 
         public event AsyncEventHandler<UpdateNuGetProjectEventArgs> Update;
 
-        async Task OnUpdateAsync(UpdateNuGetProjectEventArgs args)
+        private async Task OnUpdateAsync(UpdateNuGetProjectEventArgs args)
         {
-            if (batchToken != null && !batchToken.IsDisposed)
+            if (_batchToken != null && !_batchToken.IsDisposed)
             {
-                batchToken.Add(args);
+                _batchToken.Add(args);
                 return;
             }
 
@@ -236,7 +230,7 @@ namespace Orc.NuGetExplorer.Management
 
         public async Task InstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
-            using (batchToken = new BatchOperationToken())
+            using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
                 {
@@ -245,7 +239,7 @@ namespace Orc.NuGetExplorer.Management
             }
 
             //raise supressed events
-            foreach (var args in batchToken.GetInvokationList<InstallNuGetProjectEventArgs>())
+            foreach (var args in _batchToken.GetInvokationList<InstallNuGetProjectEventArgs>())
             {
                 await Install.SafeInvokeAsync(this, args);
             }
@@ -282,7 +276,7 @@ namespace Orc.NuGetExplorer.Management
 
         public async Task UninstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
-            using (batchToken = new BatchOperationToken())
+            using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
                 {
@@ -291,7 +285,7 @@ namespace Orc.NuGetExplorer.Management
             }
 
             //raise supressed events
-            foreach (var args in batchToken.GetInvokationList<UninstallNuGetProjectEventArgs>())
+            foreach (var args in _batchToken.GetInvokationList<UninstallNuGetProjectEventArgs>())
             {
                 await Uninstall.SafeInvokeAsync(this, args);
             }
@@ -303,12 +297,12 @@ namespace Orc.NuGetExplorer.Management
             {
                 var version = await GetVersionInstalledAsync(project, packageid, token);
 
-                using (updateToken = new BatchUpdateToken(new PackageIdentity(packageid, version)))
+                using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, version)))
                 {
                     await UpdatePackage(project, new PackageIdentity(packageid, version), targetVersion, token);
                 }
 
-                var updates = updateToken.GetUpdateEventArgs();
+                var updates = _updateToken.GetUpdateEventArgs();
 
                 foreach (var updateArg in updates)
                 {
@@ -325,7 +319,7 @@ namespace Orc.NuGetExplorer.Management
         {
             try
             {
-                using (updateToken = new BatchUpdateToken(new PackageIdentity(packageid, targetVersion)))
+                using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, targetVersion)))
                 {
                     foreach (var project in projects)
                     {
@@ -335,7 +329,7 @@ namespace Orc.NuGetExplorer.Management
                     }
                 }
 
-                var updates = updateToken.GetUpdateEventArgs();
+                var updates = _updateToken.GetUpdateEventArgs();
 
                 foreach (var updateArg in updates)
                 {
@@ -401,20 +395,20 @@ namespace Orc.NuGetExplorer.Management
 
         private class BatchOperationToken : IDisposable
         {
-            private readonly List<NuGetProjectEventArgs> supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
+            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
 
             public void Add(NuGetProjectEventArgs eventArgs)
             {
-                supressedInvokationEventArgs.Add(eventArgs);
+                _supressedInvokationEventArgs.Add(eventArgs);
             }
 
             public bool IsDisposed { get; private set; }
 
             public IEnumerable<T> GetInvokationList<T>() where T : NuGetProjectEventArgs
             {
-                if (supressedInvokationEventArgs.All(args => args is T))
+                if (_supressedInvokationEventArgs.All(args => args is T))
                 {
-                    return supressedInvokationEventArgs.Cast<T>();
+                    return _supressedInvokationEventArgs.Cast<T>();
                 }
 
                 Log.Warning("Mixed batched event args");
@@ -423,7 +417,7 @@ namespace Orc.NuGetExplorer.Management
 
             public void Dispose()
             {
-                var last = supressedInvokationEventArgs.LastOrDefault();
+                var last = _supressedInvokationEventArgs.LastOrDefault();
 
                 if (last != null)
                 {
@@ -445,7 +439,7 @@ namespace Orc.NuGetExplorer.Management
 
         private class BatchUpdateToken : IDisposable
         {
-            private readonly List<NuGetProjectEventArgs> supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
+            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
 
             private readonly PackageIdentity _identity;
 
@@ -458,12 +452,12 @@ namespace Orc.NuGetExplorer.Management
 
             public void Add(NuGetProjectEventArgs eventArgs)
             {
-                supressedInvokationEventArgs.Add(eventArgs);
+                _supressedInvokationEventArgs.Add(eventArgs);
             }
 
             public IEnumerable<UpdateNuGetProjectEventArgs> GetUpdateEventArgs()
             {
-                return supressedInvokationEventArgs
+                return _supressedInvokationEventArgs
                     .GroupBy(e => new { e.Package.Id, e.Project })
                     .Select(group =>
                             new UpdateNuGetProjectEventArgs(group.Key.Project, _identity, group))

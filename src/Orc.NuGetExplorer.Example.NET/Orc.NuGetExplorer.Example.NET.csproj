@@ -34,7 +34,7 @@
     <PackageReference Include="NuGet.PackageManagement" Version="4.9.4" />
     <PackageReference Include="NuGet.Packaging.Core" Version="4.9.4" />
     <PackageReference Include="NuGet.ProjectModel" Version="4.9.4" />
-    <PackageReference Include="NuGet.Protocol" Version="4.9.4" Alias="v_3"/>
+    <PackageReference Include="NuGet.Protocol" Version="4.9.4" Alias="v_3" />
     <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />
     <PackageReference Include="Orc.Controls" Version="3.2.3" />
     <PackageReference Include="Orc.Notifications" Version="3.1.0" />
@@ -72,6 +72,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Native\Exceptions\" />
   </ItemGroup>
   
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.Views
+namespace Orc.NuGetExplorer.Views
 {
     using System.Windows;
     using Catel.MVVM.Views;

@@ -6,10 +6,10 @@
 
 #if !NET40
 
-namespace Orc.old_NuGetExplorer.Tests
+namespace Orc.NuGetExplorer.Tests
 {
     using NUnit.Framework;
-    using old_NuGetExplorer;
+    using NuGetExplorer;
 
     [TestFixture]
     public class EncryptionHelperFacts

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.Tests
+namespace Orc.NuGetExplorer.Tests
 {
     using NUnit.Framework;
 

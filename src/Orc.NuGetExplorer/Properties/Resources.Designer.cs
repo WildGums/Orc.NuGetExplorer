@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Orc.old_NuGetExplorer.Properties {
+namespace Orc.NuGetExplorer.Properties {
     using System;
     using Catel.Reflection;
     

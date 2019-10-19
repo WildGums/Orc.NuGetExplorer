@@ -77,7 +77,7 @@
         {
             try
             {
-                return String.IsNullOrEmpty(Source) ? null : new Uri(Source);
+                return string.IsNullOrEmpty(Source) ? null : new Uri(Source);
             }
             catch (UriFormatException)
             {
@@ -94,11 +94,11 @@
         public NuGetFeed Clone()
         {
             return new NuGetFeed(
-                this.Name, this.Source)
+                Name, Source)
             {
-                IsActive = this.IsActive,
-                VerificationResult = this.VerificationResult,
-                SerializationIdentifier = this.SerializationIdentifier
+                IsActive = IsActive,
+                VerificationResult = VerificationResult,
+                SerializationIdentifier = SerializationIdentifier
             };
         }
 

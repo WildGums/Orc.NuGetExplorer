@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer
+namespace Orc.NuGetExplorer
 {
     using System.Linq;
     using System.Reflection;

@@ -1,9 +1,9 @@
 ﻿using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
-using Orc.old_NuGetExplorer;
-using Orc.old_NuGetExplorer.ViewModels;
-using Orc.old_NuGetExplorer.Views;
+using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.ViewModels;
+using Orc.NuGetExplorer.Views;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.

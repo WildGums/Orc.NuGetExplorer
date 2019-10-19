@@ -4,9 +4,6 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-
-using Orc.NuGetExplorer.Crypto;
-
 namespace Orc.NuGetExplorer.Native
 {
     using Catel;
