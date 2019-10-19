@@ -79,4 +79,30 @@
   </ItemGroup>
   
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
+  
+  <ItemGroup>
+    <None Remove="Resources\Add_8x_16x.png" />
+    <None Remove="Resources\cross-removebg.png" />
+    <None Remove="Resources\default-package-icon.png" />
+    <None Remove="Resources\Download_grey_16x.png" />
+    <None Remove="Resources\Upload_gray_16x.png" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Include="Resources\Add_8x_16x.png">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\cross-removebg.png">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\default-package-icon.png">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Download_grey_16x.png">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Upload_gray_16x.png">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+  </ItemGroup>
 </Project>

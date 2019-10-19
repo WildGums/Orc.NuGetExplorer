@@ -1,4 +1,4 @@
-using Orc.NuGetExplorer.Models;
+﻿using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
 
@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnAddFeedExecute()
         {
-            Feeds.Add(new NuGetFeed(Constants.NamePlaceholder, Constants.SourcePlaceholder));
+            Feeds.Add(new NuGetFeed(Constants.DefaultNugetOrgName, Constants.DefaultNugetOrgUri));
         }
 
         protected void CommandInitialize()

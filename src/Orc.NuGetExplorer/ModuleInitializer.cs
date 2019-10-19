@@ -19,7 +19,7 @@ public static class ModuleInitializer
         //serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
         //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
-        //serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
+        serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
         //serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
         //serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
         //serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
@@ -28,11 +28,13 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
-        //serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
+        serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
         //serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
+        
+        serviceLocator.RegisterType<IPackageOperationNotificationService, DummyPackageOperationNotificationService>();
 
         //var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
         //serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
