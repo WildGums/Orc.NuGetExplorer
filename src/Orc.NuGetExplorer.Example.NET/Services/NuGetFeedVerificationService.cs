@@ -1,11 +1,10 @@
-﻿using Orc.NuGetExplorer.Loggers;
-using Orc.NuGetExplorer.Web;
-
+﻿
 namespace Orc.NuGetExplorer.Services
 {
+    extern alias v_3;
+
     using Catel;
     using Catel.Logging;
-    using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Credentials;
     using NuGet.Protocol;
@@ -18,13 +17,14 @@ namespace Orc.NuGetExplorer.Services
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using v_3::NuGet.Common;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
-        private static readonly ILog _log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly IHttpExceptionHandler<WebException> webExceptionHandler = new HttpWebExceptionHandler();
-        private static readonly IHttpExceptionHandler<FatalProtocolException> fatalProtocolExceptionHandler = new FatalProtocolExceptionHandler();
+        private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
+        private static readonly IHttpExceptionHandler<FatalProtocolException> FatalProtocolExceptionHandler = new FatalProtocolExceptionHandler();
 
         private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
 
@@ -51,7 +51,7 @@ namespace Orc.NuGetExplorer.Services
 
             StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
-            _log.Debug("Verifying feed '{0}'", source);
+            Log.Debug("Verifying feed '{0}'", source);
 
             var v3_providers = Repository.Provider.GetCoreV3();
 
@@ -96,27 +96,27 @@ namespace Orc.NuGetExplorer.Services
                     //cancel operation
                     throw new OperationCanceledException("Verification was canceled", ex, ct);
                 }
-                result = fatalProtocolExceptionHandler.HandleException(ex, source);
+                result = FatalProtocolExceptionHandler.HandleException(ex, source);
             }
             catch (WebException ex)
             {
-                result = webExceptionHandler.HandleException(ex, source);
+                result = WebExceptionHandler.HandleException(ex, source);
             }
             catch (UriFormatException ex)
             {
                 errorMessage.Append(", a UriFormatException occurred");
-                _log.Debug(ex, errorMessage.ToString());
+                Log.Debug(ex, errorMessage.ToString());
 
                 result = FeedVerificationResult.Invalid;
             }
             catch (Exception ex) when (!ct.IsCancellationRequested)
             {
-                _log.Debug(ex, errorMessage.ToString());
+                Log.Debug(ex, errorMessage.ToString());
 
                 result = FeedVerificationResult.Invalid;
             }
 
-            _log.Debug("Verified feed '{0}', result is '{1}'", source, result);
+            Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
 
             return result;
         }
@@ -133,7 +133,7 @@ namespace Orc.NuGetExplorer.Services
 
             StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
-            _log.Debug("Verifying feed '{0}'", source);
+            Log.Debug("Verifying feed '{0}'", source);
 
             var v3_providers = Repository.Provider.GetCoreV3();
             try
@@ -172,27 +172,27 @@ namespace Orc.NuGetExplorer.Services
             }
             catch (FatalProtocolException ex)
             {
-                result = fatalProtocolExceptionHandler.HandleException(ex, source);
+                result = FatalProtocolExceptionHandler.HandleException(ex, source);
             }
             catch (WebException ex)
             {
-                result = webExceptionHandler.HandleException(ex, source);
+                result = WebExceptionHandler.HandleException(ex, source);
             }
             catch (UriFormatException ex)
             {
                 errorMessage.Append(", a UriFormatException occurred");
-                _log.Debug(ex, errorMessage.ToString());
+                Log.Debug(ex, errorMessage.ToString());
 
                 result = FeedVerificationResult.Invalid;
             }
             catch (Exception ex)
             {
-                _log.Debug(ex, errorMessage.ToString());
+                Log.Debug(ex, errorMessage.ToString());
 
                 result = FeedVerificationResult.Invalid;
             }
 
-            _log.Debug("Verified feed '{0}', result is '{1}'", source, result);
+            Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
 
             return result;
         }

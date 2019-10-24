@@ -17,6 +17,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IEchoService, EchoService>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
+        Catel.Logging.LogManager.IsDebugEnabled = true;
+
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
     }
 }

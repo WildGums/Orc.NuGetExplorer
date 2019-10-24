@@ -1,18 +1,19 @@
-﻿using Orc.NuGetExplorer.Loggers;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.Cache
+﻿namespace Orc.NuGetExplorer.Cache
 {
+    extern alias legacy;
+    extern alias v_3;
+
+    using Orc.NuGetExplorer.Loggers;
+    using Orc.NuGetExplorer.Services;
+
     using Catel;
     using Catel.Logging;
-    using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Loggers;
-    using NuGetExplorer.Services;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using v_3::NuGet.Common;
 
     public class NuGetCacheManager : INuGetCacheManager
     {
@@ -20,7 +21,7 @@ namespace Orc.NuGetExplorer.Cache
 
         private readonly IFileDirectoryService _fileDirectoryService;
 
-        private SourceCacheContext _sourceContext = new SourceCacheContext();
+        private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
 
         public NuGetCacheManager(IFileDirectoryService fileDirectoryService)
         {

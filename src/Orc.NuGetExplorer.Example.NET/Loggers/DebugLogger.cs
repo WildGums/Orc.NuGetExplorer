@@ -1,14 +1,16 @@
 ﻿namespace Orc.NuGetExplorer.Loggers
 {
+    extern alias v_3;
+
     using Catel.Logging;
-    using NuGet.Common;
     using System.Threading.Tasks;
+    using v_3::NuGet.Common;
 
     public class DebugLogger : ILogger
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private bool _verbose;
+        private readonly bool _verbose;
 
         public DebugLogger(bool verbose)
         {
