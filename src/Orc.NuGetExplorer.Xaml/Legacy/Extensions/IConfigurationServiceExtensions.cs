@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer
+namespace Orc.NuGetExplorer
 {
     using Catel;
     using Catel.Configuration;

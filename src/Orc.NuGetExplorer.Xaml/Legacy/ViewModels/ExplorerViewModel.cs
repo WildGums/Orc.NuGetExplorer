@@ -5,12 +5,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
@@ -21,7 +20,6 @@ namespace Orc.old_NuGetExplorer.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
-    using NuGet;
     using Scopes;
     using CollectionExtensions = Catel.Collections.CollectionExtensions;
 

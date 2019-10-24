@@ -3,7 +3,7 @@
 //   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace Orc.old_NuGetExplorer.Converters
+namespace Orc.NuGetExplorer.Converters
 {
     using System;
     using Catel.MVVM.Converters;

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer
+namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using System.Windows.Documents;

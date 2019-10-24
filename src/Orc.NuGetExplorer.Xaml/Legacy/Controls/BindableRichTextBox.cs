@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.Controls
+namespace Orc.NuGetExplorer.Controls
 {
     using System.Windows;
     using System.Windows.Controls;

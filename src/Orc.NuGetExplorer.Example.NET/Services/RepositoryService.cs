@@ -24,6 +24,11 @@ namespace Orc.NuGetExplorer.Services
 
         public SourceRepository GetRepository(PackageSource source)
         {
+            if(source is null)
+            {
+                return null;
+            }
+
             SourceRepository sourceRepo = null;
 
             if (!_constructedRepositories.TryGetValue(source, out sourceRepo))

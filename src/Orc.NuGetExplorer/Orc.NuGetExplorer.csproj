@@ -27,19 +27,15 @@
     <PackageReference Include="MethodTimer.Fody" Version="3.1.0" PrivateAssets="all" />    
     <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.2" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
-    <PackageReference Include="NuGet.Core" Version="2.14.0" />
-    <PackageReference Include="NuGet.Protocol.Core.v2" Version="3.5.0" />
-    <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />
+    <PackageReference Include="NuGet.Credentials" Version="4.9.4" />
+    <PackageReference Include="NuGet.DependencyResolver.Core" Version="4.9.4" />
+    <PackageReference Include="NuGet.PackageManagement" Version="4.9.4" />
+    <PackageReference Include="NuGet.Packaging.Core" Version="4.9.4" />
+    <PackageReference Include="NuGet.ProjectModel" Version="4.9.4" />
+    <PackageReference Include="NuGet.Protocol" Version="4.9.4" />
+    <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />    
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
     <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" PrivateAssets="all" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.de.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.es.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.fr.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.nl.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.ru.xlf" />
   </ItemGroup>
 
   <ItemGroup>

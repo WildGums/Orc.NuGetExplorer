@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
     using Catel;
     using NuGet.Configuration;

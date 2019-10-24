@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Management;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;

@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.old_NuGetExplorer.Converters
+namespace Orc.NuGetExplorer.Converters
 {
     using System;
     using System.Collections.ObjectModel;

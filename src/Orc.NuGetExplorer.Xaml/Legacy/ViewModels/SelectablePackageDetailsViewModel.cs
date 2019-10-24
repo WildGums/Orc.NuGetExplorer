@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.old_NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.Generic;
