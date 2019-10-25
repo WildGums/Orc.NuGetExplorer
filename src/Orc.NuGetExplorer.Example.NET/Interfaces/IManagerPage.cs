@@ -1,13 +1,13 @@
-﻿using Orc.NuGetExplorer.ViewModels;
-
+﻿
 namespace Orc.NuGetExplorer
 {
     using Catel.Collections;
+    using Models;
     using NuGetExplorer.ViewModels;
 
     public interface IManagerPage
     {
-        FastObservableCollection<PackageDetailsViewModel> PackageItems { get; }
+        FastObservableCollection<NuGetPackage> PackageItems { get; }
 
         void StartLoadingTimerOrInvalidateData();
     }

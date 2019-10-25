@@ -7,6 +7,7 @@ namespace Orc.NuGetExplorer.Management
     using NuGetExplorer.Services;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class SourceContext : IDisposable
     {
@@ -16,6 +17,11 @@ namespace Orc.NuGetExplorer.Management
         {
             get
             {
+                if (!_activeContext.Any())
+                {
+                    return null;
+                }
+
                 return _activeContext.Peek();
             }
         }

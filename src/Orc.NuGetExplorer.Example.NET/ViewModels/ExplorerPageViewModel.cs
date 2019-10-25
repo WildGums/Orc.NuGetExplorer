@@ -1,14 +1,14 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Management.EventArgs;
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Web;
-using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Timers;
+    using Windows;
     using Catel;
     using Catel.Collections;
     using Catel.Data;
@@ -17,22 +17,16 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.MVVM;
     using Catel.Services;
     using Catel.Windows.Threading;
+    using Enums;
+    using Management;
+    using Management.EventArgs;
+    using Models;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Enums;
-    using NuGetExplorer.Management;
-    using NuGetExplorer.Management.EventArgs;
-    using NuGetExplorer.Models;
-    using NuGetExplorer.Pagination;
-    using NuGetExplorer.Services;
-    using NuGetExplorer.Web;
-    using NuGetExplorer.Windows;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Pagination;
+    using Services;
+    using Web;
+    using Timer = System.Timers.Timer;
 
     public class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
@@ -41,41 +35,25 @@ namespace Orc.NuGetExplorer.ViewModels
         private static readonly int SingleTasksDelayMs = 800;
         private static readonly IHttpExceptionHandler<FatalProtocolException> PackageLoadingExceptionHandler = new FatalProtocolExceptionHandler();
 
-        private static readonly System.Timers.Timer SingleDelayTimer = new System.Timers.Timer(SingleTasksDelayMs);
+        private static readonly Timer SingleDelayTimer = new Timer(SingleTasksDelayMs);
+
+#pragma warning disable IDE1006 // Naming Styles
+        private static IDisposable _context;
+#pragma warning restore IDE1006 // Naming Styles
+        private readonly IDefferedPackageLoaderService _defferedPackageLoaderService;
+        private readonly IDispatcherService _dispatcherService;
+        private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
+        private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
 
 
         private readonly IPackagesLoaderService _packagesLoaderService;
-        private readonly INuGetExtensibleProjectManager _projectManager;
-        private readonly IRepositoryService _repositoryService;
-        private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
-        private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
-        private readonly IDefferedPackageLoaderService _defferedPackageLoaderService;
-        private readonly IDispatcherService _dispatcherService;
-        private readonly ITypeFactory _typeFactory;
 
         private readonly MetadataOrigin _pageType;
+        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly IRepositoryService _repositoryService;
 
         private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
-
-        /// <summary>
-        /// Repository context. 
-        /// Due to all pages uses package sources selected by user in settings
-        /// context is shared between pages too
-        /// </summary>
-        private static IDisposable Context
-        {
-            get { return _context; }
-            set
-            {
-                if (_context != value)
-                {
-                    _context?.Dispose();
-                    _context = value;
-                }
-            }
-        }
-
-        private static IDisposable _context;
+        private readonly ITypeFactory _typeFactory;
 
         private ExplorerSettingsContainer _settings;
 
@@ -130,6 +108,24 @@ namespace Orc.NuGetExplorer.ViewModels
             commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
         }
 
+        /// <summary>
+        ///     Repository context.
+        ///     Due to all pages uses package sources selected by user in settings
+        ///     context is shared between pages too
+        /// </summary>
+        private static IDisposable Context
+        {
+            get { return _context; }
+            set
+            {
+                if (_context != value)
+                {
+                    _context?.Dispose();
+                    _context = value;
+                }
+            }
+        }
+
 
         public static CancellationTokenSource VerificationTokenSource { get; set; } = new CancellationTokenSource();
 
@@ -150,6 +146,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 {
                     _settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
                 }
+
                 _settings = value;
 
                 if (_settings != null)
@@ -159,42 +156,14 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        private async void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (Settings.ObservedFeed == null)
-            {
-                return;
-            }
 
-            if (String.Equals(e.PropertyName, nameof(Settings.IsPreReleaseIncluded)) ||
-                String.Equals(e.PropertyName, nameof(Settings.SearchString)) || String.Equals(e.PropertyName, nameof(Settings.ObservedFeed)))
-            {
-                StartLoadingTimerOrInvalidateData();
-            }
-        }
-
-
-        public PackageDetailsViewModel SelectedPackageItem { get; set; }
-
-        public FastObservableCollection<PackageDetailsViewModel> PackageItems { get; set; }
-
-        private void OnPackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
-                //item added on first place, collection was empty
-                if (e.NewStartingIndex == 0 && IsActive)
-                {
-                    SelectedPackageItem = PackageItems.FirstOrDefault();
-                }
-            }
-        }
+        public NuGetPackage SelectedPackageItem { get; set; }
 
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// Shows is data should be reloaded
-        /// when viewmodel became active
+        ///     Shows is data should be reloaded
+        ///     when viewmodel became active
         /// </summary>
         public bool Invalidated { get; set; }
 
@@ -207,14 +176,54 @@ namespace Orc.NuGetExplorer.ViewModels
         public bool IsCancellationForced { get; set; }
 
         /// <summary>
-        /// Is project manipulations can be performed on multiple packages
-        /// on this page in one operation
+        ///     Is project manipulations can be performed on multiple packages
+        ///     on this page in one operation
         /// </summary>
         public bool CanBatchProjectActions { get; set; }
 
         public CancellationTokenSource PageLoadingTokenSource { get; set; }
 
-        protected async override Task InitializeAsync()
+        public FastObservableCollection<NuGetPackage> PackageItems { get; set; }
+
+        public void StartLoadingTimerOrInvalidateData()
+        {
+            if (IsActive)
+            {
+                StartLoadingTimer();
+            }
+            else
+            {
+                Invalidated = true;
+            }
+        }
+
+        private async void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (Settings.ObservedFeed == null)
+            {
+                return;
+            }
+
+            if (string.Equals(e.PropertyName, nameof(Settings.IsPreReleaseIncluded)) ||
+                string.Equals(e.PropertyName, nameof(Settings.SearchString)) || string.Equals(e.PropertyName, nameof(Settings.ObservedFeed)))
+            {
+                StartLoadingTimerOrInvalidateData();
+            }
+        }
+
+        private void OnPackageItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //item added on first place, collection was empty
+                if (e.NewStartingIndex == 0 && IsActive)
+                {
+                    SelectedPackageItem = PackageItems.FirstOrDefault();
+                }
+            }
+        }
+
+        protected override async Task InitializeAsync()
         {
             try
             {
@@ -224,7 +233,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
                 SingleDelayTimer.SynchronizingObject = new SynchronizeInvoker(DispatcherHelper.CurrentDispatcher, _dispatcherService);
 
-                PackageItems = new FastObservableCollection<PackageDetailsViewModel>();
+                PackageItems = new FastObservableCollection<NuGetPackage>();
 
                 PackageItems.CollectionChanged += OnPackageItemsCollectionChanged;
 
@@ -232,7 +241,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 _projectManager.Uninstall += OnProjectManagerUninstall;
 
                 //todo validation
-                if (Settings.ObservedFeed != null && !String.IsNullOrEmpty(Settings.ObservedFeed.Source))
+                if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
@@ -257,7 +266,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             base.OnPropertyChanged(e);
 
-            if (String.Equals(e.PropertyName, nameof(Invalidated)))
+            if (string.Equals(e.PropertyName, nameof(Invalidated)))
             {
                 if ((bool)e.NewValue)
                 {
@@ -265,7 +274,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
             }
 
-            if (String.Equals(e.PropertyName, nameof(IsActive)))
+            if (string.Equals(e.PropertyName, nameof(IsActive)))
             {
                 if ((bool)e.NewValue)
                 {
@@ -278,7 +287,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 return;
             }
 
-            if (String.Equals(e.PropertyName, nameof(IsActive)))
+            if (string.Equals(e.PropertyName, nameof(IsActive)))
             {
                 if (Invalidated)
                 {
@@ -289,21 +298,9 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-        protected async override Task OnClosedAsync(bool? result)
+        protected override async Task OnClosedAsync(bool? result)
         {
             PackageItems.CollectionChanged -= OnPackageItemsCollectionChanged;
-        }
-
-        public void StartLoadingTimerOrInvalidateData()
-        {
-            if (IsActive)
-            {
-                StartLoadingTimer();
-            }
-            else
-            {
-                Invalidated = true;
-            }
         }
 
         private void StartLoadingTimer()
@@ -318,7 +315,7 @@ namespace Orc.NuGetExplorer.ViewModels
             Log.Debug("Start loading delay timer");
         }
 
-        private async void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
             Log.Info("Timer elapsed");
             var currentFeed = Settings.ObservedFeed;
@@ -353,7 +350,6 @@ namespace Orc.NuGetExplorer.ViewModels
                     {
                         if (!currentSource.IsVerified)
                         {
-
                             await CanFeedBeLoadedAsync(VerificationTokenSource.Token, currentSource);
                         }
 
@@ -365,7 +361,6 @@ namespace Orc.NuGetExplorer.ViewModels
 
                         if (!IsLoadingInProcess)
                         {
-
                             await LoadPackagesAsync(pageinfo, pageTcs.Token, searchParams);
                         }
                         else
@@ -431,7 +426,10 @@ namespace Orc.NuGetExplorer.ViewModels
                 {
                     Log.Error($"Authentication credentials required. Cannot load packages from source '{currentSource.Source}'");
                 }
-                else Log.Error(ex);
+                else
+                {
+                    Log.Error(ex);
+                }
             }
             catch (Exception ex)
             {
@@ -441,6 +439,185 @@ namespace Orc.NuGetExplorer.ViewModels
             finally
             {
                 await _defferedPackageLoaderService.StartLoadingAsync();
+            }
+        }
+
+        private CancellationTokenSource GetCancelationTokenSource()
+        {
+            var source = new CancellationTokenSource();
+
+            _tokenSource.Add(source);
+
+            return source;
+        }
+
+        private void CancelLoadingTasks(CancellationTokenSource token)
+        {
+            foreach (var tokenSource in _tokenSource)
+            {
+                if (tokenSource != token)
+                {
+                    tokenSource.Cancel();
+                }
+            }
+        }
+
+        private async Task LoadPackagesAsync(PageContinuation pageInfo, CancellationToken cancellationToken, PackageSearchParameters searchParameters)
+        {
+            try
+            {
+                IsLoadingInProcess = true;
+
+                Log.Info($"Start query {Title} page");
+
+                var isFirstLoad = pageInfo.Current < 0;
+
+                if (isFirstLoad)
+                {
+                    PackageItems.Clear();
+                }
+
+
+                var packages = await _packagesLoaderService.LoadAsync(
+                    searchParameters.SearchString, pageInfo, new SearchFilter(searchParameters.IsPrereleaseIncluded), cancellationToken);
+
+                await DownloadAllPicturesForMetadataAsync(packages, cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await CreatePackageListItems(packages);
+
+                Invalidated = false;
+
+                Log.Info($"Page {Title} updates with {packages.Count()} returned by query '{Settings.SearchString} from {PageInfo.Source}'");
+
+                IsLoadingInProcess = false;
+            }
+            finally
+            {
+                IsLoadingInProcess = false;
+            }
+        }
+
+        private async Task CreatePackageListItems(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
+        {
+            IEnumerable<NuGetPackage> vms = null;
+
+            vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
+
+            //create tokens, used for deffer execution of tasks
+            //obtained states/updates of packages
+
+            if (_pageType != MetadataOrigin.Updates)
+            {
+                foreach (var vm in vms)
+                {
+                    var deferToken = new DeferToken();
+
+                    deferToken.LoadType = DetermineLoadBehavior(_pageType);
+                    deferToken.Package = vm;
+
+                    deferToken.UpdateAction = newState =>
+                    {
+                        vm.Status = newState;
+                    };
+
+                    _defferedPackageLoaderService.Add(deferToken);
+                }
+            }
+
+            _dispatcherService.BeginInvoke(() =>
+                {
+                    PackageItems.AddRange(vms);
+                }
+            );
+
+            MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
+            {
+                switch (page)
+                {
+                    case MetadataOrigin.Browse: return MetadataOrigin.Installed;
+
+                    case MetadataOrigin.Installed: return MetadataOrigin.Browse;
+                }
+
+                return MetadataOrigin.Browse;
+            }
+        }
+
+        private async Task DownloadAllPicturesForMetadataAsync(IEnumerable<IPackageSearchMetadata> metadatas, CancellationToken token)
+        {
+            foreach (var metadata in metadatas)
+            {
+                if (metadata.IconUrl != null)
+                {
+                    token.ThrowIfCancellationRequested();
+                    await _packageMetadataMediaDownloadService.DownloadFromAsync(metadata);
+                }
+            }
+
+            await Task.CompletedTask;
+        }
+
+        private async Task OnProjectManagerUninstall(object sender, UninstallNuGetProjectEventArgs e)
+        {
+            var batchedArgs = e as BatchedUninstallNuGetProjectEventArgs;
+
+            if (!batchedArgs.IsBatchEnd)
+            {
+                return;
+            }
+
+            StartLoadingTimerOrInvalidateData();
+        }
+
+        private async Task OnProjectManagerInstall(object sender, InstallNuGetProjectEventArgs e)
+        {
+            var batchedArgs = e as BatchedInstallNuGetProjectEventArgs;
+
+            if (!batchedArgs.IsBatchEnd)
+            {
+                return;
+            }
+
+            StartLoadingTimerOrInvalidateData();
+        }
+
+        private async Task CanFeedBeLoadedAsync(CancellationToken cancelToken, INuGetSource source)
+        {
+            Log.Info($"{source} is verified");
+
+            if (source is NuGetFeed)
+            {
+                var singleSource = source as NuGetFeed;
+
+                singleSource.VerificationResult = singleSource.IsLocal()
+                    ? FeedVerificationResult.Valid
+                    : await _nuGetFeedVerificationService.VerifyFeedAsync(source.Source, cancelToken);
+            }
+            else if (source is CombinedNuGetSource)
+            {
+                var combinedSource = source as CombinedNuGetSource;
+                var unaccessibleFeeds = new List<NuGetFeed>();
+
+                foreach (var feed in combinedSource.GetAllSources())
+                {
+                    feed.VerificationResult = feed.IsLocal()
+                        ? FeedVerificationResult.Valid
+                        : await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, cancelToken);
+
+                    if (!feed.IsAccessible)
+                    {
+                        unaccessibleFeeds.Add(feed);
+                        Log.Warning($"{feed} is unaccessible. It won't be used when 'All' option selected");
+                    }
+                }
+
+                unaccessibleFeeds.ForEach(x => combinedSource.RemoveFeed(x));
+            }
+            else
+            {
+                Log.Error($"Parameter {source} has invalid type");
             }
         }
 
@@ -478,186 +655,6 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             StartLoadingTimerOrInvalidateData();
         }
-
         #endregion
-
-        private CancellationTokenSource GetCancelationTokenSource()
-        {
-            var source = new CancellationTokenSource();
-
-            _tokenSource.Add(source);
-
-            return source;
-        }
-
-        private void CancelLoadingTasks(CancellationTokenSource token)
-        {
-            foreach (var tokenSource in _tokenSource)
-            {
-                if (tokenSource != token)
-                {
-                    tokenSource.Cancel();
-                }
-            }
-        }
-
-        private async Task LoadPackagesAsync(PageContinuation pageInfo, CancellationToken cancellationToken, PackageSearchParameters searchParameters)
-        {
-            try
-            {
-                IsLoadingInProcess = true;
-
-                Log.Info($"Start query {Title} page");
-
-                bool isFirstLoad = pageInfo.Current < 0;
-
-                if (isFirstLoad)
-                {
-                    PackageItems.Clear();
-                }
-
-
-                var packages = await _packagesLoaderService.LoadAsync(
-                    searchParameters.SearchString, pageInfo, new SearchFilter(searchParameters.IsPrereleaseIncluded), cancellationToken);
-
-                await DownloadAllPicturesForMetadataAsync(packages, cancellationToken);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await CreatePackageListItems(packages);
-
-                Invalidated = false;
-
-                Log.Info($"Page {Title} updates with {packages.Count()} returned by query '{Settings.SearchString} from {PageInfo.Source}'");
-
-                IsLoadingInProcess = false;
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                IsLoadingInProcess = false;
-            }
-        }
-
-        private async Task CreatePackageListItems(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
-        {
-            IEnumerable<PackageDetailsViewModel> vms = null;
-
-            vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageDetailsViewModel>(x, _pageType)).ToList();
-
-            //create tokens, used for deffer execution of tasks
-            //obtained states/updates of packages
-
-            if (_pageType != MetadataOrigin.Updates)
-            {
-                foreach (var vm in vms)
-                {
-                    var deferToken = new DeferToken();
-
-                    deferToken.LoadType = DetermineLoadBehavior(_pageType);
-                    deferToken.Package = vm.Package;
-
-                    deferToken.UpdateAction = (newState) =>
-                    {
-                        vm.Status = newState;
-                    };
-
-                    _defferedPackageLoaderService.Add(deferToken);
-                }
-            }
-
-            _dispatcherService.BeginInvoke(() =>
-                    {
-                        PackageItems.AddRange(vms);
-                    }
-            );
-
-            MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
-            {
-                switch (page)
-                {
-                    case MetadataOrigin.Browse: return MetadataOrigin.Installed;
-
-                    case MetadataOrigin.Installed: return MetadataOrigin.Browse;
-                }
-
-                return MetadataOrigin.Browse;
-            }
-        }
-
-        private async Task DownloadAllPicturesForMetadataAsync(IEnumerable<IPackageSearchMetadata> metadatas, CancellationToken token)
-        {
-            foreach (var metadata in metadatas)
-            {
-                if (metadata.IconUrl != null)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await _packageMetadataMediaDownloadService.DownloadFromAsync(metadata);
-                }
-            }
-
-            await Task.CompletedTask;
-        }
-
-        private async Task OnProjectManagerUninstall(object sender, Management.EventArgs.UninstallNuGetProjectEventArgs e)
-        {
-            var batchedArgs = e as BatchedUninstallNuGetProjectEventArgs;
-
-            if (!batchedArgs.IsBatchEnd)
-            {
-                return;
-            }
-
-            StartLoadingTimerOrInvalidateData();
-        }
-
-        private async Task OnProjectManagerInstall(object sender, Management.EventArgs.InstallNuGetProjectEventArgs e)
-        {
-            var batchedArgs = e as BatchedInstallNuGetProjectEventArgs;
-
-            if (!batchedArgs.IsBatchEnd)
-            {
-                return;
-            }
-
-            StartLoadingTimerOrInvalidateData();
-        }
-
-        private async Task CanFeedBeLoadedAsync(CancellationToken cancelToken, INuGetSource source)
-        {
-            Log.Info($"{source} is verified");
-
-            if (source is NuGetFeed)
-            {
-                var singleSource = source as NuGetFeed;
-
-                singleSource.VerificationResult = singleSource.IsLocal() ? FeedVerificationResult.Valid
-                    : await _nuGetFeedVerificationService.VerifyFeedAsync(source.Source, cancelToken);
-            }
-            else if (source is CombinedNuGetSource)
-            {
-                var combinedSource = source as CombinedNuGetSource;
-                var unaccessibleFeeds = new List<NuGetFeed>();
-
-                foreach (var feed in combinedSource.GetAllSources())
-                {
-                    feed.VerificationResult = feed.IsLocal() ? FeedVerificationResult.Valid
-                    : await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, cancelToken);
-
-                    if (!feed.IsAccessible)
-                    {
-                        unaccessibleFeeds.Add(feed);
-                        Log.Warning($"{feed} is unaccessible. It won't be used when 'All' option selected");
-                    }
-                }
-
-                unaccessibleFeeds.ForEach(x => combinedSource.RemoveFeed(x));
-            }
-            else Log.Error($"Parameter {source} has invalid type");
-        }
     }
 }

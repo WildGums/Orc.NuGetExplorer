@@ -1,8 +1,4 @@
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Configuration;
@@ -16,6 +12,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using Catel.Fody;
 
     public class MainViewModel : ViewModelBase
     {
@@ -57,19 +54,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         public IPackageSearchMetadata SelectedPackageMetadata { get; set; }
 
-        private IViewModel _selectedPackageItem;
-        public IViewModel SelectedPackageItem
-        {
-            get { return _selectedPackageItem; }
-            set
-            {
-                _selectedPackageItem = null;
-                RaisePropertyChanged(() => SelectedPackageItem);
-                _selectedPackageItem = value;
-                RaisePropertyChanged(() => SelectedPackageItem);
-
-            }
-        }
+        public NuGetPackage SelectedPackageItem { get; set; }
 
         public ObservableCollection<ExplorerPageViewModel> ExplorerPages { get; set; }
 

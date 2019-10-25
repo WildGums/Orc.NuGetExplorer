@@ -1,13 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Packaging;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Data;
@@ -30,6 +21,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel.IoC;
 
     public class PackageDetailsViewModel : ViewModelBase
     {
@@ -45,9 +37,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
-
-        public PackageDetailsViewModel(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage, IRepositoryService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-                IProgressManager progressManager, INuGetExtensibleProjectManager projectManager)
+        public PackageDetailsViewModel(IRepositoryService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+            IProgressManager progressManager, INuGetExtensibleProjectManager projectManager)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
@@ -59,49 +50,85 @@ namespace Orc.NuGetExplorer.ViewModels
             _progressManager = progressManager;
             _projectManager = projectManager;
 
-            //create package from metadata
-            if (packageMetadata != null)
-            {
-                Package = new NuGetPackage(packageMetadata);
-            }
-
-            if (fromPage == MetadataOrigin.Browse)
-            {
-                //installed version is unknown until installed is loaded
-                Package.InstalledVersion = null;
-            }
-            if (fromPage == MetadataOrigin.Installed)
-            {
-                Package.InstalledVersion = Package.LastVersion;
-            }
-
-            if (fromPage == MetadataOrigin.Updates)
-            {
-                var updateMetadata = packageMetadata as UpdatePackageSearchMetadata;
-
-                if (updateMetadata != null)
-                {
-                    InstalledVersion = updateMetadata.FromVersion.Version;
-                }
-            }
-
-            IsDownloadCountShowed = fromPage != MetadataOrigin.Installed;
-
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
             InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
 
-            CanBeAddedInBatchOperation = fromPage == MetadataOrigin.Updates;
+            IsDownloadCountShowed = false;
+            CanBeAddedInBatchOperation = false;
         }
 
-        protected async override Task InitializeAsync()
+        [Model(SupportIEditableObject = false)]
+        [Expose("Title")]
+        [Expose("Description")]
+        [Expose("Summary")]
+        [Expose("DownloadCount")]
+        [Expose("Authors")]
+        [Expose("IconUrl")]
+        [Expose("Identity")]
+     //   [Expose("Status")]
+        public NuGetPackage Package { get; set; }
+
+        public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
+
+        public object DependencyInfo { get; set; }
+
+        public DeferToken DefferedLoadingToken { get; set; }
+
+        [ViewModelToModel]
+        public PackageStatus Status { get; set; }
+
+        public bool IsDownloadCountShowed { get; private set; }
+
+        public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
+
+        public IPackageSearchMetadata VersionData { get; set; }
+
+        public NuGetVersion SelectedVersion { get; set; }
+
+        public PackageIdentity SelectedPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, SelectedVersion);
+
+        [ViewModelToModel]
+        public NuGetVersion InstalledVersion { get; set; }
+
+        public int SelectedVersionIndex { get; set; }
+
+        public bool CanBeAddedInBatchOperation { get; set; }
+
+        public bool IsChecked { get; set; }
+
+
+        private void OnPackageChanged()
+        {
+#pragma warning disable 4014
+            ApplyPackageAsync();
+#pragma warning restore 4014
+        }
+        
+        protected override async Task InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            if(Package is null)
+            {
+                return;
+            }
+
+            await ApplyPackageAsync();
+        }
+
+        private async Task ApplyPackageAsync()
         {
             try
             {
-                //select identity version
-                SelectedVersion = SelectedVersion ?? Package.Identity.Version;
+                var fromPage = Package.FromPage;
+                IsDownloadCountShowed = fromPage != MetadataOrigin.Installed;
+                CanBeAddedInBatchOperation = fromPage == MetadataOrigin.Updates;
 
-                VersionsCollection = new ObservableCollection<NuGetVersion>() { SelectedVersion };
+                //select identity version
+                SelectedVersion = SelectedVersion ?? Package?.Identity.Version;
+
+                VersionsCollection = new ObservableCollection<NuGetVersion>() {SelectedVersion};
 
                 NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
 
@@ -140,45 +167,6 @@ namespace Orc.NuGetExplorer.ViewModels
             }
         }
 
-
-        [Model(SupportIEditableObject = false)]
-        [Expose("Title")]
-        [Expose("Description")]
-        [Expose("Summary")]
-        [Expose("DownloadCount")]
-        [Expose("Authors")]
-        [Expose("IconUrl")]
-        [Expose("Identity")]
-        [Expose("Status")]
-        public NuGetPackage Package { get; set; }
-
-        public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
-
-        public object DependencyInfo { get; set; }
-
-        public DeferToken DefferedLoadingToken { get; set; }
-
-        [ViewModelToModel]
-        public PackageStatus Status { get; set; }
-
-        public bool IsDownloadCountShowed { get; }
-
-        public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
-
-        public IPackageSearchMetadata VersionData { get; set; }
-
-        public NuGetVersion SelectedVersion { get; set; }
-
-        public PackageIdentity SelectedPackage => new PackageIdentity(Package.Identity.Id, SelectedVersion);
-
-        [ViewModelToModel]
-        public NuGetVersion InstalledVersion { get; set; }
-
-        public int SelectedVersionIndex { get; set; }
-
-        public bool CanBeAddedInBatchOperation { get; set; }
-
-        public bool IsChecked { get; set; }
 
         public Command LoadInfoAboutVersions { get; set; }
 
@@ -262,7 +250,7 @@ namespace Orc.NuGetExplorer.ViewModels
         {
             var currentSourceContext = SourceContext.CurrentContext;
 
-            var repositories = currentSourceContext.Repositories ?? currentSourceContext.PackageSources.Select(src => _repositoryService.GetRepository(src));
+            var repositories = currentSourceContext.Repositories ?? currentSourceContext?.PackageSources.Select(src => _repositoryService.GetRepository(src));
 
             return new PackageMetadataProvider(repositories, null);
         }

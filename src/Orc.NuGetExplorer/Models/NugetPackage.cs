@@ -1,27 +1,32 @@
-﻿using Catel.Data;
-using Catel.Logging;
-using NuGet.Packaging.Core;
-using NuGet.Protocol.Core.Types;
-using NuGet.Versioning;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Orc.NuGetExplorer.Enums;
-
-namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer.Models
 {
+    using Catel.Data;
+    using Catel.Logging;
+    using NuGet.Packaging.Core;
+    using NuGet.Protocol.Core.Types;
+    using NuGet.Versioning;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Orc.NuGetExplorer.Enums;
+    using Packaging;
+
     public class NuGetPackage : ModelBase
     {
+
+
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IPackageSearchMetadata _packageMetadata;
 
         private readonly IList<IPackageSearchMetadata> _additionalMetadata = new List<IPackageSearchMetadata>();
 
-        public NuGetPackage(IPackageSearchMetadata packageMetadata)
+        public NuGetPackage(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage)
         {
+            FromPage = fromPage;
             _packageMetadata = packageMetadata;
+
             Title = packageMetadata.Title;
             Description = packageMetadata.Description;
             IconUrl = packageMetadata.IconUrl;
@@ -30,7 +35,25 @@ namespace Orc.NuGetExplorer.Models
             Summary = packageMetadata.Summary;
 
             LastVersion = packageMetadata.Identity.Version;
+            
+            switch (fromPage)
+            {
+                case MetadataOrigin.Browse:
+                    InstalledVersion = null;
+                    break;
+
+                case MetadataOrigin.Installed:
+                    InstalledVersion = LastVersion;
+                    break;
+
+                case MetadataOrigin.Updates when packageMetadata is UpdatePackageSearchMetadata updatePackageSearchMetadata:
+                    InstalledVersion = updatePackageSearchMetadata.FromVersion.Version;
+                    break;
+            }
         }
+
+        public bool IsChecked { get; set; }
+        public MetadataOrigin FromPage { get; }
 
         public string Title { get; private set; }
 
@@ -44,7 +67,7 @@ namespace Orc.NuGetExplorer.Models
 
         public Uri IconUrl { get; private set; }
 
-        public PackageStatus Status { get; private set; } = PackageStatus.NotInstalled;
+        public PackageStatus Status { get; set; } = PackageStatus.NotInstalled;
 
         public PackageIdentity Identity => _packageMetadata.Identity;
 
