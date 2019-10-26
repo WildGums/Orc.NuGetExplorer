@@ -1,5 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-
+﻿
 namespace Orc.NuGetExplorer.Controls.Templating
 {
     using NuGetExplorer.Enums;

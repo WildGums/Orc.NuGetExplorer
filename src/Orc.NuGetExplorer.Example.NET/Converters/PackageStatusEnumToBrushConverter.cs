@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-
-namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters
 {
     using Catel.MVVM.Converters;
     using NuGetExplorer.Enums;
@@ -9,15 +7,14 @@ namespace Orc.NuGetExplorer.Converters
 
     public class PackageStatusEnumToBrushConverter : ValueConverterBase<PackageStatus, Brush>
     {
-        int offset = -1;
-
-        readonly Themes.Brushes resourceDictionary;
+        private static readonly int Offset = -1;
+        private readonly Themes.Brushes _resourceDictionary;
 
         public PackageStatusEnumToBrushConverter()
         {
-            resourceDictionary = new Themes.Brushes();
+            _resourceDictionary = new Themes.Brushes();
 
-            resourceDictionary.InitializeComponent();
+            _resourceDictionary.InitializeComponent();
         }
 
         protected override object Convert(PackageStatus value, Type targetType, object parameter)
@@ -29,11 +26,11 @@ namespace Orc.NuGetExplorer.Converters
                 return new SolidColorBrush(Colors.Transparent);
             }
 
-            int keyIndex = (int)value - offset;
+            int keyIndex = (int)value - Offset;
 
             if (keyIndex >= 0 && keyIndex < resourceKeys.Length)
             {
-                var brushResource = resourceDictionary[resourceKeys[keyIndex]];
+                var brushResource = _resourceDictionary[resourceKeys[keyIndex]];
 
                 return brushResource;
             }

@@ -1,8 +1,4 @@
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Configuration;
@@ -63,8 +59,8 @@ namespace Orc.NuGetExplorer.ViewModels
             get { return _selectedPackageItem; }
             set
             {
-                _selectedPackageItem = null;
-                RaisePropertyChanged(() => SelectedPackageItem);
+                //_selectedPackageItem = null;
+                //RaisePropertyChanged(() => SelectedPackageItem);
                 _selectedPackageItem = value;
                 RaisePropertyChanged(() => SelectedPackageItem);
 

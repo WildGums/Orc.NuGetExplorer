@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-
-namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters
 {
     using Catel.MVVM.Converters;
     using NuGetExplorer.Enums;

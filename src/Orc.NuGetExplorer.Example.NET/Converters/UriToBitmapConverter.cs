@@ -1,7 +1,4 @@
-﻿using Orc.NuGetExplorer.Cache;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters
 {
     using Catel.IoC;
     using Catel.Logging;

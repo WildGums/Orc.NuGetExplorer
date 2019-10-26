@@ -1,10 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Loggers
 {
-    extern alias v_3;
-
     using Catel.Logging;
+    using NuGet.Common;
     using System.Threading.Tasks;
-    using v_3::NuGet.Common;
 
     public class DebugLogger : ILogger
     {

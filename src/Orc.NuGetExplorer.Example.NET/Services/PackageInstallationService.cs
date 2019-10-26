@@ -1,9 +1,4 @@
-﻿using Orc.NuGetExplorer.Cache;
-using Orc.NuGetExplorer.Loggers;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Management.Exceptions;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using Catel.IoC;

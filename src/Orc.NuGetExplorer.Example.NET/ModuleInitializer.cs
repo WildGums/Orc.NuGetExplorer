@@ -32,6 +32,8 @@ public static class ModuleInitializer
 
         Catel.Logging.LogManager.IsDebugEnabled = true;
 
+        Catel.Logging.LogManager.AddDebugListener();
+
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
 
         serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();

@@ -1,10 +1,9 @@
 ﻿
 namespace Orc.NuGetExplorer.Services
 {
-    extern alias v_3;
-
     using Catel;
     using Catel.Logging;
+    using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Credentials;
     using NuGet.Protocol;
@@ -17,7 +16,6 @@ namespace Orc.NuGetExplorer.Services
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using v_3::NuGet.Common;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {

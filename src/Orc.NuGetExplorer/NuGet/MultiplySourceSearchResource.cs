@@ -1,14 +1,12 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    extern alias v_3;
-
+    using NuGet.Common;
     using NuGet.Protocol.Core.Types;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using v_3::NuGet.Common;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {

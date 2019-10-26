@@ -1,13 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Management.EventArgs;
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Web;
-using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Collections;
@@ -62,20 +53,20 @@ namespace Orc.NuGetExplorer.ViewModels
         /// Due to all pages uses package sources selected by user in settings
         /// context is shared between pages too
         /// </summary>
-        private static IDisposable Context
+        private static IDisposable PagesContext
         {
-            get { return _context; }
+            get { return Context; }
             set
             {
-                if (_context != value)
+                if (Context != value)
                 {
-                    _context?.Dispose();
-                    _context = value;
+                    Context?.Dispose();
+                    Context = value;
                 }
             }
         }
 
-        private static IDisposable _context;
+        private static IDisposable Context;
 
         private ExplorerSettingsContainer _settings;
 
@@ -335,11 +326,11 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 if (pageinfo.Source.IsMultipleSource)
                 {
-                    Context = _repositoryService.AcquireContext();
+                    PagesContext = _repositoryService.AcquireContext();
                 }
                 else
                 {
-                    Context = _repositoryService.AcquireContext((PackageSource)pageinfo.Source);
+                    PagesContext = _repositoryService.AcquireContext((PackageSource)pageinfo.Source);
                 }
 
 

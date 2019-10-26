@@ -1,13 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Packaging;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Data;
@@ -292,9 +283,10 @@ namespace Orc.NuGetExplorer.ViewModels
             commandManager.InvalidateCommands();
         }
 
-        protected override async void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
+
             if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
             {
                 if (e.OldValue == null && SelectedVersion == Package.Identity.Version)
@@ -304,7 +296,7 @@ namespace Orc.NuGetExplorer.ViewModels
                 }
 
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
-                await LoadSinglePackageMetadataAsync(identity);
+                //await LoadSinglePackageMetadataAsync(identity);
             }
         }
 
