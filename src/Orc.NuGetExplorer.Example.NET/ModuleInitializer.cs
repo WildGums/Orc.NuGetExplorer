@@ -1,5 +1,6 @@
 ﻿using Catel.Configuration;
 using Catel.IoC;
+using Catel.MVVM;
 using NuGet.Credentials;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -11,6 +12,8 @@ using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
+using Orc.NuGetExplorer.ViewModels;
+using Orc.NuGetExplorer.Views;
 using Orc.NuGetExplorer.Windows;
 using Orc.NuGetExplorer.Windows.Service;
 using SourceRepositoryProvider = Orc.NuGetExplorer.Providers.SourceRepositoryProvider;
@@ -26,6 +29,9 @@ public static class ModuleInitializer
     public static void Initialize()
     {
         var serviceLocator = ServiceLocator.Default;
+
+        var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
+        viewModelLocator.Register<PackageDetailsView, PackageDetailsViewModel>();
 
         serviceLocator.RegisterType<IEchoService, EchoService>();
        // serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();

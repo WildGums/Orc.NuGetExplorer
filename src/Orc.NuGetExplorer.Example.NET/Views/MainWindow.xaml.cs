@@ -1,4 +1,4 @@
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

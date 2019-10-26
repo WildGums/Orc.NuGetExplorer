@@ -62,7 +62,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 _progressManager.ShowBar(this);
 
-                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).Select(x => x.Package).ToList();
+                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
 
                 var projects = _projectLocator.GetAllExtensibleProjects()
                             .Where(x => _projectLocator.IsEnabled(x));
