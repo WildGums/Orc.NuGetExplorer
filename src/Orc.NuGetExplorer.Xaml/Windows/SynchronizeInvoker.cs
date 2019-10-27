@@ -43,23 +43,23 @@
 
         private class DispatcherAsyncResult : IAsyncResult
         {
-            private readonly IAsyncResult result;
+            private readonly IAsyncResult _result;
 
             public DispatcherAsyncResult(DispatcherOperation operation)
             {
-                this.Operation = operation;
-                this.result = operation.Task;
+                Operation = operation;
+                _result = operation.Task;
             }
 
             public DispatcherOperation Operation { get; }
 
-            public bool IsCompleted => this.result.IsCompleted;
+            public bool IsCompleted => _result.IsCompleted;
 
-            public WaitHandle AsyncWaitHandle => this.result.AsyncWaitHandle;
+            public WaitHandle AsyncWaitHandle => _result.AsyncWaitHandle;
 
-            public object AsyncState => this.result.AsyncState;
+            public object AsyncState => _result.AsyncState;
 
-            public bool CompletedSynchronously => this.result.CompletedSynchronously;
+            public bool CompletedSynchronously => _result.CompletedSynchronously;
         }
     }
 }

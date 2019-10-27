@@ -13,7 +13,7 @@
     /// </summary>
     public class TabControllerButton : RadioButton
     {
-        private LinkedList<TabControllerButton> group = new LinkedList<TabControllerButton>();
+        private LinkedList<TabControllerButton> _group = new LinkedList<TabControllerButton>();
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -34,7 +34,7 @@
         {
             if ((bool)e.NewValue == true)
             {
-                if (group != null)
+                if (_group != null)
                 {
                     SelectTab();
                 }
@@ -77,7 +77,7 @@
             var tabBtn = d as TabControllerButton;
             if (tabBtn != null)
             {
-                foreach (var t in tabBtn.group)
+                foreach (var t in tabBtn._group)
                 {
                     t.SetCurrentValue(TabControllerButton.TabSourceProperty, tabBtn.TabSource);
                     Log.Info($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
@@ -87,7 +87,7 @@
 
         private void OnTabControllerButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (group != null)
+            if (_group != null)
             {
                 SelectTab();
             }
@@ -101,24 +101,24 @@
             {
                 //todo should throw exception or break chain?
                 nextButton.SetCurrentValue(TabSourceProperty, TabSource);
-                nextButton.group = group;   //keep reference on sibling memeber's group
+                nextButton._group = _group;   //keep reference on sibling memeber's group
 
-                var current = group.Find(this);
+                var current = _group.Find(this);
 
                 //костыль
-                if (group.Count == 0 && current == null)
+                if (_group.Count == 0 && current == null)
                 {
-                    group.AddFirst(this);
-                    current = group.Find(this);
+                    _group.AddFirst(this);
+                    current = _group.Find(this);
                 }
 
-                group.AddAfter(current, nextButton);
+                _group.AddAfter(current, nextButton);
             }
         }
 
         private int MyIndex()
         {
-            return group.TakeWhile(node => node != this).Count();
+            return _group.TakeWhile(node => node != this).Count();
         }
 
         private void SelectTab()

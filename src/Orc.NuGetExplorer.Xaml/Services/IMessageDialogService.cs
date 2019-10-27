@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using NuGetExplorer.Windows;
     using System.Threading.Tasks;

@@ -1,6 +1,4 @@
-using Orc.NuGetExplorer.Controls.Helpers;
-
-namespace Orc.NuGetExplorer.Controls
+﻿namespace Orc.NuGetExplorer.Controls
 {
     using Catel.MVVM;
     using NuGetExplorer.Controls.Helpers;

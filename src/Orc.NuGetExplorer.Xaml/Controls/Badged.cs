@@ -10,10 +10,8 @@
     public class Badged : ContentControl
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        const string BadgeContentPartName = "PART_BadgeContent";
-
-        const string BadgePartName = "PART_Badge";
+        private const string BadgeContentPartName = "PART_BadgeContent";
+        private const string BadgePartName = "PART_Badge";
 
         public override void OnApplyTemplate()
         {

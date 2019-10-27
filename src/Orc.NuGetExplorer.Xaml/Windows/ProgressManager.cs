@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Behaviors;
-
-namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows
 {
     using Catel.Logging;
     using Catel.MVVM;
@@ -16,7 +14,7 @@ namespace Orc.NuGetExplorer.Windows
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private Dictionary<IViewModel, DataWindow> _storedManagedWindows = new Dictionary<IViewModel, DataWindow>();
+        private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new Dictionary<IViewModel, DataWindow>();
 
         public void ShowBar(IViewModel vm)
         {

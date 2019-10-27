@@ -1,7 +1,4 @@
-﻿using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Windows.Service;
-
-namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows
 {
     using Catel;
     using Catel.IoC;

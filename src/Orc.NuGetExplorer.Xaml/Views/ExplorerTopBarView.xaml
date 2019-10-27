@@ -1,0 +1,158 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.ExplorerTopBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+             xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
+             xmlns:orc="http://schemas.wildgums.com/orc/controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="34"/>
+            <ColumnDefinition Width="34"/>
+            <ColumnDefinition Width="34"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- navigation panel-->
+        <StackPanel Grid.Column="0" 
+                    Orientation="Horizontal">
+            <!--<StackPanel.Resources>
+                <Style TargetType="{x:Type nugetc:TabControllerButton}" BasedOn="{StaticResource LabelButton}">
+                    <Setter Property="Margin" Value="10 0 10 0"/>
+                </Style>
+            </StackPanel.Resources>-->
+            <!--<nugetc:TabControllerButton x:Name="Browse"
+                TabSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type catel:UserControl}}, Path=UsedOn}"
+                Next="{Binding ElementName=Installed}" 
+                IsChecked="{Binding SelectFirstPageOnLoad}">
+                Browse
+            </nugetc:TabControllerButton>
+            <nugetc:TabControllerButton x:Name="Installed" 
+                Next="{Binding ElementName=Updates}">
+                Installed
+            </nugetc:TabControllerButton>
+            <nugetc:TabControllerButton x:Name="Updates">
+                Updates
+            </nugetc:TabControllerButton>-->
+        </StackPanel>
+
+
+        <TextBlock Text="Manage NuGet Packages"
+                   Grid.Column="5" Grid.ColumnSpan="5"
+                   HorizontalAlignment="Right"
+                   FontSize="16"
+                   Margin="0 0 10 10"/>
+
+        <!-- tool bar -->
+        <!--<TextBox Grid.Row="1"
+                 Margin="10 0 0 0"
+                 Text="{Binding SearchString}"/> --><!--search box-->
+
+        <orc:WatermarkTextBox Grid.Row="1"
+                  Text="{Binding SearchString}"
+                  Margin="10 0 0 0">
+            <orc:WatermarkTextBox.Watermark>
+                <StackPanel Orientation="Horizontal">
+                    <Viewbox Width="12" Height="12">
+                        <Canvas Width="12" Height="12">
+                            <Path Data="{Binding Source={StaticResource Search-web}, Path=Data}" 
+                                  Margin="0 -4 0 0"
+                                  Fill="{StaticResource AccentColorBrush}"/>
+                        </Canvas>
+                    </Viewbox>
+
+                    <TextBlock Text="Enter package id"
+                               Margin="14 0 0 0"/>
+                </StackPanel>
+            </orc:WatermarkTextBox.Watermark>
+            <i:Interaction.Behaviors>
+                <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
+            </i:Interaction.Behaviors>
+        </orc:WatermarkTextBox>
+        
+        <Button Grid.Row="1" Grid.Column="1"
+                Command="{catel:CommandManagerBinding RefreshCurrentPage}"
+                Height="24" Width="24"
+                Margin="3 0 3 0">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                </Canvas>
+            </Viewbox>
+            <i:Interaction.Behaviors>
+                <catel:FocusOnKeyPress Key="Return"/>
+            </i:Interaction.Behaviors>
+        </Button>
+        
+        <CheckBox Grid.Row="1" Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Margin="3 0 3 0"
+                  IsChecked="{Binding IsPreReleaseIncluded}"/>
+        <TextBlock Grid.Row="1" Grid.Column="3"
+                   VerticalAlignment="Center"
+                   Margin="3 0 3 0">
+            Include prerelease
+        </TextBlock>
+
+        <TextBlock Grid.Row="1" Grid.Column="5"
+                   VerticalAlignment="Center"
+                   Margin="4 0 3 0">
+            Package source: 
+        </TextBlock>
+        <ComboBox Grid.Row="1" Grid.Column="6" 
+                  Width="120"
+                  ItemsSource="{Binding ActiveFeeds}"
+                  Margin="3 0 3 0"
+                  IsSynchronizedWithCurrentItem="True"
+                  SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"/>
+        <!--select source feed-->
+         <Button Grid.Row="1" Grid.Column="7"
+                Command="{Binding ShowExtensibles}"
+                Margin="3 0 3 0"
+                Height="24" Width="24"
+                ToolTip="Configure projects">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Data="{Binding Source={StaticResource App-box}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                </Canvas>
+            </Viewbox>
+        </Button>
+        <Button Grid.Row="1" Grid.Column="8"
+                Command="{Binding ShowPackageSourceSettings}"
+                Margin="0 0 3 0"
+                Height="24" Width="24"
+                ToolTip="Show package source settings">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                </Canvas>
+            </Viewbox>
+        </Button>
+        <Button Grid.Row="1" Grid.Column="9"
+                Command="{Binding RunNuGetCachesClearing}"
+                ToolTip="Clear NuGet caches"
+                Margin="0 0 10 0"
+                Height="24" Width="24">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                </Canvas>
+            </Viewbox>
+        </Button>
+    </Grid>
+</catel:UserControl>
