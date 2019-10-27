@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer_old.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -20,7 +20,8 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using MethodTimer;
-    using Scopes;
+    using Orc.NuGetExplorer;
+    using Orc.NuGetExplorer.Scopes;
     using CollectionExtensions = Catel.Collections.CollectionExtensions;
 
     internal class ExplorerViewModel : ViewModelBase

@@ -77,4 +77,7 @@
     <None Remove="Resources\Images\default-package-icon.png" />
     <None Remove="Resources\Upload_gray_16x.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
 </Project>

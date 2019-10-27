@@ -100,6 +100,11 @@
 
         private void OnPackageChanged()
         {
+            if(Package is null)
+            {
+                return;
+            }
+
 #pragma warning disable 4014
             ApplyPackageAsync();
 #pragma warning restore 4014
