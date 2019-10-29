@@ -7,7 +7,7 @@
     {
         private int _lastNumber = -1;
 
-        private int _pageSize = -1;
+        private readonly int _pageSize = -1;
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -23,6 +23,7 @@
             Source = continuation.Source;
             _lastNumber = continuation.Current;
         }
+
 
         public int LastNumber { get => _lastNumber; private set => _lastNumber = value; }
 

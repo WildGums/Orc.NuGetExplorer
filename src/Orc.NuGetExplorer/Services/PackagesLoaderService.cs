@@ -1,7 +1,4 @@
-﻿using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using NuGet.Protocol;

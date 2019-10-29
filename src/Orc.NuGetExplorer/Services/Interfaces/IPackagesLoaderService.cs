@@ -1,9 +1,7 @@
-﻿using Orc.NuGetExplorer.Pagination;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Pagination;
+    using Orc.NuGetExplorer.Pagination;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;

@@ -1,8 +1,4 @@
-﻿using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using NuGet.Packaging.Core;
@@ -24,11 +20,11 @@ namespace Orc.NuGetExplorer.Services
 
         private readonly INuGetExtensibleProjectManager _projectManager;
 
-        private readonly IRepositoryService _repositoryService;
+        private readonly IRepositoryContextService _repositoryService;
 
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 
-        public LocalPackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
+        public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetExtensibleProjectManager nuGetExtensibleProjectManager)
         {
             Argument.IsNotNull(() => extensibleProjectLocator);

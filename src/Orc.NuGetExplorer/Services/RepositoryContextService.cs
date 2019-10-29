@@ -7,13 +7,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class RepositoryService : IRepositoryService
+    public class RepositoryContextService : IRepositoryContextService
     {
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly Dictionary<PackageSource, SourceRepository> _constructedRepositories = new Dictionary<PackageSource, SourceRepository>();
 
 
-        public RepositoryService(ISourceRepositoryProvider sourceRepositoryProvider)
+        public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
         {
             Argument.IsNotNull(() => sourceRepositoryProvider);
 

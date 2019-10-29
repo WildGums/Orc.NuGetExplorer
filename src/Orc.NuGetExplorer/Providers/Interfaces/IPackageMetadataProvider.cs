@@ -1,11 +1,11 @@
-﻿using NuGet.Packaging.Core;
-using NuGet.Protocol.Core.Types;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
+    using NuGet.Packaging.Core;
+    using NuGet.Protocol.Core.Types;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Contract for a generalized package metadata provider associated with a package source(s).
     /// </summary>

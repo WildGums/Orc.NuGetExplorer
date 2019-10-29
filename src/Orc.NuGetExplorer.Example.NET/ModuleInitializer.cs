@@ -57,10 +57,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ISourceRepositoryProvider, SourceRepositoryProvider>();
         serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
 
-        serviceLocator.RegisterType<Orc.NuGetExplorer.Services.IRepositoryService, RepositoryService>();
-
-        serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
-        serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();
+        serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
 
         serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
         serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
@@ -78,13 +75,6 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();
 
-        //package loaders
-        serviceLocator.RegisterType<IPackagesLoaderService, PackagesLoaderService>();
-        //todo use separate providers instead of tags
-        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, LocalPackagesLoaderService>("Installed");
-        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, UpdatePackagesLoaderService>("Updates");
-
-        serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
 
         //add all project extensions
 

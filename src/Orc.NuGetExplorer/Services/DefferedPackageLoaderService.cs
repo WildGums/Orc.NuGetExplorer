@@ -1,10 +1,4 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Packaging;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using Catel.Logging;
@@ -23,24 +17,23 @@ namespace Orc.NuGetExplorer.Services
     public class DefferedPackageLoaderService : IDefferedPackageLoaderService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly IList<DeferToken> _taskTokenList = new List<DeferToken>();
 
-        IList<DeferToken> taskTokenList = new List<DeferToken>();
+        private CancellationToken _aliveCancellationToken;
 
-        private CancellationToken aliveCancellationToken;
-
-        private bool isLoading = false;
+        private bool _isLoading = false;
 
         private readonly IPackagesLoaderService _packagesLoaderService;
 
-        private readonly IRepositoryService _repositoryService;
+        private readonly IRepositoryContextService _repositoryService;
 
         private readonly INuGetExtensibleProjectManager _projectManager;
 
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
-        private IPackageMetadataProvider packageMetadataProvider;
+        private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(IPackagesLoaderService packagesLoaderService, IRepositoryService repositoryService,
+        public DefferedPackageLoaderService(IPackagesLoaderService packagesLoaderService, IRepositoryContextService repositoryService,
             INuGetExtensibleProjectManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator)
         {
             Argument.IsNotNull(() => packagesLoaderService);
@@ -55,7 +48,7 @@ namespace Orc.NuGetExplorer.Services
 
         public async Task StartLoadingAsync()
         {
-            if (isLoading)
+            if (_isLoading)
             {
                 return;
             }
@@ -67,16 +60,16 @@ namespace Orc.NuGetExplorer.Services
         {
             try
             {
-                packageMetadataProvider = InitializeMetadataProvider();
+                _packageMetadataProvider = InitializeMetadataProvider();
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    aliveCancellationToken = cts.Token;
+                    _aliveCancellationToken = cts.Token;
 
                     //form tasklist
-                    var taskList = taskTokenList.ToDictionary(x => CreateTaskFromToken(x, aliveCancellationToken));
+                    var taskList = _taskTokenList.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 
-                    Log.Info($"Start updating {taskTokenList.Count} items in background");
+                    Log.Info($"Start updating {_taskTokenList.Count} items in background");
 
                     while (taskList.Count > 0)
                     {
@@ -108,8 +101,8 @@ namespace Orc.NuGetExplorer.Services
             finally
             {
                 //todo try to complete all remaining tasks
-                taskTokenList.Clear();
-                isLoading = false;
+                _taskTokenList.Clear();
+                _isLoading = false;
             }
         }
 
@@ -118,10 +111,10 @@ namespace Orc.NuGetExplorer.Services
             if (token.LoadType == Enums.MetadataOrigin.Installed)
             {
                 //from local
-                return packageMetadataProvider.GetLowestLocalPackageMetadataAsync(token.Package.Identity.Id, token.Package.Identity.Version.IsPrerelease, ct);
+                return _packageMetadataProvider.GetLowestLocalPackageMetadataAsync(token.Package.Identity.Id, token.Package.Identity.Version.IsPrerelease, ct);
             }
 
-            return Task.Run(() => packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, token.Package.Identity.Version.IsPrerelease, ct));
+            return Task.Run(() => _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, token.Package.Identity.Version.IsPrerelease, ct));
         }
 
         public IPackageMetadataProvider InitializeMetadataProvider()
@@ -143,7 +136,7 @@ namespace Orc.NuGetExplorer.Services
 
         public void Add(DeferToken token)
         {
-            taskTokenList.Add(token);
+            _taskTokenList.Add(token);
         }
     }
 }

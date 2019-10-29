@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management
 {
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
@@ -11,33 +9,32 @@ namespace Orc.NuGetExplorer.Management
 
     public class SourceContext : IDisposable
     {
-        private static Stack<SourceContext> _activeContext = new Stack<SourceContext>();
+        private static readonly Stack<SourceContext> ActiveContext = new Stack<SourceContext>();
 
         public static SourceContext CurrentContext
         {
             get
             {
-                if (!_activeContext.Any())
+                if (!ActiveContext.Any())
                 {
                     return null;
                 }
 
-                return _activeContext.Peek();
+                return ActiveContext.Peek();
             }
         }
 
-        public SourceContext(IReadOnlyList<PackageSource> packageSources, IRepositoryService repositoryService)
+        public SourceContext(IReadOnlyList<PackageSource> packageSources, IRepositoryContextService repositoryService)
         {
             PackageSources = packageSources;
-            _activeContext.Push(this);
+            ActiveContext.Push(this);
         }
 
-        public SourceContext(IReadOnlyList<SourceRepository> sourceRepositories, IRepositoryService repositoryService)
+        public SourceContext(IReadOnlyList<SourceRepository> sourceRepositories, IRepositoryContextService repositoryService)
         {
             Repositories = sourceRepositories;
-            _activeContext.Push(this);
+            ActiveContext.Push(this);
         }
-
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }
         public IReadOnlyList<SourceRepository> Repositories { get; private set; }
@@ -45,7 +42,7 @@ namespace Orc.NuGetExplorer.Management
         public void Dispose()
         {
             //todo release this context
-            _activeContext.Pop();
+            ActiveContext.Pop();
         }
     }
 }

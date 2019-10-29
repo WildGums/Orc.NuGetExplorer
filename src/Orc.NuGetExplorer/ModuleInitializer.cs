@@ -5,6 +5,7 @@ using NuGet.Configuration;
 using NuGet.Credentials;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Configuration;
+using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
 
@@ -28,15 +29,12 @@ public static class ModuleInitializer
 
         // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NugetConfigurationService>();
-        //serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
         serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
         //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
         //serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
         //serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
-        //serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
         //serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
-        //serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
@@ -51,6 +49,21 @@ public static class ModuleInitializer
 
         //var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
         //serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
+
+        serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
+        serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();
+        
+        serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
+        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
+
+        //package loaders
+        serviceLocator.RegisterType<IPackagesLoaderService, PackagesLoaderService>();
+        //todo use separate providers instead of tags
+        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, LocalPackagesLoaderService>("Installed");
+        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, UpdatePackagesLoaderService>("Updates");
+
+        serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
+        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
 

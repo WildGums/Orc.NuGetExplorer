@@ -1,27 +1,24 @@
-﻿using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Packaging;
-using Orc.NuGetExplorer.Pagination;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
+    using Catel.Scoping;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Management;
     using NuGetExplorer.Packaging;
-    using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Pagination;
+    using Orc.NuGetExplorer.Scopes;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
-    public class UpdatePackagesLoaderService : IPackagesLoaderService
+    public class UpdatePackagesLoaderService : IPackagesLoaderService, IPackagesUpdatesSearcherService
     {
-        private static ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IRepositoryService _repositoryService;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
@@ -111,5 +108,60 @@ namespace Orc.NuGetExplorer.Services
                 throw new OperationCanceledException("Search request was canceled", ex, token);
             }
         }
+
+        #region IPackagesUpdatesSearcherService
+        public IEnumerable<IPackageDetails> SearchForUpdates(bool? allowPrerelease = null, bool authenticateIfRequired = true)
+        {
+            //todo auth scopes?
+            var scopeManagers = new List<ScopeManager<AuthenticationScope>>();
+
+            try
+            {
+                Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
+
+                /*               
+                foreach (var repository in sourceRepositories)
+                {
+                    var scopeManager = ScopeManager<AuthenticationScope>.GetScopeManager(repository.Source.GetSafeScopeName(), () => new AuthenticationScope(authenticateIfRequired));
+                    scopeManagers.Add(scopeManager);
+                }
+                */
+
+                var repositories = _repositoryService.GetSourceRepositories();
+
+                //TODO
+                //1. Mark repository in repository services by Operation correctly
+                //2. Filter project repositories
+                //3. Find update by package metadata provider and filter
+                //4. Create PackageDetails from metadatas
+
+                /*
+                var packageRepository = _repositoryCacheService.GetNuGetRepository(_repositoryService.GetSourceAggregateRepository());
+                var packages = _repositoryCacheService.GetNuGetRepository(_repositoryService.LocalRepository).GetPackages();
+
+                foreach (var package in packages)
+                {
+                    var prerelease = allowPrerelease ?? package.IsPrerelease();
+
+                    var packageUpdates = packageRepository.GetUpdates(new[] { package }, prerelease, false).Select(x => _packageCacheService.GetPackageDetails(packageRepository, x, allowPrerelease ?? true));
+                    availableUpdates.AddRange(packageUpdates);
+                }
+                */
+
+                Log.Debug("Finished searching for updates, found '{0}' updates"); //availableUpdates.Count);
+
+                return null;
+            }
+            finally
+            {
+                foreach (var scopeManager in scopeManagers)
+                {
+                    scopeManager.Dispose();
+                }
+
+                scopeManagers.Clear();
+            }
+        }
+        #endregion
     }
 }

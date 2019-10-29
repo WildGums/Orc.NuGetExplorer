@@ -50,7 +50,7 @@
 
         private readonly MetadataOrigin _pageType;
         private readonly INuGetExtensibleProjectManager _projectManager;
-        private readonly IRepositoryService _repositoryService;
+        private readonly IRepositoryContextService _repositoryService;
 
         private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
         private readonly ITypeFactory _typeFactory;
@@ -59,7 +59,7 @@
 
         public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, IPackagesLoaderService packagesLoaderService,
             IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
-            ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryService repositoryService, ITypeFactory typeFactory,
+            ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, INuGetExtensibleProjectManager projectManager)
         {
             Title = pageTitle;

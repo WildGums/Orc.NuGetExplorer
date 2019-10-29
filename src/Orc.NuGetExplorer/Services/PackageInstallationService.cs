@@ -69,7 +69,6 @@
             {
                 await UninstallAsync(package, proj, cancellationToken);
             }
-
         }
 
 

@@ -1,13 +1,10 @@
-﻿using Orc.NuGetExplorer.Loggers;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Extensions;
     using NuGetExplorer.Loggers;
     using System;
     using System.Collections.Generic;

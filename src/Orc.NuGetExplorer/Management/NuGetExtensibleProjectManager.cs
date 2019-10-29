@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using Orc.NuGetExplorer.Management.EventArgs;
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
@@ -18,6 +17,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Orc.NuGetExplorer.Management.EventArgs;
 
     public class NuGetExtensibleProjectManager : INuGetExtensibleProjectManager
     {

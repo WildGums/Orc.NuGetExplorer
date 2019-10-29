@@ -27,7 +27,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IRepositoryService _repositoryService;
+        private readonly IRepositoryContextService _repositoryService;
 
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
 
@@ -37,7 +37,7 @@
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public PackageDetailsViewModel(IRepositoryService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+        public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IProgressManager progressManager, INuGetExtensibleProjectManager projectManager)
         {
             Argument.IsNotNull(() => repositoryService);
