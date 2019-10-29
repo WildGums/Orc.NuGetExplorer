@@ -5,11 +5,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
-             xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls;assembly=Orc.NuGetExplorer.Xaml"
+             xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:global="clr-namespace:Orc.NuGetExplorer"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:b="clr-namespace:Orc.NuGetExplorer.Behaviors;assembly=Orc.NuGetExplorer.Xaml"
+             xmlns:b="clr-namespace:Orc.NuGetExplorer.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <catel:UserControl.Resources>

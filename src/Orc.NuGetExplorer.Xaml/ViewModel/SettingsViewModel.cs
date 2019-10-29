@@ -4,6 +4,7 @@
     using Catel.Fody;
     using Catel.MVVM;
     using NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Providers;
 
     public class SettingsViewModel : ViewModelBase
     {
@@ -11,6 +12,12 @@
         {
             Argument.IsNotNull(() => settings);
             Settings = settings;
+        }
+
+        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        {
+            Argument.IsNotNull(() => settingsProvider);
+            Settings = settingsProvider.Model;
         }
 
         [Model(SupportIEditableObject = false)]

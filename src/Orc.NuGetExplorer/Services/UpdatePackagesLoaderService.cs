@@ -1,5 +1,9 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
@@ -10,10 +14,6 @@
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Pagination;
     using Orc.NuGetExplorer.Scopes;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
     public class UpdatePackagesLoaderService : IPackagesLoaderService, IPackagesUpdatesSearcherService

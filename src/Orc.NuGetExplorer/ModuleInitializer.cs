@@ -52,7 +52,7 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
         serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();
-        
+
         serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
         serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
 

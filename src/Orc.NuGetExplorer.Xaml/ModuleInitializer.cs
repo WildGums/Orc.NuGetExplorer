@@ -2,6 +2,8 @@
 using Catel.MVVM;
 using Catel.Services;
 using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.Models;
+using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.ViewModels;
 using Orc.NuGetExplorer.Views;
 
@@ -29,6 +31,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();        
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
+
+        serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
 
         var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
         viewModelLocator.Register(typeof(PackageSourceSettingControl), typeof(PackageSourceSettingViewModel));

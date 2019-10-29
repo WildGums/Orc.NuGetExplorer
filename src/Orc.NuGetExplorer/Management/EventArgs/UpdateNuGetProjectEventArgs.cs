@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Management.EventArgs
 {
+    using System.Collections.Generic;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
-    using System.Collections.Generic;
 
     public class UpdateNuGetProjectEventArgs : NuGetProjectEventArgs
     {

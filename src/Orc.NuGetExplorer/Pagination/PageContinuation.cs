@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Pagination
 {
-    using Catel.Logging;
     using System.Linq;
+    using Catel.Logging;
 
     public class PageContinuation
     {

@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using NuGet.Protocol.Core.Types;
-    using NuGet.Versioning;
     using System.Collections.Generic;
     using System.Linq;
+    using NuGet.Protocol.Core.Types;
+    using NuGet.Versioning;
 
     public static class PackageSearchMetadataExtensions
     {

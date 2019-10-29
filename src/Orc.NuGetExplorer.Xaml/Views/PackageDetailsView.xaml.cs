@@ -9,6 +9,7 @@
         static PackageDetailsView()
         {
             typeof(PackageDetailsView).AutoDetectViewPropertiesToSubscribe();
+   
         }
 
         public PackageDetailsView()

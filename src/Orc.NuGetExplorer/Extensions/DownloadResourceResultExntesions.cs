@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
-    using NuGet.Protocol.Core.Types;
     using System;
     using System.IO;
+    using Catel;
+    using NuGet.Protocol.Core.Types;
 
     public static class DownloadResourceResultExntesions
     {

@@ -1,13 +1,13 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
     using NuGetExplorer.Services;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class ExtensibleProjectLocator : IExtensibleProjectLocator
     {

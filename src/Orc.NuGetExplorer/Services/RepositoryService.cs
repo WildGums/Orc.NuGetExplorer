@@ -3,12 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Providers;
 
     internal class RepositoryService : IRepositoryService
     {
@@ -18,7 +15,7 @@
 
         public IRepository LocalRepository => throw new NotImplementedException();
 
-        public RepositoryService(IRepositoryContextService repositoryContextService, IExtensibleProjectLocator extensibleProjectLocator, 
+        public RepositoryService(IRepositoryContextService repositoryContextService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetExtensibleProjectManager projectManager)
         {
             Argument.IsNotNull(() => repositoryContextService);

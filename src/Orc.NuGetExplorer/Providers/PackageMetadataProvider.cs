@@ -1,16 +1,16 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Loggers;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
     {

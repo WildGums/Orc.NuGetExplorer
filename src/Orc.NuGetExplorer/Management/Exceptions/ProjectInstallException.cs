@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using NuGet.Packaging.Core;
     using System;
     using System.Collections.Generic;
+    using NuGet.Packaging.Core;
 
     public class ProjectInstallException : ProjectManageException
     {

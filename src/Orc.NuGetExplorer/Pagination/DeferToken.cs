@@ -1,5 +1,5 @@
-﻿using NuGet.Protocol.Core.Types;
-using System;
+﻿using System;
+using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer.Enums;
 using Orc.NuGetExplorer.Models;
 

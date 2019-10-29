@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer.ViewModels
+namespace Orc.NuGetExplorer_old.ViewModels
 {
     using System.ComponentModel;
     using System.IO.Packaging;
@@ -15,6 +15,7 @@ namespace Orc.NuGetExplorer.ViewModels
     using Catel;
     using Catel.Data;
     using Catel.MVVM;
+    using Orc.NuGetExplorer;
 
     internal class PackageDetailsViewModel : ViewModelBase
     {

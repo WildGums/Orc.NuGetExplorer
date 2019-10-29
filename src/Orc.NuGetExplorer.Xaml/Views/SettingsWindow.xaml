@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="SettingsWindow" MinHeight="400" MinWidth="500">
     <Grid>
-        <!--<local:SettingsControlView DataContext="{Binding NuGetFeeds}"/>-->
+        <local:SettingsControlView DataContext="{Binding NuGetFeeds}"/>
     </Grid>
 </catel:DataWindow>

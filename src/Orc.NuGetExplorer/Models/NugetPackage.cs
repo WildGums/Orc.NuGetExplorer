@@ -197,7 +197,7 @@
 
         private IList<string> SplitAuthors(string authors)
         {
-            if(!string.IsNullOrWhiteSpace(authors))
+            if (!string.IsNullOrWhiteSpace(authors))
             {
                 return authors.Split(',');
             }

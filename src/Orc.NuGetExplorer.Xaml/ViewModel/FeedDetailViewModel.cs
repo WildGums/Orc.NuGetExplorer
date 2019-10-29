@@ -1,7 +1,4 @@
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Providers;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.MVVM;

@@ -1,11 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Services;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using NuGet.Configuration;
+    using NuGet.Protocol.Core.Types;
 
     public class SourceContext : IDisposable
     {

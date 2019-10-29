@@ -11,12 +11,12 @@
         mc:Ignorable="d"
         xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
         Title="MainWindow" d:DesignWidth="1000">
-    <!--<i:Interaction.Behaviors>
+    <i:Interaction.Behaviors>
         <behaviors:AnimatedOverlayBehavior IsEnabled="False">
             <behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
-                -->
+                
     <!--container for content shown by overlay-->
-    <!--
+    
                 <Grid x:Name="PART_ActiveContainer"
                     Grid.Row="0"
                     Grid.RowSpan="3"
@@ -26,9 +26,9 @@
                     FocusVisualStyle="{x:Null}" />
             </behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
             <behaviors:AnimatedOverlayBehavior.OverlayGrid>
-                -->
-    <!--  overlay effect container  -->
-    <!--
+                
+      <!--overlay effect container-->  
+    
                 <Grid x:Name="PART_OverlayBox"
                     Grid.Row="0"
                     Grid.RowSpan="3"
@@ -72,12 +72,12 @@
                 </Viewbox>
             </behaviors:AnimatedOverlayBehavior.OverlayContent>
         </behaviors:AnimatedOverlayBehavior>
-    </i:Interaction.Behaviors>-->
+    </i:Interaction.Behaviors>
 
     <Grid Width="1100" Margin="0 0 0 30" Name="TopGrid">
 
         <Grid.Resources>
-            <!--<mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>-->
+            <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -89,9 +89,9 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <!--<local:ExplorerTopBarView Grid.ColumnSpan="2" x:Name="TopBar"
+        <local:ExplorerTopBarView Grid.ColumnSpan="2" x:Name="TopBar"
                                       UsedOn="{Binding ElementName=ExplorerPagesTabControl}"
-                                      DataContext="{Binding Settings}"/>-->
+                                      DataContext="{Binding Settings}"/>
 
         <orc:TabControl Name="ExplorerPagesTabControl"
                         Grid.Column="0" Grid.Row="1"
@@ -114,7 +114,7 @@
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <!--<local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=OneWayToSource}"/>-->
+                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=OneWayToSource}"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </orc:TabControl>

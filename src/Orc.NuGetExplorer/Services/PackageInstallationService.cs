@@ -1,5 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
@@ -16,12 +22,6 @@
     using NuGetExplorer.Loggers;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     public class PackageInstallationService : IPackageInstallationService
     {

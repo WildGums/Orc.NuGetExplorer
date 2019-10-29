@@ -45,8 +45,6 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
 
-        serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
-
         serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
 
         var appCache = new ApplcationCacheProvider();

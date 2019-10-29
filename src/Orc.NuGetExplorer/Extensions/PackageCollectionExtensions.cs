@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Orc.NuGetExplorer.Packaging;
-    using NuGet.Packaging.Core;
-    using NuGet.Versioning;
     using System;
     using System.Linq;
+    using NuGet.Packaging.Core;
+    using NuGet.Versioning;
+    using Orc.NuGetExplorer.Packaging;
 
     public static class PackageCollectionExtensions
     {

@@ -1,8 +1,4 @@
-﻿using Orc.NuGetExplorer.Cache;
-using Orc.NuGetExplorer.Models;
-using Orc.NuGetExplorer.Services;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Configuration;
@@ -13,7 +9,6 @@ namespace Orc.NuGetExplorer.ViewModels
     using NuGetExplorer.Cache;
     using NuGetExplorer.Models;
     using NuGetExplorer.Services;
-    using Orc.Notifications;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -36,10 +31,10 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private readonly NugetConfigurationService _configurationService;
 
-        private readonly INotificationService _notificationService;
+        //private readonly INotificationService _notificationService;
 
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, IConfigurationService configurationService,
-            INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService, INotificationService notificationService)
+            INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => uIVisualizerService);
@@ -48,7 +43,6 @@ namespace Orc.NuGetExplorer.ViewModels
             Argument.IsNotNull(() => nuGetCacheManager);
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => notificationService);
 
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;
@@ -56,7 +50,6 @@ namespace Orc.NuGetExplorer.ViewModels
             _nuGetCacheManager = nuGetCacheManager;
             _pleaseWaitService = pleaseWaitService;
             _messageService = messageService;
-            _notificationService = notificationService;
 
             Settings = settings;
 

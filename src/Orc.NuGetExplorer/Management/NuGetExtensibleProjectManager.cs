@@ -1,8 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using Orc.NuGetExplorer.Packaging;
-    using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Services;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using NuGet.Configuration;
@@ -12,12 +14,10 @@
     using NuGet.ProjectManagement;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Orc.NuGetExplorer.Management.EventArgs;
+    using Orc.NuGetExplorer.Packaging;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
 
     public class NuGetExtensibleProjectManager : INuGetExtensibleProjectManager
     {

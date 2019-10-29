@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
-    using NuGetExplorer.Pagination;
     using System.Threading.Tasks;
+    using NuGetExplorer.Pagination;
 
     public interface IDefferedPackageLoaderService
     {

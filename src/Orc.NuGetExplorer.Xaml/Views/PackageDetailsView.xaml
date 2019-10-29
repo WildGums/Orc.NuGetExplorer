@@ -71,9 +71,9 @@
                   SelectedValue="{Binding SelectedVersion}"
                   SelectedIndex="{Binding SelectedVersionIndex}"
                   ItemsSource="{Binding VersionsCollection}">
-            <i:Interaction.Behaviors>
+            <!--<i:Interaction.Behaviors>
                 <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>
-            </i:Interaction.Behaviors>
+            </i:Interaction.Behaviors>-->
         </ComboBox>
 
 

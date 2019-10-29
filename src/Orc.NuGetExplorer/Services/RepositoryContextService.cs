@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Management;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class RepositoryContextService : IRepositoryContextService
     {
@@ -22,7 +22,7 @@
 
         public SourceRepository GetRepository(PackageSource source)
         {
-            if(source is null)
+            if (source is null)
             {
                 return null;
             }

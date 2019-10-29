@@ -1,5 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using NuGet.Packaging.Core;
     using NuGet.Protocol;
@@ -8,11 +13,6 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     public class LocalPackagesLoaderService : IPackagesLoaderService
     {

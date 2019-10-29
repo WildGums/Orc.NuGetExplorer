@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using Catel;
-    using NuGet.Packaging;
-    using NuGet.Packaging.Core;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel;
+    using NuGet.Packaging;
+    using NuGet.Packaging.Core;
     using Orc.NuGetExplorer.Management.EventArgs;
 
     public interface INuGetExtensibleProjectManager
