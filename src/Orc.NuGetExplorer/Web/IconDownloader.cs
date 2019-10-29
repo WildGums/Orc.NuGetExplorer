@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Web
 {
-    using Catel.Logging;
     using System;
     using System.Net;
     using System.Threading.Tasks;
+    using Catel.Logging;
 
     public class IconDownloader
     {

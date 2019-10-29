@@ -6,7 +6,7 @@
 
     public class CombinedNuGetSource : INuGetSource
     {
-        private List<INuGetSource> _sourceList = new List<INuGetSource>();
+        private readonly List<INuGetSource> _sourceList = new List<INuGetSource>();
 
         public CombinedNuGetSource(IReadOnlyList<INuGetSource> feedList)
         {
@@ -27,6 +27,10 @@
         public bool IsAccessible => IsAllFeedsAccessible();
 
         public bool IsVerified => IsAllVerified();
+
+        public bool IsEnabled => true;
+
+        public bool IsOfficial { get; set; }
 
         public bool IsSelected { get; set; }
 

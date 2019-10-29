@@ -1,5 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Orc.NuGetExplorer.Controls"
+                    xmlns:catel="http://schemas.catelproject.com">
 
 
     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
@@ -30,13 +32,13 @@
         </Setter>
     </Style>
 
-    <!--<Style TargetType="local:RotationProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+    <Style TargetType="local:RotationProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
         <Setter Property="Template" Value="{StaticResource RotationProgressBar}"/>
-    </Style>-->
+    </Style>
 
-    <!--<Style TargetType="local:Badged">
+    <Style TargetType="local:Badged">
         <Setter Property="Template" Value="{StaticResource Badged}"/>
-    </Style>-->
+    </Style>
 
     <Style x:Key="DefaultListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>

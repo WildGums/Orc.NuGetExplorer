@@ -1,6 +1,4 @@
-using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using Catel;
     using Catel.Fody;

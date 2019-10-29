@@ -8,7 +8,7 @@
              xmlns:nugcontrols="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:catel="http://schemas.catelproject.com"
-             xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
+             xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors;assembly=Orc.NuGetExplorer.Xaml"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>

@@ -6,6 +6,7 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Example;
 using Orc.NuGetExplorer.Management;
@@ -34,7 +35,7 @@ public static class ModuleInitializer
         viewModelLocator.Register<PackageDetailsView, PackageDetailsViewModel>();
 
         serviceLocator.RegisterType<IEchoService, EchoService>();
-       // serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
+        //serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
         Catel.Logging.LogManager.IsDebugEnabled = true;
 
@@ -42,15 +43,9 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
 
-        serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();
         serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
 
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
-
-        serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
-
-        serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
-        serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();
 
         serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
 
@@ -62,7 +57,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ISourceRepositoryProvider, SourceRepositoryProvider>();
         serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
 
-        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
+        serviceLocator.RegisterType<Orc.NuGetExplorer.Services.IRepositoryService, RepositoryService>();
 
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
         serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();

@@ -13,10 +13,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <catel:UserControl.Resources>
-        <!--<converters:UriToBitmapConverter x:Key="UriToBitmapConverter"/>
+        <converters:UriToBitmapConverter x:Key="UriToBitmapConverter"/>
         <converters:PackageStatusEnumToBoolConverter x:Key="PackageStatusEnumToBoolConverter"/>
         <converters:PackageStatusEnumToBrushConverter x:Key="PackageStatusEnumToBrushConverter"/>
-        <template:BadgeContentTemplateSelector x:Key="BadgeContentTemplateSelector" />-->
+        <!--<template:BadgeContentTemplateSelector x:Key="BadgeContentTemplateSelector" />     -->
 
     </catel:UserControl.Resources>
     <Grid x:Name="PageGrid">
@@ -25,13 +25,13 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         
-        <!--<Grid.Resources>
+        <Grid.Resources>
             <mvvm:BindingProxy Data="{Binding }" x:Key="ContextProxy"/>
         </Grid.Resources>
 
-        <views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+        <!--<views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                              DataContext="{Binding}"
-                             Margin="0 0 0 2"/>
+                             Margin="0 0 0 2"/>-->
 
 
         <nugetc:InfiniteScrollListBox x:Name="infinitybox"
@@ -48,11 +48,11 @@
             <nugetc:InfiniteScrollListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        --><!--<Border BorderThickness="1"
+                        <Border BorderThickness="1"
                                 BorderBrush="Black"
                                 Effect="{StaticResource BasicShadowDepth}">
                         
-                        </Border>--><!--
+                        </Border>
 
                         <Grid Margin="0 8 0 0"
                               Height="96">
@@ -190,7 +190,7 @@
                 <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
                 </Style>
             </nugetc:InfiniteScrollListBox.ItemContainerStyle>
-        </nugetc:InfiniteScrollListBox>-->
+        </nugetc:InfiniteScrollListBox>
         
         <!--loading indication -->
         <Border Panel.ZIndex="1" Height="80"
@@ -201,13 +201,13 @@
                 BorderThickness="0 2 0 1"
                 Visibility="{Binding ElementName=infinitybox, Path=IsCommandExecuting, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             <StackPanel>
-                <!--<Button Command="{Binding Data.CancelPageLoading, Source={StaticResource ContextProxy}}" 
+                <Button Command="{Binding Data.CancelPageLoading, Source={StaticResource ContextProxy}}" 
                         Width="60" Height="20" 
                         Margin="0 10 0 0">
                     <Button.Content>
                         <TextBlock>Cancel</TextBlock>
                     </Button.Content>
-                </Button>-->
+                </Button>
 
                 <Viewbox Height="30" Width="30"
                          Margin="0 8 0 0">

@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public sealed class PackageCollectionItem : PackageIdentity
     {

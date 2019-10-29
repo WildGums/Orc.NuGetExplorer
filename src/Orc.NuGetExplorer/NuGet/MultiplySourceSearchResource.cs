@@ -1,12 +1,12 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using NuGet.Common;
-    using NuGet.Protocol.Core.Types;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using NuGet.Common;
+    using NuGet.Protocol.Core.Types;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {

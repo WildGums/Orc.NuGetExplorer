@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Web
 {
-    using Catel.Logging;
     using System;
     using System.Net;
+    using Catel.Logging;
 
     public class HttpWebExceptionHandler : IHttpExceptionHandler<WebException>
     {

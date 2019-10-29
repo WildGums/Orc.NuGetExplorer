@@ -1,5 +1,5 @@
-﻿using NuGet.Configuration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NuGet.Configuration;
 
 namespace Orc.NuGetExplorer.Models
 {

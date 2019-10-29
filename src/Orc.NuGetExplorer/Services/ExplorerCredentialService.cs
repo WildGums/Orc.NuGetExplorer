@@ -1,15 +1,15 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
-    using NuGet.Common;
-    using NuGet.Configuration;
-    using NuGet.Credentials;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel;
+    using NuGet.Common;
+    using NuGet.Configuration;
+    using NuGet.Credentials;
 
     public class ExplorerCredentialService : ICredentialService
     {

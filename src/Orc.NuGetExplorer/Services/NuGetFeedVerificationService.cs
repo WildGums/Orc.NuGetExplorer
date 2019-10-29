@@ -1,6 +1,12 @@
 ﻿
-namespace Orc.NuGetExplorer.Services
+namespace Orc.NuGetExplorer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
@@ -10,12 +16,8 @@ namespace Orc.NuGetExplorer.Services
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Loggers;
     using NuGetExplorer.Web;
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using LibConfiguration = NuGet.Configuration;
+    using NuGetProtocolTypes = NuGet.Protocol.Core.Types;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
@@ -51,13 +53,13 @@ namespace Orc.NuGetExplorer.Services
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            var v3_providers = Repository.Provider.GetCoreV3();
+            var v3_providers = NuGetProtocolTypes.Repository.Provider.GetCoreV3();
 
             try
             {
                 var packageSource = new PackageSource(source);
 
-                var repoProvider = new SourceRepositoryProvider(Settings.LoadDefaultSettings(root: null), v3_providers);
+                var repoProvider = new SourceRepositoryProvider(LibConfiguration.Settings.LoadDefaultSettings(root: null), v3_providers);
 
                 var repository = repoProvider.CreateRepository(packageSource);
 
@@ -133,7 +135,7 @@ namespace Orc.NuGetExplorer.Services
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            var v3_providers = Repository.Provider.GetCoreV3();
+            var v3_providers = NuGetProtocolTypes.Repository.Provider.GetCoreV3();
             try
             {
                 var packageSource = new PackageSource(source);

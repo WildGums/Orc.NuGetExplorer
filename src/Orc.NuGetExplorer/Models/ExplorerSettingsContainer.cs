@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
-    using Catel.Data;
-    using NuGet.Configuration;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Data;
+    using NuGet.Configuration;
 
     public class ExplorerSettingsContainer : ModelBase, INuGetSettings
     {

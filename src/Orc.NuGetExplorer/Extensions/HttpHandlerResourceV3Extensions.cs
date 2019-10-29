@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using NuGet.Configuration;
     using NuGet.Protocol;
-    using System;
 
     public static class HttpHandlerResourceV3Extensions
     {

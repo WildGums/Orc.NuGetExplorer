@@ -1,6 +1,6 @@
-﻿using Catel.Logging;
+﻿using System;
+using Catel.Logging;
 using NuGet.Frameworks;
-using System;
 
 namespace Orc.NuGetExplorer
 {

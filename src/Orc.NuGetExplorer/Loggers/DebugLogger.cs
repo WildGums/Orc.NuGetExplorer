@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Loggers
 {
+    using System.Threading.Tasks;
     using Catel.Logging;
     using NuGet.Common;
-    using System.Threading.Tasks;
 
     public class DebugLogger : ILogger
     {

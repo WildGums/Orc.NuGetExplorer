@@ -1,8 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
-    using NuGet.Credentials;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using NuGet.Credentials;
 
     public interface ICredentialProviderLoaderService
     {

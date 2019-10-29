@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
-    using Catel;
-    using NuGet.Common;
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using Catel;
+    using NuGet.Common;
 
     public class FileDirectoryService : IFileDirectoryService
     {

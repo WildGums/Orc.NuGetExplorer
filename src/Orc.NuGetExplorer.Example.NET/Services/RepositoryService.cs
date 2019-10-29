@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Management;
-
-namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services
 {
     using Catel;
     using NuGet.Configuration;

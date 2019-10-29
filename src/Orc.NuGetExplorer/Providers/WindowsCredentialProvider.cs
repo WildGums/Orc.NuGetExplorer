@@ -1,17 +1,15 @@
-﻿using Orc.NuGetExplorer.Native;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
+    using System.Net;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
     using Catel.Logging;
     using NuGet.Configuration;
     using NuGet.Credentials;
     using NuGetExplorer.Native;
-    using System;
-    using System.Net;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     public class WindowsCredentialProvider : ICredentialProvider
     {

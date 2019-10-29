@@ -8,8 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Themes/Brushes.xaml"/>
-                <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Controls/RotationProgressBar.xaml"/>
-                <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Controls/Badged.xaml"/>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/RotationProgressBar.xaml"/>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/Badged.xaml"/>
                 <ResourceDictionary  Source="/Orc.NuGetExplorer.Example.NET;component/Themes/Generic.xaml"/>
                 <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Themes/MaterialIcons.xaml"/>
                 <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Themes/Shadows.xaml"/>

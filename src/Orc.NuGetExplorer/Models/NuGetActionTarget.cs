@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
-    using Catel.Data;
     using System.Collections.Generic;
+    using Catel.Data;
 
     public class NuGetActionTarget : ModelBase
     {

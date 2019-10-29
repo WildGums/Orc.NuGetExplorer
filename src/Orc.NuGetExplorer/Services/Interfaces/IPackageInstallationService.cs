@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
-    using NuGet.Packaging.Core;
-    using NuGet.Protocol.Core.Types;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using NuGet.Packaging.Core;
+    using NuGet.Protocol.Core.Types;
 
     public interface IPackageInstallationService
     {

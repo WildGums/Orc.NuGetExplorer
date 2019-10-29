@@ -1,14 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Catel.Data;
     using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Orc.NuGetExplorer.Enums;
     using Packaging;
 
@@ -35,7 +35,7 @@
             Summary = packageMetadata.Summary;
 
             LastVersion = packageMetadata.Identity.Version;
-            
+
             switch (fromPage)
             {
                 case MetadataOrigin.Browse:
