@@ -75,7 +75,7 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox VerticalAlignment="Center" Margin="4 2 4 2"
-                                  IsChecked="{Binding IsActive}"/>
+                                  IsChecked="{Binding IsEnabled}"/>
 
                             <TextBlock Text="{Binding Path=., NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
                                    Grid.Column="1"
@@ -95,8 +95,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                    </Style>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource DefaultListBoxItemStyle}"/>
                 </ListBox.ItemContainerStyle>
             </ListBox>
 

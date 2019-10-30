@@ -73,9 +73,9 @@
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private Task OnSettingsExecute()
+        private async Task OnSettingsExecute()
         {
-            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+            await _packagesUiService.ShowPackagesSourceSettingsAsync();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }

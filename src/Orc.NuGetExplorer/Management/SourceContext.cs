@@ -23,13 +23,13 @@
             }
         }
 
-        public SourceContext(IReadOnlyList<PackageSource> packageSources, IRepositoryContextService repositoryService)
+        public SourceContext(IReadOnlyList<PackageSource> packageSources)
         {
             PackageSources = packageSources;
             ActiveContext.Push(this);
         }
 
-        public SourceContext(IReadOnlyList<SourceRepository> sourceRepositories, IRepositoryContextService repositoryService)
+        public SourceContext(IReadOnlyList<SourceRepository> sourceRepositories)
         {
             Repositories = sourceRepositories;
             ActiveContext.Push(this);

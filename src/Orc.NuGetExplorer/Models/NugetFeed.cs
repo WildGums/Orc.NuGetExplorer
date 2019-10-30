@@ -56,6 +56,39 @@
 
         public bool IsSelected { get; set; }
 
+        public bool IsOfficial { get; set; }
+
+        #region IDataErrorInfo
+        public string Error { get; private set; }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(Name):
+
+                        if (!IsNameValid)
+                        {
+                            return "Feed name cannot be empty";
+                        }
+                        break;
+
+                    case nameof(Source):
+
+                        if (GetUriSource() == null)
+                        {
+                            return "Incorrect feed source can`t be recognized as Uri";
+                        }
+                        break;
+                }
+
+                return String.Empty;
+            }
+        }
+        #endregion
+
         public override string ToString()
         {
             return $"{Name}\n{Source}";
@@ -112,36 +145,6 @@
             };
         }
 
-        public string Error { get; private set; }
-
-        public bool IsOfficial { get; set; }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch (columnName)
-                {
-                    case nameof(Name):
-
-                        if (!IsNameValid)
-                        {
-                            return "Feed name cannot be empty";
-                        }
-                        break;
-
-                    case nameof(Source):
-
-                        if (GetUriSource() == null)
-                        {
-                            return "Incorrect feed source can`t be recognized as Uri";
-                        }
-                        break;
-                }
-
-                return String.Empty;
-            }
-        }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {

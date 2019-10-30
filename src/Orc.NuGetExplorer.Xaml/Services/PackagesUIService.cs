@@ -34,6 +34,11 @@ namespace Orc.NuGetExplorer
         {
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
         }
+
+        public async Task ShowPackagesSourceSettingsAsync()
+        {
+            await _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+        }
         #endregion
     }
 }

@@ -41,7 +41,7 @@
         {
             var repo = GetRepository(source);
 
-            var context = new SourceContext(new List<SourceRepository>() { repo }, this);
+            var context = new SourceContext(new List<SourceRepository>() { repo });
 
             return context;
         }
@@ -51,7 +51,7 @@
             //acquire for all by default
             IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().ToList();
 
-            var context = new SourceContext(repos, this);
+            var context = new SourceContext(repos);
 
             return context;
         }
