@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
-    using Catel.MVVM.Converters;
-    using NuGet.Frameworks;
     using System;
     using System.Windows;
+    using Catel.MVVM.Converters;
+    using NuGet.Frameworks;
 
     public class NuGetFrameworkToVisibilityConverter : ValueConverterBase<NuGetFramework, Visibility>
     {

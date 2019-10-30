@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
-    using Catel.MVVM;
     using System.Threading.Tasks;
+    using Catel.MVVM;
 
     public class DialogHostViewModel : ViewModelBase, IDialogViewModel
     {

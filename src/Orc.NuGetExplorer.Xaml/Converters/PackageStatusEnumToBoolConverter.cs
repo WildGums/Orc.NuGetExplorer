@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
+    using System;
     using Catel.MVVM.Converters;
     using NuGetExplorer.Enums;
-    using System;
 
     public class PackageStatusEnumToBoolConverter : ValueConverterBase<PackageStatus, bool>
     {

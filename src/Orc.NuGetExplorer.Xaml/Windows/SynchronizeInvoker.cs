@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
-    using Catel.Services;
     using System;
     using System.ComponentModel;
     using System.Threading;
     using System.Windows.Threading;
+    using Catel.Services;
 
     public class SynchronizeInvoker : ISynchronizeInvoke
     {

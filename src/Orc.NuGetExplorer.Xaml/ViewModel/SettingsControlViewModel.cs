@@ -1,19 +1,19 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Services;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
     using Catel.Configuration;
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
 
     public class SettingsControlViewModel : ViewModelBase
     {

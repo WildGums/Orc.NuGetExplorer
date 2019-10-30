@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer.Controls
         #region Properties
         public FlowDocument BindableDocument
         {
-            get { return (FlowDocument) GetValue(BindableDocumentProperty); }
+            get { return (FlowDocument)GetValue(BindableDocumentProperty); }
             set { SetValue(BindableDocumentProperty, value); }
         }
 
@@ -28,9 +28,9 @@ namespace Orc.NuGetExplorer.Controls
         #region Methods
         private static void OnBindableDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var thisControl = (BindableRichTextBox) d;
+            var thisControl = (BindableRichTextBox)d;
 
-            thisControl.Document = (e.NewValue == null) ? new FlowDocument() : (FlowDocument) e.NewValue;
+            thisControl.Document = (e.NewValue == null) ? new FlowDocument() : (FlowDocument)e.NewValue;
         }
         #endregion        
     }

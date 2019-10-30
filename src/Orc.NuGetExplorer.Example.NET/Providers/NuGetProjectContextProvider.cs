@@ -1,13 +1,14 @@
-﻿using Catel;
-using Catel.IoC;
-using NuGet.ProjectManagement;
-using Orc.NuGetExplorer.Management;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
+    using Catel;
+    using Catel.IoC;
+    using NuGet.ProjectManagement;
+    using Orc.NuGetExplorer.Management;
+
+
     public class NuGetProjectContextProvider : INuGetProjectContextProvider
     {
-        ITypeFactory _typeFactory;
+        private readonly ITypeFactory _typeFactory;
 
         public NuGetProjectContextProvider(ITypeFactory typeFactory)
         {

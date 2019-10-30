@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Controls
 {
-    using Catel.Logging;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
+    using Catel.Logging;
 
     public class RotationProgressBar : ProgressBar
     {

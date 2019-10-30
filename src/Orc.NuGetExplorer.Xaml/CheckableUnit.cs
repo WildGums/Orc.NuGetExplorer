@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel.Data;
     using System;
+    using Catel.Data;
 
     public class CheckableUnit<T> : ObservableObject
     {

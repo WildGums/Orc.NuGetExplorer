@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer_old.ViewModels
 {
     using System.ComponentModel;
-    using System.IO.Packaging;
     using System.Threading.Tasks;
     using System.Windows.Documents;
 

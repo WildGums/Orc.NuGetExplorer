@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
-    using Catel.Logging;
-    using Catel.MVVM.Converters;
     using System;
     using System.Collections;
     using System.Windows;
     using System.Windows.Data;
+    using Catel.Logging;
+    using Catel.MVVM.Converters;
 
     [ValueConversion(typeof(ICollection), typeof(Visibility))]
     public class EmptyCollectionToVisibleConverter : ValueConverterBase<ICollection, Visibility>

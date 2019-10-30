@@ -1,5 +1,3 @@
-using Orc.NuGetExplorer.ViewModels;
-
 namespace Orc.NuGetExplorer.Views
 {
     using NuGetExplorer.ViewModels;

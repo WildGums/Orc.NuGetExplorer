@@ -1,7 +1,7 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
-    using NuGet.Protocol.Core.Types;
     using System.Threading.Tasks;
+    using NuGet.Protocol.Core.Types;
 
     public interface IPackageMetadataMediaDownloadService
     {

@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using Catel;
-    using Catel.MVVM;
-    using NuGetExplorer.Management;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
+    using Catel;
+    using Catel.MVVM;
+    using NuGetExplorer.Management;
 
     public class ExtensiblesViewModel : ViewModelBase
     {

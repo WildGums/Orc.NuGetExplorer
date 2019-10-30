@@ -1,8 +1,8 @@
 namespace Orc.NuGetExplorer.Behaviors
 {
-    using Catel.Windows.Interactivity;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
+    using Catel.Windows.Interactivity;
 
     public class SelectFirstItemOnContextBehavior : BehaviorBase<ListBox>
     {

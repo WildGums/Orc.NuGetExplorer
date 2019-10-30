@@ -9,6 +9,7 @@
     using Catel.Configuration;
     using NuGet.Configuration;
 
+#pragma warning disable CS0618
     public class ExplorerSettings : ISettings
     {
         private readonly IConfigurationService _configurationService;
@@ -59,7 +60,8 @@
             return _masterKeys.Values.Cast<string>().ToList();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
+
         public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
         {
             throw new NotImplementedException();
@@ -85,8 +87,9 @@
             throw new NotImplementedException();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
         public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
+
         {
             throw new NotImplementedException();
         }
@@ -147,7 +150,7 @@
             throw new NotImplementedException();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
         public void SetNestedSettingValues(string section, string subsection, IList<SettingValue> values)
         {
             throw new NotImplementedException();
@@ -163,19 +166,19 @@
             throw new NotImplementedException();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
         public void SetValues(string section, IReadOnlyList<SettingValue> values)
         {
             throw new NotImplementedException();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
         public void UpdateSections(string section, IReadOnlyList<SettingValue> values)
         {
             throw new NotImplementedException();
         }
 
-        [Obsolete]
+        [ObsoleteEx]
         public void UpdateSubsections(string section, string subsection, IReadOnlyList<SettingValue> values)
         {
             throw new NotImplementedException();
@@ -238,4 +241,6 @@
 
         #endregion
     }
+
+#pragma warning restore CS0618 // Type or member is obsolete
 }

@@ -1,7 +1,7 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
-    using NuGetExplorer.Windows;
     using System.Threading.Tasks;
+    using NuGetExplorer.Windows;
 
     public interface IMessageDialogService
     {

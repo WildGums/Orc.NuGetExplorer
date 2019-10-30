@@ -3,6 +3,10 @@ using Catel.IoC;
 using Catel.Services;
 using NuGet.Configuration;
 using NuGet.Credentials;
+using NuGet.Frameworks;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Management;
@@ -21,6 +25,10 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
+        serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
+        serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
+        serviceLocator.RegisterType<ISourceRepositoryProvider, SourceRepositoryProvider>();
+        serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
 
         serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();
         serviceLocator.RegisterType<ISettings, ExplorerSettings>();
@@ -52,6 +60,8 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
         serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();
+        serviceLocator.RegisterType<IFileDirectoryService, FileDirectoryService>();
+        serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
 
         serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
         serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
@@ -64,8 +74,6 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
-
-        var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();

@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Controls
 {
-    using Catel.MVVM;
-    using NuGetExplorer.Controls.Helpers;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using Catel.MVVM;
+    using NuGetExplorer.Controls.Helpers;
 
     public class InfiniteScrollListBox : ListBox
     {

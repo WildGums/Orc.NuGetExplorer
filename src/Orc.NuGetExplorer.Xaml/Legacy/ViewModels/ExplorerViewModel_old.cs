@@ -28,7 +28,7 @@ namespace Orc.NuGetExplorer_old.ViewModels
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        
+
         private readonly IDispatcherService _dispatcherService;
         private readonly IPackageBatchService _packageBatchService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
@@ -192,7 +192,7 @@ namespace Orc.NuGetExplorer_old.ViewModels
 
         private void SetActionName()
         {
-            ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository?.OperationType??PackageOperationType.None);
+            ActionName = _packageCommandService.GetActionName(Navigator.SelectedRepository?.OperationType ?? PackageOperationType.None);
         }
 
         private void OnSelectedRepositoryChanged()
@@ -308,7 +308,7 @@ namespace Orc.NuGetExplorer_old.ViewModels
                         {
                             using (SearchResult.PackageList.SuspendChangeNotifications())
                             {
-                                CollectionExtensions.AddRange(((ICollection<IPackageDetails>)SearchResult.PackageList), packages);
+                                CollectionExtensions.AddRange(SearchResult.PackageList, packages);
                             }
                         });
                     }

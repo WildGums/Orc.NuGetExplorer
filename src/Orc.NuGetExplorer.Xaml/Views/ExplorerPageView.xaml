@@ -29,9 +29,9 @@
             <mvvm:BindingProxy Data="{Binding }" x:Key="ContextProxy"/>
         </Grid.Resources>
 
-        <!--<views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+        <views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                              DataContext="{Binding}"
-                             Margin="0 0 0 2"/>-->
+                             Margin="0 0 0 2"/>
 
 
         <nugetc:InfiniteScrollListBox x:Name="infinitybox"

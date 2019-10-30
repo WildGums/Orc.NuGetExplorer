@@ -1,14 +1,14 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
-    using Orc.NuGetExplorer.Cache;
-    using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Web;
-    using Catel;
-    using Catel.Logging;
-    using NuGet.Protocol.Core.Types;
     using System;
     using System.Net;
     using System.Threading.Tasks;
+    using Catel;
+    using Catel.Logging;
+    using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Cache;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Web;
 
     public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownloadService
     {

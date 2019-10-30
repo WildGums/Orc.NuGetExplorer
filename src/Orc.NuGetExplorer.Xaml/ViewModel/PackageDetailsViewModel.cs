@@ -1,5 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Data;
     using Catel.Fody;
@@ -11,17 +16,9 @@
     using NuGetExplorer.Enums;
     using NuGetExplorer.Management;
     using NuGetExplorer.Models;
-    using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using NuGetExplorer.Services;
     using NuGetExplorer.Windows;
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Catel.IoC;
 
     public class PackageDetailsViewModel : ViewModelBase
     {
@@ -66,7 +63,7 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
-     //   [Expose("Status")]
+        //   [Expose("Status")]
         public NuGetPackage Package { get; set; }
 
         public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
@@ -100,7 +97,7 @@
 
         private void OnPackageChanged()
         {
-            if(Package is null)
+            if (Package is null)
             {
                 return;
             }
@@ -109,12 +106,12 @@
             ApplyPackageAsync();
 #pragma warning restore 4014
         }
-        
+
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
 
-            if(Package is null)
+            if (Package is null)
             {
                 return;
             }
@@ -133,7 +130,7 @@
                 //select identity version
                 SelectedVersion = SelectedVersion ?? Package?.Identity.Version;
 
-                VersionsCollection = new ObservableCollection<NuGetVersion>() {SelectedVersion};
+                VersionsCollection = new ObservableCollection<NuGetVersion>() { SelectedVersion };
 
                 NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
 

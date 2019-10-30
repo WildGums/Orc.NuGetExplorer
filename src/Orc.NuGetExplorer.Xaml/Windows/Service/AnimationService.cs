@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Windows.Service
+﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
     using System.Linq;

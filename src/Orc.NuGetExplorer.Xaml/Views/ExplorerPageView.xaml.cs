@@ -1,8 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
-    using Catel.MVVM;
-    using Catel.MVVM.Views;
     using System.Windows;
+    using Catel.MVVM.Views;
     using Models;
 
     /// <summary>
@@ -12,7 +11,7 @@
     {
         private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
         private const string ArrowDownResourceKey = "ArrowDownBadgeContent";
-        
+
         private readonly FrameworkElement _arrowUpResource;
         private readonly FrameworkElement _arrowDownResource;
 

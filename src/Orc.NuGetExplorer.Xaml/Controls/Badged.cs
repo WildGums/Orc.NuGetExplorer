@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Controls
 {
-    using Catel.Logging;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
+    using Catel.Logging;
 
     [TemplatePart(Name = BadgeContentPartName, Type = typeof(FrameworkElement))]
     [TemplatePart(Name = BadgePartName, Type = typeof(FrameworkElement))]

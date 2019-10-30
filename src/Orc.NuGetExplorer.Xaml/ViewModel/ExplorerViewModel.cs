@@ -1,5 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.ObjectModel;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
     using Catel;
     using Catel.Configuration;
     using Catel.IoC;
@@ -9,9 +12,6 @@
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Services;
-    using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
     using Orc.NuGetExplorer.ViewModel;
 
     public class ExplorerViewModel : ViewModelBase

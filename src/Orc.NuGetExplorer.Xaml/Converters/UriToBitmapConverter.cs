@@ -1,13 +1,13 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
+    using System;
+    using System.Windows;
+    using System.Windows.Media.Imaging;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM.Converters;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Providers;
-    using System;
-    using System.Windows;
-    using System.Windows.Media.Imaging;
 
     public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
     {

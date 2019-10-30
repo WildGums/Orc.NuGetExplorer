@@ -31,51 +31,23 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
-        viewModelLocator.Register<PackageDetailsView, PackageDetailsViewModel>();
-
         serviceLocator.RegisterType<IEchoService, EchoService>();
         //serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
         Catel.Logging.LogManager.IsDebugEnabled = true;
-
         Catel.Logging.LogManager.AddDebugListener();
 
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
 
-        serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
+        serviceLocator.RegisterInstance<IApplicationCacheProvider>(new ApplcationCacheProvider());
 
-        serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
-
-        var appCache = new ApplcationCacheProvider();
-
-        serviceLocator.RegisterInstance<IApplicationCacheProvider>(appCache);
-        serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();
-
-        serviceLocator.RegisterType<ISourceRepositoryProvider, SourceRepositoryProvider>();
         serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
-
         serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
-
-        serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
-        serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
-
-        serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
-
-        serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
-        serviceLocator.RegisterType<IMessageDialogService, MessageDialogService>();
-
-        serviceLocator.RegisterType<IFileDirectoryService, FileDirectoryService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
 
-        serviceLocator.RegisterType<IAnimationService, AnimationService>();
-
-        serviceLocator.RegisterType<IProgressManager, ProgressManager>();
-
 
         //add all project extensions
-
         var manager = serviceLocator.ResolveType<IExtensibleProjectLocator>();
 
         var directoryService = serviceLocator.ResolveType<IFileDirectoryService>();

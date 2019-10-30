@@ -120,10 +120,10 @@
         </orc:TabControl>
 
         <!--detail of current selected package -->
-        <!--<local:PackageDetailsView Package="{Binding SelectedPackageItem}"
+        <local:PackageDetailsView Package="{Binding SelectedPackageItem}"
                                   Visibility="{Binding Path=., Converter={catel:ReferenceToHidingVisibilityConverter}}"
                                   Grid.Row="1" Grid.Column="1"
-                                  MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />-->
+                                  MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 
     </Grid>
 </catel:DataWindow>

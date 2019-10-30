@@ -1,18 +1,15 @@
-﻿using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Windows;
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using Catel;
-    using Catel.Logging;
-    using Catel.MVVM;
-    using NuGetExplorer.Management;
-    using NuGetExplorer.Windows;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel;
+    using Catel.Logging;
+    using Catel.MVVM;
+    using NuGetExplorer.Management;
+    using NuGetExplorer.Windows;
 
     public class PageActionBarViewModel : ViewModelBase
     {

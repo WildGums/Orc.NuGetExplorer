@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Windows.Dialogs
 {
-    using NuGet.ProjectManagement;
     using System;
+    using NuGet.ProjectManagement;
 
     public class FileConflictDialogOption : IDialogOption<FileConflictAction>
     {

@@ -1,10 +1,10 @@
-﻿using Catel.Logging;
-using Catel.MVVM;
-using Catel.Windows;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Catel.Logging;
+using Catel.MVVM;
+using Catel.Windows;
 
 namespace Orc.NuGetExplorer.Windows
 {

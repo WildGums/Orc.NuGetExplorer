@@ -1,17 +1,14 @@
-﻿using Orc.NuGetExplorer.Windows.Service;
-
-namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows
 {
+    using System;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Threading;
     using Catel;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Reflection;
     using Catel.Services;
-    using NuGetExplorer.Windows.Service;
-    using System;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Threading;
 
     /// <summary>
     /// Synchronous implementation of Catel IUIVisualizerService
@@ -20,9 +17,9 @@ namespace Orc.NuGetExplorer.Windows
     /// </summary>
     public class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
     {
-        private readonly IViewLocator _viewLocator;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly IViewLocator _viewLocator;
 
         public SynchronousUIVisualizerService(IViewLocator viewLocator) : base(viewLocator)
         {

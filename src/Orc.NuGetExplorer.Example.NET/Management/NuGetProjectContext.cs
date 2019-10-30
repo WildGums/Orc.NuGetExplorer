@@ -1,8 +1,4 @@
-﻿using Orc.NuGetExplorer.Loggers;
-using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.Windows.Dialogs;
-
-namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management
 {
     using Catel.Logging;
     using NuGet.Common;

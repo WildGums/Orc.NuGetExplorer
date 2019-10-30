@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
-    using Catel.MVVM.Converters;
     using System;
+    using Catel.MVVM.Converters;
 
     public class BoolToIntConverter : ValueConverterBase<bool, int>
     {

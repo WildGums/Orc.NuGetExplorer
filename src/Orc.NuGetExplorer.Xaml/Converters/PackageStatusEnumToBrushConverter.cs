@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
-    using Catel.MVVM.Converters;
-    using NuGetExplorer.Enums;
     using System;
     using System.Windows.Media;
+    using Catel.MVVM.Converters;
+    using NuGetExplorer.Enums;
 
     public class PackageStatusEnumToBrushConverter : ValueConverterBase<PackageStatus, Brush>
     {

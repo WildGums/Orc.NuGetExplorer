@@ -37,7 +37,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => pager);
 
-            var newIndex = pager.ItemIndex + pager.ItemsPerPage*stepValue;
+            var newIndex = pager.ItemIndex + pager.ItemsPerPage * stepValue;
             if (newIndex < 0)
             {
                 newIndex = 0;
@@ -81,8 +81,8 @@ namespace Orc.NuGetExplorer
 
         private static int GetLastPageIndex(Pager pager)
         {
-            var pagesCount = (int) Math.Ceiling(pager.ItemsCount/(double) pager.ItemsPerPage);
-            var i = (pagesCount - 1)*pager.ItemsPerPage;
+            var pagesCount = (int)Math.Ceiling(pager.ItemsCount / (double)pager.ItemsPerPage);
+            var i = (pagesCount - 1) * pager.ItemsPerPage;
             return i;
         }
 
@@ -96,8 +96,8 @@ namespace Orc.NuGetExplorer
             var rightItems = pager.ItemsCount - pager.ItemIndex;
             var leftItems = pager.ItemsCount - rightItems;
 
-            var totalRightPages = (int) Math.Ceiling(rightItems/(double) pager.ItemsPerPage) - 1;
-            var totalLeftPages = (int) Math.Ceiling(leftItems/(double) pager.ItemsPerPage);
+            var totalRightPages = (int)Math.Ceiling(rightItems / (double)pager.ItemsPerPage) - 1;
+            var totalLeftPages = (int)Math.Ceiling(leftItems / (double)pager.ItemsPerPage);
 
             var totalPagesCount = totalRightPages + totalLeftPages;
             var currentPage = totalLeftPages + 1;
@@ -157,7 +157,7 @@ namespace Orc.NuGetExplorer
 
             for (var i = leftPagesCount; i > 0; i--)
             {
-                pager.LeftPages.Add(new PagingItemInfo((currentPage - i).ToString(CultureInfo.InvariantCulture), -1*i));
+                pager.LeftPages.Add(new PagingItemInfo((currentPage - i).ToString(CultureInfo.InvariantCulture), -1 * i));
             }
         }
         #endregion

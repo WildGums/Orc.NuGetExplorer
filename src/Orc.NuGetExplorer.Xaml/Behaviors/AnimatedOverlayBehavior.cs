@@ -1,25 +1,23 @@
-﻿using Orc.NuGetExplorer.Windows.Service;
-
-namespace Orc.NuGetExplorer.Behaviors
+﻿namespace Orc.NuGetExplorer.Behaviors
 {
-    using Catel.IoC;
-    using Catel.Windows;
-    using Catel.Windows.Interactivity;
-    using NuGetExplorer.Windows.Service;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media.Animation;
+    using Catel.IoC;
+    using Catel.Windows;
+    using Catel.Windows.Interactivity;
+    using Orc.NuGetExplorer.Windows;
 
     public class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
-        private Grid topInternalGrid;
+        private Grid _topInternalGrid;
 
-        private SizeChangedEventHandler sizeHandler;
+        private SizeChangedEventHandler _sizeHandler;
 
-        private Storyboard overlayStoryboard;
+        private Storyboard _overlayStoryboard;
 
         private IAnimationService AnimationService { get; set; }
 
@@ -79,7 +77,7 @@ namespace Orc.NuGetExplorer.Behaviors
         {
             if (overlay != null && overlay is UIElement)
             {
-                topInternalGrid.Children.Add(overlay as UIElement);
+                _topInternalGrid.Children.Add(overlay as UIElement);
 
                 //manually hide overlay
                 HideOverlay();
@@ -91,7 +89,7 @@ namespace Orc.NuGetExplorer.Behaviors
         {
             if (overlay != null && overlay is UIElement)
             {
-                topInternalGrid.Children.Remove(overlay as UIElement);
+                _topInternalGrid.Children.Remove(overlay as UIElement);
             }
         }
 
@@ -100,7 +98,7 @@ namespace Orc.NuGetExplorer.Behaviors
         {
             if (contentContainer != null && contentContainer is UIElement)
             {
-                topInternalGrid.Children.Add(contentContainer as UIElement);
+                _topInternalGrid.Children.Add(contentContainer as UIElement);
             }
         }
 
@@ -109,7 +107,7 @@ namespace Orc.NuGetExplorer.Behaviors
         {
             if (contentContainer != null && contentContainer is UIElement)
             {
-                topInternalGrid.Children.Add(contentContainer as UIElement);
+                _topInternalGrid.Children.Add(contentContainer as UIElement);
             }
         }
 
@@ -130,7 +128,7 @@ namespace Orc.NuGetExplorer.Behaviors
 
         private void GetInternalGrid()
         {
-            topInternalGrid = AssociatedObject.FindVisualDescendantByName("_InternalGridName") as Grid;
+            _topInternalGrid = AssociatedObject.FindVisualDescendantByName("_InternalGridName") as Grid;
         }
 
         protected override void OnIsEnabledChanged()
@@ -144,7 +142,7 @@ namespace Orc.NuGetExplorer.Behaviors
 
             if (IsEnabled)
             {
-                sizeHandler = SetupAndShowOverlay(OverlayContent);
+                _sizeHandler = SetupAndShowOverlay(OverlayContent);
             }
             else
             {
@@ -192,7 +190,7 @@ namespace Orc.NuGetExplorer.Behaviors
         {
             if (OverlayGrid == null) throw new InvalidOperationException("Cannot find overlay in Associated object");
 
-            if (OverlayGrid.Visibility == Visibility.Visible && overlayStoryboard == null)
+            if (OverlayGrid.Visibility == Visibility.Visible && _overlayStoryboard == null)
             {
                 return Task.CompletedTask;
             }
@@ -206,7 +204,7 @@ namespace Orc.NuGetExplorer.Behaviors
 
             var storyboard = AnimationService.GetFadeInAnimation(OverlayGrid);
 
-            overlayStoryboard = storyboard;
+            _overlayStoryboard = storyboard;
 
             DoubleAnimation animation;
 
@@ -220,9 +218,9 @@ namespace Orc.NuGetExplorer.Behaviors
                 completionHandler = (sender, args) =>
                 {
                     storyboard.Completed -= completionHandler;
-                    if (overlayStoryboard == storyboard)
+                    if (_overlayStoryboard == storyboard)
                     {
-                        overlayStoryboard = null;
+                        _overlayStoryboard = null;
                     }
                 };
 
@@ -252,7 +250,7 @@ namespace Orc.NuGetExplorer.Behaviors
 
             var storyboard = AnimationService.GetFadeOutAnimation(OverlayGrid);
 
-            overlayStoryboard = storyboard;
+            _overlayStoryboard = storyboard;
 
             DoubleAnimation animation;
 
@@ -264,10 +262,10 @@ namespace Orc.NuGetExplorer.Behaviors
                 completionHandler = (sender, args) =>
                 {
                     storyboard.Completed -= completionHandler;
-                    if (overlayStoryboard == storyboard)
+                    if (_overlayStoryboard == storyboard)
                     {
                         OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
-                        overlayStoryboard = null;
+                        _overlayStoryboard = null;
                     }
                 };
 

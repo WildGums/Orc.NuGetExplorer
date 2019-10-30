@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Behaviors
 {
-    using Catel.MVVM;
     using System;
     using System.Windows;
     using System.Windows.Controls;
+    using Catel.MVVM;
 
     public class LoadItemsOnDropDownBehavior : Catel.Windows.Interactivity.BehaviorBase<ComboBox>
     {

@@ -1,5 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
     using Catel.IoC;
@@ -9,11 +14,6 @@
     using NuGetExplorer.Cache;
     using NuGetExplorer.Models;
     using NuGetExplorer.Services;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class ExplorerTopBarViewModel : ViewModelBase
     {

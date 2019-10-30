@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using Catel.Data;
     using Catel.MVVM;
     using NuGet.Packaging;
-    using System.Collections.Generic;
 
     public class DependenciesViewModel : ViewModelBase
     {

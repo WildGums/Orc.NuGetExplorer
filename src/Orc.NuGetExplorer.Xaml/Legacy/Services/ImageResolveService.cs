@@ -70,7 +70,7 @@ namespace Orc.NuGetExplorer
         {
             try
             {
-                var request = (HttpWebRequest) WebRequest.Create(url);
+                var request = (HttpWebRequest)WebRequest.Create(url);
 
                 request.Method = "GET";
                 request.Timeout = 5000;

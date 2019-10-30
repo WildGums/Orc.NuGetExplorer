@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
     using System.Collections.ObjectModel;
+    using Catel;
 
     public static class ObservableCollectionExtensions
     {

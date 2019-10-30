@@ -1,8 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Windows.Service
+﻿namespace Orc.NuGetExplorer.Windows
 {
+    using System;
     using Catel.MVVM;
     using Catel.Services;
-    using System;
 
     public interface ISynchronousUiVisualizer
     {

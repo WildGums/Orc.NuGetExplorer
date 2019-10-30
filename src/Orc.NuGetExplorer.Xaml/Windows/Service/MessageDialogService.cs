@@ -1,12 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
-    using NuGetExplorer.Services;
-    using NuGetExplorer.Windows.Service;
-    using System.Threading.Tasks;
 
     public class MessageDialogService : IMessageDialogService
     {

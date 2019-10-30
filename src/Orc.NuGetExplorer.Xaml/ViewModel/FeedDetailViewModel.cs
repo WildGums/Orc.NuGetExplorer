@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
-    using System.Threading.Tasks;
 
     public class FeedDetailViewModel : ViewModelBase
     {

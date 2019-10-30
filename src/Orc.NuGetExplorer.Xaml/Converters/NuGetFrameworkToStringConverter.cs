@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
+    using System;
     using Catel.MVVM.Converters;
     using NuGet.Frameworks;
-    using System;
 
     public class NuGetFrameworkToStringConverter : ValueConverterBase<NuGetFramework, string>
     {

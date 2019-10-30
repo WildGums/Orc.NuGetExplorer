@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
+    using System;
     using Catel.MVVM.Converters;
     using NuGet.Versioning;
-    using System;
 
     public class NuGetVersionToStringConverter : ValueConverterBase<NuGetVersion, string>
     {

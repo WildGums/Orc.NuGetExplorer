@@ -4,12 +4,12 @@
     using Catel.MVVM.Views;
     using Models;
 
-    public partial class PackageDetailsView 
+    public partial class PackageDetailsView
     {
         static PackageDetailsView()
         {
             typeof(PackageDetailsView).AutoDetectViewPropertiesToSubscribe();
-   
+
         }
 
         public PackageDetailsView()

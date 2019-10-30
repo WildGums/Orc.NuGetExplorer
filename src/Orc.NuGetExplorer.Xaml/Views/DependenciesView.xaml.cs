@@ -1,5 +1,5 @@
-﻿using Catel.MVVM.Views;
-using System.Windows;
+﻿using System.Windows;
+using Catel.MVVM.Views;
 
 namespace Orc.NuGetExplorer.Views
 {
