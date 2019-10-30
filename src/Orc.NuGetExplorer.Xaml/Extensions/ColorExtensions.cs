@@ -13,15 +13,15 @@ namespace Orc.NuGetExplorer
     internal static class ColorExtensions
     {
         #region Fields
-        private static ResourceDictionary _accentColorResourceDictionary;
+        private static ResourceDictionary AccentColorResourceDictionary;
         #endregion
 
         #region Methods
         public static ResourceDictionary CreateAccentColorResourceDictionary(this Color color)
         {
-            if (_accentColorResourceDictionary != null)
+            if (AccentColorResourceDictionary != null)
             {
-                return _accentColorResourceDictionary;
+                return AccentColorResourceDictionary;
             }
             var resourceDictionary = new ResourceDictionary();
 
@@ -35,7 +35,7 @@ namespace Orc.NuGetExplorer
             var applicationResources = application.Resources;
             applicationResources.MergedDictionaries.Insert(0, resourceDictionary);
 
-            _accentColorResourceDictionary = resourceDictionary;
+            AccentColorResourceDictionary = resourceDictionary;
             return applicationResources;
         }
 

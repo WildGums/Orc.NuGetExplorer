@@ -1,40 +1,40 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdateSelectedItemSourceBehavior.cs" company="WildGums">
+// <copyright file="UpdateSourceOnVisibleBehavior.cs" company="WildGums">
 //   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer.Behaviors
 {
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
+    using System.Windows;
     using Catel.Windows.Interactivity;
 
-    internal class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
+    internal class UpdateSourceOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
             base.OnAssociatedObjectLoaded();
 
-            AssociatedObject.SelectionChanged += OnIsVisibleChanged;
+            AssociatedObject.IsVisibleChanged += OnIsVisibleChanged;
         }
 
         protected override void OnAssociatedObjectUnloaded()
         {
-            AssociatedObject.SelectionChanged -= OnIsVisibleChanged;
+            AssociatedObject.IsVisibleChanged -= OnIsVisibleChanged;
 
             base.OnAssociatedObjectUnloaded();
         }
 
-        private void OnIsVisibleChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var binding = AssociatedObject.GetBindingExpression(Selector.SelectedItemProperty);
-            if (binding != null)
+            if (!(bool)e.NewValue)
             {
-                binding.UpdateSource();
+                return;
             }
+
+            AssociatedObject.UpdateItemSource();
         }
         #endregion
     }

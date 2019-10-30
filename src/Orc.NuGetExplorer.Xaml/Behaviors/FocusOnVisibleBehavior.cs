@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer.Behaviors
 {
     using System.Windows;
     using Catel.Windows.Interactivity;

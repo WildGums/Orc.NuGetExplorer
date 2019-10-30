@@ -55,5 +55,17 @@
                 return image;
             }
         }
+
+        public bool IsCached(Uri iconUri)
+        {
+            if (iconUri == null)
+            {
+                return false;
+            }
+
+            var cachedItem = _cache.Get(iconUri.ToString());
+
+            return cachedItem != null;
+        }
     }
 }

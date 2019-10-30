@@ -3,13 +3,12 @@
     using System;
     using System.Net;
     using System.Threading.Tasks;
+    using System.Windows.Media;
     using Catel.Logging;
 
     public class IconDownloader
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private int _count = 0;
 
         public IconDownloader()
         {
@@ -21,9 +20,7 @@
 
         public async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
         {
-            _count += 1;
-
-            Log.Debug($"Begin webclient request {_count} on {uri}");
+            Log.Debug($"Begin webclient request on {uri}");
 
             //while (client.IsBusy)
             //{
@@ -32,7 +29,18 @@
             //}
             var array = await client.DownloadDataTaskAsync(uri);
 
-            Log.Debug($"Webclient request {_count} ended");
+            Log.Debug($"Webclient request ended");
+
+            return array;
+        }
+
+        public byte[] GetByUrl(Uri uri, WebClient client)
+        {
+            Log.Debug($"Begin webclient request on {uri}");
+
+            var array = client.DownloadData(uri);
+
+            Log.Debug($"Webclient request ended");
 
             return array;
         }
