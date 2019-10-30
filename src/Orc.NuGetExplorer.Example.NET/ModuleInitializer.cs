@@ -1,23 +1,10 @@
-﻿using Catel.Configuration;
-using Catel.IoC;
-using Catel.MVVM;
-using NuGet.Credentials;
-using NuGet.Frameworks;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Protocol.Core.Types;
+﻿using Catel.IoC;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Example;
 using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
-using Orc.NuGetExplorer.ViewModels;
-using Orc.NuGetExplorer.Views;
-using Orc.NuGetExplorer.Windows;
-using Orc.NuGetExplorer.Windows.Service;
-using SourceRepositoryProvider = Orc.NuGetExplorer.Providers.SourceRepositoryProvider;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.

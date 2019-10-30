@@ -1,10 +1,8 @@
-﻿using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management
 {
-    using NuGetExplorer.Models;
     using System;
     using System.Collections.Generic;
+    using NuGetExplorer.Models;
 
     public class ExamplePackageManagement : IExtensibleProject
     {

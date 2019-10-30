@@ -121,7 +121,7 @@
 
         <!--detail of current selected package -->
         <local:PackageDetailsView Package="{Binding SelectedPackageItem}"
-                                  Visibility="{Binding Path=., Converter={catel:ReferenceToHidingVisibilityConverter}}"
+                                  Visibility="{Binding Path=SelectedPackageItem, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"
                                   Grid.Row="1" Grid.Column="1"
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 

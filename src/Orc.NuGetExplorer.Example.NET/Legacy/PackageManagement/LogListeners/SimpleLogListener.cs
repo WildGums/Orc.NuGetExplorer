@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer.Example
         public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
             IEchoService echoService, IDispatcherService dispatcherService)
             : base(nuGetLogListeningSevice)
-        {            
+        {
             Argument.IsNotNull(() => echoService);
             Argument.IsNotNull(() => dispatcherService);
 

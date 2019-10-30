@@ -12,7 +12,6 @@
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Services;
-    using Orc.NuGetExplorer.ViewModel;
 
     public class ExplorerViewModel : ViewModelBase
     {

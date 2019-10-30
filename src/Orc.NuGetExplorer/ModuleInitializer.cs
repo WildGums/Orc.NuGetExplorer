@@ -27,13 +27,13 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
         serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
-        serviceLocator.RegisterType<ISourceRepositoryProvider, SourceRepositoryProvider>();
+        serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
+        serviceLocator.RegisterType<ISourceRepositoryProvider, DefaultSourceRepositoryProvider>();
         serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
 
         serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();
         serviceLocator.RegisterType<ISettings, ExplorerSettings>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
-        serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
 
         // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NugetConfigurationService>();

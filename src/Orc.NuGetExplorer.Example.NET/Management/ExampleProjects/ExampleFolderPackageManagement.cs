@@ -1,10 +1,8 @@
-﻿using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management
 {
+    using System.Collections.Generic;
     using Catel.Logging;
     using NuGetExplorer.Models;
-    using System.Collections.Generic;
 
     public class ExampleFolderPackageManagement : IExtensibleProject
     {

@@ -1,14 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
+    using System.Collections.Generic;
     using Catel;
     using NuGet.Configuration;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
-    using System;
-    using System.Collections.Generic;
 
-    public class SourceRepositoryProvider : ISourceRepositoryProvider
+    public class DefaultSourceRepositoryProvider : ISourceRepositoryProvider
     {
         private readonly IEnumerable<Lazy<INuGetResourceProvider>> _resourceProviders;
 
@@ -19,7 +19,7 @@
         /// </summary>
         public IPackageSourceProvider PackageSourceProvider => null;
 
-        public SourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider)
         {
             Argument.IsNotNull(() => settingsProvider);
             _resourceProviders = Repository.Provider.GetCoreV3();

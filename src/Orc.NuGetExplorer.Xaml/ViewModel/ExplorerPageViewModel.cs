@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.ViewModel
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -231,7 +231,7 @@
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
 
-                SingleDelayTimer.SynchronizingObject = new SynchronizeInvoker(DispatcherHelper.CurrentDispatcher, _dispatcherService);
+                SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(DispatcherHelper.CurrentDispatcher);
 
                 PackageItems = new FastObservableCollection<NuGetPackage>();
 
@@ -657,6 +657,4 @@
         }
         #endregion
     }
-}
-
 }

@@ -1,6 +1,4 @@
-﻿using Orc.NuGetExplorer.Cache;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
     using NuGetExplorer.Cache;
 

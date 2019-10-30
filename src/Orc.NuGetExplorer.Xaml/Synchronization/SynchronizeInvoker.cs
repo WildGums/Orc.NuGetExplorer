@@ -1,21 +1,20 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.ComponentModel;
     using System.Threading;
     using System.Windows.Threading;
+    using Catel;
     using Catel.Services;
 
     public class SynchronizeInvoker : ISynchronizeInvoke
     {
         private readonly Dispatcher _dispatcher;
 
-        private readonly IDispatcherService _dispatcherService;
-
-        public SynchronizeInvoker(Dispatcher dispatcher, IDispatcherService dispatcherService)
+        public SynchronizeInvoker(Dispatcher dispatcher)
         {
+            Argument.IsNotNull(() => dispatcher);
             _dispatcher = dispatcher;
-            _dispatcherService = dispatcherService;
         }
 
         public bool InvokeRequired => !_dispatcher.CheckAccess();

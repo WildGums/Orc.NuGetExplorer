@@ -1,4 +1,5 @@
-﻿using Catel.IoC;
+﻿using System.ComponentModel;
+using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Orc.NuGetExplorer;
@@ -20,6 +21,7 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
+        serviceLocator.RegisterType<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
         serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
@@ -35,7 +37,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();
-
 
         serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
 

@@ -1,14 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
+    using System.Xml.Linq;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging;
     using NuGet.ProjectManagement;
     using NuGetExplorer.Loggers;
-    using NuGetExplorer.Services;
     using NuGetExplorer.Windows.Dialogs;
-    using System;
-    using System.Xml.Linq;
+    using Orc.NuGetExplorer.Windows;
 
     public class NuGetProjectContext : INuGetProjectContext
     {

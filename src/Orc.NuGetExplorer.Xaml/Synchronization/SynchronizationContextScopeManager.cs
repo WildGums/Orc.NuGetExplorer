@@ -14,7 +14,7 @@
             return token;
         }
 
-        struct SynchronizationDisabilityToken : IDisposable
+        private struct SynchronizationDisabilityToken : IDisposable
         {
             private readonly SynchronizationContext _synchContext;
 
