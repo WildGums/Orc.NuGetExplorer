@@ -5,7 +5,7 @@
     using Catel.MVVM;
     using NuGet.Packaging;
 
-    public class DependenciesViewModel : ViewModelBase
+    internal class DependenciesViewModel : ViewModelBase
     {
         /// <summary>
         /// This is property inside child viewmodel mapped via attribute

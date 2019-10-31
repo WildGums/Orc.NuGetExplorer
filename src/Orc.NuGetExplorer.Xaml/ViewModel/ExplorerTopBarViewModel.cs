@@ -16,7 +16,7 @@
     using NuGetExplorer.Models;
     using NuGetExplorer.Services;
 
-    public class ExplorerTopBarViewModel : ViewModelBase
+    internal class ExplorerTopBarViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

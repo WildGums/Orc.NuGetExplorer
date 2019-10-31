@@ -1,11 +1,12 @@
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
     using NuGetExplorer.ViewModels;
+    using Catel.Windows.Controls;
 
     /// <summary>
     /// Interaction logic for FeedDetailView.xaml
     /// </summary>
-    public partial class FeedDetailView : Catel.Windows.Controls.UserControl
+    internal partial class FeedDetailView : UserControl
     {
         public FeedDetailView()
         {

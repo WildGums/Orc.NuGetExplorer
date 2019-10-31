@@ -9,7 +9,7 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Models;
 
-    public class ProjectsViewModel : ViewModelBase
+    internal class ProjectsViewModel : ViewModelBase
     {
         private readonly IExtensibleProjectLocator _extensiblesManager;
 

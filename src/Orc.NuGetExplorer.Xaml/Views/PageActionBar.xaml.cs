@@ -1,9 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
+    using Catel.Windows.Controls;
+
     /// <summary>
-    /// Логика взаимодействия для PageActionBar.xaml
+    /// Interaction logic for PageActionBar.xaml
     /// </summary>
-    public partial class PageActionBar : Catel.Windows.Controls.UserControl
+    internal partial class PageActionBar : UserControl
     {
         public PageActionBar()
         {

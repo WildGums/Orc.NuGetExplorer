@@ -13,7 +13,7 @@
     using NuGetExplorer.Providers;
     using NuGetExplorer.Services;
 
-    public class ExplorerViewModel : ViewModelBase
+    internal class ExplorerViewModel : ViewModelBase
     {
         private readonly IUIVisualizerService _uIVisualizerService;
         private readonly NugetConfigurationService _configurationService;

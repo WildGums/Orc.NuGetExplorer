@@ -28,7 +28,7 @@
     using Windows;
     using Timer = System.Timers.Timer;
 
-    public class ExplorerPageViewModel : ViewModelBase, IManagerPage
+    internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly int PageSize = 17;

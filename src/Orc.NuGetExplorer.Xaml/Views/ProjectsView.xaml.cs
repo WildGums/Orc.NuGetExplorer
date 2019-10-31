@@ -1,9 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
+    using Catel.Windows.Controls;
+
     /// <summary>
-    /// Логика взаимодействия для ProjectsView.xaml
+    /// Interaction logic for ProjectsView.xaml
     /// </summary>
-    public partial class ProjectsView : Catel.Windows.Controls.UserControl
+    internal partial class ProjectsView : UserControl
     {
         public ProjectsView()
         {

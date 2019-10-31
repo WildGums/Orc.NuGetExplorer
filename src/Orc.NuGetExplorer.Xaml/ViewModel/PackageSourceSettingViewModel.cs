@@ -15,7 +15,7 @@
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
 
-    public class SettingsControlViewModel : ViewModelBase
+    internal class PackageSourceSettingViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -25,7 +25,7 @@
 
         private readonly IModelProvider<NuGetFeed> _modelProvider;
 
-        public SettingsControlViewModel(List<NuGetFeed> configredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+        public PackageSourceSettingViewModel(List<NuGetFeed> configredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             IModelProvider<NuGetFeed> modelProvider)
         {
             Argument.IsNotNull(() => configurationService);

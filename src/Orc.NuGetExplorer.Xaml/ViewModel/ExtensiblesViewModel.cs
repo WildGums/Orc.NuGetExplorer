@@ -7,7 +7,7 @@
     using Catel.MVVM;
     using NuGetExplorer.Management;
 
-    public class ExtensiblesViewModel : ViewModelBase
+    internal class ExtensiblesViewModel : ViewModelBase
     {
         private readonly IExtensibleProjectLocator _extensiblesManager;
 

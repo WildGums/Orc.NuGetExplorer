@@ -6,7 +6,7 @@
     using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
 
-    public class SettingsViewModel : ViewModelBase
+    internal class SettingsViewModel : ViewModelBase
     {
         public SettingsViewModel(ExplorerSettingsContainer settings)
         {

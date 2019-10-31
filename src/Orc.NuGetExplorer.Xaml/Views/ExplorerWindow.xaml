@@ -9,6 +9,7 @@
         xmlns:orc ="http://schemas.wildgums.com/orc/controls"
         xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
         mc:Ignorable="d"
+        x:ClassModifier="internal"
         xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
         Title="MainWindow" d:DesignWidth="1000">
     <i:Interaction.Behaviors>

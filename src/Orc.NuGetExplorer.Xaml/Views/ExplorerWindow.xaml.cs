@@ -1,11 +1,12 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
     using System.Windows;
+    using Catel.Windows;
 
     /// <summary>
     /// Interaction logic for ExplorerWindow.xaml
     /// </summary>
-    public partial class ExplorerWindow : Catel.Windows.DataWindow
+    internal partial class ExplorerWindow : DataWindow
     {
         public ExplorerWindow()
         {

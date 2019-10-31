@@ -1,13 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
     using System.Windows;
+    using Catel.Windows.Controls;
     using Catel.MVVM.Views;
     using Models;
 
     /// <summary>
     /// Interaction logic for ExplorerPageView.xaml
     /// </summary>
-    public partial class ExplorerPageView : Catel.Windows.Controls.UserControl
+    internal partial class ExplorerPageView : UserControl
     {
         private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
         private const string ArrowDownResourceKey = "ArrowDownBadgeContent";

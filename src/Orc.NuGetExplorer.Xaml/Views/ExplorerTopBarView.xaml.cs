@@ -1,11 +1,12 @@
-﻿using System.Windows;
-
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
+    using System.Windows;
+    using Catel.Windows.Controls;
+
     /// <summary>
     /// Interaction logic for ExplorerTopBarView.xaml
     /// </summary>
-    public partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
+    internal partial class ExplorerTopBarView : UserControl
     {
         public ExplorerTopBarView()
         {

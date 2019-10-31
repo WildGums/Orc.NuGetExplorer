@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
         xmlns:catel="http://schemas.catelproject.com"
         mc:Ignorable="d"
+        x:ClassModifier="internal"
         Title="ExtensiblesWindow" MinHeight="450" MinWidth="200">
     <Grid>
         <ListBox ItemsSource="{Binding ExtensiblesCollection}">

@@ -20,7 +20,7 @@
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
 
-    public class PackageDetailsViewModel : ViewModelBase
+    internal class PackageDetailsViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

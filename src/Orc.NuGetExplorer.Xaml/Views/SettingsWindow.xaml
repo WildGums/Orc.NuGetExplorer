@@ -6,8 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
         mc:Ignorable="d"
+        x:ClassModifier="internal"
         Title="SettingsWindow" MinHeight="400" MinWidth="500">
     <Grid>
-        <local:SettingsControlView DataContext="{Binding NuGetFeeds}"/>
+        <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
     </Grid>
 </catel:DataWindow>

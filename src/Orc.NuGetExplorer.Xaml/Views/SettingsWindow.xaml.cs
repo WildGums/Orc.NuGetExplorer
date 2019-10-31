@@ -1,9 +1,11 @@
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
+    using Catel.Windows;
+
     /// <summary>
-    /// Логика взаимодействия для SettingsWindow.xaml
+    /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow : Catel.Windows.DataWindow
+    internal partial class SettingsWindow : DataWindow
     {
         public SettingsWindow()
         {

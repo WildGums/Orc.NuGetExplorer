@@ -1,9 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
+    using Catel.Windows;
+
     /// <summary>
     /// Interaction logic for ExtensiblesWindow.xaml
     /// </summary>
-    public partial class ExtensiblesWindow : Catel.Windows.DataWindow
+    internal partial class ExtensiblesWindow : DataWindow
     {
         public ExtensiblesWindow() : base(Catel.Windows.DataWindowMode.Close)
         {

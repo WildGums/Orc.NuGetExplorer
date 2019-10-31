@@ -4,7 +4,7 @@
     using Catel.MVVM.Views;
     using Models;
 
-    public partial class PackageDetailsView
+    internal partial class PackageDetailsView
     {
         static PackageDetailsView()
         {

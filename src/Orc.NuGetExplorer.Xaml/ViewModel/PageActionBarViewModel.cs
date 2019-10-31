@@ -11,7 +11,7 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
 
-    public class PageActionBarViewModel : ViewModelBase
+    internal class PageActionBarViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

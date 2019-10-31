@@ -1,12 +1,13 @@
-﻿using System.Windows;
-using Catel.MVVM.Views;
-
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
+    using System.Windows;
+    using Catel.MVVM.Views;
+    using Catel.Windows.Controls;
+
     /// <summary>
     /// Interaction logic for DependenciesView.xaml
     /// </summary>
-    public partial class DependenciesView : Catel.Windows.Controls.UserControl
+    internal partial class DependenciesView : UserControl
     {
         static DependenciesView()
         {
