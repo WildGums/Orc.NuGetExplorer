@@ -13,9 +13,11 @@
     using Catel.Runtime.Serialization;
     using Catel.Runtime.Serialization.Xml;
     using Catel.Services;
+    using NuGet.Configuration;
     using NuGetExplorer.Configuration;
     using NuGetExplorer.Models;
-    using NuGetConfig = NuGet.Configuration;
+    using Configuration = NuGet.Configuration;
+    using Settings = Orc.NuGetExplorer.Settings;
 
     public class NugetConfigurationService : ConfigurationService, INuGetConfigurationService
     {
@@ -25,15 +27,15 @@
         private readonly string _defaultDestinationFolder;
 
 
-        private NuGetConfig.IPackageSourceProvider _packageSourceProvider;
+        private Configuration.IPackageSourceProvider _packageSourceProvider;
         //todo inject with 
-        public NuGetConfig.IPackageSourceProvider PackageSourceProvider
+        public Configuration.IPackageSourceProvider PackageSourceProvider
         {
             get
             {
                 if (_packageSourceProvider == null)
                 {
-                    _packageSourceProvider = this.GetServiceLocator().ResolveType<NuGetConfig.IPackageSourceProvider>();
+                    _packageSourceProvider = this.GetServiceLocator().ResolveType<Configuration.IPackageSourceProvider>();
                 }
                 return _packageSourceProvider;
             }
@@ -84,12 +86,39 @@
 
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)
         {
-            throw new NotImplementedException();
+            Argument.IsNotNullOrWhitespace(() => name);
+            Argument.IsNotNullOrWhitespace(() => source);
+
+            try
+            {
+                var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
+
+                var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
+                
+                if (existedSource == null)
+                {
+                    existedSource = new PackageSource(source, name);
+                    packageSources.Add(existedSource);
+                }
+
+                existedSource.IsEnabled = isEnabled;
+                existedSource.IsOfficial = isOfficial;
+
+                _packageSourceProvider.SavePackageSources(packageSources);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void DisablePackageSource(string name, string source)
         {
-            throw new NotImplementedException();
+            Argument.IsNotNullOrWhitespace(() => name);
+
+            _packageSourceProvider.DisablePackageSource(name);
         }
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
@@ -99,12 +128,29 @@
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
         {
-            throw new NotImplementedException();
+            Argument.IsNotNull(() => repository);
+
+            var key = GetIsPrereleaseAllowedKey(repository);
+            this.SetRoamingValue(key, value);
         }
 
         public bool GetIsPrereleaseAllowed(IRepository repository)
         {
-            throw new NotImplementedException();
+            var key = GetIsPrereleaseAllowedKey(repository);
+            var stringValue = this.GetRoamingValue(key, false.ToString());
+
+            bool value;
+            if (bool.TryParse(stringValue, out value))
+            {
+                return value;
+            }
+
+            return false;
+        }
+
+        private string GetIsPrereleaseAllowedKey(IRepository repository)
+        {
+            return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
         }
 
         #endregion

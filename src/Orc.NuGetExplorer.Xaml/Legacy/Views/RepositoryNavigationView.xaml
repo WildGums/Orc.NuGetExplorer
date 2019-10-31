@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:catel="http://schemas.catelproject.com"
              xmlns:local="clr-namespace:Orc.NuGetExplorer"
+             xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
@@ -77,9 +78,9 @@
                                  SelectedItem="{Binding Path=DataContext.SelectedRepository, ElementName=grid, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                                  Visibility="{Binding IsSelected, Converter={StaticResource CollapsingVisibilityConverter}}">
                             <i:Interaction.Behaviors>
-                                <local:FocusOnVisibleBehavior/>
-                                <local:UpdateSourceOnVisibleBehavior/>
-                                <local:UpdateSelectedItemSourceBehavior/>
+                                <behaviors:FocusOnVisibleBehavior/>
+                                <behaviors:UpdateSourceOnVisibleBehavior/>
+                                <behaviors:UpdateSelectedItemSourceBehavior/>
                             </i:Interaction.Behaviors>
 
                             <ListBox.ItemTemplate>

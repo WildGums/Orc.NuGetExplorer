@@ -95,8 +95,6 @@
 
         public IEnumerable<IRepository> GetSourceRepositories()
         {
-            //TODO read from configuration
-
             NuGetFeed temp = null;
 
             var feedList = new List<NuGetFeed>();

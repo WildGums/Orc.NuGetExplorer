@@ -23,7 +23,7 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();
-        serviceLocator.RegisterType<IImageResolveService, ImageResolveService>();
+        serviceLocator.RegisterType<IImageResolveService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();

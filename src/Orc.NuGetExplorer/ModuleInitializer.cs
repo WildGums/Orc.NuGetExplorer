@@ -32,7 +32,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
 
         serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();
-        serviceLocator.RegisterType<ISettings, ExplorerSettings>();
+        serviceLocator.RegisterType<ISettings, NuGetSettings>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
 
         // Services

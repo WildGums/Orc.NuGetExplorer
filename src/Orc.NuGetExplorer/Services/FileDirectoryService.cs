@@ -20,6 +20,11 @@
             return Catel.IO.Path.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming, Constants.CompanyName, Constants.ProductName);
         }
 
+        public string GetApplicationLocalFolder()
+        {
+            return Catel.IO.Path.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserLocal, Constants.CompanyName, Constants.ProductName);
+        }
+
         public void DeleteDirectoryTree(string folderPath, out List<string> failedEntries)
         {
             failedEntries = new List<string>(); //list of directories which causes unavoidable errors during deletion 
