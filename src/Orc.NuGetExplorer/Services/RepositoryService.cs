@@ -5,7 +5,6 @@
     using System.Linq;
     using Catel;
     using Catel.Configuration;
-    using NuGet;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Models;
@@ -21,7 +20,7 @@
         private readonly ISourceRepositoryProvider _repositoryProvider;
 
         public RepositoryService(IRepositoryContextService repositoryContextService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetExtensibleProjectManager projectManager, INuGetConfigurationService nuGetConfigurationService, 
+            INuGetExtensibleProjectManager projectManager, INuGetConfigurationService nuGetConfigurationService,
             IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
         {
             Argument.IsNotNull(() => repositoryContextService);

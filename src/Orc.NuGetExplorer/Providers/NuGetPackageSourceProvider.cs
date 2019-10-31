@@ -16,6 +16,7 @@ namespace Orc.NuGetExplorer
             : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToPackageSourceInstances())
         {
         }
+
         #endregion
     }
 }

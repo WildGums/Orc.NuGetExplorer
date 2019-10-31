@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Collections;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
@@ -162,23 +163,11 @@
 
         private void ReadFeedsFromConfiguration(ExplorerSettingsContainer settings)
         {
-            NuGetFeed temp = null; ;
+            var feeds = _configurationService.LoadPackageSources(false).OfType<NuGetFeed>();
 
-            var keyCollection = _configurationService.GetAllKeys(ConfigurationContainer.Roaming);
+            feeds.ForEach(feed => feed.Initialize());
 
-            for (int i = 0; i < keyCollection.Count; i++)
-            {
-                temp = _configurationService.GetRoamingValue(keyCollection[i]);
-
-                if (temp != null)
-                {
-                    settings.NuGetFeeds.Add(temp);
-                }
-                else
-                {
-                    Log.Error($"Configuration value under key {i} is broken and cannot be loaded");
-                }
-            }
+            settings.NuGetFeeds.AddRange(feeds);
         }
 
         private void AddDefaultFeeds(ExplorerSettingsContainer settings)

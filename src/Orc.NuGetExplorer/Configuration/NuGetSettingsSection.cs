@@ -2,7 +2,6 @@
 namespace Orc.NuGetExplorer.Configuration
 {
     using System.Collections.Generic;
-    using System.Linq;
     using NuGet.Configuration;
 
     public class NuGetSettingsSection : SettingSection
@@ -11,7 +10,7 @@ namespace Orc.NuGetExplorer.Configuration
         /// Empty settings section
         /// </summary>
         /// <param name="name"></param>
-        public NuGetSettingsSection(string name) : base(name, new Dictionary<string,string>(), new List<SettingItem>())
+        public NuGetSettingsSection(string name) : base(name, new Dictionary<string, string>(), new List<SettingItem>())
         {
 
         }

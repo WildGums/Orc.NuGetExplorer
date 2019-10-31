@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
@@ -62,7 +60,7 @@
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
         }
 
-        
+
         public IList<KeyValuePair<string, string>> GetNestedValues(string section, string subSection)
         {
             Argument.IsNotNullOrWhitespace(() => section);
@@ -173,7 +171,7 @@
 
             var valuesListKey = GetSectionValuesListKey(sectionName);
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-            
+
             if (string.IsNullOrEmpty(valueKeysString))
             {
                 return new NuGetSettingsSection(sectionName);
@@ -288,7 +286,7 @@
             var valuesListKey = GetSectionValuesListKey(section);
             UpdateKeysList(values, valuesListKey);
 
-            foreach(var item in values)
+            foreach (var item in values)
             {
                 SetNuGetValue(section, item.Key, item.Value);
             }
@@ -378,6 +376,11 @@
                 value = ConvertToFullPath(value);
             }
 
+            if (IsSourceItem(section))
+            {
+                return new SourceItem(key, value);
+            }
+
             return new AddItem(key, value);
         }
 
@@ -393,6 +396,11 @@
             if (isPath)
             {
                 value = ConvertToFullPath(value);
+            }
+
+            if (IsSourceItem(section))
+            {
+                return new SourceItem(key, value);
             }
 
             return new AddItem(key, value);
@@ -435,6 +443,11 @@
         private static string GetSubsectionValuesListKey(string section, string subsection)
         {
             return $"NuGet_{section}_{subsection}_values";
+        }
+
+        private static bool IsSourceItem(string sectionKey)
+        {
+            return string.Equals(sectionKey, ConfigurationConstants.PackageSources);
         }
 
         #endregion

@@ -74,7 +74,9 @@
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
         {
             //todo impltement packageSourceProvider
-            var packageSources = PackageSourceProvider.LoadPackageSources();
+            //var packageSources = PackageSourceProvider.LoadPackageSources();
+
+            var packageSources = (PackageSourceProvider as NuGetPackageSourceProvider).LoadPackageSources();
 
             if (onlyEnabled)
             {
@@ -94,7 +96,7 @@
                 var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
 
                 var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
-                
+
                 if (existedSource == null)
                 {
                     existedSource = new PackageSource(source, name);

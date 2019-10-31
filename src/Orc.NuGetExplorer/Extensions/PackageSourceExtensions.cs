@@ -27,7 +27,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => packageSources);
 
-            return packageSources.Select(x => new NuGetFeed(x.Source, x.Name, x.IsEnabled, x.IsOfficial));
+            return packageSources.Select(x => new NuGetFeed(x.Name, x.Source, x.IsEnabled, x.IsOfficial));
         }
         #endregion
     }
