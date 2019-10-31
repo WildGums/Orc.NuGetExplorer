@@ -29,7 +29,7 @@
                         <Viewbox Width="24" Height="24">
                         <Canvas Width="24" Height="24" x:Name="Content_Canvas"
                                 RenderTransformOrigin="0.5, 0.5">
-                            <Path Data="{StaticResource WarningGeometry}" Fill="{DynamicResource AccentColorBrush}"
+                            <Path Data="{DynamicResource WarningGeometry}" Fill="{DynamicResource AccentColorBrush}"
                                   x:Name="Icon"
                                   RenderTransformOrigin="0.5,0.5">
                                 <Path.RenderTransform>
@@ -62,7 +62,7 @@
                         <Setter Property="Data" TargetName="Icon" Value="{Binding IconData.Data, RelativeSource={RelativeSource TemplatedParent}}"/>
                     </Trigger>
                     <Trigger Property="IsInProgress" Value="False">
-                        <Setter Property="Data" TargetName="Icon" Value="{StaticResource WarningGeometry}"/>
+                        <Setter Property="Data" TargetName="Icon" Value="{DynamicResource WarningGeometry}"/>
                     </Trigger>
                     
                     <!-- executed work result invalid -->
@@ -71,8 +71,8 @@
                             <Condition Property="IsInProgress" Value="False"></Condition>
                             <Condition Property="Success" Value="False"></Condition>
                         </MultiTrigger.Conditions>
-                        <Setter Property="Data" TargetName="Icon" Value="{StaticResource ErrorGeometry}"/>
-                        <Setter Property="Fill" TargetName="Icon" Value="{StaticResource ErrorMaterialColorBrush}"/>
+                        <Setter Property="Data" TargetName="Icon" Value="{DynamicResource ErrorGeometry}"/>
+                        <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource ErrorMaterialColorBrush}"/>
                     </MultiTrigger>
                     
                     <!--executed work result fine -->
@@ -81,8 +81,8 @@
                             <Condition Property="IsInProgress" Value="False"></Condition>
                             <Condition Property="Success" Value="true"></Condition>
                         </MultiTrigger.Conditions>
-                        <Setter Property="Data" TargetName="Icon" Value="{StaticResource CompleteGeometry}"/>
-                        <Setter Property="Fill" TargetName="Icon" Value="{StaticResource SuccessMaterialColorBrush}"/>
+                        <Setter Property="Data" TargetName="Icon" Value="{DynamicResource CompleteGeometry}"/>
+                        <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource SuccessMaterialColorBrush}"/>
                     </MultiTrigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>

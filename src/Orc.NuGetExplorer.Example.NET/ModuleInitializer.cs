@@ -25,9 +25,6 @@ public static class ModuleInitializer
         Catel.Logging.LogManager.AddDebugListener();
 
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
-
-        serviceLocator.RegisterInstance<IApplicationCacheProvider>(new ApplcationCacheProvider());
-
         serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
         serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
 

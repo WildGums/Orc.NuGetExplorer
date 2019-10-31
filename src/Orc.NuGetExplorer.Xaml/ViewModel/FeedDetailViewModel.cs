@@ -19,7 +19,6 @@
             _modelProvider = modelProvider;
 
             //work with model clone
-
             Feed = feed.Clone();
 
             UpdateFeed = new Command(OnUpdateFeedExecute, OnUpdateFeedCanExecute);

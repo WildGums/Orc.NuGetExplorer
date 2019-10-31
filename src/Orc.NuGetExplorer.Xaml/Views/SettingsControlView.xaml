@@ -13,17 +13,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <catel:UserControl.Resources>
-        <Style x:Key="HiddenListViewHeader" TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Visibility" Value="Hidden" />
-        </Style>
-        <Style x:Key="SettingsButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Height" Value="24"></Setter>
-            <Setter Property="Width" Value="24"></Setter>
-            <Setter Property="Margin" Value="3 2 3 2"/>
-        </Style>
-
-        <converters:BoolToIntConverter x:Key="BoolToIntConverter"/>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </catel:UserControl.Resources>
     <catel:InfoBarMessageControl>
         <Grid Margin="4 2 4 2">
@@ -86,7 +80,7 @@
                                                           Maximum="2" Minimum="0" 
                                                           Grid.Column="2"
                                                           Success="{Binding IsAccessible}"
-                                                          Value="{Binding IsVerifiedNow, Converter={StaticResource BoolToIntConverter}, UpdateSourceTrigger=PropertyChanged}">
+                                                          Value="{Binding IsVerifiedNow, Converter={converters:BoolToIntConverter}, UpdateSourceTrigger=PropertyChanged}">
                                 <controls:RotationProgressBar.IconData>
                                     <Path Data="M12,3A9,9 0 0,0 3,12H0L4,16L8,12H5A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19C10.5,19 9.09,18.5 7.94,17.7L6.5,19.14C8.04,20.3 9.94,21 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M14,12A2,2 0 0,0 12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12Z" Fill="Black"/>
                                 </controls:RotationProgressBar.IconData>
@@ -144,7 +138,8 @@
 
             <local:FeedDetailView DataContext="{Binding SelectedFeed}"
                               Grid.ColumnSpan="2" Grid.Row="3"
-                              Margin="0 12 0 0"></local:FeedDetailView>
+                              Margin="0 12 0 0">
+            </local:FeedDetailView>
 
             <Separator Grid.Row="4" Grid.ColumnSpan="2"
                    Margin="0 8 0 0"/>

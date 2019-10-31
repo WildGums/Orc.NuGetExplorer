@@ -29,6 +29,7 @@
         {
             _defaultProject = new DestFolder(_configurationService.GetDestinationFolder());
             _extensibleProjectLocator.Register(_defaultProject);
+            _extensibleProjectLocator.Enable(_defaultProject);
         }
     }
 }

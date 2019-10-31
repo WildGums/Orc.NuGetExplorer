@@ -44,6 +44,9 @@
             Title = "Settings";
 
             DeferValidationUntilFirstSaveCall = true;
+
+            DefaultFeed = Constants.DefaultNugetOrgName;
+            DefaultSourceName = Constants.DefaultNugetOrgUri;
         }
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
@@ -57,6 +60,16 @@
         public List<NuGetFeed> ActiveFeeds { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
+
+        #region ViewToViewModel
+
+        public string DefaultFeed { get; set; }
+        public string DefaultSourceName { get; set; }
+        public IEnumerable<IPackageSource> PackageSources { get; set; }
+
+        #endregion
+
+        #region Commands
 
         public Command RemoveFeed { get; set; }
 
@@ -84,8 +97,10 @@
 
         private void OnAddFeedExecute()
         {
-            Feeds.Add(new NuGetFeed(Constants.DefaultNugetOrgName, Constants.DefaultNugetOrgUri));
+            Feeds.Add(new NuGetFeed(DefaultFeed, DefaultSourceName));
         }
+
+        #endregion
 
         protected void CommandInitialize()
         {

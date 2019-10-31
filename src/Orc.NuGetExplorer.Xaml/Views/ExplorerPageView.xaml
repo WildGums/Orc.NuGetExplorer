@@ -13,12 +13,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <catel:UserControl.Resources>
-        <converters:UriToBitmapConverter x:Key="UriToBitmapConverter"/>
-        <converters:PackageStatusEnumToBoolConverter x:Key="PackageStatusEnumToBoolConverter"/>
-        <converters:PackageStatusEnumToBrushConverter x:Key="PackageStatusEnumToBrushConverter"/>
-        <!--<template:BadgeContentTemplateSelector x:Key="BadgeContentTemplateSelector" />     -->
 
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
     </catel:UserControl.Resources>
+    
     <Grid x:Name="PageGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -48,12 +51,6 @@
             <nugetc:InfiniteScrollListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Border BorderThickness="1"
-                                BorderBrush="Black"
-                                Effect="{StaticResource BasicShadowDepth}">
-                        
-                        </Border>
-
                         <Grid Margin="0 8 0 0"
                               Height="96">
                             <Grid.ColumnDefinitions>
@@ -80,7 +77,7 @@
                             <nugetc:Badged VerticalAlignment="Top" Margin="0 4 4 0"
                                            Grid.RowSpan="3"
                                            BorderBrush="WhiteSmoke"
-                                           IsShowed="{Binding Status, Converter={StaticResource PackageStatusEnumToBoolConverter}}"
+                                           IsShowed="{Binding Status, Converter={converters:PackageStatusEnumToBoolConverter}}"
                                            BadgeForeground="WhiteSmoke">
                                 <nugetc:Badged.Resources>
                                     <DataTemplate x:Key="NotAvailable">
@@ -101,7 +98,7 @@
                                     </DataTemplate>
                                 </nugetc:Badged.Resources>
                                 <nugetc:Badged.Background>
-                                    <Binding Path="Status" Converter="{StaticResource PackageStatusEnumToBrushConverter}">
+                                    <Binding Path="Status" Converter="{converters:PackageStatusEnumToBrushConverter}">
                                         <Binding.ConverterParameter>
                                             <x:Array Type="sys:String">
                                                 <sys:String>AvaialableUpdateBadgeBackgroundBrush</sys:String>
@@ -118,7 +115,7 @@
                                         </ContentControl.ContentTemplateSelector>
                                     </ContentControl>
                                 </nugetc:Badged.Badge>
-                                <Image Source="{Binding Path=IconUrl, Converter={StaticResource UriToBitmapConverter}, IsAsync=True}"
+                                <Image Source="{Binding Path=IconUrl, Converter={converters:UriToBitmapConverter}, IsAsync=True}"
                                        RenderOptions.BitmapScalingMode="Fant"
                                        Height="32" Width="32"/>
                             </nugetc:Badged>

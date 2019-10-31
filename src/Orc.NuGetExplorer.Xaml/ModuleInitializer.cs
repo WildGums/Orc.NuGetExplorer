@@ -21,6 +21,8 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
+        serviceLocator.RegisterType<IApplicationCacheProvider, ExplorerCacheProvider>();
+
         serviceLocator.RegisterType<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IImageResolveService, PackageMetadataMediaDownloadService>();
