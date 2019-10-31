@@ -8,13 +8,10 @@
              xmlns:nugcontrols="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:catel="http://schemas.catelproject.com"
-             xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors;assembly=Orc.NuGetExplorer.Xaml"
+             xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
              mc:Ignorable="d"
              x:ClassModifier="internal"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <converters:NuGetVersionToStringConverter x:Key="NuGetVersionToStringConverter"/>
-    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/> 
@@ -53,7 +50,7 @@
         <TextBox Grid.Row="2" Grid.Column="1"
                  Margin="3 0 3 2"
                  IsReadOnly="True"
-                 Text="{Binding InstalledVersion, Converter={StaticResource NuGetVersionToStringConverter}}"/>
+                 Text="{Binding InstalledVersion, Converter={converters:NuGetVersionToStringConverter}}"/>
 
         <Button Grid.Row="2" Grid.Column="2"
                 Margin="3 0 10 2"
@@ -72,9 +69,9 @@
                   SelectedValue="{Binding SelectedVersion}"
                   SelectedIndex="{Binding SelectedVersionIndex}"
                   ItemsSource="{Binding VersionsCollection}">
-            <!--<i:Interaction.Behaviors>
+            <i:Interaction.Behaviors>
                 <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>
-            </i:Interaction.Behaviors>-->
+            </i:Interaction.Behaviors>
         </ComboBox>
 
 

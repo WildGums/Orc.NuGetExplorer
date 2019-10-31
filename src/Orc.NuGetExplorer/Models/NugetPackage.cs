@@ -164,6 +164,7 @@
                 return null;
             }
 
+            //Error on v2 feed
             var versinfo = await _packageMetadata.GetVersionsAsync();
 
             var versions = versinfo.Select(x => x.Version).Union(Versions).OrderByDescending(x => x)

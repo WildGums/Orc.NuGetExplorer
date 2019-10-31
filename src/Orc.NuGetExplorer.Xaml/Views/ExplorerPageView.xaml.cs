@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
     using System.Windows;
-    using Catel.Windows.Controls;
     using Catel.MVVM.Views;
+    using Catel.Windows.Controls;
     using Models;
 
     /// <summary>

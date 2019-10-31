@@ -3,7 +3,6 @@
     using System;
     using System.Net;
     using System.Threading.Tasks;
-    using System.Windows.Media;
     using Catel.Logging;
 
     public class IconDownloader

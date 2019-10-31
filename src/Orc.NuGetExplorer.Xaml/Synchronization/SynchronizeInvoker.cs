@@ -5,7 +5,6 @@
     using System.Threading;
     using System.Windows.Threading;
     using Catel;
-    using Catel.Services;
 
     public class SynchronizeInvoker : ISynchronizeInvoke
     {

@@ -182,7 +182,7 @@
         private IEnumerable<INuGetSource> GetActiveFeedsFromSettings()
         {
             var activefeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList<INuGetSource>();
-            
+
             var allInOneSource = new CombinedNuGetSource(activefeeds);
 
             activefeeds.Insert(0, allInOneSource);

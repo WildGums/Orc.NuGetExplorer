@@ -25,7 +25,6 @@
     using Pagination;
     using Services;
     using Web;
-    using Windows;
     using Timer = System.Timers.Timer;
 
     internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
@@ -501,9 +500,7 @@
 
         private async Task CreatePackageListItems(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
         {
-            IEnumerable<NuGetPackage> vms = null;
-
-            vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
+            var vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
 
             //create tokens, used for deffer execution of tasks
             //obtained states/updates of packages

@@ -94,7 +94,7 @@
 
         private ImageSource GetFromCacheOrFetch(Uri uri)
         {
-            if(!_iconCache.IsCached(uri))
+            if (!_iconCache.IsCached(uri))
             {
                 DownloadFrom(uri);
             }

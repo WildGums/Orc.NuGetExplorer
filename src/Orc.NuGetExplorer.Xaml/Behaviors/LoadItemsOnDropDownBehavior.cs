@@ -30,7 +30,7 @@
         {
             using (SynchronizationContextScopeManager.OutOfContext())
             {
-                Command?.Execute();
+                ExecuteCommand();
             }
         }
 

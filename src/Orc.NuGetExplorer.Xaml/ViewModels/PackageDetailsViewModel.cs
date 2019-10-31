@@ -50,9 +50,6 @@
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
             InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
-
-            IsDownloadCountShowed = false;
-            CanBeAddedInBatchOperation = false;
         }
 
         [Model(SupportIEditableObject = false)]
@@ -63,7 +60,6 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
-        //   [Expose("Status")]
         public NuGetPackage Package { get; set; }
 
         public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
@@ -74,8 +70,6 @@
 
         [ViewModelToModel]
         public PackageStatus Status { get; set; }
-
-        public bool IsDownloadCountShowed { get; private set; }
 
         public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
 
@@ -89,11 +83,6 @@
         public NuGetVersion InstalledVersion { get; set; }
 
         public int SelectedVersionIndex { get; set; }
-
-        public bool CanBeAddedInBatchOperation { get; set; }
-
-        public bool IsChecked { get; set; }
-
 
         private void OnPackageChanged()
         {
@@ -123,10 +112,6 @@
         {
             try
             {
-                var fromPage = Package.FromPage;
-                IsDownloadCountShowed = fromPage != MetadataOrigin.Installed;
-                CanBeAddedInBatchOperation = fromPage == MetadataOrigin.Updates;
-
                 //select identity version
                 SelectedVersion = SelectedVersion ?? Package?.Identity.Version;
 
