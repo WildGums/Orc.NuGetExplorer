@@ -21,16 +21,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IEchoService, EchoService>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
-        Catel.Logging.LogManager.IsDebugEnabled = true;
-        Catel.Logging.LogManager.AddDebugListener();
-
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
-        serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
-        serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
-
-        serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
-
-
+     
         //add all project extensions
         var manager = serviceLocator.ResolveType<IExtensibleProjectLocator>();
 

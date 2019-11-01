@@ -97,7 +97,7 @@
 
         private void OnAddFeedExecute()
         {
-            Feeds.Add(new NuGetFeed(DefaultFeed, DefaultSourceName));
+            Feeds.Add(new NuGetFeed(DefaultSourceName, DefaultFeed));
         }
 
         #endregion
@@ -121,19 +121,21 @@
 
         protected override Task<bool> SaveAsync()
         {
+            _configurationService.SavePackageSources(ActiveFeeds);
+
             //store all feed inside configuration
-            for (int i = 0; i < Feeds.Count; i++)
-            {
-                _configurationService.SetRoamingValueWithDefaultIdGenerator(Feeds[i]);
-            }
+            //for (int i = 0; i < Feeds.Count; i++)
+            //{
+            //    _configurationService.SetRoamingValueWithDefaultIdGenerator(Feeds[i]);
+            //}
 
             //send usable feeds (including failed)
-            ActiveFeeds.Clear();
-            ActiveFeeds.AddRange(Feeds);
+            //ActiveFeeds.Clear();
+            //ActiveFeeds.AddRange(Feeds);
 
             //feeds removal
-            _configurationService.RemoveValues(ConfigurationContainer.Roaming, RemovedFeeds);
-            RemovedFeeds.Clear();
+            //_configurationService.RemoveValues(ConfigurationContainer.Roaming, RemovedFeeds);
+            //RemovedFeeds.Clear();
 
             return base.SaveAsync();
         }

@@ -78,12 +78,11 @@
         {
             ReadFeedsFromConfiguration(Settings);
 
-            //Log.Info("No feeds stored in configuration");
-            //AddDefaultFeeds(Settings);
-
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
-            ObservedFeed = ActiveFeeds.FirstOrDefault(x => x.IsSelected);
+            var lastSelectedSourceName = _configurationService.GetLastRepository("Browse");
+
+            ObservedFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, lastSelectedSourceName));
 
             return base.InitializeAsync();
         }
@@ -163,7 +162,7 @@
 
         private void ReadFeedsFromConfiguration(ExplorerSettingsContainer settings)
         {
-            var feeds = _configurationService.LoadPackageSources(false).OfType<NuGetFeed>();
+            var feeds = _configurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
 
             feeds.ForEach(feed => feed.Initialize());
 

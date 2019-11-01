@@ -22,6 +22,7 @@ public static class ModuleInitializer
         var serviceLocator = ServiceLocator.Default;
 
         serviceLocator.RegisterType<IApplicationCacheProvider, ExplorerCacheProvider>();
+        serviceLocator.RegisterType<INuGetProjectContextProvider, NuGetProjectContextProvider>();
 
         serviceLocator.RegisterType<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();

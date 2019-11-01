@@ -123,9 +123,15 @@
             _packageSourceProvider.DisablePackageSource(name);
         }
 
-        public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
+        public void RemovePackageSource(IPackageSource source)
         {
             throw new NotImplementedException();
+        }
+
+        public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
+        {
+            Argument.IsNotNull(() => packageSources);
+            _packageSourceProvider.SavePackageSources(packageSources.ToPackageSourceInstances());
         }
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)

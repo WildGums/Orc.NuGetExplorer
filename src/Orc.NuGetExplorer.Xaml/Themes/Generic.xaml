@@ -4,6 +4,7 @@
                     xmlns:catel="http://schemas.catelproject.com">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Brushes.xaml"/>
+        <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Styles.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/RotationProgressBar.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/Badged.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>

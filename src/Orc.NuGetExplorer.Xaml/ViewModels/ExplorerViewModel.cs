@@ -79,19 +79,17 @@
 
         protected override Task OnClosingAsync()
         {
-            //update selected feed
-            for (int i = 0; i < Settings.NuGetFeeds.Count; i++)
-            {
-                _configurationService.SetRoamingValueWithDefaultIdGenerator(Settings.NuGetFeeds[i]);
-            }
+            _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
 
             return base.OnClosingAsync();
         }
 
         private void CreateApplicationWideCommands(ICommandManager cm)
         {
-            //move to initializer
-            cm.CreateCommand("RefreshCurrentPage", new Catel.Windows.Input.InputGesture(Key.F5));
+            if (!cm.IsCommandCreated("RefreshCurrentPage"))
+            {
+                cm.CreateCommand("RefreshCurrentPage", new Catel.Windows.Input.InputGesture(Key.F5));
+            }
         }
     }
 }

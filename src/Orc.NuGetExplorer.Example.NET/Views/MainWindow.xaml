@@ -14,7 +14,7 @@
         <orccontrols:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />                             
             <RowDefinition Height="*" />
         </orccontrols:StackGrid.RowDefinitions>
 

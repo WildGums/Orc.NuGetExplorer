@@ -22,6 +22,7 @@ namespace Orc.NuGetExplorer.Example
         public App()
         {
 #if DEBUG
+            Catel.Logging.LogManager.IsDebugEnabled = true;
             LogManager.AddDebugListener(true);
 #endif
 

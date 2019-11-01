@@ -6,12 +6,15 @@
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
+    using Catel.Logging;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Services;
 
     internal class NuGetSettings : ISettings
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
         private const string ConfigurationFileName = "configuration.xml";
@@ -187,18 +190,36 @@
         public void AddOrUpdate(string sectionName, SettingItem item)
         {
             //todo add sections?
-            throw new NotImplementedException();
+            Argument.IsNotNullOrWhitespace(() => sectionName);
+
+            EnsureSectionExists(sectionName);
+
+            var section = GetSection(sectionName);
+
+            if(item is AddItem addItem)
+            {
+                SetValue(sectionName, addItem.Key, addItem.Value);
+                return;
+            }
+
+            Log.Warning($"Cannot add or update unknown item of type {item.GetType()}");
         }
 
         public void Remove(string sectionName, SettingItem item)
         {
-            DeleteValue(sectionName, item.ElementName);
+            if (item is AddItem addItem)
+            {
+                DeleteValue(sectionName, addItem.Key);
+                return;
+            }
+
+            Log.Warning($"Cannot remove unknown item of type {item.GetType()}");
         }
 
         public void SaveToDisk()
         {
-            //should flush in-memory updates in file, but currently all changes saved manually 
-            throw new NotImplementedException();
+            //should flush in-memory updates in file, but currently all changes saved manually instant in configuration file via Catel Configuration
+            Log.Info("SaveToDisk method called from PackageSourceProvider");
         }
 
         public IList<string> GetConfigFilePaths()
@@ -447,7 +468,7 @@
 
         private static bool IsSourceItem(string sectionKey)
         {
-            return string.Equals(sectionKey, ConfigurationConstants.PackageSources);
+            return string.Equals(sectionKey, ConfigurationConstants.PackageSources) || string.Equals(sectionKey, ConfigurationConstants.DisabledPackageSources);
         }
 
         #endregion

@@ -8,6 +8,7 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
@@ -76,6 +77,8 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
+
+        serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
