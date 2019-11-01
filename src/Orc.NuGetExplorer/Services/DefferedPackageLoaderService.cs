@@ -23,8 +23,6 @@
 
         private bool _isLoading = false;
 
-        private readonly IPackagesLoaderService _packagesLoaderService;
-
         private readonly IRepositoryContextService _repositoryService;
 
         private readonly INuGetExtensibleProjectManager _projectManager;
@@ -33,14 +31,12 @@
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(IPackagesLoaderService packagesLoaderService, IRepositoryContextService repositoryService,
+        public DefferedPackageLoaderService(IRepositoryContextService repositoryService,
             INuGetExtensibleProjectManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator)
         {
-            Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
 
-            _packagesLoaderService = packagesLoaderService;
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
             _extensibleProjectLocator = extensibleProjectLocator;
@@ -60,6 +56,9 @@
         {
             try
             {
+                var processedTask = _taskTokenList.ToList();
+                _taskTokenList.Clear();
+
                 _packageMetadataProvider = InitializeMetadataProvider();
 
                 using (var cts = new CancellationTokenSource())
@@ -67,7 +66,7 @@
                     _aliveCancellationToken = cts.Token;
 
                     //form tasklist
-                    var taskList = _taskTokenList.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
+                    var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
 
@@ -101,7 +100,6 @@
             finally
             {
                 //todo try to complete all remaining tasks
-                _taskTokenList.Clear();
                 _isLoading = false;
             }
         }

@@ -121,7 +121,7 @@
 
         protected override Task<bool> SaveAsync()
         {
-            _configurationService.SavePackageSources(ActiveFeeds);
+            _configurationService.SavePackageSources(Feeds);
 
             //store all feed inside configuration
             //for (int i = 0; i < Feeds.Count; i++)
