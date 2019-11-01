@@ -4,7 +4,7 @@
 
     public interface IExtensibleProjectLocator
     {
-        IEnumerable<IExtensibleProject> GetAllExtensibleProjects();
+        IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true);
 
         void Register(IExtensibleProject project);
 

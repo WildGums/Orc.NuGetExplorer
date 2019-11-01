@@ -7,34 +7,26 @@
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.MVVM;
-    using Catel.Services;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
-    using NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
     {
-        private readonly IUIVisualizerService _uIVisualizerService;
-        private readonly NugetConfigurationService _configurationService;
+        private readonly IConfigurationService _configurationService;
 
         private readonly ITypeFactory _typeFactory;
 
-
-        public ExplorerViewModel(ITypeFactory typeFactory, IUIVisualizerService service, ICommandManager commandManager,
+        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => service);
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => configurationService);
-            Argument.IsOfType(() => configurationService, typeof(NugetConfigurationService));
-
-            _uIVisualizerService = service;
+  
             _typeFactory = typeFactory;
-
-            _configurationService = configurationService as NugetConfigurationService;
+            _configurationService = configurationService;
 
             CreateApplicationWideCommands(commandManager);
 
@@ -80,6 +72,8 @@
         protected override Task OnClosingAsync()
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
+
+            Settings.Clear();
 
             return base.OnClosingAsync();
         }

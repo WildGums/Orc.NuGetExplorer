@@ -69,9 +69,14 @@
             }
         }
 
-        public IEnumerable<IExtensibleProject> GetAllExtensibleProjects()
+        public IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
         {
-            return _registredProjects.Values;
+            if(onlyEnabled)
+            {
+                return _enabledProjects.ToList();
+            }
+
+            return _registredProjects.Values.ToList();
         }
 
         public void Register(IExtensibleProject project)

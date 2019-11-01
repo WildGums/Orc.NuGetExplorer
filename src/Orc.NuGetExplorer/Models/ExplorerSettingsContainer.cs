@@ -21,6 +21,12 @@
 
         public string SearchString { get; set; }
 
+        public void Clear()
+        {
+            NuGetFeeds.Clear();
+            ObservedFeed = null;
+        }
+
         /// <summary>
         /// Create and retrive all unique enabled package sources
         /// </summary>

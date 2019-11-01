@@ -34,8 +34,7 @@
                 _extensiblesManager.RestoreStateFromConfig();
             }
 
-            var availableProjects = _extensiblesManager.GetAllExtensibleProjects()
-                .Where(x => _extensiblesManager.IsEnabled(x));
+            var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
 
             Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
                 .Select(x =>

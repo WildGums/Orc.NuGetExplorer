@@ -203,6 +203,11 @@
                 return;
             }
 
+            if(IsFirstLoaded)
+            {
+                return;
+            }
+
             if (string.Equals(e.PropertyName, nameof(Settings.IsPreReleaseIncluded)) ||
                 string.Equals(e.PropertyName, nameof(Settings.SearchString)) || string.Equals(e.PropertyName, nameof(Settings.ObservedFeed)))
             {
@@ -344,7 +349,6 @@
                     IsCancellationTokenAlive = true;
                     Log.Info("You can now cancel search from gui");
 
-                    //using (PageLoadingTokenSource = CreateCanclellationTokenSource())
                     using (var pageTcs = GetCancelationTokenSource())
                     {
                         if (!currentSource.IsVerified)
@@ -489,8 +493,6 @@
                 Invalidated = false;
 
                 Log.Info($"Page {Title} updates with {packages.Count()} returned by query '{Settings.SearchString} from {PageInfo.Source}'");
-
-                IsLoadingInProcess = false;
             }
             finally
             {

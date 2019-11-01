@@ -22,7 +22,7 @@
 
         protected override Task InitializeAsync()
         {
-            var registeredProjects = _extensiblesManager.GetAllExtensibleProjects();
+            var registeredProjects = _extensiblesManager.GetAllExtensibleProjects(onlyEnabled: false);
 
             if (!_extensiblesManager.IsConfigLoaded)
             {
