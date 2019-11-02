@@ -11,11 +11,13 @@
     <Grid>
         <ListBox ItemsSource="{Binding Projects}">
             <ListBox.ItemTemplate>
+                
                 <DataTemplate DataType="{x:Type ListBoxItem}">
                     <CheckBox IsChecked="{Binding IsChecked}" 
                               Content="{Binding Value}">
                     </CheckBox>
                 </DataTemplate>
+                
             </ListBox.ItemTemplate>
         </ListBox>    
     </Grid>

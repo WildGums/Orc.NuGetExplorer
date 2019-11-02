@@ -9,6 +9,11 @@
 
         public IReadOnlyList<IExtensibleProject> TargetProjects => _extensibleProjects;
 
+        /// <summary>
+        /// Disable ability to see and change target project for commands
+        /// </summary>
+        public bool IsTargetProjectCanBeChanged => false;
+
         public void Add(IExtensibleProject project)
         {
             _extensibleProjects.Add(project);

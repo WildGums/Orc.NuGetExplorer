@@ -113,16 +113,22 @@
         <TextBlock Grid.Row="1" Grid.Column="5"
                    VerticalAlignment="Center"
                    Margin="4 0 3 0">
-            Package source: 
+            Package source:
         </TextBlock>
+
+        <!--selecting source feed-->
+                   
         <ComboBox Grid.Row="1" Grid.Column="6" 
+                  Grid.ColumnSpan="2"
                   Width="120"
                   ItemsSource="{Binding ActiveFeeds}"
                   Margin="3 0 3 0"
                   IsSynchronizedWithCurrentItem="True"
                   SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"/>
-        <!--select source feed-->
-         <Button Grid.Row="1" Grid.Column="7"
+
+
+         <!-- Open project configuration window -->
+         <!--<Button Grid.Row="1" Grid.Column="7"
                 Command="{Binding ShowExtensibles}"
                 Margin="3 0 3 0"
                 Height="24" Width="24"
@@ -132,7 +138,7 @@
                     <Path Data="{Binding Source={StaticResource App-box}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
                 </Canvas>
             </Viewbox>
-        </Button>
+        </Button>-->
         <Button Grid.Row="1" Grid.Column="8"
                 Command="{Binding ShowPackageSourceSettings}"
                 Margin="0 0 3 0"

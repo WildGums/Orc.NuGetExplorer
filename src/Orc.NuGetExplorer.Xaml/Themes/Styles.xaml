@@ -42,7 +42,7 @@
         <Setter Property="Margin" Value="0" />
     </Style>
 
-    <Style TargetType="{x:Type ListBoxItem}">
+    <!--<Style TargetType="{x:Type ListBoxItem}">
         <Style.Resources>
             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor4}"/>
         </Style.Resources>
@@ -51,7 +51,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 
     <Style x:Key="HorizontalGridSplitterStyle" TargetType="{x:Type GridSplitter}">
         <Setter Property="VerticalAlignment" Value="Bottom" />
