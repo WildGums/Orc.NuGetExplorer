@@ -22,8 +22,8 @@ namespace Orc.NuGetExplorer.Example
         public App()
         {
 #if DEBUG
-            Catel.Logging.LogManager.IsDebugEnabled = true;
-            LogManager.AddDebugListener(true);
+            LogManager.IsDebugEnabled = true;
+            LogManager.AddDebugListener(false);
 #endif
 
             var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();

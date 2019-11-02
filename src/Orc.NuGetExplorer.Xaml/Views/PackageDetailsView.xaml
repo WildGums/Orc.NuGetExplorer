@@ -36,9 +36,10 @@
         </TextBlock>
 
         <local:ProjectsView Grid.Row="1" Grid.ColumnSpan="3"
-                            DataContext="{Binding NuGetActionTarget}"
                             MinHeight="260"
                             Margin="10 0 3 6"/>
+        <!--DataContext="{Binding NuGetActionTarget}"-->
+   
         
         <!--installation and updates-->
 

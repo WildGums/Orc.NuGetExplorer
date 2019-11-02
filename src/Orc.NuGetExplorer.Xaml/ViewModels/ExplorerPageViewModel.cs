@@ -244,14 +244,14 @@
                 _projectManager.Install += OnProjectManagerInstall;
                 _projectManager.Uninstall += OnProjectManagerUninstall;
 
+                IsFirstLoaded = false;
+
                 //todo validation
                 if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
                     var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString);
-
-                    IsFirstLoaded = false;
 
                     await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
                 }

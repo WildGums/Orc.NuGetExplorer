@@ -13,22 +13,15 @@
     {
         private readonly IExtensibleProjectLocator _extensiblesManager;
 
-        public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
+        public ProjectsViewModel(IExtensibleProjectLocator extensiblesManager)
         {
             Argument.IsNotNull(() => extensiblesManager);
-            Argument.IsNotNull(() => projectsModel);
+            //Argument.IsNotNull(() => projectsModel);
 
             _extensiblesManager = extensiblesManager;
-            ProjectsModel = projectsModel;
-        }
+            ProjectsModel = new NuGetActionTarget();
+            //ProjectsModel = projectsModel;
 
-        [Model]
-        public NuGetActionTarget ProjectsModel { get; set; }
-
-        public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; }
-
-        protected override Task InitializeAsync()
-        {
             if (!_extensiblesManager.IsConfigLoaded)
             {
                 _extensiblesManager.RestoreStateFromConfig();
@@ -41,9 +34,30 @@
                     new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
 
             Projects.ForEach(x => ProjectsModel.Add(x.Value));
-
-            return base.InitializeAsync();
         }
+
+        [Model(SupportIEditableObject = false)]
+        public NuGetActionTarget ProjectsModel { get; set; }
+
+        public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; }
+
+        //protected override Task InitializeAsync()
+        //{
+        //    if (!_extensiblesManager.IsConfigLoaded)
+        //    {
+        //        _extensiblesManager.RestoreStateFromConfig();
+        //    }
+
+        //    var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
+
+        //    Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
+        //        .Select(x =>
+        //            new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
+
+        //    Projects.ForEach(x => ProjectsModel.Add(x.Value));
+
+        //    return base.InitializeAsync();
+        //}
 
         private void NotifyOnProjectSelectionChanged(bool isSelected, IExtensibleProject project)
         {
