@@ -115,7 +115,7 @@
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=OneWayToSource}"/>
+                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </orc:TabControl>

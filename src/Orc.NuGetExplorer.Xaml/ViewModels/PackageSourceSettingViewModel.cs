@@ -25,16 +25,15 @@
 
         private readonly IModelProvider<NuGetFeed> _modelProvider;
 
-        public PackageSourceSettingViewModel(List<NuGetFeed> configredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             IModelProvider<NuGetFeed> modelProvider)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => modelProvider);
             Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => configredFeeds);
+            Argument.IsNotNull(() => configuredFeeds);
 
-            ActiveFeeds = configredFeeds;
-            Feeds = new ObservableCollection<NuGetFeed>(ActiveFeeds);
+            Feeds = new ObservableCollection<NuGetFeed>(configuredFeeds);
             RemovedFeeds = new List<NuGetFeed>();
 
             _configurationService = configurationService as NugetConfigurationService;
@@ -53,11 +52,6 @@
 
         //[Model]
         public NuGetFeed SelectedFeed { get; set; }
-
-        /// <summary>
-        /// Feeds which should be visible for NuGet Package Manager
-        /// </summary>
-        public List<NuGetFeed> ActiveFeeds { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
 
@@ -112,7 +106,6 @@
 
         protected override async Task InitializeAsync()
         {
-            //handle manual model save on child viewmodel
             _modelProvider.PropertyChanged += OnModelProviderPropertyChanged;
             Feeds.CollectionChanged += OnFeedsCollectioChanged;
 
@@ -121,30 +114,18 @@
 
         protected override Task<bool> SaveAsync()
         {
-            _configurationService.SavePackageSources(Feeds);
-
-            //store all feed inside configuration
-            //for (int i = 0; i < Feeds.Count; i++)
-            //{
-            //    _configurationService.SetRoamingValueWithDefaultIdGenerator(Feeds[i]);
-            //}
-
-            //send usable feeds (including failed)
-            //ActiveFeeds.Clear();
-            //ActiveFeeds.AddRange(Feeds);
-
-            //feeds removal
-            //_configurationService.RemoveValues(ConfigurationContainer.Roaming, RemovedFeeds);
-            //RemovedFeeds.Clear();
+            SaveFeeds();
 
             return base.SaveAsync();
         }
+
 
         protected override Task CloseAsync()
         {
             _modelProvider.PropertyChanged -= OnModelProviderPropertyChanged;
             return base.CloseAsync();
         }
+
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
         {
@@ -156,6 +137,12 @@
                 }
             }
         }
+
+        private void SaveFeeds()
+        {
+            _configurationService.SavePackageSources(Feeds);
+        }
+
 
         private bool IsNamesNotUniqueRule(out IEnumerable<string> invalidNames)
         {

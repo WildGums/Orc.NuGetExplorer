@@ -26,21 +26,12 @@
         private readonly IXmlSerializer _configSerializer;
         private readonly string _defaultDestinationFolder;
 
-
-        private Configuration.IPackageSourceProvider _packageSourceProvider;
-        //todo inject with 
-        public Configuration.IPackageSourceProvider PackageSourceProvider
-        {
-            get
-            {
-                if (_packageSourceProvider == null)
-                {
-                    _packageSourceProvider = this.GetServiceLocator().ResolveType<Configuration.IPackageSourceProvider>();
+        //had to doing this, because settings is as parameter in ctor caused loop references
+        private readonly Lazy<Configuration.IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
+                () => { 
+                    return ServiceLocator.Default.ResolveType<Configuration.IPackageSourceProvider>(); 
                 }
-                return _packageSourceProvider;
-            }
-        }
-
+            );
 
         private readonly Dictionary<ConfigurationSections, string> _masterKeys = new Dictionary<ConfigurationSections, string>()
         {
@@ -73,10 +64,10 @@
 
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
         {
-            //todo impltement packageSourceProvider
+            //todo implement packageSourceProvider
             //var packageSources = PackageSourceProvider.LoadPackageSources();
 
-            var packageSources = (PackageSourceProvider as NuGetPackageSourceProvider).LoadPackageSources();
+            var packageSources = _packageSourceProvider.Value.LoadPackageSources();
 
             if (onlyEnabled)
             {
@@ -93,7 +84,7 @@
 
             try
             {
-                var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
+                var packageSources = _packageSourceProvider.Value.LoadPackageSources().ToList();
 
                 var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
 
@@ -106,7 +97,7 @@
                 existedSource.IsEnabled = isEnabled;
                 existedSource.IsOfficial = isOfficial;
 
-                _packageSourceProvider.SavePackageSources(packageSources);
+                _packageSourceProvider.Value.SavePackageSources(packageSources);
             }
             catch
             {
@@ -120,7 +111,7 @@
         {
             Argument.IsNotNullOrWhitespace(() => name);
 
-            _packageSourceProvider.DisablePackageSource(name);
+            _packageSourceProvider.Value.DisablePackageSource(name);
         }
 
         public void RemovePackageSource(IPackageSource source)
@@ -131,7 +122,7 @@
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);
-            _packageSourceProvider.SavePackageSources(packageSources.ToPackageSourceInstances());
+            _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
         }
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)

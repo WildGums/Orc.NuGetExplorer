@@ -283,6 +283,9 @@
                 if ((bool)e.NewValue)
                 {
                     Log.Info($"Switched page: {Title} is active");
+
+                    //force update selected item
+                    SelectedPackageItem = PackageItems?.FirstOrDefault();
                 }
             }
 
