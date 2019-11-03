@@ -22,7 +22,9 @@
 
         private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
 
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly SourceRepository _localRepository;
+#pragma warning restore IDE0052 // Remove unread private members
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
             IEnumerable<SourceRepository> optionalGlobalLocalRepositories)
@@ -99,6 +101,11 @@
 
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
+            if(!_sourceRepositories.Any())
+            {
+                throw new InvalidOperationException("No repositories available");
+            }
+
             var tasks = _sourceRepositories
                .Select(r => GetPackageMetadataAsyncFromSource(r, identity, includePrerelease, cancellationToken)).ToArray();
 

@@ -34,8 +34,15 @@
         /// <returns></returns>
         public IReadOnlyList<PackageSource> GetAllPackageSources()
         {
-            var feeds = NuGetFeeds.Where(x => x.IsSelected).Select(x => new PackageSource(x.Source));
-            return feeds.ToList();
+            var feeds = NuGetFeeds.Where(x => x.IsSelected);
+
+            if(!feeds.Any())
+            {
+                //then try to return all feeds, 'all' feed probably is selected
+                feeds = NuGetFeeds.Where(x => x.IsEnabled);
+            }
+
+            return feeds.Select(x => new PackageSource(x.Source)).ToList();
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)

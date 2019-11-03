@@ -125,6 +125,12 @@
                     }
                 }
 
+                if(!availabePackageStorage.Any())
+                {
+                    Log.Error($"Package {package} cannot be resolved with current settings for chosen destination");
+                    return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
+                }
+
                 using (var cacheContext = _nuGetCacheManager.GetCacheContext())
                 {
                     //select main sourceDependencyInfo

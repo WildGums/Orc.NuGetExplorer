@@ -79,6 +79,8 @@
 
         public PackageIdentity SelectedPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
+        public PackageIdentity InstalledPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, InstalledVersion);
+
         [ViewModelToModel]
         public NuGetVersion InstalledVersion { get; set; }
 
@@ -211,7 +213,8 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    await _projectManager.UninstallPackageForMultipleProject(NuGetActionTarget.TargetProjects, SelectedPackage, cts.Token);
+                    //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
+                    await _projectManager.UninstallPackageForMultipleProject(NuGetActionTarget.TargetProjects, InstalledPackage, cts.Token);
                 }
 
                 await Task.Delay(200);
