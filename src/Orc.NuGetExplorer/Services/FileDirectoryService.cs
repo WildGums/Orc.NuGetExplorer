@@ -6,7 +6,7 @@
     using Catel;
     using NuGet.Common;
 
-    public class FileDirectoryService : IFileDirectoryService
+    internal class FileDirectoryService : IFileDirectoryService
     {
         public static readonly string DefaultGlobalPackagesFolderPath = "packages" + Path.DirectorySeparatorChar;
 

@@ -10,7 +10,7 @@
     using Catel.Windows.Interactivity;
     using NuGetExplorer.Behaviors;
 
-    public class ProgressManager : IProgressManager
+    internal class ProgressManager : IProgressManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

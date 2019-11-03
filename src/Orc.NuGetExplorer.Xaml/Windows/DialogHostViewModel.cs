@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using Catel.MVVM;
 
-    public class DialogHostViewModel : ViewModelBase, IDialogViewModel
+    internal class DialogHostViewModel : ViewModelBase, IDialogViewModel
     {
         public DialogHostViewModel(DialogCustomization options, DialogResult result, string title, string message)
         {

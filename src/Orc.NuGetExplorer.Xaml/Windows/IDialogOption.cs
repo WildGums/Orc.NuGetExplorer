@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface IDialogOption
+    internal interface IDialogOption
     {
         /// <summary>
         ///  Is this dialog option replaces and act as standart window 'ok' button,
@@ -24,7 +24,7 @@
         string Caption { get; }
     }
 
-    public interface IDialogOption<T> : IDialogOption
+    internal interface IDialogOption<T> : IDialogOption
     {
         /// <summary>
         /// Additional action performed when dialog option was selected

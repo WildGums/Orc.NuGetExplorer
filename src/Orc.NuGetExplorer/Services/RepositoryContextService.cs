@@ -7,7 +7,7 @@
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Management;
 
-    public class RepositoryContextService : IRepositoryContextService
+    internal class RepositoryContextService : IRepositoryContextService
     {
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly Dictionary<PackageSource, SourceRepository> _constructedRepositories = new Dictionary<PackageSource, SourceRepository>();

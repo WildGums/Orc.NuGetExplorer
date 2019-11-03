@@ -5,19 +5,19 @@
     using System.Windows;
     using System.Windows.Media.Animation;
 
-    public class AnimationService : IAnimationService
+    internal class AnimationService : IAnimationService
     {
-        private readonly Themes.Animations resourceDictionary;
+        private readonly Themes.Animations _resourceDictionary;
 
         public AnimationService()
         {
-            resourceDictionary = new Themes.Animations();
-            resourceDictionary.InitializeComponent();
+            _resourceDictionary = new Themes.Animations();
+            _resourceDictionary.InitializeComponent();
         }
 
         public Storyboard GetFadeInAnimation(DependencyObject dependencyObject)
         {
-            var sb = (resourceDictionary["FastFadeIn"] as Storyboard)?.Clone();
+            var sb = (_resourceDictionary["FastFadeIn"] as Storyboard)?.Clone();
 
             ValidateFadeAnimation(sb, dependencyObject, "FastFadeIn");
 
@@ -26,7 +26,7 @@
 
         public Storyboard GetFadeOutAnimation(DependencyObject dependencyObject)
         {
-            var sb = (resourceDictionary["FastFadeOut"] as Storyboard)?.Clone();
+            var sb = (_resourceDictionary["FastFadeOut"] as Storyboard)?.Clone();
 
             ValidateFadeAnimation(sb, dependencyObject, "FastFadeOut");
 

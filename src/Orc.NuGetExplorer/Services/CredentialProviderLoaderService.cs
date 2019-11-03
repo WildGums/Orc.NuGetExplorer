@@ -7,7 +7,7 @@
     using NuGet.Credentials;
     using NuGetExplorer.Providers;
 
-    public class CredentialProviderLoaderService : ICredentialProviderLoaderService
+    internal class CredentialProviderLoaderService : ICredentialProviderLoaderService
     {
         private readonly IConfigurationService _configurationService;
 

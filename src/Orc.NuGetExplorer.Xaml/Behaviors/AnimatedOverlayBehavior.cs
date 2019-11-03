@@ -11,7 +11,7 @@
     using Catel.Windows.Interactivity;
     using Orc.NuGetExplorer.Windows;
 
-    public class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
+    internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
         private Grid _topInternalGrid;
 

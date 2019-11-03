@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class NuGetProjectMetadata
+    internal class NuGetProjectMetadata
     {
         public Dictionary<string, object> Data = new Dictionary<string, object>();
     }

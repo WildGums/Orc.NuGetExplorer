@@ -12,7 +12,7 @@
     using Orc.NuGetExplorer.Enums;
     using Packaging;
 
-    public class NuGetPackage : ModelBase, IPackageDetails
+    public sealed class NuGetPackage : ModelBase, IPackageDetails
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

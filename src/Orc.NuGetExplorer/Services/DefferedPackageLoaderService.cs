@@ -14,7 +14,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
 
-    public class DefferedPackageLoaderService : IDefferedPackageLoaderService
+    internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IList<DeferToken> _taskTokenList = new List<DeferToken>();

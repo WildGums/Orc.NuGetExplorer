@@ -3,7 +3,7 @@
     using System;
     using NuGet.ProjectManagement;
 
-    public class FileConflictDialogOption : IDialogOption<FileConflictAction>
+    internal class FileConflictDialogOption : IDialogOption<FileConflictAction>
     {
         public FileConflictDialogOption(Func<FileConflictAction> optionCallback)
         {

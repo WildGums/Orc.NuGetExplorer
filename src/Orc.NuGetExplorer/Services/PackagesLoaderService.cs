@@ -11,7 +11,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
 
-    public class PackagesLoaderService : IPackagesLoaderService
+    internal class PackagesLoaderService : IPackagesLoaderService
     {
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 

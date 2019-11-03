@@ -23,7 +23,7 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
 
-    public class PackageInstallationService : IPackageInstallationService
+    internal class PackageInstallationService : IPackageInstallationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

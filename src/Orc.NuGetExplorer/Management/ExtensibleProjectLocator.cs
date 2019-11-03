@@ -9,7 +9,7 @@
     using Catel.Logging;
     using NuGetExplorer.Services;
 
-    public class ExtensibleProjectLocator : IExtensibleProjectLocator
+    internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
         private readonly static ILog Log = LogManager.GetCurrentClassLogger();
 

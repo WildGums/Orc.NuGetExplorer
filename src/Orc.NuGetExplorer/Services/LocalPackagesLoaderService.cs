@@ -14,7 +14,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
 
-    public class LocalPackagesLoaderService : IPackagesLoaderService
+    internal class LocalPackagesLoaderService : IPackagesLoaderService
     {
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 

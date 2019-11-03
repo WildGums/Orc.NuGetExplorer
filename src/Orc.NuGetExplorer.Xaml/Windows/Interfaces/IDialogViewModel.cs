@@ -2,7 +2,7 @@
 {
     using Catel.MVVM;
 
-    public interface IDialogViewModel
+    internal interface IDialogViewModel
     {
         DialogCustomization Dialog { get; }
 

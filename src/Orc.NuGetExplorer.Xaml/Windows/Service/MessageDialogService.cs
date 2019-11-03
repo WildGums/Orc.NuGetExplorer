@@ -6,7 +6,7 @@
     using Catel.MVVM;
     using Catel.Services;
 
-    public class MessageDialogService : IMessageDialogService
+    internal class MessageDialogService : IMessageDialogService
     {
         private readonly IUIVisualizerService _uIVisualizerService;
 

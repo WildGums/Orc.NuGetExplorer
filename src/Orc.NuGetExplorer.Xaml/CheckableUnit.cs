@@ -3,7 +3,7 @@
     using System;
     using Catel.Data;
 
-    public class CheckableUnit<T> : ObservableObject
+    internal class CheckableUnit<T> : ObservableObject
     {
         private readonly Action<bool, T> _onCheckedChangedCallback;
 

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class DialogCustomization
+    internal class DialogCustomization
     {
         public DialogCustomization(IEnumerable<IDialogOption> options, bool isCloseButtonAvailable)
         {

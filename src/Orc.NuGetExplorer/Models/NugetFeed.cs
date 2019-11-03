@@ -5,7 +5,7 @@
     using System.Xml.Serialization;
     using Catel.Data;
 
-    public class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, IDataErrorInfo, INuGetSource
+    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, IDataErrorInfo, INuGetSource
     {
         public NuGetFeed()
         {

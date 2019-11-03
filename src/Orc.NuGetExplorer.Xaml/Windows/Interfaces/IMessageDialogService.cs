@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    public interface IMessageDialogService
+    internal interface IMessageDialogService
     {
         Task<T> ShowDialogAsync<T>(string title, string message, bool addCloseButton, params IDialogOption[] options);
 

@@ -10,7 +10,7 @@
     using NuGetExplorer.Windows.Dialogs;
     using Orc.NuGetExplorer.Windows;
 
-    public class NuGetProjectContext : INuGetProjectContext
+    internal class NuGetProjectContext : INuGetProjectContext
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

@@ -1,10 +1,10 @@
-namespace Orc.NuGetExplorer.Behaviors
+﻿namespace Orc.NuGetExplorer.Behaviors
 {
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using Catel.Windows.Interactivity;
 
-    public class SelectFirstItemOnContextBehavior : BehaviorBase<ListBox>
+    internal class SelectFirstItemOnContextBehavior : BehaviorBase<ListBox>
     {
         protected override void OnAssociatedObjectLoaded()
         {

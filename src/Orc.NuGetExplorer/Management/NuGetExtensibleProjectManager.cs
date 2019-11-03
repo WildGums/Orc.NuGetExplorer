@@ -19,7 +19,7 @@
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
 
-    public class NuGetExtensibleProjectManager : INuGetExtensibleProjectManager
+    internal class NuGetExtensibleProjectManager : INuGetExtensibleProjectManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

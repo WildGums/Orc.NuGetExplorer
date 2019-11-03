@@ -3,7 +3,7 @@
     using System.Windows;
     using System.Windows.Media.Animation;
 
-    public interface IAnimationService
+    internal interface IAnimationService
     {
         Storyboard GetFadeInAnimation(DependencyObject dependencyObject);
 

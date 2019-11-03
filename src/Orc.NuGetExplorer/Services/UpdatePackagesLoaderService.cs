@@ -16,7 +16,7 @@
     using Orc.NuGetExplorer.Scopes;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
-    public class UpdatePackagesLoaderService : IPackagesLoaderService, IPackagesUpdatesSearcherService
+    internal class UpdatePackagesLoaderService : IPackagesLoaderService, IPackagesUpdatesSearcherService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

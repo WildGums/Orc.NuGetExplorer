@@ -4,7 +4,7 @@
     using Catel;
     using Catel.Logging;
 
-    public class DialogResult<T> : DialogResult
+    internal class DialogResult<T> : DialogResult
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -32,7 +32,7 @@
         }
     }
 
-    public class DialogResult
+    internal class DialogResult
     {
         public virtual void SetResult(IDialogOption result)
         {

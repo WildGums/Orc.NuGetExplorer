@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class CombinedNuGetSource : INuGetSource
+    public sealed class CombinedNuGetSource : INuGetSource
     {
         private readonly List<INuGetSource> _sourceList = new List<INuGetSource>();
 
@@ -59,12 +59,12 @@
             return new PackageSourceWrapper(_sourceList.Select(x => x.Source).ToList());
         }
 
-        protected bool IsAllFeedsAccessible()
+        public bool IsAllFeedsAccessible()
         {
             return _sourceList.Any() && _sourceList.All(x => x.IsAccessible);
         }
 
-        protected bool IsAllVerified()
+        public bool IsAllVerified()
         {
             return _sourceList.Any() && _sourceList.All(x => x.IsVerified);
         }

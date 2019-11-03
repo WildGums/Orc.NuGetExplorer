@@ -6,7 +6,7 @@
     using Catel.Data;
     using NuGet.Configuration;
 
-    public class ExplorerSettingsContainer : ModelBase, INuGetSettings
+    public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
     {
         /// <summary>
         /// All feeds configured in application

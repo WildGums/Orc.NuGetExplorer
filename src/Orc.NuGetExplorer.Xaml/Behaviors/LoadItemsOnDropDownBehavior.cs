@@ -5,7 +5,7 @@
     using System.Windows.Controls;
     using Catel.MVVM;
 
-    public class LoadItemsOnDropDownBehavior : Catel.Windows.Interactivity.BehaviorBase<ComboBox>
+    internal class LoadItemsOnDropDownBehavior : Catel.Windows.Interactivity.BehaviorBase<ComboBox>
     {
         protected override void OnAssociatedObjectLoaded()
         {

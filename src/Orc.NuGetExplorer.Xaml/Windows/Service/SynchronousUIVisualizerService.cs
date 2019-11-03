@@ -15,7 +15,7 @@
     /// It used only for compatibility purposes
     /// to satisfy necessity of calling visualizer from implementations of NuGet Library's synchronous interfaces
     /// </summary>
-    public class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
+    internal class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

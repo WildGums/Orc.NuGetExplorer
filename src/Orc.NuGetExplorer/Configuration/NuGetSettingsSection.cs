@@ -4,7 +4,7 @@ namespace Orc.NuGetExplorer.Configuration
     using System.Collections.Generic;
     using NuGet.Configuration;
 
-    public class NuGetSettingsSection : SettingSection
+    internal class NuGetSettingsSection : SettingSection
     {
         /// <summary>
         /// Empty settings section
