@@ -101,7 +101,7 @@
 
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
-            if(!_sourceRepositories.Any())
+            if (!_sourceRepositories.Any())
             {
                 throw new InvalidOperationException("No repositories available");
             }

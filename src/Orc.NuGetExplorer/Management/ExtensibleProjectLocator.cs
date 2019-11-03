@@ -71,7 +71,7 @@
 
         public IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
         {
-            if(onlyEnabled)
+            if (onlyEnabled)
             {
                 return _enabledProjects.ToList();
             }

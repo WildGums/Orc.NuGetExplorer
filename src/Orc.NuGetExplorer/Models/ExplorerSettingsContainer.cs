@@ -36,7 +36,7 @@
         {
             var feeds = NuGetFeeds.Where(x => x.IsSelected);
 
-            if(!feeds.Any())
+            if (!feeds.Any())
             {
                 //then try to return all feeds, 'all' feed probably is selected
                 feeds = NuGetFeeds.Where(x => x.IsEnabled);

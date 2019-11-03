@@ -196,7 +196,7 @@
 
             var section = GetSection(sectionName);
 
-            if(item is AddItem addItem)
+            if (item is AddItem addItem)
             {
                 SetValue(sectionName, addItem.Key, addItem.Value);
                 return;

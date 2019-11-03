@@ -28,8 +28,9 @@
 
         //had to doing this, because settings is as parameter in ctor caused loop references
         private readonly Lazy<Configuration.IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
-                () => { 
-                    return ServiceLocator.Default.ResolveType<Configuration.IPackageSourceProvider>(); 
+                () =>
+                {
+                    return ServiceLocator.Default.ResolveType<Configuration.IPackageSourceProvider>();
                 }
             );
 

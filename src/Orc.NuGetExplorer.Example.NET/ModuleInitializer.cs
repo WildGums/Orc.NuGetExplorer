@@ -1,9 +1,7 @@
 ﻿using Catel.IoC;
 using Orc.NuGetExplorer;
-using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Example;
 using Orc.NuGetExplorer.Management;
-using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
 
 /// <summary>
@@ -22,7 +20,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
         serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
-     
+
         //add all project extensions
         var manager = serviceLocator.ResolveType<IExtensibleProjectLocator>();
 

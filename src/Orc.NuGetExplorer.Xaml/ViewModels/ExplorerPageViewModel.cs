@@ -203,7 +203,7 @@
                 return;
             }
 
-            if(IsFirstLoaded)
+            if (IsFirstLoaded)
             {
                 return;
             }

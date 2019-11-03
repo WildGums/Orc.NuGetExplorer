@@ -24,7 +24,7 @@
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => configurationService);
-  
+
             _typeFactory = typeFactory;
             _configurationService = configurationService;
 

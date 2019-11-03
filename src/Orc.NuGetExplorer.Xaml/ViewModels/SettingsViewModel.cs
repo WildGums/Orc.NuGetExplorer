@@ -25,7 +25,7 @@
             Settings = settingsProvider.Model;
         }
 
-        public SettingsViewModel(bool loadFeedsFromConfig, IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService) 
+        public SettingsViewModel(bool loadFeedsFromConfig, IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService)
             : this(settingsProvider)
         {
             Argument.IsNotNull(() => configurationService);

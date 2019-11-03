@@ -125,7 +125,7 @@
                     }
                 }
 
-                if(!availabePackageStorage.Any())
+                if (!availabePackageStorage.Any())
                 {
                     Log.Error($"Package {package} cannot be resolved with current settings for chosen destination");
                     return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();

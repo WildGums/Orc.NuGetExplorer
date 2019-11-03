@@ -9,7 +9,6 @@
     using Catel.Services;
     using Catel.Threading;
     using Models;
-    using Orc.NuGetExplorer.ViewModels;
 
     public class MainViewModel : ViewModelBase
     {

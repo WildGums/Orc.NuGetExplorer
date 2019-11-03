@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer
 {
     using Catel;
     using Catel.Configuration;
-    using Orc.NuGetExplorer.Enums;
 
     internal static class IConfigurationServiceExtensions
     {
@@ -55,7 +54,7 @@ namespace Orc.NuGetExplorer
             configurationService.SetRoamingValue(key, repository.Name);
         }
 
-        public static void SetLastRepository(this IConfigurationService configurationService, string page,  IRepository repository)
+        public static void SetLastRepository(this IConfigurationService configurationService, string page, IRepository repository)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => repository);
