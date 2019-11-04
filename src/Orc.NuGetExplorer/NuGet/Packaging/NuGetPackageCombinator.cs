@@ -1,14 +1,11 @@
-﻿using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Packaging
+﻿namespace Orc.NuGetExplorer.Packaging
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
     using NuGetExplorer.Models;
-    using System.Threading.Tasks;
 
     public class NuGetPackageCombinator
     {

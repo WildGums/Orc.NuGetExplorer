@@ -1,15 +1,15 @@
 ﻿namespace Orc.NuGetExplorer.Cache
 {
-    using Orc.NuGetExplorer.Loggers;
-    using Orc.NuGetExplorer.Services;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
+    using Orc.NuGetExplorer.Loggers;
+    using Orc.NuGetExplorer.Services;
 
     public class NuGetCacheManager : INuGetCacheManager
     {

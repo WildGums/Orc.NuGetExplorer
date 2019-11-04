@@ -1,12 +1,12 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
-    using Catel;
-    using NuGet.Common;
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using Catel;
+    using NuGet.Common;
 
-    public class FileDirectoryService : IFileDirectoryService
+    internal class FileDirectoryService : IFileDirectoryService
     {
         public static readonly string DefaultGlobalPackagesFolderPath = "packages" + Path.DirectorySeparatorChar;
 
@@ -18,6 +18,11 @@
         public string GetApplicationRoamingFolder()
         {
             return Catel.IO.Path.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming, Constants.CompanyName, Constants.ProductName);
+        }
+
+        public string GetApplicationLocalFolder()
+        {
+            return Catel.IO.Path.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserLocal, Constants.CompanyName, Constants.ProductName);
         }
 
         public void DeleteDirectoryTree(string folderPath, out List<string> failedEntries)

@@ -9,5 +9,7 @@
         string GetGlobalPackagesFolder();
 
         string GetApplicationRoamingFolder();
+
+        string GetApplicationLocalFolder();
     }
 }

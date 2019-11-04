@@ -7,7 +7,6 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 // All other assembly info is defined in SharedAssembly.cs
 

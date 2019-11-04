@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     internal class SearchSettings : ModelBase
     {
         public bool? IsPrereleaseAllowed { get; set; }
-        public string SearchFilter { get; set; }       
+        public string SearchFilter { get; set; }
         public int PackagesToSkip { get; set; }
     }
 }

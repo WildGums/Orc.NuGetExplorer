@@ -13,13 +13,13 @@ namespace Orc.NuGetExplorer
     internal static class AccentColorHelper
     {
         #region Fields
-        private static bool _isAccentColorResourceDictionaryCreated;
+        private static bool IsAccentColorResourceDictionaryCreated;
         #endregion
 
         #region Methods
         public static void CreateAccentColorResourceDictionary()
         {
-            if (_isAccentColorResourceDictionaryCreated)
+            if (IsAccentColorResourceDictionaryCreated)
             {
                 return;
             }
@@ -27,7 +27,7 @@ namespace Orc.NuGetExplorer
             var accentColor = GetAccentColorBrush().Color;
             accentColor.CreateAccentColorResourceDictionary();
 
-            _isAccentColorResourceDictionaryCreated = true;
+            IsAccentColorResourceDictionaryCreated = true;
         }
 
         private static SolidColorBrush GetAccentColorBrush()

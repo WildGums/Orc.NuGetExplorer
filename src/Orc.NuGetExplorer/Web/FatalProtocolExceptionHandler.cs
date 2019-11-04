@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Web
 {
-    using Catel.Logging;
-    using NuGet.Protocol.Core.Types;
     using System;
     using System.Net;
+    using Catel.Logging;
+    using NuGet.Protocol.Core.Types;
 
     public class FatalProtocolExceptionHandler : IHttpExceptionHandler<FatalProtocolException>
     {

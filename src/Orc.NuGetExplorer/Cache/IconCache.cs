@@ -1,10 +1,10 @@
 ﻿namespace Orc.NuGetExplorer.Cache
 {
-    using Catel.Caching;
-    using Catel.Caching.Policies;
     using System;
     using System.IO;
     using System.Windows.Media.Imaging;
+    using Catel.Caching;
+    using Catel.Caching.Policies;
 
     public class IconCache
     {
@@ -54,6 +54,18 @@
 
                 return image;
             }
+        }
+
+        public bool IsCached(Uri iconUri)
+        {
+            if (iconUri == null)
+            {
+                return false;
+            }
+
+            var cachedItem = _cache.Get(iconUri.ToString());
+
+            return cachedItem != null;
         }
     }
 }

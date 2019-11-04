@@ -1,11 +1,12 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
-    using Catel.Data;
-    using NuGet.Configuration;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Data;
+    using NuGet.Configuration;
 
-    public class ExplorerSettingsContainer : ModelBase, INuGetSettings
+    public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
     {
         /// <summary>
         /// All feeds configured in application
@@ -19,7 +20,13 @@
 
         public bool IsPreReleaseIncluded { get; set; }
 
-        public string SearchString { get; set; }
+        public string SearchString { get; set; } = String.Empty;
+
+        public void Clear()
+        {
+            NuGetFeeds.Clear();
+            ObservedFeed = null;
+        }
 
         /// <summary>
         /// Create and retrive all unique enabled package sources
@@ -27,8 +34,15 @@
         /// <returns></returns>
         public IReadOnlyList<PackageSource> GetAllPackageSources()
         {
-            var feeds = NuGetFeeds.Where(x => x.IsSelected).Select(x => new PackageSource(x.Source));
-            return feeds.ToList();
+            var feeds = NuGetFeeds.Where(x => x.IsSelected);
+
+            if (!feeds.Any())
+            {
+                //then try to return all feeds, 'all' feed probably is selected
+                feeds = NuGetFeeds.Where(x => x.IsEnabled);
+            }
+
+            return feeds.Select(x => new PackageSource(x.Source)).ToList();
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)

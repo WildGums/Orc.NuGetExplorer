@@ -1,16 +1,16 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using NuGet.Common;
-    using NuGet.Protocol.Core.Types;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using NuGet.Common;
+    using NuGet.Protocol.Core.Types;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {
-        private PackageSearchResource[] combinedResources;
+        private PackageSearchResource[] _combinedResources;
 
         private MultiplySourceSearchResource()
         {
@@ -20,7 +20,7 @@
         {
             var combinedResourcesTasks = sourceRepositories.Select(x => x.GetResourceAsync<PackageSearchResource>()).ToList();
             var completed = (await Task.WhenAll(combinedResourcesTasks)).Where(m => m != null);
-            combinedResources = completed.ToArray();
+            _combinedResources = completed.ToArray();
         }
 
         public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
@@ -35,7 +35,7 @@
         {
             try
             {
-                var searchTasks = combinedResources.Select(res => res.SearchAsync(searchTerm, filters, skip, take, log, cancellationToken));
+                var searchTasks = _combinedResources.Select(res => res.SearchAsync(searchTerm, filters, skip, take, log, cancellationToken));
 
                 var results = await Task.WhenAll(searchTasks);
 

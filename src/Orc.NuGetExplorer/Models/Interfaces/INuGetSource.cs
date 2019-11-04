@@ -1,11 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
-    public interface INuGetSource
+    public interface INuGetSource : IPackageSource
     {
-        string Name { get; }
-
-        string Source { get; }
-
         PackageSourceWrapper GetPackageSource();
 
         bool IsAccessible { get; }

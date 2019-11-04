@@ -32,6 +32,7 @@
     <PackageReference Include="NuGet.PackageManagement" Version="4.9.4" />
     <PackageReference Include="NuGet.ProjectModel" Version="4.9.4" />
     <PackageReference Include="NuGet.Protocol" Version="4.9.4" />
+    <PackageReference Include="NuGet.Resolver" Version="4.9.4" />
     <PackageReference Include="Obsolete.Fody" Version="5.1.0" PrivateAssets="all" />    
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
     <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" PrivateAssets="all" />

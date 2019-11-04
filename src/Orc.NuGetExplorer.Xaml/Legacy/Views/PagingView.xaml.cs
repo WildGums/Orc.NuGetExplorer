@@ -18,7 +18,7 @@ namespace Orc.NuGetExplorer.Views
         #region Constructors
         static PagingView()
         {
-            typeof (PagingView).AutoDetectViewPropertiesToSubscribe();
+            typeof(PagingView).AutoDetectViewPropertiesToSubscribe();
         }
 
         public PagingView()
@@ -31,40 +31,40 @@ namespace Orc.NuGetExplorer.Views
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public int VisiblePages
         {
-            get { return (int) GetValue(VisiblePagesProperty); }
+            get { return (int)GetValue(VisiblePagesProperty); }
             set { SetValue(VisiblePagesProperty, value); }
         }
 
         public static readonly DependencyProperty VisiblePagesProperty = DependencyProperty.Register("VisiblePages", typeof(int),
             typeof(PagingView), new FrameworkPropertyMetadata(5, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        
+
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public int ItemsCount
         {
-            get { return (int) GetValue(ItemsCountProperty); }
+            get { return (int)GetValue(ItemsCountProperty); }
             set { SetValue(ItemsCountProperty, value); }
         }
 
         public static readonly DependencyProperty ItemsCountProperty = DependencyProperty.Register("ItemsCount", typeof(int), typeof(PagingView),
             new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        
+
 
         [ViewToViewModel("ItemsPerPage", MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public int ItemsPerPage
         {
-            get { return (int) GetValue(ItemsPerPageProperty); }
+            get { return (int)GetValue(ItemsPerPageProperty); }
             set { SetValue(ItemsPerPageProperty, value); }
         }
 
         public static readonly DependencyProperty ItemsPerPageProperty = DependencyProperty.Register("ItemsPerPage", typeof(int),
             typeof(PagingView), new FrameworkPropertyMetadata(10, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        
+
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayDoNothing)]
         public int ItemIndex
         {
-            get { return (int) GetValue(ItemIndexProperty); }
+            get { return (int)GetValue(ItemIndexProperty); }
             set { SetValue(ItemIndexProperty, value); }
         }
 

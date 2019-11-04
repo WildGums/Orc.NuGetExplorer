@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
+    using System.Linq;
     using Catel;
     using NuGet.Packaging;
     using NuGet.Protocol.Core.Types;
-    using System.Linq;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
     public class UpdatePackageSearchMetadataBuilder

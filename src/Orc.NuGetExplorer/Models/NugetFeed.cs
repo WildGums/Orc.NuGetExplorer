@@ -1,17 +1,17 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
-    using Catel.Data;
     using System;
     using System.ComponentModel;
     using System.Xml.Serialization;
+    using Catel.Data;
 
-    public class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, IDataErrorInfo, INuGetSource
+    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, IDataErrorInfo, INuGetSource
     {
         public NuGetFeed()
         {
             VerificationResult = FeedVerificationResult.Unknown;
             Error = String.Empty;
-            IsActive = true;
+            IsEnabled = true;
         }
 
         public NuGetFeed(string name, string source)
@@ -20,11 +20,21 @@
             Source = source;
         }
 
+        public NuGetFeed(string name, string source, bool isEnabled) : this(name, source)
+        {
+            IsEnabled = isEnabled;
+        }
+
+        public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) : this(name, source, isEnabled)
+        {
+            IsOfficial = isOfficial;
+        }
+
         public string Name { get; set; }
 
         public string Source { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool IsEnabled { get; set; }
 
         [XmlIgnore]
         public bool IsVerifiedNow { get; set; }
@@ -45,6 +55,39 @@
         public bool IsVerified { get; private set; }
 
         public bool IsSelected { get; set; }
+
+        public bool IsOfficial { get; set; }
+
+        #region IDataErrorInfo
+        public string Error { get; private set; }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(Name):
+
+                        if (!IsNameValid)
+                        {
+                            return "Feed name cannot be empty";
+                        }
+                        break;
+
+                    case nameof(Source):
+
+                        if (GetUriSource() == null)
+                        {
+                            return "Incorrect feed source can`t be recognized as Uri";
+                        }
+                        break;
+                }
+
+                return String.Empty;
+            }
+        }
+        #endregion
 
         public override string ToString()
         {
@@ -96,40 +139,12 @@
             return new NuGetFeed(
                 Name, Source)
             {
-                IsActive = IsActive,
+                IsEnabled = IsEnabled,
                 VerificationResult = VerificationResult,
                 SerializationIdentifier = SerializationIdentifier
             };
         }
 
-        public string Error { get; private set; }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch (columnName)
-                {
-                    case nameof(Name):
-
-                        if (!IsNameValid)
-                        {
-                            return "Feed name cannot be empty";
-                        }
-                        break;
-
-                    case nameof(Source):
-
-                        if (GetUriSource() == null)
-                        {
-                            return "Incorrect feed source can`t be recognized as Uri";
-                        }
-                        break;
-                }
-
-                return String.Empty;
-            }
-        }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {

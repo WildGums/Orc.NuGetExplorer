@@ -1,13 +1,13 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
     using NuGet.Credentials;
     using NuGetExplorer.Providers;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
-    public class CredentialProviderLoaderService : ICredentialProviderLoaderService
+    internal class CredentialProviderLoaderService : ICredentialProviderLoaderService
     {
         private readonly IConfigurationService _configurationService;
 
