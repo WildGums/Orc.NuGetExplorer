@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Pagination;
@@ -13,6 +14,14 @@
 
     internal class PackagesLoaderService : IPackagesLoaderService
     {
+        private readonly ILogger _nugetLogger;
+
+        public PackagesLoaderService(ILogger logger)
+        {
+            Argument.IsNotNull(() => logger);
+            _nugetLogger = logger;
+        }
+
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
@@ -29,7 +38,7 @@
 
                 try
                 {
-                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, new Loggers.DebugLogger(true), token);
+                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
                     return packages;
                 }
@@ -74,7 +83,7 @@
             try
             {
                 var packages = await searchResource.SearchAsync(searchTerm, searchFilter,
-                    pageContinuation.GetNext(), pageContinuation.Size, new Loggers.DebugLogger(true), token);
+                    pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
                 return packages;
             }

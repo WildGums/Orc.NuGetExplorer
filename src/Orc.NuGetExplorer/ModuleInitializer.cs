@@ -1,6 +1,7 @@
 ﻿using Catel.Configuration;
 using Catel.IoC;
 using Catel.Services;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 using NuGet.Frameworks;
@@ -10,6 +11,7 @@ using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Configuration;
+using Orc.NuGetExplorer.Loggers;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
@@ -26,6 +28,9 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+        serviceLocator.RegisterType<ILogger, NuGetLogger>();
+
         serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
         serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
         serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
@@ -38,7 +43,7 @@ public static class ModuleInitializer
 
         // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NugetConfigurationService>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+
         //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
         //serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
@@ -86,8 +91,6 @@ public static class ModuleInitializer
 
         var languageService = serviceLocator.ResolveType<ILanguageService>();
         languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-
-
 
         //serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
     }

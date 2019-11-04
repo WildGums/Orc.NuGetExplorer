@@ -101,10 +101,15 @@
 
         private bool BatchUpdateCanExecute()
         {
-            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+            return _parentManagerPage.PackageItems.Any(); /*(x => x.IsChecked);*/
         }
 
         private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            InvalidateCommands();
+        }
+
+        private void InvalidateCommands()
         {
             var commandManager = this.GetViewModelCommandManager();
             commandManager.InvalidateCommands();

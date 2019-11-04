@@ -1,20 +1,31 @@
 ﻿namespace Orc.NuGetExplorer.Loggers
 {
     using System.Threading.Tasks;
+    using Catel;
     using Catel.Logging;
     using NuGet.Common;
 
-    public class DebugLogger : ILogger
+    public class NuGetLogger : ILogger
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly bool _verbose;
+        private readonly INuGetLogListeningSevice _logListeningService;
 
-        public DebugLogger(bool verbose)
+        public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
         {
+            Argument.IsNotNull(() => logListeningService);
+
+            _logListeningService = logListeningService;
             _verbose = verbose;
         }
 
+        public NuGetLogger(INuGetLogListeningSevice logListeningService) : this(true, logListeningService)
+        {
+
+        }
+
+        #region ILogger
         void ILogger.Log(LogLevel level, string data)
         {
             switch (level)
@@ -47,7 +58,14 @@
 
         void ILogger.Log(ILogMessage message)
         {
+            Log.Debug($"Send {message.Level} message to log listeners");
             ((ILogger)this).Log(message.Level, message.Message);
+        }
+
+        public async Task LogAsync(ILogMessage message)
+        {
+            Log.Debug($"Send {message.Level} message to log listeners");
+            await LogAsync(message.Level, message.Message);
         }
 
         public async Task LogAsync(LogLevel level, string data)
@@ -56,29 +74,29 @@
             await logginTask;
         }
 
-        public async Task LogAsync(ILogMessage message)
-        {
-            await LogAsync(message.Level, message.Message);
-        }
-
         public void LogDebug(string data)
         {
-            Log.Debug(data);
+            _logListeningService.SendDebug(data);
         }
 
         public void LogError(string data)
         {
-            Log.Error(data);
+            _logListeningService.SendError(data);
         }
 
         public void LogInformation(string data)
         {
-            Log.Info(data);
+            _logListeningService.SendInfo(data);
+        }
+
+        public void LogWarning(string data)
+        {
+            _logListeningService.SendWarning(data);
         }
 
         public void LogInformationSummary(string data)
         {
-            Log.Info(data);
+            _logListeningService.SendInfo(data);
         }
 
         public void LogMinimal(string data)
@@ -88,12 +106,12 @@
 
         public void LogVerbose(string data)
         {
-            Log.Info(data);
+            if (_verbose)
+            {
+                LogInformation(data);
+            }
         }
 
-        public void LogWarning(string data)
-        {
-            Log.Warning(data);
-        }
+        #endregion
     }
 }

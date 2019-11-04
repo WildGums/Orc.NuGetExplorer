@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging.Core;
@@ -16,7 +17,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly ILogger NuGetLogger = new DebugLogger(true);
+        private static readonly ILogger NuGetLogger;
 
         private readonly IEnumerable<SourceRepository> _sourceRepositories;
 
@@ -25,6 +26,11 @@
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly SourceRepository _localRepository;
 #pragma warning restore IDE0052 // Remove unread private members
+
+        static PackageMetadataProvider()
+        {
+            NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
+        }
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
             IEnumerable<SourceRepository> optionalGlobalLocalRepositories)

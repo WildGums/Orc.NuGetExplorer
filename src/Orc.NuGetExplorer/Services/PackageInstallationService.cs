@@ -27,7 +27,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly ILogger NuGetLog = new DebugLogger(true);
+        private readonly ILogger _nugetLogger;
 
         private readonly IFrameworkNameProvider _frameworkNameProvider;
 
@@ -40,15 +40,17 @@
         public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider,
             ISourceRepositoryProvider sourceRepositoryProvider,
             IFileDirectoryService fileDirectoryService,
-            ITypeFactory typeFactory)
+            ILogger logger)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => sourceRepositoryProvider);
             Argument.IsNotNull(() => fileDirectoryService);
+            Argument.IsNotNull(() => logger);
 
             _frameworkNameProvider = frameworkNameProvider;
             _sourceRepositoryProvider = sourceRepositoryProvider;
             _fileDirectoryService = fileDirectoryService;
+            _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
         }
@@ -194,15 +196,13 @@
         {
             Argument.IsNotNull(() => storage);
 
-            var logger = new Loggers.DebugLogger(true);
-
             HashSet<SourcePackageDependencyInfo> packageStore = storage;
 
             Stack<SourcePackageDependencyInfo> downloadStack = new Stack<SourcePackageDependencyInfo>();
 
             //get top dependency
             var dependencyInfo = await dependencyInfoResource.ResolvePackage(
-                            identity, targetFramework, cacheContext, logger, cancellationToken);
+                            identity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
             if (dependencyInfo == null)
             {
@@ -237,7 +237,7 @@
                     //but possibly it should be configured in project
                     var relatedIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
-                    var relatedDepInfo = await dependencyInfoResource.ResolvePackage(relatedIdentity, targetFramework, cacheContext, logger, cancellationToken);
+                    var relatedDepInfo = await dependencyInfoResource.ResolvePackage(relatedIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
                     downloadStack.Push(relatedDepInfo);
                 }
@@ -276,7 +276,7 @@
                     package,
                     new PackageDownloadContext(cacheContext),
                     globalFolder,
-                    NuGetLog,
+                    _nugetLogger,
                     cancellationToken
                 );
 
@@ -360,7 +360,7 @@
                 prefferedVersion,
                 flatDependencies,
                 _sourceRepositoryProvider.GetRepositories().Select(x => x.PackageSource),
-                NuGetLog
+                _nugetLogger
             );
 
             return resolverContext;
@@ -371,13 +371,13 @@
             //todo provide read certs?
             var signaturesCerts = Enumerable.Empty<TrustedSignerAllowListEntry>().ToList();
 
-            var policyContextForClient = ClientPolicyContext.GetClientPolicy(Settings.LoadDefaultSettings(null), NuGetLog);
+            var policyContextForClient = ClientPolicyContext.GetClientPolicy(Settings.LoadDefaultSettings(null), _nugetLogger);
 
             var extractionContext = new PackageExtractionContext(
                 PackageSaveMode.Defaultv3,
                 XmlDocFileSaveMode.Skip,
                 policyContextForClient,
-                NuGetLog
+                _nugetLogger
             );
 
             return extractionContext;

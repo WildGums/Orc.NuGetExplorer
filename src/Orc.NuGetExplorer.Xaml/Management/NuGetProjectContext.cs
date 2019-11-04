@@ -2,6 +2,7 @@
 {
     using System;
     using System.Xml.Linq;
+    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging;
@@ -14,15 +15,19 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly ILogger NugetLogger = new DebugLogger(true);
+        private readonly ILogger _nugetLogger;
 
         private readonly IMessageDialogService _messageDialogService;
 
-        public NuGetProjectContext(FileConflictAction fileConflictAction, IMessageDialogService messageDialogService)
+        public NuGetProjectContext(FileConflictAction fileConflictAction, IMessageDialogService messageDialogService, ILogger logger)
         {
+            Argument.IsNotNull(() => messageDialogService);
+            Argument.IsNotNull(() => logger);
+
             FileConflictAction = fileConflictAction;
 
             _messageDialogService = messageDialogService;
+            _nugetLogger = logger;
         }
 
         public PackageExtractionContext PackageExtractionContext { get; set; }

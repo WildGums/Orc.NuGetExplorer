@@ -22,17 +22,19 @@ namespace Orc.NuGetExplorer
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
         private static readonly IHttpExceptionHandler<FatalProtocolException> FatalProtocolExceptionHandler = new FatalProtocolExceptionHandler();
 
+        private readonly ILogger _nugetLogger;
         private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
 
-        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService)
+        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ILogger logger)
         {
             Argument.IsNotNull(() => credentialProviderLoaderService);
+            Argument.IsNotNull(() => logger);
 
             _credentialProviderLoaderService = credentialProviderLoaderService;
+            _nugetLogger = logger;
 
             //set own provider 
             HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => new ExplorerCredentialService(
@@ -47,7 +49,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => source);
 
             var result = FeedVerificationResult.Valid;
-            var logger = new DebugLogger(true);
 
             StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
@@ -73,7 +74,7 @@ namespace Orc.NuGetExplorer
                 //try to perform search
                 try
                 {
-                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, logger, ct);
+                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                 }
                 catch (Exception)
                 {
@@ -129,7 +130,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => source);
 
             var result = FeedVerificationResult.Valid;
-            var logger = new DebugLogger(true);
 
             StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
@@ -151,7 +151,7 @@ namespace Orc.NuGetExplorer
                     var cancellationToken = cts.Token;
 
                     //try to perform search
-                    var searchTask = searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, logger, cancellationToken);
+                    var searchTask = searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
 
                     var searchCompletion = Task.WhenAny(searchTask, Task.Delay(timeOut, cancellationToken)).Result;
 
