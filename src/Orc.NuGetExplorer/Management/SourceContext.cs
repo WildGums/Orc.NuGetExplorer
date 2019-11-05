@@ -41,7 +41,7 @@
                 return ActiveContext.Peek();
             }
         }
-     
+
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }
         public IReadOnlyList<SourceRepository> Repositories { get; private set; }

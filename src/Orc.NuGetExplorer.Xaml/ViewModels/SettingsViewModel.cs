@@ -24,7 +24,7 @@
             Settings = settings;
         }
 
-        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider): this()
+        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider) : this()
         {
             Argument.IsNotNull(() => settingsProvider);
             Settings = settingsProvider.Model;
@@ -63,7 +63,7 @@
 
         protected override Task OnClosingAsync()
         {
-            if(_reloadConfigOnInitialize)
+            if (_reloadConfigOnInitialize)
             {
                 Settings.Clear();
             }
