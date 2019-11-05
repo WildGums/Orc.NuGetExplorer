@@ -19,7 +19,7 @@
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
 
-    internal class NuGetExtensibleProjectManager : INuGetExtensibleProjectManager
+    internal class NuGetProjectPackageManager : INuGetPackageManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -35,7 +35,7 @@
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
 
-        public NuGetExtensibleProjectManager(IPackageInstallationService packageInstallationService, IFrameworkNameProvider frameworkNameProvider,
+        public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService, IFrameworkNameProvider frameworkNameProvider,
             INuGetProjectContextProvider nuGetProjectContextProvider, ISourceRepositoryProvider repositoryProvider)
         {
             Argument.IsNotNull(() => packageInstallationService);

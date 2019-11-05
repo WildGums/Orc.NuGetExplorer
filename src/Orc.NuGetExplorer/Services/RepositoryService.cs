@@ -14,13 +14,13 @@
     {
         private readonly IRepositoryContextService _repositoryContextService;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IDefaultExtensibleProjectProvider _defaultExtensibleProjectProvider;
         private readonly ISourceRepositoryProvider _repositoryProvider;
 
         public RepositoryService(IRepositoryContextService repositoryContextService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetExtensibleProjectManager projectManager, INuGetConfigurationService nuGetConfigurationService,
+            INuGetPackageManager projectManager, INuGetConfigurationService nuGetConfigurationService,
             IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
         {
             Argument.IsNotNull(() => repositoryContextService);

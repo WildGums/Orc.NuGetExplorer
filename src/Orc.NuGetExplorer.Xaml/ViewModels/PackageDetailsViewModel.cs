@@ -31,12 +31,12 @@
 
         private readonly IProgressManager _progressManager;
 
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, INuGetExtensibleProjectManager projectManager)
+            IProgressManager progressManager, INuGetPackageManager projectManager)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);

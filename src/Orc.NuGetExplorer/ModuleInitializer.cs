@@ -65,7 +65,7 @@ public static class ModuleInitializer
         //serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
 
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
-        serviceLocator.RegisterType<INuGetExtensibleProjectManager, NuGetExtensibleProjectManager>();
+        serviceLocator.RegisterType<INuGetPackageManager, NuGetProjectPackageManager>();
         serviceLocator.RegisterType<IFileDirectoryService, FileDirectoryService>();
         serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
 

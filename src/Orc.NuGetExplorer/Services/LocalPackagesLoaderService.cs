@@ -18,14 +18,14 @@
     {
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
 
         private readonly IRepositoryContextService _repositoryService;
 
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 
         public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetExtensibleProjectManager nuGetExtensibleProjectManager)
+            INuGetPackageManager nuGetExtensibleProjectManager)
         {
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);

@@ -17,13 +17,13 @@
 
         private readonly IManagerPage _parentManagerPage;
 
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
 
         private readonly IExtensibleProjectLocator _projectLocator;
 
         private readonly IProgressManager _progressManager;
 
-        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetExtensibleProjectManager projectManager,
+        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
             IExtensibleProjectLocator projectLocator)
         {
             Argument.IsNotNull(() => managerPage);

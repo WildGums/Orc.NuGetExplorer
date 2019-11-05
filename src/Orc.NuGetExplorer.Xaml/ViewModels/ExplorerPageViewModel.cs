@@ -48,7 +48,7 @@
         private readonly IPackagesLoaderService _packagesLoaderService;
 
         private readonly MetadataOrigin _pageType;
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
         private readonly IRepositoryContextService _repositoryService;
 
         private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
@@ -59,7 +59,7 @@
         public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, IPackagesLoaderService packagesLoaderService,
             IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetExtensibleProjectManager projectManager)
+            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager)
         {
             Title = pageTitle;
 
@@ -243,6 +243,7 @@
 
                 _projectManager.Install += OnProjectManagerInstall;
                 _projectManager.Uninstall += OnProjectManagerUninstall;
+                _projectManager.Update += OnProjectManagerUpdate;
 
                 IsFirstLoaded = false;
 
@@ -570,6 +571,11 @@
                 return;
             }
 
+            StartLoadingTimerOrInvalidateData();
+        }
+
+        private async Task OnProjectManagerUpdate(object sender, UpdateNuGetProjectEventArgs e)
+        {
             StartLoadingTimerOrInvalidateData();
         }
 

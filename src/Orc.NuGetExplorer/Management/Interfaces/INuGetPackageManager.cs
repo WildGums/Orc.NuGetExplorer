@@ -8,7 +8,7 @@
     using NuGet.Packaging.Core;
     using Orc.NuGetExplorer.Management.EventArgs;
 
-    public interface INuGetExtensibleProjectManager
+    public interface INuGetPackageManager
     {
         Task InstallPackageForProject(IExtensibleProject project, PackageIdentity package, CancellationToken token);
 

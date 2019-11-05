@@ -22,7 +22,7 @@
 
         private readonly IRepositoryService _repositoryService;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
-        private readonly INuGetExtensibleProjectManager _nuGetExtensibleProjectManager;
+        private readonly INuGetPackageManager _nuGetExtensibleProjectManager;
 
         private readonly IServiceLocator _serviceLocator;
 
@@ -33,7 +33,7 @@
         private readonly HashSet<string> _discardedPackagesSet = new HashSet<string>();
 
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-           INuGetExtensibleProjectManager nuGetExtensibleProjectManager)
+           INuGetPackageManager nuGetExtensibleProjectManager)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => extensibleProjectLocator);

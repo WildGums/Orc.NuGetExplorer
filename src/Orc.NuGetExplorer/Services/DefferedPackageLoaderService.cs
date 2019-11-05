@@ -25,14 +25,14 @@
 
         private readonly IRepositoryContextService _repositoryService;
 
-        private readonly INuGetExtensibleProjectManager _projectManager;
+        private readonly INuGetPackageManager _projectManager;
 
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService,
-            INuGetExtensibleProjectManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator)
+            INuGetPackageManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
