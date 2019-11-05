@@ -16,37 +16,35 @@
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Management.EventArgs;
     using Orc.NuGetExplorer.Packaging;
-    using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
 
     internal class NuGetProjectPackageManager : INuGetPackageManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new Dictionary<IExtensibleProject, NuGetProjectMetadata>();
-
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly ISourceRepositoryProvider _repositoryProvider;
-        private const string MetadataTargetFramework = "TargetFramework";
-        private const string MetadataName = "Name";
+        private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService, IFrameworkNameProvider frameworkNameProvider,
-            INuGetProjectContextProvider nuGetProjectContextProvider, ISourceRepositoryProvider repositoryProvider)
+            INuGetProjectContextProvider nuGetProjectContextProvider, ISourceRepositoryProvider repositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider)
         {
             Argument.IsNotNull(() => packageInstallationService);
             Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => repositoryProvider);
+            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
 
             _packageInstallationService = packageInstallationService;
             _frameworkNameProvider = frameworkNameProvider;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _repositoryProvider = repositoryProvider;
+            _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
@@ -108,7 +106,7 @@
         {
             //TODO should local metadata is also be checked?
 
-            var packageConfigProject = CreatePackageConfigProjectFromExtensible(project);
+            var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
             var packageReferences = await packageConfigProject.GetInstalledPackagesAsync(token);
 
@@ -173,7 +171,8 @@
         {
             try
             {
-                var packageConfigProject = CreatePackageConfigProjectFromExtensible(project);
+                var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
+
                 var repositories = SourceContext.CurrentContext.Repositories;
 
                 var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, token);
@@ -249,24 +248,11 @@
         {
             try
             {
-                var packageConfigProject = CreatePackageConfigProjectFromExtensible(project);
+                var installedPackages = await GetInstalledPackagesAsync(project, token);
 
-                await _packageInstallationService.UninstallAsync(package, project, token);
+                await _packageInstallationService.UninstallAsync(package, project, installedPackages, token);
 
-                var isRepositoryConfigRecordExist = await IsPackageInstalledAsync(project, package, token);
-
-
-                if (isRepositoryConfigRecordExist)
-                {
-                    var result = await packageConfigProject.UninstallPackageAsync(package, _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser), token);
-
-                    if (!result)
-                    {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
-                    }
-                }
-
-                await OnUninstallAsync(project, package, isRepositoryConfigRecordExist);
+                await OnUninstallAsync(project, package, true);
             }
             catch (Exception e)
             {
@@ -354,33 +340,6 @@
             {
                 Log.Error(e, $"Error during package {installedVersion} update");
             }
-        }
-
-        /// <summary>
-        /// Creates minimal required metadata for initializing NuGet PackagesConfigNuGetProject from
-        /// our IExtensibleProject
-        /// </summary>
-        /// <param name="project"></param>
-        /// <returns></returns>
-        public PackagesConfigNuGetProject CreatePackageConfigProjectFromExtensible(IExtensibleProject project)
-        {
-            NuGetProjectMetadata metadata = null;
-
-            if (!_storedProjectMetadata.TryGetValue(project, out metadata))
-            {
-                metadata = new NuGetProjectMetadata();
-
-                var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
-
-                metadata.Data.Add(MetadataTargetFramework, targetFramework);
-                metadata.Data.Add(MetadataName, project.Name);
-
-                _storedProjectMetadata.Add(project, metadata);
-            }
-
-            var packagesConfigProject = new PackagesConfigNuGetProject(project.ContentPath, metadata.Data);
-
-            return packagesConfigProject;
         }
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)

@@ -7,11 +7,11 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Frameworks;
+    using NuGet.PackageManagement;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Packaging.Signing;
@@ -33,59 +33,102 @@
 
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
 
+        private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
+
+        private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
+
         private readonly IFileDirectoryService _fileDirectoryService;
 
         private readonly INuGetCacheManager _nuGetCacheManager;
 
+
         public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider,
             ISourceRepositoryProvider sourceRepositoryProvider,
+            INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
+            INuGetProjectContextProvider nuGetProjectContextProvider,
             IFileDirectoryService fileDirectoryService,
             ILogger logger)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => sourceRepositoryProvider);
+            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
+            Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => fileDirectoryService);
             Argument.IsNotNull(() => logger);
 
             _frameworkNameProvider = frameworkNameProvider;
             _sourceRepositoryProvider = sourceRepositoryProvider;
+            _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
+            _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _fileDirectoryService = fileDirectoryService;
             _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
         }
 
-        public async Task InstallAsync(PackageIdentity package, IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken)
-        {
-            var repositories = SourceContext.CurrentContext.Repositories;
-
-            foreach (var proj in projects)
-            {
-                await InstallAsync(package, proj, repositories, cancellationToken);
-            }
-        }
-
-        public async Task UninstallAsync(PackageIdentity package, IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken)
-        {
-            foreach (var proj in projects)
-            {
-                await UninstallAsync(package, proj, cancellationToken);
-            }
-        }
-
-
-        public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, CancellationToken cancellationToken)
+        public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
+            CancellationToken cancellationToken)
         {
             List<string> failedEntries = null;
+            ICollection<PackageIdentity> uninstalledPackages;
+
+            var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+            var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
+
+            if (projectConfig == null)
+            {
+                Log.Warning("Current project does not implement configuration for own packages");
+            }
+
+            //gather all dependencies
+            var installedDependencyInfos = new HashSet<PackageDependencyInfo>(PackageIdentity.Comparer);
+
+            using (var cacheContext = _nuGetCacheManager.GetCacheContext())
+            {
+                var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
+                    .GetResourceAsync<DependencyInfoResource>();
+
+                foreach (var packageReference in installedPackageReferences)
+                {
+                    var dependencyInfo = await dependencyInfoResource.ResolvePackage(packageReference.PackageIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+
+                    if (dependencyInfo != null)
+                    {
+                        installedDependencyInfos.Add(dependencyInfo);
+                    }
+                    else
+                    {
+                        Log.Warning($"Cannot resolve dependency reference {packageReference.PackageIdentity} for package {package}");
+                    }
+                }
+
+                uninstalledPackages = await GetPackagesCanBeUninstalled(installedDependencyInfos, installedPackageReferences.Select(x => x.PackageIdentity), null);
+            }
 
             try
             {
-                var folderProject = new FolderNuGetProject(project.ContentPath);
-
-                if (folderProject.PackageExists(package))
+                foreach (var removedPackage in uninstalledPackages)
                 {
-                    _fileDirectoryService.DeleteDirectoryTree(folderProject.GetInstalledPath(package), out failedEntries);
+                    var folderProject = new FolderNuGetProject(project.ContentPath);
+
+                    if (folderProject.PackageExists(removedPackage))
+                    {
+                        _fileDirectoryService.DeleteDirectoryTree(folderProject.GetInstalledPath(removedPackage), out failedEntries);
+                    }
+
+                    if (projectConfig == null)
+                    {
+                        continue;
+                    }
+
+                    var result = await projectConfig.UninstallPackageAsync(removedPackage, _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser), cancellationToken);
+
+                    if (!result)
+                    {
+                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                    }
                 }
+
             }
             catch (IOException e)
             {
@@ -93,7 +136,6 @@
             }
             finally
             {
-                LogHelper.LogUnclearedPaths(failedEntries, Log);
                 LogHelper.LogUnclearedPaths(failedEntries, Log);
             }
         }
@@ -109,9 +151,8 @@
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-                //todo check is this context needed explicitily
+                //todo check is this context needed
                 //var resContext = new NuGet.PackageManagement.ResolutionContext();
-
 
                 var availabePackageStorage = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
 
@@ -392,6 +433,54 @@
             var bestMatches = frameworkReducer.GetNearest(targetFramework, libraries.Select(x => x.TargetFramework));
 
             return bestMatches != null;
+        }
+
+        private async Task ResolvePackagesCanBeUninstalledAsync(PackageIdentity packageIdentity,
+            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDict,
+            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependentsDict,
+            UninstallationContext uninstallationContext,
+            HashSet<PackageIdentity> packagesMarkedForUninstall)
+        {
+
+        }
+
+
+        private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
+            IEnumerable<PackageDependencyInfo> markedForUninstall,
+            IEnumerable<PackageIdentity> installedPackages,
+            UninstallationContext uninstallationContext)
+        {
+            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDictionary;
+            var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out dependenciesDictionary);
+
+            //exclude packages which should not be removed, because of dependent packages
+            HashSet<PackageIdentity> shouldBeExcludedSet = new HashSet<PackageIdentity>();
+
+            foreach (var identity in dependenciesDictionary)
+            {
+                var markedOnUninstallDependency = identity.Key;
+
+                HashSet<PackageIdentity> dependents;
+
+                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out dependents) && dependents != null)
+                {
+                    var externalDependants = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
+
+                    if (externalDependants.Count > 0)
+                    {
+                        Log.Info($"{identity} package skipped, because one or more installed packages depends on it");
+                    }
+
+                    externalDependants.ForEach(d => shouldBeExcludedSet.Add(d));
+                }
+            }
+
+            foreach (var excludedDependency in shouldBeExcludedSet)
+            {
+                dependenciesDictionary.Remove(excludedDependency);
+            }
+
+            return dependenciesDictionary.Keys;
         }
 
         private async Task CheckLibAndFrameworkItems(IDictionary<SourcePackageDependencyInfo, DownloadResourceResult> downloadedPackagesDictionary,

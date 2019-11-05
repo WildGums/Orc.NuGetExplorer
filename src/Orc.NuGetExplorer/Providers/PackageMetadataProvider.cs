@@ -11,7 +11,6 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Loggers;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
     {

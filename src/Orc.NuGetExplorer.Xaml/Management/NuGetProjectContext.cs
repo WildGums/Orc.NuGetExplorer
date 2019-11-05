@@ -7,7 +7,6 @@
     using NuGet.Common;
     using NuGet.Packaging;
     using NuGet.ProjectManagement;
-    using NuGetExplorer.Loggers;
     using NuGetExplorer.Windows.Dialogs;
     using Orc.NuGetExplorer.Windows;
 

@@ -14,7 +14,6 @@ namespace Orc.NuGetExplorer
     using NuGet.Credentials;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Loggers;
     using NuGetExplorer.Web;
     using LibConfiguration = NuGet.Configuration;
     using NuGetProtocolTypes = NuGet.Protocol.Core.Types;

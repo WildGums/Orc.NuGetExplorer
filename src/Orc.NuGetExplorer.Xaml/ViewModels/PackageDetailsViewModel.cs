@@ -289,7 +289,7 @@
                 {
                     await LoadSinglePackageMetadataAsync(identity);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.Error(ex, "Unexpected error when loading package metadata");
                 }
