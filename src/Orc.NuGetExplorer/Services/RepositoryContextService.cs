@@ -41,6 +41,11 @@
         {
             var repo = GetRepository(source);
 
+            if(repo == null)
+            {
+                return SourceContext.EmptyContext;
+            }
+
             var context = new SourceContext(new List<SourceRepository>() { repo });
 
             return context;

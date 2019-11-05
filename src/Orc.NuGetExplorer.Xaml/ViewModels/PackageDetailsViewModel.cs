@@ -109,6 +109,8 @@
             }
 
             await ApplyPackageAsync();
+
+            NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
         }
 
         private async Task ApplyPackageAsync()
@@ -116,11 +118,11 @@
             try
             {
                 //select identity version
-                SelectedVersion = SelectedVersion ?? Package?.Identity.Version;
+                var selectedVersion = Package?.Identity?.Version;
 
-                VersionsCollection = new ObservableCollection<NuGetVersion>() { SelectedVersion };
+                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
 
-                NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
+                SelectedVersion = selectedVersion;
 
                 _packageMetadataProvider = InitMetadataProvider();
 

@@ -343,6 +343,12 @@
 
                 if (IsActive)
                 {
+                    if(Context == SourceContext.EmptyContext)
+                    {
+                        //clear all packages, context does not contains any repos
+                        PackageItems.Clear();
+                    }
+
                     IsCancellationTokenAlive = true;
                     Log.Info("You can now cancel search from gui");
 

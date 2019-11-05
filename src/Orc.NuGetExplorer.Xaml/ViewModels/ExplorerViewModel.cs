@@ -31,6 +31,8 @@
             CreateApplicationWideCommands(commandManager);
 
             Settings = settingsProvider.Model;
+
+            Title = "Explorer";
         }
 
         protected override Task InitializeAsync()

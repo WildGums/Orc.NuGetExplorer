@@ -72,7 +72,6 @@
                   Margin="3 0 3 2"
                   IsReadOnly="True"
                   SelectedValue="{Binding SelectedVersion}"
-                  SelectedIndex="{Binding SelectedVersionIndex}"
                   ItemsSource="{Binding VersionsCollection}">
             <i:Interaction.Behaviors>
                 <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>

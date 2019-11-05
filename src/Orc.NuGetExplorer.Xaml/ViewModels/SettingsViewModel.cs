@@ -13,13 +13,18 @@
         private readonly bool _reloadConfigOnInitialize;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
 
-        public SettingsViewModel(ExplorerSettingsContainer settings)
+        private SettingsViewModel()
+        {
+            Title = "Package source settings";
+        }
+
+        public SettingsViewModel(ExplorerSettingsContainer settings) : this()
         {
             Argument.IsNotNull(() => settings);
             Settings = settings;
         }
 
-        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider): this()
         {
             Argument.IsNotNull(() => settingsProvider);
             Settings = settingsProvider.Model;
@@ -55,6 +60,15 @@
         [Model(SupportIEditableObject = false)]
         [Expose("NuGetFeeds")]
         public ExplorerSettingsContainer Settings { get; set; }
+
+        protected override Task OnClosingAsync()
+        {
+            if(_reloadConfigOnInitialize)
+            {
+                Settings.Clear();
+            }
+            return base.OnClosingAsync();
+        }
 
     }
 }

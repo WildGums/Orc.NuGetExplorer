@@ -10,17 +10,9 @@
     {
         private static readonly Stack<SourceContext> ActiveContext = new Stack<SourceContext>();
 
-        public static SourceContext CurrentContext
+        private SourceContext()
         {
-            get
-            {
-                if (!ActiveContext.Any())
-                {
-                    return null;
-                }
-
-                return ActiveContext.Peek();
-            }
+            //empty context
         }
 
         public SourceContext(IReadOnlyList<PackageSource> packageSources)
@@ -34,6 +26,22 @@
             Repositories = sourceRepositories;
             ActiveContext.Push(this);
         }
+
+        public static SourceContext EmptyContext { get; set; } = new SourceContext();
+
+        public static SourceContext CurrentContext
+        {
+            get
+            {
+                if (!ActiveContext.Any())
+                {
+                    return null;
+                }
+
+                return ActiveContext.Peek();
+            }
+        }
+     
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }
         public IReadOnlyList<SourceRepository> Repositories { get; private set; }
