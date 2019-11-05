@@ -112,11 +112,14 @@
                                         <TextBlock Text="{Binding Authors}"
                                                    TextTrimming="WordEllipsis"/>
                                 </TextBlock>
-                <TextBlock Text="{Binding Identity.Version}"
-                                               Margin="0 0 8 0"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Bottom"
-                                               Grid.Column="3"/>
+
+                <!-- version -->
+                <TextBlock Text="{Binding FirstVersion}"
+                           Grid.Column="2"
+                           Margin="0 0 8 0"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"/>
+
             </Grid>
 
 
@@ -144,6 +147,13 @@
                                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                                     total downloads
                 </TextBlock>
+                
+                <!-- secondary version -->
+                <TextBlock Text="{Binding SecondaryVersion}"
+                           Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                           Grid.Column="2" Grid.Row="1"
+                                            Margin="0 0 8 0"
+                                            HorizontalAlignment="Right"/>
             </Grid>
 
             <TextBlock Text="{Binding Summary }" TextWrapping="WrapWithOverflow"

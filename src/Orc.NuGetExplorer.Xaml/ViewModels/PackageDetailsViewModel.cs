@@ -23,6 +23,7 @@
     internal class PackageDetailsViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly int Timeout = 500;
 
         private readonly IRepositoryContextService _repositoryService;
 
@@ -249,7 +250,7 @@
         {
             try
             {
-                if (Package.LoadVersionsAsync().Wait(500))
+                if (Package.LoadVersionsAsync().Wait(Timeout))
                 {
                     VersionsCollection = new ObservableCollection<NuGetVersion>(Package.Versions);
                 }
@@ -260,7 +261,7 @@
             }
             catch (TimeoutException ex)
             {
-                Log.Error(ex, "Failed to get package versions for a given time (500 ms)");
+                Log.Error(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
             }
         }
 
@@ -270,7 +271,7 @@
             commandManager.InvalidateCommands();
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
@@ -283,7 +284,15 @@
                 }
 
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
-                //await LoadSinglePackageMetadataAsync(identity);
+
+                try
+                {
+                    await LoadSinglePackageMetadataAsync(identity);
+                }
+                catch(Exception ex)
+                {
+                    Log.Error(ex, "Unexpected error when loading package metadata");
+                }
             }
         }
 

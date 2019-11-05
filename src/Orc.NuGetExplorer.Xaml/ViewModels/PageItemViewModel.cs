@@ -5,6 +5,7 @@
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
+    using NuGet.Versioning;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
@@ -46,7 +47,13 @@
 
         public bool CanBeAddedInBatchOperation { get; set; }
 
+        public bool IsSecondaryVersionShowed { get; private set; } = false;
+
         public bool IsChecked { get; set; }
+
+        public NuGetVersion FirstVersion { get; set; }
+
+        public NuGetVersion SecondaryVersion { get; set; }
 
         protected override Task InitializeAsync()
         {
@@ -54,6 +61,20 @@
 
             IsDownloadCountShowed = packageOrigin != MetadataOrigin.Installed;
             CanBeAddedInBatchOperation = packageOrigin == MetadataOrigin.Updates;
+
+            FirstVersion = Package.Identity.Version;
+
+            switch (packageOrigin)
+            {
+                case MetadataOrigin.Browse:
+                    IsSecondaryVersionShowed = true;
+                    SecondaryVersion = Package.InstalledVersion;
+                    break;
+
+                case MetadataOrigin.Updates:
+                    FirstVersion = Package.InstalledVersion;
+                    break;
+            }
 
             return base.InitializeAsync();
         }
