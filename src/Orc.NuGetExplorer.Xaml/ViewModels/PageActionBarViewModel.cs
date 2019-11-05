@@ -62,7 +62,7 @@
                 var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
 
                 var projects = _projectLocator.GetAllExtensibleProjects()
-                            .Where(x => _projectLocator.IsEnabled(x));
+                            .Where(x => _projectLocator.IsEnabled(x)).ToList();
 
                 using (var cts = new CancellationTokenSource())
                 {
@@ -72,7 +72,7 @@
 
                         foreach (var project in projects)
                         {
-                            if (await _projectManager.IsPackageInstalledAsync(project, package.Identity, cts.Token))
+                            if (!await _projectManager.IsPackageInstalledAsync(project, package.Identity, cts.Token))
                             {
                                 targetProjects.Add(project);
                             }

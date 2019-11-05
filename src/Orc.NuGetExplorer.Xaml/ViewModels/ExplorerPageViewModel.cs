@@ -272,10 +272,7 @@
 
             if (string.Equals(e.PropertyName, nameof(Invalidated)))
             {
-                if ((bool)e.NewValue)
-                {
-                    Log.Info($"ViewModel {this} data was invalidated");
-                }
+                Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
             }
 
             if (string.Equals(e.PropertyName, nameof(IsActive)))
@@ -294,14 +291,10 @@
                 return;
             }
 
-            if (string.Equals(e.PropertyName, nameof(IsActive)))
+            if (string.Equals(e.PropertyName, nameof(IsActive)) && Invalidated)
             {
-                if (Invalidated)
-                {
-                    //this happen when page selecting and old gathered package data 
-                    //doesnt match to current user search query
-                    StartLoadingTimerOrInvalidateData();
-                }
+                //just switching page, no need to invalidate data
+                StartLoadingTimer();
             }
         }
 
@@ -392,10 +385,6 @@
                         IsCancellationTokenAlive = false;
                     }
                 }
-                else
-                {
-                    Invalidated = true;
-                }
             }
             catch (OperationCanceledException e)
             {
@@ -482,7 +471,6 @@
                 {
                     PackageItems.Clear();
                 }
-
 
                 var packages = await _packagesLoaderService.LoadAsync(
                     searchParameters.SearchString, pageInfo, new SearchFilter(searchParameters.IsPrereleaseIncluded), cancellationToken);

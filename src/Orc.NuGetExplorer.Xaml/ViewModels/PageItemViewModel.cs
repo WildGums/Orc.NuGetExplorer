@@ -38,6 +38,7 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
+        [Expose("IsChecked")]
         public NuGetPackage Package { get; set; }
 
         [ViewModelToModel]
@@ -48,8 +49,6 @@
         public bool CanBeAddedInBatchOperation { get; set; }
 
         public bool IsSecondaryVersionShowed { get; private set; } = false;
-
-        public bool IsChecked { get; set; }
 
         public NuGetVersion FirstVersion { get; set; }
 
