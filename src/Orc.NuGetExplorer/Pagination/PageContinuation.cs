@@ -24,6 +24,11 @@
             _lastNumber = continuation.Current;
         }
 
+        public PageContinuation(PageContinuation continuation, bool onlyLocal) : this(continuation)
+        {
+            OnlyLocal = onlyLocal;
+        }
+
 
         public int LastNumber { get => _lastNumber; private set => _lastNumber = value; }
 
@@ -33,7 +38,9 @@
 
         public int Current => _lastNumber;
 
-        public bool IsValid => Source.PackageSources.Any();
+        public bool OnlyLocal { get; set; } = false;
+
+        public bool IsValid => Source.PackageSources.Any() || OnlyLocal;
 
         public PackageSourceWrapper Source { get; private set; }
 

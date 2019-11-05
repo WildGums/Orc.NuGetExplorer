@@ -48,8 +48,10 @@
 
         public void Dispose()
         {
-            //todo release this context
-            ActiveContext.Pop();
+            if (this != EmptyContext)
+            {
+                ActiveContext.Pop();
+            }
         }
     }
 }

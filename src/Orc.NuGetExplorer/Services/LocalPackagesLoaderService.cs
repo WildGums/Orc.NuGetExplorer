@@ -19,13 +19,13 @@
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
         private readonly INuGetPackageManager _projectManager;
-
+        private readonly ISourceRepositoryProvider _repositoryProvider;
         private readonly IRepositoryContextService _repositoryService;
 
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 
         public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetPackageManager nuGetExtensibleProjectManager)
+            INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
@@ -33,6 +33,7 @@
 
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
+            _repositoryProvider = repositoryProvider;
             _repositoryService = repositoryService;
 
             PackageMetadataProvider = new Lazy<IPackageMetadataProvider>(() => InitializeMetdataProvider());
@@ -42,9 +43,19 @@
         {
             Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
 
-            var repository = new SourceRepository(pageContinuation.Source.PackageSources.FirstOrDefault(), Repository.Provider.GetCoreV3());
-
+            var source = pageContinuation.Source.PackageSources.FirstOrDefault();
             var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
+
+            SourceRepository repository = null;
+            
+            if(source != null)
+            {
+                repository = new SourceRepository(source, Repository.Provider.GetCoreV3());
+            }
+            else
+            {
+                repository = observedProjects.FirstOrDefault().AsSourceRepository(_repositoryProvider);
+            }
 
             var httpHandler = await repository.GetResourceAsync<HttpHandlerResourceV3>();
 
@@ -104,7 +115,7 @@
 
             var localRepos = _projectManager.AsLocalRepositories(projects);
 
-            var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
+            var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
 
             return new PackageMetadataProvider(repos, localRepos);
         }

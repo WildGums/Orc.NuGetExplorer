@@ -56,9 +56,12 @@
             //acquire for all by default
             IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().ToList();
 
-            var context = new SourceContext(repos);
-
-            return context;
+            if (repos.Any())
+            {
+                return new SourceContext(repos);
+            }
+           
+            return SourceContext.EmptyContext;
         }
     }
 }

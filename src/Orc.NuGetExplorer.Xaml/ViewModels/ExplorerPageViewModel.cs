@@ -343,10 +343,16 @@
 
                 if (IsActive)
                 {
-                    if (Context == SourceContext.EmptyContext)
+                    if (Context == SourceContext.EmptyContext && _pageType == MetadataOrigin.Browse)
                     {
                         //clear all packages, context does not contains any repos
                         PackageItems.Clear();
+                    }
+
+                    if (Context == SourceContext.EmptyContext && _pageType == MetadataOrigin.Installed)
+                    {
+                        //create valid page continuation for only-local query
+                        pageinfo = new PageContinuation(pageinfo, true);
                     }
 
                     IsCancellationTokenAlive = true;
@@ -359,7 +365,7 @@
                             await CanFeedBeLoadedAsync(VerificationTokenSource.Token, currentSource);
                         }
 
-                        if (!currentSource.IsAccessible)
+                        if (!currentSource.IsAccessible && _pageType != MetadataOrigin.Installed)
                         {
                             IsCancellationTokenAlive = false;
                             return;
@@ -519,7 +525,10 @@
                         vm.Status = newState;
                     };
 
-                    _defferedPackageLoaderService.Add(deferToken);
+                    if (_repositoryService.AcquireContext() != SourceContext.EmptyContext)
+                    {
+                        _defferedPackageLoaderService.Add(deferToken);
+                    }
                 }
             }
 
