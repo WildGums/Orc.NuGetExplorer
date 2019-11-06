@@ -141,7 +141,7 @@
 
             var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
 
-            return master.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
+            return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken)

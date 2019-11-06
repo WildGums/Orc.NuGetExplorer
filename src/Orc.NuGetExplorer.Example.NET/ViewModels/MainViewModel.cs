@@ -2,6 +2,7 @@
 {
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
@@ -95,10 +96,13 @@
         {
             AvailableUpdates.Clear();
 
-            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
+            using(var cts = new CancellationTokenSource())
+            {
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(cts.Token, AllowPrerelease, false);
 
-            // Note: AddRange doesn't refresh button state
-            AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+                // Note: AddRange doesn't refresh button state
+                AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+            }
         }
 
         public TaskCommand AdddPackageSource { get; private set; }

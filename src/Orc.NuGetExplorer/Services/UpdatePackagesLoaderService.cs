@@ -2,16 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Scoping;
+    using Catel.Threading;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Pagination;
     using Orc.NuGetExplorer.Scopes;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
@@ -61,7 +64,7 @@
                     _discardedPackagesSet.Clear();
                 }
 
-                var localContinuation = new PageContinuation(pageContinuation);
+                var localContinuation = new PageContinuation(pageContinuation, !pageContinuation.Source.PackageSources.Any());
 
                 var installedPackagesMetadatas = (await _projectRepositoryLoader.Value.LoadAsync(searchTerm, localContinuation, searchFilter, token));
 
@@ -85,6 +88,12 @@
                     }
 
                     var clonedMetadata = await PackageMetadataProvider.Value.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+
+                    if(clonedMetadata == null)
+                    {
+                        Log.Error($"Couldn't retrieve update metadata for installed {package.Identity}");
+                        continue;
+                    }
 
                     if (clonedMetadata.Identity.Version > package.Identity.Version)
                     {
@@ -112,6 +121,15 @@
         #region IPackagesUpdatesSearcherService
         public IEnumerable<IPackageDetails> SearchForUpdates(bool? allowPrerelease = null, bool authenticateIfRequired = true)
         {
+            //todo
+            using (var cts = new CancellationTokenSource())
+            {
+                return Task.Run(() => SearchForUpdatesAsync(cts.Token, allowPrerelease, authenticateIfRequired)).Result;
+            }
+        }
+
+        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(CancellationToken token, bool? allowPrerelease = null, bool authenticateIfRequired = true)
+        {
             //todo auth scopes?
             var scopeManagers = new List<ScopeManager<AuthenticationScope>>();
 
@@ -119,38 +137,17 @@
             {
                 Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
 
-                /*               
-                foreach (var repository in sourceRepositories)
-                {
-                    var scopeManager = ScopeManager<AuthenticationScope>.GetScopeManager(repository.Source.GetSafeScopeName(), () => new AuthenticationScope(authenticateIfRequired));
-                    scopeManagers.Add(scopeManager);
-                }
-                */
-
                 var repositories = _repositoryService.GetSourceRepositories();
 
-                //TODO
-                //1. Mark repository in repository services by Operation correctly
-                //2. Filter project repositories
-                //3. Find update by package metadata provider and filter
-                //4. Create PackageDetails from metadatas
+                var pageToken = new PageContinuation(0, new PackageSourceWrapper(repositories.Select(r => r.Source).ToList()));
 
-                /*
-                var packageRepository = _repositoryCacheService.GetNuGetRepository(_repositoryService.GetSourceAggregateRepository());
-                var packages = _repositoryCacheService.GetNuGetRepository(_repositoryService.LocalRepository).GetPackages();
+                var availableUpdates = await LoadAsync("", pageToken, new SearchFilter(allowPrerelease ?? true), token);
 
-                foreach (var package in packages)
-                {
-                    var prerelease = allowPrerelease ?? package.IsPrerelease();
-
-                    var packageUpdates = packageRepository.GetUpdates(new[] { package }, prerelease, false).Select(x => _packageCacheService.GetPackageDetails(packageRepository, x, allowPrerelease ?? true));
-                    availableUpdates.AddRange(packageUpdates);
-                }
-                */
-
-                Log.Debug("Finished searching for updates, found '{0}' updates"); //availableUpdates.Count);
-
-                return null;
+                return availableUpdates.Select(metadata => new NuGetPackage(metadata, Enums.MetadataOrigin.Updates)).ToList();
+            }
+            catch (Exception ex) when (token.IsCancellationRequested)
+            {
+                throw new OperationCanceledException("Search request was canceled", ex, token);
             }
             finally
             {
