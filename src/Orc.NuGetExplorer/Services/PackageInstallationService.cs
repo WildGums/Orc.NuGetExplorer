@@ -446,7 +446,7 @@
 
 
         private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
-            IEnumerable<PackageDependencyInfo> markedForUninstall,
+            ICollection<PackageDependencyInfo> markedForUninstall,
             IEnumerable<PackageIdentity> installedPackages,
             UninstallationContext uninstallationContext)
         {
@@ -475,12 +475,14 @@
                 }
             }
 
+            var markedForUninstallList = markedForUninstall.OfType<PackageIdentity>().ToList();
+
             foreach (var excludedDependency in shouldBeExcludedSet)
             {
-                dependenciesDictionary.Remove(excludedDependency);
+                markedForUninstallList.Remove(excludedDependency);
             }
 
-            return dependenciesDictionary.Keys;
+            return markedForUninstallList;
         }
 
         private async Task CheckLibAndFrameworkItems(IDictionary<SourcePackageDependencyInfo, DownloadResourceResult> downloadedPackagesDictionary,
