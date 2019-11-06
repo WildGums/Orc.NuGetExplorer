@@ -93,10 +93,10 @@
         public Version Version => Identity.Version.Version;
 
         //todo
-        public string SpecialVersion => throw new NotImplementedException();
+        public string SpecialVersion { get; set; }
 
         //todo
-        public bool IsAbsoluteLatestVersion => throw new NotImplementedException();
+        public bool IsAbsoluteLatestVersion { get; set; }
 
         //todo check is comparer needed
         public bool IsLatestVersion => Identity?.Version.Equals(LastVersion) ?? false;
@@ -104,15 +104,15 @@
         public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
 
         //todo
-        public string Dependencies => throw new NotImplementedException();
+        public string Dependencies { get; set; }
 
-        public bool? IsInstalled { get; set; } // => InstalledVersion != null;
+        public bool? IsInstalled { get; set; }
 
         //todo
         public IList<string> AvailableVersions => throw new NotImplementedException();
 
         //todo
-        public string SelectedVersion { get; set; }// => throw new NotImplementedException();
+        public string SelectedVersion { get; set; }
 
         //todo
         public IValidationContext ValidationContext => throw new NotImplementedException();
@@ -126,7 +126,7 @@
         //Todo
         public void ResetValidationContext()
         {
-            throw new NotImplementedException();
+            //
         }
 
         #endregion

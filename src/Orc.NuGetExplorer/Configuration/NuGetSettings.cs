@@ -242,13 +242,13 @@
         [Obsolete]
         public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
         {
-            throw new NotImplementedException();
+            return new List<SettingValue>();
         }
 
         [Obsolete]
         public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
         {
-            throw new NotImplementedException();
+            return new List<SettingValue>();
         }
 
         [Obsolete]
@@ -291,7 +291,7 @@
         [Obsolete]
         public void UpdateSubsections(string section, string subsection, IReadOnlyList<SettingValue> values)
         {
-            throw new NotImplementedException();
+            
         }
 
         #endregion
