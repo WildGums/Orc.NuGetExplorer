@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using NuGet.Configuration;
-
-namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer.Models
 {
+    using System.Collections.Generic;
+    using NuGet.Configuration;
+
     public interface INuGetSettings
     {
         IReadOnlyList<PackageSource> GetAllPackageSources();

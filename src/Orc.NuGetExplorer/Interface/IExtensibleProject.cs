@@ -11,8 +11,6 @@
 
         string ContentPath { get; }
 
-        IReadOnlyList<NuGetPackage> PackageList { get; }
-
         void Install();
 
         void Update();

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using Catel;
     using Catel.Configuration;
     using Catel.IO;
@@ -10,18 +11,19 @@
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Services;
 
-    internal class NuGetSettings : ISettings
+    internal class NuGetSettings : IVersionedSettings
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
+        private const string VersionKey = "Version";
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
         private readonly IFileDirectoryService _fileDirectoryService;
-
         #endregion
 
         #region Constructors
@@ -32,9 +34,18 @@
 
             _configurationService = configurationService;
             _fileDirectoryService = fileDirectoryService;
+
+            //version of configuration is a version of assembly
+            //get version from configuration
+            GetVersionFromConfiguration();
+
+            SettingsChanged += OnSettingsChanged;
         }
         #endregion
 
+        public bool IsLastVersion => AssemblyVersion.Equals(Version);
+
+        public Version Version { get; private set; }
 
         public event EventHandler SettingsChanged;
 
@@ -42,7 +53,6 @@
         {
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
-
 
         #region ISettings
 
@@ -446,6 +456,26 @@
             _configurationService.SetRoamingValue(combinedKey, value);
         }
 
+        private void GetVersionFromConfiguration()
+        {
+            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
+
+            Version configurationVersion = null;
+
+            if(!String.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
+            {
+                Version = configurationVersion;
+            }
+        }
+
+        private void OnSettingsChanged(object sender, EventArgs e)
+        {
+            //write version one time
+            UpdateVersion();
+
+            SettingsChanged -= OnSettingsChanged;
+        }
+
         private string GetSectionValueKey(string section, string key)
         {
             return $"NuGet_{section}_value_{key}";
@@ -469,6 +499,11 @@
         private static bool IsSourceItem(string sectionKey)
         {
             return string.Equals(sectionKey, ConfigurationConstants.PackageSources) || string.Equals(sectionKey, ConfigurationConstants.DisabledPackageSources);
+        }
+
+        public void UpdateVersion()
+        {
+            _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
         }
 
         #endregion

@@ -1,9 +1,9 @@
-﻿using System;
-using Catel.Logging;
-using NuGet.Frameworks;
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System;
+    using Catel.Logging;
+    using NuGet.Frameworks;
+
     public static class FrameworkParser
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -14,10 +14,9 @@ namespace Orc.NuGetExplorer
             {
                 return NuGetFramework.ParseFrameworkName(frameworkString, frameworkNameProvider);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
-                Log.Error(e, "Incorrect target framework");
-                throw;
+                return NuGetFramework.UnsupportedFramework;
             }
         }
     }

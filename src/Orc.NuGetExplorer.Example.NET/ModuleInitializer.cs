@@ -27,6 +27,5 @@ public static class ModuleInitializer
         var directoryService = serviceLocator.ResolveType<IFileDirectoryService>();
 
         manager.Register<ExampleFolderPackageManagement>(directoryService.GetApplicationRoamingFolder());
-        manager.Register<ExamplePackageManagement>(directoryService.GetApplicationRoamingFolder());
     }
 }

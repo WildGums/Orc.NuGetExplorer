@@ -1,5 +1,6 @@
 ﻿using Catel.Configuration;
 using Catel.IoC;
+using Catel.Logging;
 using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -14,6 +15,7 @@ using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Loggers;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
+using Orc.NuGetExplorer.Scenario;
 using Orc.NuGetExplorer.Services;
 
 /// <summary>
@@ -35,7 +37,10 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
         serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
         serviceLocator.RegisterType<ISourceRepositoryProvider, DefaultSourceRepositoryProvider>();
+        serviceLocator.RegisterType<INuGetProjectContextProvider, EmptyProjectContextProvider>();
         serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
+
+        serviceLocator.RegisterTypeAndInstantiate<DefaultNuGetFramework>();
 
         serviceLocator.RegisterType<INuGetProjectConfigurationProvider, PackagesConfigProvider>();
 
@@ -78,7 +83,6 @@ public static class ModuleInitializer
 
         //package loaders
         serviceLocator.RegisterType<IPackagesLoaderService, PackagesLoaderService>();
-        //todo use separate providers instead of tags
         serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, LocalPackagesLoaderService>("Installed");
         serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, UpdatePackagesLoaderService>("Updates");
 
@@ -86,7 +90,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
-
+ 
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();

@@ -8,10 +8,10 @@
     using Catel;
     using Catel.Logging;
     using NuGet.Configuration;
-    using NuGet.Frameworks;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.ProjectManagement;
+    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Management.EventArgs;
@@ -23,27 +23,21 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IPackageInstallationService _packageInstallationService;
-        private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
-        private readonly ISourceRepositoryProvider _repositoryProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
 
-        public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService, IFrameworkNameProvider frameworkNameProvider,
-            INuGetProjectContextProvider nuGetProjectContextProvider, ISourceRepositoryProvider repositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider)
+        public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
+            INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider)
         {
             Argument.IsNotNull(() => packageInstallationService);
-            Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => repositoryProvider);
             Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
 
             _packageInstallationService = packageInstallationService;
-            _frameworkNameProvider = frameworkNameProvider;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
-            _repositoryProvider = repositoryProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
         }
 
@@ -344,9 +338,9 @@
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
         {
-            var repos = projects.Select(x => _repositoryProvider
-                .CreateRepository(
-                        new PackageSource(x.ContentPath), NuGet.Protocol.FeedType.FileSystemV2
+            var repos = projects.Select(x => 
+                 new SourceRepository(
+                        new PackageSource(x.ContentPath), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
                 ));
 
             return repos;

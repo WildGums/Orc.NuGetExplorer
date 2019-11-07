@@ -34,6 +34,8 @@
 
             LastVersion = packageMetadata.Identity.Version;
 
+            ValidationContext = new ValidationContext();
+
             switch (fromPage)
             {
                 case MetadataOrigin.Browse:
@@ -115,7 +117,7 @@
         public string SelectedVersion { get; set; }
 
         //todo
-        public IValidationContext ValidationContext => throw new NotImplementedException();
+        public IValidationContext ValidationContext { get; set; }
 
         IEnumerable<string> IPackageDetails.Authors => SplitAuthors(Authors);
 
@@ -126,7 +128,7 @@
         //Todo
         public void ResetValidationContext()
         {
-            //
+
         }
 
         #endregion

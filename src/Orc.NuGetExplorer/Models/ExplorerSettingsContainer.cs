@@ -42,7 +42,7 @@
                 feeds = NuGetFeeds.Where(x => x.IsEnabled);
             }
 
-            return feeds.Select(x => new PackageSource(x.Source)).ToList();
+            return feeds.Select(x => new PackageSource(x.Source, x.Name, x.IsEnabled)).ToList();
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)

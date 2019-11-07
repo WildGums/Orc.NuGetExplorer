@@ -1,8 +1,8 @@
-﻿using Catel.IoC;
-using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
+    using Catel.IoC;
+    using Orc.NuGetExplorer.Models;
+
     public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
     {
         private readonly ITypeFactory _typeFactory;

@@ -15,8 +15,6 @@
 
         public string Name => "Plain project extensible example with additinal logging";
 
-        public IReadOnlyList<NuGetPackage> PackageList { get; set; }
-
         public string Framework => ".NETStandard,Version=v2.1";
 
         public string ContentPath { get; }
