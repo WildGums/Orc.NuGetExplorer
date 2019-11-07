@@ -33,7 +33,8 @@
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => configuredFeeds);
 
-            Feeds = new ObservableCollection<NuGetFeed>(configuredFeeds);
+            SettingsFeeds = configuredFeeds;
+            Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
             RemovedFeeds = new List<NuGetFeed>();
 
             _configurationService = configurationService as NugetConfigurationService;
@@ -54,6 +55,11 @@
         public NuGetFeed SelectedFeed { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
+
+        /// <summary>
+        /// All feeds currently loaded in settings model
+        /// </summary>
+        public List<NuGetFeed> SettingsFeeds { get; set; }
 
         #region ViewToViewModel
 
@@ -140,6 +146,9 @@
 
         private void SaveFeeds()
         {
+            SettingsFeeds.Clear();
+            SettingsFeeds.AddRange(Feeds);
+
             _configurationService.SavePackageSources(Feeds);
         }
 

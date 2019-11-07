@@ -123,6 +123,11 @@
                         {
                             AddToCredentialCache(uri, type, provider, response);
                         }
+
+                        if(response.Status == CredentialStatus.Success)
+                        {
+                            //add credentials to retry cache only if is known it's a new response, not from cache
+                        }
                     }
 
                     if (response.Status == CredentialStatus.Success)
@@ -130,6 +135,10 @@
                         _retryCache[retryKey] = true;
                         creds = response.Credentials;
                         break;
+                    }
+                    else
+                    {
+
                     }
                 }
                 catch (Exception)

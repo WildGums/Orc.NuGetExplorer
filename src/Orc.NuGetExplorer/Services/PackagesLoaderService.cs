@@ -32,29 +32,21 @@
             {
                 var repository = new SourceRepository(pageContinuation.Source.PackageSources.FirstOrDefault(), Repository.Provider.GetCoreV3());
 
-
                 var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
-                var httpHandler = await repository.GetResourceAsync<HttpHandlerResourceV3>();
 
                 try
                 {
-                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
+                    using (var credToken = await CredentialsToken.Create(repository))
+                    {
+                        var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-                    return packages;
+                        return packages;
+                    }
                 }
                 catch (FatalProtocolException ex) when (token.IsCancellationRequested)
                 {
                     //task is cancelled, supress
                     throw new OperationCanceledException("Search request was canceled", ex, token);
-                }
-                finally
-                {
-                    var credentialsService = httpHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
-                    if (credentialsService != null)
-                    {
-                        credentialsService.ClearRetryCache();
-                    }
                 }
             }
             else
@@ -78,28 +70,19 @@
                     })
                 .ToArray());
 
-            var httpHandler = await tempRepoLocal?.GetResourceAsync<HttpHandlerResourceV3>();
-
             try
             {
-                var packages = await searchResource.SearchAsync(searchTerm, searchFilter,
-                    pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
+                using (var credToken = await CredentialsToken.Create(tempRepoLocal))
+                {
+                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-                return packages;
+                    return packages;
+                }
             }
             catch (FatalProtocolException ex) when (token.IsCancellationRequested)
             {
                 //task is cancelled, supress
                 throw new OperationCanceledException("Search request was cancelled", ex, token);
-            }
-            finally
-            {
-                var credentialsService = httpHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
-                if (credentialsService != null)
-                {
-                    credentialsService.ClearRetryCache();
-                }
             }
         }
     }

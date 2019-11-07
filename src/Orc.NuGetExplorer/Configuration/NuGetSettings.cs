@@ -19,7 +19,7 @@
 
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
-        private const string VersionKey = "Version";
+        private const string VersionKey = "NuGetExplorer.Version";
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;

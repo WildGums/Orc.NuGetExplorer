@@ -98,7 +98,7 @@
                     }
                     else
                     {
-                        Log.Warning($"Cannot resolve dependency reference {packageReference.PackageIdentity} for package {package}");
+                        Log.Warning($"Cannot resolve installed package reference {packageReference.PackageIdentity} for package {package}, probably package is missed");
                     }
                 }
 
@@ -279,6 +279,11 @@
                     var relatedIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
                     var relatedDepInfo = await dependencyInfoResource.ResolvePackage(relatedIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+
+                    if(relatedDepInfo == null)
+                    {
+                        throw new MissedPackageException($"Cannot find package {relatedIdentity}");
+                    }
 
                     downloadStack.Push(relatedDepInfo);
                 }

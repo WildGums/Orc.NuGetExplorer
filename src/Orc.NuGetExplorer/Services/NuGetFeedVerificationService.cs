@@ -65,28 +65,16 @@ namespace Orc.NuGetExplorer
 
                 var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                var httpHandler = await repository.GetResourceAsync<HttpHandlerResourceV3>();
-
-
-                //maybe use Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token) instead
-
-                //try to perform search
                 try
                 {
-                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
+                    using (var credToken = await CredentialsToken.Create(repository))
+                    {
+                        var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
+                    }
                 }
                 catch (Exception)
                 {
                     throw;
-                }
-                finally
-                {
-                    var credentialsService = httpHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
-                    if (credentialsService != null)
-                    {
-                        credentialsService.ClearRetryCache();
-                    }
                 }
             }
             catch (FatalProtocolException ex)
