@@ -17,6 +17,7 @@
 
         }
 
+        public event EventHandler Updating;
         public event EventHandler Updated;
 
         public virtual void Check()
@@ -25,9 +26,16 @@
             {
                 return;
             }
+
+            RaiseUpdating(new EventArgs());
         }
 
         protected void RaiseUpdated(EventArgs e)
+        {
+            Updated?.Invoke(this, e);
+        }
+
+        protected void RaiseUpdating(EventArgs e)
         {
             Updated?.Invoke(this, e);
         }

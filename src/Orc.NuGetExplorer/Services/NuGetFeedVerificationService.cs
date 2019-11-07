@@ -34,13 +34,6 @@ namespace Orc.NuGetExplorer
 
             _credentialProviderLoaderService = credentialProviderLoaderService;
             _nugetLogger = logger;
-
-            //set own provider 
-            HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => new ExplorerCredentialService(
-                    new AsyncLazy<IEnumerable<ICredentialProvider>>(() => _credentialProviderLoaderService.GetCredentialProvidersAsync()),
-                    false,
-                    true)
-                );
         }
 
         public async Task<FeedVerificationResult> VerifyFeedAsync(string source, CancellationToken ct, bool authenticateIfRequired = true)
@@ -63,12 +56,12 @@ namespace Orc.NuGetExplorer
 
                 var repository = repoProvider.CreateRepository(packageSource);
 
-                var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
-
                 try
                 {
                     using (var credToken = await CredentialsToken.Create(repository))
                     {
+                        var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+
                         var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                     }
                 }

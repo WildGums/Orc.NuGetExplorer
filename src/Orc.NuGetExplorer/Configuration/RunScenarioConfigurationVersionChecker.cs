@@ -38,13 +38,19 @@
 
                     //update config version
                     _settings.UpdateVersion();
-
-                    RaiseUpdated(new EventArgs());
                 }
+
+                RaiseUpdated(new EventArgs());
             }
             else
-            {
-                Log.Info("No additional pre-initialization is required");
+            { 
+                Log.Info("Current configuration version is higher than runned NuGetExplorer version");
+                Log.Info("Check compatibility..");
+
+                if(_settings.MinimalVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                {
+                    throw new ApplicationException("This version of NuGetExplorer does not supported current configuration");
+                }
             }
         }
 

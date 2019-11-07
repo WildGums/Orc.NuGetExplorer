@@ -20,6 +20,8 @@
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
         private const string VersionKey = "NuGetExplorer.Version";
+        private const string MinimalVersionKey = "NuGetExplorer.MinimalVersion";
+        private const string MinimalVersionNumber = "4.0.0";
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
@@ -46,6 +48,8 @@
         public bool IsLastVersion => AssemblyVersion.Equals(Version);
 
         public Version Version { get; private set; }
+
+        public Version MinimalVersion { get; private set; }
 
         public event EventHandler SettingsChanged;
 
@@ -466,6 +470,13 @@
             {
                 Version = configurationVersion;
             }
+
+            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
+
+            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
+            {
+                MinimalVersion = configurationVersion;
+            }
         }
 
         private void OnSettingsChanged(object sender, EventArgs e)
@@ -503,6 +514,7 @@
 
         public void UpdateVersion()
         {
+            _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
             _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
         }
 

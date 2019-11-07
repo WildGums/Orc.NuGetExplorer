@@ -32,12 +32,12 @@
             {
                 var repository = new SourceRepository(pageContinuation.Source.PackageSources.FirstOrDefault(), Repository.Provider.GetCoreV3());
 
-                var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
-
                 try
                 {
                     using (var credToken = await CredentialsToken.Create(repository))
                     {
+                        var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+
                         var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
                         return packages;
@@ -62,18 +62,18 @@
         {
             SourceRepository tempRepoLocal = null;
 
-            var searchResource = await MultiplySourceSearchResource.CreateAsync(
-                pageContinuation.Source.PackageSources.Select(s =>
-                    {
-                        tempRepoLocal = new SourceRepository(s, Repository.Provider.GetCoreV3());
-                        return tempRepoLocal;
-                    })
-                .ToArray());
+            var repositoryCollection = pageContinuation.Source.PackageSources.Select(s =>
+            {
+                tempRepoLocal = new SourceRepository(s, Repository.Provider.GetCoreV3());
+                return tempRepoLocal;
+            }).ToArray();
 
             try
             {
                 using (var credToken = await CredentialsToken.Create(tempRepoLocal))
                 {
+                    var searchResource = await MultiplySourceSearchResource.CreateAsync(repositoryCollection);
+
                     var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
                     return packages;

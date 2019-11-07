@@ -60,7 +60,9 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
         //serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
         serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
-        serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();
+        var credentialProviderLoader = serviceLocator.RegisterTypeAndInstantiate<CredentialProviderLoaderService>();
+        serviceLocator.RegisterInstance<ICredentialProviderLoaderService>(credentialProviderLoader);
+        
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();

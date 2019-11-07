@@ -9,6 +9,8 @@
 
         Version Version { get; }
 
+        Version MinimalVersion { get; }
+
         void UpdateVersion();
     }
 }
