@@ -2,10 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel.Logging;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Scenario;
@@ -32,7 +29,7 @@
 
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-            if(currentVersion.CompareTo(_settings.Version) > 0)
+            if (currentVersion.CompareTo(_settings.Version) > 0)
             {
                 foreach (var scenario in _runOnCheckList)
                 {

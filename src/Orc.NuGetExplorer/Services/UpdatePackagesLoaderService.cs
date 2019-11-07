@@ -9,7 +9,6 @@
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Scoping;
-    using Catel.Threading;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Providers;
@@ -89,7 +88,7 @@
 
                     var clonedMetadata = await PackageMetadataProvider.Value.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
 
-                    if(clonedMetadata == null)
+                    if (clonedMetadata == null)
                     {
                         Log.Error($"Couldn't retrieve update metadata for installed {package.Identity}");
                         continue;

@@ -168,15 +168,6 @@
             settings.NuGetFeeds.AddRange(feeds);
         }
 
-        private void AddDefaultFeeds(ExplorerSettingsContainer settings)
-        {
-            settings.NuGetFeeds.Add(
-                new NuGetFeed(
-                  Constants.DefaultNugetOrgName,
-                  Constants.DefaultNugetOrgUri
-              ));
-        }
-
         private IEnumerable<INuGetSource> GetActiveFeedsFromSettings()
         {
             var activefeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList<INuGetSource>();

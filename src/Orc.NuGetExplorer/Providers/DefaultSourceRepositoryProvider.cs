@@ -52,9 +52,9 @@
                 repos.Add(CreateRepository(source));
             }
 
-            foreach(var configSource in configuredSources)
+            foreach (var configSource in configuredSources)
             {
-                if(repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) == null)
+                if (repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) == null)
                 {
                     repos.Add(CreateRepository(configSource));
                 }

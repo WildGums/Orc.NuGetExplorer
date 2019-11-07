@@ -374,9 +374,10 @@
             {
                 Log.Error(e, $"An error occured during package extraction");
 
-                var extractionEx = new ProjectInstallException(e.Message, e);
-
-                extractionEx.CurrentBatch = extractedPackages;
+                var extractionEx = new ProjectInstallException(e.Message, e)
+                {
+                    CurrentBatch = extractedPackages
+                };
 
                 throw extractionEx;
             }
@@ -434,16 +435,6 @@
 
             return bestMatches != null;
         }
-
-        private async Task ResolvePackagesCanBeUninstalledAsync(PackageIdentity packageIdentity,
-            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDict,
-            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependentsDict,
-            UninstallationContext uninstallationContext,
-            HashSet<PackageIdentity> packagesMarkedForUninstall)
-        {
-
-        }
-
 
         private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
             ICollection<PackageDependencyInfo> markedForUninstall,

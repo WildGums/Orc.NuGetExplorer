@@ -3,7 +3,6 @@
     using System;
     using Catel;
     using NuGet.Configuration;
-    using Orc.NuGetExplorer.Configuration;
 
     public abstract class ConfigurationVersionCheckerBase
     {
@@ -22,7 +21,7 @@
 
         public virtual void Check()
         {
-            if(_settings.IsLastVersion)
+            if (_settings.IsLastVersion)
             {
                 return;
             }
@@ -30,7 +29,7 @@
 
         protected void RaiseUpdated(EventArgs e)
         {
-            Updated?.Invoke(this,  e);
+            Updated?.Invoke(this, e);
         }
     }
 }

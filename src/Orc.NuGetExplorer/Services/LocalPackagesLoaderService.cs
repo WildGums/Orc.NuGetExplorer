@@ -47,8 +47,8 @@
             var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
             SourceRepository repository = null;
-            
-            if(source != null)
+
+            if (source != null)
             {
                 repository = new SourceRepository(source, Repository.Provider.GetCoreV3());
             }

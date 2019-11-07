@@ -1,12 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
 
@@ -15,7 +10,7 @@
         /// <summary>
         /// This regex follows the same rules as C# namespaces
         /// </summary>
-        private static readonly string IdentityPattern = @"(@?[a-z_A-Z]\w+(?:\.@?[a-z_A-Z]\w+)*)"; 
+        private static readonly string IdentityPattern = @"(@?[a-z_A-Z]\w+(?:\.@?[a-z_A-Z]\w+)*)";
 
         public static PackageIdentity Parse(string packageString)
         {
@@ -23,12 +18,12 @@
 
             var match = rgx.Match(packageString);
 
-            if(!match.Success)
+            if (!match.Success)
             {
                 throw new ArgumentException($"{packageString} parameter doesn't contain valid package identity");
             }
 
-            if(match.Captures.Count != 1)
+            if (match.Captures.Count != 1)
             {
                 throw new ArgumentException($"{packageString} parameter doesn't contain valid package identity");
             }
@@ -37,7 +32,7 @@
 
             var versionString = packageString.Replace(identity, "");
 
-            if(!NuGetVersion.TryParse(versionString.TrimStart('.'), out NuGetVersion version))
+            if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out NuGetVersion version))
             {
                 throw new ArgumentException($"{packageString} parameter doesn't contain valid package version");
             }

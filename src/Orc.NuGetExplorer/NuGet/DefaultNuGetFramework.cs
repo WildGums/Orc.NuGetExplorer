@@ -2,9 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using Microsoft.Win32;
@@ -21,9 +18,9 @@
         public DefaultNuGetFramework(IFrameworkNameProvider frameworkNameProvider)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
-            
+
             _frameworkNameProvider = frameworkNameProvider;
-            
+
             LoadAvailableFrameworks();
         }
 
@@ -40,7 +37,7 @@
         private void LoadAvailableFrameworks()
         {
             var revision = Environment.Version.Revision;
-            
+
             var frameworkStringList = new List<string>();
 
             if (revision < 42000)
@@ -52,7 +49,7 @@
                 GetNewerFrameworkVersionsFromRegistry(frameworkStringList);
             }
 
-            foreach(var frameworkName in frameworkStringList)
+            foreach (var frameworkName in frameworkStringList)
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(frameworkName, _frameworkNameProvider);
 
@@ -84,7 +81,7 @@
                     {
 
                         RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
-                        
+
                         // Get the .NET Framework version value.
                         var name = (string)versionKey.GetValue("Version", "");
                         // Get the service pack (SP) number.
@@ -118,7 +115,7 @@
                                 sp = subKey.GetValue("SP", "").ToString();
 
                             install = subKey.GetValue("Install", "").ToString();
-                           
+
                             if (string.IsNullOrEmpty(install))
                             {
                                 //No install info; it must be later.
@@ -126,9 +123,9 @@
                             }
                             else
                             {
-                                if(install == "1")
+                                if (install == "1")
                                 {
-                                    if(!(string.IsNullOrEmpty(sp)))
+                                    if (!(string.IsNullOrEmpty(sp)))
                                     {
                                         frameworkList.Add($"{subKeyName} {name} SP{sp}");
                                     }
@@ -210,7 +207,7 @@
 
                 // This code should never execute. A non-null release key should mean
                 // that 4.5 or later is installed.
-                return String.Empty;
+                return string.Empty;
             }
         }
     }

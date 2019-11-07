@@ -60,7 +60,7 @@
             {
                 return new SourceContext(repos);
             }
-           
+
             return SourceContext.EmptyContext;
         }
     }

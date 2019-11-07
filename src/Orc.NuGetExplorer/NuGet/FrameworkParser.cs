@@ -6,8 +6,6 @@
 
     public static class FrameworkParser
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         public static NuGetFramework TryParseFrameworkName(string frameworkString, IFrameworkNameProvider frameworkNameProvider)
         {
             try

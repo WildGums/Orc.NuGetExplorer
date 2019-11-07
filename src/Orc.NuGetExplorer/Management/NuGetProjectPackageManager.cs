@@ -338,7 +338,7 @@
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
         {
-            var repos = projects.Select(x => 
+            var repos = projects.Select(x =>
                  new SourceRepository(
                         new PackageSource(x.ContentPath), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
                 ));

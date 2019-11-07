@@ -4,14 +4,11 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
-    using NuGet.Configuration;
     using NuGet.Packaging.Core;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
@@ -24,32 +21,26 @@
         private readonly IExtensibleProject _defaultProject;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IRepositoryContextService _repositoryContextService;
-        private readonly DefaultNuGetFramework _defaultNuGetFramework;
-        private readonly IFileDirectoryService _fileDirectoryService;
         private readonly ILogger _logger;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager, IRepositoryContextService repositoryContextService
-            , DefaultNuGetFramework defaultNuGetFramework, IFileDirectoryService fileDirectoryService, ILogger logger)
+        public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager, IRepositoryContextService repositoryContextService,
+            ILogger logger)
         {
             Argument.IsNotNull(() => projectProvider);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => repositoryContextService);
-            Argument.IsNotNull(() => defaultNuGetFramework);
-            Argument.IsNotNull(() => fileDirectoryService);
 
             _defaultProject = projectProvider.GetDefaultProject();
             _nuGetPackageManager = nuGetPackageManager;
             _repositoryContextService = repositoryContextService;
-            _defaultNuGetFramework = defaultNuGetFramework;
-            _fileDirectoryService = fileDirectoryService;
             _logger = logger;
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public async Task Run()
         {
-           var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
+            var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
 
             var subFolders = folderProject.GetPackageDirectories();
 

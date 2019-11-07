@@ -301,7 +301,7 @@
         [Obsolete]
         public void UpdateSubsections(string section, string subsection, IReadOnlyList<SettingValue> values)
         {
-            
+
         }
 
         #endregion
@@ -462,7 +462,7 @@
 
             Version configurationVersion = null;
 
-            if(!String.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
+            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
             {
                 Version = configurationVersion;
             }

@@ -20,7 +20,7 @@
 
         public bool IsPreReleaseIncluded { get; set; }
 
-        public string SearchString { get; set; } = String.Empty;
+        public string SearchString { get; set; } = string.Empty;
 
         public void Clear()
         {
@@ -49,16 +49,12 @@
         {
             if (string.Equals(e.PropertyName, nameof(ObservedFeed)))
             {
-                var source = e.NewValue as INuGetSource;
-
-                if (source != null)
+                if (e.NewValue is INuGetSource source)
                 {
                     source.IsSelected = true;
                 }
 
-                var oldSelected = e.OldValue as INuGetSource;
-
-                if (oldSelected != null)
+                if (e.OldValue is INuGetSource oldSelected)
                 {
                     oldSelected.IsSelected = false;
                 }

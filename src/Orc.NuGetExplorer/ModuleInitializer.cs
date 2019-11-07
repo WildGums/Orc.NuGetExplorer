@@ -1,6 +1,5 @@
 ﻿using Catel.Configuration;
 using Catel.IoC;
-using Catel.Logging;
 using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -15,7 +14,6 @@ using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Loggers;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Scenario;
 using Orc.NuGetExplorer.Services;
 
 /// <summary>
@@ -90,7 +88,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
- 
+
         serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();

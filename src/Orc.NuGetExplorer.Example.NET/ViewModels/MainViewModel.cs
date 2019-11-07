@@ -96,7 +96,7 @@
         {
             AvailableUpdates.Clear();
 
-            using(var cts = new CancellationTokenSource())
+            using (var cts = new CancellationTokenSource())
             {
                 var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(cts.Token, AllowPrerelease, false);
 
