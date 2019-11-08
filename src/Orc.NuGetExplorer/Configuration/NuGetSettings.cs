@@ -499,10 +499,9 @@
 
         private void OnSettingsChanged(object sender, EventArgs e)
         {
+            SettingsChanged -= OnSettingsChanged;
             //write version one time
             UpdateVersion();
-
-            SettingsChanged -= OnSettingsChanged;
         }
 
         private string GetSectionValueKey(string section, string key)

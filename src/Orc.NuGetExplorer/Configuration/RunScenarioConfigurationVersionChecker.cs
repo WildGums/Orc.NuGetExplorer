@@ -62,10 +62,10 @@
 
         private void OnCheckedSettingsReaded(object sender, EventArgs e)
         {
-            Check();
-
             //fire this handler only once
             _settings.SettingsReaded -= OnCheckedSettingsReaded;
+
+            Check();
         }
     }
 }
