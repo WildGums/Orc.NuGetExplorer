@@ -50,7 +50,8 @@
 
                 if (_settings.MinimalVersion > Assembly.GetExecutingAssembly().GetName().Version)
                 {
-                    throw new ApplicationException("This version of NuGetExplorer does not supported current configuration");
+                    //use this if you want to break up compatibility with old versions
+                    //throw new ApplicationException("This version of NuGetExplorer does not supported current configuration");
                 }
             }
         }
