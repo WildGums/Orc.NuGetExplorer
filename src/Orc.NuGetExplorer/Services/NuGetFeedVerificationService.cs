@@ -2,7 +2,6 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Text;
     using System.Threading;
@@ -11,7 +10,6 @@ namespace Orc.NuGetExplorer
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
-    using NuGet.Credentials;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Web;

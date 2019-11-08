@@ -1,6 +1,5 @@
 ﻿using Catel.Configuration;
 using Catel.IoC;
-using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -38,7 +37,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<INuGetProjectContextProvider, EmptyProjectContextProvider>();
         serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
 
-        serviceLocator.RegisterTypeAndInstantiate<DefaultNuGetFramework>();
+        serviceLocator.RegisterType<IDefaultNuGetFramework, DefaultNuGetFramework>();
 
         serviceLocator.RegisterType<INuGetProjectConfigurationProvider, PackagesConfigProvider>();
 
@@ -60,9 +59,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
         //serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
         serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
-        var credentialProviderLoader = serviceLocator.RegisterTypeAndInstantiate<CredentialProviderLoaderService>();
-        serviceLocator.RegisterInstance<ICredentialProviderLoaderService>(credentialProviderLoader);
-        
+        serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();
+
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
@@ -90,14 +88,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
-
-        serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
-
-        var languageService = serviceLocator.ResolveType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-
         //serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
     }
 }

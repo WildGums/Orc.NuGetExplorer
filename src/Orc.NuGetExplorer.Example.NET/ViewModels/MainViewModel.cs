@@ -10,6 +10,7 @@
     using Catel.Services;
     using Catel.Threading;
     using Models;
+    using Orc.NuGetExplorer.Services;
 
     public class MainViewModel : ViewModelBase
     {
@@ -18,13 +19,14 @@
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageBatchService _packageBatchService;
+        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
         #region Constructors
-        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
+        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
             IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
         {
@@ -35,7 +37,9 @@
             Argument.IsNotNull(() => messageService);
             Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => initializationService);
 
+            _initializationService = initializationService;
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
             _feedVerificationService = feedVerificationService;

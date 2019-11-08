@@ -75,8 +75,6 @@
             var templateBadgeContent = b.GetTemplateChild(BadgeContentPartName);
             var templateBadge = b.GetTemplateChild(BadgePartName);
 
-            Log.Info($"{b.DataContext}: {visibility}");
-
             templateBadgeContent?.SetCurrentValue(VisibilityProperty, visibility);
             templateBadge?.SetCurrentValue(VisibilityProperty, visibility);
         }

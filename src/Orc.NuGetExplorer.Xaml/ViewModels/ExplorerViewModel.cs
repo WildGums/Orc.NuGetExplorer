@@ -10,23 +10,26 @@
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
     {
         private readonly IConfigurationService _configurationService;
-
+        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
 
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
-            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService)
+            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
         {
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => initializationService);
 
             _typeFactory = typeFactory;
             _configurationService = configurationService;
+            _initializationService = initializationService;
 
             CreateApplicationWideCommands(commandManager);
 

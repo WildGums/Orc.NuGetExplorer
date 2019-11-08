@@ -37,7 +37,7 @@
 
         protected void RaiseUpdating(EventArgs e)
         {
-            Updated?.Invoke(this, e);
+            Updating?.Invoke(this, e);
         }
     }
 }

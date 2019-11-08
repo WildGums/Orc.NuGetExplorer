@@ -280,7 +280,7 @@
             {
                 if ((bool)e.NewValue)
                 {
-                    Log.Info($"Switched page: {Title} is active");
+                    Log.Info($"Switching page: {Title} is active");
 
                     //force update selected item
                     SelectedPackageItem = PackageItems?.FirstOrDefault();
@@ -356,7 +356,7 @@
                     }
 
                     IsCancellationTokenAlive = true;
-                    Log.Info("You can now cancel search from gui");
+                    Log.Debug("You can now cancel search from gui");
 
                     using (var pageTcs = GetCancelationTokenSource())
                     {
@@ -476,7 +476,7 @@
             {
                 IsLoadingInProcess = true;
 
-                Log.Info($"Start query {Title} page");
+                Log.Info($"Start package query on {Title} page");
 
                 var isFirstLoad = pageInfo.Current < 0;
 
@@ -496,7 +496,7 @@
 
                 Invalidated = false;
 
-                Log.Info($"Page {Title} updates with {packages.Count()} returned by query '{Settings.SearchString} from {PageInfo.Source}'");
+                Log.Info($"Page {Title} updates with {packages.Count()} packages returned by query '{Settings.SearchString} from {PageInfo.Source}'");
             }
             finally
             {
@@ -596,7 +596,7 @@
 
         private async Task CanFeedBeLoadedAsync(CancellationToken cancelToken, INuGetSource source)
         {
-            Log.Info($"{source} is verified");
+            Log.Info($"'{source}' package source is verified");
 
             if (source is NuGetFeed)
             {

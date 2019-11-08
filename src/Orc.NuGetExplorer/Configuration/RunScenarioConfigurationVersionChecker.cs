@@ -18,6 +18,7 @@
         public RunScenarioConfigurationVersionChecker(ISettings settings) : base(settings)
         {
             _settings = (settings as IVersionedSettings);
+            _settings.SettingsReaded += OnCheckedSettingsReaded;
         }
 
         public override void Check()
@@ -43,11 +44,11 @@
                 RaiseUpdated(new EventArgs());
             }
             else
-            { 
+            {
                 Log.Info("Current configuration version is higher than runned NuGetExplorer version");
                 Log.Info("Check compatibility..");
 
-                if(_settings.MinimalVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                if (_settings.MinimalVersion > Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     throw new ApplicationException("This version of NuGetExplorer does not supported current configuration");
                 }
@@ -57,6 +58,14 @@
         public void AddUpgradeScenario(IUpgradeScenario scenario)
         {
             _runOnCheckList.Add(scenario);
+        }
+
+        private void OnCheckedSettingsReaded(object sender, EventArgs e)
+        {
+            Check();
+
+            //fire this handler only once
+            _settings.SettingsReaded -= OnCheckedSettingsReaded;
         }
     }
 }

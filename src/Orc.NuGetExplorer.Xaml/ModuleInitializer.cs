@@ -1,14 +1,9 @@
 ﻿using System.ComponentModel;
 using Catel.IoC;
-using Catel.MVVM;
-using Catel.Services;
 using Orc.NuGetExplorer;
-using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Scenario;
-using Orc.NuGetExplorer.ViewModels;
-using Orc.NuGetExplorer.Views;
+using Orc.NuGetExplorer.Services;
 using Orc.NuGetExplorer.Windows;
 
 /// <summary>
@@ -48,16 +43,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
 
-        var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
-        viewModelLocator.Register(typeof(PackageSourceSettingControl), typeof(PackageSourceSettingViewModel));
-
-        //pre-initialization to prepare old data to new NuGetExplorer versions
-        var upgradeRunner = serviceLocator.RegisterTypeAndInstantiate<RunScenarioConfigurationVersionChecker>();
-        var basicV3Scenario = serviceLocator.ResolveType<ITypeFactory>().CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
-        upgradeRunner.AddUpgradeScenario(basicV3Scenario);
-        upgradeRunner.Check();
-
-        var languageService = serviceLocator.ResolveType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
+        serviceLocator.RegisterType<INuGetExplorerInitializationService, NuGetExplorerInitializationService>();
     }
 }

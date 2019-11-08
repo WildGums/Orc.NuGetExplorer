@@ -234,7 +234,7 @@
                 return unitedMetadata.WithVersions(versionsMetadatas.ToVersionInfo(includePrerelease));
             }
 
-            using(var credToken = await CredentialsToken.Create(repository))
+            using (var credToken = await CredentialsToken.Create(repository))
             using (var sourceCacheContext = new SourceCacheContext())
             {
                 var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);

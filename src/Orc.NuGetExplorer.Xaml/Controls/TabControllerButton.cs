@@ -80,7 +80,7 @@
                 foreach (var t in tabBtn._group)
                 {
                     t.SetCurrentValue(TabControllerButton.TabSourceProperty, tabBtn.TabSource);
-                    Log.Info($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
+                    Log.Debug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
                 }
             }
         }

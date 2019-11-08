@@ -46,7 +46,7 @@
 
         public int GetNext()
         {
-            Log.Info($"Got next {Size} positions, starts from {Next}");
+            Log.Debug($"Got next {Size} positions, starts from {Next}");
 
             var next = Next;
 
@@ -57,7 +57,7 @@
 
         public int GetNext(int count)
         {
-            Log.Info($"Got next {count} positions, starts from {Next}");
+            Log.Debug($"Got next {count} positions, starts from {Next}");
 
             var next = Next;
 

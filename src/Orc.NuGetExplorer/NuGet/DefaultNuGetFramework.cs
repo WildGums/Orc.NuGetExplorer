@@ -7,7 +7,7 @@
     using Microsoft.Win32;
     using NuGet.Frameworks;
 
-    public class DefaultNuGetFramework
+    public class DefaultNuGetFramework : IDefaultNuGetFramework
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

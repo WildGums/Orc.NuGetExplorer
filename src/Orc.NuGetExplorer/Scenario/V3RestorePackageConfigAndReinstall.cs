@@ -12,7 +12,6 @@
     using NuGet.Packaging.Core;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Services;
 
     public class V3RestorePackageConfigAndReinstall : IUpgradeScenario
     {

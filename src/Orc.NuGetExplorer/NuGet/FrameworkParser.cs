@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using Catel.Logging;
     using NuGet.Frameworks;
 
     public static class FrameworkParser

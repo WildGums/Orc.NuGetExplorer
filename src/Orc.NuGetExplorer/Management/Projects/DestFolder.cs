@@ -9,7 +9,7 @@
     /// </summary>
     public class DestFolder : IExtensibleProject
     {
-        public DestFolder(string destinationFolder, DefaultNuGetFramework defaultFramework)
+        public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
         {
             ContentPath = destinationFolder;
 

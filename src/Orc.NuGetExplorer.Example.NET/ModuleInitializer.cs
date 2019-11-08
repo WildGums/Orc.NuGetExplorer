@@ -1,8 +1,7 @@
 ﻿using Catel.IoC;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Example;
-using Orc.NuGetExplorer.Example.PackageManagement;
-using Orc.NuGetExplorer.Management;
+using Orc.NuGetExplorer.Example.Services;
 using Orc.NuGetExplorer.Services;
 
 /// <summary>
@@ -20,15 +19,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IEchoService, EchoService>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
-        serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
-
-        //add all project extensions
-        var manager = serviceLocator.ResolveType<IExtensibleProjectLocator>();
-
-        var directoryService = serviceLocator.ResolveType<IFileDirectoryService>();
-        
-        serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
-
-        manager.Register<ExampleFolderPackageManagement>(directoryService.GetApplicationRoamingFolder());
+        serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
     }
 }

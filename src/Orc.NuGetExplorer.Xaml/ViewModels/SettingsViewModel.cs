@@ -7,11 +7,13 @@
     using Catel.MVVM;
     using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
 
     internal class SettingsViewModel : ViewModelBase
     {
         private readonly bool _reloadConfigOnInitialize;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+        private readonly INuGetExplorerInitializationService _initializationService;
 
         private SettingsViewModel()
         {
@@ -30,13 +32,16 @@
             Settings = settingsProvider.Model;
         }
 
-        public SettingsViewModel(bool loadFeedsFromConfig, IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService)
+        public SettingsViewModel(bool loadFeedsFromConfig, IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService,
+            INuGetExplorerInitializationService initializationService)
             : this(settingsProvider)
         {
             Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => initializationService);
 
             _reloadConfigOnInitialize = loadFeedsFromConfig;
             _nuGetConfigurationService = configurationService;
+            _initializationService = initializationService;
         }
 
         protected override Task InitializeAsync()

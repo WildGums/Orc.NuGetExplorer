@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    internal interface IBackupFileSystemService
+    public interface IBackupFileSystemService
     {
         #region Methods
         void BackupFolder(string fullPath);

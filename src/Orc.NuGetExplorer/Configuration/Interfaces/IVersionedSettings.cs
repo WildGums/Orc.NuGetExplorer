@@ -11,6 +11,8 @@
 
         Version MinimalVersion { get; }
 
+        event EventHandler SettingsReaded;
+
         void UpdateVersion();
     }
 }

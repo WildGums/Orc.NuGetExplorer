@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
 
-    internal class RollbackWatcher : PackageManagerWatcherBase
+    public class RollbackWatcher : PackageManagerWatcherBase
     {
         #region Fields
         private readonly IBackupFileSystemService _backupFileSystemService;

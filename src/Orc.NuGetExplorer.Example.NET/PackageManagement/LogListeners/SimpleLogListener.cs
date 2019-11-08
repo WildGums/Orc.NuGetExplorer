@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer.Example
 {
     using Catel;
+    using Catel.Logging;
     using Catel.Services;
     using Models;
 

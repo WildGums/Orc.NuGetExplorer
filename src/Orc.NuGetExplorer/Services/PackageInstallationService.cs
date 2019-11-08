@@ -280,7 +280,7 @@
 
                     var relatedDepInfo = await dependencyInfoResource.ResolvePackage(relatedIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-                    if(relatedDepInfo == null)
+                    if (relatedDepInfo == null)
                     {
                         throw new MissedPackageException($"Cannot find package {relatedIdentity}");
                     }

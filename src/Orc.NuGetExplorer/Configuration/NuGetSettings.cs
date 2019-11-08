@@ -53,9 +53,16 @@
 
         public event EventHandler SettingsChanged;
 
+        public event EventHandler SettingsReaded;
+
         private void RaiseSettingsChanged()
         {
             SettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseSettingsReaded()
+        {
+            SettingsReaded?.Invoke(this, EventArgs.Empty);
         }
 
         #region ISettings
@@ -69,11 +76,15 @@
 
             var result = settingValue == null ? string.Empty : settingValue.Value;
 
+            RaiseSettingsReaded();
+
             return result;
         }
 
         public IReadOnlyList<string> GetAllSubsections(string section)
         {
+            RaiseSettingsReaded();
+
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
         }
 
@@ -83,6 +94,7 @@
             Argument.IsNotNullOrWhitespace(() => section);
             Argument.IsNotNullOrWhitespace(() => subSection);
 
+            RaiseSettingsReaded();
 
             //extract key-value pairs from AddItem
             return GetNuGetValues(section, subSection)
@@ -198,6 +210,8 @@
 
             var subsections = keys.Select(key => GetNuGetValue(sectionName, key, false)).ToList();
 
+            RaiseSettingsReaded();
+
             return new NuGetSettingsSection(sectionName, subsections);
         }
 
@@ -256,12 +270,14 @@
         [Obsolete]
         public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
         {
+            RaiseSettingsReaded();
             return new List<SettingValue>();
         }
 
         [Obsolete]
         public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
         {
+            RaiseSettingsReaded();
             return new List<SettingValue>();
         }
 
@@ -477,6 +493,8 @@
             {
                 MinimalVersion = configurationVersion;
             }
+
+            RaiseSettingsReaded();
         }
 
         private void OnSettingsChanged(object sender, EventArgs e)
