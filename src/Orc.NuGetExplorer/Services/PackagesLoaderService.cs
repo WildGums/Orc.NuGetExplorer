@@ -15,11 +15,15 @@
     internal class PackagesLoaderService : IPackagesLoaderService
     {
         private readonly ILogger _nugetLogger;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
 
-        public PackagesLoaderService(ILogger logger)
+        public PackagesLoaderService(ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
             Argument.IsNotNull(() => logger);
+            Argument.IsNotNull(() => repositoryProvider);
+
             _nugetLogger = logger;
+            _repositoryProvider = repositoryProvider;
         }
 
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
@@ -30,18 +34,15 @@
 
             if (pageContinuation.Source.PackageSources.Count < 2)
             {
-                var repository = new SourceRepository(pageContinuation.Source.PackageSources.FirstOrDefault(), Repository.Provider.GetCoreV3());
+                var repository = _repositoryProvider.CreateRepository(pageContinuation.Source.PackageSources.FirstOrDefault());
 
                 try
                 {
-                    using (var credToken = await CredentialsToken.Create(repository))
-                    {
-                        var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+                    var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                        var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
+                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-                        return packages;
-                    }
+                    return packages;
                 }
                 catch (FatalProtocolException ex) when (token.IsCancellationRequested)
                 {
@@ -62,22 +63,20 @@
         {
             SourceRepository tempRepoLocal = null;
 
-            var repositoryCollection = pageContinuation.Source.PackageSources.Select(s =>
+            var repositoryCollection = pageContinuation.Source.PackageSources.Select(source =>
             {
-                tempRepoLocal = new SourceRepository(s, Repository.Provider.GetCoreV3());
+                tempRepoLocal = _repositoryProvider.CreateRepository(source);
+      
                 return tempRepoLocal;
             }).ToArray();
 
             try
             {
-                using (var credToken = await CredentialsToken.Create(tempRepoLocal))
-                {
-                    var searchResource = await MultiplySourceSearchResource.CreateAsync(repositoryCollection);
+                var searchResource = await MultiplySourceSearchResource.CreateAsync(repositoryCollection);
 
-                    var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
+                var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-                    return packages;
-                }
+                return packages;
             }
             catch (FatalProtocolException ex) when (token.IsCancellationRequested)
             {

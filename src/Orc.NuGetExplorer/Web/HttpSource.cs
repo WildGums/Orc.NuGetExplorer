@@ -7,7 +7,7 @@
 
     public class HttpSource
     {
-        static HttpClient HttpClient;
+        private static HttpClient HttpClient;
 
         // Only one thread may re-create the http client at a time.
         private readonly SemaphoreSlim _httpClientLock = new SemaphoreSlim(1, 1);

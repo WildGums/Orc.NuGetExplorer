@@ -38,6 +38,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
 
         serviceLocator.RegisterType<IDefaultNuGetFramework, DefaultNuGetFramework>();
+        serviceLocator.RegisterType<IExtendedSourceRepositoryProvider, DefaultSourceRepositoryProvider>();
 
         serviceLocator.RegisterType<INuGetProjectConfigurationProvider, PackagesConfigProvider>();
 

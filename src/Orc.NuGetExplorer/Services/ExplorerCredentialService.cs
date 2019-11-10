@@ -7,12 +7,15 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Credentials;
 
     public class ExplorerCredentialService : ICredentialService
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly ConcurrentDictionary<string, bool> _retryCache
              = new ConcurrentDictionary<string, bool>();
 
@@ -96,6 +99,9 @@
                     _proivderSemaphore.WaitOne();
 
                     CredentialResponse response;
+
+                    Log.Debug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
+
                     if (!TryFromCredentialCache(uri, type, isRetry, provider, out response))
                     {
                         response = await provider.GetAsync(
@@ -123,16 +129,12 @@
                         {
                             AddToCredentialCache(uri, type, provider, response);
                         }
-
-                        if (response.Status == CredentialStatus.Success)
-                        {
-                            //add credentials to retry cache only if is known it's a new response, not from cache
-                        }
                     }
 
                     if (response.Status == CredentialStatus.Success)
                     {
                         _retryCache[retryKey] = true;
+                        Log.Info($"_retryCache count now is {_retryCache.Count}");
                         creds = response.Credentials;
                         break;
                     }
@@ -218,9 +220,14 @@
             _providerCredentialCache[CredentialsKeyHelper.GetCacheKey(uri, type, provider)] = credentials;
         }
 
+
+        /// <summary>
+        /// Clear retry cache. As long as we don't recreate SourceRepository instances this is unnecessary
+        /// </summary>
         public void ClearRetryCache()
         {
             _retryCache.Clear();
+            Log.Debug($"_retryCache count {_retryCache.Count}");
         }
 
         private static class CredentialsKeyHelper

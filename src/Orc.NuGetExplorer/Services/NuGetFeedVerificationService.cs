@@ -24,13 +24,16 @@ namespace Orc.NuGetExplorer
 
         private readonly ILogger _nugetLogger;
         private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
 
-        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ILogger logger)
+        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
             Argument.IsNotNull(() => credentialProviderLoaderService);
+            Argument.IsNotNull(() => repositoryProvider);
             Argument.IsNotNull(() => logger);
 
             _credentialProviderLoaderService = credentialProviderLoaderService;
+            _repositoryProvider = repositoryProvider;
             _nugetLogger = logger;
         }
 
@@ -44,24 +47,17 @@ namespace Orc.NuGetExplorer
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            var v3_providers = NuGetProtocolTypes.Repository.Provider.GetCoreV3();
-
             try
             {
                 var packageSource = new PackageSource(source);
 
-                var repoProvider = new SourceRepositoryProvider(LibConfiguration.Settings.LoadDefaultSettings(root: null), v3_providers);
-
-                var repository = repoProvider.CreateRepository(packageSource);
+                var repository = _repositoryProvider.CreateRepository(packageSource);
 
                 try
                 {
-                    using (var credToken = await CredentialsToken.Create(repository))
-                    {
-                        var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+                    var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                        var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
-                    }
+                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                 }
                 catch (Exception)
                 {
@@ -113,14 +109,11 @@ namespace Orc.NuGetExplorer
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            var v3_providers = NuGetProtocolTypes.Repository.Provider.GetCoreV3();
             try
             {
                 var packageSource = new PackageSource(source);
 
-                //var repoProvider = new SourceRepositoryProvider(Settings.LoadDefaultSettings(root: null), Repository.Provider.GetCoreV3());
-
-                var repository = new SourceRepository(packageSource, v3_providers);
+                var repository = _repositoryProvider.CreateRepository(packageSource);
 
                 var searchResource = repository.GetResource<PackageSearchResource>();
 

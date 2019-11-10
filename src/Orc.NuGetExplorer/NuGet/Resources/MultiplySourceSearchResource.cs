@@ -12,6 +12,8 @@
     {
         private PackageSearchResource[] _combinedResources;
 
+        private readonly Dictionary<SourceRepository, PackageSearchResource> _resourceDict = new Dictionary<SourceRepository, PackageSearchResource>();
+
         private MultiplySourceSearchResource()
         {
         }
@@ -20,6 +22,7 @@
         {
             var combinedResourcesTasks = sourceRepositories.Select(x => x.GetResourceAsync<PackageSearchResource>()).ToList();
             var completed = (await Task.WhenAll(combinedResourcesTasks)).Where(m => m != null);
+
             _combinedResources = completed.ToArray();
         }
 
@@ -39,7 +42,7 @@
 
                 var results = await Task.WhenAll(searchTasks);
 
-                var combinedResults = results.SelectMany(x => x.Select(i => i));
+                var combinedResults = results.SelectMany(metadataCollection => metadataCollection.Select(metadata => metadata));
 
                 return await MergeVersionsAsync(combinedResults);
             }

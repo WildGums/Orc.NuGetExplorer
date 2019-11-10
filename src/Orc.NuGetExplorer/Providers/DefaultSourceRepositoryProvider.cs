@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -9,12 +10,14 @@
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
 
-    public class DefaultSourceRepositoryProvider : ISourceRepositoryProvider
+    public class DefaultSourceRepositoryProvider : IExtendedSourceRepositoryProvider
     {
-        private readonly IEnumerable<Lazy<INuGetResourceProvider>> _resourceProviders;
+        private static readonly IEnumerable<Lazy<INuGetResourceProvider>> V3ProtocolProviders = Repository.Provider.GetCoreV3();
 
         private readonly INuGetSettings _settings;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+
+        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new ConcurrentDictionary<PackageSource, SourceRepository>(new PackageSourceCustomEqualityComparer());
 
         /// <summary>
         /// Unused provider from NuGet library
@@ -24,19 +27,20 @@
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => settingsProvider);
-            _resourceProviders = Repository.Provider.GetCoreV3();
             _settings = settingsProvider.Model;
             _nuGetConfigurationService = nuGetConfigurationService;
         }
 
         public SourceRepository CreateRepository(PackageSource source)
         {
-            return CreateRepository(source, FeedType.Undefined);
+            var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined));
+            return repo;
         }
 
         public SourceRepository CreateRepository(PackageSource source, FeedType type)
         {
-            return new SourceRepository(source, _resourceProviders, type);
+            var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, type));
+            return repo;
         }
 
         public IEnumerable<SourceRepository> GetRepositories()
@@ -45,7 +49,7 @@
 
             //from config
             var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)
-                .Select(feed => new PackageSource(feed.Source, feed.Name, feed.IsEnabled));
+                .ToPackageSourceInstances();
 
             foreach (var source in _settings.GetAllPackageSources())
             {
@@ -61,6 +65,29 @@
             }
 
             return repos;
+        }
+
+        public SourceRepository CreateLocalRepository(string source)
+        {
+            return new SourceRepository(
+                        new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
+                );
+        }
+
+        /// <summary>
+        /// Custom equality comparer, comparing PackageSources by sources string
+        /// </summary>
+        private class PackageSourceCustomEqualityComparer : IEqualityComparer<PackageSource>
+        {
+            public bool Equals(PackageSource x, PackageSource y)
+            {
+                return string.Equals(x.Source, y.Source);
+            }
+
+            public int GetHashCode(PackageSource obj)
+            {
+                return obj.Source.GetHashCode();
+            }
         }
     }
 }

@@ -178,27 +178,24 @@
             CancellationToken cancellationToken)
         {
 
-            using (var credToken = await CredentialsToken.Create(repository))
+            var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+
+            using (var sourceCacheContext = new SourceCacheContext())
             {
-                var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+                // Update http source cache context MaxAge so that it can always go online to fetch
+                // latest versions of the package.
+                sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
 
-                using (var sourceCacheContext = new SourceCacheContext())
-                {
-                    // Update http source cache context MaxAge so that it can always go online to fetch
-                    // latest versions of the package.
-                    sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
+                var packages = await metadataResource?.GetMetadataAsync(
+                    packageId,
+                    includePrerelease,
+                    includeUnlisted,
+                    sourceCacheContext,
+                    NuGetLogger,
+                    cancellationToken);
 
-                    var packages = await metadataResource?.GetMetadataAsync(
-                        packageId,
-                        includePrerelease,
-                        includeUnlisted,
-                        sourceCacheContext,
-                        NuGetLogger,
-                        cancellationToken);
+                return packages;
 
-                    return packages;
-
-                }
             }
         }
 
@@ -234,7 +231,6 @@
                 return unitedMetadata.WithVersions(versionsMetadatas.ToVersionInfo(includePrerelease));
             }
 
-            using (var credToken = await CredentialsToken.Create(repository))
             using (var sourceCacheContext = new SourceCacheContext())
             {
                 var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
@@ -267,22 +263,19 @@
             string packageId,
             CancellationToken token)
         {
-            using (var credToken = await CredentialsToken.Create(localRepository))
+            var localResource = await localRepository.GetResourceAsync<PackageMetadataResource>(token);
+
+            using (var sourceCacheContext = new SourceCacheContext())
             {
-                var localResource = await localRepository.GetResourceAsync<PackageMetadataResource>(token);
+                var localPackages = await localResource?.GetMetadataAsync(
+                    packageId,
+                    includePrerelease: true,
+                    includeUnlisted: true,
+                    sourceCacheContext: sourceCacheContext,
+                    log: NuGetLogger,
+                    token: token);
 
-                using (var sourceCacheContext = new SourceCacheContext())
-                {
-                    var localPackages = await localResource?.GetMetadataAsync(
-                        packageId,
-                        includePrerelease: true,
-                        includeUnlisted: true,
-                        sourceCacheContext: sourceCacheContext,
-                        log: NuGetLogger,
-                        token: token);
-
-                    return localPackages;
-                }
+                return localPackages;
             }
         }
 

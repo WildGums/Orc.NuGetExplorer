@@ -50,14 +50,12 @@
 
             if (source != null)
             {
-                repository = new SourceRepository(source, Repository.Provider.GetCoreV3());
+                repository = _repositoryProvider.CreateRepository(source);
             }
             else
             {
                 repository = observedProjects.FirstOrDefault().AsSourceRepository(_repositoryProvider);
             }
-
-            var httpHandler = await repository.GetResourceAsync<HttpHandlerResourceV3>();
 
             try
             {
@@ -93,15 +91,6 @@
             {
                 //task is cancelled, supress
                 throw new OperationCanceledException("Search request was canceled", ex, token);
-            }
-            finally
-            {
-                var credentialsService = httpHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
-                if (credentialsService != null)
-                {
-                    credentialsService.ClearRetryCache();
-                }
             }
         }
 
