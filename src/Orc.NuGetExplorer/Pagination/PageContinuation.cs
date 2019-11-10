@@ -50,7 +50,7 @@
 
             var next = Next;
 
-            LastNumber = LastNumber + Size;
+            LastNumber += Size;
 
             return next;
         }
@@ -61,14 +61,14 @@
 
             var next = Next;
 
-            LastNumber = LastNumber + Size;
+            LastNumber += Size;
 
             return next;
         }
 
         public int GetPrevious()
         {
-            LastNumber = LastNumber - Size;
+            LastNumber -= Size;
             return Next;
         }
     }

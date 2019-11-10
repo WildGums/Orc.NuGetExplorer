@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
     using Catel;
     using NuGet.Common;
-    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
@@ -66,7 +65,7 @@
             var repositoryCollection = pageContinuation.Source.PackageSources.Select(source =>
             {
                 tempRepoLocal = _repositoryProvider.CreateRepository(source);
-      
+
                 return tempRepoLocal;
             }).ToArray();
 

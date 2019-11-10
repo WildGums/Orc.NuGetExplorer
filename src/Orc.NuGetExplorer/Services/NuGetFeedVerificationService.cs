@@ -10,11 +10,8 @@ namespace Orc.NuGetExplorer
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
-    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Web;
-    using LibConfiguration = NuGet.Configuration;
-    using NuGetProtocolTypes = NuGet.Protocol.Core.Types;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {

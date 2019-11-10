@@ -1,10 +1,8 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
@@ -39,12 +37,12 @@
 
         public async Task<SourcePackageDependencyInfo> ResolvePackage(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
-            foreach(var resource in _resources)
+            foreach (var resource in _resources)
             {
                 var packageDependencyInfo = await resource.ResolvePackage(package, projectFramework, cacheContext, log, token);
 
                 //just returns first existed package 
-                if(packageDependencyInfo != null)
+                if (packageDependencyInfo != null)
                 {
                     return packageDependencyInfo;
                 }
