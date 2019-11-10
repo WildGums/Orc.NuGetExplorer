@@ -89,6 +89,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
-        //serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
+        serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
     }
 }

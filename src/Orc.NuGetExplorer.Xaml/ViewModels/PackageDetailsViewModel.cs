@@ -151,6 +151,8 @@
                         identity, _settingsProvider.Model.IsPreReleaseIncluded, cts.Token);
 
                     DependencyInfo = VersionData?.DependencySets;
+
+                    Package.AddDependencyInfo(VersionData.Identity.Version, VersionData?.DependencySets);
                 }
             }
             catch (Exception e)

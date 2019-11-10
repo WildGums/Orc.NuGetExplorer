@@ -1,11 +1,13 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.Data;
     using Catel.Logging;
+    using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
@@ -19,6 +21,8 @@
         private readonly IPackageSearchMetadata _packageMetadata;
 
         private readonly IList<IPackageSearchMetadata> _additionalMetadata = new List<IPackageSearchMetadata>();
+
+        private readonly IDictionary<NuGetVersion, IEnumerable<PackageDependencyGroup>> _dependencyGroups = new Dictionary<NuGetVersion, IEnumerable<PackageDependencyGroup>>();
 
         public NuGetPackage(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage)
         {
@@ -94,11 +98,13 @@
 
         public Version Version => Identity.Version.Version;
 
+        public NuGetVersion NuGetVersion => Identity.Version;
+
         //todo
         public string SpecialVersion { get; set; }
 
         //todo
-        public bool IsAbsoluteLatestVersion { get; set; }
+        public bool IsAbsoluteLatestVersion => IsLatestVersion;
 
         //todo check is comparer needed
         public bool IsLatestVersion => Identity?.Version.Equals(LastVersion) ?? false;
@@ -111,12 +117,11 @@
         public bool? IsInstalled { get; set; }
 
         //todo
-        public IList<string> AvailableVersions => throw new NotImplementedException();
+        public IList<string> AvailableVersions { get; set; }
 
         //todo
         public string SelectedVersion { get; set; }
 
-        //todo
         public IValidationContext ValidationContext { get; set; }
 
         IEnumerable<string> IPackageDetails.Authors => SplitAuthors(Authors);
@@ -125,10 +130,9 @@
 
         public DateTimeOffset? Published => _packageMetadata.Published;
 
-        //Todo
         public void ResetValidationContext()
         {
-
+            ValidationContext = new ValidationContext();
         }
 
         #endregion
@@ -181,6 +185,16 @@
             IsLoaded = true;
 
             return Versions;
+        }
+
+        public void AddDependencyInfo(NuGetVersion version, IEnumerable<PackageDependencyGroup> dependencyGroups)
+        {
+            _dependencyGroups.Add(version, dependencyGroups);
+        }
+
+        public IEnumerable<PackageDependencyGroup> GetDependencyInfo(NuGetVersion version)
+        {
+            return _dependencyGroups.TryGetValue(version, out var groups) ? groups : null;
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
