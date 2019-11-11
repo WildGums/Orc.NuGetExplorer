@@ -45,7 +45,9 @@ namespace Orc.NuGetExplorer
         #region Methods
         public string GetDestinationFolder()
         {
-            return _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+            var destinationFolder = _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+
+            return string.IsNullOrEmpty(destinationFolder) ? _defaultDestinationFolder : destinationFolder;
         }
 
         public void SetDestinationFolder(string value)
