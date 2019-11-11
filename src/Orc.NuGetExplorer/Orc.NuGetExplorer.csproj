@@ -5,7 +5,7 @@
     <RootNamespace>Orc.NuGetExplorer</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageId>Orc.NuGetExplorer</PackageId>
-    <PackageVersion>3.1.10-beta0001</PackageVersion>
+    <PackageVersion>1.0.0-alpha0001</PackageVersion>
     <Description>NuGet explorer library.</Description>
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec</PackageTags>
     <UseWpf>true</UseWpf>

@@ -1,11 +1,11 @@
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net46;net47</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Xaml</AssemblyName>
     <RootNamespace>Orc.NuGetExplorer</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageId>Orc.NuGetExplorer.Xaml</PackageId>
-    <PackageVersion>3.1.10-beta0001</PackageVersion>
+    <PackageVersion>1.0.0-alpha0001</PackageVersion>
     <Description>NuGet explorer library.</Description>
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec;xaml;wpf</PackageTags>
     <UseWpf>true</UseWpf>
