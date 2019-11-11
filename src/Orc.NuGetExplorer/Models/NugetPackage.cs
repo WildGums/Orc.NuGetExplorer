@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.Data;
@@ -56,6 +57,7 @@
         }
 
         public bool IsChecked { get; set; }
+
         public MetadataOrigin FromPage { get; }
 
         public string Title { get; private set; }
@@ -73,6 +75,7 @@
         public PackageIdentity Identity => _packageMetadata?.Identity;
 
         private List<NuGetVersion> _versions = new List<NuGetVersion>();
+
         public IReadOnlyList<NuGetVersion> Versions
         {
             get { return _versions; }
@@ -91,6 +94,7 @@
         public NuGetVersion InstalledVersion { get; set; }
 
         #region IPackageDetails
+
         public string Id => Identity?.Id ?? String.Empty;
 
         public string FullName => $"{Id} {Identity.Version.ToFullString()}";
@@ -188,12 +192,15 @@
 
         public void AddDependencyInfo(NuGetVersion version, IEnumerable<PackageDependencyGroup> dependencyGroups)
         {
-            _dependencyGroups.Add(version, dependencyGroups);
+            if (!_dependencyGroups.ContainsKey(version))
+            {
+                _dependencyGroups.Add(version, dependencyGroups);
+            }
         }
 
         public IEnumerable<PackageDependencyGroup> GetDependencyInfo(NuGetVersion version)
         {
-            return _dependencyGroups.TryGetValue(version, out var groups) ? groups : null;
+            return _dependencyGroups.TryGetValue(version, out var groups) ? groups : new List<PackageDependencyGroup>();
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)

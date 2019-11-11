@@ -28,13 +28,10 @@
 
             //set language resources
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
+            languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
 
             //register some view models
             vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
-
-            //for testing purposes
-            var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
-            apiRegistry.Register("Chameleon.Api", "2.2.20");
 
             //run upgrade
             //pre-initialization to prepare old data to new NuGetExplorer versions

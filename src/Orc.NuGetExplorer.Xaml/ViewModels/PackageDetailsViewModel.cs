@@ -10,6 +10,7 @@
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Services;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
@@ -33,21 +34,28 @@
 
         private readonly INuGetPackageManager _projectManager;
 
+        private readonly ILanguageService _languageService;
+
+        private readonly IApiPackageRegistry _apiPackageRegistry;
+
         private IPackageMetadataProvider _packageMetadataProvider;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, INuGetPackageManager projectManager)
+            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => projectManager);
+            Argument.IsNotNull(() => languageService);
+            Argument.IsNotNull(() => apiPackageRegistry);
 
             _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _projectManager = projectManager;
-
+            _languageService = languageService;
+            _apiPackageRegistry = apiPackageRegistry;
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
             InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
@@ -85,18 +93,16 @@
         [ViewModelToModel]
         public NuGetVersion InstalledVersion { get; set; }
 
-        public int SelectedVersionIndex { get; set; }
+        public string[] ApiValidationMessages { get; private set; }
 
-        private void OnPackageChanged()
+        private async void OnPackageChanged()
         {
             if (Package is null)
             {
                 return;
             }
 
-#pragma warning disable 4014
-            ApplyPackageAsync();
-#pragma warning restore 4014
+            await ApplyPackageAsync();
         }
 
         protected override async Task InitializeAsync()
@@ -156,6 +162,12 @@
                     {
                         Package.AddDependencyInfo(VersionData.Identity.Version, VersionData?.DependencySets);
                     }
+
+                    //validate loaded dependencies
+                    Package.ResetValidationContext();
+                    _apiPackageRegistry.Validate(Package);
+
+                    GetPackageValidationErrors();
                 }
             }
             catch (Exception e)
@@ -306,6 +318,31 @@
         private bool IsInstalled()
         {
             return Status == PackageStatus.UpdateAvailable || Status == PackageStatus.LastVersionInstalled;
+        }
+
+        private void GetPackageValidationErrors()
+        {
+            ApiValidationMessages = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"),
+                Package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
+        }
+
+        private string[] GetAlertRecords(string title, params string[] stringLines)
+        {
+            Argument.IsNotNullOrWhitespace(() => title);
+
+            if (stringLines == null)
+            {
+                return null;
+            }
+
+            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+            
+            if (!valuableLines.Any())
+            {
+                return null;
+            }
+
+            return valuableLines;
         }
     }
 }
