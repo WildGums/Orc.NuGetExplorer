@@ -134,7 +134,7 @@
                     if (response.Status == CredentialStatus.Success)
                     {
                         _retryCache[retryKey] = true;
-                        Log.Info($"_retryCache count now is {_retryCache.Count}");
+                        Log.Debug($"_retryCache count now is {_retryCache.Count}");
                         creds = response.Credentials;
                         break;
                     }

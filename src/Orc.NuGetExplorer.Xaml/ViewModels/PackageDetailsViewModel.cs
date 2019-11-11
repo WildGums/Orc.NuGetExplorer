@@ -152,7 +152,10 @@
 
                     DependencyInfo = VersionData?.DependencySets;
 
-                    Package.AddDependencyInfo(VersionData.Identity.Version, VersionData?.DependencySets);
+                    if (VersionData?.Identity?.Version != null)
+                    {
+                        Package.AddDependencyInfo(VersionData.Identity.Version, VersionData?.DependencySets);
+                    }
                 }
             }
             catch (Exception e)
