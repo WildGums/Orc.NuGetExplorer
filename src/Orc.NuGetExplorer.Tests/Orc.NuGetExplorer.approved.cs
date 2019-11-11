@@ -62,6 +62,10 @@ namespace Orc.NuGetExplorer
         Orc.NuGetExplorer.FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = True);
     }
     public class static INuGetFeedVerificationServiceExtensions { }
+    public interface INuGetInitializer
+    {
+        void Initialize();
+    }
     public interface INuGetLogListeningSevice
     {
         public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Debug;
@@ -184,6 +188,11 @@ namespace Orc.NuGetExplorer
         string RootDirectory { get; }
         string GetDirectory(string relativeDirectoryName);
         string GetFile(string relativeFilePath);
+    }
+    public class NuGetInitializer : Orc.NuGetExplorer.INuGetInitializer
+    {
+        public NuGetInitializer(Catel.IoC.IServiceLocator serviceLocator) { }
+        public void Initialize() { }
     }
     public class NuGetLogRecordEventArgs : System.EventArgs
     {
