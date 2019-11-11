@@ -21,9 +21,6 @@ namespace Orc.NuGetExplorer
         private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IPackageRepositoryFactory _repositoryFactory;
         private readonly ITypeFactory _typeFactory;
-
-        private IRepository _localRepository;
-        private IPackageRepository _localNuGetRepository;
         #endregion
 
         #region Constructors
@@ -39,13 +36,15 @@ namespace Orc.NuGetExplorer
             _repositoryFactory = packageRepositoryFactory;
             _repositoryCacheService = repositoryCacheService;
             _typeFactory = typeFactory;
+
+            LocalRepository = GetLocalRepository();
+            LocalNuGetRepository = _repositoryCacheService.GetNuGetRepository(LocalRepository);
         }
         #endregion
 
         #region Properties
-        public IRepository LocalRepository => _localRepository ?? (_localRepository = GetLocalRepository());
-
-        private IPackageRepository LocalNuGetRepository => _localNuGetRepository ?? (_localNuGetRepository = _repositoryCacheService.GetNuGetRepository(LocalRepository));
+        public IRepository LocalRepository { get; private set; }
+        private IPackageRepository LocalNuGetRepository { get; set; }
         #endregion
 
         #region Methods
