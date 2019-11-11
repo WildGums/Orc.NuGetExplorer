@@ -1,4 +1,5 @@
-﻿using Catel.IoC;
+﻿using System;
+using Catel.IoC;
 using Catel.Services;
 using Orc.NuGetExplorer;
 using NuGet;
@@ -47,15 +48,28 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
 
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
-
-        var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
-        serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
+        
+        serviceLocator.RegisterType<INuGetInitializer, NuGetInitializer>();
 
         var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
         HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
 
-        serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
+        try
+        {
+            // Note: this is only for the hotfix. 
+            //       do not initialize anything here. Only register types.
+            //       Use NuGetInitializer
+            var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
+            serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
+
+            serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+            serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
+        }
+        catch (Exception)
+        {
+            // Do nothing
+        }
+
         serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
 
         var languageService = serviceLocator.ResolveType<ILanguageService>();
