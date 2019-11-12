@@ -47,7 +47,7 @@
             {
                 if (_rootContext == null)
                 {
-                    context.CatchedExceptions.Clear();
+                    context.Exceptions.Clear();
 
                     _rootContext = context;
                     CurrentContext = context;

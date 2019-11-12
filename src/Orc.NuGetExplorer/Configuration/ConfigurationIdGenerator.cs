@@ -8,7 +8,7 @@
         /// <summary>
         /// The dictionary containing the unique identifiers per type.
         /// </summary>
-        private static readonly HashSet<Guid> OccupiedIdenitfiers = new HashSet<Guid>();
+        private static readonly HashSet<Guid> OccupiedIdentifiers = new HashSet<Guid>();
 
         private static readonly object LockObject = new object();
 
@@ -25,9 +25,8 @@
                 {
                     var guid = Guid.NewGuid();
 
-                    if (!OccupiedIdenitfiers.Contains(guid))
+                    if (!OccupiedIdentifiers.Add(guid))
                     {
-                        OccupiedIdenitfiers.Add(guid);
                         return guid;
                     }
                 }
@@ -44,7 +43,7 @@
 
                 isFree = !RemappedValues.TryGetValue(guid, out collisionResolve);
 
-                if (OccupiedIdenitfiers.Contains(isFree ? guid : collisionResolve))
+                if (OccupiedIdentifiers.Contains(isFree ? guid : collisionResolve))
                 {
                     isFree = false;
                     collisionResolve = GetUniqueIdentifier();
@@ -52,7 +51,7 @@
                     RemappedValues[guid] = collisionResolve;
                 }
 
-                OccupiedIdenitfiers.Add(guid);
+                OccupiedIdentifiers.Add(guid);
 
                 return isFree;
             }
@@ -66,7 +65,8 @@
                 {
                     return collidedGuid;
                 }
-                else throw new InvalidOperationException("No collisions stored for this identifier");
+                
+                throw new InvalidOperationException("No collisions stored for this identifier");
             }
         }
 

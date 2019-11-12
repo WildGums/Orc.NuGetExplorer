@@ -18,7 +18,7 @@
         public RunScenarioConfigurationVersionChecker(ISettings settings) : base(settings)
         {
             _settings = (settings as IVersionedSettings);
-            _settings.SettingsReaded += OnCheckedSettingsReaded;
+            _settings.SettingsRead += OnCheckedSettingsReaded;
         }
 
         public override void Check()
@@ -64,7 +64,7 @@
         private void OnCheckedSettingsReaded(object sender, EventArgs e)
         {
             //fire this handler only once
-            _settings.SettingsReaded -= OnCheckedSettingsReaded;
+            _settings.SettingsRead -= OnCheckedSettingsReaded;
 
             Check();
         }

@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer
         private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
-            if (context.CatchedExceptions.Any())
+            if (context.Exceptions.Any())
             {
                 _rollbackPackageOperationService.Rollback(context);
             }

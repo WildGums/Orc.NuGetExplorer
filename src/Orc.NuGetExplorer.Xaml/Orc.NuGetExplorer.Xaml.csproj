@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <!-- SonarQube requires a project guid -->
-    <ProjectGuid>FF1311A4-D83A-4F96-B28A-C29F8D758728</ProjectGuid>
+    <ProjectGuid>{6A1494F8-88AA-41CE-B899-6B2CFAA8C678}</ProjectGuid>
   </PropertyGroup>
   
   <ItemGroup>
@@ -70,12 +70,4 @@
 
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
-  <ItemGroup>
-    <None Remove="Resources\Add_8x_16x.png" />
-    <None Remove="Resources\cross-removebg.png" />
-    <None Remove="Resources\default-package-icon.png" />
-    <None Remove="Resources\Download_grey_16x.png" />
-    <None Remove="Resources\Images\default-package-icon.png" />
-    <None Remove="Resources\Upload_gray_16x.png" />
-  </ItemGroup>
 </Project>

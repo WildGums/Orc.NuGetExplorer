@@ -53,16 +53,16 @@
 
         public event EventHandler SettingsChanged;
 
-        public event EventHandler SettingsReaded;
+        public event EventHandler SettingsRead;
 
         private void RaiseSettingsChanged()
         {
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void RaiseSettingsReaded()
+        private void RaiseSettingsRead()
         {
-            SettingsReaded?.Invoke(this, EventArgs.Empty);
+            SettingsRead?.Invoke(this, EventArgs.Empty);
         }
 
         #region ISettings
@@ -76,14 +76,14 @@
 
             var result = settingValue == null ? string.Empty : settingValue.Value;
 
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
 
             return result;
         }
 
         public IReadOnlyList<string> GetAllSubsections(string section)
         {
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
 
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
         }
@@ -94,7 +94,7 @@
             Argument.IsNotNullOrWhitespace(() => section);
             Argument.IsNotNullOrWhitespace(() => subSection);
 
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
 
             //extract key-value pairs from AddItem
             return GetNuGetValues(section, subSection)
@@ -210,7 +210,7 @@
 
             var subsections = keys.Select(key => GetNuGetValue(sectionName, key, false)).ToList();
 
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
 
             return new NuGetSettingsSection(sectionName, subsections);
         }
@@ -267,17 +267,18 @@
         }
 
         /* obsolete members */
+        // Note: use ObsoleteEx
         [Obsolete]
         public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
         {
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
             return new List<SettingValue>();
         }
 
         [Obsolete]
         public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
         {
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
             return new List<SettingValue>();
         }
 
@@ -494,7 +495,7 @@
                 MinimalVersion = configurationVersion;
             }
 
-            RaiseSettingsReaded();
+            RaiseSettingsRead();
         }
 
         private void OnSettingsChanged(object sender, EventArgs e)

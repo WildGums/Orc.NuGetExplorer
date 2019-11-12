@@ -20,24 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Behaviors\**" />
-    <Compile Remove="MVVM\**" />
-    <Compile Remove="Windows\**" />
-    <EmbeddedResource Remove="Behaviors\**" />
-    <EmbeddedResource Remove="MVVM\**" />
-    <EmbeddedResource Remove="Windows\**" />
-    <None Remove="Behaviors\**" />
-    <None Remove="MVVM\**" />
-    <None Remove="Windows\**" />
-    <Page Remove="Behaviors\**" />
-    <Page Remove="MVVM\**" />
-    <Page Remove="Windows\**" />
-    <_SettingsFiles Remove="Behaviors\**" />
-    <_SettingsFiles Remove="MVVM\**" />
-    <_SettingsFiles Remove="Windows\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Catel.Analyzers" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Catel.MVVM" Version="5.11.2" />
     <PackageReference Include="Catel.Fody" Version="4.2.0" PrivateAssets="all" />
@@ -53,14 +35,6 @@
     <PackageReference Include="Orchestra.Core" Version="5.2.3" />
     <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" PrivateAssets="all" />
   </ItemGroup>
-
-  <!--<Target Name="ChangeAliasesOfNugetRefs" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
-    <ItemGroup>
-      <ReferencePath Condition="'%(FileName)' == 'NuGet.Protocol.Core.Types'">
-        <Aliases>legacy</Aliases>
-      </ReferencePath>
-    </ItemGroup>
-  </Target>-->
 
   <ItemGroup>
     <PackageReference Update="NETStandard.Library" Version="2.0.1" />
