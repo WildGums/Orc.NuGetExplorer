@@ -30,9 +30,6 @@
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
 
-            //register some view models
-            vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
-
             //run upgrade
             //pre-initialization to prepare old data to new NuGetExplorer versions
             var upgradeRunner = serviceLocator.RegisterTypeAndInstantiate<RunScenarioConfigurationVersionChecker>();

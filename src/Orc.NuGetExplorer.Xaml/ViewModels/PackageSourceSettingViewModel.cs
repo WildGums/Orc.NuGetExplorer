@@ -150,6 +150,7 @@
             SettingsFeeds.AddRange(Feeds);
 
             _configurationService.SavePackageSources(Feeds);
+
         }
 
 
