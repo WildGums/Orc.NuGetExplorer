@@ -11,7 +11,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
 
-    internal class PackagesLoaderService : IPackagesLoaderService
+    internal class PackagesLoaderService : IPackageLoaderService
     {
         private readonly ILogger _nugetLogger;
         private readonly ISourceRepositoryProvider _repositoryProvider;

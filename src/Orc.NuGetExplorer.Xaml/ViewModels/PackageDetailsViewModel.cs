@@ -201,7 +201,7 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    await _projectManager.InstallPackageForMultipleProject(NuGetActionTarget.TargetProjects, SelectedPackage, cts.Token);
+                    await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
                 }
 
                 await Task.Delay(200);
@@ -234,7 +234,7 @@
                 using (var cts = new CancellationTokenSource())
                 {
                     //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
-                    await _projectManager.UninstallPackageForMultipleProject(NuGetActionTarget.TargetProjects, InstalledPackage, cts.Token);
+                    await _projectManager.UninstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), InstalledPackage, cts.Token);
                 }
 
                 await Task.Delay(200);

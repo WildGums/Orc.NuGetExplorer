@@ -65,7 +65,7 @@
                         //reinstall
                         if (!await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, _cancellationTokenSource.Token))
                         {
-                            await _nuGetPackageManager.InstallPackageForProject(_defaultProject, package, _cancellationTokenSource.Token);
+                            await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, _cancellationTokenSource.Token);
                         }
                     }
 

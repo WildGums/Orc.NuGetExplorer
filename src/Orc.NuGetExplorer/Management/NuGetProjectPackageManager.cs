@@ -161,7 +161,7 @@
         }
 
 
-        public async Task InstallPackageForProject(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+        public async Task InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
             try
             {
@@ -210,7 +210,7 @@
 
                 foreach (var canceledPackages in e.CurrentBatch)
                 {
-                    await UninstallPackageForProject(project, canceledPackages, token);
+                    await UninstallPackageForProjectAsync(project, canceledPackages, token);
                 }
 
             }
@@ -227,7 +227,7 @@
             {
                 foreach (var project in projects)
                 {
-                    await InstallPackageForProject(project, package, token);
+                    await InstallPackageForProjectAsync(project, package, token);
                 }
             }
 
@@ -238,7 +238,7 @@
             }
         }
 
-        public async Task UninstallPackageForProject(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+        public async Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
             try
             {
@@ -260,7 +260,7 @@
             {
                 foreach (var project in projects)
                 {
-                    await UninstallPackageForProject(project, package, token);
+                    await UninstallPackageForProjectAsync(project, package, token);
                 }
             }
 
@@ -271,7 +271,7 @@
             }
         }
 
-        public async Task UpdatePackageForProject(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token)
+        public async Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
             try
             {
@@ -326,9 +326,9 @@
         {
             try
             {
-                await UninstallPackageForProject(project, installedVersion, token);
+                await UninstallPackageForProjectAsync(project, installedVersion, token);
 
-                await InstallPackageForProject(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
+                await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
             }
             catch (Exception e)
             {

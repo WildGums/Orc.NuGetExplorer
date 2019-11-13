@@ -6,7 +6,7 @@
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Pagination;
 
-    public interface IPackagesLoaderService
+    public interface IPackageLoaderService
     {
         System.Lazy<Providers.IPackageMetadataProvider> PackageMetadataProvider { get; set; }
 

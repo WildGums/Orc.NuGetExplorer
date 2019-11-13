@@ -18,7 +18,7 @@
     using Orc.NuGetExplorer.Scopes;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
-    internal class UpdatePackagesLoaderService : IPackagesLoaderService, IPackagesUpdatesSearcherService
+    internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpdatesSearcherService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -29,8 +29,8 @@
         private readonly IServiceLocator _serviceLocator;
 
         //underlying service
-        private readonly Lazy<IPackagesLoaderService> _feedRepositoryLoader;
-        private readonly Lazy<IPackagesLoaderService> _projectRepositoryLoader;
+        private readonly Lazy<IPackageLoaderService> _feedRepositoryLoader;
+        private readonly Lazy<IPackageLoaderService> _projectRepositoryLoader;
 
         private readonly HashSet<string> _discardedPackagesSet = new HashSet<string>();
 
@@ -47,8 +47,8 @@
 
             _serviceLocator = this.GetServiceLocator();
 
-            _feedRepositoryLoader = new Lazy<IPackagesLoaderService>(() => _serviceLocator.ResolveType<IPackagesLoaderService>());
-            _projectRepositoryLoader = new Lazy<IPackagesLoaderService>(() => _serviceLocator.ResolveType<IPackagesLoaderService>("Installed"));
+            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>());
+            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
         }
 
         public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }

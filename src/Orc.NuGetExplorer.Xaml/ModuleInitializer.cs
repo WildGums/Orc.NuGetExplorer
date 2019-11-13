@@ -44,5 +44,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
 
         serviceLocator.RegisterType<INuGetExplorerInitializationService, NuGetExplorerInitializationService>();
+
+        serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
     }
 }

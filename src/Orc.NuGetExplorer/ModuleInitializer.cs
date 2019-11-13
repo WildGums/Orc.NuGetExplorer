@@ -51,8 +51,7 @@ public static class ModuleInitializer
 
         //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
-        //serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
-        //serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
+
         //serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
@@ -67,9 +66,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
         serviceLocator.RegisterType<IPackageOperationNotificationService, DummyPackageOperationNotificationService>();
 
-        //var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
-        //serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
-
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
         serviceLocator.RegisterType<INuGetPackageManager, NuGetProjectPackageManager>();
         serviceLocator.RegisterType<IFileDirectoryService, FileDirectoryService>();
@@ -81,14 +77,17 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
 
         //package loaders
-        serviceLocator.RegisterType<IPackagesLoaderService, PackagesLoaderService>();
-        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, LocalPackagesLoaderService>("Installed");
-        serviceLocator.RegisterTypeWithTag<IPackagesLoaderService, UpdatePackagesLoaderService>("Updates");
+        serviceLocator.RegisterType<IPackageLoaderService, PackagesLoaderService>();
+        serviceLocator.RegisterTypeWithTag<IPackageLoaderService, LocalPackagesLoaderService>("Installed");
+        serviceLocator.RegisterTypeWithTag<IPackageLoaderService, UpdatePackagesLoaderService>("Updates");
 
         serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
         serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
         serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
         serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
+
+        serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
+        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
     }
 }

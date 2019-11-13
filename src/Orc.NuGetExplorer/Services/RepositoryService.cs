@@ -84,12 +84,12 @@
 
         public IRepository GetSourceAggregateRepository()
         {
+            //todo
             //var packageSource = new CombinedNuGetSource(GetSourceRepositories()
             //    .Select(x => new NuGetFeed(x.Name, x.Source, x.));
 
             //var allInOneSource = new CombinedNuGetSource(;
-
-            throw new NotImplementedException();
+            return null;
         }
 
         public IEnumerable<IRepository> GetSourceRepositories()
@@ -128,12 +128,14 @@
 
         public IRepository GetUpdateAggeregateRepository()
         {
-            throw new NotImplementedException();
+            //todo
+            return null;
         }
 
         public IEnumerable<IRepository> GetUpdateRepositories()
         {
-            throw new NotImplementedException();
+            //todo
+            return null;
         }
 
         private IRepository GetMainProjectRepository()

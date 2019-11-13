@@ -7,10 +7,5 @@
     public class UpdatePackageSearchMetadata : ClonedPackageSearchMetadata
     {
         public VersionInfo FromVersion { get; set; }
-
-        public void ResetValidationContext()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

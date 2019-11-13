@@ -45,7 +45,7 @@
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
 
 
-        private readonly IPackagesLoaderService _packagesLoaderService;
+        private readonly IPackageLoaderService _packagesLoaderService;
 
         private readonly MetadataOrigin _pageType;
         private readonly INuGetPackageManager _projectManager;
@@ -56,7 +56,7 @@
 
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, IPackagesLoaderService packagesLoaderService,
+        public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, IPackageLoaderService packagesLoaderService,
             IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager)
@@ -78,7 +78,7 @@
 
             if (Title != "Browse")
             {
-                _packagesLoaderService = this.GetServiceLocator().ResolveType<IPackagesLoaderService>(Title);
+                _packagesLoaderService = this.GetServiceLocator().ResolveType<IPackageLoaderService>(Title);
             }
 
 
