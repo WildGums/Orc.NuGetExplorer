@@ -35,7 +35,7 @@
         public PackageMetadataProvider(IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
         {
             _sourceRepositories = repositoryProvider.GetRepositories();
-            _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource() };
+            _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource()) };
         }
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
