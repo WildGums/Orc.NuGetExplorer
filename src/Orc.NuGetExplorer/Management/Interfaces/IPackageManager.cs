@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
 
-    internal interface IPackageManager //: IPackageOperationNotificationService
+    public interface IPackageManager //: IPackageOperationNotificationService
     {
     }
 }

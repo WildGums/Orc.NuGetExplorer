@@ -25,6 +25,7 @@
 
             _repositoryProvider = repositoryProvider;
             _packageMetadataProvider = packageMetadataProvider;
+            _logger = logger;
         }
 
 

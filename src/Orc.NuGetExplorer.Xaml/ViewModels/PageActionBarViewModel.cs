@@ -85,7 +85,7 @@
                             throw new InvalidOperationException("Target version for update cannot be null");
                         }
 
-                        await _projectManager.UpdatePackageForMultipleProject(targetProjects, package.Identity.Id, targetVersion, cts.Token);
+                        await _projectManager.UpdatePackageForProjectAsync(targetProjects.FirstOrDefault(), package.Identity.Id, targetVersion, cts.Token);
                     }
                 }
 

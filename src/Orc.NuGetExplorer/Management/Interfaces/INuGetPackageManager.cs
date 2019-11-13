@@ -11,7 +11,7 @@
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
 
-    internal interface INuGetPackageManager : IPackageManager
+    public interface INuGetPackageManager : IPackageManager
     {
         Task InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
 
