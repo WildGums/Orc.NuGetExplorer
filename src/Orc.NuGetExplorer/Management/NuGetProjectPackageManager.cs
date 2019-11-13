@@ -169,7 +169,7 @@
 
                 var repositories = SourceContext.CurrentContext.Repositories;
 
-                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, token);
+                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
 
                 bool dependencyInstallResult = true;
 

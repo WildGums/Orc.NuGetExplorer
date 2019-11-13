@@ -13,8 +13,9 @@
             PackageIdentity package,
             IExtensibleProject project,
             IReadOnlyList<SourceRepository> repositories,
-            CancellationToken cancellationToken);
+            bool ignoreMissingPackages = false,
+            CancellationToken cancellationToken = default);
         Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
-            CancellationToken cancellationToken);
+            CancellationToken cancellationToken = default);
     }
 }

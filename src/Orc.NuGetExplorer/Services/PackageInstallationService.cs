@@ -67,7 +67,7 @@
         }
 
         public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             List<string> failedEntries = null;
             ICollection<PackageIdentity> uninstalledPackages;
@@ -145,7 +145,8 @@
             PackageIdentity package,
             IExtensibleProject project,
             IReadOnlyList<SourceRepository> repositories,
-            CancellationToken cancellationToken)
+            bool ignoreMissingPackages = false,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -163,7 +164,7 @@
                         var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>();
 
                         await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResource, cacheContext,
-                            availabePackageStorage, cancellationToken);
+                            availabePackageStorage, ignoreMissingPackages, cancellationToken);
 
                     }
                 }
@@ -233,7 +234,8 @@
             DependencyInfoResource dependencyInfoResource,
             SourceCacheContext cacheContext,
             HashSet<SourcePackageDependencyInfo> storage,
-            CancellationToken cancellationToken)
+            bool ignoreMissingPackages = false,
+            CancellationToken cancellationToken = default)
         {
             Argument.IsNotNull(() => storage);
 
@@ -280,12 +282,19 @@
 
                     var relatedDepInfo = await dependencyInfoResource.ResolvePackage(relatedIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-                    if (relatedDepInfo == null)
+                    if (relatedDepInfo != null)
                     {
-                        throw new MissedPackageException($"Cannot find package {relatedIdentity}");
+                        downloadStack.Push(relatedDepInfo);
                     }
-
-                    downloadStack.Push(relatedDepInfo);
+                    
+                    if(ignoreMissingPackages)
+                    {
+                        await _nugetLogger.LogAsync(LogLevel.Warning, $"Available sources doesn't contain package {relatedIdentity}. Package {relatedIdentity} is missing");
+                    }
+                    else
+                    {
+                        throw new MissingPackageException($"Cannot find package {relatedIdentity}");
+                    }
                 }
             }
         }
