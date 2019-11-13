@@ -85,7 +85,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnApplyAllExecute()
         {
-            var packages = PackagesBatch.PackageList.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).ToArray();
+            var packages = PackagesBatch.PackageList.ToArray(); //.Where(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p)).ToArray();
             using (_packageOperationContextService.UseOperationContext(PackagesBatch.OperationType, packages))
             {
                 foreach (var package in packages)
@@ -99,7 +99,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private bool OnApplyAllCanExecute()
         {
-            return PackagesBatch.PackageList.All(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p));
+            return true;
+            //return PackagesBatch.PackageList.All(p => _packageCommandService.CanExecute(PackagesBatch.OperationType, p));
         }
 
         public Command PackageAction { get; set; }
@@ -113,7 +114,8 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private bool OnPackageActionCanExecute()
         {
-            return _packageCommandService.CanExecute(PackagesBatch.OperationType, SelectedPackage);
+            return true;
+            //return _packageCommandService.CanExecute(PackagesBatch.OperationType, SelectedPackage);
         }
 
         private void RefreshCanExecute()
@@ -121,7 +123,7 @@ namespace Orc.NuGetExplorer.ViewModels
             foreach (var package in PackagesBatch.PackageList)
             {
                 package.IsInstalled = null;
-                _packageCommandService.CanExecute(PackagesBatch.OperationType, package);
+                //_packageCommandService.CanExecute(PackagesBatch.OperationType, package);
             }
         }
         #endregion
