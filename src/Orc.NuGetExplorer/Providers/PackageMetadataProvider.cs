@@ -171,7 +171,7 @@
         /// <param name="includeUnlisted"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(SourceRepository repository,
+        public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(SourceRepository repository,
             string packageId,
             bool includePrerelease,
             bool includeUnlisted,

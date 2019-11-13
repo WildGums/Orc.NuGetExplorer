@@ -8,7 +8,9 @@
     using System.Threading.Tasks;
     using Catel;
     using NuGet.Common;
+    using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Providers;
 
     internal class PackageQueryService : IPackageQueryService
@@ -28,32 +30,39 @@
             _logger = logger;
         }
 
-
-        public int CountPackages(IRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        public async Task<bool> PackageExists(IRepository packageRepository, string filter, bool allowPrereleaseVersions)
         {
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            return 0;
+            var packages = await GetPackagesAsync(packageRepository, allowPrereleaseVersions, filter, 0, 1);
+
+            return packages.Any();
         }
 
-        public int CountPackages(IRepository packageRepository, string packageId)
+        public async Task<bool> PackageExists(IRepository packageRepository, string packageId)
         {
+
+            //TODO add suport for local packages
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            return 0;
+            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, true, false, CancellationToken.None);
+
+            return versionsMetadata.Any();
         }
 
-        public int CountPackages(IRepository packageRepository, IPackageDetails packageDetails)
+        public async Task<bool> PackageExists(IRepository packageRepository, IPackageDetails packageDetails)
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            return 0;
+            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(new PackageIdentity(packageDetails.Id, packageDetails.NuGetVersion), true, CancellationToken.None);
+
+            return versionsMetadata != null;
         }
 
-        public IPackageDetails GetPackage(IRepository packageRepository, string packageId, string version)
+        public async Task<IPackageDetails> GetPackage(IRepository packageRepository, string packageId, string version)
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            return null;
+
+            return await BuildMultiVersionPackageSearchMetadata(packageId, sourceRepository, true);
         }
 
-        public IEnumerable<IPackageDetails> GetPackages(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
+        public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
@@ -61,19 +70,44 @@
 
             var searchFilters = new SearchFilter(allowPrereleaseVersions);
 
-            using (var cts = new CancellationTokenSource())
-            {
-                var packages = searchResource.SearchAsync(filter ?? string.Empty, searchFilters, skip, take, _logger, cts.Token).Result;
-            }
+            var packages = await searchResource.SearchAsync(filter ?? string.Empty, searchFilters, skip, take, _logger, CancellationToken.None);
 
-            //convert IPackageSearchMetadata => IPackageDetails
-            return null;
+            //provide information about available versions
+            var packageDetails = packages.Select(async package => await BuildMultiVersionPackageSearchMetadata(package, sourceRepository, allowPrereleaseVersions))
+                .Select(x => x.Result)
+                .Where(result => result != null);
+
+            return packageDetails;
         }
 
-        public IEnumerable<IPackageDetails> GetVersionsOfPackage(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, ref int skip, int minimalTake = 10)
+        public async Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackage(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, int skip)
         {
+            if (skip < 0)
+            {
+                return Enumerable.Empty<IPackageSearchMetadata>();
+            }
+
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            return null;
+
+            var getMetadataResult = await _packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
+
+            var versions = getMetadataResult.Skip(skip).ToList();
+
+            return versions;
+        }
+
+        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadata(IPackageSearchMetadata packageSearchMetadata, SourceRepository sourceRepository, bool includePrerelease)
+        {
+            return await BuildMultiVersionPackageSearchMetadata(packageSearchMetadata.Identity.Id, sourceRepository, includePrerelease);
+        }
+
+        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadata(string packageId, SourceRepository sourceRepository, bool includePrerelease)
+        {
+            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
+
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+
+            return details;
         }
     }
 }

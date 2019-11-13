@@ -90,7 +90,7 @@ namespace Orc.NuGetExplorer.ViewModels
             {
                 foreach (var package in packages)
                 {
-                    _packageCommandService.Execute(PackagesBatch.OperationType, package);
+                    _packageCommandService.ExecuteAsync(PackagesBatch.OperationType, package);
 
                     RefreshCanExecute();
                 }
@@ -106,7 +106,7 @@ namespace Orc.NuGetExplorer.ViewModels
 
         private void OnPackageActionExecute()
         {
-            _packageCommandService.Execute(PackagesBatch.OperationType, SelectedPackage);
+            _packageCommandService.ExecuteAsync(PackagesBatch.OperationType, SelectedPackage);
 
             RefreshCanExecute();
         }

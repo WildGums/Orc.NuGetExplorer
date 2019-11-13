@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Threading;
     using NuGet.Common;
@@ -66,7 +67,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public void UninstallPackage(IPackageDetails package)
+        public async Task UninstallPackageAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof (NuGetPackage));
@@ -84,17 +85,17 @@ namespace Orc.NuGetExplorer
                 //nuPackage should provide identity of installed package, which targeted for uninstall action
                 using(var cts = new CancellationTokenSource())
                 {
-                    _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
+                    await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Log(LogLevel.Error, exception.Message);
+                await _logger.LogAsync(LogLevel.Error, exception.Message);
                 _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
             }
         }
 
-        public void InstallPackage(IPackageDetails package, bool allowedPrerelease)
+        public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof (NuGetPackage));
@@ -114,17 +115,17 @@ namespace Orc.NuGetExplorer
                 //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
                 using (var cts = new CancellationTokenSource())
                 {
-                    _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
+                    await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Log(LogLevel.Error, exception.Message);
+                await _logger.LogAsync(LogLevel.Error, exception.Message);
                 _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
             }
         }
 
-        public void UpdatePackages(IPackageDetails package, bool allowedPrerelease)
+        public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
             Argument.IsOfType(() => package, typeof(NuGetPackage));
@@ -141,12 +142,12 @@ namespace Orc.NuGetExplorer
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, nuPackage.Id, nuPackage.Identity.Version, cts.Token);
+                    await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, nuPackage.Id, nuPackage.Identity.Version, cts.Token);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Log(LogLevel.Error, exception.Message);
+                await _logger.LogAsync(LogLevel.Error, exception.Message);
                 _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
             }
         }

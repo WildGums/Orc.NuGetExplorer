@@ -78,7 +78,10 @@
 
         public IReadOnlyList<NuGetVersion> Versions
         {
-            get { return _versions; }
+            get 
+            { 
+                return _versions; 
+            }
             private set
             {
                 _versions = value.ToList();
