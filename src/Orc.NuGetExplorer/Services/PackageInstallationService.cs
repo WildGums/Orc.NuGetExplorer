@@ -156,6 +156,7 @@
                 //var resContext = new NuGet.PackageManagement.ResolutionContext();
 
                 var availabePackageStorage = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
+                DependencyBehavior dependencyBehavior = DependencyBehavior.Lowest;
 
                 using (var cacheContext = _nuGetCacheManager.GetCacheContext())
                 {
@@ -163,7 +164,7 @@
                     {
                         var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>();
 
-                        await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResource, cacheContext,
+                        dependencyBehavior = await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResource, cacheContext,
                             availabePackageStorage, ignoreMissingPackages, cancellationToken);
 
                     }
@@ -191,7 +192,7 @@
                     }
 
 
-                    var resolverContext = GetResolverContext(package, availabePackageStorage);
+                    var resolverContext = GetResolverContext(package, dependencyBehavior, availabePackageStorage);
 
                     var resolver = new PackageResolver();
 
@@ -230,7 +231,7 @@
             }
         }
 
-        private async Task ResolveDependenciesRecursivelyAsync(PackageIdentity identity, NuGetFramework targetFramework,
+        private async Task<DependencyBehavior> ResolveDependenciesRecursivelyAsync(PackageIdentity identity, NuGetFramework targetFramework,
             DependencyInfoResource dependencyInfoResource,
             SourceCacheContext cacheContext,
             HashSet<SourcePackageDependencyInfo> storage,
@@ -243,6 +244,8 @@
 
             Stack<SourcePackageDependencyInfo> downloadStack = new Stack<SourcePackageDependencyInfo>();
 
+            var resolvedBehavior = DependencyBehavior.Lowest;
+
             //get top dependency
             var dependencyInfo = await dependencyInfoResource.ResolvePackage(
                             identity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
@@ -250,7 +253,7 @@
             if (dependencyInfo == null)
             {
                 Log.Error($"Cannot resolve {identity} package for target framework {targetFramework}");
-                return;
+                return resolvedBehavior;
             }
 
             downloadStack.Push(dependencyInfo); //and add it to package store
@@ -286,9 +289,11 @@
                     {
                         downloadStack.Push(relatedDepInfo);
                     }
+
                     
                     if(ignoreMissingPackages)
                     {
+                        resolvedBehavior = DependencyBehavior.Ignore;
                         await _nugetLogger.LogAsync(LogLevel.Warning, $"Available sources doesn't contain package {relatedIdentity}. Package {relatedIdentity} is missing");
                     }
                     else
@@ -297,6 +302,8 @@
                     }
                 }
             }
+
+            return resolvedBehavior;
         }
 
         private async Task<IDictionary<SourcePackageDependencyInfo, DownloadResourceResult>> DownloadPackagesResourcesAsync(
@@ -398,18 +405,18 @@
         }
 
 
-        private PackageResolverContext GetResolverContext(PackageIdentity package, IEnumerable<SourcePackageDependencyInfo> flatDependencies)
+        private PackageResolverContext GetResolverContext(PackageIdentity package, DependencyBehavior dependencyBehavior, IEnumerable<SourcePackageDependencyInfo> flatDependencies)
         {
             var idArray = new[] { package.Id };
 
-            var requiredPackages = Enumerable.Empty<string>();
+            var requiredPackages = Enumerable.Empty<string>(); //new List<string>() { "ChameleonApi" };
 
             var packagesConfig = Enumerable.Empty<PackageReference>();
 
             var prefferedVersion = Enumerable.Empty<PackageIdentity>();
 
             var resolverContext = new PackageResolverContext(
-                DependencyBehavior.Lowest,
+                dependencyBehavior,
                 idArray,
                 requiredPackages,
                 packagesConfig,

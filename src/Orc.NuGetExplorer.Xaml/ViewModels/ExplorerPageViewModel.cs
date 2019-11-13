@@ -567,25 +567,11 @@
 
         private async Task OnProjectManagerUninstall(object sender, UninstallNuGetProjectEventArgs e)
         {
-            var batchedArgs = e as BatchedUninstallNuGetProjectEventArgs;
-
-            if (!batchedArgs.IsBatchEnd)
-            {
-                return;
-            }
-
             StartLoadingTimerOrInvalidateData();
         }
 
         private async Task OnProjectManagerInstall(object sender, InstallNuGetProjectEventArgs e)
         {
-            var batchedArgs = e as BatchedInstallNuGetProjectEventArgs;
-
-            if (!batchedArgs.IsBatchEnd)
-            {
-                return;
-            }
-
             StartLoadingTimerOrInvalidateData();
         }
 
