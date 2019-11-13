@@ -11,6 +11,7 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Management;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
     {
@@ -29,6 +30,12 @@
         static PackageMetadataProvider()
         {
             NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
+        }
+
+        public PackageMetadataProvider(IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
+        {
+            _sourceRepositories = repositoryProvider.GetRepositories();
+            _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource() };
         }
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
