@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml"/>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Example.NET;component/Themes/Generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

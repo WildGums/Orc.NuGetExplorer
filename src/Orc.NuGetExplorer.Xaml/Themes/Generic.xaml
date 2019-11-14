@@ -22,6 +22,7 @@
         <Setter Property="Margin" Value="3 2 3 2"/>
     </Style>
 
+    <!--
     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -49,7 +50,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    -->
+    
     <Style TargetType="local:RotationProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
         <Setter Property="Template" Value="{StaticResource RotationProgressBar}"/>
     </Style>
@@ -59,6 +61,10 @@
     </Style>
 
     <Style x:Key="DefaultListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor4}"/>
+        </Style.Resources>
+
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Padding" Value="4,1"/>
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -148,7 +154,7 @@
                                          Focusable="False"/>
                             </Grid>
                         </Border>
-                        
+
 
                         <Rectangle x:Name="_underline"
                                    Grid.Row="1"
@@ -244,39 +250,4 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type Button}">
-        <Setter Property="Margin" Value="{DynamicResource Margin.Button}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ButtonBase}">
-                    <Border x:Name="Chrome" BorderBrush="LightGray" BorderThickness="1" Background="#FFF4F4F4" SnapsToDevicePixels="True">
-                        <Grid>
-                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"
-                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Margin="{TemplateBinding Padding}"
-                                              RecognizesAccessKey="True"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <Grid x:Name="Filter" Background="Transparent" Opacity="0.7"/>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="Chrome" Value="{StaticResource AccentColorBrush4}"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="Chrome" Value="{StaticResource AccentColorBrush}"/>
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="BorderBrush" TargetName="Chrome" Value="{StaticResource AccentColorBrush}"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" TargetName="Filter" Value="WhiteSmoke"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    
 </ResourceDictionary>

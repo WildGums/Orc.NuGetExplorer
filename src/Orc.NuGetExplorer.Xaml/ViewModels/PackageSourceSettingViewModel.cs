@@ -209,8 +209,9 @@
         {
             if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
             {
-                SettingsFeeds.AddRange(PackageSources.OfType<NuGetFeed>().ToList());
-                Feeds.AddRange(SettingsFeeds);
+                var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();
+                SettingsFeeds.AddRange(passedFeeds);
+                Feeds.AddRange(passedFeeds);
             }
             
             base.OnPropertyChanged(e);

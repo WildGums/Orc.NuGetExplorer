@@ -22,8 +22,8 @@
             <!--title-->
             <RowDefinition Height="60"/> 
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <!--second part-->
             <RowDefinition Height="20"/>
             <RowDefinition/>
