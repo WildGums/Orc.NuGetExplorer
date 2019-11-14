@@ -26,20 +26,27 @@
         private readonly IModelProvider<NuGetFeed> _modelProvider;
 
         public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            IModelProvider<NuGetFeed> modelProvider) : this(configurationService, feedVerificationService, modelProvider)
+        {
+            Argument.IsNotNull(() => configuredFeeds);
+
+            SettingsFeeds = configuredFeeds;
+            Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
+        }
+
+        public PackageSourceSettingViewModel(IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             IModelProvider<NuGetFeed> modelProvider)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => modelProvider);
             Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => configuredFeeds);
-
-            SettingsFeeds = configuredFeeds;
-            Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
-            RemovedFeeds = new List<NuGetFeed>();
 
             _configurationService = configurationService as NugetConfigurationService;
             _feedVerificationService = feedVerificationService;
             _modelProvider = modelProvider;
+
+            RemovedFeeds = new List<NuGetFeed>();
+
             CommandInitialize();
             Title = "Settings";
 
@@ -47,6 +54,8 @@
 
             DefaultFeed = Constants.DefaultNugetOrgName;
             DefaultSourceName = Constants.DefaultNugetOrgUri;
+
+            Feeds = new ObservableCollection<NuGetFeed>();
         }
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
@@ -122,6 +131,8 @@
         {
             SaveFeeds();
 
+            PackageSources = Feeds.ToList();
+
             return base.SaveAsync();
         }
 
@@ -150,7 +161,6 @@
             SettingsFeeds.AddRange(Feeds);
 
             _configurationService.SavePackageSources(Feeds);
-
         }
 
 
@@ -193,6 +203,17 @@
             Feeds[index] = _modelProvider.Model;
 
             SelectedFeed = _modelProvider.Model;
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
+            {
+                SettingsFeeds = PackageSources.OfType<NuGetFeed>().ToList();
+                Feeds.AddRange(SettingsFeeds);
+            }
+            
+            base.OnPropertyChanged(e);
         }
 
 
