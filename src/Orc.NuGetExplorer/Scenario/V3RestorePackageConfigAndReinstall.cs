@@ -43,7 +43,7 @@
 
             if(!Directory.Exists(_defaultProject.ContentPath))
             {
-                Log.Info($"plugins folder does not exist")
+                Log.Info($"plugins folder does not exist");
                 return;
             }
 
