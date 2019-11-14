@@ -145,28 +145,35 @@
 
         public async Task MergeMetadata(IPackageSearchMetadata searchMetadata, MetadataOrigin pageToken)
         {
-            _additionalMetadata.Add(searchMetadata);
-
-            //merge versions
-            var versInfo = await searchMetadata.GetVersionsAsync();
-
-            if (!Versions.Any())
+            try
             {
-                //currently package versions doesn't loaded from metadata,
-                //but we still can add current version to list and check it as our LastVersion
+                _additionalMetadata.Add(searchMetadata);
 
-                var singleVersion = searchMetadata.Identity.Version;
-                _versions.Add(singleVersion);
+                //merge versions
+                var versInfo = await searchMetadata.GetVersionsAsync();
+
+                if (!Versions.Any())
+                {
+                    //currently package versions doesn't loaded from metadata,
+                    //but we still can add current version to list and check it as our LastVersion
+
+                    var singleVersion = searchMetadata.Identity.Version;
+                    _versions.Add(singleVersion);
+                }
+
+                if (versInfo != null)
+                {
+                    VersionsInfo = VersionsInfo.Union(versInfo).Distinct();
+
+                    Versions = VersionsInfo.Select(x => x.Version).OrderByDescending(x => x).ToList();
+                }
+
+                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
             }
-
-            if (versInfo != null)
+            catch(NullReferenceException e)
             {
-                VersionsInfo = VersionsInfo.Union(versInfo).Distinct();
-
-                Versions = VersionsInfo.Select(x => x.Version).OrderByDescending(x => x).ToList();
+                Log.Warning(e, $"possibly because local package {searchMetadata.Identity} installation is missed or corrupted");
             }
-
-            LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
         }
 
         public async Task<IEnumerable<NuGetVersion>> LoadVersionsAsync()
