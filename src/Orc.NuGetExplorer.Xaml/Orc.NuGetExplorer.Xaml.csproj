@@ -68,6 +68,12 @@
     <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.ru.xlf" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Themes\Brushes.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
 </Project>

@@ -78,6 +78,8 @@
 
         #endregion
 
+        private bool ListenViewToViewModelPropertyChanges { get; set; } = true;
+
         #region Commands
 
         public Command RemoveFeed { get; set; }
@@ -131,7 +133,11 @@
         {
             SaveFeeds();
 
+            ListenViewToViewModelPropertyChanges = false;
+
             PackageSources = Feeds.ToList();
+
+            ListenViewToViewModelPropertyChanges = true;
 
             return base.SaveAsync();
         }
@@ -207,6 +213,11 @@
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
+            if(!ListenViewToViewModelPropertyChanges)
+            {
+                return;
+            }
+
             if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
             {
                 var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();

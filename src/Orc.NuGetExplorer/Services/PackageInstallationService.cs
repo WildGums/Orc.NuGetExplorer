@@ -160,14 +160,15 @@
 
                 using (var cacheContext = _nuGetCacheManager.GetCacheContext())
                 {
-                    foreach (var repository in repositories)
-                    {
-                        var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>();
+                    var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
 
-                        dependencyBehavior = await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResource, cacheContext,
-                            availabePackageStorage, ignoreMissingPackages, cancellationToken);
+                    var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrException()).Where(x => x.IsSuccess && x.Result != null)
+                        .Select(x => x.Result).ToArray();
 
-                    }
+                    var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
+
+                    dependencyBehavior = await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResources, cacheContext,
+                        availabePackageStorage, ignoreMissingPackages, cancellationToken);
                 }
 
                 if (!availabePackageStorage.Any())
@@ -232,7 +233,7 @@
         }
 
         private async Task<DependencyBehavior> ResolveDependenciesRecursivelyAsync(PackageIdentity identity, NuGetFramework targetFramework,
-            DependencyInfoResource dependencyInfoResource,
+            DependencyInfoResourceCollection dependencyInfoResource,
             SourceCacheContext cacheContext,
             HashSet<SourcePackageDependencyInfo> storage,
             bool ignoreMissingPackages = false,
