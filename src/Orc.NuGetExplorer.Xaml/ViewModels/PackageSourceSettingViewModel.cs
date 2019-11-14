@@ -209,7 +209,7 @@
         {
             if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
             {
-                SettingsFeeds = PackageSources.OfType<NuGetFeed>().ToList();
+                SettingsFeeds.AddRange(PackageSources.OfType<NuGetFeed>().ToList());
                 Feeds.AddRange(SettingsFeeds);
             }
             
