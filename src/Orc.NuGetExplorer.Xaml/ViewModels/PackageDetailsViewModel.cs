@@ -26,6 +26,8 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly int Timeout = 500;
 
+        private static IPackageMetadataProvider PackageMetadataProvider;
+
         private readonly IRepositoryContextService _repositoryService;
 
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
@@ -38,7 +40,6 @@
 
         private readonly IApiPackageRegistry _apiPackageRegistry;
 
-        private IPackageMetadataProvider _packageMetadataProvider;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry)
@@ -95,87 +96,8 @@
 
         public string[] ApiValidationMessages { get; private set; }
 
-        private async void OnPackageChanged()
-        {
-            if (Package is null)
-            {
-                return;
-            }
 
-            await ApplyPackageAsync();
-        }
-
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            if (Package is null)
-            {
-                return;
-            }
-
-            await ApplyPackageAsync();
-
-            NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
-        }
-
-        private async Task ApplyPackageAsync()
-        {
-            try
-            {
-                //select identity version
-                var selectedVersion = Package?.Identity?.Version;
-
-                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
-
-                SelectedVersion = selectedVersion;
-
-                _packageMetadataProvider = InitMetadataProvider();
-
-                await LoadSinglePackageMetadataAsync(Package.Identity);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Error ocurred during view model inititalization, probably package metadata is incorrect");
-            }
-        }
-
-        protected override Task CloseAsync()
-        {
-            NuGetActionTarget.PropertyChanged -= OnNuGetActionTargetPropertyPropertyChanged;
-
-            return base.CloseAsync();
-        }
-
-        protected async Task LoadSinglePackageMetadataAsync(PackageIdentity identity)
-        {
-            try
-            {
-                using (var cts = new CancellationTokenSource())
-                {
-                    VersionData = await _packageMetadataProvider?.GetPackageMetadataAsync(
-                        identity, _settingsProvider.Model.IsPreReleaseIncluded, cts.Token);
-
-                    DependencyInfo = VersionData?.DependencySets;
-
-                    if (VersionData?.Identity?.Version != null)
-                    {
-                        Package.AddDependencyInfo(VersionData.Identity.Version, VersionData?.DependencySets);
-                    }
-
-                    //validate loaded dependencies
-                    Package.ResetValidationContext();
-                    _apiPackageRegistry.Validate(Package);
-
-                    GetPackageValidationErrors();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Metadata retrieve error");
-            }
-        }
-
+        #region Commands
 
         public Command LoadInfoAboutVersions { get; set; }
 
@@ -256,6 +178,137 @@
             return anyProject && IsInstalled();
         }
 
+        #endregion
+
+        protected static async Task<IPackageSearchMetadata> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
+        {
+            try
+            {
+                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(
+                    identity, isPreReleaseIncluded, CancellationToken.None);
+
+                if (versionMetadata?.Identity?.Version != null)
+                {
+                    Log.Info("LoadSinglePackageMetadata call: add DI");
+                    packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
+                }
+
+                return versionMetadata;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Metadata retrieve error");
+                return null;
+            }
+        }
+
+        protected override async Task InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            if (Package is null)
+            {
+                return;
+            }
+
+            await ApplyPackageAsync();
+
+            NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
+        }
+
+        protected override Task CloseAsync()
+        {
+            NuGetActionTarget.PropertyChanged -= OnNuGetActionTargetPropertyPropertyChanged;
+
+            return base.CloseAsync();
+        }
+
+        private void OnNuGetActionTargetPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var commandManager = this.GetViewModelCommandManager();
+            commandManager.InvalidateCommands();
+        }
+
+        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
+            {
+                if ((e.OldValue == null && SelectedVersion == Package.Identity.Version) || e.NewValue == null)
+                {
+                    //skip loading on version list first load
+                    return;
+                }
+
+                var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
+
+                VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
+                
+                if (Package != null)
+                {
+                    ValidateCurrentPackage(Package);
+                }
+            }
+        }
+
+        private async void OnPackageChanged()
+        {
+            Log.Info("Package changed");
+
+            if (Package is null)
+            {
+                Log.Info("Package is null");
+                return;
+            }
+
+            await ApplyPackageAsync();
+        }
+
+        private void OnVersionDataChanged()
+        {
+            DependencyInfo = VersionData?.DependencySets;
+        }
+
+        private async Task ApplyPackageAsync()
+        {
+            try
+            {
+                //select identity version
+                var selectedVersion = Package?.Identity?.Version;
+
+                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
+
+                SelectedVersion = selectedVersion;
+
+                PackageMetadataProvider = InitMetadataProvider();
+
+                Log.Info("Start ApplyPackage Call");
+
+                VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
+
+                if (Package != null)
+                {
+                    ValidateCurrentPackage(Package);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Error ocurred during view model inititalization, probably package metadata is incorrect");
+            }
+        }
+
+        private void ValidateCurrentPackage(NuGetPackage package)
+        {
+            Argument.IsNotNull(() => package);
+
+            //validate loaded dependencies
+            package.ResetValidationContext();
+            _apiPackageRegistry.Validate(package);
+
+            GetPackageValidationErrors(package);
+        }
+
         private IPackageMetadataProvider InitMetadataProvider()
         {
             var currentSourceContext = SourceContext.CurrentContext;
@@ -284,46 +337,17 @@
             }
         }
 
-        private void OnNuGetActionTargetPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var commandManager = this.GetViewModelCommandManager();
-            commandManager.InvalidateCommands();
-        }
-
-        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
-            {
-                if (e.OldValue == null && SelectedVersion == Package.Identity.Version)
-                {
-                    //skip loading on version list first load
-                    return;
-                }
-
-                var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
-
-                try
-                {
-                    await LoadSinglePackageMetadataAsync(identity);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unexpected error when loading package metadata");
-                }
-            }
-        }
-
         private bool IsInstalled()
         {
             return Status == PackageStatus.UpdateAvailable || Status == PackageStatus.LastVersionInstalled;
         }
 
-        private void GetPackageValidationErrors()
+        private void GetPackageValidationErrors(NuGetPackage package)
         {
+            Argument.IsNotNull(() => package);
+
             ApiValidationMessages = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"),
-                Package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
+                package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
         }
 
         private string[] GetAlertRecords(string title, params string[] stringLines)
