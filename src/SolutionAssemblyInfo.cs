@@ -10,4 +10,3 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("4.0.0")]
 [assembly: AssemblyInformationalVersion("4.0.0-alpha.1")]
 [assembly: AssemblyCopyright("Copyright © WildGums 2014 - 2019")]
-
