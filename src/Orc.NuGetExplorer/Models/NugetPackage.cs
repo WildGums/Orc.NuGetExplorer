@@ -52,6 +52,7 @@
 
                 case MetadataOrigin.Updates when packageMetadata is UpdatePackageSearchMetadata updatePackageSearchMetadata:
                     InstalledVersion = updatePackageSearchMetadata.FromVersion.Version;
+                    Status = PackageStatus.UpdateAvailable;
                     break;
             }
         }
