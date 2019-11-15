@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
 
     internal static class DefaultName
     {
-        public const string PackageSourceFeed = "https://www.nuget.org/api/v2/";
+        public const string PackageSourceFeed = "https://api.nuget.org/v3/index.json";
         public const string PackageSourceName = "PackageSource";
     }
 

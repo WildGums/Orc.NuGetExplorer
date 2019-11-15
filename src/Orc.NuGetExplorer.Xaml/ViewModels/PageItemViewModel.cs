@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.ComponentModel;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
@@ -71,11 +72,23 @@
                     break;
 
                 case MetadataOrigin.Updates:
+                    IsSecondaryVersionShowed = true;
                     FirstVersion = Package.InstalledVersion;
+                    SecondaryVersion = Package.LastVersion;
                     break;
             }
 
             return base.InitializeAsync();
+        }
+
+        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(string.Equals(e.PropertyName, nameof(Package.InstalledVersion)) && Package.FromPage == MetadataOrigin.Browse)
+            {
+                SecondaryVersion = Package.InstalledVersion;
+            }
+
+            base.OnModelPropertyChanged(sender, e);
         }
     }
 }

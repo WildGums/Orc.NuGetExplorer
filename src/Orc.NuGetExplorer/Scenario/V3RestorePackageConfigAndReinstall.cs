@@ -64,7 +64,7 @@
 
                         if (!isV2packageInstalled)
                         {
-                            Log.Error($"Package {package} does not recognized in project folder as v2 NuGet installed package");
+                            Log.Warning($"Package {package} does not recognized in project folder as v2 NuGet installed package");
                             continue;
                         }
 

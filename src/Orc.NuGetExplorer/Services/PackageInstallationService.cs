@@ -81,27 +81,18 @@
             }
 
             //gather all dependencies
-            var installedDependencyInfos = new HashSet<PackageDependencyInfo>(PackageIdentity.Comparer);
+            var installedDependencyInfos = new HashSet<SourcePackageDependencyInfo>(PackageIdentity.Comparer);
 
             using (var cacheContext = _nuGetCacheManager.GetCacheContext())
             {
                 var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                     .GetResourceAsync<DependencyInfoResource>(cancellationToken);
 
-                var packageReferences = installedPackageReferences.ToList();
-                foreach (var packageReference in packageReferences)
-                {
-                    var dependencyInfo = await dependencyInfoResource.ResolvePackage(packageReference.PackageIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+                var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
-                    if (dependencyInfo != null)
-                    {
-                        installedDependencyInfos.Add(dependencyInfo);
-                    }
-                    else
-                    {
-                        Log.Warning($"Cannot resolve installed package reference {packageReference.PackageIdentity} for package {package}, probably package is missed");
-                    }
-                }
+                await ResolveDependenciesRecursivelyAsync(package, targetFramework, dependencyInfoResourceCollection, cacheContext, installedDependencyInfos, true, cancellationToken);
+
+                var packageReferences = installedPackageReferences.ToList();
 
                 uninstalledPackages = await GetPackagesCanBeUninstalled(installedDependencyInfos, packageReferences.Select(x => x.PackageIdentity), null);
             }
@@ -129,7 +120,6 @@
                         Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
                     }
                 }
-
             }
             catch (IOException e)
             {
@@ -460,7 +450,7 @@
         }
 
         private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
-            ICollection<PackageDependencyInfo> markedForUninstall,
+            ICollection<SourcePackageDependencyInfo> markedForUninstall,
             IEnumerable<PackageIdentity> installedPackages,
             UninstallationContext uninstallationContext)
         {

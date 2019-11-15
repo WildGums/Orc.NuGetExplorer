@@ -52,8 +52,8 @@
 
             DeferValidationUntilFirstSaveCall = true;
 
-            DefaultFeed = Constants.DefaultNugetOrgName;
-            DefaultSourceName = Constants.DefaultNugetOrgUri;
+            DefaultFeed = Constants.DefaultNugetOrgUri;
+            DefaultSourceName = Constants.DefaultNugetOrgName;
 
             Feeds = new ObservableCollection<NuGetFeed>();
         }

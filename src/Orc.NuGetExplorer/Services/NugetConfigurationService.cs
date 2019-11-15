@@ -53,7 +53,8 @@
         #region INuGetConfigurationService
         public string GetDestinationFolder()
         {
-            return this.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+            var destinationFolder = this.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+            return string.IsNullOrEmpty(destinationFolder) ? _defaultDestinationFolder : destinationFolder;
         }
 
         public void SetDestinationFolder(string value)

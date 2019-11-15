@@ -35,6 +35,12 @@
             _resources = resources.ToList();
         }
 
+        public DependencyInfoResourceCollection(DependencyInfoResource resource)
+        {
+            Argument.IsNotNull(() => resource);
+            _resources = new List<DependencyInfoResource>() { resource };
+        }
+
         public async Task<SourcePackageDependencyInfo> ResolvePackage(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
             foreach (var resource in _resources)

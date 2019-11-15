@@ -123,7 +123,16 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
+
+                    if (IsInstalled())
+                    {
+                        //run upgrade scenario
+                        await _projectManager.UpdatePackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), Package.Identity.Id, SelectedVersion, cts.Token);
+                    }
+                    else
+                    {
+                        await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
+                    }
                 }
 
                 await Task.Delay(200);
@@ -142,7 +151,7 @@
         {
             var anyProject = NuGetActionTarget?.IsValid ?? false;
 
-            return anyProject && !IsInstalled();
+            return anyProject; //allow to install version if already installed but launch 'Upgrade scenario' // && !IsInstalled();
         }
 
         public TaskCommand UninstallPackage { get; set; }
@@ -189,7 +198,6 @@
 
                 if (versionMetadata?.Identity?.Version != null)
                 {
-                    Log.Info("LoadSinglePackageMetadata call: add DI");
                     packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
                 }
 
@@ -258,7 +266,6 @@
 
             if (Package is null)
             {
-                Log.Info("Package is null");
                 return;
             }
 
@@ -282,8 +289,6 @@
                 SelectedVersion = selectedVersion;
 
                 PackageMetadataProvider = InitMetadataProvider();
-
-                Log.Info("Start ApplyPackage Call");
 
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 

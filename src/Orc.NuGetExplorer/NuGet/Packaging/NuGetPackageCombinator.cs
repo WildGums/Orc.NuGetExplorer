@@ -52,7 +52,9 @@
 
             var comparison = package.InstalledVersion.CompareTo(package.LastVersion, NuGet.Versioning.VersionComparison.VersionRelease);
 
-            return (PackageStatus)comparison;
+            var status = (PackageStatus)comparison == PackageStatus.Pending ? PackageStatus.LastVersionInstalled : (PackageStatus)comparison;
+
+            return status;
         }
     }
 }
