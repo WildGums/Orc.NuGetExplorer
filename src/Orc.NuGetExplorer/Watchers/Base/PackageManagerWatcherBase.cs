@@ -11,14 +11,10 @@ namespace Orc.NuGetExplorer
 
     public abstract class PackageManagerWatcherBase
     {
-        private IPackageOperationNotificationService _packageOperationNotificationService;
-
         #region Constructors
         protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
-            
-            _packageOperationNotificationService = packageOperationNotificationService;
 
             packageOperationNotificationService.OperationStarting += OnOperationStarting;
             packageOperationNotificationService.OperationFinished += OnOperationFinished;
@@ -28,23 +24,6 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        // Note: this is a temporary hotfix
-        internal void UpdatePackageOperationNotificationService(IPackageOperationNotificationService packageOperationNotificationService)
-        {
-            _packageOperationNotificationService.OperationStarting -= OnOperationStarting;
-            _packageOperationNotificationService.OperationFinished -= OnOperationFinished;
-            _packageOperationNotificationService.OperationsBatchStarting -= OnOperationsBatchStarting;
-            _packageOperationNotificationService.OperationsBatchFinished -= OnOperationsBatchFinished;
-
-            _packageOperationNotificationService = packageOperationNotificationService;
-
-            _packageOperationNotificationService.OperationStarting += OnOperationStarting;
-            _packageOperationNotificationService.OperationFinished += OnOperationFinished;
-            _packageOperationNotificationService.OperationsBatchStarting += OnOperationsBatchStarting;
-            _packageOperationNotificationService.OperationsBatchFinished += OnOperationsBatchFinished;
-        }
-
-
         protected virtual void OnOperationsBatchFinished(object sender, PackageOperationBatchEventArgs e)
         {
         }

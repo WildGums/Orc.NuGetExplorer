@@ -13,7 +13,9 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using Catel.Logging;
     using Catel.Services;
-    using NuGet;
+    using NuGet.Packaging.Core;
+    using NuGet.Versioning;
+    using Orc.NuGetExplorer.Models;
 
     internal sealed class ApiPackageRegistry : IApiPackageRegistry
     {
@@ -65,15 +67,15 @@ namespace Orc.NuGetExplorer
         public void Validate(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(PackageDetails));
+            Argument.IsOfType(() => package, typeof(NuGetPackage));
 
-            var innerPackage = ((PackageDetails)package).Package;
+            var dependencyGroups = (package as NuGetPackage).GetDependencyInfo(package.NuGetVersion);
 
             lock (_syncObj)
             {
-                foreach (var dependencySet in innerPackage.DependencySets)
+                foreach (var depencyGroup in dependencyGroups)
                 {
-                    foreach (var dependency in dependencySet.Dependencies)
+                    foreach (var dependency in depencyGroup.Packages)
                     {
                         ValidateDependency(package, dependency);
                     }
@@ -93,19 +95,19 @@ namespace Orc.NuGetExplorer
                 }
             }
 
-            var versionSpec = dependency.VersionSpec;
+            var versionSpec = dependency.VersionRange;
 
             var minVersion = versionSpec.MinVersion;
             if (minVersion != null)
             {
                 if (versionSpec.IsMinInclusive && currentVersion < minVersion)
                 {
-                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
                 }
 
                 if (!versionSpec.IsMinInclusive && currentVersion <= minVersion)
                 {
-                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, dependency.VersionSpec.MinVersion, currentVersion), ValidationTags.Api));
+                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
                 }
             }
 
@@ -117,14 +119,15 @@ namespace Orc.NuGetExplorer
 
             if (versionSpec.IsMaxInclusive && currentVersion > maxVersion)
             {
-                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
             }
 
             if (!versionSpec.IsMaxInclusive && currentVersion >= maxVersion)
             {
-                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, dependency.VersionSpec.MaxVersion, currentVersion), ValidationTags.Api));
+                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
             }
         }
+
         #endregion
     }
 }

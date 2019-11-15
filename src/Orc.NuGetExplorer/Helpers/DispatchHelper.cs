@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
-    using Catel.Threading;
     using System;
     using System.Threading.Tasks;
     using System.Windows;

@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Themes.Compiled">
+
+    <Viewbox x:Key="ArrowUpBadgeContent" x:Shared="False">
+        <Canvas Width="24" Height="24" ClipToBounds="True">
+            <Path Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" Fill="WhiteSmoke"/>
+        </Canvas>
+    </Viewbox>
+
+    <Viewbox x:Key="ArrowDownBadgeContent" x:Shared="False">
+        <Canvas Width="24" Height="24" ClipToBounds="True">
+            <Path Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="WhiteSmoke"/>
+        </Canvas>
+    </Viewbox>
+
+</ResourceDictionary>

@@ -1,70 +1,91 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetFeedVerificationService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
+﻿
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Linq;
     using System.Net;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
-    using Catel.Scoping;
-    using MethodTimer;
-    using NuGet;
-    using Scopes;
+    using NuGet.Common;
+    using NuGet.Configuration;
+    using NuGet.Protocol.Core.Types;
+    using NuGetExplorer.Web;
 
     internal class NuGetFeedVerificationService : INuGetFeedVerificationService
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
+        private static readonly IHttpExceptionHandler<FatalProtocolException> FatalProtocolExceptionHandler = new FatalProtocolExceptionHandler();
 
-        private readonly IPackageRepositoryFactory _packageRepositoryFactory;
-        #endregion
+        private readonly ILogger _nugetLogger;
+        private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
 
-        #region Constructors
-        public NuGetFeedVerificationService(IPackageRepositoryFactory packageRepositoryFactory)
+        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
-            Argument.IsNotNull(() => packageRepositoryFactory);
+            Argument.IsNotNull(() => credentialProviderLoaderService);
+            Argument.IsNotNull(() => repositoryProvider);
+            Argument.IsNotNull(() => logger);
 
-            _packageRepositoryFactory = packageRepositoryFactory;
+            _credentialProviderLoaderService = credentialProviderLoaderService;
+            _repositoryProvider = repositoryProvider;
+            _nugetLogger = logger;
         }
-        #endregion
 
-        #region Methods
-        [Time]
-        public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
+        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, CancellationToken ct, bool authenticateIfRequired = true)
         {
+            Argument.IsNotNull(() => source);
+
             var result = FeedVerificationResult.Valid;
+
+            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 
-            using (ScopeManager<AuthenticationScope>.GetScopeManager(source.GetSafeScopeName(), () => new AuthenticationScope(authenticateIfRequired)))
+            try
             {
+                var packageSource = new PackageSource(source);
+
+                var repository = _repositoryProvider.CreateRepository(packageSource);
+
                 try
                 {
-                    var repository = _packageRepositoryFactory.CreateRepository(source);
-                    repository.GetPackages().Take(1).Count();
-                }
-                catch (WebException ex)
-                {
-                    result = HandleWebException(ex, source);
-                }
-                catch (UriFormatException ex)
-                {
-                    Log.Debug(ex, "Failed to verify feed '{0}', a UriFormatException occurred", source);
+                    var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                    result = FeedVerificationResult.Invalid;
+                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Log.Debug(ex, "Failed to verify feed '{0}'", source);
-
-                    result = FeedVerificationResult.Invalid;
+                    throw;
                 }
+            }
+            catch (FatalProtocolException ex)
+            {
+                if (ct.IsCancellationRequested)
+                {
+                    //cancel operation
+                    throw new OperationCanceledException("Verification was canceled", ex, ct);
+                }
+                result = FatalProtocolExceptionHandler.HandleException(ex, source);
+            }
+            catch (WebException ex)
+            {
+                result = WebExceptionHandler.HandleException(ex, source);
+            }
+            catch (UriFormatException ex)
+            {
+                errorMessage.Append(", a UriFormatException occurred");
+                Log.Debug(ex, errorMessage.ToString());
+
+                result = FeedVerificationResult.Invalid;
+            }
+            catch (Exception ex) when (!ct.IsCancellationRequested)
+            {
+                Log.Debug(ex, errorMessage.ToString());
+
+                result = FeedVerificationResult.Invalid;
             }
 
             Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
@@ -72,35 +93,76 @@ namespace Orc.NuGetExplorer
             return result;
         }
 
-        private static FeedVerificationResult HandleWebException(WebException exception, string source)
+        [ObsoleteEx]
+        public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
+            int timeOut = 3000;
+
+            Argument.IsNotNull(() => source);
+
+            var result = FeedVerificationResult.Valid;
+
+            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+
+            Log.Debug("Verifying feed '{0}'", source);
+
             try
             {
-                var httpWebResponse = (HttpWebResponse)exception.Response;
-                if (ReferenceEquals(httpWebResponse, null))
-                {
-                    return FeedVerificationResult.Invalid;
-                }
+                var packageSource = new PackageSource(source);
 
-                if ((int)httpWebResponse.StatusCode == 403)
-                {
-                    return FeedVerificationResult.Valid;
-                }
+                var repository = _repositoryProvider.CreateRepository(packageSource);
 
-                if (exception.Status == WebExceptionStatus.ProtocolError)
+                var searchResource = repository.GetResource<PackageSearchResource>();
+
+                using (var cts = new CancellationTokenSource())
                 {
-                    return httpWebResponse.StatusCode == HttpStatusCode.Unauthorized
-                        ? FeedVerificationResult.AuthenticationRequired
-                        : FeedVerificationResult.Invalid;
-                }                
+                    var cancellationToken = cts.Token;
+
+                    //try to perform search
+                    var searchTask = searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
+
+                    var searchCompletion = Task.WhenAny(searchTask, Task.Delay(timeOut, cancellationToken)).Result;
+
+                    if (searchCompletion != searchTask)
+                    {
+                        throw new TimeoutException("Search operation has timed out");
+                    }
+
+                    if (searchTask.IsFaulted && searchTask.Exception != null)
+                    {
+                        throw searchTask.Exception;
+                    }
+                    if (searchTask.IsCanceled)
+                    {
+                        return FeedVerificationResult.Unknown;
+                    }
+                }
+            }
+            catch (FatalProtocolException ex)
+            {
+                result = FatalProtocolExceptionHandler.HandleException(ex, source);
+            }
+            catch (WebException ex)
+            {
+                result = WebExceptionHandler.HandleException(ex, source);
+            }
+            catch (UriFormatException ex)
+            {
+                errorMessage.Append(", a UriFormatException occurred");
+                Log.Debug(ex, errorMessage.ToString());
+
+                result = FeedVerificationResult.Invalid;
             }
             catch (Exception ex)
             {
-                Log.Debug(ex, "Failed to verify feed '{0}'", source);
+                Log.Debug(ex, errorMessage.ToString());
+
+                result = FeedVerificationResult.Invalid;
             }
 
-            return FeedVerificationResult.Invalid;
+            Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
+
+            return result;
         }
-        #endregion
     }
 }

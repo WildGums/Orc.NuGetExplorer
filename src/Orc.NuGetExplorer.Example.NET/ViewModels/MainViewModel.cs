@@ -1,14 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Example.ViewModels
+﻿namespace Orc.NuGetExplorer.Example.ViewModels
 {
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
@@ -16,6 +10,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using Models;
+    using Orc.NuGetExplorer.Services;
 
     public class MainViewModel : ViewModelBase
     {
@@ -24,13 +19,14 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly IPackageBatchService _packageBatchService;
+        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
         #endregion
 
         #region Constructors
-        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
+        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
             IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
         {
@@ -41,7 +37,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             Argument.IsNotNull(() => messageService);
             Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => initializationService);
 
+            _initializationService = initializationService;
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
             _feedVerificationService = feedVerificationService;
@@ -79,9 +77,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private Task OnSettingsExecute()
+        private async Task OnSettingsExecute()
         {
-            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+            await _packagesUiService.ShowPackagesSourceSettingsAsync();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }
@@ -102,10 +100,13 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         {
             AvailableUpdates.Clear();
 
-            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
+            using (var cts = new CancellationTokenSource())
+            {
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(cts.Token, AllowPrerelease, false);
 
-            // Note: AddRange doesn't refresh button state
-            AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+                // Note: AddRange doesn't refresh button state
+                AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+            }
         }
 
         public TaskCommand AdddPackageSource { get; private set; }

@@ -1,343 +1,251 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageSourceSettingViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
-    using System.ComponentModel;
+    using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
+    using Catel.Configuration;
     using Catel.Data;
-    using Catel.Fody;
+    using Catel.Logging;
     using Catel.MVVM;
-    using Catel.Scoping;
-    using Catel.Threading;
-    using Scopes;
+    using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Services;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
-        #region Fields
-        private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
-        private readonly IPackageSourceFactory _packageSourceFactory;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private bool _ignoreNextPackageUpdate;
-        #endregion
+        private readonly NugetConfigurationService _configurationService;
 
-        #region Constructors
-        public PackageSourceSettingViewModel(INuGetFeedVerificationService nuGetFeedVerificationService, IPackageSourceFactory packageSourceFactory)
+        private readonly INuGetFeedVerificationService _feedVerificationService;
+
+        private readonly IModelProvider<NuGetFeed> _modelProvider;
+
+        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            IModelProvider<NuGetFeed> modelProvider) : this(configurationService, feedVerificationService, modelProvider)
         {
-            Argument.IsNotNull(() => nuGetFeedVerificationService);
-            Argument.IsNotNull(() => packageSourceFactory);
+            Argument.IsNotNull(() => configuredFeeds);
 
-            _nuGetFeedVerificationService = nuGetFeedVerificationService;
-            _packageSourceFactory = packageSourceFactory;
-
-            Add = new Command(OnAddExecute);
-            Remove = new Command(OnRemoveExecute, OnRemoveCanExecute);
-            MoveUp = new Command(OnMoveUpExecute, OnMoveUpCanExecute);
-            MoveDown = new Command(OnMoveDownExecute, OnMoveDownCanExecute);
+            SettingsFeeds = configuredFeeds;
+            Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
         }
-        #endregion
 
-        #region Properties
-        public IList<EditablePackageSource> EditablePackageSources { get; private set; }
-        public IEnumerable<IPackageSource> PackageSources { get; set; }
+        public PackageSourceSettingViewModel(IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            IModelProvider<NuGetFeed> modelProvider)
+        {
+            Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => modelProvider);
+            Argument.IsNotNull(() => feedVerificationService);
 
-        [Model(SupportIEditableObject = false)]
-        [Expose("Name")]
-        [Expose("Source")]
-        public EditablePackageSource SelectedPackageSource { get; set; }
+            _configurationService = configurationService as NugetConfigurationService;
+            _feedVerificationService = feedVerificationService;
+            _modelProvider = modelProvider;
+
+            RemovedFeeds = new List<NuGetFeed>();
+
+            CommandInitialize();
+            Title = "Settings";
+
+            DeferValidationUntilFirstSaveCall = true;
+
+            DefaultFeed = Constants.DefaultNugetOrgUri;
+            DefaultSourceName = Constants.DefaultNugetOrgName;
+
+            Feeds = new ObservableCollection<NuGetFeed>();
+        }
+
+        public ObservableCollection<NuGetFeed> Feeds { get; set; }
+
+        //[Model]
+        public NuGetFeed SelectedFeed { get; set; }
+
+        public List<NuGetFeed> RemovedFeeds { get; set; }
+
+        /// <summary>
+        /// All feeds currently loaded in settings model
+        /// </summary>
+        public List<NuGetFeed> SettingsFeeds { get; set; }
+
+        #region ViewToViewModel
 
         public string DefaultFeed { get; set; }
         public string DefaultSourceName { get; set; }
+        public IEnumerable<IPackageSource> PackageSources { get; set; }
+
         #endregion
 
-        #region Methods
+        private bool ListenViewToViewModelPropertyChanges { get; set; } = true;
+
+        #region Commands
+
+        public Command RemoveFeed { get; set; }
+
+        private void OnRemoveFeedExecute()
+        {
+            RemovedFeeds.Add(SelectedFeed);
+            Feeds.Remove(SelectedFeed);
+        }
+
+        public Command MoveUpFeed { get; set; }
+
+        private void OnMoveUpFeedExecute()
+        {
+            Feeds.MoveUp(SelectedFeed);
+        }
+
+        public Command MoveDownFeed { get; set; }
+
+        private void OnMoveDownFeedExecute()
+        {
+            Feeds.MoveDown(SelectedFeed);
+        }
+
+        public Command AddFeed { get; set; }
+
+        private void OnAddFeedExecute()
+        {
+            Feeds.Add(new NuGetFeed(DefaultSourceName, DefaultFeed));
+        }
+
+        #endregion
+
+        protected void CommandInitialize()
+        {
+            RemoveFeed = new Command(OnRemoveFeedExecute);
+            MoveUpFeed = new Command(OnMoveUpFeedExecute);
+            MoveDownFeed = new Command(OnMoveDownFeedExecute);
+            AddFeed = new Command(OnAddFeedExecute);
+        }
+
         protected override async Task InitializeAsync()
         {
-            if (PackageSources != null)
-            {
-                OnPackageSourcesChanged();
-            }
+            _modelProvider.PropertyChanged += OnModelProviderPropertyChanged;
+            Feeds.CollectionChanged += OnFeedsCollectioChanged;
 
-            await base.InitializeAsync();
+            Feeds.ForEach(async x => await VerifyFeedAsync(x));
         }
 
-        private void OnPackageSourcesChanged()
+        protected override Task<bool> SaveAsync()
         {
-            EditablePackageSources = new FastObservableCollection<EditablePackageSource>(PackageSources.Select(x =>
-                new EditablePackageSource
-                {
-                    IsEnabled = x.IsEnabled,
-                    Name = x.Name,
-                    Source = x.Source
-                }));
+            SaveFeeds();
 
-            if (_ignoreNextPackageUpdate)
-            {
-                return;
-            }
+            ListenViewToViewModelPropertyChanges = false;
 
-            VerifyAll();
+            PackageSources = Feeds.ToList();
+
+            ListenViewToViewModelPropertyChanges = true;
+
+            return base.SaveAsync();
         }
 
-        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+
+        protected override Task CloseAsync()
         {
-            base.OnModelPropertyChanged(sender, e);
-            if (string.Equals(e.PropertyName, "Name"))
-            {
-                VerifyAll();
-            }
-
-            if (string.Equals(e.PropertyName, "Source"))
-            {
-                var selectedPackageSource = SelectedPackageSource;
-                if (selectedPackageSource == null)
-                {
-                    return;
-                }
-
-                if (selectedPackageSource.IsValid == null)
-                {
-                    return;
-                }
-
-                selectedPackageSource.IsValid = false;
-
-#pragma warning disable 4014
-                VerifyPackageSourceAsync(selectedPackageSource);
-#pragma warning restore 4014
-            }
+            _modelProvider.PropertyChanged -= OnModelProviderPropertyChanged;
+            return base.CloseAsync();
         }
 
-        protected override async Task<bool> SaveAsync()
-        {
-            var editablePackageSource = EditablePackageSources;
-            if (editablePackageSource == null)
-            {
-                return false;
-            }
-
-            if (editablePackageSource.Any(x => x.IsValid == null))
-            {
-                return false;
-            }
-
-            _ignoreNextPackageUpdate = true;
-
-            PackageSources = editablePackageSource.Select(x =>
-            {
-                using (ScopeManager<AuthenticationScope>.GetScopeManager(x.Source.GetSafeScopeName(), () => new AuthenticationScope(false)))
-                {
-                    var packageSource = _packageSourceFactory.CreatePackageSource(x.Source, x.Name, x.IsEnabled, false);
-                    return packageSource;
-                }
-            }).ToArray();
-
-            return await base.SaveAsync();
-        }
-
-        protected override void ValidateFields(List<IFieldValidationResult> validationResults)
-        {
-            base.ValidateFields(validationResults);
-
-            if (SelectedPackageSource == null || (SelectedPackageSource.IsValid ?? true))
-            {
-                return;
-            }
-
-            if (!(SelectedPackageSource.IsValidName ?? false))
-            {
-                validationResults.Add(FieldValidationResult.CreateError("Name", "Package source name '{0}' is empty or not unique.", SelectedPackageSource.Name));
-            }
-
-            if (!(SelectedPackageSource.IsValidSource ?? false))
-            {
-                validationResults.Add(FieldValidationResult.CreateError("Source", "Package source '{0}' is invalid.", SelectedPackageSource.Source));
-            }
-        }
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
         {
-            base.ValidateBusinessRules(validationResults);
-
-            if (EditablePackageSources != null && EditablePackageSources.Any(x => x.IsValid.HasValue && !x.IsValid.Value))
+            if (SelectedFeed != null && IsNamesNotUniqueRule(out var names))
             {
-                validationResults.Add(BusinessRuleValidationResult.CreateError("Some package sources are invalid."));
+                foreach (var name in names)
+                {
+                    validationResults.Add(BusinessRuleValidationResult.CreateError($"Two or more feeds have same name '{name}'"));
+                }
             }
         }
 
-        private async Task VerifyPackageSourceAsync(EditablePackageSource packageSource, bool force = false)
+        private void SaveFeeds()
         {
-            if (packageSource == null || packageSource.IsValid == null)
+            SettingsFeeds.Clear();
+            SettingsFeeds.AddRange(Feeds);
+
+            _configurationService.SavePackageSources(Feeds);
+        }
+
+
+        private bool IsNamesNotUniqueRule(out IEnumerable<string> invalidNames)
+        {
+            var names = new List<string>();
+
+            var groups = Feeds.GroupBy(x => x.Name).Where(g => g.Count() > 1);
+
+            groups.ForEach(g => names.Add(g.Key));
+
+            invalidNames = names;
+
+            return groups.Count() > 0;
+        }
+
+        private async Task VerifyFeedAsync(NuGetFeed feed)
+        {
+            if (feed == null || !feed.IsValid())
             {
                 return;
             }
 
-            if (!force && string.Equals(packageSource.Source, packageSource.PreviousSourceValue))
+            feed.IsVerifiedNow = true;
+
+            using (var cts = new CancellationTokenSource())
+            {
+                var result = await _feedVerificationService.VerifyFeedAsync(feed.Source, cts.Token, true);
+                feed.VerificationResult = result;
+            }
+
+            feed.IsVerifiedNow = false;
+        }
+
+
+        private void OnModelProviderPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var index = Feeds.IndexOf(SelectedFeed);
+
+            Feeds[index] = _modelProvider.Model;
+
+            SelectedFeed = _modelProvider.Model;
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (!ListenViewToViewModelPropertyChanges)
             {
                 return;
             }
 
-            packageSource.IsValid = null;
-
-            string feedToValidate;
-            string nameToValidate;
-            bool isValidUrl;
-            bool isValidName;
-
-            do
+            if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
             {
-                feedToValidate = packageSource.Source;
-                nameToValidate = packageSource.Name;
-
-                var namesCount = EditablePackageSources.Count(x => string.Equals(nameToValidate, x.Name));
-
-                isValidName = !string.IsNullOrWhiteSpace(nameToValidate) && namesCount == 1;
-
-                var validate = feedToValidate;
-                var feedVerificationResult = await TaskHelper.Run(() => _nuGetFeedVerificationService.VerifyFeed(validate, true), true);
-
-                packageSource.FeedVerificationResult = feedVerificationResult;
-                isValidUrl = feedVerificationResult != FeedVerificationResult.Invalid && feedVerificationResult != FeedVerificationResult.Unknown;
-
-            } while (!string.Equals(feedToValidate, packageSource.Source) && !string.Equals(nameToValidate, packageSource.Name));
-
-            packageSource.PreviousSourceValue = packageSource.Source;
-            packageSource.IsValidSource = isValidUrl;
-            packageSource.IsValidName = isValidName;
-
-            Validate(true);
-        }
-
-        private bool CanMoveToStep(int step)
-        {
-            var selectedPackageSource = SelectedPackageSource;
-            if (selectedPackageSource == null)
-            {
-                return false;
+                var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();
+                SettingsFeeds.AddRange(passedFeeds);
+                Feeds.AddRange(passedFeeds);
             }
 
-            var editablePackageSources = EditablePackageSources;
-
-            var index = editablePackageSources.IndexOf(selectedPackageSource);
-
-            var newIndex = index + step;
-
-            return newIndex >= 0 && newIndex < editablePackageSources.Count;
+            base.OnPropertyChanged(e);
         }
 
-        private void MoveToStep(int step)
+
+        private async void OnFeedsCollectioChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            var selectedPackageSource = SelectedPackageSource;
-            if (selectedPackageSource == null)
+            //verify all new feeds in collection
+            //because of feed edit is simple re-insertion we should'nt handle property change inside model
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
             {
-                return;
-            }
-
-            var editablePackageSources = EditablePackageSources;
-
-            var index = editablePackageSources.IndexOf(selectedPackageSource);
-
-            EditablePackageSources.RemoveAt(index);
-            EditablePackageSources.Insert(index + step, selectedPackageSource);
-
-            SelectedPackageSource = selectedPackageSource;
-        }
-
-        private void VerifyAll()
-        {
-            foreach (var packageSource in EditablePackageSources)
-            {
-#pragma warning disable 4014
-                VerifyPackageSourceAsync(packageSource, true);
-#pragma warning restore 4014
+                if (e.NewItems != null)
+                {
+                    foreach (NuGetFeed item in e.NewItems)
+                    {
+                        if (!item.IsLocal() && item.VerificationResult == FeedVerificationResult.Unknown)
+                        {
+                            await VerifyFeedAsync(item);
+                        }
+                    }
+                }
             }
         }
-        #endregion
-
-        #region Commands
-        public Command MoveUp { get; private set; }
-
-        private void OnMoveUpExecute()
-        {
-            MoveToStep(-1);
-        }
-
-        private bool OnMoveUpCanExecute()
-        {
-            return CanMoveToStep(-1);
-        }
-
-        public Command MoveDown { get; private set; }
-
-        private void OnMoveDownExecute()
-        {
-            MoveToStep(1);
-        }
-
-        private bool OnMoveDownCanExecute()
-        {
-            return CanMoveToStep(1);
-        }
-
-        public Command Add { get; private set; }
-
-        private void OnAddExecute()
-        {
-            var packageSource = new EditablePackageSource
-            {
-                IsEnabled = true,
-                Name = DefaultSourceName,
-                Source = DefaultFeed,
-                IsValid = true
-            };
-
-            EditablePackageSources.Add(packageSource);
-            SelectedPackageSource = packageSource;
-
-            VerifyAll();
-        }
-
-        public Command Remove { get; private set; }
-
-        private void OnRemoveExecute()
-        {
-            if (SelectedPackageSource == null)
-            {
-                return;
-            }
-
-            var index = EditablePackageSources.IndexOf(SelectedPackageSource);
-            if (index < 0)
-            {
-                return;
-            }
-
-            EditablePackageSources.RemoveAt(index);
-
-            if (index < EditablePackageSources.Count)
-            {
-                SelectedPackageSource = EditablePackageSources[index];
-            }
-            else
-            {
-                SelectedPackageSource = EditablePackageSources.LastOrDefault();
-            }
-
-            VerifyAll();
-        }
-
-        private bool OnRemoveCanExecute()
-        {
-            return SelectedPackageSource != null;
-        }
-        #endregion
     }
 }

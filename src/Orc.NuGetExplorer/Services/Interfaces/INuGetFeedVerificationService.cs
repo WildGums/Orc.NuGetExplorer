@@ -4,12 +4,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-
 namespace Orc.NuGetExplorer
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public interface INuGetFeedVerificationService
     {
         #region Methods
+        Task<FeedVerificationResult> VerifyFeedAsync(string source, CancellationToken ct, bool authenticateIfRequired = true);
         FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true);
         #endregion
     }

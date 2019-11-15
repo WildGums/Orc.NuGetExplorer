@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IRollbackPackageOperationService.cs" company="WildGums">
 //   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
 // </copyright>
@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    internal interface IRollbackPackageOperationService
+    public interface IRollbackPackageOperationService
     {
         #region Methods
         void PushRollbackAction(Action rollbackAction, IPackageOperationContext context);

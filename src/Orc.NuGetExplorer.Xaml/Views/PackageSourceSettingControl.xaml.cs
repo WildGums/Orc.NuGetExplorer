@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer.Views
         {
             CreateWarningAndErrorValidatorForViewModel = true;
             SkipSearchingForInfoBarMessageControl = false;
-            AccentColorHelper.CreateAccentColorResourceDictionary();
+            //AccentColorHelper.CreateAccentColorResourceDictionary();
 
             InitializeComponent();
         }

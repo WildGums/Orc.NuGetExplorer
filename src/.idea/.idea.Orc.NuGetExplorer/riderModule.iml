@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<module type="RIDER_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://C:/Microsoft/Xamarin/NuGet/nunit3testadapter/3.13.0/build/net35/NUnit3.TestAdapter.dll" />
+    <content url="file://C:/Microsoft/Xamarin/NuGet/nunit3testadapter/3.13.0/build/net35/NUnit3.TestAdapter.pdb" />
+    <content url="file://C:/Microsoft/Xamarin/NuGet/nunit3testadapter/3.13.0/build/net35/nunit.engine.api.dll" />
+    <content url="file://C:/Microsoft/Xamarin/NuGet/nunit3testadapter/3.13.0/build/net35/nunit.engine.dll" />
+    <content url="file://$USER_HOME$/.nuget/packages/apiapprover/8.1.0/contentFiles/cs/any/ApiApprover" />
+    <content url="file://$USER_HOME$/.nuget/packages/publicapigenerator/8.1.0/contentFiles/cs/any/PublicApiGenerator" />
+    <content url="file://$MODULE_DIR$/../.." />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

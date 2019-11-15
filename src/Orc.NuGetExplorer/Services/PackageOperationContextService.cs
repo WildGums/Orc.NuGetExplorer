@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageOperationContextService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
@@ -41,7 +34,7 @@ namespace Orc.NuGetExplorer
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext {OperationType = operationType, Packages = packages, FileSystemContext = context},
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = context },
                 token => ApplyOperationContext(token.Instance),
                 token => CloseCurrentOperationContext(token.Instance));
         }
@@ -54,11 +47,11 @@ namespace Orc.NuGetExplorer
             {
                 if (_rootContext == null)
                 {
-                    context.CatchedExceptions.Clear();
+                    context.Exceptions.Clear();
 
                     _rootContext = context;
                     CurrentContext = context;
-                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages??new IPackageDetails[0]);
+                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages ?? new IPackageDetails[0]);
                 }
                 else
                 {
@@ -79,7 +72,7 @@ namespace Orc.NuGetExplorer
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
                     context.FileSystemContext.Dispose();
 
-                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages??new IPackageDetails[0]);
+                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages ?? new IPackageDetails[0]);
                     _rootContext = null;
                 }
 

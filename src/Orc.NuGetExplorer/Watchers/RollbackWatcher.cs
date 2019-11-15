@@ -10,7 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Linq;
     using Catel;
 
-    internal class RollbackWatcher : PackageManagerWatcherBase
+    public class RollbackWatcher : PackageManagerWatcherBase
     {
         #region Fields
         private readonly IBackupFileSystemService _backupFileSystemService;
@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer
         private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
-            if (context.CatchedExceptions.Any())
+            if (context.Exceptions.Any())
             {
                 _rollbackPackageOperationService.Rollback(context);
             }

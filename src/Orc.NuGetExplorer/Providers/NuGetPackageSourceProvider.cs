@@ -7,7 +7,7 @@
 
 namespace Orc.NuGetExplorer
 {
-    using NuGet;
+    using NuGet.Configuration;
 
     internal class NuGetPackageSourceProvider : PackageSourceProvider
     {
@@ -16,6 +16,7 @@ namespace Orc.NuGetExplorer
             : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToPackageSourceInstances())
         {
         }
+
         #endregion
     }
 }

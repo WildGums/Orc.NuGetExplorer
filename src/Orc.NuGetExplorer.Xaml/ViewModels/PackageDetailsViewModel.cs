@@ -1,85 +1,377 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageDetailsViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.ComponentModel;
-    using System.IO.Packaging;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Documents;
-
     using Catel;
     using Catel.Data;
+    using Catel.Fody;
+    using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Services;
+    using NuGet.Packaging.Core;
+    using NuGet.Protocol.Core.Types;
+    using NuGet.Versioning;
+    using NuGetExplorer.Enums;
+    using NuGetExplorer.Management;
+    using NuGetExplorer.Models;
+    using NuGetExplorer.Pagination;
+    using NuGetExplorer.Providers;
+    using NuGetExplorer.Windows;
 
     internal class PackageDetailsViewModel : ViewModelBase
     {
-        #region Fields
-        private readonly IPackageDetailsService _packageDetailsService;
-        private readonly IPackageQueryService _packageQueryService;
-        private readonly IRepositoryNavigatorService _repositoryNavigatorService;
-        #endregion
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly int Timeout = 500;
 
-        #region Constructors
-        public PackageDetailsViewModel(IPackageDetails package, IPackageDetailsService packageDetailsService, IPackageQueryService packageQueryService, IRepositoryNavigatorService repositoryNavigatorService)
+        private static IPackageMetadataProvider PackageMetadataProvider;
+
+        private readonly IRepositoryContextService _repositoryService;
+
+        private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
+
+        private readonly IProgressManager _progressManager;
+
+        private readonly INuGetPackageManager _projectManager;
+
+        private readonly ILanguageService _languageService;
+
+        private readonly IApiPackageRegistry _apiPackageRegistry;
+
+
+        public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry)
         {
-            Argument.IsNotNull(() => package);
-            Argument.IsNotNull(() => packageDetailsService);
-            Argument.IsNotNull(() => packageQueryService);
-            Argument.IsNotNull(() => repositoryNavigatorService);
+            Argument.IsNotNull(() => repositoryService);
+            Argument.IsNotNull(() => settingsProvider);
+            Argument.IsNotNull(() => progressManager);
+            Argument.IsNotNull(() => projectManager);
+            Argument.IsNotNull(() => languageService);
+            Argument.IsNotNull(() => apiPackageRegistry);
 
-            _packageDetailsService = packageDetailsService;
-            _packageQueryService = packageQueryService;
-            _repositoryNavigatorService = repositoryNavigatorService;
-
-            Package = package;
+            _repositoryService = repositoryService;
+            _settingsProvider = settingsProvider;
+            _progressManager = progressManager;
+            _projectManager = projectManager;
+            _languageService = languageService;
+            _apiPackageRegistry = apiPackageRegistry;
+            LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
+            InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
+            UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
         }
-        #endregion
 
-        #region Properties
         [Model(SupportIEditableObject = false)]
-        public IPackageDetails Package { get; private set; }
+        [Expose("Title")]
+        [Expose("Description")]
+        [Expose("Summary")]
+        [Expose("DownloadCount")]
+        [Expose("Authors")]
+        [Expose("IconUrl")]
+        [Expose("Identity")]
+        public NuGetPackage Package { get; set; }
 
-        public FlowDocument PackageSummary { get; private set; }
+        public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
+
+        public object DependencyInfo { get; set; }
+
+        public DeferToken DefferedLoadingToken { get; set; }
+
+        [ViewModelToModel]
+        public PackageStatus Status { get; set; }
+
+        public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
+
+        public IPackageSearchMetadata VersionData { get; set; }
+
+        public NuGetVersion SelectedVersion { get; set; }
+
+        public PackageIdentity SelectedPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, SelectedVersion);
+
+        public PackageIdentity InstalledPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, InstalledVersion);
+
+        [ViewModelToModel]
+        public NuGetVersion InstalledVersion { get; set; }
+
+        public string[] ApiValidationMessages { get; private set; }
+
+
+        #region Commands
+
+        public Command LoadInfoAboutVersions { get; set; }
+
+        private void LoadInfoAboutVersionsExecute()
+        {
+            try
+            {
+                PopulateVersionCollection();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+        }
+
+        public TaskCommand InstallPackage { get; set; }
+
+        private async Task OnInstallPackageExecute()
+        {
+            try
+            {
+                _progressManager.ShowBar(this);
+
+                using (var cts = new CancellationTokenSource())
+                {
+
+                    if (IsInstalled())
+                    {
+                        //run upgrade scenario
+                        await _projectManager.UpdatePackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), Package.Identity.Id, SelectedVersion, cts.Token);
+                    }
+                    else
+                    {
+                        await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
+                    }
+                }
+
+                await Task.Delay(200);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"Error when installing package {Package.Identity}, installation was failed");
+            }
+            finally
+            {
+                _progressManager.HideBar(this);
+            }
+        }
+
+        private bool OnInstallPackageCanExecute()
+        {
+            var anyProject = NuGetActionTarget?.IsValid ?? false;
+
+            return anyProject; //allow to install version if already installed but launch 'Upgrade scenario' // && !IsInstalled();
+        }
+
+        public TaskCommand UninstallPackage { get; set; }
+
+        private async Task OnUninstallPackageExecute()
+        {
+            try
+            {
+                _progressManager.ShowBar(this);
+
+                using (var cts = new CancellationTokenSource())
+                {
+                    //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
+                    await _projectManager.UninstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), InstalledPackage, cts.Token);
+                }
+
+                await Task.Delay(200);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
+            }
+            finally
+            {
+                _progressManager.HideBar(this);
+            }
+        }
+
+        private bool OnUninstallPackageCanExecute()
+        {
+            var anyProject = NuGetActionTarget?.IsValid ?? false;
+
+            return anyProject && IsInstalled();
+        }
+
         #endregion
 
-        #region Methods
+        protected static async Task<IPackageSearchMetadata> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
+        {
+            try
+            {
+                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(
+                    identity, isPreReleaseIncluded, CancellationToken.None);
+
+                if (versionMetadata?.Identity?.Version != null)
+                {
+                    packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
+                }
+
+                return versionMetadata;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Metadata retrieve error");
+                return null;
+            }
+        }
+
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
 
-            if (Package is ModelBase modelBase)
+            if (Package is null)
             {
-                modelBase.PropertyChanged += (sender, args) =>
-                    {
-                        var selectedVersionPropertyName = nameof(Package.SelectedVersion);
-                        if (args.HasPropertyChanged(selectedVersionPropertyName))
-                        {
-                            BuildPackageSummary();
-                        }
-                    };
+                return;
             }
 
-            BuildPackageSummary();
+            await ApplyPackageAsync();
+
+            NuGetActionTarget.PropertyChanged += OnNuGetActionTargetPropertyPropertyChanged;
         }
 
-        private void BuildPackageSummary()
+        protected override Task CloseAsync()
         {
-            //// Fix: Required since available versions aren't available until dropdown button is displayed.
-            if (!string.IsNullOrWhiteSpace(Package.SelectedVersion) && Package.Version.ToString() != Package.SelectedVersion)
+            NuGetActionTarget.PropertyChanged -= OnNuGetActionTargetPropertyPropertyChanged;
+
+            return base.CloseAsync();
+        }
+
+        private void OnNuGetActionTargetPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var commandManager = this.GetViewModelCommandManager();
+            commandManager.InvalidateCommands();
+        }
+
+        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
             {
-                var packageSummary = _packageQueryService.GetPackage(_repositoryNavigatorService.Navigator.SelectedRepository, Package.Id, Package.SelectedVersion);
-                PackageSummary = _packageDetailsService.PackageToFlowDocument(packageSummary);
-            }
-            else
-            {
-                PackageSummary = _packageDetailsService.PackageToFlowDocument(Package);
+                if ((e.OldValue == null && SelectedVersion == Package.Identity.Version) || e.NewValue == null)
+                {
+                    //skip loading on version list first load
+                    return;
+                }
+
+                var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
+
+                VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
+
+                if (Package != null)
+                {
+                    ValidateCurrentPackage(Package);
+                }
             }
         }
-        #endregion
+
+        private async void OnPackageChanged()
+        {
+            Log.Info("Package changed");
+
+            if (Package is null)
+            {
+                return;
+            }
+
+            await ApplyPackageAsync();
+        }
+
+        private void OnVersionDataChanged()
+        {
+            DependencyInfo = VersionData?.DependencySets;
+        }
+
+        private async Task ApplyPackageAsync()
+        {
+            try
+            {
+                //select identity version
+                var selectedVersion = Package?.Identity?.Version;
+
+                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
+
+                SelectedVersion = selectedVersion;
+
+                PackageMetadataProvider = InitMetadataProvider();
+
+                VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
+
+                if (Package != null)
+                {
+                    ValidateCurrentPackage(Package);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Error ocurred during view model inititalization, probably package metadata is incorrect");
+            }
+        }
+
+        private void ValidateCurrentPackage(NuGetPackage package)
+        {
+            Argument.IsNotNull(() => package);
+
+            //validate loaded dependencies
+            package.ResetValidationContext();
+            _apiPackageRegistry.Validate(package);
+
+            GetPackageValidationErrors(package);
+        }
+
+        private IPackageMetadataProvider InitMetadataProvider()
+        {
+            var currentSourceContext = SourceContext.CurrentContext;
+
+            var repositories = currentSourceContext.Repositories ?? currentSourceContext?.PackageSources.Select(src => _repositoryService.GetRepository(src));
+
+            return new PackageMetadataProvider(repositories, null);
+        }
+
+        private void PopulateVersionCollection()
+        {
+            try
+            {
+                if (Package.LoadVersionsAsync().Wait(Timeout))
+                {
+                    VersionsCollection = new ObservableCollection<NuGetVersion>(Package.Versions);
+                }
+                else
+                {
+                    throw new TimeoutException();
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                Log.Error(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
+            }
+        }
+
+        private bool IsInstalled()
+        {
+            return Status == PackageStatus.UpdateAvailable || Status == PackageStatus.LastVersionInstalled;
+        }
+
+        private void GetPackageValidationErrors(NuGetPackage package)
+        {
+            Argument.IsNotNull(() => package);
+
+            ApiValidationMessages = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"),
+                package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
+        }
+
+        private string[] GetAlertRecords(string title, params string[] stringLines)
+        {
+            Argument.IsNotNullOrWhitespace(() => title);
+
+            if (stringLines == null)
+            {
+                return null;
+            }
+
+            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+
+            if (!valuableLines.Any())
+            {
+                return null;
+            }
+
+            return valuableLines;
+        }
     }
 }

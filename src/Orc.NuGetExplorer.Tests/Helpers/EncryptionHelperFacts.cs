@@ -9,7 +9,7 @@
 namespace Orc.NuGetExplorer.Tests
 {
     using NUnit.Framework;
-    using Orc.NuGetExplorer;
+    using NuGetExplorer;
 
     [TestFixture]
     public class EncryptionHelperFacts

@@ -22,6 +22,7 @@ namespace Orc.NuGetExplorer.Example
         public App()
         {
 #if DEBUG
+            LogManager.IsDebugEnabled = true;
             LogManager.AddDebugListener(true);
 #endif
 

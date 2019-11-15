@@ -4,9 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-
 namespace Orc.NuGetExplorer
 {
+    using System;
+
     public sealed class Repository : IRepository
     {
         #region Properties
@@ -14,12 +15,16 @@ namespace Orc.NuGetExplorer
         public string Name { get; set; }
         public string Source { get; set; }
         public PackageOperationType OperationType { get; set; }
+
+        public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
         #endregion
 
         #region Methods
         private bool Equals(Repository other)
         {
-            return Id == other.Id && string.Equals(Name, other.Name) && string.Equals(Source, other.Source) && OperationType == other.OperationType;
+            return Id == other.Id && string.Equals(Name, other.Name)
+                && string.Equals(Source, other.Source)
+                && OperationType == other.OperationType;
         }
 
         public override int GetHashCode()

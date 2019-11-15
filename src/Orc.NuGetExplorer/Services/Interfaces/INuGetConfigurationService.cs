@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections.Generic;
 
     public interface INuGetConfigurationService
@@ -23,6 +22,8 @@ namespace Orc.NuGetExplorer
         void SavePackageSources(IEnumerable<IPackageSource> packageSources);
         void SetIsPrereleaseAllowed(IRepository repository, bool value);
         bool GetIsPrereleaseAllowed(IRepository repository);
+
+        void RemovePackageSource(IPackageSource source);
         #endregion
     }
 }

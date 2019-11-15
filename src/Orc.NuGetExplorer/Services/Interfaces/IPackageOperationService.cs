@@ -4,15 +4,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-
 namespace Orc.NuGetExplorer
 {
+    using System.Threading.Tasks;
+
     public interface IPackageOperationService
     {
         #region Methods
-        void UninstallPackage(IPackageDetails package);
-        void InstallPackage(IPackageDetails package, bool allowedPrerelease);
-        void UpdatePackages(IPackageDetails package, bool allowedPrerelease);
+        Task UninstallPackageAsync(IPackageDetails package);
+        Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease);
+        Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease);
         #endregion
     }
 }

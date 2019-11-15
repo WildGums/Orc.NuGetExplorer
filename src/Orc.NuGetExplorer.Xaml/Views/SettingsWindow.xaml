@@ -1,0 +1,14 @@
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.SettingsWindow"
+        xmlns:catel="http://schemas.catelproject.com"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+        mc:Ignorable="d"
+        x:ClassModifier="internal"
+        Title="SettingsWindow" MinHeight="500" MinWidth="400">
+    <Grid Height="500" Width="400">
+        <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
+    </Grid>
+</catel:DataWindow>

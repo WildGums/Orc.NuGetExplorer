@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer.Behaviors
 {
     using System.Windows;
     using Catel.Windows.Interactivity;
@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (!(bool) e.NewValue)
+            if (!(bool)e.NewValue)
             {
                 return;
             }

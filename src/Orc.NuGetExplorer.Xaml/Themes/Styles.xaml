@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Orc.NuGetExplorer.Themes">
     <Style TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
@@ -37,22 +37,11 @@
         <Setter Property="Padding" Value="4 0 4 4" />
         <Setter Property="Margin" Value="2 0 2 0" />
     </Style>
-    
+
     <Style TargetType="{x:Type ListBox}">
         <Setter Property="Margin" Value="0" />
     </Style>
-    
-    <Style TargetType="{x:Type ListBoxItem}">
-        <Style.Resources>
-            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor4}"/>
-        </Style.Resources>
-        <Style.Triggers>
-            <Trigger Property="ListBoxItem.IsSelected" Value="True" >
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    
+
     <Style x:Key="HorizontalGridSplitterStyle" TargetType="{x:Type GridSplitter}">
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -106,5 +95,4 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
 </ResourceDictionary>
