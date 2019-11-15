@@ -7,8 +7,13 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Media;
+    using Catel;
+    using Catel.MVVM.Converters;
+    using Orc.Controls;
 
     internal static class AccentColorHelper
     {
@@ -25,20 +30,22 @@ namespace Orc.NuGetExplorer
             }
 
             var accentColor = GetAccentColorBrush().Color;
+
             accentColor.CreateAccentColorResourceDictionary();
 
             IsAccentColorResourceDictionaryCreated = true;
         }
 
-        private static SolidColorBrush GetAccentColorBrush()
+        private static SolidColorBrush GetAccentColorBrush(ThemeColorStyle themeColor = ThemeColorStyle.AccentColor)
         {
-            var accentColorBrush = Application.Current.TryFindResource("AccentColorBrush") as SolidColorBrush;
+            var accentColorBrush = Application.Current.TryFindResource($"{themeColor}") as SolidColorBrush;
             if (accentColorBrush != null)
             {
                 return accentColorBrush;
             }
-            return new SolidColorBrush(Color.FromArgb(255, 0, 122, 204));
+            return Orc.Controls.ThemeHelper.GetThemeColorBrush(themeColor);
         }
+
         #endregion
     }
 }

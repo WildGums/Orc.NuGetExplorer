@@ -15,17 +15,17 @@
     <SolidColorBrush x:Key="TabPopupBrushKey" Color="{x:Static SystemColors.ActiveCaptionTextColor}"/>
 
     <!-- main accent theme brushes -->
-    <SolidColorBrush x:Key="AccentColorBrush" Color="Orange"/>
+    <!--<SolidColorBrush x:Key="AccentColorBrush" Color="Orange"/>
     <SolidColorBrush x:Key="AccentColorBrush2" Color="{DynamicResource AccentColor2}"/>
     <SolidColorBrush x:Key="AccentColorBrush3" Color="{DynamicResource AccentColor3}"/>
-    <SolidColorBrush x:Key="AccentColorBrush4" Color="{DynamicResource AccentColor4}"/>
+    <SolidColorBrush x:Key="AccentColorBrush4" Color="{DynamicResource AccentColor4}"/>-->
 
 
     <!-- basic colors -->
-    <Color x:Key="AccentColor">#FFA500</Color>
+    <!--<Color x:Key="AccentColor">#FFA500</Color>
     <Color x:Key="AccentColor2">#ffd27f</Color>
     <Color x:Key="AccentColor3">#ffe4b2</Color>
-    <Color x:Key="AccentColor4">#ffefd5</Color>
+    <Color x:Key="AccentColor4">#ffefd5</Color>-->
 
     <!--Package status badges brushes and colors-->
     <Color x:Key="InstalledBadgeBackgroundColor">#329932</Color>
