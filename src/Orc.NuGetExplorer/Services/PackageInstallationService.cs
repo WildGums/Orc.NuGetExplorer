@@ -86,9 +86,10 @@
             using (var cacheContext = _nuGetCacheManager.GetCacheContext())
             {
                 var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
-                    .GetResourceAsync<DependencyInfoResource>();
+                    .GetResourceAsync<DependencyInfoResource>(cancellationToken);
 
-                foreach (var packageReference in installedPackageReferences)
+                var packageReferences = installedPackageReferences.ToList();
+                foreach (var packageReference in packageReferences)
                 {
                     var dependencyInfo = await dependencyInfoResource.ResolvePackage(packageReference.PackageIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
@@ -102,7 +103,7 @@
                     }
                 }
 
-                uninstalledPackages = await GetPackagesCanBeUninstalled(installedDependencyInfos, installedPackageReferences.Select(x => x.PackageIdentity), null);
+                uninstalledPackages = await GetPackagesCanBeUninstalled(installedDependencyInfos, packageReferences.Select(x => x.PackageIdentity), null);
             }
 
             try
