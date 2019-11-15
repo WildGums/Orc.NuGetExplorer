@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Windows;
     using System.Windows.Media;
     using Orc.Controls;

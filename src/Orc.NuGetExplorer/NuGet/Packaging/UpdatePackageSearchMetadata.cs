@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
-    using System;
     using NuGet.Protocol.Core.Types;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 

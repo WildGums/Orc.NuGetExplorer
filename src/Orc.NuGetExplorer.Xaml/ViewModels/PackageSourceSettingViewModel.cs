@@ -213,7 +213,7 @@
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
-            if(!ListenViewToViewModelPropertyChanges)
+            if (!ListenViewToViewModelPropertyChanges)
             {
                 return;
             }
@@ -224,7 +224,7 @@
                 SettingsFeeds.AddRange(passedFeeds);
                 Feeds.AddRange(passedFeeds);
             }
-            
+
             base.OnPropertyChanged(e);
         }
 

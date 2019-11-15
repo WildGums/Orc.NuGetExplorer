@@ -1,8 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using Catel;
     using Catel.Data;
     using Catel.MVVM;
     using NuGet.Packaging;
@@ -22,6 +20,6 @@
             }
         }
 
-        public bool HasDependency { get; set; }      
+        public bool HasDependency { get; set; }
     }
 }

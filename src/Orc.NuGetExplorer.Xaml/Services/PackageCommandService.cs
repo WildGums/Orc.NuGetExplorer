@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
@@ -30,7 +29,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService, 
+        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
             Argument.IsNotNull(() => pleaseWaitService);

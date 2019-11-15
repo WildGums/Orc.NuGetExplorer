@@ -6,8 +6,6 @@
     using Catel.Services;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
-    using Orc.NuGetExplorer.ViewModels;
-    using Orc.NuGetExplorer.Views;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
     {

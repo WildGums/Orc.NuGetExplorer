@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
-    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IPackageCommandService

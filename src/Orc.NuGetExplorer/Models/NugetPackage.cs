@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.Data;
@@ -79,9 +78,9 @@
 
         public IReadOnlyList<NuGetVersion> Versions
         {
-            get 
-            { 
-                return _versions; 
+            get
+            {
+                return _versions;
             }
             private set
             {
@@ -171,7 +170,7 @@
 
                 LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
                 Log.Warning(e, $"possibly because local package {searchMetadata.Identity} installation is missed or corrupted");
             }

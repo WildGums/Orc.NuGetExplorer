@@ -8,16 +8,13 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Threading;
     using NuGet.Common;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
-    using NuGet.Versioning;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Models;
 
@@ -50,7 +47,7 @@ namespace Orc.NuGetExplorer
 
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
-             _nuGetPackageManager = nuGetPackageManager;
+            _nuGetPackageManager = nuGetPackageManager;
             //_repositoryCacheService = repositoryCacheService;
             _apiPackageRegistry = apiPackageRegistry;
 
@@ -70,7 +67,7 @@ namespace Orc.NuGetExplorer
         public async Task UninstallPackageAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof (NuGetPackage));
+            Argument.IsOfType(() => package, typeof(NuGetPackage));
 
             //var dependentsResolver = new DependentsWalker(_localRepository, null);
 
@@ -83,7 +80,7 @@ namespace Orc.NuGetExplorer
                 //walker.ResolveOperations(nuGetPackage);
 
                 //nuPackage should provide identity of installed package, which targeted for uninstall action
-                using(var cts = new CancellationTokenSource())
+                using (var cts = new CancellationTokenSource())
                 {
                     await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
                 }
@@ -98,7 +95,7 @@ namespace Orc.NuGetExplorer
         public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof (NuGetPackage));
+            Argument.IsOfType(() => package, typeof(NuGetPackage));
 
             var repository = _packageOperationContextService.CurrentContext.Repository;
 

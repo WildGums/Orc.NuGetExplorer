@@ -7,12 +7,8 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System;
-    using System.Globalization;
     using System.Windows;
     using System.Windows.Media;
-    using Catel;
-    using Catel.MVVM.Converters;
     using Orc.Controls;
 
     internal static class AccentColorHelper

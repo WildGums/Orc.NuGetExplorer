@@ -252,7 +252,7 @@
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
-                
+
                 if (Package != null)
                 {
                     ValidateCurrentPackage(Package);
@@ -365,7 +365,7 @@
             }
 
             var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-            
+
             if (!valuableLines.Any())
             {
                 return null;

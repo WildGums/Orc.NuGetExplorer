@@ -11,7 +11,6 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
-    using Orc.NuGetExplorer.Management;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
     {

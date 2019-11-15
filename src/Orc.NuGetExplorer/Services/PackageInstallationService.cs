@@ -282,8 +282,8 @@
                         downloadStack.Push(relatedDepInfo);
                     }
 
-                    
-                    if(ignoreMissingPackages)
+
+                    if (ignoreMissingPackages)
                     {
                         resolvedBehavior = DependencyBehavior.Ignore;
                         await _nugetLogger.LogAsync(LogLevel.Warning, $"Available sources doesn't contain package {relatedIdentity}. Package {relatedIdentity} is missing");

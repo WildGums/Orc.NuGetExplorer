@@ -83,7 +83,7 @@
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(string.Equals(e.PropertyName, nameof(Package.InstalledVersion)) && Package.FromPage == MetadataOrigin.Browse)
+            if (string.Equals(e.PropertyName, nameof(Package.InstalledVersion)) && Package.FromPage == MetadataOrigin.Browse)
             {
                 SecondaryVersion = Package.InstalledVersion;
             }

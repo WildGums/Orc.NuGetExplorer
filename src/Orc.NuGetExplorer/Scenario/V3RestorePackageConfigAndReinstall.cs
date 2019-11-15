@@ -41,7 +41,7 @@
         {
             var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
 
-            if(!Directory.Exists(_defaultProject.ContentPath))
+            if (!Directory.Exists(_defaultProject.ContentPath))
             {
                 Log.Info($"plugins folder does not exist");
                 return;
