@@ -114,17 +114,24 @@
         </TextBlock>
 
         <!--selecting source feed-->
-                   
+
         <ComboBox Grid.Row="1" Grid.Column="6" 
                   Grid.ColumnSpan="2"
                   Width="120"
                   ItemsSource="{Binding ActiveFeeds}"
                   Margin="3 0 3 0"
                   IsSynchronizedWithCurrentItem="True"
-                  SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"/>
+                  SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"
+                  DisplayMemberPath="Name">
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="MaxWidth" Value="118"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+        </ComboBox>
 
 
-         <!-- Open project configuration window -->
+        <!-- Open project configuration window -->
          <!--<Button Grid.Row="1" Grid.Column="7"
                 Command="{Binding ShowExtensibles}"
                 Margin="3 0 3 0"
