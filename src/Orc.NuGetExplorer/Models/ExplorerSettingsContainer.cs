@@ -17,6 +17,8 @@
         /// </summary>
         public INuGetSource ObservedFeed { get; set; }
 
+        public INuGetSource DefaultFeed { get; set; }
+
         public bool IsPreReleaseIncluded { get; set; }
 
         public string SearchString { get; set; } = string.Empty;

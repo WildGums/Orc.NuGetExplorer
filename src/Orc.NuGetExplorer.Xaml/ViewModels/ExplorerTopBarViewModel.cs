@@ -69,6 +69,9 @@
         [ViewModelToModel]
         public INuGetSource ObservedFeed { get; set; }
 
+        [ViewModelToModel]
+        public INuGetSource DefaultFeed { get; set; }
+
         public bool SelectFirstPageOnLoad { get; set; } = true;
 
         public ObservableCollection<INuGetSource> ActiveFeeds { get; set; }
@@ -81,7 +84,10 @@
 
             var lastSelectedSourceName = _configurationService.GetLastRepository("Browse");
 
-            ObservedFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, lastSelectedSourceName));
+            //"all" feed
+            DefaultFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, Constants.CombinedSourceName));
+
+            ObservedFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, lastSelectedSourceName)) ?? DefaultFeed;
 
             return base.InitializeAsync();
         }

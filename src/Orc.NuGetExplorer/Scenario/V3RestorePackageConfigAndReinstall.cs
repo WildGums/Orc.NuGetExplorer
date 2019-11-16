@@ -60,7 +60,7 @@
 
                     try
                     {
-                        var isV2packageInstalled = folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
+                        var isV2packageInstalled = package != null && folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
 
                         if (!isV2packageInstalled)
                         {

@@ -2,11 +2,14 @@
 {
     using System;
     using System.Text.RegularExpressions;
+    using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
 
     public class PackageIdentityParser
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// This regex follows the same rules as C# namespaces
         /// </summary>
@@ -20,12 +23,14 @@
 
             if (!match.Success)
             {
-                throw new ArgumentException($"{packageString} parameter doesn't contain valid package identity");
+                Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+                return null;
             }
 
             if (match.Captures.Count != 1)
             {
-                throw new ArgumentException($"{packageString} parameter doesn't contain valid package identity");
+                Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+                return null;
             }
 
             var identity = match.Captures[0].Value;
@@ -34,7 +39,8 @@
 
             if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out NuGetVersion version))
             {
-                throw new ArgumentException($"{packageString} parameter doesn't contain valid package version");
+                Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
+                return null;
             }
 
             return new PackageIdentity(identity, version);

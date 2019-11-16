@@ -20,7 +20,7 @@
             }
         }
 
-        public string Name => "All";
+        public string Name => Constants.CombinedSourceName;
 
         public string Source => _sourceList.FirstOrDefault()?.Source;//returns top source
 

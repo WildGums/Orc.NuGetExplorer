@@ -57,11 +57,16 @@ namespace Orc.NuGetExplorer
 
         public const string NotInstalled = "not installed";
 
+        public const string CombinedSourceName = "All";
+
         public static class Messages
         {
             public const string CacheClearEndedSuccessful = "NuGet cache cleared";
             public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. Is means some cached files  ";
             public const string CacheClearFailed = "Fatal error during cache clearing";
+
+            public const string PackageParserInvalidIdentity = "parameter doesn't contain valid package identity";
+            public const string PackageParserInvalidVersion = "parameter doesn't contain valid package version";
         }
     }
 }
