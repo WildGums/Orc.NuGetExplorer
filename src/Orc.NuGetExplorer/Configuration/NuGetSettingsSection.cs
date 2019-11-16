@@ -2,6 +2,7 @@
 namespace Orc.NuGetExplorer.Configuration
 {
     using System.Collections.Generic;
+    using System.Linq;
     using NuGet.Configuration;
 
     internal class NuGetSettingsSection : SettingSection
@@ -31,7 +32,7 @@ namespace Orc.NuGetExplorer.Configuration
 
         public override SettingBase Clone()
         {
-            throw new System.NotImplementedException();
+            return new NuGetSettingsSection(ElementName, Items.Select(child => child.Clone() as SettingItem));
         }
     }
 }

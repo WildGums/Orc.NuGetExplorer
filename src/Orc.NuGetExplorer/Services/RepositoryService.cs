@@ -70,16 +70,6 @@
             }
         }
 
-        private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository repository)
-        {
-            return new Repository()
-            {
-                Id = 0, //todo create serializable repos
-                Name = repository.PackageSource.Name,
-                Source = repository.PackageSource.Source,
-                OperationType = PackageOperationType.None
-            };
-        }
 
         public IRepository GetSourceAggregateRepository()
         {
@@ -124,7 +114,6 @@
         }
 
 
-
         public IRepository GetUpdateAggeregateRepository()
         {
             //todo
@@ -142,6 +131,17 @@
             var repository = _defaultExtensibleProjectProvider.GetDefaultProject().AsSourceRepository(_repositoryProvider);
 
             return CreateModelRepositoryFromSourceRepository(repository);
+        }
+
+        private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository repository)
+        {
+            return new Repository()
+            {
+                Id = 0, //todo create serializable repos
+                Name = repository.PackageSource.Name,
+                Source = repository.PackageSource.Source,
+                OperationType = PackageOperationType.None
+            };
         }
     }
 }

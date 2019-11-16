@@ -118,7 +118,7 @@
 
         public void RemovePackageSource(IPackageSource source)
         {
-            throw new NotImplementedException();
+            //todo implement packageSource removal
         }
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
@@ -194,7 +194,7 @@
 
                     return serializedFeed;
                 }
-                throw new InvalidCastException("Serialized model cannot be casted to type 'NuGetFeed'");
+                throw new InvalidCastException("Serialized object cannot be casted to type 'NuGetFeed'");
             }
         }
 

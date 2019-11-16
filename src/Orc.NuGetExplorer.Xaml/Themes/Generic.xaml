@@ -140,7 +140,6 @@
                             HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
 
-                            <!-- todo using template binding in margin? -->
                             <Grid Name="clickableContent">
                                 <ContentPresenter RecognizesAccessKey="True"
                                          Content="{TemplateBinding ContentControl.Content}"

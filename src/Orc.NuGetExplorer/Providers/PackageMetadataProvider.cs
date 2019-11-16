@@ -85,7 +85,6 @@
             return null;
         }
 
-        //todo last/lowest in parameter
         public async Task<IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken)
         {
             var sources = new List<SourceRepository>();
@@ -109,12 +108,12 @@
         }
 
 
-
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             if (!_sourceRepositories.Any())
             {
-                throw new InvalidOperationException("No repositories available");
+                Log.Warning("No repositories available");
+                return null;
             }
 
             var tasks = _sourceRepositories
@@ -285,7 +284,6 @@
             }
         }
 
-        //TODO
         //private async Task<IEnumerable<VersionInfo>> FetchAndMergeVersionsAsync(PackageIdentity identity, bool includePrerelease, CancellationToken token)
         //{
         //    var rp = _localRepository;

@@ -14,7 +14,7 @@
             {
                 if (feed is CombinedNuGetSource)
                 {
-                    throw new InvalidOperationException("NuGet Source with multiple feeds cannot contains сontains nested sources");
+                    throw new InvalidOperationException("Nested multiple source feeds are not allowed");
                 }
                 _sourceList.Add(feed);
             }

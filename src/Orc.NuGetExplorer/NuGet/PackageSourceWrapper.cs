@@ -11,7 +11,7 @@
         {
             if (wrapper.IsMultipleSource)
             {
-                throw new InvalidCastException("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' bacuse of wrapper contains multiple sources");
+                throw new InvalidCastException("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
             }
             return wrapper.PackageSources.FirstOrDefault();
         }

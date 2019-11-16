@@ -9,9 +9,9 @@
 
     <catel:UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOpposite" />
-        <converters:PackageImageConverter x:Key="ImageConverter" />
+        <!--<converters:PackageImageConverter x:Key="ImageConverter" />
         <converters:PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter x:Key="PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter" />
-        <converters:SelectablePackageDetailsViewModelToPackageDetailsConverter x:Key="SelectablePackageDetailsViewModelToPackageDetailsConverter" />
+        <converters:SelectablePackageDetailsViewModelToPackageDetailsConverter x:Key="SelectablePackageDetailsViewModelToPackageDetailsConverter" />-->
 
         <Style TargetType="ListBox"
                BasedOn="{StaticResource {x:Type ListBox}}">

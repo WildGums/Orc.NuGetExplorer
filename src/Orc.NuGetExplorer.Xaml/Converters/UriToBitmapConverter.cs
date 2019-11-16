@@ -26,9 +26,9 @@
 
         protected override object Convert(Uri value, Type targetType, object parameter)
         {
-            //get bitmap from stream cache
             try
             {
+                //get bitmap from stream cache
                 return IconCache.GetFromCache(value);
             }
             catch (Exception e)

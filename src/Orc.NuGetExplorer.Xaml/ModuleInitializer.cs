@@ -31,7 +31,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPagingService, PagingService>();
         serviceLocator.RegisterType<IRepositoryNavigatorService, RepositoryNavigatorService>();
         serviceLocator.RegisterType<ISearchSettingsService, SearchSettingsService>();
         serviceLocator.RegisterType<ISearchResultService, SearchResultService>();

@@ -217,7 +217,6 @@
 
         public void AddOrUpdate(string sectionName, SettingItem item)
         {
-            //todo add sections?
             Argument.IsNotNullOrWhitespace(() => sectionName);
 
             EnsureSectionExists(sectionName);

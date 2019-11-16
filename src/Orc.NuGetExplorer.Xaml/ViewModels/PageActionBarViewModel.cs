@@ -82,7 +82,8 @@
 
                         if (targetVersion == null)
                         {
-                            throw new InvalidOperationException("Target version for update cannot be null");
+                            Log.Warning("Cannot perform upgrade because of 'Target version' is null");
+                            return;
                         }
 
                         await _projectManager.UpdatePackageForProjectAsync(targetProjects.FirstOrDefault(), package.Identity.Id, targetVersion, cts.Token);

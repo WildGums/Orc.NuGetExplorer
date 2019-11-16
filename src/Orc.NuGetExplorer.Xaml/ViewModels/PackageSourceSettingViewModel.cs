@@ -30,7 +30,7 @@
         {
             Argument.IsNotNull(() => configuredFeeds);
 
-            SettingsFeeds = configuredFeeds;
+            SettingsFeeds = configuredFeeds ?? new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
         }
 
