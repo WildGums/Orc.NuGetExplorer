@@ -75,6 +75,8 @@
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
+            Log.Info($"Uninstall package {package}, Target framework: {targetFramework}");
+
             if (projectConfig == null)
             {
                 Log.Warning("Current project does not implement configuration for own packages");
@@ -142,6 +144,8 @@
             try
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+
+                Log.Info($"Installing package {package}, Target framework: {targetFramework}");
 
                 //todo check is this context needed
                 //var resContext = new NuGet.PackageManagement.ResolutionContext();
