@@ -38,6 +38,13 @@ namespace Orc.NuGetExplorer
                 resourceDictionary.Add($"AccentColorBrush{accent}", brush);
             }
 
+            //non-alpha accent color
+            var nonAlphaAccentColor3 = AccentColorHelper.ConvertToNonAlphaColor(Colors.White, ThemeColorStyle.AccentColor3);
+            var nonAlphaAccentColor3Brush = ThemeHelper.GetSolidColorBrush(nonAlphaAccentColor3);
+
+            resourceDictionary.Add("AccentColorRGB3", nonAlphaAccentColor3);
+            resourceDictionary.Add("AccentColorBrushRGB3", nonAlphaAccentColor3Brush);
+
             //borders
             for (int border = 6; border <= 11; border++)
             {
@@ -92,18 +99,18 @@ namespace Orc.NuGetExplorer
             AddAliaseResource("ForegroundSelectedInactive", "ForegroundAlternativeColor", "ForegroundAlternativeColorBrush");
             AddAliaseResource("ForegroundDisabled", "ForegroundColor", "ForegroundColorBrush");
 
-            void AddAliaseResource(string colorAlias, string resourceColorKey, string resourceBrushKey)
-            {
-                resourceDictionary.Add(colorAlias, resourceDictionary[resourceColorKey]);
-                resourceDictionary.Add($"{colorAlias}Brush", resourceDictionary[resourceBrushKey]);
-            }
-
             var application = Application.Current;
             var applicationResources = application.Resources;
             applicationResources.MergedDictionaries.Insert(0, resourceDictionary);
 
             AccentColorResourceDictionary = resourceDictionary;
             return applicationResources;
+
+            void AddAliaseResource(string colorAlias, string resourceColorKey, string resourceBrushKey)
+            {
+                resourceDictionary.Add(colorAlias, resourceDictionary[resourceColorKey]);
+                resourceDictionary.Add($"{colorAlias}Brush", resourceDictionary[resourceBrushKey]);
+            }
         }
 
         #endregion
