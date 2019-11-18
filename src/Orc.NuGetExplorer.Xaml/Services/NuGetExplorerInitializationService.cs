@@ -35,7 +35,6 @@
             var upgradeRunner = serviceLocator.RegisterTypeAndInstantiate<RunScenarioConfigurationVersionChecker>();
             var basicV3Scenario = typeFactory.CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
             upgradeRunner.AddUpgradeScenario(basicV3Scenario);
-            upgradeRunner.Check();
         }
     }
 }
