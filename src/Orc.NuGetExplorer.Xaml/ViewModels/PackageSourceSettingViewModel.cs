@@ -31,7 +31,7 @@
             Argument.IsNotNull(() => configuredFeeds);
 
             SettingsFeeds = configuredFeeds ?? new List<NuGetFeed>();
-            Feeds = new ObservableCollection<NuGetFeed>(SettingsFeeds);
+            Feeds.AddRange(SettingsFeeds);
         }
 
         public PackageSourceSettingViewModel(IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
@@ -55,6 +55,7 @@
             DefaultFeed = Constants.DefaultNugetOrgUri;
             DefaultSourceName = Constants.DefaultNugetOrgName;
 
+            SettingsFeeds = new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>();
         }
 
