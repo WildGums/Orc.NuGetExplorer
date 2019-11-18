@@ -11,10 +11,10 @@
              mc:Ignorable="d"
              x:ClassModifier="internal"
              d:DesignHeight="450" d:DesignWidth="1300">
-    <Grid>
+    <Grid Margin="0 0 10 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" MinHeight="24"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -24,9 +24,9 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="34"/>
-            <ColumnDefinition Width="34"/>
-            <ColumnDefinition Width="34"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- navigation panel-->
@@ -57,7 +57,7 @@
                    Grid.Column="5" Grid.ColumnSpan="5"
                    HorizontalAlignment="Right"
                    FontSize="16"
-                   Margin="0 0 10 10"/>
+                   Margin="0 0 0 10"/>
 
         <!-- tool bar -->
 
@@ -85,7 +85,7 @@
         
         <Button Grid.Row="1" Grid.Column="1"
                 Command="{catel:CommandManagerBinding RefreshCurrentPage}"
-                Height="24" Width="24"
+                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 Margin="3 0 3 0">
             <Viewbox>
                 <Canvas Width="24" Height="24">
@@ -109,7 +109,8 @@
 
         <TextBlock Grid.Row="1" Grid.Column="5"
                    VerticalAlignment="Center"
-                   Margin="4 0 3 0">
+                   HorizontalAlignment="Right"
+                   Margin="4 0 4 0">
             Package source:
         </TextBlock>
 
@@ -119,7 +120,8 @@
                   Grid.ColumnSpan="2"
                   Width="120"
                   ItemsSource="{Binding ActiveFeeds}"
-                  Margin="3 0 3 0"
+                  Margin="3 0 0 0"
+                  HorizontalAlignment="Right"
                   IsSynchronizedWithCurrentItem="True"
                   SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"
                   DisplayMemberPath="Name">
@@ -143,10 +145,11 @@
                 </Canvas>
             </Viewbox>
         </Button>-->
+        
         <Button Grid.Row="1" Grid.Column="8"
                 Command="{Binding ShowPackageSourceSettings}"
-                Margin="0 0 3 0"
-                Height="24" Width="24"
+                HorizontalAlignment="Right"
+                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 ToolTip="Show package source settings">
             <Viewbox>
                 <Canvas Width="24" Height="24">
@@ -154,11 +157,12 @@
                 </Canvas>
             </Viewbox>
         </Button>
+        
         <Button Grid.Row="1" Grid.Column="9"
                 Command="{Binding RunNuGetCachesClearing}"
-                ToolTip="Clear NuGet caches"
-                Margin="0 0 10 0"
-                Height="24" Width="24">
+                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                HorizontalAlignment="Right"
+                ToolTip="Clear NuGet caches">
             <Viewbox>
                 <Canvas Width="24" Height="24">
                     <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
