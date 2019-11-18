@@ -69,7 +69,7 @@
         /// <summary>
         /// All feeds currently loaded in settings model
         /// </summary>
-        public List<NuGetFeed> SettingsFeeds { get; set; }
+        public List<NuGetFeed> SettingsFeeds { get; private set; }
 
         #region ViewToViewModel
 
