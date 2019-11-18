@@ -122,11 +122,6 @@ namespace Orc.NuGetExplorer.Converters
         protected override object Convert(System.Nullable<bool> value, System.Type targetType, object parameter) { }
         protected override object ConvertBack(object value, System.Type targetType, object parameter) { }
     }
-    public class PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter : Catel.MVVM.Converters.ValueConverterBase<System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails>, System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>>
-    {
-        public PackageDetailsCollectionToSelectablePackageDetailsViewModelCollectionConverter() { }
-        protected override object Convert(System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails> value, System.Type targetType, object parameter) { }
-    }
     public class PackageStatusEnumToBoolConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.Enums.PackageStatus, bool>
     {
         public PackageStatusEnumToBoolConverter() { }
@@ -136,12 +131,6 @@ namespace Orc.NuGetExplorer.Converters
     {
         public PackageStatusEnumToBrushConverter() { }
         protected override object Convert(Orc.NuGetExplorer.Enums.PackageStatus value, System.Type targetType, object parameter) { }
-    }
-    public class SelectablePackageDetailsViewModelToPackageDetailsConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.IPackageDetails, Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel>
-    {
-        public SelectablePackageDetailsViewModelToPackageDetailsConverter() { }
-        protected override object Convert(Orc.NuGetExplorer.IPackageDetails value, System.Type targetType, object parameter) { }
-        protected override object ConvertBack(Orc.NuGetExplorer.ViewModels.SelectablePackageDetailsViewModel value, System.Type targetType, object parameter) { }
     }
     public class UriToBitmapConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, System.Windows.Media.Imaging.BitmapImage>
     {
