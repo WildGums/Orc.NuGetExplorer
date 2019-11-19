@@ -65,7 +65,7 @@
                 {
                     return collidedGuid;
                 }
-                
+
                 throw new InvalidOperationException("No collisions stored for this identifier");
             }
         }

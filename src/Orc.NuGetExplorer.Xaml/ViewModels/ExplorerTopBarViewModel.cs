@@ -13,7 +13,6 @@
     using Catel.Services;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Models;
-    using NuGetExplorer.Services;
 
     internal class ExplorerTopBarViewModel : ViewModelBase
     {
@@ -33,7 +32,7 @@
 
         //private readonly INotificationService _notificationService;
 
-        public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService  configurationService,
+        public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
             INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
             Argument.IsNotNull(() => typeFactory);

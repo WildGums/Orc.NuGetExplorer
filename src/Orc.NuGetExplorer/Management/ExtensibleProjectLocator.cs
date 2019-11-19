@@ -4,10 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
-    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
-    using NuGetExplorer.Services;
     using Orc.NuGetExplorer.Configuration;
 
     internal class ExtensibleProjectLocator : IExtensibleProjectLocator

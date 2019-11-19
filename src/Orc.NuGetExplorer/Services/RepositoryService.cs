@@ -3,11 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
-    using Catel.Configuration;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Services;
 
     internal class RepositoryService : IRepositoryService
     {

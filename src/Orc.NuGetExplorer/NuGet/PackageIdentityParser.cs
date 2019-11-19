@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Text.RegularExpressions;
     using Catel.Logging;
     using NuGet.Packaging.Core;

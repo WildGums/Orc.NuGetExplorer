@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.Configuration;
 
     public interface INuGetConfigurationService
     {

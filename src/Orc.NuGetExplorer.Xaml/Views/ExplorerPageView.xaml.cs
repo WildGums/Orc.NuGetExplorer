@@ -3,7 +3,6 @@
     using System.Windows;
     using System.Windows.Controls;
     using Catel.MVVM.Views;
-    using Catel.Windows.Controls;
     using Models;
     using Orc.NuGetExplorer.Controls.Helpers;
 
@@ -51,7 +50,7 @@
             //fix loading indicator part size
             _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
 
-            if(_infinityboxScrollViewer == null)
+            if (_infinityboxScrollViewer == null)
             {
                 return;
             }

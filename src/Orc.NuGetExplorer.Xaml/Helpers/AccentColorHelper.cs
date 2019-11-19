@@ -46,7 +46,7 @@ namespace Orc.NuGetExplorer
         {
             var accentColor = ThemeHelper.GetThemeColor(themeColor);
 
-            var alphaNormalized = (double)accentColor.A/(double)255;
+            var alphaNormalized = accentColor.A / (double)255;
 
             //calculate rgb from argb with same color
             var newColorR = (byte)(accentColor.R * alphaNormalized + backgroundColor.R * (1 - alphaNormalized));

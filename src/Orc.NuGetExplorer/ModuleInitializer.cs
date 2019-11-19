@@ -1,5 +1,4 @@
-﻿using Catel.Configuration;
-using Catel.IoC;
+﻿using Catel.IoC;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
