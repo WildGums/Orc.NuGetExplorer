@@ -53,7 +53,8 @@
             Installed:
         </Label>
 
-        <TextBox Grid.Row="2" Grid.Column="1"
+        <TextBox Name="InstalledVersionTextBox"
+                 Grid.Row="2" Grid.Column="1"
                  Margin="3 0 3 2"
                  IsReadOnly="True"
                  Text="{Binding InstalledVersion, Converter={converters:NuGetVersionToStringConverter}}"/>
@@ -72,6 +73,7 @@
         <ComboBox Grid.Row="3" Grid.Column="1"
                   Margin="3 0 3 2"
                   IsReadOnly="True"
+                  Width="{Binding ElementName=InstalledVersionTextBox, Path=ActualWidth}"
                   SelectedValue="{Binding SelectedVersion}"
                   ItemsSource="{Binding VersionsCollection}">
             <i:Interaction.Behaviors>

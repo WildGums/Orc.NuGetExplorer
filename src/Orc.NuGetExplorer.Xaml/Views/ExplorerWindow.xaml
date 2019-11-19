@@ -142,8 +142,7 @@
                               EnableIcons="True"
                               EnableTimestamp="False"
                               AutoScroll="True"
-                              ShowDebug="False"
-                              Margin="10 0 0 0">
+                              ShowDebug="False">
         </orc:LogViewerControl>
 
     </Grid>

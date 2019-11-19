@@ -14,7 +14,7 @@
     <Grid Margin="0 0 10 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" MinHeight="24"/>
+            <RowDefinition Height="Auto" MinHeight="27"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -85,7 +85,7 @@
         
         <Button Grid.Row="1" Grid.Column="1"
                 Command="{catel:CommandManagerBinding RefreshCurrentPage}"
-                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 Margin="3 0 3 0">
             <Viewbox>
                 <Canvas Width="24" Height="24">
@@ -149,7 +149,7 @@
         <Button Grid.Row="1" Grid.Column="8"
                 Command="{Binding ShowPackageSourceSettings}"
                 HorizontalAlignment="Right"
-                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 ToolTip="Show package source settings">
             <Viewbox>
                 <Canvas Width="24" Height="24">
@@ -160,7 +160,7 @@
         
         <Button Grid.Row="1" Grid.Column="9"
                 Command="{Binding RunNuGetCachesClearing}"
-                Height="Auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 HorizontalAlignment="Right"
                 ToolTip="Clear NuGet caches">
             <Viewbox>
