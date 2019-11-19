@@ -496,7 +496,7 @@
 
                 Invalidated = false;
 
-                Log.Info($"Page {Title} updates with {packages.Count()} packages returned by query '{Settings.SearchString} from {PageInfo.Source}'");
+                Log.Info($"Page '{Title}' updated with {packages.Count()} packages returned by query from {PageInfo.Source}'");
             }
             finally
             {

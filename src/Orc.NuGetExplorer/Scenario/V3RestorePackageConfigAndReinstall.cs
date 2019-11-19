@@ -15,6 +15,8 @@
 
     public class V3RestorePackageConfigAndReinstall : IUpgradeScenario
     {
+        private const string Name = "Upgrade packages to compatible versions";
+
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IExtensibleProject _defaultProject;
@@ -90,6 +92,12 @@
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            //scenario name
+            return Name;
         }
     }
 }

@@ -26,7 +26,7 @@
         {
             await base.CheckAsync();
 
-            Log.Info("Current configuration version does not match for NuGetExplorer version");
+            Log.Info("Current configuration version does not match for configuration version");
             Log.Info("Check is current configuration version older..");
 
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -35,12 +35,13 @@
             {
                 foreach (var scenario in _runOnCheckList)
                 {
-                    Log.Info($"Run {scenario.GetType().Name}");
+                    Log.Info($"Run {scenario}..");
                     await scenario.Run();
-
-                    //update config version
-                    _settings.UpdateVersion();
+                    Log.Info($"Completed");
                 }
+
+                //update config version
+                _settings.UpdateVersion();
 
                 RaiseUpdated(new EventArgs());
             }

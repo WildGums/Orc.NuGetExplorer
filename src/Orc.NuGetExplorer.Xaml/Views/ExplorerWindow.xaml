@@ -75,16 +75,17 @@
         </behaviors:AnimatedOverlayBehavior>
     </i:Interaction.Behaviors>
 
-    <Grid Width="840" Margin="0 0 0 30" Name="TopGrid">
+    <Grid Width="840" Margin="0 0 0 30" Name="TopGrid"
+          Height="720">
 
         <Grid.Resources>
             <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="6*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -98,7 +99,7 @@
 
         <orc:TabControl Name="ExplorerPagesTabControl"
                         Grid.Column="0" Grid.Row="1"
-                        Height="570"
+                        MinHeight="230"
                         Margin="10 0 0 0"
                         LoadTabItems="LazyLoading"
                         ItemsSource="{Binding ExplorerPages}">
@@ -131,13 +132,17 @@
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Bottom"
+                      ResizeBehavior="PreviousAndNext"
                       ResizeDirection="Rows"
                       Margin="10 0 0 0"
-                      Height="8"/>
+                      Height="10"/>
 
         <orc:LogViewerControl Grid.Row="3" Grid.ColumnSpan="2"
                               EnableTextColoring="True"
                               EnableIcons="True"
+                              EnableTimestamp="False"
+                              AutoScroll="True"
+                              ShowDebug="False"
                               Margin="10 0 0 0">
         </orc:LogViewerControl>
 

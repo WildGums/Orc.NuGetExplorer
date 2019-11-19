@@ -262,7 +262,7 @@
 
         private async void OnPackageChanged()
         {
-            Log.Info("Package changed");
+            Log.Debug("Package changed");
 
             if (Package is null)
             {
