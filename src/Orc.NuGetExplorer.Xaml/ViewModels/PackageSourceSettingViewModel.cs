@@ -19,7 +19,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly NugetConfigurationService _configurationService;
+        private readonly NuGetConfigurationService _configurationService;
 
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
@@ -41,7 +41,7 @@
             Argument.IsNotNull(() => modelProvider);
             Argument.IsNotNull(() => feedVerificationService);
 
-            _configurationService = configurationService as NugetConfigurationService;
+            _configurationService = configurationService as NuGetConfigurationService;
             _feedVerificationService = feedVerificationService;
             _modelProvider = modelProvider;
 

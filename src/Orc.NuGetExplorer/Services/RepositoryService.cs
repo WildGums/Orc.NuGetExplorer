@@ -43,6 +43,7 @@
         public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
         {
             //todo get repositories based on packageOperationType
+            //currenly returns all available repositories
             //create package metadata provider from context
             using (var context = _repositoryContextService.AcquireContext())
             {
@@ -83,34 +84,7 @@
 
         public IEnumerable<IRepository> GetSourceRepositories()
         {
-            NuGetFeed temp = null;
-
-            var feedList = new List<NuGetFeed>();
-
-            //todo temp cast
-            var configurationService = _nuGetConfigurationService as NugetConfigurationService;
-
-            var keyCollection = configurationService.GetAllKeys(ConfigurationContainer.Roaming);
-
-            for (int i = 0; i < keyCollection.Count; i++)
-            {
-                temp = configurationService.GetRoamingValue(keyCollection[i]);
-
-                if (temp != null)
-                {
-                    feedList.Add(temp);
-                }
-            }
-
-            var repositories = feedList.Select(feed => new Repository()
-            {
-                Id = 0,
-                OperationType = PackageOperationType.None,
-                Name = feed.Name,
-                Source = feed.Source
-            });
-
-            return repositories;
+            return GetRepositories(PackageOperationType.None);
         }
 
 
@@ -122,8 +96,7 @@
 
         public IEnumerable<IRepository> GetUpdateRepositories()
         {
-            //todo
-            return null;
+            return GetRepositories(PackageOperationType.Update);
         }
 
         private IRepository GetMainProjectRepository()

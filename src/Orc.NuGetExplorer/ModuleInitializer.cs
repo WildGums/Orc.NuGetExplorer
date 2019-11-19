@@ -42,12 +42,11 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<INuGetProjectConfigurationProvider, PackagesConfigProvider>();
 
-        serviceLocator.RegisterType<IConfigurationService, NugetConfigurationService>();
         serviceLocator.RegisterType<ISettings, NuGetSettings>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
 
         // Services
-        serviceLocator.RegisterType<INuGetConfigurationService, NugetConfigurationService>();
+        serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
 
         //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();

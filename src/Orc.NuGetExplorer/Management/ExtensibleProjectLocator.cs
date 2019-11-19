@@ -8,6 +8,7 @@
     using Catel.IoC;
     using Catel.Logging;
     using NuGetExplorer.Services;
+    using Orc.NuGetExplorer.Configuration;
 
     internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
@@ -15,21 +16,19 @@
 
         private readonly ITypeFactory _typeFactory;
 
-        private readonly NugetConfigurationService _managerConfigurationService;
+        private readonly INuGetConfigurationService _managerConfigurationService;
 
         private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new Dictionary<Type, IExtensibleProject>();
 
         private readonly HashSet<IExtensibleProject> _enabledProjects = new HashSet<IExtensibleProject>();
 
-        public ExtensibleProjectLocator(ITypeFactory typeFactory, IConfigurationService configurationService)
+        public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => configurationService);
 
             _typeFactory = typeFactory;
-            _managerConfigurationService = configurationService as NugetConfigurationService;
-
-            Argument.IsNotNull(() => _managerConfigurationService);
+            _managerConfigurationService = configurationService;
         }
 
         public bool IsConfigLoaded { get; private set; }
@@ -98,18 +97,14 @@
 
         public void PersistChanges()
         {
-            _managerConfigurationService.SetRoamingValueWithDefaultIdGenerator(
-                _enabledProjects.Select(x =>
-                    x.GetType().FullName)
-                .ToList()
-                );
+            _managerConfigurationService.SaveProjects(_enabledProjects);
         }
 
         public void RestoreStateFromConfig()
         {
             try
             {
-                var restored = _managerConfigurationService.GetRoamingValue(Configuration.ConfigurationSections.ProjectExtensions) as List<string>;
+                var restored = _managerConfigurationService.GetSectionValues(ConfigurationSection.ProjectExtensions) as List<string>;
 
                 foreach (var type in _registredProjects.Keys.Where(x => restored.Any(s => s == x.FullName)))
                 {

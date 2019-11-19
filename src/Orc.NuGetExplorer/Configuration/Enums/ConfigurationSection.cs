@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Configuration
 {
     // Note: do not use plural name if this is not a collection property
-    public enum ConfigurationSections
+    public enum ConfigurationSection
     {
         Feeds = 0,
         ProjectExtensions = 1

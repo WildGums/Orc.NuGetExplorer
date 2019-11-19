@@ -17,9 +17,9 @@
     using NuGetExplorer.Configuration;
     using NuGetExplorer.Models;
     using Configuration = NuGet.Configuration;
-    using Settings = Orc.NuGetExplorer.Settings;
+    using Settings = Settings;
 
-    public class NugetConfigurationService : ConfigurationService, INuGetConfigurationService
+    public class NuGetConfigurationService : ConfigurationService, INuGetConfigurationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -34,14 +34,14 @@
                 }
             );
 
-        private readonly Dictionary<ConfigurationSections, string> _masterKeys = new Dictionary<ConfigurationSections, string>()
+        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new Dictionary<ConfigurationSection, string>()
         {
-            { ConfigurationSections.Feeds, $"NuGet_{ConfigurationSections.Feeds}" },
-            { ConfigurationSections.ProjectExtensions, $"NuGet_{ConfigurationSections.ProjectExtensions}" }
+            { ConfigurationSection.Feeds, $"NuGet_{ConfigurationSection.Feeds}" },
+            { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
         };
 
 
-        public NugetConfigurationService(ISerializationManager serializationManager,
+        public NuGetConfigurationService(ISerializationManager serializationManager,
             IObjectConverterService objectConverterService, IXmlSerializer serializer) : base(serializationManager, objectConverterService, serializer)
         {
             _configSerializer = serializer;
@@ -66,9 +66,6 @@
 
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
         {
-            //todo implement packageSourceProvider
-            //var packageSources = PackageSourceProvider.LoadPackageSources();
-
             var packageSources = _packageSourceProvider.Value.LoadPackageSources();
 
             if (onlyEnabled)
@@ -198,7 +195,7 @@
             }
         }
 
-        public object GetRoamingValue(ConfigurationSections section)
+        public object GetRoamingValue(ConfigurationSection section)
         {
             var masterKey = _masterKeys[section];
 
@@ -214,7 +211,7 @@
 
         public IReadOnlyList<Guid> GetAllKeys(ConfigurationContainer container)
         {
-            var feedKeys = GetValueFromStore(container, _masterKeys[ConfigurationSections.Feeds]);
+            var feedKeys = GetValueFromStore(container, _masterKeys[ConfigurationSection.Feeds]);
 
             var keyList = feedKeys.Split(new string[] { Constants.ConfigKeySeparator }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -233,7 +230,7 @@
 
                 if (shouldBeUpdated)
                 {
-                    UpdateSectionKeyList(container, ConfigurationSections.Feeds, key);
+                    UpdateSectionKeyList(container, ConfigurationSection.Feeds, key);
                 }
             }
         }
@@ -255,7 +252,7 @@
 
         public void SetRoamingValueWithDefaultIdGenerator(List<string> extensibleProject)
         {
-            SetValueInSection(ConfigurationContainer.Roaming, ConfigurationSections.ProjectExtensions, extensibleProject);
+            SetValueInSection(ConfigurationContainer.Roaming, ConfigurationSection.ProjectExtensions, extensibleProject);
         }
 
         public void RemoveValues(ConfigurationContainer container, IReadOnlyList<NuGetFeed> feedList)
@@ -272,10 +269,24 @@
                     {
                         SetValue(container, KeyToString(guid), String.Empty);
 
-                        UpdateSectionKeyList(container, ConfigurationSections.Feeds, KeyToString(guid), true);
+                        UpdateSectionKeyList(container, ConfigurationSection.Feeds, KeyToString(guid), true);
                     }
                 }
             }
+        }
+
+        public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
+        {
+            SetRoamingValueWithDefaultIdGenerator(
+                    extensibleProjects.Select(x =>
+                        x.GetType().FullName)
+                    .ToList()
+               );
+        }
+
+        public object GetSectionValues(ConfigurationSection section)
+        {
+            return GetRoamingValue(section);
         }
 
         protected string KeyToString(Guid guid)
@@ -320,7 +331,7 @@
             }
         }
 
-        private void SetValueInSection(ConfigurationContainer container, ConfigurationSections section, object value)
+        private void SetValueInSection(ConfigurationContainer container, ConfigurationSection section, object value)
         {
             using (var memStream = new MemoryStream())
             {
@@ -330,7 +341,7 @@
             }
         }
 
-        private void UpdateSectionKeyList(ConfigurationContainer container, ConfigurationSections confSection, string key, bool isRemove = false)
+        private void UpdateSectionKeyList(ConfigurationContainer container, ConfigurationSection confSection, string key, bool isRemove = false)
         {
             var keyList = GetValueFromStore(container, _masterKeys[confSection]);
             string updatedKeys = String.Empty;
@@ -339,13 +350,11 @@
             {
                 var persistedKeys = keyList.Split(new string[] { Constants.ConfigKeySeparator }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                //updatedKeys = String.Join(KeySeparator, persistedKeys.Except(keys));
                 persistedKeys.Remove(key);
                 updatedKeys = String.Join(Constants.ConfigKeySeparator, persistedKeys);
             }
             else
             {
-                //updatedKeys = String.Join(keyList, keys);
                 updatedKeys = String.Join(Constants.ConfigKeySeparator, key, keyList);
             }
 

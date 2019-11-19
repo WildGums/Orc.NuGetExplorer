@@ -187,6 +187,13 @@
 
             using (var sourceCacheContext = new SourceCacheContext())
             {
+                //todo
+                //check this httpCache created inside GetMetadataAsync()
+                //but it appeared, Root folder value didn't use, when retry count is 0
+                //Then temporary folder for package never created and SourceCacheContext dispoe caused
+                //DirectoryNotFoundException
+                //var httpCache = HttpSourceCacheContext.Create(sourceCacheContext, 0);
+
                 // Update http source cache context MaxAge so that it can always go online to fetch
                 // latest versions of the package.
                 sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;

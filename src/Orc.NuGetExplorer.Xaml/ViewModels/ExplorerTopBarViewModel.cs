@@ -29,11 +29,11 @@
 
         private readonly IMessageService _messageService;
 
-        private readonly NugetConfigurationService _configurationService;
+        private readonly INuGetConfigurationService _configurationService;
 
         //private readonly INotificationService _notificationService;
 
-        public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, IConfigurationService configurationService,
+        public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService  configurationService,
             INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
             Argument.IsNotNull(() => typeFactory);
@@ -46,7 +46,7 @@
 
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;
-            _configurationService = configurationService as NugetConfigurationService;
+            _configurationService = configurationService;
             _nuGetCacheManager = nuGetCacheManager;
             _pleaseWaitService = pleaseWaitService;
             _messageService = messageService;
@@ -82,7 +82,7 @@
 
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
-            var lastSelectedSourceName = _configurationService.GetLastRepository("Browse");
+            var lastSelectedSourceName = (_configurationService as IConfigurationService)?.GetLastRepository("Browse") ?? String.Empty;
 
             //"all" feed
             DefaultFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, Constants.CombinedSourceName));
