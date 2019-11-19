@@ -48,7 +48,6 @@
             RemovedFeeds = new List<NuGetFeed>();
 
             CommandInitialize();
-            Title = "Settings";
 
             DeferValidationUntilFirstSaveCall = true;
 
@@ -69,7 +68,7 @@
         /// <summary>
         /// All feeds currently loaded in settings model
         /// </summary>
-        public List<NuGetFeed> SettingsFeeds { get; set; }
+        public List<NuGetFeed> SettingsFeeds { get; private set; }
 
         #region ViewToViewModel
 
@@ -124,8 +123,10 @@
 
         protected override async Task InitializeAsync()
         {
+            Title = "Settings";
+
             _modelProvider.PropertyChanged += OnModelProviderPropertyChanged;
-            Feeds.CollectionChanged += OnFeedsCollectioChanged;
+            Feeds.CollectionChanged += OnFeedsCollectionChanged;
 
             Feeds.ForEach(async x => await VerifyFeedAsync(x));
         }
@@ -147,19 +148,21 @@
         protected override Task CloseAsync()
         {
             _modelProvider.PropertyChanged -= OnModelProviderPropertyChanged;
+            Feeds.CollectionChanged -= OnFeedsCollectionChanged;
+
             return base.CloseAsync();
         }
 
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
         {
-            if (SelectedFeed != null && IsNamesNotUniqueRule(out var names))
+            if (SelectedFeed is null || !IsNamesNotUniqueRule(out var names))
             {
-                foreach (var name in names)
-                {
-                    validationResults.Add(BusinessRuleValidationResult.CreateError($"Two or more feeds have same name '{name}'"));
-                }
+                return;
             }
+
+            var results = names.Select(name => BusinessRuleValidationResult.CreateError($"Two or more feeds have same name '{name}'")).Cast<IBusinessRuleValidationResult>();
+            validationResults.AddRange(results);
         }
 
         private void SaveFeeds()
@@ -175,13 +178,13 @@
         {
             var names = new List<string>();
 
-            var groups = Feeds.GroupBy(x => x.Name).Where(g => g.Count() > 1);
+            var groups = Feeds.GroupBy(x => x.Name).Where(g => g.Count() > 1).ToList();
 
             groups.ForEach(g => names.Add(g.Key));
 
             invalidNames = names;
 
-            return groups.Count() > 0;
+            return groups.Any();
         }
 
         private async Task VerifyFeedAsync(NuGetFeed feed)
@@ -230,21 +233,25 @@
         }
 
 
-        private async void OnFeedsCollectioChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //verify all new feeds in collection
             //because of feed edit is simple re-insertion we should'nt handle property change inside model
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+            if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
             {
-                if (e.NewItems != null)
+                return;
+            }
+
+            if (e.NewItems is null)
+            {
+                return;
+            }
+
+            foreach (NuGetFeed item in e.NewItems)
+            {
+                if (!item.IsLocal() && item.VerificationResult == FeedVerificationResult.Unknown)
                 {
-                    foreach (NuGetFeed item in e.NewItems)
-                    {
-                        if (!item.IsLocal() && item.VerificationResult == FeedVerificationResult.Unknown)
-                        {
-                            await VerifyFeedAsync(item);
-                        }
-                    }
+                    await VerifyFeedAsync(item);
                 }
             }
         }
