@@ -86,7 +86,7 @@
 
                 if (failedIdentities.Any())
                 {
-                    await _logger.LogAsync(LogLevel.Information, $"Some packages failed to install correclty:");
+                    await _logger.LogAsync(LogLevel.Information, $"failed to install some packages:");
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
             }

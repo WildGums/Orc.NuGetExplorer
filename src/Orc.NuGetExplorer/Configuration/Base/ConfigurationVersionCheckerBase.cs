@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Configuration
 {
     using System;
+    using System.Threading.Tasks;
     using Catel;
     using NuGet.Configuration;
 
@@ -20,7 +21,7 @@
         public event EventHandler Updating;
         public event EventHandler Updated;
 
-        public virtual void Check()
+        public async virtual Task CheckAsync()
         {
             if (_settings.IsLastVersion)
             {

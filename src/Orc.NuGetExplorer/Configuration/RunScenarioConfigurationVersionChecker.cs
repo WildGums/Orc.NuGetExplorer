@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Catel.Logging;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Scenario;
@@ -21,9 +22,9 @@
             _settings.SettingsRead += OnCheckedSettingsReaded;
         }
 
-        public override void Check()
+        public async override Task CheckAsync()
         {
-            base.Check();
+            await base.CheckAsync();
 
             Log.Info("Current configuration version does not match for NuGetExplorer version");
             Log.Info("Check is current configuration version older..");
@@ -35,7 +36,7 @@
                 foreach (var scenario in _runOnCheckList)
                 {
                     Log.Info($"Run {scenario.GetType().Name}");
-                    scenario.Run();
+                    await scenario.Run();
 
                     //update config version
                     _settings.UpdateVersion();
@@ -61,12 +62,12 @@
             _runOnCheckList.Add(scenario);
         }
 
-        private void OnCheckedSettingsReaded(object sender, EventArgs e)
+        private async void OnCheckedSettingsReaded(object sender, EventArgs e)
         {
             //fire this handler only once
             _settings.SettingsRead -= OnCheckedSettingsReaded;
 
-            Check();
+            await CheckAsync();
         }
     }
 }
