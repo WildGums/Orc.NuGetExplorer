@@ -36,6 +36,8 @@
             Settings = settingsProvider.Model;
 
             Title = "Explorer";
+
+            IsLogAutoScroll = true;
         }
 
         protected override Task InitializeAsync()
@@ -53,6 +55,8 @@
         public NuGetPackage SelectedPackageItem { get; set; }
 
         public ObservableCollection<ExplorerPageViewModel> ExplorerPages { get; set; }
+
+        public bool IsLogAutoScroll { get; set; }
 
         private void CreatePages()
         {
