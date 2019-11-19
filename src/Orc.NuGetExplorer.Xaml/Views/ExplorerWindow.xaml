@@ -81,8 +81,10 @@
             <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="6*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -96,7 +98,7 @@
 
         <orc:TabControl Name="ExplorerPagesTabControl"
                         Grid.Column="0" Grid.Row="1"
-                        MinHeight="800"
+                        Height="570"
                         Margin="10 0 0 0"
                         LoadTabItems="LazyLoading"
                         ItemsSource="{Binding ExplorerPages}">
@@ -125,6 +127,19 @@
                                   Visibility="{Binding Path=SelectedPackageItem, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"
                                   Grid.Row="1" Grid.Column="1"
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
+
+        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Bottom"
+                      ResizeDirection="Rows"
+                      Margin="10 0 0 0"
+                      Height="8"/>
+
+        <orc:LogViewerControl Grid.Row="3" Grid.ColumnSpan="2"
+                              EnableTextColoring="True"
+                              EnableIcons="True"
+                              Margin="10 0 0 0">
+        </orc:LogViewerControl>
 
     </Grid>
 </catel:DataWindow>
