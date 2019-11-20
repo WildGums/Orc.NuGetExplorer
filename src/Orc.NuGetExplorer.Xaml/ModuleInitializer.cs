@@ -2,6 +2,7 @@
 using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.Logging;
 using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
@@ -46,6 +47,8 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
 
         serviceLocator.RegisterType<INuGetExplorerInitializationService, NuGetExplorerInitializationService>();
+
+        serviceLocator.RegisterType<NuGetLogListener>();
 
         var vmLocator = serviceLocator.ResolveType<IViewModelLocator>();
 

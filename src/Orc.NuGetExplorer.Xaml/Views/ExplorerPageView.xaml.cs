@@ -1,5 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
+    using System;
+    using System.ComponentModel;
     using System.Windows;
     using System.Windows.Controls;
     using Catel.MVVM.Views;
@@ -19,6 +21,7 @@
         private readonly FrameworkElement _arrowDownResource;
 
         private ScrollViewer _infinityboxScrollViewer;
+        private bool _isViewportWidthListened = false;
 
         static ExplorerPageView()
         {
@@ -32,6 +35,8 @@
 
             _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;
             _arrowDownResource = FindResource(ArrowDownResourceKey) as FrameworkElement;
+
+           
         }
 
         [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
@@ -46,7 +51,6 @@
 
         private void Border_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-
             //fix loading indicator part size
             _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
 
@@ -54,12 +58,48 @@
             {
                 return;
             }
-
-            if (indicatorScreen.Visibility == Visibility.Visible)
+ 
+            if(!_isViewportWidthListened)
             {
-                //try to resize indicator border to viewport width
-                indicatorScreen.SetCurrentValue(WidthProperty, _infinityboxScrollViewer.ViewportWidth + IndicatorOffset);
+                SubscribeToScrollViewerPropertyChanges();
             }
+        }
+
+        private void SubscribeToScrollViewerPropertyChanges()
+        {
+            //listen ViewportWidth
+            if (_isViewportWidthListened)
+            {
+                return;
+            }
+
+            DependencyPropertyDescriptor
+                .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
+                .AddValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
+
+            //recount manually
+            OnInfinityScrollViewPortChanged(this, EventArgs.Empty);
+
+            _isViewportWidthListened = true;
+        }
+        
+
+        private void OnInfinityScrollViewPortChanged(object sender, EventArgs e)
+        {
+            indicatorScreen.SetCurrentValue(WidthProperty, _infinityboxScrollViewer.ViewportWidth + IndicatorOffset);
+        }
+
+        private void UnsubscribeFromScrollViewerProperyChanged()
+        {
+            DependencyPropertyDescriptor
+               .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
+               .RemoveValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
+            _isViewportWidthListened = false;
+        }
+
+        protected override void OnUnloaded(EventArgs e)
+        {
+            UnsubscribeFromScrollViewerProperyChanged();
         }
     }
 }

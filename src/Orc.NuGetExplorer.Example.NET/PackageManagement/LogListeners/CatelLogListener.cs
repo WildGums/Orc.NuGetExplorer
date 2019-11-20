@@ -64,7 +64,7 @@
 
         public void Write(ILog log, string message, LogEvent logEvent, object extraData, LogData logData, DateTime time)
         {
-            //
+
         }
 
         private void Echo(ILog log, string message)

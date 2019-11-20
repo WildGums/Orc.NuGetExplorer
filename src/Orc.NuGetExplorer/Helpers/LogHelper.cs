@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Loggers
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;

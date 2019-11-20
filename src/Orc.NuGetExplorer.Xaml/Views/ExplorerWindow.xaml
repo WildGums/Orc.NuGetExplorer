@@ -8,6 +8,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:orc ="http://schemas.wildgums.com/orc/controls"
         xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
+        xmlns:log="clr-namespace:Orc.NuGetExplorer.Logging"
         mc:Ignorable="d"
         x:ClassModifier="internal"
         xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
@@ -142,6 +143,7 @@
                               EnableIcons="True"
                               EnableTimestamp="False"
                               AutoScroll="True"
+                              LogListenerType="{x:Type log:NuGetLogListener}"
                               ShowDebug="False">
         </orc:LogViewerControl>
 
