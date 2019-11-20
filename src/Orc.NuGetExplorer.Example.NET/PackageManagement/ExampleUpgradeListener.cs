@@ -18,12 +18,12 @@
 
         protected override void OnUpdated(object sender, EventArgs e)
         {
-            _messageService.ShowAsync("Updating NuGet data");
+            _messageService.ShowAsync("NuGet data updated");
         }
 
         protected override void OnUpdating(object sender, EventArgs e)
         {
-            _messageService.ShowAsync("NuGet data updated");
+            _messageService.ShowAsync("Updating NuGet data");
         }
     }
 }

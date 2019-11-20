@@ -19,13 +19,13 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly NuGetConfigurationService _configurationService;
+        private readonly INuGetConfigurationService _configurationService;
 
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
         private readonly IModelProvider<NuGetFeed> _modelProvider;
 
-        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             IModelProvider<NuGetFeed> modelProvider) : this(configurationService, feedVerificationService, modelProvider)
         {
             Argument.IsNotNull(() => configuredFeeds);
@@ -34,14 +34,14 @@
             Feeds.AddRange(SettingsFeeds);
         }
 
-        public PackageSourceSettingViewModel(IConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             IModelProvider<NuGetFeed> modelProvider)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => modelProvider);
             Argument.IsNotNull(() => feedVerificationService);
 
-            _configurationService = configurationService as NuGetConfigurationService;
+            _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
             _modelProvider = modelProvider;
 
