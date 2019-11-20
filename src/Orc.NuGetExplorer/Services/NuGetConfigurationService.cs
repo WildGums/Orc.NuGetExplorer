@@ -42,7 +42,8 @@
 
 
         public NuGetConfigurationService(ISerializationManager serializationManager,
-            IObjectConverterService objectConverterService, IXmlSerializer serializer) : base(serializationManager, objectConverterService, serializer)
+            IObjectConverterService objectConverterService, IXmlSerializer serializer, IAppDataService appDataService) 
+            : base(serializationManager, objectConverterService, serializer, appDataService)
         {
             _configSerializer = serializer;
 
@@ -161,12 +162,12 @@
 
             object serializedModel = null;
 
-            using (StringReader sr = new StringReader(rawXml))
+            using (var sr = new StringReader(rawXml))
             {
                 serializedModel = ser.Deserialize(sr);
             }
 
-            if (serializedModel == null)
+            if (serializedModel is null)
             {
                 return null;
             }
@@ -174,7 +175,7 @@
             {
                 var serializedFeed = serializedModel as NuGetFeed;
 
-                Guid guid = KeyFromString(key);
+                var guid = KeyFromString(key);
 
                 if (serializedFeed != null)
                 {
