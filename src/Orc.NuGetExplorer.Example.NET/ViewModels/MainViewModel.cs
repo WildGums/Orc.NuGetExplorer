@@ -23,11 +23,13 @@
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
+        private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
         #endregion
 
         #region Constructors
         public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
+            INuGetProjectUpgradeService nuGetProjectUpgradeService,
             IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => packagesUiService);
@@ -38,6 +40,7 @@
             Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => initializationService);
+            Argument.IsNotNull(() => nuGetProjectUpgradeService);
 
             _initializationService = initializationService;
             _packagesUiService = packagesUiService;
@@ -45,6 +48,7 @@
             _feedVerificationService = feedVerificationService;
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
+            _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
             _packageBatchService = packageBatchService;
             _uiVisualizerService = uiVisualizerService;
 
@@ -73,6 +77,11 @@
         public string PackageSourceUrl { get; set; }
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
         #endregion
+
+        protected async override Task InitializeAsync()
+        {
+            await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
+        }
 
         #region Commands
         public TaskCommand Settings { get; private set; }
