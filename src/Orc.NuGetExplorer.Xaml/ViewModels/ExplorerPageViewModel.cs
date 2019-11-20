@@ -590,7 +590,7 @@
 
                 singleSource.VerificationResult = singleSource.IsLocal()
                     ? FeedVerificationResult.Valid
-                    : await _nuGetFeedVerificationService.VerifyFeedAsync(source.Source, cancelToken);
+                    : await _nuGetFeedVerificationService.VerifyFeedAsync(source.Source, cancellationToken: cancelToken);
             }
             else if (source is CombinedNuGetSource)
             {
@@ -601,7 +601,7 @@
                 {
                     feed.VerificationResult = feed.IsLocal()
                         ? FeedVerificationResult.Valid
-                        : await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, cancelToken);
+                        : await _nuGetFeedVerificationService.VerifyFeedAsync(feed.Source, cancellationToken: cancelToken);
 
                     if (!feed.IsAccessible)
                     {

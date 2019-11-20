@@ -118,16 +118,8 @@
         }
 
         #region IPackagesUpdatesSearcherService
-        public IEnumerable<IPackageDetails> SearchForUpdates(bool? allowPrerelease = null, bool authenticateIfRequired = true)
-        {
-            //todo
-            using (var cts = new CancellationTokenSource())
-            {
-                return Task.Run(() => SearchForUpdatesAsync(cts.Token, allowPrerelease, authenticateIfRequired)).Result;
-            }
-        }
 
-        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(CancellationToken token, bool? allowPrerelease = null, bool authenticateIfRequired = true)
+        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
             //todo auth scopes?
             var scopeManagers = new List<ScopeManager<AuthenticationScope>>();

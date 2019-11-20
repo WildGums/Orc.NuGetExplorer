@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             _nugetLogger = logger;
         }
 
-        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, CancellationToken ct, bool authenticateIfRequired = true)
+        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = true, CancellationToken ct = default)
         {
             Argument.IsNotNull(() => source);
 

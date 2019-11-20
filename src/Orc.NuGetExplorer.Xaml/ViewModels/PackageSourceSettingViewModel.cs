@@ -198,7 +198,7 @@
 
             using (var cts = new CancellationTokenSource())
             {
-                var result = await _feedVerificationService.VerifyFeedAsync(feed.Source, cts.Token, true);
+                var result = await _feedVerificationService.VerifyFeedAsync(feed.Source, true, cts.Token);
                 feed.VerificationResult = result;
             }
 

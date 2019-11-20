@@ -102,7 +102,7 @@
 
             using (var cts = new CancellationTokenSource())
             {
-                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(cts.Token, AllowPrerelease, false);
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease, false, cts.Token);
 
                 // Note: AddRange doesn't refresh button state
                 AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
@@ -129,7 +129,7 @@
 
         private async Task OnVerifyFeedExecute()
         {
-            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl), true);
+            await _feedVerificationService.VerifyFeedAsync(PackageSourceUrl);
         }
 
         private bool OnVerifyFeedCanExecute()
