@@ -215,6 +215,31 @@ namespace Orc.NuGetExplorer
         public System.IDisposable InterruptTemporarily() { }
     }
 }
+namespace Orc.NuGetExplorer.Logging
+{
+    public class NuGetLogListener : Orc.NuGetExplorer.PackageManagerLogListenerBase, Catel.Logging.ILogListener
+    {
+        public NuGetLogListener(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
+        public bool IgnoreCatelLogging { get; set; }
+        public bool IsDebugEnabled { get; set; }
+        public bool IsErrorEnabled { get; set; }
+        public bool IsInfoEnabled { get; set; }
+        public bool IsStatusEnabled { get; set; }
+        public bool IsWarningEnabled { get; set; }
+        public Catel.Logging.TimeDisplay TimeDisplay { get; set; }
+        public event System.EventHandler<Catel.Logging.LogMessageEventArgs> LogMessage;
+        public void Debug(Catel.Logging.ILog log, string message, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+        public void Error(Catel.Logging.ILog log, string message, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+        public void Info(Catel.Logging.ILog log, string message, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+        protected override void OnDebug(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnError(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnInfo(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnWarning(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        public void Status(Catel.Logging.ILog log, string message, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+        public void Warning(Catel.Logging.ILog log, string message, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+        public void Write(Catel.Logging.ILog log, string message, Catel.Logging.LogEvent logEvent, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
+    }
+}
 namespace Orc.NuGetExplorer.MVVM
 {
     public class BindingProxy : System.Windows.Freezable
@@ -241,7 +266,7 @@ namespace Orc.NuGetExplorer.Services
 {
     public class NuGetExplorerInitializationService : Orc.NuGetExplorer.Services.INuGetExplorerInitializationService
     {
-        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
+        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
     }
 }
 namespace Orc.NuGetExplorer.ViewModels
