@@ -4,16 +4,16 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
-    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
     {
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
-            IViewModelLocator vmLocator, ITypeFactory typeFactory)
+            INuGetProjectUpgradeService nuGetProjectUpgradeService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => languageService);
             Argument.IsNotNull(() => credentialProviderLoaderService);
+            Argument.IsNotNull(() => nuGetProjectUpgradeService);
 
             var serviceLocator = ServiceLocator.Default;
 
@@ -31,10 +31,9 @@
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
 
             //run upgrade
-            //pre-initialization to prepare old data to new NuGetExplorer versions
-            var upgradeRunner = serviceLocator.RegisterTypeAndInstantiate<RunScenarioConfigurationVersionChecker>();
+            //pre-initialization to prepare old data to new NuGetExplorer
             var basicV3Scenario = typeFactory.CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
-            upgradeRunner.AddUpgradeScenario(basicV3Scenario);
+            nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
         }
     }
 }
