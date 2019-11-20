@@ -21,6 +21,8 @@
 
         private IAnimationService AnimationService { get; set; }
 
+        #region Properties
+
         public Grid OverlayGrid
         {
             get { return (Grid)GetValue(OverlayGridProperty); }
@@ -72,44 +74,7 @@
         public static readonly DependencyProperty OverlayContentProperty =
             DependencyProperty.Register("OverlayContent", typeof(UIElement), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null));
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "<Ожидание>")]
-        private void AttachOverlay(object overlay)
-        {
-            if (overlay != null && overlay is UIElement)
-            {
-                _topInternalGrid.Children.Add(overlay as UIElement);
-
-                //manually hide overlay
-                HideOverlay();
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "<Ожидание>")]
-        private void DetachOverlay(object overlay)
-        {
-            if (overlay != null && overlay is UIElement)
-            {
-                _topInternalGrid.Children.Remove(overlay as UIElement);
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "<Ожидание>")]
-        public void AttachActiveContainer(object contentContainer)
-        {
-            if (contentContainer != null && contentContainer is UIElement)
-            {
-                _topInternalGrid.Children.Add(contentContainer as UIElement);
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "<Ожидание>")]
-        public void DetachActiveContainer(object contentContainer)
-        {
-            if (contentContainer != null && contentContainer is UIElement)
-            {
-                _topInternalGrid.Children.Add(contentContainer as UIElement);
-            }
-        }
+        #endregion
 
         protected override void OnAssociatedObjectLoaded()
         {
@@ -124,6 +89,45 @@
         {
             base.OnAttached();
             AnimationService = this.GetServiceLocator().ResolveType<IAnimationService>();
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
+        private void AttachOverlay(object overlay)
+        {
+            if (overlay != null && overlay is UIElement)
+            {
+                _topInternalGrid.Children.Add(overlay as UIElement);
+
+                //manually hide overlay
+                HideOverlay();
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
+        private void DetachOverlay(object overlay)
+        {
+            if (overlay != null && overlay is UIElement)
+            {
+                _topInternalGrid.Children.Remove(overlay as UIElement);
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
+        private void AttachActiveContainer(object contentContainer)
+        {
+            if (contentContainer != null && contentContainer is UIElement)
+            {
+                _topInternalGrid.Children.Add(contentContainer as UIElement);
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
+        private void DetachActiveContainer(object contentContainer)
+        {
+            if (contentContainer != null && contentContainer is UIElement)
+            {
+                _topInternalGrid.Children.Add(contentContainer as UIElement);
+            }
         }
 
         private void GetInternalGrid()
@@ -186,7 +190,7 @@
             ActiveContentContainer.Children.Add(overlayContent);
         }
 
-        public Task ShowOverlayAsync()
+        private Task ShowOverlayAsync()
         {
             if (OverlayGrid == null) throw new InvalidOperationException("Cannot find overlay in Associated object");
 
@@ -235,7 +239,7 @@
             return Task.CompletedTask;
         }
 
-        public System.Threading.Tasks.Task HideOverlayAsync()
+        private Task HideOverlayAsync()
         {
             if (OverlayGrid == null) throw new InvalidOperationException("Cannot find overlay in Associated object");
 
@@ -281,7 +285,7 @@
             return Task.CompletedTask;
         }
 
-        public void HideActiveContainer()
+        private void HideActiveContainer()
         {
             ActiveContentContainer.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
         }
@@ -310,13 +314,13 @@
                    || animation.DecelerationRatio > 0;
         }
 
-        public void ShowOverlay()
+        private void ShowOverlay()
         {
             OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
             OverlayGrid.SetCurrentValue(Grid.OpacityProperty, 0.7);
         }
 
-        public void HideOverlay()
+        private void HideOverlay()
         {
             OverlayGrid.SetCurrentValue(Grid.OpacityProperty, 0d);
             OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);

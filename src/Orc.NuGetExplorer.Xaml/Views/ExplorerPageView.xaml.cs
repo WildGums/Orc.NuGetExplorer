@@ -77,7 +77,7 @@
                 .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
                 .AddValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
 
-            //recount manually
+            //manual recount
             OnInfinityScrollViewPortChanged(this, EventArgs.Empty);
 
             _isViewportWidthListened = true;
