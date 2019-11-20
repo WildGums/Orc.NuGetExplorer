@@ -3,23 +3,24 @@
     using System;
     using Catel;
     using Orc.NuGetExplorer.Configuration;
+    using Orc.NuGetExplorer.Services;
 
     public abstract class UpgradeListenerBase
     {
-        protected UpgradeListenerBase(RunScenarioConfigurationVersionChecker upgradeRunner)
+        protected UpgradeListenerBase(INuGetProjectUpgradeService upgradeRunner)
         {
             Argument.IsNotNull(() => upgradeRunner);
 
-            upgradeRunner.Updated += OnUpdated;
-            upgradeRunner.Updating += OnUpdating;
+            upgradeRunner.UpgradeEnd += OnUpgraded;
+            upgradeRunner.UpgradeStart += OnUpgrading;
         }
 
-        protected virtual void OnUpdating(object sender, EventArgs e)
+        protected virtual void OnUpgrading(object sender, EventArgs e)
         {
 
         }
 
-        protected virtual void OnUpdated(object sender, EventArgs e)
+        protected virtual void OnUpgraded(object sender, EventArgs e)
         {
 
         }

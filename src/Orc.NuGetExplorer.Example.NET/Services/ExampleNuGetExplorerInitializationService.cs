@@ -15,10 +15,11 @@
         public ExampleNuGetExplorerInitializationService(
             ILanguageService languageService,
             ICredentialProviderLoaderService credentialProviderLoaderService,
+            INuGetProjectUpgradeService nuGetProjectUpgradeService,
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            IFileDirectoryService fileDirectoryService) : base(languageService, credentialProviderLoaderService, vmLocator, typeFactory)
+            IFileDirectoryService fileDirectoryService) : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => fileDirectoryService);

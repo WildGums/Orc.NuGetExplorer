@@ -5,23 +5,24 @@
     using Catel.Services;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
+    using Orc.NuGetExplorer.Services;
 
     internal class ExampleUpgradeListener : UpgradeListenerBase
     {
         private readonly IMessageService _messageService;
 
-        public ExampleUpgradeListener(RunScenarioConfigurationVersionChecker upgradeRunner, IMessageService messageService) : base(upgradeRunner)
+        public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService) : base(upgradeService)
         {
             Argument.IsNotNull(() => messageService);
             _messageService = messageService;
         }
 
-        protected override void OnUpdated(object sender, EventArgs e)
+        protected override void OnUpgraded(object sender, EventArgs e)
         {
             _messageService.ShowAsync("NuGet data updated");
         }
 
-        protected override void OnUpdating(object sender, EventArgs e)
+        protected override void OnUpgrading(object sender, EventArgs e)
         {
             _messageService.ShowAsync("Updating NuGet data");
         }
