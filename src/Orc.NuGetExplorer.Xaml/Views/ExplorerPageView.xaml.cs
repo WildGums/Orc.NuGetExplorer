@@ -91,10 +91,13 @@
 
         private void UnsubscribeFromScrollViewerProperyChanged()
         {
-            DependencyPropertyDescriptor
-               .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
-               .RemoveValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
-            _isViewportWidthListened = false;
+            if (_isViewportWidthListened && _infinityboxScrollViewer != null)
+            {
+                DependencyPropertyDescriptor
+                   .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
+                   .RemoveValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
+                _isViewportWidthListened = false;
+            }
         }
 
         protected override void OnUnloaded(EventArgs e)
