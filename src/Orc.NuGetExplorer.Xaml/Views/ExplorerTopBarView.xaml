@@ -89,23 +89,20 @@
                 Margin="3 0 3 0">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{StaticResource DynamicResource}"/>
                 </Canvas>
             </Viewbox>
             <i:Interaction.Behaviors>
                 <catel:FocusOnKeyPress Key="Return"/>
             </i:Interaction.Behaviors>
         </Button>
-        
+
         <CheckBox Grid.Row="1" Grid.Column="2"
                   VerticalAlignment="Center"
                   Margin="3 0 3 0"
-                  IsChecked="{Binding IsPreReleaseIncluded}"/>
-        <TextBlock Grid.Row="1" Grid.Column="3"
-                   VerticalAlignment="Center"
-                   Margin="3 0 3 0">
+                  IsChecked="{Binding IsPreReleaseIncluded}">
             Include prerelease
-        </TextBlock>
+        </CheckBox>
 
         <TextBlock Grid.Row="1" Grid.Column="5"
                    VerticalAlignment="Center"
@@ -153,7 +150,7 @@
                 ToolTip="Show package source settings">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
                 </Canvas>
             </Viewbox>
         </Button>
@@ -165,7 +162,7 @@
                 ToolTip="Clear NuGet caches">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
                 </Canvas>
             </Viewbox>
         </Button>
