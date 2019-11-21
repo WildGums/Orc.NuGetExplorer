@@ -41,14 +41,15 @@
             { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
         };
 
-        public NuGetConfigurationService(IXmlSerializer serializer, IConfigurationService configurationService)
+        public NuGetConfigurationService(IXmlSerializer serializer, IConfigurationService configurationService, IAppDataService appDataService)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => serializer);
 
             _configSerializer = serializer;
             _configurationService = configurationService;
-            _defaultDestinationFolder = Path.Combine(Catel.IO.Path.GetApplicationDataDirectory(), "plugins");
+
+            _defaultDestinationFolder = Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "plugins");
         }
 
 
