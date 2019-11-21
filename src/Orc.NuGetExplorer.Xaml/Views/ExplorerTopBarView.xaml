@@ -70,7 +70,7 @@
                         <Canvas Width="12" Height="12">
                             <Path Data="{Binding Source={StaticResource Search-web}, Path=Data}" 
                                   Margin="0 -4 0 0"
-                                  Fill="{StaticResource AccentColorBrush}"/>
+                                  Fill="{DynamicResource AccentColorBrush}"/>
                         </Canvas>
                     </Viewbox>
 
@@ -89,7 +89,7 @@
                 Margin="3 0 3 0">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{StaticResource DynamicResource}"/>
+                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
                 </Canvas>
             </Viewbox>
             <i:Interaction.Behaviors>
