@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.MVVM;
@@ -8,6 +9,8 @@
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
     {
+        private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
+
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
@@ -34,6 +37,13 @@
             //pre-initialization to prepare old data to new NuGetExplorer
             var basicV3Scenario = typeFactory.CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
             nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
+
+            _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
+        }
+
+        public virtual async Task<bool> UpgradeNuGetPackagesIfNeededAsync()
+        {
+            return await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
         }
     }
 }
