@@ -308,6 +308,7 @@
         {
             PackageItems.CollectionChanged -= OnPackageItemsCollectionChanged;
             Settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
+            SingleDelayTimer.Elapsed -= OnTimerElapsed;
         }
 
         private void StartLoadingTimer()
