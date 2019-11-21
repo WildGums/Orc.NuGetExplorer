@@ -161,7 +161,7 @@
         }
 
 
-        public async Task InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+        public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
             try
             {
@@ -172,6 +172,12 @@
                 var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
 
                 bool dependencyInstallResult = true;
+
+                if(!installerResults.Any())
+                {
+                    Log.Info( $"Package {package} has not been installed");
+                    return false;
+                }
 
                 foreach (var packageDownloadResultPair in installerResults)
                 {
@@ -193,6 +199,8 @@
                 }
 
                 await OnInstallAsync(project, package, dependencyInstallResult);
+
+                return true;
             }
             catch (ProjectInstallException e)
             {
@@ -203,7 +211,7 @@
 
                 if (e?.CurrentBatch == null)
                 {
-                    return;
+                    return false;
                 }
 
                 Log.Info("Rollback changes");
@@ -212,6 +220,8 @@
                 {
                     await UninstallPackageForProjectAsync(project, canceledPackages, token);
                 }
+
+                return false;
 
             }
             catch (Exception e)

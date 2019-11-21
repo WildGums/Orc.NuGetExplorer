@@ -13,7 +13,7 @@
 
     public interface INuGetPackageManager : IPackageManager
     {
-        Task InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
+        Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
 
         Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
 

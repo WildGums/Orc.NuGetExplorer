@@ -71,9 +71,17 @@
                         }
 
                         //reinstall
-                        if (!await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, _cancellationTokenSource.Token))
+                        if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, _cancellationTokenSource.Token))
                         {
-                            await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, _cancellationTokenSource.Token);
+                            Log.Info($"Skip package {package}, package is valid");
+                            continue;
+                        }
+
+                        var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, _cancellationTokenSource.Token);
+                        
+                        if(!isInstalled)
+                        {
+                            failedIdentities.Add(package);
                         }
                     }
 
@@ -88,11 +96,13 @@
 
                 if (failedIdentities.Any())
                 {
-                    await _logger.LogAsync(LogLevel.Information, $"failed to install some packages:");
+                    await _logger.LogAsync(LogLevel.Information, $"Failed to install some packages:");
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
             }
         }
+
+
 
         public override string ToString()
         {
