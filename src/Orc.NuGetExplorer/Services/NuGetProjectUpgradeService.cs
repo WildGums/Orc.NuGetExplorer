@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Catel;
@@ -38,6 +39,12 @@
 
             Log.Info("Current configuration version does not match for configuration version");
             Log.Info("Check is current configuration version older..");
+
+            if(!_runOnCheckList.Any())
+            {
+                Log.Info("No registred scenaries for upgrade");
+                return false;
+            }
 
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 

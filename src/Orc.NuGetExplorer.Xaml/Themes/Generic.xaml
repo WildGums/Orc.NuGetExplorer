@@ -62,7 +62,7 @@
 
     <Style x:Key="DefaultListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Style.Resources>
-            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor4}"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{DynamicResource AccentColor4}"/>
         </Style.Resources>
 
         <Setter Property="SnapsToDevicePixels" Value="True"/>

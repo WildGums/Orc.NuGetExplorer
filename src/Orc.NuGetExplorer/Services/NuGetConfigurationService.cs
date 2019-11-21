@@ -19,18 +19,19 @@
     using Configuration = NuGet.Configuration;
     using Settings = Settings;
 
-    public class NuGetConfigurationService : ConfigurationService, INuGetConfigurationService
+    public class NuGetConfigurationService : INuGetConfigurationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IXmlSerializer _configSerializer;
+        private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
 
         //had to doing this, because settings is as parameter in ctor caused loop references
-        private readonly Lazy<Configuration.IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
+        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
                 () =>
                 {
-                    return ServiceLocator.Default.ResolveType<Configuration.IPackageSourceProvider>();
+                    return ServiceLocator.Default.ResolveType<IPackageSourceProvider>();
                 }
             );
 
@@ -40,13 +41,13 @@
             { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
         };
 
-
-        public NuGetConfigurationService(ISerializationManager serializationManager,
-            IObjectConverterService objectConverterService, IXmlSerializer serializer, IAppDataService appDataService) 
-            : base(serializationManager, objectConverterService, serializer, appDataService)
+        public NuGetConfigurationService(IXmlSerializer serializer, IConfigurationService configurationService)
         {
-            _configSerializer = serializer;
+            Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => serializer);
 
+            _configSerializer = serializer;
+            _configurationService = configurationService;
             _defaultDestinationFolder = Path.Combine(Catel.IO.Path.GetApplicationDataDirectory(), "plugins");
         }
 
@@ -54,7 +55,7 @@
         #region INuGetConfigurationService
         public string GetDestinationFolder()
         {
-            var destinationFolder = this.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
+            var destinationFolder = _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
             return string.IsNullOrEmpty(destinationFolder) ? _defaultDestinationFolder : destinationFolder;
         }
 
@@ -62,7 +63,7 @@
         {
             Argument.IsNotNullOrWhitespace(() => value);
 
-            this.SetRoamingValue(Settings.NuGet.DestinationFolder, value);
+            _configurationService.SetRoamingValue(Settings.NuGet.DestinationFolder, value);
         }
 
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
@@ -130,13 +131,13 @@
             Argument.IsNotNull(() => repository);
 
             var key = GetIsPrereleaseAllowedKey(repository);
-            this.SetRoamingValue(key, value);
+            _configurationService.SetRoamingValue(key, value);
         }
 
         public bool GetIsPrereleaseAllowed(IRepository repository)
         {
             var key = GetIsPrereleaseAllowedKey(repository);
-            var stringValue = this.GetRoamingValue(key, false.ToString());
+            var stringValue = _configurationService.GetRoamingValue(key, false.ToString());
 
             bool value;
             if (bool.TryParse(stringValue, out value))
@@ -150,130 +151,6 @@
         private string GetIsPrereleaseAllowedKey(IRepository repository)
         {
             return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
-        }
-
-        #endregion
-
-        public NuGetFeed GetValue(ConfigurationContainer container, string key)
-        {
-            var rawXml = GetValueFromStore(container, key);
-
-            var ser = new System.Xml.Serialization.XmlSerializer(typeof(NuGetFeed));
-
-            object serializedModel = null;
-
-            using (var sr = new StringReader(rawXml))
-            {
-                serializedModel = ser.Deserialize(sr);
-            }
-
-            if (serializedModel is null)
-            {
-                return null;
-            }
-            else
-            {
-                var serializedFeed = serializedModel as NuGetFeed;
-
-                var guid = KeyFromString(key);
-
-                if (serializedFeed != null)
-                {
-                    if (!ConfigurationIdGenerator.TryTakeUniqueIdentifier(guid, out Guid newGUid))
-                    {
-                        serializedFeed.SerializationIdentifier = newGUid;
-                    }
-                    else
-                    {
-                        serializedFeed.SerializationIdentifier = guid;
-                    }
-
-                    serializedFeed.Initialize();
-
-                    return serializedFeed;
-                }
-                throw new InvalidCastException("Serialized object cannot be casted to type 'NuGetFeed'");
-            }
-        }
-
-        public object GetRoamingValue(ConfigurationSection section)
-        {
-            var masterKey = _masterKeys[section];
-
-            var obj = DeserializeXmlToListOfString(ConfigurationContainer.Roaming, masterKey);
-
-            return obj;
-        }
-
-        public NuGetFeed GetRoamingValue(Guid key)
-        {
-            return GetValue(ConfigurationContainer.Roaming, KeyToString(key));
-        }
-
-        public IReadOnlyList<Guid> GetAllKeys(ConfigurationContainer container)
-        {
-            var feedKeys = GetValueFromStore(container, _masterKeys[ConfigurationSection.Feeds]);
-
-            var keyList = feedKeys.Split(new string[] { Constants.ConfigKeySeparator }, StringSplitOptions.RemoveEmptyEntries);
-
-            return keyList.Select(key => KeyFromString(key)).ToList();
-        }
-
-        public void SetValue(ConfigurationContainer container, string key, NuGetFeed value)
-        {
-            using (var memstream = new MemoryStream())
-            {
-                var rawxml = SerializeXml(memstream, () => value.Save(memstream, _configSerializer));
-
-                bool shouldBeUpdated = !ValueExists(container, key);
-
-                SetValueToStore(container, key, rawxml);
-
-                if (shouldBeUpdated)
-                {
-                    UpdateSectionKeyList(container, ConfigurationSection.Feeds, key);
-                }
-            }
-        }
-
-        public void SetValueWithDefaultIdGenerator(ConfigurationContainer container, NuGetFeed value)
-        {
-            if (value.SerializationIdentifier.Equals(default(Guid)))
-            {
-                value.SerializationIdentifier = ConfigurationIdGenerator.GetUniqueIdentifier();
-            }
-
-            SetValue(container, KeyToString(value.SerializationIdentifier), value);
-        }
-
-        public void SetRoamingValueWithDefaultIdGenerator(NuGetFeed value)
-        {
-            SetValueWithDefaultIdGenerator(ConfigurationContainer.Roaming, value);
-        }
-
-        public void SetRoamingValueWithDefaultIdGenerator(List<string> extensibleProject)
-        {
-            SetValueInSection(ConfigurationContainer.Roaming, ConfigurationSection.ProjectExtensions, extensibleProject);
-        }
-
-        public void RemoveValues(ConfigurationContainer container, IReadOnlyList<NuGetFeed> feedList)
-        {
-            foreach (var feed in feedList)
-            {
-                var guid = feed.SerializationIdentifier;
-
-                if (!guid.Equals(default(Guid)))
-                {
-                    guid = ConfigurationIdGenerator.IsCollision(guid) ? ConfigurationIdGenerator.GetOriginalIdentifier(guid) : guid;
-
-                    if (IsValueAvailable(container, KeyToString(guid)))
-                    {
-                        SetValue(container, KeyToString(guid), String.Empty);
-
-                        UpdateSectionKeyList(container, ConfigurationSection.Feeds, KeyToString(guid), true);
-                    }
-                }
-            }
         }
 
         public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
@@ -290,32 +167,26 @@
             return GetRoamingValue(section);
         }
 
-        protected string KeyToString(Guid guid)
+        #endregion
+
+        public object GetRoamingValue(ConfigurationSection section)
         {
-            return $"_{guid}";
+            var masterKey = _masterKeys[section];
+
+            var obj = DeserializeXmlToListOfString(ConfigurationContainer.Roaming, masterKey);
+
+            return obj;
         }
 
-        protected Guid KeyFromString(string key)
+        public void SetRoamingValueWithDefaultIdGenerator(List<string> extensibleProject)
         {
-            return Guid.Parse(key.Substring(1));
-        }
-
-        private string SerializeXml(Stream stream, Action putValueToStream)
-        {
-            putValueToStream();
-
-            var streamReader = new StreamReader(stream);
-
-            stream.Position = 0;
-
-            string rawxml = streamReader.ReadToEnd();
-
-            return rawxml;
+            SetValueInSection(ConfigurationContainer.Roaming, ConfigurationSection.ProjectExtensions, extensibleProject);
         }
 
         private object DeserializeXmlToListOfString(ConfigurationContainer container, string key)
         {
-            var storedValue = GetValueFromStore(container, key);
+            //var storedValue = _configurationService.GetValueFromStore(container, key);
+            var storedValue = _configurationService.GetValue<string>(container, key);
 
             if (string.IsNullOrEmpty(storedValue))
             {
@@ -338,29 +209,24 @@
             {
                 var strValue = SerializeXml(memStream, () => _configSerializer.Serialize(value, memStream));
 
-                SetValueToStore(container, _masterKeys[section], strValue);
+                //SetValueToStore(container, _masterKeys[section], strValue);
+                _configurationService.SetValue(container, _masterKeys[section], strValue);
             }
         }
 
-        private void UpdateSectionKeyList(ConfigurationContainer container, ConfigurationSection confSection, string key, bool isRemove = false)
+        private string SerializeXml(Stream stream, Action putValueToStream)
         {
-            var keyList = GetValueFromStore(container, _masterKeys[confSection]);
-            string updatedKeys = String.Empty;
+            putValueToStream();
 
-            if (isRemove)
-            {
-                var persistedKeys = keyList.Split(new string[] { Constants.ConfigKeySeparator }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var streamReader = new StreamReader(stream);
 
-                persistedKeys.Remove(key);
-                updatedKeys = String.Join(Constants.ConfigKeySeparator, persistedKeys);
-            }
-            else
-            {
-                updatedKeys = String.Join(Constants.ConfigKeySeparator, key, keyList);
-            }
+            stream.Position = 0;
 
-            SetValueToStore(container, _masterKeys[confSection], updatedKeys);
+            string rawxml = streamReader.ReadToEnd();
+
+            return rawxml;
         }
+
 
         [XmlRoot(ElementName = "Items")]
         public class ListWrapper
@@ -368,5 +234,6 @@
             [XmlElement(ElementName = "string", Namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays")]
             public List<string> List { get; set; }
         }
+
     }
 }
