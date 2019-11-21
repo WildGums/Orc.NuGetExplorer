@@ -196,7 +196,7 @@
             }
         }
 
-        private async void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (Settings.ObservedFeed == null)
             {
@@ -271,6 +271,11 @@
         {
             base.OnPropertyChanged(e);
 
+            if(string.Equals(e.PropertyName, nameof(PageInfo)))
+            {
+                Log.Info("PageInfo is {PageInfo}");
+            }
+
             if (string.Equals(e.PropertyName, nameof(Invalidated)))
             {
                 Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
@@ -302,6 +307,7 @@
         protected override async Task OnClosedAsync(bool? result)
         {
             PackageItems.CollectionChanged -= OnPackageItemsCollectionChanged;
+            Settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
         }
 
         private void StartLoadingTimer()
