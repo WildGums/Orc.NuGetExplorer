@@ -74,6 +74,7 @@
                   Margin="3 0 3 2"
                   IsReadOnly="True"
                   Width="{Binding ElementName=InstalledVersionTextBox, Path=ActualWidth}"
+                  MinWidth="90"
                   SelectedValue="{Binding SelectedVersion}"
                   ItemsSource="{Binding VersionsCollection}">
             <i:Interaction.Behaviors>
