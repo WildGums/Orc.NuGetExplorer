@@ -101,7 +101,7 @@
                   VerticalAlignment="Center"
                   Margin="3 0 3 0"
                   IsChecked="{Binding IsPreReleaseIncluded}">
-            Include prerelease
+            <TextBlock Margin="4 0 0 0"> Include prerelease</TextBlock>
         </CheckBox>
 
         <TextBlock Grid.Row="1" Grid.Column="5"

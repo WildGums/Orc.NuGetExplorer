@@ -154,10 +154,12 @@
 
                     </TextBlock>
 
-                    <Label Grid.Row="3">License:
+                    <!-- todo collapse this with Property in UserControl-->
+                    <Label Grid.Row="3" Visibility="Collapsed">License:
                     </Label>
                     <TextBlock Grid.Column="1" Grid.Row="3"
                                TextTrimming="WordEllipsis"
+                               Visibility="Collapsed"
                                MaxWidth="210"
                            Text="{Binding VersionData.LicenseMetadata.License}"/>
 
@@ -174,9 +176,14 @@
                                MaxWidth="210"
                            Text="{Binding VersionData.ProjectUrl}"/>
 
-                    <Label Grid.Row="6">Report Abuse:</Label>
+                    <!-- todo collapse this with Property in UserControl-->
+                    <Label Grid.Row="6"
+                           Visibility="Collapsed">
+                        Report Abuse:
+                    </Label>
                     <TextBlock Grid.Column="1" Grid.Row="6"
                                TextTrimming="WordEllipsis"
+                               Visibility="Collapsed"
                                MaxWidth="210"
                            Text="{Binding VersionData.ReportAbuseUrl}"/>
 
