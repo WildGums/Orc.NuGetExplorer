@@ -8,9 +8,12 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
+    using NuGet.Packaging.Core;
+    using NuGet.Versioning;
 
     internal class PackageCommandService : IPackageCommandService
     {
@@ -83,6 +86,33 @@ namespace Orc.NuGetExplorer
             }
 
             packageDetails.IsInstalled = null;
+        }
+
+        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
+        {
+            using (_pleaseWaitService.WaitingScope())
+            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+            {
+                await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
+            }
+        }
+
+        public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
+        {
+            using (_pleaseWaitService.WaitingScope())
+            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+            {
+                await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
+            }
+        }
+
+        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
+        {
+            using (_pleaseWaitService.WaitingScope())
+            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+            {
+                await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
+            }
         }
 
         public async Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package)

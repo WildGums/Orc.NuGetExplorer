@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
+    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IPackageCommandService
@@ -15,6 +16,9 @@ namespace Orc.NuGetExplorer
         Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package);
         bool IsRefreshRequired(PackageOperationType operationType);
         string GetPluralActionName(PackageOperationType operationType);
+        Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token);
+        Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token);
+        Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token);
         #endregion
     }
 }

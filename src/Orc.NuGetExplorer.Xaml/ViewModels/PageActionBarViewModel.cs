@@ -10,6 +10,7 @@
     using Catel.MVVM;
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
+    using Orc.NuGetExplorer.Packaging;
 
     internal class PageActionBarViewModel : ViewModelBase
     {
@@ -23,18 +24,22 @@
 
         private readonly IProgressManager _progressManager;
 
+        private readonly IPackageCommandService _packageCommandService;
+
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
-            IExtensibleProjectLocator projectLocator)
+            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => managerPage);
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => projectLocator);
+            Argument.IsNotNull(() => packageCommandService);
 
             _parentManagerPage = managerPage;
             _projectManager = projectManager;
             _projectLocator = projectLocator;
             _progressManager = progressManager;
+            _packageCommandService = packageCommandService;
 
             BatchUpdate = new TaskCommand(BatchUpdateExecute, BatchUpdateCanExecute);
         }
@@ -86,17 +91,24 @@
                             return;
                         }
 
-                        await _projectManager.UpdatePackageForProjectAsync(targetProjects.FirstOrDefault(), package.Identity.Id, targetVersion, cts.Token);
+
+                        var updatePackageDetails = PackageDetailsFactory.Create(PackageOperationType.Update, package.GetMetadata(), targetVersion, null);
+                        await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token);
+                        //await _projectManager.UpdatePackageForProjectAsync(targetProjects.FirstOrDefault(), package.Identity.Id, targetVersion, cts.Token);
                     }
                 }
 
-                _progressManager.HideBar(this);
-
-                _parentManagerPage.StartLoadingTimerOrInvalidateData();
+                await Task.Delay(200);
             }
             catch (Exception e)
             {
                 Log.Error(e, $"Error when updating package");
+            }
+            finally
+            {
+                _progressManager.HideBar(this);
+
+                _parentManagerPage.StartLoadingTimerOrInvalidateData();
             }
         }
 

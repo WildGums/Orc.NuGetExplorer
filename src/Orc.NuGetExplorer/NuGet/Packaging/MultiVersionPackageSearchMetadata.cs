@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Catel.Data;
+    using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
@@ -25,7 +26,7 @@
 
         public string Id => Identity.Id;
 
-        public string FullName => $"{Id} {Identity.Version.ToFullString()}";
+        public string FullName => Identity.ToFullString();
 
         public Version Version => Identity.Version.Version;
 
@@ -52,23 +53,18 @@
 
         public IValidationContext ValidationContext { get; private set; }
 
-        IEnumerable<string> IPackageDetails.Authors => SplitAuthors(Authors);
+        IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty(); 
 
         int? IPackageDetails.DownloadCount { get; }
+
+        public PackageIdentity GetIdentity()
+        {
+            return Identity;
+        }
 
         public void ResetValidationContext()
         {
             //empty context
-        }
-
-        private IList<string> SplitAuthors(string authors)
-        {
-            if (!string.IsNullOrWhiteSpace(authors))
-            {
-                return authors.Split(',');
-            }
-
-            return new List<string>();
         }
     }
 }

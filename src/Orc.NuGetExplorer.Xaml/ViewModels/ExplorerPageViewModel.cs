@@ -271,11 +271,6 @@
         {
             base.OnPropertyChanged(e);
 
-            if(string.Equals(e.PropertyName, nameof(PageInfo)))
-            {
-                Log.Info("PageInfo is {PageInfo}");
-            }
-
             if (string.Equals(e.PropertyName, nameof(Invalidated)))
             {
                 Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");

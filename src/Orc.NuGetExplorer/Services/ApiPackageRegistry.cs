@@ -13,12 +13,16 @@ namespace Orc.NuGetExplorer
     using Catel.Data;
     using Catel.Logging;
     using Catel.Services;
+    using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Packaging;
+    using Orc.NuGetExplorer.Providers;
 
     internal sealed class ApiPackageRegistry : IApiPackageRegistry
     {
+
         #region Constructors
         public ApiPackageRegistry(ILanguageService languageService)
         {
@@ -67,9 +71,19 @@ namespace Orc.NuGetExplorer
         public void Validate(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(NuGetPackage));
 
-            var dependencyGroups = (package as NuGetPackage).GetDependencyInfo(package.NuGetVersion);
+            IEnumerable<PackageDependencyGroup> dependencyGroups = null;
+
+            if (package is NuGetPackage modelPackage)
+            {
+                //then dependencies loaded inside already
+                dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
+            }
+
+            if(package is PackageDetails details)
+            {
+                dependencyGroups = details.DependencySets;
+            }
 
             lock (_syncObj)
             {

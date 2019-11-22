@@ -64,26 +64,14 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
-        public async Task UninstallPackageAsync(IPackageDetails package)
+        public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(NuGetPackage));
-
-            //var dependentsResolver = new DependentsWalker(_localRepository, null);
-
-            //var walker = new UninstallWalker(_localRepository, dependentsResolver, null,
-            //    _logger, true, false);
 
             try
             {
-                var nuPackage = (NuGetPackage)package;
-                //walker.ResolveOperations(nuGetPackage);
-
                 //nuPackage should provide identity of installed package, which targeted for uninstall action
-                using (var cts = new CancellationTokenSource())
-                {
-                    await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
-                }
+                await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
             catch (Exception exception)
             {
@@ -92,28 +80,19 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease)
+        public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(NuGetPackage));
-
-            var repository = _packageOperationContextService.CurrentContext.Repository;
-
-            //var sourceRepository = _repositoryCacheService.GetNuGetRepository(repository);
-            // var walker = new InstallWalker(_localRepository, sourceRepository, null, _logger, false, allowedPrerelease, DependencyVersion);
 
             try
             {
                 ValidatePackage(package);
-                //var nuGetPackage = EnsurePackageDependencies(((NuGetPackage)package).Package);
-                //walker.ResolveOperations(nuGetPackage);
-                var nuPackage = (NuGetPackage)package;
 
+                //repositories retrieved inside package manager now
+                //todo use PackageOperationContextService instead on repositoryContextService
+                
                 //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
-                using (var cts = new CancellationTokenSource())
-                {
-                    await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, nuPackage.Identity, cts.Token);
-                }
+                await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
             catch (Exception exception)
             {
@@ -122,25 +101,22 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease)
+
+        public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
-            Argument.IsOfType(() => package, typeof(NuGetPackage));
 
             try
             {
                 ValidatePackage(package);
-                //var nuGetPackage = EnsurePackageDependencies(((NuGetPackage)package)); //todo deprecated?
 
                 //where to get target version?
                 //somehow we should get target version from package
-                //nugetPackage should provide 'update' identity
-                var nuPackage = (NuGetPackage)package;
+                //package should provide 'update' identity
 
-                using (var cts = new CancellationTokenSource())
-                {
-                    await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, nuPackage.Id, nuPackage.Identity.Version, cts.Token);
-                }
+                var updateIdentity = package.GetIdentity();
+
+                await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
             }
             catch (Exception exception)
             {

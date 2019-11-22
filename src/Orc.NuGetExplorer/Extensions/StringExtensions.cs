@@ -5,8 +5,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
+
 namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+
     public static class StringExtensions
     {
         public static string GetSafeScopeName(this string value)
@@ -17,6 +20,16 @@ namespace Orc.NuGetExplorer
             }
 
             return value.ToLower();
+        }
+
+        public static IList<string> SplitOrEmpty(this string value, char separator = ',')
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value.Split(separator);
+            }
+
+            return new List<string>();
         }
     }
 }

@@ -20,6 +20,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
+    using Orc.NuGetExplorer.Packaging;
 
     internal class PackageDetailsViewModel : ViewModelBase
     {
@@ -40,9 +41,12 @@
 
         private readonly IApiPackageRegistry _apiPackageRegistry;
 
+        private readonly IPackageCommandService _packageCommandService;
+
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry)
+            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry, 
+            IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
@@ -50,6 +54,7 @@
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => languageService);
             Argument.IsNotNull(() => apiPackageRegistry);
+            Argument.IsNotNull(() => packageCommandService);
 
             _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
@@ -57,6 +62,8 @@
             _projectManager = projectManager;
             _languageService = languageService;
             _apiPackageRegistry = apiPackageRegistry;
+            _packageCommandService = packageCommandService;
+
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
             InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
@@ -123,15 +130,19 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
-
                     if (IsInstalled())
                     {
+                        var updatePackageDetails = PackageDetailsFactory.Create(PackageOperationType.Update, VersionData, SelectedVersion, null);
+                        await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token);
                         //run upgrade scenario
-                        await _projectManager.UpdatePackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), Package.Identity.Id, SelectedVersion, cts.Token);
+                        //await _projectManager.UpdatePackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), Package.Identity.Id, SelectedVersion, cts.Token);
+
                     }
                     else
                     {
-                        await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
+                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
+                        await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
+                        //await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
                     }
                 }
 
@@ -165,7 +176,10 @@
                 using (var cts = new CancellationTokenSource())
                 {
                     //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
-                    await _projectManager.UninstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), InstalledPackage, cts.Token);
+                    var uninstallPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Uninstall, Package.GetMetadata(), InstalledPackage, null);
+                    await _packageCommandService.ExecuteUninstallAsync(uninstallPackageDetails, cts.Token);
+
+                    //await _projectManager.UninstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), InstalledPackage, cts.Token);
                 }
 
                 await Task.Delay(200);

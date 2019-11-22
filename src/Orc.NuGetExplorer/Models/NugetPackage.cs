@@ -130,7 +130,7 @@
 
         public IValidationContext ValidationContext { get; set; }
 
-        IEnumerable<string> IPackageDetails.Authors => SplitAuthors(Authors);
+        IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
         public int? DownloadCount { get; private set; }
 
@@ -172,7 +172,7 @@
             }
             catch (NullReferenceException e)
             {
-                Log.Warning(e, $"possibly because local package {searchMetadata.Identity} installation is missed or corrupted");
+                Log.Warning(e, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
             }
         }
 
@@ -213,6 +213,16 @@
             return _dependencyGroups.TryGetValue(version, out var groups) ? groups : new List<PackageDependencyGroup>();
         }
 
+        public IPackageSearchMetadata GetMetadata()
+        {
+            return _packageMetadata;
+        }
+
+        public PackageIdentity GetIdentity()
+        {
+            return Identity;
+        }
+
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -226,16 +236,6 @@
             {
                 Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
             }
-        }
-
-        private IList<string> SplitAuthors(string authors)
-        {
-            if (!string.IsNullOrWhiteSpace(authors))
-            {
-                return authors.Split(',');
-            }
-
-            return new List<string>();
         }
     }
 }
