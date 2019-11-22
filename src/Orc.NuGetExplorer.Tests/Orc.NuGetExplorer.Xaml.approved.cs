@@ -161,6 +161,9 @@ namespace Orc.NuGetExplorer
     {
         System.Threading.Tasks.Task<bool> CanExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails package);
         System.Threading.Tasks.Task ExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails, Orc.NuGetExplorer.IRepository sourceRepository = null, bool allowedPrerelease = False);
+        System.Threading.Tasks.Task ExecuteInstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task ExecuteUninstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         string GetActionName(Orc.NuGetExplorer.PackageOperationType operationType);
         string GetPluralActionName(Orc.NuGetExplorer.PackageOperationType operationType);
         bool IsRefreshRequired(Orc.NuGetExplorer.PackageOperationType operationType);
@@ -267,6 +270,7 @@ namespace Orc.NuGetExplorer.Services
     public class NuGetExplorerInitializationService : Orc.NuGetExplorer.Services.INuGetExplorerInitializationService
     {
         public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
+        public virtual System.Threading.Tasks.Task<bool> UpgradeNuGetPackagesIfNeededAsync() { }
     }
 }
 namespace Orc.NuGetExplorer.ViewModels
