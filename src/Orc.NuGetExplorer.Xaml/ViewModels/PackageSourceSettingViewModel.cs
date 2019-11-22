@@ -60,7 +60,6 @@
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
 
-        //[Model]
         public NuGetFeed SelectedFeed { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
@@ -236,8 +235,10 @@
         private async void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //verify all new feeds in collection
-            //because of feed edit is simple re-insertion we should'nt handle property change inside model
-            if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Replace)
+            //feed edit is just re-insertion
+
+            if (!(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+                e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace))
             {
                 return;
             }
@@ -247,7 +248,11 @@
                 return;
             }
 
-            foreach (NuGetFeed item in e.NewItems)
+            var newFeeds = e.NewItems.OfType<NuGetFeed>().ToList();
+
+            SelectedFeed = newFeeds.LastOrDefault();
+
+            foreach (NuGetFeed item in newFeeds)
             {
                 if (!item.IsLocal() && item.VerificationResult == FeedVerificationResult.Unknown)
                 {

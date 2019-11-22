@@ -85,8 +85,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="6*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="1*"/>
+            <!--<RowDefinition Height="10"/>--> <!-- used for disabled Gridsplitter -->
+            <!--<RowDefinition Height="1*"/>--> <!-- used for disabled LogViewer -->
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -130,7 +130,9 @@
                                   Grid.Row="1" Grid.Column="1"
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 
-        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
+
+        <!-- own log viewer commented -->
+        <!--<GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Bottom"
                       ResizeBehavior="PreviousAndNext"
@@ -145,7 +147,7 @@
                               AutoScroll="True"
                               LogListenerType="{x:Type log:NuGetLogListener}"
                               ShowDebug="False">
-        </orc:LogViewerControl>
+        </orc:LogViewerControl>-->
 
     </Grid>
 </catel:DataWindow>
