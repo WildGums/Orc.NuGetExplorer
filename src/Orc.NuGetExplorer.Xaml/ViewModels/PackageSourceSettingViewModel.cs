@@ -107,7 +107,7 @@
 
         private void OnAddFeedExecute()
         {
-            Feeds.Add(new NuGetFeed(DefaultSourceName, DefaultFeed));
+            Feeds.Add(new NuGetFeed(DefaultSourceName, DefaultFeed, true));
         }
 
         #endregion
