@@ -158,6 +158,7 @@
         <Button Grid.Row="1" Grid.Column="9"
                 Command="{Binding RunNuGetCachesClearing}"
                 Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Margin="0"
                 HorizontalAlignment="Right"
                 ToolTip="Clear NuGet caches">
             <Viewbox>
