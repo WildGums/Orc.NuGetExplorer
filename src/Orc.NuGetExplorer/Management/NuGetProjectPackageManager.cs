@@ -25,20 +25,24 @@
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
+        private readonly IPackageOperationNotificationService _packageOperationNotificationService;
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
-            INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider)
+            INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
+            IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageInstallationService);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
+            Argument.IsNotNull(() => packageOperationNotificationService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
+            _packageOperationNotificationService = packageOperationNotificationService;
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
@@ -199,6 +203,7 @@
                 }
 
                 await OnInstallAsync(project, package, dependencyInstallResult);
+
 
                 return true;
             }

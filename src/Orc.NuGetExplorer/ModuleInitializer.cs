@@ -62,7 +62,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
-        serviceLocator.RegisterType<IPackageOperationNotificationService, DummyPackageOperationNotificationService>();
+        serviceLocator.RegisterType<IPackageOperationNotificationService, PackageOperationNotificationService>();
 
         serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
         serviceLocator.RegisterType<INuGetPackageManager, NuGetProjectPackageManager>();

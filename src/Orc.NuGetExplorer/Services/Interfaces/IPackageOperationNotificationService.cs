@@ -26,7 +26,7 @@ namespace Orc.NuGetExplorer
         #endregion
     }
 
-    public class DummyPackageOperationNotificationService : IPackageOperationNotificationService
+    public class PackageOperationNotificationService : IPackageOperationNotificationService
     {
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
