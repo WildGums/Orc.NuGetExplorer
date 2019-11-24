@@ -29,7 +29,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="18"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto" MinHeight="8"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -95,27 +95,34 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding Title}"
-                                               ToolTip="{Binding Title}"
-                                               FontSize="14" 
-                                               TextTrimming="WordEllipsis"
-                                               FontWeight="DemiBold"
-                                               MaxWidth="300"/>
-                <TextBlock Margin="8 0 2 0" 
-                                               VerticalAlignment="Bottom"
-                                               Grid.Column="1"
-                                               ToolTip="{Binding Authors}">
-                                        <TextBlock Text="by:"></TextBlock>
-                                        <TextBlock Text="{Binding Authors}"
-                                                   TextTrimming="WordEllipsis"/>
-                                </TextBlock>
+                <TextBlock>
+                    <InlineUIContainer BaselineAlignment="Baseline">
+                        <TextBlock Text="{Binding Title}"
+                           ToolTip="{Binding Title}"
+                           FontSize="14" 
+                           TextTrimming="WordEllipsis"
+                           LineStackingStrategy="BlockLineHeight"
+                           VerticalAlignment="Bottom"
+                           FontWeight="DemiBold"
+                           MaxWidth="300"/>
+                    </InlineUIContainer>  
+                    <InlineUIContainer BaselineAlignment="Baseline">
+                        <TextBlock Margin="8 0 2 0" 
+                           VerticalAlignment="Bottom"
+                           TextTrimming="WordEllipsis"
+                           LineStackingStrategy="BlockLineHeight"
+                           ToolTip="{Binding Authors}">
+                           <Run Text="by:"></Run>
+                           <Run Text="{Binding Authors}"/>
+                        </TextBlock>
+                    </InlineUIContainer>
+                </TextBlock>
 
                 <!-- version -->
                 <TextBlock Text="{Binding FirstVersion}"
-                           Grid.Column="2"
+                           Grid.Column="1"
                            Margin="0 0 8 0"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"/>
