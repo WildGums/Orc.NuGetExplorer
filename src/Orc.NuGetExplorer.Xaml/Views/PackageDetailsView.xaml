@@ -143,15 +143,16 @@
                     <TextBlock Grid.Column="1"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
-                               Text="{Binding VersionData.Identity.Version}"/>
+                               Text="{Binding VersionData.Identity.Version}"
+                               ToolTip="{Binding VersionData.Identity.Version}"/>
 
 
                     <Label Grid.Row="2">Author(s):</Label>
                     <TextBlock Grid.Column="1" Grid.Row="2"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
-                           Text="{Binding VersionData.Authors}">
-
+                               Text="{Binding VersionData.Authors}"
+                               ToolTip="{Binding VersionData.Authors}">
                     </TextBlock>
 
                     <!-- todo collapse this with Property in UserControl-->
@@ -161,20 +162,23 @@
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
-                           Text="{Binding VersionData.LicenseMetadata.License}"/>
+                               Text="{Binding VersionData.LicenseMetadata.License}"
+                               ToolTip="{Binding VersionData.LicenseMetadata.License}"/>
 
 
                     <Label Grid.Row="4">Date published:</Label>
                     <TextBlock Grid.Column="1" Grid.Row="4"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
-                           Text="{Binding VersionData.Published, StringFormat=D}"/>
+                               Text="{Binding VersionData.Published, StringFormat=D}"
+                               ToolTip="{Binding VersionData.Published, StringFormat=D}"/>
 
                     <Label Grid.Row="5">Project URL:</Label>
                     <TextBlock Grid.Column="1" Grid.Row="5"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
-                           Text="{Binding VersionData.ProjectUrl}"/>
+                               Text="{Binding VersionData.ProjectUrl}"
+                               ToolTip="{Binding VersionData.ProjectUrl}"/>
 
                     <!-- todo collapse this with Property in UserControl-->
                     <Label Grid.Row="6"
@@ -185,14 +189,16 @@
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
-                           Text="{Binding VersionData.ReportAbuseUrl}"/>
+                               Text="{Binding VersionData.ReportAbuseUrl}"
+                               ToolTip="{Binding VersionData.ReportAbuseUrl}"/>
 
 
                     <Label Grid.Row="7">Tags:</Label>
                     <TextBlock Grid.Column="1" Grid.Row="7"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
-                           Text="{Binding VersionData.Tags}"/>
+                               Text="{Binding VersionData.Tags}"
+                               ToolTip="{Binding VersionData.Tags}"/>
 
 
                 </Grid>
