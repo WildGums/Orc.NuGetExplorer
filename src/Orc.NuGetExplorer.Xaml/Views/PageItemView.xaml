@@ -124,7 +124,7 @@
                 <!-- version -->
                 <TextBlock Text="{Binding FirstVersion}"
                            Grid.Column="1"
-                           Margin="0 0 8 0"
+                           Margin="2 2 8 2"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"/>
 
@@ -152,8 +152,9 @@
                 <TextBlock Text="{Binding DownloadCount}" Grid.Column="0"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"/>
-                <TextBlock Grid.Column="1" Margin="4 0 0 0"
+                <TextBlock Grid.Column="1"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                           Margin="2 0 0 0"
                            VerticalAlignment="Stretch">
                                     total downloads
                 </TextBlock>
@@ -163,7 +164,7 @@
                            Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"
                            Grid.Column="2" Grid.Row="1"
-                           Margin="0 0 8 0"
+                           Margin="2 2 8 2"
                            HorizontalAlignment="Right"/>
             </Grid>
 
