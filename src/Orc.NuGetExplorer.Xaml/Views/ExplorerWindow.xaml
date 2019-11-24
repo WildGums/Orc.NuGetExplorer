@@ -53,7 +53,7 @@
                         <Ellipse    Canvas.Left="0" 
                                     Width="60" Height="60"
                                     StrokeThickness="2" 
-                                    Stroke="{DynamicResource AccentColorBrush}" 
+                                    Stroke="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}" 
                                     StrokeStartLineCap="Round" 
                                     StrokeDashArray="12 10"
                                     StrokeEndLineCap="Round">

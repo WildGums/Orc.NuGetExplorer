@@ -70,7 +70,7 @@
                         <Canvas Width="12" Height="12">
                             <Path Data="{Binding Source={StaticResource Search-web}, Path=Data}" 
                                   Margin="0 -4 0 0"
-                                  Fill="{DynamicResource AccentColorBrush}"/>
+                                  Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
 
@@ -89,7 +89,7 @@
                 Margin="3 0 3 0">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                 </Canvas>
             </Viewbox>
             <i:Interaction.Behaviors>
@@ -150,7 +150,7 @@
                 ToolTip="Show package source settings">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                 </Canvas>
             </Viewbox>
         </Button>
@@ -163,7 +163,7 @@
                 ToolTip="Clear NuGet caches">
             <Viewbox>
                 <Canvas Width="24" Height="24">
-                    <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{DynamicResource AccentColorBrush}"/>
+                    <Path Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                 </Canvas>
             </Viewbox>
         </Button>

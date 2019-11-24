@@ -6,6 +6,7 @@
              xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
              xmlns:catel="http://schemas.catelproject.com"
+             xmlns:orc="http://schemas.wildgums.com/orc/controls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
@@ -91,7 +92,7 @@
                         <Ellipse    Canvas.Left="0" 
                                     Width="30" Height="30"
                                     StrokeThickness="2" 
-                                    Stroke="{DynamicResource AccentColorBrush}" 
+                                    Stroke="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}" 
                                     StrokeStartLineCap="Round" 
                                     StrokeDashArray="10 5"
                                     StrokeEndLineCap="Round">

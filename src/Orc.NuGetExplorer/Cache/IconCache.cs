@@ -52,6 +52,11 @@
                 image.StreamSource = stream;
                 image.EndInit();
 
+                if(!image.IsFrozen)
+                {
+                    image.Freeze();
+                }
+
                 return image;
             }
         }

@@ -4,6 +4,6 @@
 
     public interface IUpgradeScenario
     {
-        Task Run();
+        Task<bool> Run();
     }
 }

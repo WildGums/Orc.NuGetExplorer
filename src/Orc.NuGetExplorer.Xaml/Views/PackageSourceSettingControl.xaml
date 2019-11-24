@@ -1,6 +1,7 @@
 <catel:UserControl x:Class="Orc.NuGetExplorer.Views.PackageSourceSettingControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:catel="http://schemas.catelproject.com"
+             xmlns:orc="http://schemas.wildgums.com/orc/controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -109,7 +110,7 @@
                     Command="{Binding AddFeed}">
                     <Viewbox>
                         <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Plus}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                            <Path Data="{Binding Source={StaticResource Plus}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
                 </Button>
@@ -117,7 +118,7 @@
                     Command="{Binding RemoveFeed}">
                     <Viewbox>
                         <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Minus}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                            <Path Data="{Binding Source={StaticResource Minus}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
                 </Button>
@@ -125,7 +126,7 @@
                     Command="{Binding MoveUpFeed}">
                     <Viewbox>
                         <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                            <Path Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
                 </Button>
@@ -133,7 +134,7 @@
                     Command="{Binding MoveDownFeed}">
                     <Viewbox>
                         <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                            <Path Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
                 </Button>

@@ -19,27 +19,18 @@
 
         public async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
         {
-            Log.Debug($"Begin webclient request on {uri}");
+            Log.Debug($"Webclient request on {uri}");
 
-            //while (client.IsBusy)
-            //{
-            //    Log.Debug("Waiting for ending current download");
-            //    await Task.Delay(200);
-            //}
             var array = await client.DownloadDataTaskAsync(uri);
-
-            Log.Debug($"Webclient request ended");
 
             return array;
         }
 
         public byte[] GetByUrl(Uri uri, WebClient client)
         {
-            Log.Debug($"Begin webclient request on {uri}");
+            Log.Debug($"Webclient request on {uri}");
 
             var array = client.DownloadData(uri);
-
-            Log.Debug($"Webclient request ended");
 
             return array;
         }

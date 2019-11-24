@@ -50,11 +50,15 @@
 
             if (currentVersion.CompareTo(_settings.Version) > 0)
             {
+                bool anyCompleted = false;
+
                 foreach (var scenario in _runOnCheckList)
                 {
                     Log.Info($"Run {scenario}..");
-                    await scenario.Run();
+                    var result = await scenario.Run();
                     Log.Info($"Completed");
+
+                    anyCompleted = anyCompleted || result;
                 }
 
                 //update config version
@@ -62,7 +66,7 @@
 
                 RaiseUpgradeEnd(new EventArgs());
 
-                return true;
+                return anyCompleted;
             }
             else
             {

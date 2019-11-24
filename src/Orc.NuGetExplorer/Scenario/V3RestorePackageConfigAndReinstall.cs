@@ -39,19 +39,22 @@
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public async Task Run()
+        public async Task<bool> Run()
         {
             var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
+
 
             if (!Directory.Exists(_defaultProject.ContentPath))
             {
                 Log.Info($"plugins folder does not exist");
-                return;
+                return false;
             }
 
             var subFolders = folderProject.GetPackageDirectories();
 
             List<PackageIdentity> failedIdentities = new List<PackageIdentity>();
+
+            bool anyUpgraded = false;
 
             using (var context = _repositoryContextService.AcquireContext())
             {
@@ -83,6 +86,8 @@
                         {
                             failedIdentities.Add(package);
                         }
+
+                        anyUpgraded = isInstalled || anyUpgraded;
                     }
 
                     catch (Exception e)
@@ -99,6 +104,8 @@
                     await _logger.LogAsync(LogLevel.Information, $"Failed to install some packages:");
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
+
+                return anyUpgraded;
             }
         }
 
