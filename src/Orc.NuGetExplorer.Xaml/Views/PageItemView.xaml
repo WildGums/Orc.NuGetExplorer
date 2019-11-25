@@ -104,13 +104,17 @@
                            ToolTip="{Binding Title}"
                            FontSize="14" 
                            VerticalAlignment="Bottom"
+                           TextTrimming="WordEllipsis"
+                           LineStackingStrategy="BlockLineHeight"
                            FontWeight="DemiBold"
                            MaxWidth="300"/>
                     </InlineUIContainer>  
                     <InlineUIContainer BaselineAlignment="Baseline">
                         <TextBlock Margin="8 0 2 0" 
                            VerticalAlignment="Bottom"
-                           ToolTip="{Binding Authors}">
+                           ToolTip="{Binding Authors}"
+                           TextTrimming="WordEllipsis"
+                           LineStackingStrategy="BlockLineHeight">
                                 <Run Text="by:"/>
                                 <Run Text="{Binding Authors}"/>
                         </TextBlock>
@@ -148,10 +152,10 @@
                 <TextBlock Text="{Binding DownloadCount}" Grid.Column="0"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"
-                           Margin="0"/>
+                           Margin="0 2 2 2"/>
                 <TextBlock Grid.Column="1"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                           Margin="4 0 0 0"
+                           Margin="2"
                            VerticalAlignment="Stretch">
                                     total downloads
                 </TextBlock>
