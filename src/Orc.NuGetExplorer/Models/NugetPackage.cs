@@ -56,6 +56,8 @@
             }
         }
 
+        public static event EventHandler AnyNuGetPackageCheckedChanged;
+
         public bool IsChecked { get; set; }
 
         public MetadataOrigin FromPage { get; }
@@ -109,23 +111,19 @@
         //todo
         public string SpecialVersion { get; set; }
 
-        //todo
+        //todo obsolete
         public bool IsAbsoluteLatestVersion => IsLatestVersion;
 
-        //todo check is comparer needed
         public bool IsLatestVersion => Identity?.Version.Equals(LastVersion) ?? false;
 
         public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
 
-        //todo
         public string Dependencies { get; set; }
 
         public bool? IsInstalled { get; set; }
 
-        //todo
         public IList<string> AvailableVersions { get; set; }
 
-        //todo
         public string SelectedVersion { get; set; }
 
         public IValidationContext ValidationContext { get; set; }
@@ -236,6 +234,11 @@
             {
                 Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
             }
+        }
+
+        private void OnIsCheckedChanged()
+        {
+            AnyNuGetPackageCheckedChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

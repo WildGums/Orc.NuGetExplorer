@@ -6,10 +6,12 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
+    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PageActionBarViewModel : ViewModelBase
@@ -47,6 +49,7 @@
         protected override Task InitializeAsync()
         {
             _parentManagerPage.PackageItems.CollectionChanged += OnParentPagePackageItemsCollectionChanged;
+            NuGetPackage.AnyNuGetPackageCheckedChanged += OnAnyNuGetPackageCheckedChanged;
             return base.InitializeAsync();
         }
 
@@ -85,7 +88,7 @@
 
                         var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.FirstOrDefault();
 
-                        if (targetVersion == null)
+                        if (targetVersion is null)
                         {
                             Log.Warning("Cannot perform upgrade because of 'Target version' is null");
                             return;
@@ -114,10 +117,20 @@
 
         private bool BatchUpdateCanExecute()
         {
-            return _parentManagerPage.PackageItems.Any(); /*(x => x.IsChecked);*/
+            if(_parentManagerPage is null)
+            {
+                return false;
+            }
+
+            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
         }
 
         private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            InvalidateCommands();
+        }
+
+        private void OnAnyNuGetPackageCheckedChanged(object sender, EventArgs e)
         {
             InvalidateCommands();
         }
