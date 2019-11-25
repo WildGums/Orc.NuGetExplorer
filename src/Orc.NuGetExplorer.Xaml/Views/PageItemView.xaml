@@ -97,7 +97,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock TextTrimming="WordEllipsis">
+                <TextBlock>
                     <InlineUIContainer BaselineAlignment="Baseline">
                         <TextBlock Text="{Binding Title}"
                            Margin="0"
@@ -152,7 +152,7 @@
                 <TextBlock Text="{Binding DownloadCount}" Grid.Column="0"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"
-                           Margin="0 2 2 2"/>
+                           Margin="2"/>
                 <TextBlock Grid.Column="1"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            Margin="2"
