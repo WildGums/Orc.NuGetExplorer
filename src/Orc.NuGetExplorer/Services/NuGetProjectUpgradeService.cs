@@ -61,8 +61,11 @@
                     anyCompleted = anyCompleted || result;
                 }
 
-                //update config version
-                _settings.UpdateVersion();
+                //update config version only if operation was successful
+                if (anyCompleted)
+                {
+                    _settings.UpdateVersion();
+                }
 
                 RaiseUpgradeEnd(new EventArgs());
 

@@ -58,6 +58,13 @@
 
             using (var context = _repositoryContextService.AcquireContext())
             {
+                if(context == SourceContext.EmptyContext)
+                {
+                    Log.Warning($"Source context is empty");
+                    return false;
+                }
+
+
                 foreach (var folder in subFolders)
                 {
                     var packageFolderName = Path.GetFileName(folder);
