@@ -82,7 +82,7 @@
                     <ContentControl Content="{Binding Status}">
                         <ContentControl.ContentTemplateSelector>
                             <template:BadgeContentTemplateSelector Available="{StaticResource Available}"
-                                                                                   NotAvailable="{StaticResource NotAvailable}"/>
+                                                                   NotAvailable="{StaticResource NotAvailable}"/>
                         </ContentControl.ContentTemplateSelector>
                     </ContentControl>
                 </nugetc:Badged.Badge>
@@ -93,33 +93,19 @@
 
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock>
-                    <InlineUIContainer BaselineAlignment="Baseline">
-                        <TextBlock Text="{Binding Title}"
-                           Margin="0"
-                           ToolTip="{Binding Title}"
-                           FontSize="14" 
+                <TextBlock HorizontalAlignment="Left"
+                           TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Bottom"
-                           TextTrimming="WordEllipsis"
-                           LineStackingStrategy="BlockLineHeight"
-                           FontWeight="DemiBold"
-                           MaxWidth="300"/>
-                    </InlineUIContainer>  
-                    <InlineUIContainer BaselineAlignment="Baseline">
-                        <TextBlock Margin="8 0 2 0" 
-                           VerticalAlignment="Bottom"
-                           ToolTip="{Binding Authors}"
-                           TextTrimming="WordEllipsis"
                            LineStackingStrategy="BlockLineHeight">
-                                <Run Text="by:"/>
-                                <Run Text="{Binding Authors}"/>
-                        </TextBlock>
-                    </InlineUIContainer>
+                         <Run Text="{Binding Title}" FontSize="14" FontWeight="DemiBold" ToolTip="{Binding Title}"></Run>
+                         <Run Text="   by:" ToolTip="{Binding Authors}"/>
+                         <Run Text="{Binding Authors}" ToolTip="{Binding Authors}"/>
                 </TextBlock>
+
 
                 <!-- version -->
                 <TextBlock Text="{Binding FirstVersion}"
