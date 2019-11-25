@@ -56,7 +56,7 @@
 
             bool anyUpgraded = false;
 
-            using (var context = _repositoryContextService.AcquireContext())
+            using (var context = _repositoryContextService.AcquireContext(ignoreLocal: true))
             {
                 if(context == SourceContext.EmptyContext)
                 {

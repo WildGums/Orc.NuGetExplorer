@@ -8,7 +8,7 @@
     {
         SourceRepository GetRepository(PackageSource source);
         SourceContext AcquireContext(PackageSource source);
-        SourceContext AcquireContext();
+        SourceContext AcquireContext(bool ignoreLocal = false);
 
     }
 }

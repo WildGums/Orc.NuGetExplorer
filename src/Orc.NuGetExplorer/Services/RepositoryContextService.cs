@@ -10,7 +10,6 @@
     internal class RepositoryContextService : IRepositoryContextService
     {
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
-        private readonly Dictionary<PackageSource, SourceRepository> _constructedRepositories = new Dictionary<PackageSource, SourceRepository>();
 
 
         public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
@@ -29,10 +28,7 @@
 
             SourceRepository sourceRepo = null;
 
-            if (!_constructedRepositories.TryGetValue(source, out sourceRepo))
-            {
-                sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
-            }
+            sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
 
             return sourceRepo;
         }
@@ -51,10 +47,11 @@
             return context;
         }
 
-        public SourceContext AcquireContext()
+
+        public SourceContext AcquireContext(bool ignoreLocal = false)
         {
             //acquire for all by default
-            IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().ToList();
+            IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().Where(r => !r.PackageSource.IsLocal || !ignoreLocal).ToList();
 
             if (repos.Any())
             {
