@@ -134,7 +134,10 @@
                     //try to get container from source
                     var tab = TabSource.ItemContainerGenerator.ContainerFromItem(item);
 
-                    tab.SetCurrentValue(TabItem.IsSelectedProperty, i == index);
+                    if (tab != null)
+                    {
+                        tab.SetCurrentValue(TabItem.IsSelectedProperty, i == index);
+                    }
 
                     i++;
                 }

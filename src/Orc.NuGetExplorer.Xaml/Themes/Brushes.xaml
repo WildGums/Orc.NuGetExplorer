@@ -11,10 +11,14 @@
     <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="{DynamicResource AccentColor}" />
 
     <!-- labeled tab items brushes-->
-    <SolidColorBrush x:Key="TabSelectedBrushKey" Color="{x:Static SystemColors.ActiveCaptionTextColor}"/>
+    <SolidColorBrush x:Key="TabSelectedBrushKey" Color="#575757"/>
     <SolidColorBrush x:Key="TabPopupBrushKey" Color="{x:Static SystemColors.ActiveCaptionTextColor}"/>
 
     <SolidColorBrush x:Key="IndicatorBorderBrushKey" Color="{x:Static SystemColors.ActiveBorderColor}"/>
+
+    <SolidColorBrush x:Key="DefaultButtonIconColorBrush" Color="#575757"/>
+    <SolidColorBrush x:Key="PressedButtonIconColorBrush" Color="White"/>
+    <SolidColorBrush x:Key="DisabledButtonIconColorBrush" Color="#ADADAD"/>
 
     <!--Package status badges brushes and colors-->
     <Color x:Key="InstalledBadgeBackgroundColor">#329932</Color>

@@ -108,35 +108,83 @@
                 </StackPanel.Resources>
                 <Button x:Name="AddBtn" 
                     Command="{Binding AddFeed}">
-                    <Viewbox>
-                        <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Plus}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
-                        </Canvas>
-                    </Viewbox>
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Plus}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
                 </Button>
                 <Button x:Name="RemoveBtn"
                     Command="{Binding RemoveFeed}">
-                    <Viewbox>
-                        <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Minus}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
-                        </Canvas>
-                    </Viewbox>
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Minus}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
                 </Button>
                 <Button x:Name="MoveUpBtn"
                     Command="{Binding MoveUpFeed}">
-                    <Viewbox>
-                        <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
-                        </Canvas>
-                    </Viewbox>
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
                 </Button>
                 <Button x:Name="MoveDownBtn"
                     Command="{Binding MoveDownFeed}">
-                    <Viewbox>
-                        <Canvas Width="24" Height="24">
-                            <Path Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
-                        </Canvas>
-                    </Viewbox>
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}"  Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
                 </Button>
             </StackPanel>
 

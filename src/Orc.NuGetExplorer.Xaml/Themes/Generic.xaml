@@ -6,10 +6,9 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Orc.Controls;component/Themes/Generic.xaml" />
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Brushes.xaml"/>
-        <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Styles.xaml"/>
+        <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/RotationProgressBar.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/Badged.xaml"/>
-        <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Shadows.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/CompiledResources.xaml"/>
     </ResourceDictionary.MergedDictionaries>
