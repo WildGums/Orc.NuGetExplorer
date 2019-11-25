@@ -112,7 +112,7 @@
                            Grid.Column="1"
                            Margin="2 2 8 2"
                            HorizontalAlignment="Right"
-                           VerticalAlignment="Bottom"/>
+                           VerticalAlignment="Center"/>
 
             </Grid>
 
