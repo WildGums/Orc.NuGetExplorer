@@ -53,13 +53,13 @@
 
             //constructed manually from outside 
             //todo add this to model settings right after creating
-            foreach(var storedSource in _repositoryStore.Keys)
-            {
-                if(configuredSources.FirstOrDefault(source => source.Name == storedSource.Name) == null)
-                {
-                    configuredSources.Add(storedSource);
-                }
-            }
+            //foreach(var storedSource in _repositoryStore.Keys)
+            //{
+            //    if(configuredSources.FirstOrDefault(source => source.Name == storedSource.Name) == null)
+            //    {
+            //        configuredSources.Add(storedSource);
+            //    }
+            //}
 
             //from settings model
             foreach (var source in _settings.GetAllPackageSources())
