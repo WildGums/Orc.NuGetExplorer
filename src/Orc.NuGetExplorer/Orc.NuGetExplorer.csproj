@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net46;net47;netcoreapp3.0</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer</AssemblyName>
@@ -51,9 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="NETStandard.Library" Version="2.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Management\Projects\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
