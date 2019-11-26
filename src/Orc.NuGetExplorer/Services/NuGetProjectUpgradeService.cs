@@ -65,6 +65,7 @@
                 if (anyCompleted)
                 {
                     _settings.UpdateVersion();
+                    _settings.UpdateMinimalVersion();
                 }
 
                 RaiseUpgradeEnd(new EventArgs());

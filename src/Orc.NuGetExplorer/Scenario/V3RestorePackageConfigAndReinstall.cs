@@ -114,6 +114,7 @@
                         if (!isInstalled)
                         {
                             failedIdentities.Add(package);
+                            continue;
                         }
 
                         anyUpgraded = isInstalled || anyUpgraded;
