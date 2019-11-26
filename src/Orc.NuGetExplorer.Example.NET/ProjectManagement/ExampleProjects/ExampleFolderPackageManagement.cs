@@ -1,14 +1,19 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
     using Catel.Logging;
+    using NuGet.Packaging;
+    using NuGet.Packaging.Core;
 
     public class ExampleFolderPackageManagement : IExtensibleProject
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private readonly PackagePathResolver _pathResolver;
 
         public ExampleFolderPackageManagement(string rootPath)
         {
             ContentPath = System.IO.Path.Combine(rootPath, nameof(ExampleFolderPackageManagement));
+
+            _pathResolver = new PackagePathResolver(ContentPath);
         }
 
         public string Name => "Plain project extensible example with additinal logging";
@@ -16,6 +21,11 @@
         public string Framework => ".NETStandard,Version=v2.1";
 
         public string ContentPath { get; }
+
+        public string GetInstallPath(PackageIdentity packageIdentity)
+        {
+            return _pathResolver.GetInstallPath(packageIdentity);
+        }
 
         public void Install()
         {
