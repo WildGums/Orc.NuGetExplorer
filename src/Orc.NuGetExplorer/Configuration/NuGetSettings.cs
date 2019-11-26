@@ -501,7 +501,7 @@
         {
             SettingsChanged -= OnSettingsChanged;
             //write version one time
-            UpdateVersion();
+            UpdateMinimalVersion();
         }
 
         private string GetSectionValueKey(string section, string key)
@@ -531,8 +531,12 @@
 
         public void UpdateVersion()
         {
-            _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
             _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
+        }
+
+        public void UpdateMinimalVersion()
+        {
+            _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
         }
 
         #endregion

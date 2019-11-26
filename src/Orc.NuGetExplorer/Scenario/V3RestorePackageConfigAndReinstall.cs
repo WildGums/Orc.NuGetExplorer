@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
@@ -46,7 +45,6 @@
         public async Task<bool> Run()
         {
             var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
-
 
             if (!Directory.Exists(_defaultProject.ContentPath))
             {
@@ -142,9 +140,9 @@
 
         private SourceContext CreateSourceFromFallbackPluginsUri()
         {
-            var defaultPluginUri = _configurationService.GetRoamingValue<string>("Plugins.FeedUrl");
+            var defaultPluginUri = _configurationService.GetRoamingValue<string>(FallbackUriKey);
 
-            if(String.IsNullOrEmpty(defaultPluginUri))
+            if(string.IsNullOrEmpty(defaultPluginUri))
             {
                 return SourceContext.EmptyContext;
             }

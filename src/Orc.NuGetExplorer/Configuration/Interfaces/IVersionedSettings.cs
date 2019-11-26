@@ -13,6 +13,7 @@
 
         event EventHandler SettingsRead;
 
+        void UpdateMinimalVersion();
         void UpdateVersion();
     }
 }
