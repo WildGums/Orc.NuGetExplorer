@@ -53,11 +53,13 @@
         </StackPanel>
 
 
-        <TextBlock Text="Manage NuGet Packages"
+        <!-- Hide title for manager, until it uneditable -->
+        <TextBlock Text="{Binding Title}"
                    Grid.Column="5" Grid.ColumnSpan="5"
                    HorizontalAlignment="Right"
                    FontSize="16"
-                   Margin="0 0 0 10"/>
+                   Margin="0 0 0 10"
+                   Visibility="Hidden"/>
 
         <!-- tool bar -->
 

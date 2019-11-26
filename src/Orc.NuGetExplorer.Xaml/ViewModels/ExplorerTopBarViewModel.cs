@@ -52,7 +52,7 @@
 
             Settings = settings;
 
-            Title = "Manage Packages";
+            Title = "Manage NuGet Packages";
             CommandInitialize();
         }
 

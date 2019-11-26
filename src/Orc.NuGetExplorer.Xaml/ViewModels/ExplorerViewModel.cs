@@ -35,7 +35,7 @@
 
             Settings = settingsProvider.Model;
 
-            Title = "Explorer";
+            Title = "Package management";
 
             IsLogAutoScroll = true;
         }

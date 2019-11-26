@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <!--title-->
-            <RowDefinition Height="60"/> 
+            <RowDefinition Height="36"/> 
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -29,8 +29,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Margin="10 13 0 0"
-                   FontSize="24"
+        <TextBlock Margin="10 4 0 0"
+                   FontSize="20"
                    Grid.ColumnSpan="3"
                    Text="{Binding Title}"
                    TextTrimming="WordEllipsis">
