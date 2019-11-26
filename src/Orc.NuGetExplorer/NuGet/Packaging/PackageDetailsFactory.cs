@@ -26,5 +26,15 @@
             var selectedIdentity = new PackageIdentity(versionMetadata.Identity.Id, packageVersion);
             return Create(operationType, versionMetadata, selectedIdentity, isLastVersion);
         }
+
+        /// <summary>
+        /// Empty package details
+        /// </summary>
+        /// <param name="packageIdentity"></param>
+        /// <returns></returns>
+        public static IPackageDetails Create(PackageIdentity packageIdentity)
+        {
+            return new EmptyPackageDetails(packageIdentity);
+        }
     }
 }

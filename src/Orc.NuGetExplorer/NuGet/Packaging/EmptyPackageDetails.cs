@@ -1,0 +1,72 @@
+﻿namespace Orc.NuGetExplorer.Packaging
+{
+    using System;
+    using System.Collections.Generic;
+    using Catel.Data;
+    using NuGet.Packaging.Core;
+    using NuGet.Versioning;
+
+    public class EmptyPackageDetails : IPackageDetails
+    {
+        private readonly PackageIdentity _package;
+
+        public EmptyPackageDetails(PackageIdentity package)
+        {
+            _package = package;
+            ResetValidationContext();
+            FullName = package.ToFullString();
+        }
+
+        #region IPackageDetails
+        public string Id => _package.Id;
+
+        public string FullName { get; }
+
+        public string Description { get; }
+
+        public Uri IconUrl { get; }
+
+        public Version Version => NuGetVersion.Version;
+
+        public NuGetVersion NuGetVersion => _package.Version;
+
+        public string SpecialVersion { get; }
+
+        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "IsLatestVersion")]
+        public bool IsAbsoluteLatestVersion => false;
+
+        public bool IsLatestVersion => false;
+
+        public bool IsPrerelease => NuGetVersion?.IsPrerelease ?? false;
+
+        public string Title { get; }
+
+        public IEnumerable<string> Authors { get; }
+
+        public DateTimeOffset? Published { get; }
+
+        public int? DownloadCount { get; }
+
+        public string Dependencies { get; }
+
+        public bool? IsInstalled { get; set; }
+
+        public IList<string> AvailableVersions { get; }
+
+        public string SelectedVersion { get; set; }
+
+        public IValidationContext ValidationContext { get; private set; }
+
+        public PackageIdentity GetIdentity()
+        {
+            return _package;
+        }
+
+        public void ResetValidationContext()
+        {
+            ValidationContext = new ValidationContext();
+        }
+
+        #endregion
+    }
+}

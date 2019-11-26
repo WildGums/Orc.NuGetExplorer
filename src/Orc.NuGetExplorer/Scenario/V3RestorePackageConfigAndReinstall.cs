@@ -13,6 +13,7 @@
     using NuGet.Packaging.Core;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Packaging;
 
     public class V3RestorePackageConfigAndReinstall : IUpgradeScenario
     {
@@ -92,11 +93,13 @@
                             continue;
                         }
 
-                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, null);
+                        var packageDetaulsForArgs = PackageDetailsFactory.Create(package);
+
+                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetaulsForArgs);
 
                         var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default);
 
-                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, null);
+                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetaulsForArgs);
 
                         if (!isInstalled)
                         {
