@@ -59,6 +59,7 @@
             var subFolders = folderProject.GetPackageDirectories();
 
             List<PackageIdentity> failedIdentities = new List<PackageIdentity>();
+            List<IPackageDetails> parsedPackages = new List<IPackageDetails>();
 
             bool anyUpgraded = false;
 
@@ -71,10 +72,21 @@
                     return false;
                 }
 
-                foreach (var folder in subFolders)
+                foreach(var folder in subFolders)
                 {
                     var packageFolderName = Path.GetFileName(folder);
                     var package = PackageIdentityParser.Parse(packageFolderName);
+
+                    var packageDetails = PackageDetailsFactory.Create(package);
+
+                    parsedPackages.Add(packageDetails);
+                }
+
+                _packageOperationNotificationService.NotifyOperationBatchStarting(PackageOperationType.Install, parsedPackages.ToArray());
+
+                foreach (var packageDetails in parsedPackages)
+                {
+                    var package = packageDetails.GetIdentity();
 
                     try
                     {
@@ -93,13 +105,11 @@
                             continue;
                         }
 
-                        var packageDetaulsForArgs = PackageDetailsFactory.Create(package);
-
-                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetaulsForArgs);
+                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
 
                         var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default);
 
-                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetaulsForArgs);
+                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
 
                         if (!isInstalled)
                         {
@@ -123,6 +133,8 @@
                     await _logger.LogAsync(LogLevel.Information, $"Failed to install some packages:");
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
+
+                _packageOperationNotificationService.NotifyOperationBatchFinished(PackageOperationType.Install, parsedPackages.ToArray());
 
                 return anyUpgraded;
             }
