@@ -26,20 +26,23 @@
         private readonly IRepositoryContextService _repositoryContextService;
         private readonly ILogger _logger;
         private readonly IConfigurationService _configurationService;
+        private readonly IPackageOperationNotificationService _packageOperationNotificationService;
 
         public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager, IRepositoryContextService repositoryContextService,
-            ILogger logger, IConfigurationService configurationService)
+            ILogger logger, IConfigurationService configurationService, IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => projectProvider);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => repositoryContextService);
             Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => packageOperationNotificationService);
 
             _defaultProject = projectProvider.GetDefaultProject();
             _nuGetPackageManager = nuGetPackageManager;
             _repositoryContextService = repositoryContextService;
             _logger = logger;
             _configurationService = configurationService;
+            _packageOperationNotificationService = packageOperationNotificationService;
         }
 
         public async Task<bool> Run()
@@ -89,7 +92,11 @@
                             continue;
                         }
 
+                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, null);
+
                         var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default);
+
+                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, null);
 
                         if (!isInstalled)
                         {

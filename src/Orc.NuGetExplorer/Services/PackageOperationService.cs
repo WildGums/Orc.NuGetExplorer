@@ -71,8 +71,9 @@ namespace Orc.NuGetExplorer
         public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
+
             var uninstalledIdentity = package.GetIdentity();
-            var operationPath = GetOperationPath(_defaultProject, uninstalledIdentity);
+            var operationPath = _defaultProject.GetInstallPath(uninstalledIdentity);
 
             try
             {
@@ -96,7 +97,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             var installedIdentity = package.GetIdentity();
-            var operationPath = GetOperationPath(_defaultProject, installedIdentity);
+            var operationPath = _defaultProject.GetInstallPath(installedIdentity);
 
             try
             {
@@ -127,7 +128,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             var updateIdentity = package.GetIdentity();
-            var operationPath = GetOperationPath(_defaultProject, updateIdentity);
+            var operationPath = _defaultProject.GetInstallPath(updateIdentity);
 
             try
             {
@@ -161,13 +162,6 @@ namespace Orc.NuGetExplorer
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
             }
-        }
-
-        private string GetOperationPath(IExtensibleProject nugetProject, PackageIdentity packageIdentity)
-        {
-            var pathResolver = new PackagePathResolver(nugetProject.ContentPath);
-
-            return pathResolver.GetInstallPath(packageIdentity);
         }
 
         //private PackageWrapper EnsurePackageDependencies(IPackage nuGetPackage)
