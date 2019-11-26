@@ -291,18 +291,6 @@ namespace Orc.NuGetExplorer.ViewModels
         public Catel.MVVM.Command UpdateFeed { get; set; }
         protected override System.Threading.Tasks.Task<bool> SaveAsync() { }
     }
-    public sealed class SelectablePackageDetailsViewModel : Catel.MVVM.ViewModelBase
-    {
-        public SelectablePackageDetailsViewModel(Orc.NuGetExplorer.IPackageDetails packageDetails) { }
-        public System.Collections.Generic.IList<string> AvailableVersions { get; }
-        public string Description { get; }
-        public System.Uri IconUrl { get; }
-        public System.Nullable<bool> IsInstalled { get; set; }
-        public Orc.NuGetExplorer.IPackageDetails PackageDetails { get; }
-        public string SelectedVersion { get; set; }
-        public System.Windows.Input.ICommand SelectPackageVersionCommand { get; }
-        public override string Title { get; }
-    }
 }
 namespace Orc.NuGetExplorer.Views
 {
