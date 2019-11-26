@@ -28,20 +28,13 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceLocator.RegisterType<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IImageResolveService, PackageMetadataMediaDownloadService>();
-        serviceLocator.RegisterType<IPackageBatchService, PackageBatchService>();
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
-        serviceLocator.RegisterType<IPackageDetailsService, PackageDetailsService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IRepositoryNavigatorService, RepositoryNavigatorService>();
-        serviceLocator.RegisterType<ISearchSettingsService, SearchSettingsService>();
-        serviceLocator.RegisterType<ISearchResultService, SearchResultService>();
         serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();
         serviceLocator.RegisterType<IMessageDialogService, MessageDialogService>();
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();
-
-        serviceLocator.RegisterType<IRepositoryNavigationFactory, RepositoryNavigationFactory>();
 
         serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();

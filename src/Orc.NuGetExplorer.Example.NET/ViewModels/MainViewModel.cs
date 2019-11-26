@@ -18,7 +18,6 @@
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IPackageBatchService _packageBatchService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
@@ -29,15 +28,13 @@
         #region Constructors
         public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService,
-            IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
+            INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => initializationService);
             Argument.IsNotNull(() => nuGetProjectUpgradeService);
@@ -49,7 +46,6 @@
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
-            _packageBatchService = packageBatchService;
             _uiVisualizerService = uiVisualizerService;
 
             Echo = echoService.GetPackageManagementEcho();
@@ -95,7 +91,8 @@
 
         private async Task OnOpenUpdateWindowExecute()
         {
-            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
+            //show batch update
+            //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         private bool OnOpenUpdateWindowCanExecute()

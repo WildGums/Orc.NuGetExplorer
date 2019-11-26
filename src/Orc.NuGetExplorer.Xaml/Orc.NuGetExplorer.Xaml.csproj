@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>net46;net47;netcoreapp3.0</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Xaml</AssemblyName>
@@ -49,15 +49,11 @@
     <PackageReference Update="NETStandard.Library" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Legacy\Resources\Images\Loading.gif" />
-    <Resource Include="Legacy\Resources\Images\packageDefaultIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.de.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.es.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.fr.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.nl.xlf" />
-    <XliffResource Include="Legacy\MultilingualResources\Orc.NuGetExplorer.Xaml.ru.xlf" />
+    <XliffResource Include="\MultilingualResources\Orc.NuGetExplorer.Xaml.de.xlf" />
+    <XliffResource Include="\MultilingualResources\Orc.NuGetExplorer.Xaml.es.xlf" />
+    <XliffResource Include="\MultilingualResources\Orc.NuGetExplorer.Xaml.fr.xlf" />
+    <XliffResource Include="\MultilingualResources\Orc.NuGetExplorer.Xaml.nl.xlf" />
+    <XliffResource Include="\MultilingualResources\Orc.NuGetExplorer.Xaml.ru.xlf" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Themes\Brushes.xaml">

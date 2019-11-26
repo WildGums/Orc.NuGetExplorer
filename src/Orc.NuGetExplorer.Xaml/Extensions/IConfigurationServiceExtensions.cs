@@ -28,11 +28,6 @@ namespace Orc.NuGetExplorer
             configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
         }
 
-        public static string GetLastRepository(this IConfigurationService configurationService, RepositoryCategory repositoryCategory)
-        {
-            return GetLastRepository(configurationService, repositoryCategory.Name);
-        }
-
         public static string GetLastRepository(this IConfigurationService configurationService, string repositoryCategory)
         {
             Argument.IsNotNull(() => configurationService);
@@ -42,16 +37,6 @@ namespace Orc.NuGetExplorer
             var value = configurationService.GetRoamingValue(key, AppSettings.NuGetExplorer.LastRepositoryDefaultValue);
 
             return value;
-        }
-
-        public static void SetLastRepository(this IConfigurationService configurationService, RepositoryCategory repositoryCategory, IRepository repository)
-        {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repositoryCategory);
-            Argument.IsNotNull(() => repository);
-
-            var key = GetLastRepositoryKey(repositoryCategory.Name);
-            configurationService.SetRoamingValue(key, repository.Name);
         }
 
         public static void SetLastRepository(this IConfigurationService configurationService, string page, IRepository repository)
