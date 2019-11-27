@@ -170,7 +170,7 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackageMetadataMediaDownloadService
     {
-        System.Threading.Tasks.Task DownloadFromAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata);
+        System.Threading.Tasks.Task DownloadMediaForMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata);
     }
     public class static IPleaseWaitServiceExtensions
     {
@@ -184,7 +184,7 @@ namespace Orc.NuGetExplorer
     public class PackageMetadataMediaDownloadService : Orc.NuGetExplorer.IImageResolveService, Orc.NuGetExplorer.IPackageMetadataMediaDownloadService
     {
         public PackageMetadataMediaDownloadService(Orc.NuGetExplorer.Providers.IApplicationCacheProvider appCacheProvider) { }
-        public System.Threading.Tasks.Task DownloadFromAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata) { }
+        public System.Threading.Tasks.Task DownloadMediaForMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata) { }
         public System.Windows.Media.ImageSource ResolveImageFromUri(System.Uri uri, string defaultUrl = null) { }
         public System.Threading.Tasks.Task<System.Windows.Media.ImageSource> ResolveImageFromUriAsync(System.Uri uri, string defaultUrl = null) { }
     }
