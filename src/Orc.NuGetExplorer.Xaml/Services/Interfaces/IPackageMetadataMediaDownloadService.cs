@@ -5,6 +5,6 @@
 
     public interface IPackageMetadataMediaDownloadService
     {
-        Task DownloadFromAsync(IPackageSearchMetadata packageMetadata);
+        Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata);
     }
 }

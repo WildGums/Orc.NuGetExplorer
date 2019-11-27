@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Catel;
     using NuGet.Common;
+    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
@@ -40,6 +41,8 @@
                     var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
                     var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
+
+                    await LoadVersionsEagerIfNeedAsync(searchResource, packages);
 
                     return packages;
                 }
@@ -75,12 +78,27 @@
 
                 var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
+                await LoadVersionsEagerIfNeedAsync(searchResource, packages);
+
                 return packages;
             }
             catch (FatalProtocolException ex) when (token.IsCancellationRequested)
             {
                 //task is cancelled, supress
                 throw new OperationCanceledException("Search request was cancelled", ex, token);
+            }
+        }
+
+        private async Task LoadVersionsEagerIfNeedAsync(PackageSearchResource searchResource, IEnumerable<IPackageSearchMetadata> packages)
+        {
+            //workaround for v2 NuGet: eager load for v2 NuGet feed, because it failed later, since
+            //lazyFactory inside ClonePackageSearchMetadata constains reference on CancellationToken used in SearchAsync
+            if (searchResource is PackageSearchResourceV2Feed)
+            {
+                foreach (var package in packages)
+                {
+                    await package.GetVersionsAsync();
+                }
             }
         }
     }

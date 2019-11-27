@@ -560,7 +560,7 @@
                 if (metadata.IconUrl != null)
                 {
                     token.ThrowIfCancellationRequested();
-                    await _packageMetadataMediaDownloadService.DownloadFromAsync(metadata);
+                    await _packageMetadataMediaDownloadService.DownloadMediaForMetadataAsync(metadata);
                 }
             }
 

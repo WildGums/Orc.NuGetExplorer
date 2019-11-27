@@ -31,10 +31,16 @@
             _iconCache.FallbackValue = new System.Windows.Media.Imaging.BitmapImage(new Uri(_defaultIconUri));
         }
 
-        public async Task DownloadFromAsync(IPackageSearchMetadata packageMetadata)
+        public async Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata)
         {
             try
             {
+                //skip if already in cache
+                if (_iconCache.IsCached(packageMetadata.IconUrl))
+                {
+                    return;
+                }
+
                 await DownloadFromAsync(packageMetadata.IconUrl);
             }
             catch (WebException ex)
@@ -116,7 +122,7 @@
                 Log.Error(ex);
             }
 
-            return new BitmapImage(new Uri(_defaultIconUri));
+            return new BitmapImage(new Uri(defaultUrl));
         }
 
         private async Task<ImageSource> GetFromCacheOrFetchAsync(Uri uri)
