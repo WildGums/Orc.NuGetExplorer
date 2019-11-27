@@ -41,53 +41,55 @@
         
         <local:ProjectsView Grid.Row="1" Grid.ColumnSpan="3"
                             MinHeight="260"
-                            Margin="10 0 3 6"
+                            Margin="10 0 3 10"
                             DataContext="{Binding NuGetActionTarget}"
                             Visibility="{Binding IsTargetProjectCanBeChanged, Converter={catel:BooleanToCollapsingVisibilityConverter}}"/>
-        
-        
-        
-        <!-- install/uninstall actions -->
-        <Label Grid.Row="2" 
-               Margin="6 0 3 2">
-            Installed:
-        </Label>
 
-        <TextBox Name="InstalledVersionTextBox"
-                 Grid.Row="2" Grid.Column="1"
+
+        <UniformGrid Grid.Row="2"  Grid.ColumnSpan="3"
+                     Rows="2">
+            <!-- install/uninstall actions -->
+            <Label  
+               Margin="6 0 3 2">
+                Installed:
+            </Label>
+
+            <TextBox Name="InstalledVersionTextBox"
                  Margin="3 0 3 2"
                  IsReadOnly="True"
                  Text="{Binding InstalledVersion, Converter={converters:NuGetVersionToStringConverter}}"/>
 
-        <Button Grid.Row="2" Grid.Column="2"
+            <Button 
                 Margin="3 0 10 2"
                 Command="{Binding UninstallPackage}">
-            Uninstall
-        </Button>
+                Uninstall
+            </Button>
 
-        <Label Grid.Row="3"
+            <Label 
                Margin="6 0 3 2">
-            Version:
-        </Label>
+                Version:
+            </Label>
 
-        <ComboBox Grid.Row="3" Grid.Column="1"
+            <ComboBox 
                   Margin="3 0 3 2"
                   IsReadOnly="True"
                   Width="{Binding ElementName=InstalledVersionTextBox, Path=ActualWidth}"
                   MinWidth="90"
                   SelectedValue="{Binding SelectedVersion}"
                   ItemsSource="{Binding VersionsCollection}">
-            <i:Interaction.Behaviors>
-                <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>
-            </i:Interaction.Behaviors>
-        </ComboBox>
+                <i:Interaction.Behaviors>
+                    <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>
+                </i:Interaction.Behaviors>
+            </ComboBox>
 
 
-        <Button Grid.Row="3" Grid.Column="2"
+            <Button
                 Margin="3 0 10 2"
-                Command="{Binding InstallPackage}"> 
-            Install
-        </Button>
+                Command="{Binding InstallPackage}">
+                Install
+            </Button>
+        </UniformGrid>
+       
         
         <!-- second part contained full description -->
 
