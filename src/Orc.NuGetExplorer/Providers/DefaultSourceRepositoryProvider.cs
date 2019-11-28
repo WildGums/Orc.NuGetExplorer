@@ -17,7 +17,7 @@
         private readonly INuGetSettings _settings;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
 
-        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new ConcurrentDictionary<PackageSource, SourceRepository>(new PackageSourceCustomEqualityComparer());
+        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new ConcurrentDictionary<PackageSource, SourceRepository>(DefaultNuGetComparers.PackageSource);
 
         /// <summary>
         /// Unused provider from NuGet library
@@ -83,22 +83,6 @@
             return new SourceRepository(
                         new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
                 );
-        }
-
-        /// <summary>
-        /// Custom equality comparer, comparing PackageSources by sources string
-        /// </summary>
-        private class PackageSourceCustomEqualityComparer : IEqualityComparer<PackageSource>
-        {
-            public bool Equals(PackageSource x, PackageSource y)
-            {
-                return string.Equals(x.Source, y.Source);
-            }
-
-            public int GetHashCode(PackageSource obj)
-            {
-                return obj.Source.GetHashCode();
-            }
         }
     }
 }

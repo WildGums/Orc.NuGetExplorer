@@ -78,8 +78,6 @@
 
                 var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-                await LoadVersionsEagerIfNeedAsync(searchResource, packages);
-
                 return packages;
             }
             catch (FatalProtocolException ex) when (token.IsCancellationRequested)
