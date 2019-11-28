@@ -97,7 +97,7 @@ namespace Orc.NuGetExplorer
         public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
             using (_pleaseWaitService.WaitingScope())
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
             {
                 await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
             }
@@ -106,7 +106,7 @@ namespace Orc.NuGetExplorer
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
         {
             using (_pleaseWaitService.WaitingScope())
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
             }

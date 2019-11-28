@@ -26,6 +26,7 @@
         Task<PackageCollection> CreatePackagesCollectionFromProjectsAsync(IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken);
 
         IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects);
+        Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token);
 
         /*
         Task UninstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token);
