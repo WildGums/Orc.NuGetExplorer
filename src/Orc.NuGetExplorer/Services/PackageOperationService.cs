@@ -148,7 +148,7 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Update, package);
+                _packageOperationNotificationService.NotifyOperationFinished(operationPath, PackageOperationType.Update, package);
             }
         }
 
