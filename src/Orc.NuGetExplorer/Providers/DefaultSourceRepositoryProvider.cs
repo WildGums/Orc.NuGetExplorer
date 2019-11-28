@@ -75,6 +75,9 @@
                 }
             }
 
+            //this provider aware of same-source repositories
+            repos = repos.Distinct(DefaultNuGetComparers.SourceRepository).ToList();
+
             return repos;
         }
 

@@ -198,6 +198,8 @@
                 // latest versions of the package.
                 sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
 
+                Log.Info($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
+
                 var packages = await metadataResource?.GetMetadataAsync(
                     packageId,
                     includePrerelease,
@@ -205,6 +207,8 @@
                     sourceCacheContext,
                     NuGetLogger,
                     cancellationToken);
+
+                Log.Info($"Returned {packages.Count()} packages");
 
                 return packages;
 

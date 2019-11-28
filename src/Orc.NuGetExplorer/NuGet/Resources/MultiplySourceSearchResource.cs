@@ -40,7 +40,8 @@
         private async Task ResolveResources(SourceRepository[] sourceRepositories)
         {
             //get one source for repositories with same uri
-            var combinedResourcesTasks = sourceRepositories.Distinct(new UniqueSourceSourceRepositoryComparer())
+            //nonetheless repository provider is already aware of source duplicates, so check is unnecessary
+            var combinedResourcesTasks = sourceRepositories.Distinct(DefaultNuGetComparers.SourceRepository)
                 .Select(async x =>
                 {
                     var resource = await x.GetResourceAsync<PackageSearchResource>();
@@ -106,19 +107,6 @@
             public int GetHashCode(IPackageSearchMetadata obj)
             {
                 return obj.Identity.GetHashCode();
-            }
-        }
-
-        private class UniqueSourceSourceRepositoryComparer : IEqualityComparer<SourceRepository>
-        {
-            public bool Equals(SourceRepository x, SourceRepository y)
-            {
-                return DefaultNuGetComparers.PackageSource.Equals(x.PackageSource, y.PackageSource);
-            }
-
-            public int GetHashCode(SourceRepository obj)
-            {
-                return DefaultNuGetComparers.PackageSource.GetHashCode(obj.PackageSource);
             }
         }
     }
