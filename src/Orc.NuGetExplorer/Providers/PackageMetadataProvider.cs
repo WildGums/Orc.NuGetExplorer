@@ -188,9 +188,9 @@
             using (var sourceCacheContext = new SourceCacheContext())
             {
                 //todo
-                //check this httpCache created inside GetMetadataAsync()
-                //but it appeared, Root folder value didn't use, when retry count is 0
-                //Then temporary folder for package never created and SourceCacheContext dispoe caused
+                //check httpCache created inside GetMetadataAsync()
+                //it appeared, Root folder value didn't used when retry count is 0
+                //Then temporary folder for package never created and SourceCacheContext dispose caused
                 //DirectoryNotFoundException
                 //var httpCache = HttpSourceCacheContext.Create(sourceCacheContext, 0);
 
