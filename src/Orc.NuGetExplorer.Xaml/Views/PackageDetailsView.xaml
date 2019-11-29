@@ -186,9 +186,13 @@
                                Text="{Binding VersionData.Published, StringFormat=D}"
                                ToolTip="{Binding VersionData.Published, StringFormat=D}"/>
 
-                    <Label Grid.Row="5">Project URL:</Label>
+                    <Label Grid.Row="5"
+                           Visibility="Collapsed">
+                        Project URL:
+                    </Label>
                     <TextBlock Grid.Column="1" Grid.Row="5"
                                TextTrimming="WordEllipsis"
+                               Visibility="Collapsed"
                                MaxWidth="210"
                                Text="{Binding VersionData.ProjectUrl}"
                                ToolTip="{Binding VersionData.ProjectUrl}"/>
