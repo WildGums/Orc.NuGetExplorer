@@ -123,18 +123,45 @@
         {
             //todo auth scopes?
             var scopeManagers = new List<ScopeManager<AuthenticationScope>>();
+            var updateList = new List<IPackageDetails>();
+            var emptySearchTerm = String.Empty;
 
             try
             {
                 Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
 
-                var repositories = _repositoryService.GetSourceRepositories();
+                //get local packages
+                var localFilter = new SearchFilter(true);
+                var localRepo = _repositoryService.LocalRepository;
+                var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepo.Source));
 
-                var pageToken = new PageContinuation(0, new PackageSourceWrapper(repositories.Select(r => r.Source).ToList()));
+                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
 
-                var availableUpdates = await LoadAsync("", pageToken, new SearchFilter(allowPrerelease ?? true), token);
+                //getting updates
+                foreach(var package in installedPackagesMetadatas)
+                {
+                    //current behavior defined based on installed version
+                    //pre-release versions upgraded to latest stable or pre-release
+                    //stable versions upgraded to latest stable only
+                    var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
+                    var clonedMetadata = await PackageMetadataProvider.Value.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
-                return availableUpdates.Select(metadata => new NuGetPackage(metadata, Enums.MetadataOrigin.Updates)).ToList();
+                    if (clonedMetadata == null)
+                    {
+                        Log.Error($"Couldn't retrieve update metadata for installed {package.Identity}");
+                        continue;
+                    }
+
+                    if (clonedMetadata.Identity.Version > package.Identity.Version)
+                    {
+                        //construct package details
+                        var details = PackageDetailsFactory.Create(PackageOperationType.Update, clonedMetadata, clonedMetadata.Identity, true);
+
+                        updateList.Add(details);
+                    }
+                }
+
+                return updateList;
             }
             catch (Exception ex) when (token.IsCancellationRequested)
             {
