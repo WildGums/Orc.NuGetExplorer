@@ -29,7 +29,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Margin="10 4 0 0"
+        <TextBlock Margin="10 4 10 0"
                    FontSize="20"
                    Grid.ColumnSpan="3"
                    Text="{Binding Title}"
@@ -38,40 +38,51 @@
 
         <!-- We can use this view to allow user to select different project when performing install/uninstall actions
         -->
-        
         <local:ProjectsView Grid.Row="1" Grid.ColumnSpan="3"
                             MinHeight="260"
                             Margin="10 0 3 10"
                             DataContext="{Binding NuGetActionTarget}"
                             Visibility="{Binding IsTargetProjectCanBeChanged, Converter={catel:BooleanToCollapsingVisibilityConverter}}"/>
 
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="16*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-        <UniformGrid Grid.Row="2"  Grid.ColumnSpan="3"
-                     Rows="2">
             <!-- install/uninstall actions -->
             <Label  
-               Margin="6 0 3 2">
+                Margin="6 0 3 2">
                 Installed:
             </Label>
 
             <TextBox Name="InstalledVersionTextBox"
+                 Grid.Column="1"
                  Margin="3 0 3 2"
+                 Padding="3 3 0 3"
                  IsReadOnly="True"
                  Text="{Binding InstalledVersion, Converter={converters:NuGetVersionToStringConverter}}"/>
 
-            <Button 
+            <Button Grid.Column="2" 
                 Margin="3 0 10 2"
                 Command="{Binding UninstallPackage}">
                 Uninstall
             </Button>
 
-            <Label 
+            <Label Grid.Row="2"
                Margin="6 0 3 2">
                 Version:
             </Label>
 
-            <ComboBox 
+            <ComboBox Grid.Row="2" Grid.Column="1" 
                   Margin="3 0 3 2"
+                  Padding ="6 4 0 3"
                   IsReadOnly="True"
                   Width="{Binding ElementName=InstalledVersionTextBox, Path=ActualWidth}"
                   MinWidth="90"
@@ -82,13 +93,13 @@
                 </i:Interaction.Behaviors>
             </ComboBox>
 
-
-            <Button
+            <Button Grid.Row="2" Grid.Column="2"
                 Margin="3 0 10 2"
                 Command="{Binding InstallPackage}">
                 Install
             </Button>
-        </UniformGrid>
+
+        </Grid>
        
         
         <!-- second part contained full description -->
