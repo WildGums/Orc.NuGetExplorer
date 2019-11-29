@@ -31,12 +31,13 @@
 
             var configuredUri = _configurationService.GetRoamingValue<string>(_fallbackSourceKey);
 
-            if(string.IsNullOrEmpty(configuredUri))
+            var packageSource = new NuGetFeed("Plugins", configuredUri, true);
+
+            if(packageSource.GetUriSource() is null)
             {
+                //source is empty or invalid uri
                 yield break;
             }
-
-            var packageSource = new NuGetFeed("Plugins", configuredUri, true);
 
             yield return packageSource;
         }
