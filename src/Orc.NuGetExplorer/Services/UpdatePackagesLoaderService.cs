@@ -137,8 +137,13 @@
 
                 var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
 
+                if (PackageMetadataProvider == null)
+                {
+                    PackageMetadataProvider = _projectRepositoryLoader.Value.PackageMetadataProvider;
+                }
+
                 //getting updates
-                foreach(var package in installedPackagesMetadatas)
+                foreach (var package in installedPackagesMetadatas)
                 {
                     //current behavior defined based on installed version
                     //pre-release versions upgraded to latest stable or pre-release
