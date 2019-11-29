@@ -5,6 +5,7 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
+    using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Scenario;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
@@ -21,6 +22,10 @@
             var serviceLocator = ServiceLocator.Default;
 
             AccentColorHelper.CreateAccentColorResourceDictionary();
+
+            //create default source provider based on configuration key
+            var defaultPackageSourcesProvider = typeFactory.CreateInstanceWithParametersAndAutoCompletion<FallbackSourceDefaultPackageSourcesProvider>(DefaultSourceKey);
+            serviceLocator.RegisterInstance<IDefaultPackageSourcesProvider>(defaultPackageSourcesProvider);
 
             //instantiate watchers
             serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
@@ -40,6 +45,8 @@
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
         }
+
+        public string DefaultSourceKey => Settings.NuGet.FallbackUrl;
 
         public virtual async Task<bool> UpgradeNuGetPackagesIfNeededAsync()
         {

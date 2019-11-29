@@ -4,6 +4,8 @@
 
     public interface INuGetExplorerInitializationService
     {
+        string DefaultSourceKey { get; }
+
         Task<bool> UpgradeNuGetPackagesIfNeededAsync();
     }
 }

@@ -26,6 +26,8 @@ namespace Orc.NuGetExplorer
 
             public const string PackageSources = "PackageSources";
 
+            public const string FallbackUrl = "Plugins.FeedUrl";
+
             public const int PackageCount = 200;
 
             #endregion

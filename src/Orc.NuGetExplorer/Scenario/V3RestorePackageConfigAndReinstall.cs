@@ -14,11 +14,12 @@
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Packaging;
+    using Settings = NuGetExplorer.Settings;
 
     public class V3RestorePackageConfigAndReinstall : IUpgradeScenario
     {
         private const string Name = "Upgrade packages to compatible versions";
-        private const string FallbackUriKey = "Plugins.FeedUrl";
+        private const string FallbackUriKey = Settings.NuGet.FallbackUrl;
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
