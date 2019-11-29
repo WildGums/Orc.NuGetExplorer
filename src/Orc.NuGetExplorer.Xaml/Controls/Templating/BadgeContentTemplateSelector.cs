@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer.Controls.Templating
 
         public DataTemplate Available { get; set; }
 
+        public DataTemplate Default { get; set; }
+
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             if (item != null)
@@ -25,6 +27,8 @@ namespace Orc.NuGetExplorer.Controls.Templating
                 {
                     return Available;
                 }
+
+                return Default;
             }
             return base.SelectTemplate(item, container);
         }

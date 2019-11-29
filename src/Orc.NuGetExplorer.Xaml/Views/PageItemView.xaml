@@ -68,6 +68,9 @@
                             </Canvas>
                         </Viewbox>
                     </DataTemplate>
+                    <DataTemplate x:Key="DefaultTemplate">
+                        <!-- default -->
+                    </DataTemplate>
                 </nugetc:Badged.Resources>
                 <nugetc:Badged.Background>
                     <Binding Path="Status" Converter="{converters:PackageStatusEnumToBrushConverter}">
@@ -83,7 +86,8 @@
                     <ContentControl Content="{Binding Status}">
                         <ContentControl.ContentTemplateSelector>
                             <template:BadgeContentTemplateSelector Available="{StaticResource Available}"
-                                                                   NotAvailable="{StaticResource NotAvailable}"/>
+                                                                   NotAvailable="{StaticResource NotAvailable}"
+                                                                   Default="{StaticResource DefaultTemplate}"/>
                         </ContentControl.ContentTemplateSelector>
                     </ContentControl>
                 </nugetc:Badged.Badge>
