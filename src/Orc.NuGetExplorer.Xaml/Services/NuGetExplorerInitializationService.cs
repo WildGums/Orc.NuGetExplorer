@@ -23,10 +23,6 @@
 
             AccentColorHelper.CreateAccentColorResourceDictionary();
 
-            //create default source provider based on configuration key
-            //var defaultPackageSourcesProvider = typeFactory.CreateInstanceWithParametersAndAutoCompletion<FallbackSourceDefaultPackageSourcesProvider>(DefaultSourceKey);
-            //serviceLocator.RegisterInstance<IDefaultPackageSourcesProvider>(defaultPackageSourcesProvider);
-
             //instantiate watchers
             serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
             serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
