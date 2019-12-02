@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Logging;
     using NuGet.Frameworks;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
@@ -11,6 +12,8 @@
     /// </summary>
     public class DestFolder : IExtensibleProject
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly PackagePathResolver _pathResolver;
 
         public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
@@ -20,6 +23,8 @@
             var lowest = defaultFramework.GetLowest();
 
             Framework = lowest.LastOrDefault()?.ToString();
+
+            Log.Info($"Current target framework for plugins set as '{Framework}'");
 
             _pathResolver = new PackagePathResolver(ContentPath);
         }

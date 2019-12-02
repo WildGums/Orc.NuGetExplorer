@@ -85,7 +85,7 @@
             //gather all dependencies
             var installedDependencyInfos = new HashSet<SourcePackageDependencyInfo>(PackageIdentity.Comparer);
 
-            using (var cacheContext = _nuGetCacheManager.GetCacheContext())
+            using (var cacheContext = new SourceCacheContext())  // _nuGetCacheManager.GetCacheContext())
             {
                 var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                     .GetResourceAsync<DependencyInfoResource>(cancellationToken);
@@ -153,7 +153,7 @@
                 var availabePackageStorage = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
                 DependencyBehavior dependencyBehavior = DependencyBehavior.Lowest;
 
-                using (var cacheContext = _nuGetCacheManager.GetCacheContext())
+                using (var cacheContext = new SourceCacheContext())   //_nuGetCacheManager.GetCacheContext())
                 {
                     var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
 
@@ -172,7 +172,7 @@
                     return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
                 }
 
-                using (var cacheContext = _nuGetCacheManager.GetCacheContext())
+                using (var cacheContext = new SourceCacheContext())  // _nuGetCacheManager.GetCacheContext())
                 {
                     //select main sourceDependencyInfo
                     var mainPackageInfo = availabePackageStorage.FirstOrDefault(p => p.Id == package.Id);
@@ -444,6 +444,9 @@
 
         private async Task<bool> CheckCanBeInstalledAsync(IExtensibleProject project, PackageReaderBase packageReader, NuGetFramework targetFramework, CancellationToken token)
         {
+            Argument.IsNotNull(() => project);
+            Argument.IsNotNull(() => packageReader);
+
             var frameworkReducer = new FrameworkReducer();
 
             var libraries = await packageReader.GetLibItemsAsync(token);
