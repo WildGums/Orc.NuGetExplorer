@@ -9,7 +9,7 @@
         ResizeMode="CanResizeWithGrip"
         x:ClassModifier="internal"
         Title="SettingsWindow" MinHeight="500" MinWidth="430">
-    <Grid MinHeight="300" MinWidth="400">
+    <Grid>
         <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
     </Grid>
 </catel:DataWindow>

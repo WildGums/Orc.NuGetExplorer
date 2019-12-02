@@ -184,6 +184,7 @@
             </StackPanel>
 
             <local:FeedDetailView DataContext="{Binding SelectedFeed}"
+                                  HorizontalAlignment="Stretch"
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
                             Margin="0 12 0 0">
