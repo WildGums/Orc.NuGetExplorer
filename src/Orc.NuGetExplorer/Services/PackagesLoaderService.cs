@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
@@ -14,6 +15,8 @@
 
     internal class PackagesLoaderService : IPackageLoaderService
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly ILogger _nugetLogger;
         private readonly ISourceRepositoryProvider _repositoryProvider;
 
@@ -95,7 +98,14 @@
             {
                 foreach (var package in packages)
                 {
-                    await package.GetVersionsAsync();
+                    try
+                    {
+                        await package.GetVersionsAsync();
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Warning($"Cannot preload package metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {e.Message}");
+                    }
                 }
             }
         }

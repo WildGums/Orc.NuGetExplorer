@@ -5,13 +5,15 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel.Logging;
     using NuGet.Common;
-    using NuGet.Configuration;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources;
         private bool _v2Used;
 
@@ -74,8 +76,16 @@
                     //load all versions early
                     foreach (var package in mergedResults)
                     {
-                        await package.GetVersionsAsync();
+                        try
+                        {
+                            await package.GetVersionsAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warning($"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {e.Message}");
+                        }
                     }
+                    
                 }
 
                 return mergedResults;
