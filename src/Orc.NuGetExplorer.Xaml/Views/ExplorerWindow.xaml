@@ -11,6 +11,7 @@
         xmlns:log="clr-namespace:Orc.NuGetExplorer.Logging"
         mc:Ignorable="d"
         x:ClassModifier="internal"
+        x:Name="MainWindow"
         xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
         Title="MainWindow" d:DesignWidth="1000">
     <i:Interaction.Behaviors>
@@ -96,6 +97,7 @@
 
         <local:ExplorerTopBarView Grid.ColumnSpan="2" x:Name="TopBar"
                                       UsedOn="{Binding ElementName=ExplorerPagesTabControl}"
+                                      StartPage="{Binding ElementName=MainWindow, Path=StartPage}"
                                       DataContext="{Binding Settings}"/>
 
         <orc:TabControl Name="ExplorerPagesTabControl"

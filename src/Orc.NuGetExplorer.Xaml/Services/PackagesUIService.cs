@@ -17,6 +17,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;
+        private readonly ITypeFactory _typeFactory;
         #endregion
 
         #region Constructors
@@ -26,6 +27,7 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => typeFactory);
 
             _uiVisualizerService = uiVisualizerService;
+            _typeFactory = typeFactory;
         }
         #endregion
 
@@ -33,6 +35,13 @@ namespace Orc.NuGetExplorer
         public async Task ShowPackagesExplorerAsync()
         {
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
+        }
+
+        public async Task ShowPackagesExplorerAsync(ExplorerTab openTab)
+        {
+            var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
+            explorerVM.StartPage = openTab.Name;
+            await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 
 

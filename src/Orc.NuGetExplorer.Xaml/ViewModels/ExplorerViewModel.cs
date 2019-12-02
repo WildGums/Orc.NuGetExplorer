@@ -48,6 +48,10 @@
             return base.InitializeAsync();
         }
 
+
+        //View to viewmodel
+        public string StartPage { get; set; } = "Browse";
+
         public ExplorerSettingsContainer Settings { get; set; }
 
         public IPackageSearchMetadata SelectedPackageMetadata { get; set; }

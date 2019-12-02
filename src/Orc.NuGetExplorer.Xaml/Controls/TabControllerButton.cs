@@ -105,7 +105,7 @@
 
                 var current = _group.Find(this);
 
-                //костыль
+
                 if (_group.Count == 0 && current == null)
                 {
                     _group.AddFirst(this);

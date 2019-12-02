@@ -39,8 +39,7 @@
             </StackPanel.Resources>
             <nugetc:TabControllerButton x:Name="Browse"
                 TabSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type catel:UserControl}}, Path=UsedOn}"
-                Next="{Binding ElementName=Installed}" 
-                IsChecked="{Binding SelectFirstPageOnLoad}">
+                Next="{Binding ElementName=Installed}">
                 Browse
             </nugetc:TabControllerButton>
             <nugetc:TabControllerButton x:Name="Installed" 
