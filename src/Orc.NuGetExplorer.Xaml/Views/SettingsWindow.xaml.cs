@@ -1,6 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Views
 {
+    using System;
     using Catel.Windows;
+    using Orc.Controls;
     using Orc.NuGetExplorer.ViewModels;
 
     /// <summary>
@@ -18,6 +20,20 @@
             InitializeComponent();
 
             Title = viewModel.Title;
+        }
+
+        protected override void OnLoaded(EventArgs e)
+        {
+            base.OnLoaded(e);
+
+            this.LoadWindowSize(true);
+        }
+
+        protected override void OnUnloaded(EventArgs e)
+        {
+            this.SaveWindowSize();
+
+            base.OnUnloaded(e);
         }
     }
 }

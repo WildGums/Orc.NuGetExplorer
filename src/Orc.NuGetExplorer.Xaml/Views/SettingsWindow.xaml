@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
+        SizeToContent="Manual"
         x:ClassModifier="internal"
         Title="SettingsWindow" MinHeight="500" MinWidth="430">
     <Grid>
