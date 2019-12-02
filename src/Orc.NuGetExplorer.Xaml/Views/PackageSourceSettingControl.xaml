@@ -60,7 +60,7 @@
                         <Grid Margin="4">
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="24"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="40"/>
                             </Grid.ColumnDefinitions>
@@ -70,7 +70,6 @@
 
                             <TextBlock Text="{Binding Path=., NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
                                    Grid.Column="1"
-                                   MaxWidth="290"
                                    TextTrimming="WordEllipsis"
                                    Margin="4 0 4 0">
                             </TextBlock>
