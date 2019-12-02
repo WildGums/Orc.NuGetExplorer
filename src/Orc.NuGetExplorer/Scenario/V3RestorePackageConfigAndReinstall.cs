@@ -83,6 +83,12 @@
                     parsedPackages.Add(packageDetails);
                 }
 
+                //no valid package folders
+                if(!parsedPackages.Any())
+                {
+                    return false;
+                }
+
                 _packageOperationNotificationService.NotifyOperationBatchStarting(PackageOperationType.Install, parsedPackages.ToArray());
 
                 foreach (var packageDetails in parsedPackages)

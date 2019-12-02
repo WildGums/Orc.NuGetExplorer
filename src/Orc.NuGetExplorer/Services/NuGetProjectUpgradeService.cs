@@ -56,7 +56,7 @@
                 {
                     Log.Info($"Run {scenario}..");
                     var result = await scenario.Run();
-                    Log.Info($"Completed");
+                    Log.Info($"Completed, returned status {result}");
 
                     anyCompleted = anyCompleted || result;
                 }
