@@ -11,6 +11,8 @@
     /// </summary>
     public class FallbackSourceDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
     {
+        private const string IsFirstLoadKey = "NuGetExplorer.IsFirstLoad";
+
         private readonly string _fallbackSourceKey;
         private readonly IConfigurationService _configurationService;
 
@@ -29,6 +31,13 @@
                 yield break;
             }
 
+            bool shouldBeAdded = _configurationService.GetRoamingValue(IsFirstLoadKey, true);
+
+            if(!shouldBeAdded)
+            {
+                yield break;
+            }
+
             var configuredUri = _configurationService.GetRoamingValue<string>(_fallbackSourceKey);
 
             var packageSource = new NuGetFeed("Plugins", configuredUri, true);
@@ -38,6 +47,8 @@
                 //source is empty or invalid uri
                 yield break;
             }
+
+            _configurationService.SetRoamingValue(IsFirstLoadKey, false);
 
             yield return packageSource;
         }
