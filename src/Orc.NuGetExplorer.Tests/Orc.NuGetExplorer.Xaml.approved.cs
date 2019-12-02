@@ -84,6 +84,7 @@ namespace Orc.NuGetExplorer.Controls.Templating
     {
         public BadgeContentTemplateSelector() { }
         public System.Windows.DataTemplate Available { get; set; }
+        public System.Windows.DataTemplate Default { get; set; }
         public System.Windows.DataTemplate NotAvailable { get; set; }
         public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container) { }
     }
@@ -140,6 +141,13 @@ namespace Orc.NuGetExplorer.Converters
 }
 namespace Orc.NuGetExplorer
 {
+    public class ExplorerTab
+    {
+        public static Orc.NuGetExplorer.ExplorerTab Browse;
+        public static Orc.NuGetExplorer.ExplorerTab Installed;
+        public static Orc.NuGetExplorer.ExplorerTab Update;
+        public string Name { get; }
+    }
     public interface IImageResolveService
     {
         System.Windows.Media.ImageSource ResolveImageFromUri(System.Uri uri, string defaultUrl = null);
@@ -173,6 +181,12 @@ namespace Orc.NuGetExplorer
     public interface IPackageMetadataMediaDownloadService
     {
         System.Threading.Tasks.Task DownloadMediaForMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata);
+    }
+    public interface IPackagesUIService
+    {
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync();
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab);
+        System.Threading.Tasks.Task ShowPackagesSourceSettingsAsync();
     }
     public class static IPleaseWaitServiceExtensions
     {
