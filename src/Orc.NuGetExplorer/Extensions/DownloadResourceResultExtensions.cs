@@ -5,7 +5,7 @@
     using Catel;
     using NuGet.Protocol.Core.Types;
 
-    public static class DownloadResourceResultExntesions
+    public static class DownloadResourceResultExtensions
     {
         public static string GetResourceRoot(this DownloadResourceResult downloadResourceResult)
         {
@@ -21,6 +21,11 @@
             {
                 return downloadResourceResult.PackageSource ?? String.Empty;
             }
+        }
+
+        public static bool IsAvailable(this DownloadResourceResult downloadResourceResult)
+        {
+            return downloadResourceResult.Status == DownloadResourceResultStatus.Available || downloadResourceResult.Status == DownloadResourceResultStatus.AvailableWithoutStream;
         }
     }
 }

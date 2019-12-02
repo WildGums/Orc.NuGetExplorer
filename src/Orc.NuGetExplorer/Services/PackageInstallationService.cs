@@ -180,13 +180,20 @@
                     //try to download main package and check it target version
                     var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
 
+                    if(!mainDownloadedFiles.IsAvailable())
+                    {
+                        //download failed, possible because of package goes deleted during operation or feed is valid only for searching
+                        //or connection failed
+                        Log.Error($"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress");
+                        return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
+                    }
+
                     var canBeInstalled = await CheckCanBeInstalledAsync(project, mainDownloadedFiles.PackageReader, targetFramework, cancellationToken);
 
                     if (!canBeInstalled)
                     {
                         throw new IncompatiblePackageException($"Package {package} incompatible with project target platform {targetFramework}");
                     }
-
 
                     var resolverContext = GetResolverContext(package, dependencyBehavior, availabePackageStorage);
 
@@ -351,8 +358,6 @@
 
             try
             {
-
-
                 var pathResolver = new PackagePathResolver(project.ContentPath);
 
                 foreach (var packageResource in packageResources)
