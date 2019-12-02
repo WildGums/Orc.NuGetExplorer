@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
+    using Catel.Services;
     using NuGet.Configuration;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
@@ -26,23 +27,26 @@
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+        private readonly IMessageService _messageService;
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            IPackageOperationNotificationService packageOperationNotificationService)
+            IPackageOperationNotificationService packageOperationNotificationService, IMessageService messageService)
         {
             Argument.IsNotNull(() => packageInstallationService);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
             Argument.IsNotNull(() => packageOperationNotificationService);
+            Argument.IsNotNull(() => messageService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _packageOperationNotificationService = packageOperationNotificationService;
+            _messageService = messageService;
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
@@ -177,13 +181,18 @@
 
                 bool dependencyInstallResult = true;
 
-                if(!installerResults.Any())
+                if(!installerResults.Result.Any())
                 {
-                    Log.Info( $"Package {package} has not been installed");
+                    Log.Error( $"Failed to install package {package}");
+
+                    //todo PackageCommandService or context is better place for messaging
+
+                    await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+
                     return false;
                 }
 
-                foreach (var packageDownloadResultPair in installerResults)
+                foreach (var packageDownloadResultPair in installerResults.Result)
                 {
                     var dependencyIdentity = packageDownloadResultPair.Key;
                     var downloadResult = packageDownloadResultPair.Value;

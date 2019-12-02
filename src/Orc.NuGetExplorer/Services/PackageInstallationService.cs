@@ -134,7 +134,7 @@
         }
 
 
-        public async Task<IDictionary<SourcePackageDependencyInfo, DownloadResourceResult>> InstallAsync(
+        public async Task<InstallerResult> InstallAsync(
             PackageIdentity package,
             IExtensibleProject project,
             IReadOnlyList<SourceRepository> repositories,
@@ -168,8 +168,9 @@
 
                 if (!availabePackageStorage.Any())
                 {
-                    Log.Error($"Package {package} cannot be resolved with current settings for chosen destination");
-                    return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
+                    var errorMessage = $"Package {package} cannot be resolved with current settings for chosen destination";
+                    Log.Error(errorMessage);
+                    return new InstallerResult(errorMessage);
                 }
 
                 using (var cacheContext = new SourceCacheContext())  // _nuGetCacheManager.GetCacheContext())
@@ -184,8 +185,9 @@
                     {
                         //download failed, possible because of package goes deleted during operation or feed is valid only for searching
                         //or connection failed
-                        Log.Error($"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress");
-                        return new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
+                        var errorMessage = $"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress";
+                        Log.Error(errorMessage);
+                        return new InstallerResult(errorMessage);
                     }
 
                     var canBeInstalled = await CheckCanBeInstalledAsync(project, mainDownloadedFiles.PackageReader, targetFramework, cancellationToken);
@@ -216,7 +218,7 @@
 
                     await CheckLibAndFrameworkItems(downloadResults, targetFramework, cancellationToken);
 
-                    return downloadResults;
+                    return new InstallerResult(downloadResults);
                 }
             }
             catch (NuGetResolverInputException e)

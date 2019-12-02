@@ -9,7 +9,7 @@
 
     public interface IPackageInstallationService
     {
-        Task<IDictionary<SourcePackageDependencyInfo, DownloadResourceResult>> InstallAsync(
+        Task<InstallerResult> InstallAsync(
             PackageIdentity package,
             IExtensibleProject project,
             IReadOnlyList<SourceRepository> repositories,
