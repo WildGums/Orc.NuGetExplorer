@@ -33,9 +33,8 @@
         public static readonly DependencyProperty UsedOnProperty =
             DependencyProperty.Register("UsedOn", typeof(TabControl), typeof(ExplorerTopBarView), new PropertyMetadata(null));
 
-
         public static readonly DependencyProperty StartPageProperty =
-             DependencyProperty.Register("StartPage", typeof(string), typeof(ExplorerTopBarView), new PropertyMetadata("Browse", (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
+             DependencyProperty.Register("StartPage", typeof(string), typeof(ExplorerTopBarView), new PropertyMetadata("", (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
         public string StartPage

@@ -38,8 +38,6 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <catel:WarningAndErrorValidator Source="{Binding}" />
@@ -50,8 +48,6 @@
 
             <ListBox Grid.Row="1" Grid.ColumnSpan="2"
                  Margin="0 4 2 0"
-                 Grid.RowSpan="2"
-                 MaxHeight="400"
                  SelectedItem="{Binding SelectedFeed}"
                  HorizontalContentAlignment="Stretch"
                  VerticalContentAlignment="Stretch"
@@ -86,7 +82,7 @@
                                                           Success="{Binding IsAccessible}"
                                                           Value="{Binding IsVerifiedNow, Converter={converters:BoolToIntConverter}, UpdateSourceTrigger=PropertyChanged}">
                                 <controls:RotationProgressBar.IconData>
-                                    <Path Data="M12,3A9,9 0 0,0 3,12H0L4,16L8,12H5A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19C10.5,19 9.09,18.5 7.94,17.7L6.5,19.14C8.04,20.3 9.94,21 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M14,12A2,2 0 0,0 12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12Z" Fill="Black"/>
+                                    <Path Data="{Binding Source={StaticResource RotationArrow}, Path=Data}"/>
                                 </controls:RotationProgressBar.IconData>
                             </controls:RotationProgressBar>
                         </Grid>
@@ -189,11 +185,11 @@
             </StackPanel>
 
             <local:FeedDetailView DataContext="{Binding SelectedFeed}"
-                              Grid.ColumnSpan="2" Grid.Row="3"
+                              Grid.ColumnSpan="2" Grid.Row="2"
                               Margin="0 12 0 0">
             </local:FeedDetailView>
 
-            <Separator Grid.Row="4" Grid.ColumnSpan="2"
+            <Separator Grid.Row="3" Grid.ColumnSpan="2"
                    Margin="0 8 0 0"/>
         </Grid>
     </catel:InfoBarMessageControl>

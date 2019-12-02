@@ -6,9 +6,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
         mc:Ignorable="d"
+        ResizeMode="CanResizeWithGrip"
         x:ClassModifier="internal"
-        Title="SettingsWindow" MinHeight="500" MinWidth="400">
-    <Grid Height="500" Width="400">
+        Title="SettingsWindow" MinHeight="500" MinWidth="430">
+    <Grid MinHeight="300" MinWidth="400">
         <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
     </Grid>
 </catel:DataWindow>
