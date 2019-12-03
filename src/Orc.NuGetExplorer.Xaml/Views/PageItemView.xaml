@@ -105,9 +105,10 @@
                 <TextBlock HorizontalAlignment="Left"
                            TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Bottom"
+                           LineHeight="20"
                            LineStackingStrategy="BlockLineHeight">
                          <Run Text="{Binding Title}" FontSize="14" FontWeight="DemiBold" ToolTip="{Binding Title}"></Run>
-                         <Run Text="   by:" ToolTip="{Binding Authors}"/>
+                         <Run xml:space="preserve" Text="  by:" ToolTip="{Binding Authors}"/>
                          <Run Text="{Binding Authors}" ToolTip="{Binding Authors}"/>
                 </TextBlock>
 
@@ -115,9 +116,10 @@
                 <!-- version -->
                 <TextBlock Text="{Binding FirstVersion}"
                            Grid.Column="1"
-                           Margin="2 2 8 2"
                            HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           LineHeight="20"
+                           LineStackingStrategy="BlockLineHeight"
                            ToolTip="{Binding FirstVersion}"/>
 
             </Grid>
@@ -128,45 +130,35 @@
                                   Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                                   Height="28">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid.Resources>
-                    <Style TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
-                        <Setter Property="Padding" Value="0 2 0 2"/>
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="VerticalAlignment" Value="Top"/>
-                    </Style>
-                </Grid.Resources>
 
-                <TextBlock Text="{Binding DownloadCount}" Grid.Column="0"
+                <TextBlock Grid.Column="0"
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                           VerticalAlignment="Stretch"
-                           Margin="2"/>
-                <TextBlock Grid.Column="1"
-                           Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                           Margin="2"
                            VerticalAlignment="Stretch">
-                                    total downloads
+                    
+                    <Run Text="{Binding DownloadCount}"/>
+                    <Run Text=" total downloads"/>
                 </TextBlock>
                 
+
                 <!-- secondary version -->
                 <TextBlock Text="{Binding SecondaryVersion}"
                            Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"
-                           Grid.Column="2" Grid.Row="1"
+                           Grid.Column="1" Grid.Row="1"
                            Margin="2 2 8 2"
                            HorizontalAlignment="Right"
                            ToolTip="{Binding SecondaryVersion}"/>
             </Grid>
 
             <TextBlock Text="{Binding Summary }" TextWrapping="WrapWithOverflow"
-                                       VerticalAlignment="Stretch"
-                                       Grid.Column="1" Grid.Row="2"
-                                       TextTrimming="WordEllipsis"
-                                       MaxHeight="50"/>
+                       VerticalAlignment="Stretch"
+                       Grid.Column="1" Grid.Row="2"
+                       TextTrimming="WordEllipsis"
+                       MaxHeight="50"/>
         </Grid>
     </Grid>
 </catel:UserControl>
