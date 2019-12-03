@@ -129,6 +129,12 @@
                 var index = MyIndex();
 
                 int i = 0;
+
+                if(TabSource.ItemsSource == null)
+                {
+                    return;
+                }
+
                 foreach (var item in TabSource.ItemsSource)
                 {
                     //try to get container from source

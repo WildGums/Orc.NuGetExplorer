@@ -14,9 +14,11 @@
 
     internal class ExplorerViewModel : ViewModelBase
     {
+        private const string DefaultStartPage = "Browse";
         private readonly IConfigurationService _configurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
+        private string _startPage = DefaultStartPage;
 
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
@@ -50,7 +52,7 @@
 
 
         //View to viewmodel
-        public string StartPage { get; set; } = "Browse";
+        public string StartPage { get; set; } = DefaultStartPage;
 
         public ExplorerSettingsContainer Settings { get; set; }
 
@@ -61,6 +63,11 @@
         public ObservableCollection<ExplorerPageViewModel> ExplorerPages { get; set; }
 
         public bool IsLogAutoScroll { get; set; }
+
+        public void ChangeStartPage(string name)
+        {
+            _startPage = name;   
+        }
 
         private void CreatePages()
         {
@@ -75,6 +82,8 @@
                     ExplorerPages.Add(newPage);
                 }
             }
+
+            StartPage = _startPage;
 
             ExplorerPageViewModel CreatePage(string title)
             {

@@ -23,8 +23,8 @@
 
         <TextBlock Grid.Column="0"
                    Grid.Row="0"
-                   VerticalAlignment="Top"
-                   Margin="4 6 0 0"
+                   VerticalAlignment="Center"
+                   Margin="4 2 0 0"
                    Text="Name:"/>
 
         <TextBox Grid.Column="1"
@@ -37,8 +37,8 @@
 
         <TextBlock Grid.Column="0"
                    Grid.Row="1"
-                   VerticalAlignment="Top"
-                   Margin="4 6 0 0"
+                   VerticalAlignment="Center"
+                   Margin="4 2 0 0"
                    Text="Source:"/>
 
         <TextBox Grid.Column="1"

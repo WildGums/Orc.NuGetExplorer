@@ -149,7 +149,6 @@
                            Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch"
                            Grid.Column="1" Grid.Row="1"
-                           Margin="2 2 8 2"
                            HorizontalAlignment="Right"
                            ToolTip="{Binding SecondaryVersion}"/>
             </Grid>

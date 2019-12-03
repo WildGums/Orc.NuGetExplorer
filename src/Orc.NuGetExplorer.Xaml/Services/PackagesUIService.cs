@@ -40,7 +40,7 @@ namespace Orc.NuGetExplorer
         public async Task ShowPackagesExplorerAsync(ExplorerTab openTab)
         {
             var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
-            explorerVM.StartPage = openTab.Name;
+            explorerVM.ChangeStartPage(openTab.Name);
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 

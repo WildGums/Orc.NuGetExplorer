@@ -42,7 +42,7 @@
 
         private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            
+
         }
 
         #endregion
