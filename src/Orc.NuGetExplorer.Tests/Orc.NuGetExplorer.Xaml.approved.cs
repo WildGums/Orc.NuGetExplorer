@@ -185,7 +185,7 @@ namespace Orc.NuGetExplorer
     public interface IPackagesUIService
     {
         System.Threading.Tasks.Task ShowPackagesExplorerAsync();
-        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab);
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab, bool searchIncludePrerelease = False);
         System.Threading.Tasks.Task ShowPackagesSourceSettingsAsync();
     }
     public class static IPleaseWaitServiceExtensions
