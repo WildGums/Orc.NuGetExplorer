@@ -50,6 +50,7 @@
                  SelectedItem="{Binding SelectedFeed}"
                  HorizontalContentAlignment="Stretch"
                  VerticalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding Feeds}">
                 <i:Interaction.Behaviors>
                     <catel:Focus/>
