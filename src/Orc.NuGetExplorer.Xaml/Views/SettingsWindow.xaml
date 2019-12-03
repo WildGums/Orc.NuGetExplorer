@@ -9,7 +9,8 @@
         ResizeMode="CanResizeWithGrip"
         SizeToContent="Manual"
         x:ClassModifier="internal"
-        Title="SettingsWindow" MinHeight="500" MinWidth="430">
+        Title="SettingsWindow" MinHeight="500" MinWidth="430"
+        Height="500" Width="430">
     <Grid>
         <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
     </Grid>
