@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
@@ -18,7 +19,16 @@
         private readonly IConfigurationService _configurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
+
+        private readonly IDictionary<string, PackageSearchParameters> _pageSetup = new Dictionary<string, PackageSearchParameters>()
+        {
+            { "Browse", new PackageSearchParameters() },
+            { "Installed", new PackageSearchParameters() },
+            { "Updates", new PackageSearchParameters() }
+        };
+
         private string _startPage = DefaultStartPage;
+
 
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
@@ -71,11 +81,9 @@
 
         private void CreatePages()
         {
-            string[] pageNames = new string[] { "Browse", "Installed", "Updates" };
-
-            for (int i = 0; i < pageNames.Length; i++)
+            foreach(var page in _pageSetup)
             {
-                var newPage = CreatePage(pageNames[i]);
+                var newPage = CreatePage(page.Key);
 
                 if (newPage != null)
                 {

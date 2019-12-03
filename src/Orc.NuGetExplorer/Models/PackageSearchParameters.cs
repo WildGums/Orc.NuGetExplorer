@@ -8,6 +8,12 @@
             IsPrereleaseIncluded = prereleasIncluded;
         }
 
+        public PackageSearchParameters()
+        {
+            SearchString = string.Empty;
+            IsPrereleaseIncluded = false;
+        }
+
         public bool IsPrereleaseIncluded { get; set; }
 
         public string SearchString { get; set; }
