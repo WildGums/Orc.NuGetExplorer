@@ -102,11 +102,12 @@
         {
             try
             {
-                var restored = _managerConfigurationService.GetSectionValues(ConfigurationSection.ProjectExtensions) as List<string>;
-
-                foreach (var type in _registredProjects.Keys.Where(x => restored.Any(s => s == x.FullName)))
+                foreach(var project in _registredProjects.Values)
                 {
-                    Enable(_registredProjects[type]);
+                    if(_managerConfigurationService.IsProjectConfigured(project))
+                    {
+                        Enable(project);
+                    }
                 }
             }
             catch (ProjectStateException e)

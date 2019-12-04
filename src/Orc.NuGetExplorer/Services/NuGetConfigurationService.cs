@@ -4,26 +4,20 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Xml.Serialization;
     using Catel;
     using Catel.Configuration;
-    using Catel.Data;
     using Catel.IoC;
     using Catel.Logging;
-    using Catel.Runtime.Serialization;
     using Catel.Runtime.Serialization.Xml;
     using Catel.Services;
     using NuGet.Configuration;
     using NuGetExplorer.Configuration;
-    using NuGetExplorer.Models;
-    using Configuration = NuGet.Configuration;
     using Settings = Settings;
 
     public class NuGetConfigurationService : INuGetConfigurationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IXmlSerializer _configSerializer;
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
 
@@ -41,12 +35,10 @@
             { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
         };
 
-        public NuGetConfigurationService(IXmlSerializer serializer, IConfigurationService configurationService, IAppDataService appDataService)
+        public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => serializer);
 
-            _configSerializer = serializer;
             _configurationService = configurationService;
 
             _defaultDestinationFolder = Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "plugins");
@@ -156,84 +148,23 @@
 
         public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
         {
-            SetRoamingValueWithDefaultIdGenerator(
-                    extensibleProjects.Select(x =>
-                        x.GetType().FullName)
-                    .ToList()
-               );
+            foreach(var project in extensibleProjects)
+            {
+                var key = GetProjectKey(project);
+                _configurationService.SetRoamingValue(key, project);
+            }
         }
 
-        public object GetSectionValues(ConfigurationSection section)
+        public bool IsProjectConfigured(IExtensibleProject project)
         {
-            return GetRoamingValue(section);
+            return _configurationService.GetRoamingValue<bool>(GetProjectKey(project));
         }
 
         #endregion
 
-        public object GetRoamingValue(ConfigurationSection section)
+        private string GetProjectKey(IExtensibleProject extensibleProject)
         {
-            var masterKey = _masterKeys[section];
-
-            var obj = DeserializeXmlToListOfString(ConfigurationContainer.Roaming, masterKey);
-
-            return obj;
-        }
-
-        public void SetRoamingValueWithDefaultIdGenerator(List<string> extensibleProject)
-        {
-            SetValueInSection(ConfigurationContainer.Roaming, ConfigurationSection.ProjectExtensions, extensibleProject);
-        }
-
-        private object DeserializeXmlToListOfString(ConfigurationContainer container, string key)
-        {
-            //var storedValue = _configurationService.GetValueFromStore(container, key);
-            var storedValue = _configurationService.GetValue<string>(container, key);
-
-            if (string.IsNullOrEmpty(storedValue))
-            {
-                return new List<string>();
-            }
-
-            var ser = new System.Xml.Serialization.XmlSerializer(typeof(ListWrapper));
-
-            using (StringReader sr = new StringReader(storedValue))
-            {
-                var obj = ser.Deserialize(sr);
-
-                return (obj as ListWrapper)?.List;
-            }
-        }
-
-        private void SetValueInSection(ConfigurationContainer container, ConfigurationSection section, object value)
-        {
-            using (var memStream = new MemoryStream())
-            {
-                var strValue = SerializeXml(memStream, () => _configSerializer.Serialize(value, memStream));
-
-                //SetValueToStore(container, _masterKeys[section], strValue);
-                _configurationService.SetValue(container, _masterKeys[section], strValue);
-            }
-        }
-
-        private string SerializeXml(Stream stream, Action putValueToStream)
-        {
-            putValueToStream();
-
-            var streamReader = new StreamReader(stream);
-
-            stream.Position = 0;
-
-            string rawxml = streamReader.ReadToEnd();
-
-            return rawxml;
-        }
-
-
-        [XmlRoot(ElementName = "Items")]
-        public class ListWrapper
-        {
-            [XmlElement(ElementName = "string", Namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays")]
-            public List<string> List { get; set; }
+            return $"{_masterKeys[ConfigurationSection.ProjectExtensions]}_{extensibleProject.GetType().FullName}";
         }
 
     }
