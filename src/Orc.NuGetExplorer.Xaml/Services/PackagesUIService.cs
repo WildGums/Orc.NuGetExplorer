@@ -41,6 +41,7 @@ namespace Orc.NuGetExplorer
         {
             var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(openTab.Name);
+            explorerVM.ChangeInitialSearchParameters(openTab.Name, new PackageSearchParameters(searchIncludePrerelease, string.Empty));
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 

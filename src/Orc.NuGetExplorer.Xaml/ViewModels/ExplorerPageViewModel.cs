@@ -43,8 +43,6 @@
         private readonly IDispatcherService _dispatcherService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
-
-
         private readonly IPackageLoaderService _packagesLoaderService;
 
         private readonly MetadataOrigin _pageType;
@@ -54,9 +52,11 @@
         private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
         private readonly ITypeFactory _typeFactory;
 
+        private readonly PackageSearchParameters _initialSearchParams;
+
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, IPackageLoaderService packagesLoaderService,
+        public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, PackageSearchParameters initialSearchParams, IPackageLoaderService packagesLoaderService,
             IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager)
@@ -73,14 +73,23 @@
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
+            Argument.IsNotNull(() => initialSearchParams);
+
+            _dispatcherService = dispatcherService;
+            _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
+            _nuGetFeedVerificationService = nuGetFeedVerificationService;
+            _repositoryService = repositoryService;
+            _defferedPackageLoaderService = defferedPackageLoaderService;
+            _projectManager = projectManager;
+            _typeFactory = typeFactory;
 
             _packagesLoaderService = packagesLoaderService;
+            _initialSearchParams = initialSearchParams;
 
             if (Title != "Browse")
             {
                 _packagesLoaderService = this.GetServiceLocator().ResolveType<IPackageLoaderService>(Title);
             }
-
 
             if (!Enum.TryParse(Title, out _pageType))
             {
@@ -89,16 +98,7 @@
 
             CanBatchProjectActions = _pageType == MetadataOrigin.Updates;
 
-            _dispatcherService = dispatcherService;
-            _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
-            _nuGetFeedVerificationService = nuGetFeedVerificationService;
-            _repositoryService = repositoryService;
-            _defferedPackageLoaderService = defferedPackageLoaderService;
-            _projectManager = projectManager;
-
             Settings = explorerSettings;
-
-            _typeFactory = typeFactory;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecute);
             CancelPageLoading = new TaskCommand(CancelPageLoadingExecute);
@@ -231,6 +231,13 @@
         {
             try
             {
+                if(IsActive)
+                {
+                    //set page initial search params as Settings parameters
+                    Settings.IsPreReleaseIncluded = _initialSearchParams.IsPrereleaseIncluded;
+                    Settings.SearchString = _initialSearchParams.SearchString;
+                }
+
                 //execution delay
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
@@ -247,11 +254,11 @@
 
                 IsFirstLoaded = false;
 
-                //todo validation
                 if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
+
                     var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString);
 
                     await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);

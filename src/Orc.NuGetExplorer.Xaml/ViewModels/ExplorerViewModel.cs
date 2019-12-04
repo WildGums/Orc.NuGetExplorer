@@ -15,16 +15,16 @@
 
     internal class ExplorerViewModel : ViewModelBase
     {
-        private const string DefaultStartPage = "Browse";
+        private const string DefaultStartPage = ExplorerPageName.Browse;
         private readonly IConfigurationService _configurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
 
         private readonly IDictionary<string, PackageSearchParameters> _pageSetup = new Dictionary<string, PackageSearchParameters>()
         {
-            { "Browse", new PackageSearchParameters() },
-            { "Installed", new PackageSearchParameters() },
-            { "Updates", new PackageSearchParameters() }
+            { ExplorerPageName.Browse, new PackageSearchParameters() },
+            { ExplorerPageName.Installed, new PackageSearchParameters() },
+            { ExplorerPageName.Updates, new PackageSearchParameters() }
         };
 
         private string _startPage = DefaultStartPage;
@@ -79,11 +79,19 @@
             _startPage = name;   
         }
 
+        public void ChangeInitialSearchParameters(string pagename, PackageSearchParameters searchParams)
+        {
+            if(_pageSetup.ContainsKey(pagename))
+            {
+
+            }
+        }
+
         private void CreatePages()
         {
             foreach(var page in _pageSetup)
             {
-                var newPage = CreatePage(page.Key);
+                var newPage = CreatePage(page.Key, page.Value);
 
                 if (newPage != null)
                 {
@@ -93,9 +101,9 @@
 
             StartPage = _startPage;
 
-            ExplorerPageViewModel CreatePage(string title)
+            ExplorerPageViewModel CreatePage(string title, PackageSearchParameters initialSearchParams)
             {
-                return _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, title);
+                return _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, title, initialSearchParams);
             }
         }
 

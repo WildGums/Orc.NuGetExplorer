@@ -14,6 +14,13 @@ namespace Orc.NuGetExplorer
         public const string Update = "Update";
     }
 
+    internal static class ExplorerPageName
+    {
+        public const string Browse = "Browse";
+        public const string Installed = "Installed";
+        public const string Updates = "Updates";
+    }
+
     internal static class DefaultName
     {
         public const string PackageSourceFeed = "https://api.nuget.org/v3/index.json";
