@@ -119,11 +119,12 @@
 
         #region IPackagesUpdatesSearcherService
 
-        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
+        public async Task<IEnumerable<IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
             //todo auth scopes?
             var scopeManagers = new List<ScopeManager<AuthenticationScope>>();
-            var updateList = new List<IPackageDetails>();
+
+            var updateList = new List<IPackageSearchMetadata>();
             var emptySearchTerm = String.Empty;
 
             try
@@ -160,9 +161,7 @@
                     if (clonedMetadata.Identity.Version > package.Identity.Version)
                     {
                         //construct package details
-                        var details = PackageDetailsFactory.Create(PackageOperationType.Update, clonedMetadata, clonedMetadata.Identity, true);
-
-                        updateList.Add(details);
+                        updateList.Add(clonedMetadata);
                     }
                 }
 
@@ -181,6 +180,15 @@
 
                 scopeManagers.Clear();
             }
+        }
+
+        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
+        {
+
+            return (await SearchForPackagesUpdatesAsync(allowPrerelease, authenticateIfRequired, token))
+            .Select(
+                m => PackageDetailsFactory.Create(PackageOperationType.Update, m, m.Identity, true))
+            .ToList();
         }
         #endregion
     }

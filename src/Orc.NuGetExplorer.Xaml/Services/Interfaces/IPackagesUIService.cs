@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     {
         #region Methods
         Task ShowPackagesExplorerAsync();
-        Task ShowPackagesExplorerAsync(ExplorerTab openTab, bool searchIncludePrerelease = false);
+        Task ShowPackagesExplorerAsync(ExplorerTab openTab, PackageSearchParameters searchParameters);
         Task ShowPackagesSourceSettingsAsync();
         #endregion
     }

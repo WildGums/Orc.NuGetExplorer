@@ -22,9 +22,9 @@
 
         private readonly IDictionary<string, PackageSearchParameters> _pageSetup = new Dictionary<string, PackageSearchParameters>()
         {
-            { ExplorerPageName.Browse, new PackageSearchParameters() },
-            { ExplorerPageName.Installed, new PackageSearchParameters() },
-            { ExplorerPageName.Updates, new PackageSearchParameters() }
+            { ExplorerPageName.Browse, null},
+            { ExplorerPageName.Installed, null},
+            { ExplorerPageName.Updates, null }
         };
 
         private string _startPage = DefaultStartPage;
@@ -83,7 +83,7 @@
         {
             if(_pageSetup.ContainsKey(pagename))
             {
-
+                _pageSetup[pagename] = searchParams;
             }
         }
 

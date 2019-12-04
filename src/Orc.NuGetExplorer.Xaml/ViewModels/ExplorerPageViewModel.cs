@@ -73,7 +73,6 @@
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
-            Argument.IsNotNull(() => initialSearchParams);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -84,7 +83,7 @@
             _typeFactory = typeFactory;
 
             _packagesLoaderService = packagesLoaderService;
-            _initialSearchParams = initialSearchParams;
+            _initialSearchParams = initialSearchParams; //if null, standard Settings will not be overriden
 
             if (Title != "Browse")
             {
@@ -124,7 +123,6 @@
                 }
             }
         }
-
 
         public static CancellationTokenSource VerificationTokenSource { get; set; } = new CancellationTokenSource();
 
@@ -231,11 +229,13 @@
         {
             try
             {
-                if(IsActive)
+                if(IsActive && _initialSearchParams != null)
                 {
                     //set page initial search params as Settings parameters
+                    //only on first loaded page
                     Settings.IsPreReleaseIncluded = _initialSearchParams.IsPrereleaseIncluded;
                     Settings.SearchString = _initialSearchParams.SearchString;
+                    Settings.IsRecommendedOnly = _initialSearchParams.IsRecommendedOnly;
                 }
 
                 //execution delay
@@ -259,7 +259,7 @@
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
 
-                    var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString);
+                    var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
 
                     await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
                 }
@@ -332,7 +332,7 @@
             //reset page
             PageInfo = new PageContinuation(PageSize, currentFeed.GetPackageSource());
 
-            var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString);
+            var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
             await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
         }
 
@@ -494,8 +494,19 @@
                     PackageItems.Clear();
                 }
 
-                var packages = await _packagesLoaderService.LoadAsync(
+                IEnumerable<IPackageSearchMetadata> packages = null;
+
+                if(searchParameters.IsRecommendedOnly && _packagesLoaderService is IPackagesUpdatesSearcherService updatesLoaderService)
+                {
+                    Log.Info("Select only recommended upgrades");
+                    packages = await updatesLoaderService.SearchForPackagesUpdatesAsync(token: cancellationToken);
+                }
+                else
+                {
+                    packages = await _packagesLoaderService.LoadAsync(
                     searchParameters.SearchString, pageInfo, new SearchFilter(searchParameters.IsPrereleaseIncluded), cancellationToken);
+                }
+ 
 
                 await DownloadAllPicturesForMetadataAsync(packages, cancellationToken);
 
@@ -633,7 +644,7 @@
         private async Task LoadNextPackagePageExecute()
         {
             var pageInfo = PageInfo;
-            var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString);
+            var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
             await VerifySourceAndLoadPackagesAsync(pageInfo, Settings.ObservedFeed, searchParams);
         }
 

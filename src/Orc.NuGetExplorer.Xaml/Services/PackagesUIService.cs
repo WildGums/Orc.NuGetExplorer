@@ -37,11 +37,11 @@ namespace Orc.NuGetExplorer
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
         }
 
-        public async Task ShowPackagesExplorerAsync(ExplorerTab openTab, bool searchIncludePrerelease = false)
+        public async Task ShowPackagesExplorerAsync(ExplorerTab openTab, PackageSearchParameters searchParameters)
         {
             var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(openTab.Name);
-            explorerVM.ChangeInitialSearchParameters(openTab.Name, new PackageSearchParameters(searchIncludePrerelease, string.Empty));
+            explorerVM.ChangeInitialSearchParameters(openTab.Name, searchParameters);
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 
