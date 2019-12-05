@@ -46,9 +46,10 @@ namespace Orc.NuGetExplorer
         }
 
 
-        public async Task ShowPackagesSourceSettingsAsync()
+        public async Task ShowPackagesSourceSettingsAsync(string title = null)
         {
-            await _uiVisualizerService.ShowDialogAsync<SettingsViewModel>(true);
+            var settingsVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>(true, title);
+            await _uiVisualizerService.ShowDialogAsync(settingsVM);
         }
         #endregion
     }
