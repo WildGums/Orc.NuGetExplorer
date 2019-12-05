@@ -81,10 +81,10 @@ namespace Orc.NuGetExplorer
                 _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Uninstall, package);
                 await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                await _logger.LogAsync(LogLevel.Error, exception.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
+                await _logger.LogAsync(LogLevel.Error, ex.Message);
+                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
             }
             finally
             {
@@ -111,10 +111,10 @@ namespace Orc.NuGetExplorer
                 _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Install, package);
                 await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                await _logger.LogAsync(LogLevel.Error, exception.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
+                await _logger.LogAsync(LogLevel.Error, ex.Message);
+                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
             }
             finally
             {
@@ -155,10 +155,10 @@ namespace Orc.NuGetExplorer
                 await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
 
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                await _logger.LogAsync(LogLevel.Error, exception.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(exception);
+                await _logger.LogAsync(LogLevel.Error, ex.Message);
+                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
             }
             finally
             {

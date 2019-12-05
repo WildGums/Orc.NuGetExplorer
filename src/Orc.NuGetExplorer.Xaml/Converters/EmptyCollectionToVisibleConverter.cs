@@ -23,9 +23,9 @@
                 return visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error("Error occured during value conversion", e);
+                Log.Error("Error occured during value conversion", ex);
                 return DependencyProperty.UnsetValue;
             }
         }

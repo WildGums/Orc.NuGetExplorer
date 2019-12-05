@@ -103,9 +103,9 @@
 
                 await Task.Delay(200);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error when updating package");
+                Log.Error(ex, $"Error when updating package");
             }
             finally
             {

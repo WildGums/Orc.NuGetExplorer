@@ -31,9 +31,9 @@
                 //get bitmap from stream cache
                 return IconCache.GetFromCache(value);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error("Error occured during value conversion", e);
+                Log.Error("Error occured during value conversion", ex);
                 return DependencyProperty.UnsetValue;
             }
         }

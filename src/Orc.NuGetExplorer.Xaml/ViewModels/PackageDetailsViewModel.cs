@@ -148,9 +148,9 @@
 
                 await Task.Delay(200);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error when installing package {Package.Identity}, installation was failed");
+                Log.Error(ex, $"Error when installing package {Package.Identity}, installation was failed");
             }
             finally
             {
@@ -184,9 +184,9 @@
 
                 await Task.Delay(200);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
+                Log.Error(ex, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
             }
             finally
             {
@@ -217,9 +217,9 @@
 
                 return versionMetadata;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, "Metadata retrieve error");
+                Log.Error(ex, "Metadata retrieve error");
                 return null;
             }
         }
@@ -311,9 +311,9 @@
                     ValidateCurrentPackage(Package);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, "Error ocurred during view model inititalization, probably package metadata is incorrect");
+                Log.Error(ex, "Error ocurred during view model inititalization, probably package metadata is incorrect");
             }
         }
 

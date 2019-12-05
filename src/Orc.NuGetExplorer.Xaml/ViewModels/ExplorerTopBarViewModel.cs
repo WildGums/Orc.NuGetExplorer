@@ -156,9 +156,9 @@
                     await _messageService.ShowWarningAsync(Constants.Messages.CachedClearEndedWithError, Constants.PackageManagement);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, Constants.Messages.CacheClearFailed);
+                Log.Error(ex, Constants.Messages.CacheClearFailed);
 
                 await _messageService.ShowErrorAsync(Constants.Messages.CacheClearFailed, Constants.PackageManagement);
             }

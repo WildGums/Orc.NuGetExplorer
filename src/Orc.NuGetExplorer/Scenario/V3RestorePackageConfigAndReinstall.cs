@@ -127,10 +127,10 @@
                         anyUpgraded = isInstalled || anyUpgraded;
                     }
 
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
                         failedIdentities.Add(package);
-                        Log.Error(e);
+                        Log.Error(ex);
                     }
                 }
 

@@ -43,9 +43,9 @@ namespace Orc.NuGetExplorer
 
                 _fileSystemService.CopyDirectory(fullPath, destinationDirectory);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.Error(exception, "Failed to create backup for {0}", fullPath);
+                Log.Error(ex, "Failed to create backup for {0}", fullPath);
             }
         }
 
@@ -61,9 +61,9 @@ namespace Orc.NuGetExplorer
 
                 _fileSystemService.CopyDirectory(sourceDirectory, fullPath);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.Error(exception, "Failed to restore backup for {0}", fullPath);
+                Log.Error(ex, "Failed to restore backup for {0}", fullPath);
             }
         }
         #endregion

@@ -408,9 +408,9 @@
                     }
                 }
             }
-            catch (OperationCanceledException e)
+            catch (OperationCanceledException ex)
             {
-                Log.Info($"Command {nameof(LoadPackagesAsync)} was cancelled by {e}");
+                Log.Info($"Command {nameof(LoadPackagesAsync)} was cancelled by {ex}");
 
                 IsCancellationTokenAlive = false;
 

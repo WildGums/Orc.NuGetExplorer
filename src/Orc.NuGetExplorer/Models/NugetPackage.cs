@@ -168,9 +168,9 @@
 
                 LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException ex)
             {
-                Log.Warning(e, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
+                Log.Warning(ex, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
             }
         }
 

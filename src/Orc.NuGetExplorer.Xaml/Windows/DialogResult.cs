@@ -25,9 +25,9 @@
                     throw new InvalidCastException();
                 }
             }
-            catch (InvalidCastException e)
+            catch (InvalidCastException ex)
             {
-                Log.Error(e, $"Cannot set result value, expected type {typeof(T)} was {result.GetType()}");
+                Log.Error(ex, $"Cannot set result value, expected type {typeof(T)} was {result.GetType()}");
             }
         }
     }

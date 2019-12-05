@@ -76,14 +76,7 @@
                     //load all versions early
                     foreach (var package in mergedResults)
                     {
-                        try
-                        {
-                            await package.GetVersionsAsync();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Warning($"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {e.Message}");
-                        }
+                        await GetVersionsMetadataAsync(package);
                     }
                     
                 }
@@ -105,6 +98,18 @@
 
 
             return identityGroups.ToList();
+        }
+
+        private async Task GetVersionsMetadataAsync(IPackageSearchMetadata package)
+        {
+            try
+            {
+                await package.GetVersionsAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, $"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error");
+            }
         }
 
         private class PackageIdentityEqualityComparer : IEqualityComparer<IPackageSearchMetadata>

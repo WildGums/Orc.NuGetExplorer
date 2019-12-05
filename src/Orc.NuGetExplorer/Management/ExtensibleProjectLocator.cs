@@ -110,13 +110,13 @@
                     }
                 }
             }
-            catch (ProjectStateException e)
+            catch (ProjectStateException ex)
             {
-                Log.Error(e, "Mismatch between configuration and registered projects");
+                Log.Error(ex, "Mismatch between configuration and registered projects");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, "Error when restoring project extensions state from configuration");
+                Log.Error(ex, "Error when restoring project extensions state from configuration");
             }
             finally
             {

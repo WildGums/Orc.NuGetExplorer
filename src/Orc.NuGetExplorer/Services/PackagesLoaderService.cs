@@ -102,9 +102,9 @@
                     {
                         await package.GetVersionsAsync();
                     }
-                    catch(Exception e)
+                    catch(Exception ex)
                     {
-                        Log.Warning($"Cannot preload package metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {e.Message}");
+                        Log.Warning($"Cannot preload package metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {ex.Message}");
                     }
                 }
             }

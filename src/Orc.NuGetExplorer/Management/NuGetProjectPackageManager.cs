@@ -216,21 +216,21 @@
 
                 return true;
             }
-            catch (ProjectInstallException e)
+            catch (ProjectInstallException ex)
             {
-                Log.Error(e, $"The Installation of package {package} was failed");
+                Log.Error(ex, $"The Installation of package {package} was failed");
 
                 //rollback packages
                 //todo always provide correct rollback info
 
-                if (e?.CurrentBatch == null)
+                if (ex?.CurrentBatch == null)
                 {
                     return false;
                 }
 
                 Log.Info("Rollback changes");
 
-                foreach (var canceledPackages in e.CurrentBatch)
+                foreach (var canceledPackages in ex.CurrentBatch)
                 {
                     await UninstallPackageForProjectAsync(project, canceledPackages, token);
                 }
@@ -238,9 +238,9 @@
                 return false;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"The Installation of package {package} was failed");
+                Log.Error(ex, $"The Installation of package {package} was failed");
                 throw;
             }
         }
@@ -272,9 +272,9 @@
 
                 await OnUninstallAsync(project, package, true);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Uninstall of package {package} was failed");
+                Log.Error(ex, $"Uninstall of package {package} was failed");
             }
         }
 
@@ -313,9 +313,9 @@
                     await OnUpdateAsync(updateArg);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error during package {packageid} update");
+                Log.Error(ex, $"Error during package {packageid} update");
             }
         }
 
@@ -340,9 +340,9 @@
                     await OnUpdateAsync(updateArg);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error during package {packageid} update");
+                Log.Error(ex, $"Error during package {packageid} update");
             }
         }
 
@@ -354,9 +354,9 @@
 
                 await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"Error during package {installedVersion} update");
+                Log.Error(ex, $"Error during package {installedVersion} update");
             }
         }
 

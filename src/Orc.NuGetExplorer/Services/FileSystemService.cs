@@ -42,10 +42,10 @@
                 {
                     Directory.Delete(path, false);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to delete directory {0}", path);
+                    Log.Error(ex, "Failed to delete directory {0}", path);
                 }
             }
 
@@ -96,10 +96,10 @@
                 {
                     File.Copy(sourceFileName, destFileName, true);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to copy file {0} to {1}.", sourceFileName, destinationDirectory);
+                    Log.Error(ex, "Failed to copy file {0} to {1}.", sourceFileName, destinationDirectory);
                 }
             }
             return success;
@@ -123,11 +123,11 @@
                         Directory.CreateDirectory(newDir);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
                     failedDirectories.Add(newDir);
-                    Log.Error(exception, "Failed to create directory {0}.", newDir);
+                    Log.Error(ex, "Failed to create directory {0}.", newDir);
                 }
             }
             return success;
@@ -146,10 +146,10 @@
                 {
                     DeleteDirectory(subDirectory);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to delete directory {0}.", directory);
+                    Log.Error(ex, "Failed to delete directory {0}.", directory);
                 }
             }
             return success;
@@ -169,12 +169,12 @@
                     File.SetAttributes(file, FileAttributes.Normal);
                     File.Delete(file);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
                     var directoryName = Path.GetDirectoryName(file);
                     failedDirectories.Add(directoryName);
-                    Log.Error(exception, "Failed to delete file {0}.", file);
+                    Log.Error(ex, "Failed to delete file {0}.", file);
                 }
             }
             return success;

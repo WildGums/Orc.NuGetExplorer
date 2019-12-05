@@ -123,9 +123,9 @@
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
-                Log.Error(e, "Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
+                Log.Error(ex, "Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
             }
             finally
             {
@@ -221,17 +221,17 @@
                     return new InstallerResult(downloadResults);
                 }
             }
-            catch (NuGetResolverInputException e)
+            catch (NuGetResolverInputException ex)
             {
-                throw new ProjectInstallException($"Package {package} or some of it dependencies are missed for current target framework", e);
+                throw new ProjectInstallException($"Package {package} or some of it dependencies are missed for current target framework", ex);
             }
             catch (ProjectInstallException)
             {
                 throw;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e);
+                Log.Error(ex);
                 throw;
             }
         }
@@ -394,11 +394,11 @@
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, $"An error occured during package extraction");
+                Log.Error(ex, $"An error occured during package extraction");
 
-                var extractionEx = new ProjectInstallException(e.Message, e)
+                var extractionEx = new ProjectInstallException(ex.Message, ex)
                 {
                     CurrentBatch = extractedPackages
                 };

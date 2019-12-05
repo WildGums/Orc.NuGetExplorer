@@ -93,9 +93,9 @@
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e, "Background loading task was failed");
+                Log.Error(ex, "Background loading task was failed");
             }
             finally
             {
