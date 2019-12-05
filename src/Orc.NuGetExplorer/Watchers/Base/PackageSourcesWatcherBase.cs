@@ -20,7 +20,7 @@
             {
                 var packageSource = provider.LoadPackageSources().FirstOrDefault(source => !string.IsNullOrWhiteSpace(source.Source));
 
-                OnPackageSourcesChanged(packageSource.Source);
+                OnPackageSourcesChanged(packageSource?.Source);
             }
         }
 
