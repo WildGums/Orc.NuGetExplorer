@@ -28,7 +28,18 @@ namespace Orc.NuGetExplorer
 
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
+
+            SettingsTitle = null;
         }
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Overriden title for settings window
+        /// </summary>
+        public string SettingsTitle { get; set; }
+
         #endregion
 
         #region Methods
@@ -46,9 +57,9 @@ namespace Orc.NuGetExplorer
         }
 
 
-        public async Task ShowPackagesSourceSettingsAsync(string title = null)
+        public async Task ShowPackagesSourceSettingsAsync()
         {
-            var settingsVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>(true, title);
+            var settingsVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>(true, SettingsTitle);
             await _uiVisualizerService.ShowDialogAsync(settingsVM);
         }
         #endregion

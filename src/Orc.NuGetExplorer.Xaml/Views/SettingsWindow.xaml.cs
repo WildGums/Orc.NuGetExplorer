@@ -17,9 +17,14 @@
 
         public SettingsWindow(SettingsViewModel viewModel) : base(viewModel, DataWindowMode.OkCancel)
         {
-            InitializeComponent();
+            if(viewModel.CanReset)
+            {
+                AddCustomButton(new DataWindowButton("Reset", "Reset"));
+            }
 
             Title = viewModel.Title;
+
+            InitializeComponent();
         }
 
         protected override void OnLoaded(EventArgs e)

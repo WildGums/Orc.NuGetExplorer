@@ -19,13 +19,26 @@
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
+        private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
 
-        private SettingsViewModel()
+        private SettingsViewModel(IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
+            Argument.IsNotNull(() => defaultPackageSourcesProvider);
+
+            _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
+
+            var sl = this.GetServiceLocator();
+
+            if (sl.IsTypeRegistered<INuGetConfigurationResetService>())
+            {
+                _nuGetConfigurationResetService = sl.ResolveType<INuGetConfigurationResetService>();
+                CanReset = true;
+            }
+
             Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
-        public SettingsViewModel(ExplorerSettingsContainer settings) : this()
+        public SettingsViewModel(ExplorerSettingsContainer settings, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => settings);
             Settings = settings;
@@ -33,28 +46,21 @@
             Title = DefaultTitle;
         }
 
-        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, string title) : this()
+        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, string title, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => settingsProvider);
-            Settings = settingsProvider.Model;
 
+            Settings = settingsProvider.Model;
             Title = title ?? DefaultTitle;
         }
 
         public SettingsViewModel(bool loadFeedsFromConfig, string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            INuGetConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
-            : this(settingsProvider, title)
+            INuGetConfigurationService configurationService, INuGetExplorerInitializationService initializationService, 
+            IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+            : this(settingsProvider, title, defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => initializationService);
-
-            var sl = this.GetServiceLocator();
-
-            if(sl.IsTypeRegistered<INuGetConfigurationResetService>())
-            {
-                _nuGetConfigurationResetService = sl.ResolveType<INuGetConfigurationResetService>();
-                CanReset = true;
-            }
 
             _reloadConfigOnInitialize = loadFeedsFromConfig;
             _nuGetConfigurationService = configurationService;
@@ -77,6 +83,8 @@
                 LoadFeeds();
             }
 
+            InitializeDefaultFeed();
+
             return base.InitializeAsync();
         }
 
@@ -86,6 +94,18 @@
             feeds.ForEach(feed => feed.Initialize());
 
             Settings.NuGetFeeds.AddRange(feeds);
+        }
+
+        private void InitializeDefaultFeed()
+        {
+            DefaultFeed = _defaultPackageSourcesProvider.DefaultSource  ?? string.Empty;
+        }
+
+        protected override async Task<bool> SaveAsync()
+        {
+            InitializeDefaultFeed();
+
+            return await base.SaveAsync();
         }
 
         protected override Task OnClosingAsync()

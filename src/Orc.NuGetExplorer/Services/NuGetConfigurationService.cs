@@ -8,7 +8,6 @@
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
-    using Catel.Runtime.Serialization.Xml;
     using Catel.Services;
     using NuGet.Configuration;
     using NuGetExplorer.Configuration;
@@ -46,6 +45,7 @@
 
 
         #region INuGetConfigurationService
+
         public string GetDestinationFolder()
         {
             var destinationFolder = _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
@@ -166,6 +166,5 @@
         {
             return $"{_masterKeys[ConfigurationSection.ProjectExtensions]}_{extensibleProject.GetType().FullName}";
         }
-
     }
 }

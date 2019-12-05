@@ -12,6 +12,8 @@ namespace Orc.NuGetExplorer.Example
 
     public class DefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
     {
+        public string DefaultSource { get; set; } = Constants.DefaultNugetOrgUri;
+
         #region Methods
         public IEnumerable<IPackageSource> GetDefaultPackages()
         {
