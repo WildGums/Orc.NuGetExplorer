@@ -12,6 +12,6 @@
         Title="SettingsWindow" MinHeight="500" MinWidth="430"
         Height="500" Width="430">
     <Grid>
-        <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}"/>
+        <local:PackageSourceSettingControl DataContext="{Binding NuGetFeeds}" DefaultFeed="{Binding DefaultFeed}"/>
     </Grid>
 </catel:DataWindow>
