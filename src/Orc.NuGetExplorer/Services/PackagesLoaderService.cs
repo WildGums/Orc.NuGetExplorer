@@ -92,20 +92,12 @@
 
         private async Task LoadVersionsEagerIfNeedAsync(PackageSearchResource searchResource, IEnumerable<IPackageSearchMetadata> packages)
         {
-            //workaround for v2 NuGet: eager load for v2 NuGet feed, because it failed later, since
-            //lazyFactory inside ClonePackageSearchMetadata constains reference on CancellationToken used in SearchAsync
+            
             if (searchResource is PackageSearchResourceV2Feed)
             {
                 foreach (var package in packages)
                 {
-                    try
-                    {
-                        await package.GetVersionsAsync();
-                    }
-                    catch(Exception ex)
-                    {
-                        Log.Warning($"Cannot preload package metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error: {ex.Message}");
-                    }
+                    await V2SearchHelper.GetVersionsMetadataAsync(package);
                 }
             }
         }
