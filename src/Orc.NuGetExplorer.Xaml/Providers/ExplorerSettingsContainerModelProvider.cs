@@ -34,11 +34,12 @@
                 }
 
 
-                if (IsInitialized)
+                if (!IsInitialized)
                 {
                     var currentValue = base.Model;
                     currentValue.Clear();
                     base.Model = ModelInitialize(base.Model);
+                    IsInitialized = true;
                 }
 
 
