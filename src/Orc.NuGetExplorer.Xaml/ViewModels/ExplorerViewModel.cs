@@ -45,6 +45,12 @@
 
             CreateApplicationWideCommands(commandManager);
 
+            if(settingsProvider is ExplorerSettingsContainerModelProvider settingsLazyProvider)
+            {
+                //force settings model re-initialization from config
+                settingsLazyProvider.IsInitialized = false;
+            }
+
             Settings = settingsProvider.Model;
 
             Title = "Package management";

@@ -1,4 +1,4 @@
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
     using System.ComponentModel;
     using Catel.Data;
@@ -6,5 +6,7 @@ namespace Orc.NuGetExplorer.Providers
     public interface IModelProvider<T> : INotifyPropertyChanged where T : ModelBase
     {
         T Model { get; set; }
+
+        T Create();
     }
 }
