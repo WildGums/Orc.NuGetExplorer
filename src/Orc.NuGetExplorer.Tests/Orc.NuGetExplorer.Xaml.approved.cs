@@ -279,7 +279,9 @@ namespace Orc.NuGetExplorer.Providers
     public class ExplorerSettingsContainerModelProvider : Orc.NuGetExplorer.Providers.ModelProvider<Orc.NuGetExplorer.Models.ExplorerSettingsContainer>
     {
         public ExplorerSettingsContainerModelProvider(Catel.IoC.ITypeFactory typeFactory, Orc.NuGetExplorer.INuGetConfigurationService nugetConfigurationService) { }
+        public bool IsInitialized { get; set; }
         public override Orc.NuGetExplorer.Models.ExplorerSettingsContainer Model { get; set; }
+        public override Orc.NuGetExplorer.Models.ExplorerSettingsContainer Create() { }
     }
     public class NuGetProjectContextProvider : Orc.NuGetExplorer.INuGetProjectContextProvider
     {
