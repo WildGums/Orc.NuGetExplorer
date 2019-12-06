@@ -61,6 +61,12 @@
 
                 _packageMetadataProvider = InitializeMetadataProvider();
 
+                if(_packageMetadataProvider == null)
+                {
+                    Log.Info("Cannot acquire metadata provider for background loading tasks");
+                    return;
+                }
+
                 using (var cts = new CancellationTokenSource())
                 {
                     _aliveCancellationToken = cts.Token;
@@ -122,6 +128,11 @@
             //create package metadata provider from context
             using (var context = _repositoryService.AcquireContext())
             {
+                if(context == SourceContext.EmptyContext)
+                {
+                    return null;
+                }
+
                 var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
                 var localRepos = _projectManager.AsLocalRepositories(projects);

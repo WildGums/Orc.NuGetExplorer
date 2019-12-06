@@ -11,12 +11,14 @@ namespace Orc.NuGetExplorer
 
     public interface IPackagesUIService
     {
+        #region Properties
+        string SettingsTitle { get; set; }
+        #endregion
+
         #region Methods
         Task ShowPackagesExplorerAsync();
         Task ShowPackagesExplorerAsync(ExplorerTab openTab, PackageSearchParameters searchParameters);
-        Task ShowPackagesSourceSettingsAsync();
-
-        string SettingsTitle { get; set; }
+        Task<bool?> ShowPackagesSourceSettingsAsync();
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel;
@@ -15,17 +16,36 @@
     {
         private const string DefaultTitle = "Package source settings";
 
-        private readonly bool _reloadConfigOnInitialize;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
         private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
 
-        private SettingsViewModel(IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+            : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider)
+        {
+            
+        }
+
+        public SettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+            INuGetConfigurationService configurationService,
+            IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(settingsProvider?.Model, configurationService, defaultPackageSourcesProvider)
+        {
+            Argument.IsNotNull(() => settingsProvider);
+
+            Title = title ?? DefaultTitle;
+        }
+
+        public SettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => defaultPackageSourcesProvider);
+            Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => settings);
 
             _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
+            _nuGetConfigurationService = configurationService;
+
+            Title = DefaultTitle;
+            Settings = settings;
 
             var sl = this.GetServiceLocator();
 
@@ -38,39 +58,12 @@
             Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
-        public SettingsViewModel(ExplorerSettingsContainer settings, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(defaultPackageSourcesProvider)
-        {
-            Argument.IsNotNull(() => settings);
-            Settings = settings;
-
-            Title = DefaultTitle;
-        }
-
-        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, string title, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(defaultPackageSourcesProvider)
-        {
-            Argument.IsNotNull(() => settingsProvider);
-
-            Settings = settingsProvider.Model;
-            Title = title ?? DefaultTitle;
-        }
-
-        public SettingsViewModel(bool loadFeedsFromConfig, string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            INuGetConfigurationService configurationService, INuGetExplorerInitializationService initializationService, 
-            IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
-            : this(settingsProvider, title, defaultPackageSourcesProvider)
-        {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => initializationService);
-
-            _reloadConfigOnInitialize = loadFeedsFromConfig;
-            _nuGetConfigurationService = configurationService;
-            _initializationService = initializationService;
-        }
-
 
         [Model(SupportIEditableObject = false)]
         [Expose("NuGetFeeds")]
         public ExplorerSettingsContainer Settings { get; set; }
+
+        public IEnumerable<IPackageSource> PackageSources { get; set; }
 
         public bool CanReset { get; set; }
 
@@ -78,10 +71,7 @@
 
         protected override Task InitializeAsync()
         {
-            if (_reloadConfigOnInitialize)
-            {
-                LoadFeeds();
-            }
+            LoadFeeds();
 
             InitializeDefaultFeed();
 
@@ -92,8 +82,7 @@
         {
             var feeds = _nuGetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
             feeds.ForEach(feed => feed.Initialize());
-
-            Settings.NuGetFeeds.AddRange(feeds);
+            PackageSources = feeds;
         }
 
         private void InitializeDefaultFeed()
@@ -105,16 +94,16 @@
         {
             InitializeDefaultFeed();
 
+            FillSettings();
+
             return await base.SaveAsync();
         }
 
-        protected override Task OnClosingAsync()
+        private void FillSettings()
         {
-            if (_reloadConfigOnInitialize)
-            {
-                Settings.Clear();
-            }
-            return base.OnClosingAsync();
+            Settings.Clear();
+
+            Settings.NuGetFeeds.AddRange(PackageSources.OfType<NuGetFeed>());
         }
 
         #region Commands

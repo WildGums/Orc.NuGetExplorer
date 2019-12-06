@@ -235,7 +235,6 @@
         private async void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //verify all new feeds in collection
-            //feed edit is just re-insertion
 
             if (!(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
                 e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace))
@@ -254,7 +253,14 @@
 
             foreach (NuGetFeed item in newFeeds)
             {
-                if (!item.IsLocal() && item.VerificationResult == FeedVerificationResult.Unknown)
+                if(item.IsLocal())
+                {
+                    //should be truly checked?
+                    item.VerificationResult = FeedVerificationResult.Valid;
+                    return;
+                }
+
+                if (item.VerificationResult == FeedVerificationResult.Unknown)
                 {
                     await VerifyFeedAsync(item);
                 }

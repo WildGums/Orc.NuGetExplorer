@@ -455,7 +455,10 @@
             }
             finally
             {
-                await _defferedPackageLoaderService.StartLoadingAsync();
+                if (PackageItems.Any())
+                {
+                    await _defferedPackageLoaderService.StartLoadingAsync();
+                }
             }
         }
 

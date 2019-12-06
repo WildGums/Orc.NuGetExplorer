@@ -77,8 +77,6 @@
 
         protected override Task InitializeAsync()
         {
-            ReadFeedsFromConfiguration(Settings);
-
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
             var lastSelectedSourceName = (_configurationService as IConfigurationService)?.GetLastRepository("Browse") ?? String.Empty;
@@ -102,7 +100,7 @@
 
         private async Task OnShowPackageSourceSettingsExecuteAsync()
         {
-            var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>(Settings);
+            var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>();
 
             if (nugetSettingsVm != null)
             {
@@ -162,15 +160,6 @@
 
                 await _messageService.ShowErrorAsync(Constants.Messages.CacheClearFailed, Constants.PackageManagement);
             }
-        }
-
-        private void ReadFeedsFromConfiguration(ExplorerSettingsContainer settings)
-        {
-            var feeds = _configurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
-
-            feeds.ForEach(feed => feed.Initialize());
-
-            settings.NuGetFeeds.AddRange(feeds);
         }
 
         private IEnumerable<INuGetSource> GetActiveFeedsFromSettings()

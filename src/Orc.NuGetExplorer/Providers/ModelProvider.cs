@@ -1,4 +1,4 @@
-namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers
 {
     using System.ComponentModel;
     using Catel.Data;
@@ -7,7 +7,7 @@ namespace Orc.NuGetExplorer.Providers
     {
         private T _model;
 
-        public T Model
+        public virtual T Model
         {
             get => _model;
             set
