@@ -13,7 +13,8 @@
             InitializeComponent();
         }
 
-        public ProjectsView(ProjectsViewModel viewModel) : base(viewModel)
+        public ProjectsView(ProjectsViewModel viewModel) 
+            : base(viewModel)
         {
             InitializeComponent();
         }

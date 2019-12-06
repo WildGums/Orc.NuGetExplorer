@@ -13,7 +13,8 @@
             InitializeComponent();
         }
 
-        public FeedDetailView(FeedDetailViewModel viewModel) : base(viewModel)
+        public FeedDetailView(FeedDetailViewModel viewModel) 
+            : base(viewModel)
         {
             InitializeComponent();
         }

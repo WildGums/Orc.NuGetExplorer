@@ -15,7 +15,8 @@
             InitializeComponent();
         }
 
-        public SettingsWindow(SettingsViewModel viewModel) : base(viewModel, DataWindowMode.OkCancel)
+        public SettingsWindow(SettingsViewModel viewModel) 
+            : base(viewModel, DataWindowMode.OkCancel)
         {
             if(viewModel.CanReset)
             {

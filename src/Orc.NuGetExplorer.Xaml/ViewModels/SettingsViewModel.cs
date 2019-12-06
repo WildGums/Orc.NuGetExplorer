@@ -26,9 +26,9 @@
             
         }
 
-        public SettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            INuGetConfigurationService configurationService,
-            IDefaultPackageSourcesProvider defaultPackageSourcesProvider) : this(settingsProvider?.Model, configurationService, defaultPackageSourcesProvider)
+        public SettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+            INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) 
+            : this(settingsProvider?.Model, configurationService, defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => settingsProvider);
 
@@ -47,11 +47,11 @@
             Title = DefaultTitle;
             Settings = settings;
 
-            var sl = this.GetServiceLocator();
+            var serviceLocator = this.GetServiceLocator();
 
-            if (sl.IsTypeRegistered<INuGetConfigurationResetService>())
+            if (serviceLocator.IsTypeRegistered<INuGetConfigurationResetService>())
             {
-                _nuGetConfigurationResetService = sl.ResolveType<INuGetConfigurationResetService>();
+                _nuGetConfigurationResetService = serviceLocator.ResolveType<INuGetConfigurationResetService>();
                 CanReset = true;
             }
 

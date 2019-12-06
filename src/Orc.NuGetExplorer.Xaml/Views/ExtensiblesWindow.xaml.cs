@@ -7,7 +7,8 @@
     /// </summary>
     internal partial class ExtensiblesWindow : DataWindow
     {
-        public ExtensiblesWindow() : base(Catel.Windows.DataWindowMode.Close)
+        public ExtensiblesWindow() 
+            : base(Catel.Windows.DataWindowMode.Close)
         {
             InitializeComponent();
         }

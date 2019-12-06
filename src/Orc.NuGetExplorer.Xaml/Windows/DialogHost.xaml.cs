@@ -1,18 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using Catel.Logging;
-using Catel.MVVM;
-using Catel.Windows;
-
-namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows
 {
+    using System;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Input;
+    using Catel.Logging;
+    using Catel.MVVM;
+    using Catel.Windows;
+
     public partial class DialogHost : Catel.Windows.DataWindow
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public DialogHost(IViewModel vm) : base(vm, DataWindowMode.Custom)
+        public DialogHost(IViewModel vm) 
+            : base(vm, DataWindowMode.Custom)
         {
             var dialogOptions = (ViewModel as IDialogViewModel)?.Dialog;
 
@@ -33,7 +34,6 @@ namespace Orc.NuGetExplorer.Windows
 
         protected override void Initialize()
         {
-            //hack
             SetCurrentValue(DialogCommandProperty, (ViewModel as IDialogViewModel)?.RunOption);
 
             base.Initialize();

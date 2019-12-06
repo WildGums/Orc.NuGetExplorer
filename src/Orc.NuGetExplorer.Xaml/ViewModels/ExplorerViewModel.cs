@@ -97,7 +97,7 @@
         {
             foreach(var page in _pageSetup)
             {
-                var newPage = CreatePage(page.Key, page.Value);
+                var newPage = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, page.Key, page.Value);
 
                 if (newPage != null)
                 {
@@ -106,11 +106,6 @@
             }
 
             StartPage = _startPage;
-
-            ExplorerPageViewModel CreatePage(string title, PackageSearchParameters initialSearchParams)
-            {
-                return _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, title, initialSearchParams);
-            }
         }
 
         protected override Task OnClosingAsync()

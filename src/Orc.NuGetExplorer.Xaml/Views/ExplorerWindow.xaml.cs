@@ -19,7 +19,8 @@
         {
         }
 
-        public ExplorerWindow(ExplorerViewModel viewModel) : base(viewModel, DataWindowMode.Custom)
+        public ExplorerWindow(ExplorerViewModel viewModel) 
+            : base(viewModel, DataWindowMode.Custom)
         {
             InitializeComponent();
             ShowInTaskbar = false;

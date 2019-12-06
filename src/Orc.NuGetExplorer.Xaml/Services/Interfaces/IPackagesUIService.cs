@@ -17,7 +17,7 @@ namespace Orc.NuGetExplorer
 
         #region Methods
         Task ShowPackagesExplorerAsync();
-        Task ShowPackagesExplorerAsync(ExplorerTab openTab, PackageSearchParameters searchParameters);
+        Task ShowPackagesExplorerAsync(INuGetExplorerInitialState explorerState);
         Task<bool?> ShowPackagesSourceSettingsAsync();
         #endregion
     }
