@@ -165,6 +165,10 @@ namespace Orc.NuGetExplorer
         public static System.Windows.Documents.Inline Insert(this System.Windows.Documents.Inline inline, System.Windows.Documents.Inline inlineToAdd) { }
         public static System.Windows.Documents.Inline InsertRange(this System.Windows.Documents.Inline inline, System.Collections.Generic.IEnumerable<System.Windows.Documents.Inline> inlines) { }
     }
+    public interface INuGetConfigurationResetService
+    {
+        System.Threading.Tasks.Task Reset();
+    }
     public interface IPackageCommandService
     {
         System.Threading.Tasks.Task<bool> CanExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails package);
@@ -184,9 +188,10 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackagesUIService
     {
+        string SettingsTitle { get; set; }
         System.Threading.Tasks.Task ShowPackagesExplorerAsync();
-        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab, bool searchIncludePrerelease = False);
-        System.Threading.Tasks.Task ShowPackagesSourceSettingsAsync();
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab, Orc.NuGetExplorer.PackageSearchParameters searchParameters);
+        System.Threading.Tasks.Task<System.Nullable<bool>> ShowPackagesSourceSettingsAsync();
     }
     public class static IPleaseWaitServiceExtensions
     {
@@ -273,7 +278,8 @@ namespace Orc.NuGetExplorer.Providers
 {
     public class ExplorerSettingsContainerModelProvider : Orc.NuGetExplorer.Providers.ModelProvider<Orc.NuGetExplorer.Models.ExplorerSettingsContainer>
     {
-        public ExplorerSettingsContainerModelProvider(Catel.IoC.ITypeFactory typeFactory) { }
+        public ExplorerSettingsContainerModelProvider(Catel.IoC.ITypeFactory typeFactory, Orc.NuGetExplorer.INuGetConfigurationService nugetConfigurationService) { }
+        public override Orc.NuGetExplorer.Models.ExplorerSettingsContainer Model { get; set; }
     }
     public class NuGetProjectContextProvider : Orc.NuGetExplorer.INuGetProjectContextProvider
     {
