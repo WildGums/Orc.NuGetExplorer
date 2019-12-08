@@ -8,14 +8,14 @@
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    internal partial class SettingsWindow : DataWindow
+    internal partial class NuGetSettingsWindow : DataWindow
     {
-        public SettingsWindow()
+        public NuGetSettingsWindow()
         {
             InitializeComponent();
         }
 
-        public SettingsWindow(SettingsViewModel viewModel) 
+        public NuGetSettingsWindow(NuGetSettingsViewModel viewModel) 
             : base(viewModel, DataWindowMode.OkCancel)
         {
             if(viewModel.CanReset)

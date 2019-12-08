@@ -12,7 +12,7 @@
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
 
-    internal class SettingsViewModel : ViewModelBase
+    internal class NuGetSettingsViewModel : ViewModelBase
     {
         private const string DefaultTitle = "Package source settings";
 
@@ -20,13 +20,13 @@
         private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
         private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
 
-        public SettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+        public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider)
         {
             
         }
 
-        public SettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+        public NuGetSettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
             INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) 
             : this(settingsProvider?.Model, configurationService, defaultPackageSourcesProvider)
         {
@@ -35,7 +35,7 @@
             Title = title ?? DefaultTitle;
         }
 
-        public SettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+        public NuGetSettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => defaultPackageSourcesProvider);
             Argument.IsNotNull(() => configurationService);

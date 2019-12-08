@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.SettingsWindow"
+﻿<catel:DataWindow x:Class="Orc.NuGetExplorer.Views.NuGetSettingsWindow"
         xmlns:catel="http://schemas.catelproject.com"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,7 @@
         ResizeMode="CanResizeWithGrip"
         SizeToContent="Manual"
         x:ClassModifier="internal"
-        Title="SettingsWindow" MinHeight="500" MinWidth="430"
+        MinHeight="500" MinWidth="430"
         Height="500" Width="430">
     <Grid>
         <local:PackageSourceSettingControl DefaultFeed="{Binding DefaultFeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

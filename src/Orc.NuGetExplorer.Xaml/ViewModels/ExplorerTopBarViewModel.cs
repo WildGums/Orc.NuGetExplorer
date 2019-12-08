@@ -100,7 +100,7 @@
 
         private async Task OnShowPackageSourceSettingsExecuteAsync()
         {
-            var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<SettingsViewModel>();
+            var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetSettingsViewModel>();
 
             if (nugetSettingsVm != null)
             {
