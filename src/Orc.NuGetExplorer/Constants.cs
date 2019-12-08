@@ -43,9 +43,9 @@ namespace Orc.NuGetExplorer
 
     public static class Constants
     {
-        public const string DefaultNugetOrgUri = "https://api.nuget.org/v3/index.json";
+        public const string DefaultNuGetOrgUri = "https://api.nuget.org/v3/index.json";
 
-        public const string DefaultNugetOrgName = "nuget.org";
+        public const string DefaultNuGetOrgName = "nuget.org";
 
         public const string ConfigKeySeparator = "|";
 

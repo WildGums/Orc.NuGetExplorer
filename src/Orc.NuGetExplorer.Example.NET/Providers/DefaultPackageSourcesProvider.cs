@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer.Example
 
     public class DefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
     {
-        public string DefaultSource { get; set; } = Constants.DefaultNugetOrgUri;
+        public string DefaultSource { get; set; } = Constants.DefaultNuGetOrgUri;
 
         #region Methods
         public IEnumerable<IPackageSource> GetDefaultPackages()
