@@ -169,6 +169,11 @@ namespace Orc.NuGetExplorer
     {
         System.Threading.Tasks.Task Reset();
     }
+    public interface INuGetExplorerInitialState
+    {
+        Orc.NuGetExplorer.PackageSearchParameters InitialSearchParameters { get; }
+        Orc.NuGetExplorer.ExplorerTab Tab { get; }
+    }
     public interface IPackageCommandService
     {
         System.Threading.Tasks.Task<bool> CanExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails package);
@@ -190,12 +195,18 @@ namespace Orc.NuGetExplorer
     {
         string SettingsTitle { get; set; }
         System.Threading.Tasks.Task ShowPackagesExplorerAsync();
-        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.ExplorerTab openTab, Orc.NuGetExplorer.PackageSearchParameters searchParameters);
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.INuGetExplorerInitialState explorerState);
         System.Threading.Tasks.Task<System.Nullable<bool>> ShowPackagesSourceSettingsAsync();
     }
     public class static IPleaseWaitServiceExtensions
     {
         public static System.IDisposable WaitingScope(this Catel.Services.IPleaseWaitService pleaseWaitService) { }
+    }
+    public class NuGetExplorerInitialState : Orc.NuGetExplorer.INuGetExplorerInitialState
+    {
+        public NuGetExplorerInitialState(Orc.NuGetExplorer.ExplorerTab tab, Orc.NuGetExplorer.PackageSearchParameters packageSearchParameters = null) { }
+        public Orc.NuGetExplorer.PackageSearchParameters InitialSearchParameters { get; }
+        public Orc.NuGetExplorer.ExplorerTab Tab { get; }
     }
     public class static ObservableCollectionExtensions
     {
