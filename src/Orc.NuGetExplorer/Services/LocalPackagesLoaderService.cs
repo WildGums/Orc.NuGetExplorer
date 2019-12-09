@@ -21,7 +21,8 @@
         private readonly ISourceRepositoryProvider _repositoryProvider;
         private readonly IRepositoryContextService _repositoryService;
 
-        public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
+        public IPackageMetadataProvider PackageMetadataProvider => 
+            Providers.PackageMetadataProvider.CreateFromSourceContext(_repositoryService, _extensibleProjectLocator, _projectManager);
 
         public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
@@ -34,8 +35,6 @@
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;
             _repositoryService = repositoryService;
-
-            PackageMetadataProvider = new Lazy<IPackageMetadataProvider>(() => InitializeMetdataProvider());
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
@@ -93,30 +92,15 @@
             }
         }
 
-        public IPackageMetadataProvider InitializeMetdataProvider()
-        {
-            //todo provide more automatic way
-            //create package metadata provider from context
-            var context = _repositoryService.AcquireContext();
-
-            var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
-
-            var localRepos = _projectManager.AsLocalRepositories(projects);
-
-            var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
-
-            return new PackageMetadataProvider(repos, localRepos);
-        }
-
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             // first we try and load the metadata from a local package
-            var packageMetadata = await PackageMetadataProvider.Value.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+            var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
 
             if (packageMetadata == null)
             {
                 // and failing that we go to the network
-                packageMetadata = await PackageMetadataProvider.Value.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+                packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
             }
             return packageMetadata;
         }

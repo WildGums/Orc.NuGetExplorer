@@ -13,7 +13,6 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Pagination;
     using Orc.NuGetExplorer.Scopes;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
@@ -51,7 +50,7 @@
             _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
         }
 
-        public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
+        public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
@@ -71,11 +70,6 @@
 
                 Log.Info("Local packages queryed for further available update searching");
 
-                if (PackageMetadataProvider == null)
-                {
-                    PackageMetadataProvider = _projectRepositoryLoader.Value.PackageMetadataProvider;
-                }
-
                 List<IPackageSearchMetadata> updateList = new List<IPackageSearchMetadata>();
 
                 //getting last metadata
@@ -86,7 +80,7 @@
                         continue;
                     }
 
-                    var clonedMetadata = await PackageMetadataProvider.Value.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
 
                     if (clonedMetadata == null)
                     {
@@ -138,11 +132,6 @@
 
                 var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
 
-                if (PackageMetadataProvider == null)
-                {
-                    PackageMetadataProvider = _projectRepositoryLoader.Value.PackageMetadataProvider;
-                }
-
                 //getting updates
                 foreach (var package in installedPackagesMetadatas)
                 {
@@ -150,7 +139,7 @@
                     //pre-release versions upgraded to latest stable or pre-release
                     //stable versions upgraded to latest stable only
                     var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
-                    var clonedMetadata = await PackageMetadataProvider.Value.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
+                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
                     if (clonedMetadata == null)
                     {

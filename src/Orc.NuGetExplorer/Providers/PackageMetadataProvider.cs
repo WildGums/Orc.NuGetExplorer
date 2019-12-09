@@ -11,6 +11,7 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Management;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
     {
@@ -38,21 +39,30 @@
         }
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
-            IEnumerable<SourceRepository> optionalGlobalLocalRepositories)
+            IEnumerable<SourceRepository> optionalGlobalLocalRepositories, SourceRepository localRepository = null)
         {
             Argument.IsNotNull(() => sourceRepositories);
 
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
-        }
-
-        public PackageMetadataProvider(SourceRepository localRepository, IEnumerable<SourceRepository> sourceRepositories,
-            IEnumerable<SourceRepository> optionalGlobalLocalRepositories) : this(sourceRepositories, optionalGlobalLocalRepositories)
-        {
-            Argument.IsNotNull(() => localRepository);
-
             _localRepository = localRepository;
         }
+
+        
+
+        public static PackageMetadataProvider CreateFromSourceContext(IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
+        {
+            var context = repositoryService.AcquireContext();
+
+            var projects = projectSource.GetAllExtensibleProjects();
+
+            var localRepos = projectManager.AsLocalRepositories(projects);
+
+            var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
+
+            return new PackageMetadataProvider(repos, localRepos);
+        }
+
 
         public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
@@ -294,13 +304,5 @@
                 return localPackages;
             }
         }
-
-        //private async Task<IEnumerable<VersionInfo>> FetchAndMergeVersionsAsync(PackageIdentity identity, bool includePrerelease, CancellationToken token)
-        //{
-        //    var rp = _localRepository;
-
-        //    Log.Info(rp.ToString());
-        //    return null;
-        //}
     }
 }

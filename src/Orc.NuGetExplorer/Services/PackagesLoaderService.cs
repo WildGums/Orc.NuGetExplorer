@@ -29,7 +29,7 @@
             _repositoryProvider = repositoryProvider;
         }
 
-        public Lazy<IPackageMetadataProvider> PackageMetadataProvider { get; set; }
+        public IPackageMetadataProvider PackageMetadataProvider { get; }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {

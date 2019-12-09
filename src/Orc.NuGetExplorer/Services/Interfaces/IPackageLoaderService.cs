@@ -5,10 +5,11 @@
     using System.Threading.Tasks;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Pagination;
+    using Orc.NuGetExplorer.Providers;
 
     public interface IPackageLoaderService
     {
-        System.Lazy<Providers.IPackageMetadataProvider> PackageMetadataProvider { get; set; }
+        IPackageMetadataProvider PackageMetadataProvider { get; }
 
         Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token);
     }
