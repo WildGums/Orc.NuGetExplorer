@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
+    using global::NuGetExplorer;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
     using NuGetExplorer.Models;
@@ -52,16 +53,15 @@
 
             var comparison = package.InstalledVersion.CompareTo(package.LastVersion, NuGet.Versioning.VersionComparison.VersionRelease);
 
-            if(comparison < (int)PackageStatus.NotInstalled)
-            {
-                Log.Warning($"Wrong result of package version comparison: {comparison}");
-                return PackageStatus.NotInstalled;
-            }
 
-            if(comparison >= (int)PackageStatus.Pending)
+
+            if (comparison < (int)PackageStatus.NotInstalled || comparison >= (int)PackageStatus.Pending)
             {
-                Log.Warning($"Wrong result of package version comparison: {comparison}");
-                return PackageStatus.LastVersionInstalled;
+                //because of version comparer fallen back to StringComparison of non-numeric labels.
+
+                Log.Debug($"Two packages was compared by release labels with result: {comparison}");
+
+                return comparison < 0 ? PackageStatus.UpdateAvailable : PackageStatus.LastVersionInstalled;
             }
 
             return (PackageStatus)comparison;
