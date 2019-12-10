@@ -358,7 +358,7 @@
 
         private bool IsInstalled()
         {
-            return Status == PackageStatus.UpdateAvailable || Status == PackageStatus.LastVersionInstalled;
+            return InstalledVersion != null;
         }
 
         private void GetPackageValidationErrors(NuGetPackage package)
