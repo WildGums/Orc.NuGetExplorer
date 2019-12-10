@@ -55,7 +55,7 @@
                 foreach (var scenario in _runOnCheckList)
                 {
                     Log.Info($"Run {scenario}..");
-                    var result = await scenario.Run();
+                    var result = await scenario.RunAsync();
                     Log.Info($"Completed, returned status {result}");
 
                     anyCompleted = anyCompleted || result;

@@ -16,7 +16,7 @@
         public PackageDetails(IPackageSearchMetadata metadata, bool isLatestVersion = false)
         {
             Id = metadata.Identity.Id;
-            FullName = metadata.Identity.ToFullString();
+            FullName = metadata.Identity?.ToFullString();
             Description = metadata.Description;
             IconUrl = metadata.IconUrl;
             NuGetVersion = metadata.Identity.Version;

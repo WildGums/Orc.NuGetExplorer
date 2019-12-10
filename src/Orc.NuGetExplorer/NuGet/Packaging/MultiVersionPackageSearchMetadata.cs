@@ -19,14 +19,14 @@
         public MultiVersionPackageSearchMetadata(IEnumerable<IPackageSearchMetadata> availableVersions)
         {
             DownloadCount = (int?)DownloadCount;
-            SelectedVersion = Identity.Version.ToString(); //selcted version by default is version from identity
+            SelectedVersion = Identity.Version.ToString(); //selected version by default is version from identity
 
             _availableVersions.AddRange(availableVersions.Select(x => x.Identity.Version.ToFullString()));
         }
 
         public string Id => Identity.Id;
 
-        public string FullName => Identity.ToFullString();
+        public string FullName => Identity?.ToFullString();
 
         public Version Version => Identity.Version.Version;
 

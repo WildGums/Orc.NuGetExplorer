@@ -59,7 +59,7 @@
         {
             var packageOrigin = Package.FromPage;
 
-            IsDownloadCountShowed = packageOrigin != MetadataOrigin.Installed;
+            IsDownloadCountShowed = packageOrigin == MetadataOrigin.Browse;
             CanBeAddedInBatchOperation = packageOrigin == MetadataOrigin.Updates;
 
             FirstVersion = Package.Identity.Version;

@@ -4,10 +4,14 @@
 
     public static class PackageIdentityExtensions
     {
-        //TODO check is needed or standart implementation is enough
         public static string ToFullString(this PackageIdentity packageIdentity)
         {
-            return $"{packageIdentity} {packageIdentity.Version.ToFullString()}";
+            if(packageIdentity.HasVersion)
+            {
+                return $"{packageIdentity} {packageIdentity.Version.ToFullString()}";
+            }
+
+            return packageIdentity.ToString();
         }
     }
 }

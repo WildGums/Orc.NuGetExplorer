@@ -14,11 +14,11 @@
         {
             _package = package;
             ResetValidationContext();
-            FullName = package.ToFullString();
+            FullName = package?.ToFullString();
         }
 
         #region IPackageDetails
-        public string Id => _package.Id;
+        public string Id => _package?.Id;
 
         public string FullName { get; }
 
@@ -28,7 +28,7 @@
 
         public Version Version => NuGetVersion.Version;
 
-        public NuGetVersion NuGetVersion => _package.Version;
+        public NuGetVersion NuGetVersion => _package?.Version;
 
         public string SpecialVersion { get; }
 

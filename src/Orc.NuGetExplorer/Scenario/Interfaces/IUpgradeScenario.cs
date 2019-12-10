@@ -4,6 +4,6 @@
 
     public interface IUpgradeScenario
     {
-        Task<bool> Run();
+        Task<bool> RunAsync();
     }
 }

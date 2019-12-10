@@ -47,7 +47,7 @@
             _packageOperationNotificationService = packageOperationNotificationService;
         }
 
-        public async Task<bool> Run()
+        public async Task<bool> RunAsync()
         {
             var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
 
