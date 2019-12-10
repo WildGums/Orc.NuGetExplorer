@@ -3,7 +3,6 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
-    using global::NuGetExplorer;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
     using NuGetExplorer.Models;
