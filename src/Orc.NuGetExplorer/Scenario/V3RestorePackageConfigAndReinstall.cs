@@ -73,7 +73,7 @@
                     return false;
                 }
 
-                foreach(var folder in subFolders)
+                foreach (var folder in subFolders)
                 {
                     var packageFolderName = Path.GetFileName(folder);
                     var package = PackageIdentityParser.Parse(packageFolderName);
@@ -84,7 +84,7 @@
                 }
 
                 //no valid package folders
-                if(!parsedPackages.Any())
+                if (!parsedPackages.Any())
                 {
                     return false;
                 }
@@ -173,7 +173,7 @@
         {
             var defaultPluginUri = _configurationService.GetRoamingValue<string>(FallbackUriKey);
 
-            if(string.IsNullOrEmpty(defaultPluginUri))
+            if (string.IsNullOrEmpty(defaultPluginUri))
             {
                 return SourceContext.EmptyContext;
             }

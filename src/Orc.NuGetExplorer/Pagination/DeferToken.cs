@@ -1,10 +1,10 @@
-﻿using System;
-using NuGet.Protocol.Core.Types;
-using Orc.NuGetExplorer.Enums;
-using Orc.NuGetExplorer.Models;
-
-namespace Orc.NuGetExplorer.Pagination
+﻿namespace Orc.NuGetExplorer.Pagination
 {
+    using System;
+    using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Enums;
+    using Orc.NuGetExplorer.Models;
+
     public class DeferToken
     {
         public Func<IPackageSearchMetadata> PackageSelector { get; set; }

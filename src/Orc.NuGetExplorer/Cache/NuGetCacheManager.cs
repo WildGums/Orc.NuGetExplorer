@@ -8,7 +8,6 @@
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using Orc.NuGetExplorer.Loggers;
     using Orc.NuGetExplorer.Services;
 
     public class NuGetCacheManager : INuGetCacheManager
@@ -39,7 +38,7 @@
 
         public HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false)
         {
-            //create http cache context from source cache instance
+            // create http cache context from source cache instance
             var baseCache = _sourceContext;
 
             if (directDownload)
@@ -89,7 +88,7 @@
             }
             finally
             {
-                //log all errors
+                // log all errors
 
                 LogHelper.LogUnclearedPaths(failedDeletes, Log);
             }

@@ -83,7 +83,7 @@ namespace Orc.NuGetExplorer
                         {
                             _fileSystemService.DeleteDirectory(e.InstallPath);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
                             Log.Error("Failed to delete directory during rollback actions", ex);

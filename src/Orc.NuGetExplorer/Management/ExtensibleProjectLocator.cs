@@ -6,11 +6,10 @@
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
-    using Orc.NuGetExplorer.Configuration;
 
     internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
-        private readonly static ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ITypeFactory _typeFactory;
 
@@ -102,9 +101,9 @@
         {
             try
             {
-                foreach(var project in _registredProjects.Values)
+                foreach (var project in _registredProjects.Values)
                 {
-                    if(_managerConfigurationService.IsProjectConfigured(project))
+                    if (_managerConfigurationService.IsProjectConfigured(project))
                     {
                         Enable(project);
                     }

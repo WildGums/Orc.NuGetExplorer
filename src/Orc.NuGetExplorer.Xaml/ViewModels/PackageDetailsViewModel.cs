@@ -46,7 +46,7 @@
         private bool _packageApplied;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry, 
+            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry,
             IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => repositoryService);
@@ -257,7 +257,7 @@
                     return;
                 }
 
-                if(!_packageApplied)
+                if (!_packageApplied)
                 {
                     //skip until model is applied
                     return;

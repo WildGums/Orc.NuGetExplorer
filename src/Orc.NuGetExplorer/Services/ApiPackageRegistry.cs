@@ -18,7 +18,6 @@ namespace Orc.NuGetExplorer
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
-    using Orc.NuGetExplorer.Providers;
 
     internal sealed class ApiPackageRegistry : IApiPackageRegistry
     {
@@ -80,7 +79,7 @@ namespace Orc.NuGetExplorer
                 dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
             }
 
-            if(package is PackageDetails details)
+            if (package is PackageDetails details)
             {
                 dependencyGroups = details.DependencySets;
             }

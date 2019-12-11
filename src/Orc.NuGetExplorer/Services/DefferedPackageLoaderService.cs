@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
-    using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
     using NuGetExplorer.Management;
@@ -64,7 +63,7 @@
 
                 _packageMetadataProvider = InitializeMetadataProvider();
 
-                if(_packageMetadataProvider == null)
+                if (_packageMetadataProvider == null)
                 {
                     Log.Info("Cannot acquire metadata provider for background loading tasks");
                     return;
@@ -143,7 +142,7 @@
             //create package metadata provider from context
             using (var context = _repositoryService.AcquireContext())
             {
-                if(context == SourceContext.EmptyContext)
+                if (context == SourceContext.EmptyContext)
                 {
                     return null;
                 }
@@ -171,16 +170,16 @@
         /// <returns></returns>
         private async Task<bool> ValidateIsLocalPackageInstalledAsync(IPackageSearchMetadata package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return false;
             }
 
             var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
-            foreach(var project in projects)
+            foreach (var project in projects)
             {
-                if(await _projectManager.IsPackageInstalledAsync(project, package.Identity, default))
+                if (await _projectManager.IsPackageInstalledAsync(project, package.Identity, default))
                 {
                     return true;
                 }

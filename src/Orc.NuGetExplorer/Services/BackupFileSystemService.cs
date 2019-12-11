@@ -59,7 +59,7 @@ namespace Orc.NuGetExplorer
 
                 File.Copy(filePath, Catel.IO.Path.Combine(fileDestinationPath, fileName), true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex, "Failed to create backup for {0}", filePath);
             }

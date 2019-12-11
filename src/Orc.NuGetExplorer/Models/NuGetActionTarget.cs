@@ -14,6 +14,8 @@
         /// </summary>
         public bool IsTargetProjectCanBeChanged => false;
 
+        public bool IsValid { get; private set; }
+
         public void Add(IExtensibleProject project)
         {
             _extensibleProjects.Add(project);
@@ -27,8 +29,6 @@
 
             RaisePropertyChanged(() => TargetProjects);
         }
-
-        public bool IsValid { get; private set; }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {

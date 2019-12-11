@@ -2,7 +2,6 @@
 {
     using System;
     using Catel;
-    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Services;
 
     public abstract class UpgradeListenerBase

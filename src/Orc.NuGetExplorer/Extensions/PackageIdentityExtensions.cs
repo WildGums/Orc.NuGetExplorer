@@ -6,7 +6,7 @@
     {
         public static string ToFullString(this PackageIdentity packageIdentity)
         {
-            if(packageIdentity.HasVersion)
+            if (packageIdentity.HasVersion)
             {
                 return $"{packageIdentity} {packageIdentity.Version.ToFullString()}";
             }

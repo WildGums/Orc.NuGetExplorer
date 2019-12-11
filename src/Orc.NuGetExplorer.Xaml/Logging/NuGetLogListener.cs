@@ -1,9 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Logging
 {
     using System;
-    using System.Diagnostics;
     using Catel.Logging;
-    using Orc.Controls;
     using Orc.NuGetExplorer;
 
     public class NuGetLogListener : PackageManagerLogListenerBase, ILogListener

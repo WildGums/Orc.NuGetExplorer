@@ -36,7 +36,7 @@
             _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;
             _arrowDownResource = FindResource(ArrowDownResourceKey) as FrameworkElement;
 
-           
+
         }
 
         [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
@@ -58,8 +58,8 @@
             {
                 return;
             }
- 
-            if(!_isViewportWidthListened)
+
+            if (!_isViewportWidthListened)
             {
                 SubscribeToScrollViewerPropertyChanges();
             }
@@ -82,7 +82,7 @@
 
             _isViewportWidthListened = true;
         }
-        
+
 
         private void OnInfinityScrollViewPortChanged(object sender, EventArgs e)
         {

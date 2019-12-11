@@ -48,7 +48,7 @@
 
                 var localRepos = _projectManager.AsLocalRepositories(projects);
 
-                var repos = context == SourceContext.EmptyContext ? new List<SourceRepository>() 
+                var repos = context == SourceContext.EmptyContext ? new List<SourceRepository>()
                     : context.Repositories ?? context.PackageSources.Select(src => _repositoryContextService.GetRepository(src));
 
                 var repositoryModelList = new List<IRepository>();

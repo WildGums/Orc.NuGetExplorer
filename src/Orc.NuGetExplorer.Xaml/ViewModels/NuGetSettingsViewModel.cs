@@ -7,10 +7,8 @@
     using Catel.Fody;
     using Catel.IoC;
     using Catel.MVVM;
-    using Catel.Services;
     using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Services;
 
     internal class NuGetSettingsViewModel : ViewModelBase
     {
@@ -23,11 +21,11 @@
         public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider)
         {
-            
+
         }
 
-        public NuGetSettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
-            INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider) 
+        public NuGetSettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+            INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : this(settingsProvider?.Model, configurationService, defaultPackageSourcesProvider)
         {
             Argument.IsNotNull(() => settingsProvider);
@@ -87,7 +85,7 @@
 
         private void InitializeDefaultFeed()
         {
-            DefaultFeed = _defaultPackageSourcesProvider.DefaultSource  ?? string.Empty;
+            DefaultFeed = _defaultPackageSourcesProvider.DefaultSource ?? string.Empty;
         }
 
         protected override async Task<bool> SaveAsync()

@@ -12,8 +12,6 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
-    using NuGet.Packaging.Core;
-    using NuGet.Versioning;
 
     internal class PackageCommandService : IPackageCommandService
     {

@@ -12,7 +12,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public DialogHost(IViewModel vm) 
+        public DialogHost(IViewModel vm)
             : base(vm, DataWindowMode.Custom)
         {
             var dialogOptions = (ViewModel as IDialogViewModel)?.Dialog;

@@ -19,7 +19,6 @@
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using NuGetExplorer.Cache;
-    using NuGetExplorer.Loggers;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
 
@@ -181,7 +180,7 @@
                     //try to download main package and check it target version
                     var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
 
-                    if(!mainDownloadedFiles.IsAvailable())
+                    if (!mainDownloadedFiles.IsAvailable())
                     {
                         //download failed, possible because of package goes deleted during operation or feed is valid only for searching
                         //or connection failed

@@ -4,7 +4,6 @@
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using Catel.MVVM.Views;
-    using Orc.NuGetExplorer.Controls;
 
     /// <summary>
     /// Interaction logic for ExplorerTopBarView.xaml
@@ -47,15 +46,18 @@
         {
             string selectPageWithName = e.NewValue.ToString();
 
-            switch(selectPageWithName)
+            switch (selectPageWithName)
             {
-                case "Browse":  Browse.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
+                case "Browse":
+                    Browse.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                     return;
 
-                case "Installed": Installed.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
+                case "Installed":
+                    Installed.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                     return;
 
-                case "Updates": Updates.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
+                case "Updates":
+                    Updates.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                     return;
             }
         }

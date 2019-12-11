@@ -69,16 +69,16 @@
 
                 var combinedResults = results.SelectMany(metadataCollection => metadataCollection.Select(metadata => metadata));
 
-                var mergedResults =  await MergeVersionsAsync(combinedResults);
+                var mergedResults = await MergeVersionsAsync(combinedResults);
 
-                if(_v2Used)
+                if (_v2Used)
                 {
                     //load all versions early
                     foreach (var package in mergedResults)
                     {
                         await V2SearchHelper.GetVersionsMetadataAsync(package);
                     }
-                    
+
                 }
 
                 return mergedResults;

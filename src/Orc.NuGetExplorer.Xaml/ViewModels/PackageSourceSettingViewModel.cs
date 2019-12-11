@@ -7,13 +7,11 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Collections;
-    using Catel.Configuration;
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
     using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Services;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
@@ -253,7 +251,7 @@
 
             foreach (NuGetFeed item in newFeeds)
             {
-                if(item.IsLocal())
+                if (item.IsLocal())
                 {
                     //should be truly checked?
                     item.VerificationResult = FeedVerificationResult.Valid;

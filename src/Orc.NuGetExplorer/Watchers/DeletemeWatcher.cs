@@ -9,7 +9,6 @@ namespace Orc.NuGetExplorer
 {
     using System.IO;
     using Catel;
-    using Path = Catel.IO.Path;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
@@ -36,7 +35,7 @@ namespace Orc.NuGetExplorer
                 _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
             }
 
-            if(e.PackageOperationType == PackageOperationType.Install)
+            if (e.PackageOperationType == PackageOperationType.Install)
             {
                 //handle cases where we reinstall package not removed correctly
                 _fileSystemService.RemoveDeleteme(e.PackageDetails.Id, e.InstallPath);

@@ -92,7 +92,7 @@
 
         private async Task LoadVersionsEagerIfNeedAsync(PackageSearchResource searchResource, IEnumerable<IPackageSearchMetadata> packages)
         {
-            
+
             if (searchResource is PackageSearchResourceV2Feed)
             {
                 foreach (var package in packages)

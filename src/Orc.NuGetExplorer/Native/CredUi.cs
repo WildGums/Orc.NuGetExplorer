@@ -81,6 +81,7 @@ namespace Orc.NuGetExplorer.Native
         #endregion
 
         #region Methods
+#pragma warning disable IDE1006 // Naming Styles
         public static string DecryptPassword(byte[] encrypted)
         {
             try
@@ -136,6 +137,7 @@ namespace Orc.NuGetExplorer.Native
         [DllImport("credui.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CredUnPackAuthenticationBuffer(uint dwFlags, IntPtr pAuthBuffer, uint cbAuthBuffer, StringBuilder pszUserName, ref uint pcchMaxUserName, StringBuilder pszDomainName, ref uint pcchMaxDomainName, StringBuilder pszPassword, ref uint pcchMaxPassword);
+#pragma warning restore IDE1006 // Naming Styles
         #endregion
 
         internal sealed class CriticalCredentialHandle : CriticalHandleZeroOrMinusOneIsInvalid
@@ -245,6 +247,7 @@ namespace Orc.NuGetExplorer.Native
             Enterprise = 3
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct CredUiInfo
         {
@@ -258,6 +261,7 @@ namespace Orc.NuGetExplorer.Native
             public IntPtr hbmBanner;
             #endregion
         }
+#pragma warning restore IDE1006 // Naming Styles
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct NativeCredential

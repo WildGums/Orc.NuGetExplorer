@@ -13,12 +13,10 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using Catel;
     using NuGet.Common;
-    using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Models;
 
     internal class PackageOperationService : IPackageOperationService
     {
@@ -150,7 +148,7 @@ namespace Orc.NuGetExplorer
 
                 _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
 
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package); 
+                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
 
                 await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
 

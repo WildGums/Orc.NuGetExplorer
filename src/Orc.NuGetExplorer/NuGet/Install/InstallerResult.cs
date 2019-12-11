@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using NuGet.Protocol.Core.Types;
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+    using NuGet.Protocol.Core.Types;
+
     public class InstallerResult
     {
         public InstallerResult(string errorMessage)

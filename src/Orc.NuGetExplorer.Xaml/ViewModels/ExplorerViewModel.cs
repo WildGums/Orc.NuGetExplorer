@@ -48,7 +48,7 @@
 
             CreateApplicationWideCommands(commandManager);
 
-            if(settingsProvider is ExplorerSettingsContainerModelProvider settingsLazyProvider)
+            if (settingsProvider is ExplorerSettingsContainerModelProvider settingsLazyProvider)
             {
                 //force settings model re-initialization from config
                 settingsLazyProvider.IsInitialized = false;
@@ -85,14 +85,14 @@
 
         public void ChangeStartPage(string name)
         {
-            _startPage = name;   
+            _startPage = name;
         }
 
         public void SetInitialPageParameters(INuGetExplorerInitialState initialState)
         {
             var pagename = initialState.Tab.Name;
 
-            if(string.IsNullOrEmpty(pagename))
+            if (string.IsNullOrEmpty(pagename))
             {
                 Log.Error("Name for explorer page cannot be null or empty");
                 return;
@@ -106,7 +106,7 @@
 
         private void CreatePages()
         {
-            foreach(var page in _pageSetup)
+            foreach (var page in _pageSetup)
             {
                 var newPage = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(page.Value);
 

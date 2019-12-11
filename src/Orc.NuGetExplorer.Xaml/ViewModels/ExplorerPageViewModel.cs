@@ -231,7 +231,7 @@
         {
             try
             {
-                if(IsActive && _initialSearchParams != null)
+                if (IsActive && _initialSearchParams != null)
                 {
                     //set page initial search params as Settings parameters
                     //only on first loaded page
@@ -501,7 +501,7 @@
 
                 IEnumerable<IPackageSearchMetadata> packages = null;
 
-                if(searchParameters.IsRecommendedOnly && _packagesLoaderService is IPackagesUpdatesSearcherService updatesLoaderService)
+                if (searchParameters.IsRecommendedOnly && _packagesLoaderService is IPackagesUpdatesSearcherService updatesLoaderService)
                 {
                     Log.Info("Select only recommended upgrades");
                     packages = await updatesLoaderService.SearchForPackagesUpdatesAsync(token: cancellationToken);
@@ -511,7 +511,7 @@
                     packages = await _packagesLoaderService.LoadAsync(
                     searchParameters.SearchString, pageInfo, new SearchFilter(searchParameters.IsPrereleaseIncluded), cancellationToken);
                 }
- 
+
 
                 await DownloadAllPicturesForMetadataAsync(packages, cancellationToken);
 

@@ -16,7 +16,7 @@
 
         private void OnPackageSourcesChanged(object sender, EventArgs e)
         {
-            if(sender is IPackageSourceProvider provider)
+            if (sender is IPackageSourceProvider provider)
             {
                 var packageSource = provider.LoadPackageSources().FirstOrDefault(source => !string.IsNullOrWhiteSpace(source.Source));
 

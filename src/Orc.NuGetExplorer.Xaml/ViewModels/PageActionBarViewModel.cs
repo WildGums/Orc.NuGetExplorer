@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGetExplorer.Management;
@@ -117,7 +116,7 @@
 
         private bool BatchUpdateCanExecute()
         {
-            if(_parentManagerPage is null)
+            if (_parentManagerPage is null)
             {
                 return false;
             }

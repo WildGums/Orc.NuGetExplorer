@@ -148,7 +148,7 @@
 
         public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
         {
-            foreach(var project in extensibleProjects)
+            foreach (var project in extensibleProjects)
             {
                 var key = GetProjectKey(project);
                 _configurationService.SetRoamingValue(key, project);

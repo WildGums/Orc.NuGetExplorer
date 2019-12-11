@@ -10,7 +10,7 @@
         public NuGetFeed()
         {
             VerificationResult = FeedVerificationResult.Unknown;
-            Error = String.Empty;
+            Error = string.Empty;
             IsEnabled = true;
         }
 
@@ -84,7 +84,7 @@
                         break;
                 }
 
-                return String.Empty;
+                return string.Empty;
             }
         }
         #endregion
@@ -136,8 +136,7 @@
 
         public NuGetFeed Clone()
         {
-            return new NuGetFeed(
-                Name, Source)
+            return new NuGetFeed(Name, Source)
             {
                 IsEnabled = IsEnabled,
                 VerificationResult = VerificationResult,
@@ -160,7 +159,7 @@
             }
             if (e.PropertyName == nameof(Name))
             {
-                IsNameValid = !String.IsNullOrEmpty(Name);
+                IsNameValid = !string.IsNullOrEmpty(Name);
             }
             base.OnPropertyChanged(e);
         }
@@ -170,7 +169,7 @@
         /// </summary>
         public void Initialize()
         {
-            IsNameValid = !String.IsNullOrEmpty(Name);
+            IsNameValid = !string.IsNullOrEmpty(Name);
             IsAccessible = VerificationResult == FeedVerificationResult.Valid || VerificationResult == FeedVerificationResult.AuthorizationRequired;
             IsVerified = VerificationResult != FeedVerificationResult.Unknown;
         }

@@ -10,7 +10,7 @@
     public static class V2SearchHelper
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        
+
         public static async Task GetVersionsMetadataAsync(IPackageSearchMetadata package)
         {
             try

@@ -49,7 +49,7 @@
             _localRepository = localRepository;
         }
 
-        
+
 
         public static PackageMetadataProvider CreateFromSourceContext(IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
         {

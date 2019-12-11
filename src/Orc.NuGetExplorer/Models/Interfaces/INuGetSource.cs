@@ -2,12 +2,12 @@
 {
     public interface INuGetSource : IPackageSource
     {
-        PackageSourceWrapper GetPackageSource();
-
         bool IsAccessible { get; }
 
         bool IsVerified { get; }
 
         bool IsSelected { get; set; }
+
+        PackageSourceWrapper GetPackageSource();
     }
 }

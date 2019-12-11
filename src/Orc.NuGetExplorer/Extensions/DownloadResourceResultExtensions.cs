@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.IO;
     using Catel;
     using NuGet.Protocol.Core.Types;
@@ -19,7 +18,7 @@
             }
             else
             {
-                return downloadResourceResult.PackageSource ?? String.Empty;
+                return downloadResourceResult.PackageSource ?? string.Empty;
             }
         }
 

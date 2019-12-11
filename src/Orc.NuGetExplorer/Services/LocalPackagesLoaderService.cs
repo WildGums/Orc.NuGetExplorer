@@ -21,7 +21,7 @@
         private readonly ISourceRepositoryProvider _repositoryProvider;
         private readonly IRepositoryContextService _repositoryService;
 
-        public IPackageMetadataProvider PackageMetadataProvider => 
+        public IPackageMetadataProvider PackageMetadataProvider =>
             Providers.PackageMetadataProvider.CreateFromSourceContext(_repositoryService, _extensibleProjectLocator, _projectManager);
 
         public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,

@@ -52,7 +52,7 @@
                 image.StreamSource = stream;
                 image.EndInit();
 
-                if(!image.IsFrozen)
+                if (!image.IsFrozen)
                 {
                     image.Freeze();
                 }

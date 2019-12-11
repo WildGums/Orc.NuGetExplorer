@@ -11,7 +11,7 @@
         private readonly ITypeFactory _typeFactory;
         private readonly INuGetConfigurationService _nugetConfigurationService;
         private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
-        
+
         public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService) : base(typeFactory)
         {
             Argument.IsNotNull(() => nugetConfigurationService);
@@ -23,8 +23,8 @@
             _explorerSettings = new Lazy<ExplorerSettingsContainer>(() => Create());
         }
 
-        public override ExplorerSettingsContainer Model 
-        { 
+        public override ExplorerSettingsContainer Model
+        {
             get
             {
                 if (!_explorerSettings.IsValueCreated)

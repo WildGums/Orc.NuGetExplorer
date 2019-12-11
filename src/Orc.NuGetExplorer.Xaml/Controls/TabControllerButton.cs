@@ -130,7 +130,7 @@
 
                 int i = 0;
 
-                if(TabSource.ItemsSource == null)
+                if (TabSource.ItemsSource == null)
                 {
                     return;
                 }

@@ -100,7 +100,7 @@
 
         #region IPackageDetails
 
-        public string Id => Identity?.Id ?? String.Empty;
+        public string Id => Identity?.Id ?? string.Empty;
 
         public string FullName => $"{Id} {Identity.Version.ToFullString()}";
 
@@ -230,7 +230,7 @@
                 return;
             }
 
-            if (String.Equals(e.PropertyName, nameof(Status)))
+            if (string.Equals(e.PropertyName, nameof(Status)))
             {
                 Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
             }

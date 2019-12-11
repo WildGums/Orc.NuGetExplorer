@@ -183,9 +183,9 @@
 
                 bool dependencyInstallResult = true;
 
-                if(!installerResults.Result.Any())
+                if (!installerResults.Result.Any())
                 {
-                    Log.Error( $"Failed to install package {package}");
+                    Log.Error($"Failed to install package {package}");
 
                     //todo PackageCommandService or context is better place for messaging
 

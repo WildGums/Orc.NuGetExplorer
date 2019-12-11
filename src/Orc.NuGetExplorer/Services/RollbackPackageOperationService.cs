@@ -24,7 +24,7 @@ namespace Orc.NuGetExplorer
         {
             Stack<Action> stack;
 
-            if(context is null)
+            if (context is null)
             {
                 Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
                 return;
@@ -56,7 +56,7 @@ namespace Orc.NuGetExplorer
         {
             Stack<Action> stack;
 
-            if(context is null)
+            if (context is null)
             {
                 Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
                 return;

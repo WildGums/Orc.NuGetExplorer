@@ -40,7 +40,7 @@
             Log.Info("Current configuration version does not match for configuration version");
             Log.Info("Check is current configuration version older..");
 
-            if(!_runOnCheckList.Any())
+            if (!_runOnCheckList.Any())
             {
                 Log.Info("No registred scenaries for upgrade");
                 return false;
