@@ -22,6 +22,7 @@
     using Models;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Providers;
     using Pagination;
     using Services;
     using Web;
@@ -56,15 +57,14 @@
 
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(ExplorerSettingsContainer explorerSettings, string pageTitle, PackageSearchParameters initialSearchParams, IPackageLoaderService packagesLoaderService,
-            IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
+        public ExplorerPageViewModel(INuGetExplorerInitialState pageInitialState, IPackageLoaderService packagesLoaderService,
+            IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager)
         {
-            Title = pageTitle;
-
+            Argument.IsNotNull(() => pageInitialState);
             Argument.IsNotNull(() => packagesLoaderService);
-            Argument.IsNotNull(() => explorerSettings);
+            Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => packageMetadataMediaDownloadService);
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => nuGetFeedVerificationService);
@@ -73,6 +73,8 @@
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
+
+            Title = pageInitialState.Tab.Name;
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -83,7 +85,7 @@
             _typeFactory = typeFactory;
 
             _packagesLoaderService = packagesLoaderService;
-            _initialSearchParams = initialSearchParams; //if null, standard Settings will not be overriden
+            _initialSearchParams = pageInitialState.InitialSearchParameters; //if null, standard Settings will not be overriden
 
             if (Title != "Browse")
             {
@@ -97,7 +99,7 @@
 
             CanBatchProjectActions = _pageType == MetadataOrigin.Updates;
 
-            Settings = explorerSettings;
+            Settings = settingsProvider.Model;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecute);
             CancelPageLoading = new TaskCommand(CancelPageLoadingExecute);

@@ -48,13 +48,13 @@ namespace Orc.NuGetExplorer
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
         }
 
-        public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState explorerState)
+        public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
         {
-            Argument.IsNotNull(() => explorerState);
+            Argument.IsNotNull(() => initialState);
 
             var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
-            explorerVM.ChangeStartPage(explorerState.Tab.Name);
-            explorerVM.ChangeInitialSearchParameters(explorerState.Tab.Name, explorerState.InitialSearchParameters);
+            explorerVM.ChangeStartPage(initialState.Tab.Name);
+            explorerVM.SetInitialPageParameters(initialState);
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 

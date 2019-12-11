@@ -7,6 +7,7 @@
     using Catel;
     using Catel.Configuration;
     using Catel.IoC;
+    using Catel.Logging;
     using Catel.MVVM;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
@@ -15,16 +16,18 @@
 
     internal class ExplorerViewModel : ViewModelBase
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private const string DefaultStartPage = ExplorerPageName.Browse;
         private readonly IConfigurationService _configurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
 
-        private readonly IDictionary<string, PackageSearchParameters> _pageSetup = new Dictionary<string, PackageSearchParameters>()
+        private readonly IDictionary<string, INuGetExplorerInitialState> _pageSetup = new Dictionary<string, INuGetExplorerInitialState>()
         {
-            { ExplorerPageName.Browse, null},
-            { ExplorerPageName.Installed, null},
-            { ExplorerPageName.Updates, null }
+            { ExplorerPageName.Browse, new NuGetExplorerInitialState(ExplorerTab.Browse, null)},
+            { ExplorerPageName.Installed, new NuGetExplorerInitialState(ExplorerTab.Installed, null)},
+            { ExplorerPageName.Updates, new NuGetExplorerInitialState(ExplorerTab.Update, null)}
         };
 
         private string _startPage = DefaultStartPage;
@@ -85,11 +88,19 @@
             _startPage = name;   
         }
 
-        public void ChangeInitialSearchParameters(string pagename, PackageSearchParameters searchParams)
+        public void SetInitialPageParameters(INuGetExplorerInitialState initialState)
         {
-            if(_pageSetup.ContainsKey(pagename))
+            var pagename = initialState.Tab.Name;
+
+            if(string.IsNullOrEmpty(pagename))
             {
-                _pageSetup[pagename] = searchParams;
+                Log.Error("Name for explorer page cannot be null or empty");
+                return;
+            }
+
+            if (_pageSetup.ContainsKey(pagename))
+            {
+                _pageSetup[pagename] = initialState;
             }
         }
 
@@ -97,7 +108,7 @@
         {
             foreach(var page in _pageSetup)
             {
-                var newPage = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(Settings, page.Key, page.Value);
+                var newPage = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(page.Value);
 
                 if (newPage != null)
                 {
