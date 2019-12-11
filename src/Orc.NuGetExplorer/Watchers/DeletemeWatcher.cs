@@ -8,13 +8,18 @@
 namespace Orc.NuGetExplorer
 {
     using System.IO;
+    using Catel;
     using Path = Catel.IO.Path;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
+        private readonly IFileSystemService _fileSystemService;
         #region Constructors
-        public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService) : base(packageOperationNotificationService)
+        public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService) : base(packageOperationNotificationService)
         {
+            Argument.IsNotNull(() => fileSystemService);
+
+            _fileSystemService = fileSystemService;
         }
         #endregion
 
@@ -31,12 +36,7 @@ namespace Orc.NuGetExplorer
                 return;
             }
 
-            var fileName = $"{e.PackageDetails.Id}.deleteme";
-            var fullName = Path.Combine(e.InstallPath, fileName);
-
-            using (File.Create(fullName))
-            {
-            }
+            _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
         }
         #endregion
     }

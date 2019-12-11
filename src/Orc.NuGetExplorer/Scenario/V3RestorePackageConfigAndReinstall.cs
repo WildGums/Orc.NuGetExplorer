@@ -114,14 +114,11 @@
 
                         _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
 
-                        var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default);
-
-                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
+                        var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default, false);
 
                         if (!isInstalled)
                         {
                             failedIdentities.Add(package);
-                            continue;
                         }
 
                         anyUpgraded = isInstalled || anyUpgraded;
@@ -131,6 +128,10 @@
                     {
                         failedIdentities.Add(package);
                         Log.Error(ex);
+                    }
+                    finally
+                    {
+                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
                     }
                 }
 

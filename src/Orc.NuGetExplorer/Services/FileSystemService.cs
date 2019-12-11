@@ -14,6 +14,7 @@
         #endregion
 
         #region Methods
+
         public bool DeleteDirectory(string path)
         {
             Argument.IsNotNullOrEmpty(() => path);
@@ -73,6 +74,17 @@
             if (success)
             {
                 Log.Info("Copying directory {0} to {1} hes been successully completed.", sourceDirectory, destinationDirectory);
+            }
+        }
+
+        public void CreateDeleteme(string name, string path)
+        {
+            var fileName = $"{name}.deleteme";
+
+            var fullName = Path.Combine(path, fileName);
+
+            using (File.Create(fullName))
+            {
             }
         }
 

@@ -12,6 +12,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         bool DeleteDirectory(string path);
         void CopyDirectory(string sourceDirectory, string destinationDirectory);
+        void CreateDeleteme(string name, string path);
         #endregion
     }
 }

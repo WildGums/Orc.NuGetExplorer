@@ -27,6 +27,7 @@
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+        private readonly IFileSystemService _fileSystemService;
         private readonly IMessageService _messageService;
 
         private BatchOperationToken _batchToken;
@@ -34,7 +35,7 @@
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            IPackageOperationNotificationService packageOperationNotificationService, IMessageService messageService)
+            IPackageOperationNotificationService packageOperationNotificationService, IMessageService messageService, IFileSystemService fileSystemService)
         {
             Argument.IsNotNull(() => packageInstallationService);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
@@ -47,6 +48,7 @@
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _packageOperationNotificationService = packageOperationNotificationService;
             _messageService = messageService;
+            _fileSystemService = fileSystemService;
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
@@ -169,7 +171,7 @@
         }
 
 
-        public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+        public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true)
         {
             try
             {
@@ -187,7 +189,10 @@
 
                     //todo PackageCommandService or context is better place for messaging
 
-                    await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                    if (showErrors)
+                    {
+                        await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                    }
 
                     return false;
                 }
@@ -213,30 +218,30 @@
 
                 await OnInstallAsync(project, package, dependencyInstallResult);
 
-
                 return true;
             }
             catch (ProjectInstallException ex)
             {
-                Log.Error(ex, $"The Installation of package {package} was failed");
+                Log.Error($"Failed to install package {package}");
 
-                //rollback packages
-                //todo always provide correct rollback info
+                if (showErrors)
+                {
+                    await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{ex.Message}");
+                }
 
                 if (ex?.CurrentBatch == null)
                 {
                     return false;
                 }
 
-                Log.Info("Rollback changes");
-
-                foreach (var canceledPackages in ex.CurrentBatch)
+                //Mark all partially-extracted packages to removal;
+                foreach (var canceledPackage in ex.CurrentBatch)
                 {
-                    await UninstallPackageForProjectAsync(project, canceledPackages, token);
+                    _fileSystemService.CreateDeleteme(canceledPackage.Id, project.GetInstallPath(canceledPackage));
                 }
 
-                return false;
-
+                //throw exception to add exception in operation context
+                throw;
             }
             catch (Exception ex)
             {

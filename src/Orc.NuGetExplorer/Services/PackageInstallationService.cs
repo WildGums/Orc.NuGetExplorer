@@ -223,11 +223,7 @@
             }
             catch (NuGetResolverInputException ex)
             {
-                throw new ProjectInstallException($"Package {package} or some of it dependencies are missed for current target framework", ex);
-            }
-            catch (ProjectInstallException)
-            {
-                throw;
+                throw new IncompatiblePackageException($"Package {package} or some of it dependencies are missed for current target framework", ex);
             }
             catch (Exception ex)
             {
