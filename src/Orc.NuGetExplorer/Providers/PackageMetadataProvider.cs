@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -199,14 +200,17 @@
             {
                 //todo
                 //check httpCache created inside GetMetadataAsync()
-                //it appeared, Root folder value didn't used when retry count is 0
+                //The Root folder value didn't used when retry count is 0
                 //Then temporary folder for package never created and SourceCacheContext dispose caused
                 //DirectoryNotFoundException
                 //var httpCache = HttpSourceCacheContext.Create(sourceCacheContext, 0);
 
                 // Update http source cache context MaxAge so that it can always go online to fetch
                 // latest versions of the package.
-                sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
+                //sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
+
+                //force creating folder for cache even http retry count is 0
+                Directory.CreateDirectory(sourceCacheContext.GeneratedTempFolder);
 
                 Log.Debug($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
 

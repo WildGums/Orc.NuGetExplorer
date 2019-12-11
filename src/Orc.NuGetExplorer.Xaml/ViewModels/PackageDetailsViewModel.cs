@@ -43,6 +43,7 @@
 
         private readonly IPackageCommandService _packageCommandService;
 
+        private bool _packageApplied;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry, 
@@ -103,7 +104,6 @@
 
         public string[] ApiValidationMessages { get; private set; }
 
-
         #region Commands
 
         public Command LoadInfoAboutVersions { get; set; }
@@ -134,15 +134,11 @@
                     {
                         var updatePackageDetails = PackageDetailsFactory.Create(PackageOperationType.Update, VersionData, SelectedVersion, null);
                         await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token);
-                        //run upgrade scenario
-                        //await _projectManager.UpdatePackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), Package.Identity.Id, SelectedVersion, cts.Token);
-
                     }
                     else
                     {
                         var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
                         await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
-                        //await _projectManager.InstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), SelectedPackage, cts.Token);
                     }
                 }
 
@@ -178,8 +174,6 @@
                     //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
                     var uninstallPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Uninstall, Package.GetMetadata(), InstalledPackage, null);
                     await _packageCommandService.ExecuteUninstallAsync(uninstallPackageDetails, cts.Token);
-
-                    //await _projectManager.UninstallPackageForProjectAsync(NuGetActionTarget.TargetProjects.FirstOrDefault(), InstalledPackage, cts.Token);
                 }
 
                 await Task.Delay(200);
@@ -263,6 +257,12 @@
                     return;
                 }
 
+                if(!_packageApplied)
+                {
+                    //skip until model is applied
+                    return;
+                }
+
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
@@ -277,6 +277,8 @@
         private async void OnPackageChanged()
         {
             Log.Debug("Package changed");
+
+            _packageApplied = false;
 
             if (Package is null)
             {
@@ -314,6 +316,10 @@
             catch (Exception ex)
             {
                 Log.Error(ex, "Error ocurred during view model inititalization, probably package metadata is incorrect");
+            }
+            finally
+            {
+                _packageApplied = true;
             }
         }
 

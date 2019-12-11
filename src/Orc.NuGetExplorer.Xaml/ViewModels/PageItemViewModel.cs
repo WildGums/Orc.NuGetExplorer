@@ -17,16 +17,12 @@
 
         private readonly IRepositoryContextService _repositoryService;
 
-        private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
-
-        public PageItemViewModel(NuGetPackage package, IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public PageItemViewModel(NuGetPackage package, IRepositoryContextService repositoryService)
         {
             Argument.IsNotNull(() => package);
             Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => settingsProvider);
 
             _repositoryService = repositoryService;
-            _settingsProvider = settingsProvider;
 
             Package = package;
         }

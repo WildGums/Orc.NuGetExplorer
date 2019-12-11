@@ -99,7 +99,7 @@
 
             if (packageMetadata == null)
             {
-                // and failing that we go to the network
+                //fallback network package if local installation exists but package cannot be read
                 packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
             }
             return packageMetadata;

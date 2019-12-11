@@ -455,7 +455,7 @@
             }
             finally
             {
-                if (PackageItems.Any())
+                if (PackageItems.Any() && IsActive)
                 {
                     await _defferedPackageLoaderService.StartLoadingAsync();
                 }
@@ -555,7 +555,7 @@
                 }
             }
 
-            _dispatcherService.BeginInvoke(() =>
+            _dispatcherService.Invoke(() =>
             {
                 PackageItems.AddRange(vms);
             }
