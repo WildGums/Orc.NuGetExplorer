@@ -7,12 +7,16 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
     using Catel;
+    using Catel.Logging;
 
     public class RollbackWatcher : PackageManagerWatcherBase
     {
         #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IBackupFileSystemService _backupFileSystemService;
         private readonly IFileSystemService _fileSystemService;
         private readonly IPackageOperationContextService _packageOperationContextService;
@@ -73,7 +77,20 @@ namespace Orc.NuGetExplorer
 
             if (e.PackageOperationType == PackageOperationType.Install)
             {
-                _rollbackPackageOperationService.PushRollbackAction(() => _fileSystemService.DeleteDirectory(e.InstallPath), context);
+                _rollbackPackageOperationService.PushRollbackAction(() =>
+                    {
+                        try
+                        {
+                            _fileSystemService.DeleteDirectory(e.InstallPath);
+                        }
+                        catch(Exception ex)
+                        {
+                            _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
+                            Log.Error("Failed to delete directory during rollback actions", ex);
+                        }
+                    },
+                    context
+                );
             }
 
             base.OnOperationStarting(sender, e);
