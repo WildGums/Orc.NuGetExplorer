@@ -79,13 +79,18 @@
 
         public void CreateDeleteme(string name, string path)
         {
-            var fileName = $"{name}.deleteme";
+            var fullPath = GetDeletemePath(name, path);
 
-            var fullName = Path.Combine(path, fileName);
-
-            using (File.Create(fullName))
+            using (File.Create(fullPath))
             {
             }
+        }
+
+        public void RemoveDeleteme(string name, string path)
+        {
+            var fullPath = GetDeletemePath(name, path);
+
+            File.Delete(fullPath);
         }
 
         private static bool CopyFiles(string sourceDirectory, string destinationDirectory, HashSet<string> failedDirectories)
@@ -190,6 +195,11 @@
                 }
             }
             return success;
+        }
+
+        private static string GetDeletemePath(string name, string path)
+        {
+            return Path.Combine(path, $"{name}.deleteme");
         }
         #endregion
     }

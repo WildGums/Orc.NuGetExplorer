@@ -321,6 +321,7 @@
             catch (Exception ex)
             {
                 Log.Error(ex, $"Error during package {packageid} update");
+                throw;
             }
         }
 
@@ -353,16 +354,9 @@
 
         private async Task UpdatePackage(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
-            try
-            {
-                await UninstallPackageForProjectAsync(project, installedVersion, token);
+            await UninstallPackageForProjectAsync(project, installedVersion, token);
 
-                await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Error during package {installedVersion} update");
-            }
+            await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
         }
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)

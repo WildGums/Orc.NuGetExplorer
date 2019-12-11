@@ -26,17 +26,21 @@ namespace Orc.NuGetExplorer
         #region Methods
         protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
-            if (e.PackageOperationType != PackageOperationType.Uninstall)
+            if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
-                return;
+                if (!Directory.Exists(e.InstallPath))
+                {
+                    return;
+                }
+
+                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
             }
 
-            if (!Directory.Exists(e.InstallPath))
+            if(e.PackageOperationType == PackageOperationType.Install)
             {
-                return;
+                //handle cases where we reinstall package not removed correctly
+                _fileSystemService.RemoveDeleteme(e.PackageDetails.Id, e.InstallPath);
             }
-
-            _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
         }
         #endregion
     }
