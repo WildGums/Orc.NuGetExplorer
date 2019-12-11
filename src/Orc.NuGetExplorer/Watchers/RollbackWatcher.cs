@@ -55,10 +55,19 @@ namespace Orc.NuGetExplorer
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
             var context = _packageOperationContextService.CurrentContext;
+            var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
+
             if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
                 _backupFileSystemService.BackupFolder(e.InstallPath);
-                _rollbackPackageOperationService.PushRollbackAction(() => _backupFileSystemService.Restore(e.InstallPath), context);
+                _backupFileSystemService.BackupFile(packagesConfig);
+                _rollbackPackageOperationService.PushRollbackAction(() =>
+                    {
+                        _backupFileSystemService.Restore(e.InstallPath);
+                        _backupFileSystemService.Restore(packagesConfig);
+                    },
+                    context
+                );
                 return;
             }
 
