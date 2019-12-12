@@ -195,7 +195,7 @@ namespace Orc.NuGetExplorer
     {
         string SettingsTitle { get; set; }
         System.Threading.Tasks.Task ShowPackagesExplorerAsync();
-        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.INuGetExplorerInitialState explorerState);
+        System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.INuGetExplorerInitialState initialState);
         System.Threading.Tasks.Task<System.Nullable<bool>> ShowPackagesSourceSettingsAsync();
     }
     public class static IPleaseWaitServiceExtensions
