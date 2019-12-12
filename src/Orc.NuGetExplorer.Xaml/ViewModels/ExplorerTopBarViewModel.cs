@@ -92,8 +92,8 @@
         protected void CommandInitialize()
         {
             ShowPackageSourceSettings = new TaskCommand(OnShowPackageSourceSettingsExecuteAsync);
-            ShowExtensibles = new TaskCommand(OnShowExtensibles);
-            RunNuGetCachesClearing = new TaskCommand(OnRunNuGetCachesClearing);
+            ShowExtensibles = new TaskCommand(OnShowExtensiblesAsync);
+            RunNuGetCachesClearing = new TaskCommand(OnRunNuGetCachesClearingAsync);
         }
 
         public TaskCommand ShowPackageSourceSettings { get; set; }
@@ -116,7 +116,7 @@
 
         public TaskCommand ShowExtensibles { get; set; }
 
-        private async Task OnShowExtensibles()
+        private async Task OnShowExtensiblesAsync()
         {
             var extensiblesVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExtensiblesViewModel>();
 
@@ -128,7 +128,7 @@
 
         public TaskCommand RunNuGetCachesClearing { get; set; }
 
-        private async Task OnRunNuGetCachesClearing()
+        private async Task OnRunNuGetCachesClearingAsync()
         {
             try
             {

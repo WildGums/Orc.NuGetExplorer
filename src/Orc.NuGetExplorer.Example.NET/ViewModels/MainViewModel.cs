@@ -53,11 +53,11 @@
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             ShowExplorer = new TaskCommand(OnShowExplorerExecuteAsync);
-            AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
-            VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
-            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
-            Settings = new TaskCommand(OnSettingsExecute);
+            AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecuteAsync, OnAdddPackageSourceCanExecute);
+            VerifyFeed = new TaskCommand(OnVerifyFeedExecuteAsync, OnVerifyFeedCanExecute);
+            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecuteAsync);
+            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
+            Settings = new TaskCommand(OnSettingsExecuteAsync);
 
             Title = "Orc.NuGetExplorer example";
         }
@@ -82,14 +82,14 @@
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private async Task OnSettingsExecute()
+        private async Task OnSettingsExecuteAsync()
         {
             await _packagesUiService.ShowPackagesSourceSettingsAsync();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }
 
-        private async Task OnOpenUpdateWindowExecute()
+        private async Task OnOpenUpdateWindowExecuteAsync()
         {
             //show batch update
             //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
@@ -102,7 +102,7 @@
 
         public TaskCommand CheckForUpdates { get; private set; }
 
-        private async Task OnCheckForUpdatesExecute()
+        private async Task OnCheckForUpdatesExecuteAsync()
         {
             AvailableUpdates.Clear();
 
@@ -117,7 +117,7 @@
 
         public TaskCommand AdddPackageSource { get; private set; }
 
-        private async Task OnAdddPackageSourceExecute()
+        private async Task OnAdddPackageSourceExecuteAsync()
         {
             var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
             if (!packageSourceSaved)
@@ -133,7 +133,7 @@
 
         public TaskCommand VerifyFeed { get; private set; }
 
-        private async Task OnVerifyFeedExecute()
+        private async Task OnVerifyFeedExecuteAsync()
         {
             await _feedVerificationService.VerifyFeedAsync(PackageSourceUrl);
         }

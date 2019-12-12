@@ -250,7 +250,7 @@
             }
         }
 
-        public async Task InstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
+        public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
             using (_batchToken = new BatchOperationToken())
             {
@@ -283,7 +283,7 @@
             }
         }
 
-        public async Task UninstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
+        public async Task UninstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
             using (_batchToken = new BatchOperationToken())
             {
@@ -308,7 +308,7 @@
 
                 using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, version)))
                 {
-                    await UpdatePackage(project, new PackageIdentity(packageid, version), targetVersion, token);
+                    await UpdatePackageAsync(project, new PackageIdentity(packageid, version), targetVersion, token);
                 }
 
                 var updates = _updateToken.GetUpdateEventArgs();
@@ -325,7 +325,7 @@
             }
         }
 
-        public async Task UpdatePackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGetVersion targetVersion, CancellationToken token)
+        public async Task UpdatePackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
             try
             {
@@ -335,7 +335,7 @@
                     {
                         var version = await GetVersionInstalledAsync(project, packageid, token);
 
-                        await UpdatePackage(project, new PackageIdentity(packageid, version), targetVersion, token);
+                        await UpdatePackageAsync(project, new PackageIdentity(packageid, version), targetVersion, token);
                     }
                 }
 
@@ -352,7 +352,7 @@
             }
         }
 
-        private async Task UpdatePackage(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
+        private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
             await UninstallPackageForProjectAsync(project, installedVersion, token);
 

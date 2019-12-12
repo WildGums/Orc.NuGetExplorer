@@ -141,7 +141,7 @@
 
         #endregion
 
-        public async Task MergeMetadata(IPackageSearchMetadata searchMetadata, MetadataOrigin pageToken)
+        public async Task MergeMetadataAsync(IPackageSearchMetadata searchMetadata, MetadataOrigin pageToken)
         {
             try
             {

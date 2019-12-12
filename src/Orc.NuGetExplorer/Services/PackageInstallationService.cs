@@ -215,7 +215,7 @@
 
                     await ExtractPackagesResourcesAsync(downloadResults, project, extractionContext, cancellationToken);
 
-                    await CheckLibAndFrameworkItems(downloadResults, targetFramework, cancellationToken);
+                    await CheckLibAndFrameworkItemsAsync(downloadResults, targetFramework, cancellationToken);
 
                     return new InstallerResult(downloadResults);
                 }
@@ -498,7 +498,7 @@
             return markedForUninstallList;
         }
 
-        private async Task CheckLibAndFrameworkItems(IDictionary<SourcePackageDependencyInfo, DownloadResourceResult> downloadedPackagesDictionary,
+        private async Task CheckLibAndFrameworkItemsAsync(IDictionary<SourcePackageDependencyInfo, DownloadResourceResult> downloadedPackagesDictionary,
             NuGetFramework targetFramework, CancellationToken cancellationToken)
         {
             var frameworkReducer = new FrameworkReducer();

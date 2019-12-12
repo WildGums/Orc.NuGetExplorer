@@ -101,9 +101,9 @@
 
             Settings = settingsProvider.Model;
 
-            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecute);
-            CancelPageLoading = new TaskCommand(CancelPageLoadingExecute);
-            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecute);
+            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
+            CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
+            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
 
             commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
         }
@@ -250,9 +250,9 @@
 
                 PackageItems.CollectionChanged += OnPackageItemsCollectionChanged;
 
-                _projectManager.Install += OnProjectManagerInstall;
-                _projectManager.Uninstall += OnProjectManagerUninstall;
-                _projectManager.Update += OnProjectManagerUpdate;
+                _projectManager.Install += OnProjectManagerInstallAsync;
+                _projectManager.Uninstall += OnProjectManagerUninstallAsync;
+                _projectManager.Update += OnProjectManagerUpdateAsync;
 
                 IsFirstLoaded = false;
 
@@ -517,7 +517,7 @@
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await CreatePackageListItems(packages);
+                await CreatePackageListItemsAsync(packages);
 
                 Invalidated = false;
 
@@ -529,7 +529,7 @@
             }
         }
 
-        private async Task CreatePackageListItems(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
+        private async Task CreatePackageListItemsAsync(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
         {
             var vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
 
@@ -590,17 +590,17 @@
             await Task.CompletedTask;
         }
 
-        private async Task OnProjectManagerUninstall(object sender, UninstallNuGetProjectEventArgs e)
+        private async Task OnProjectManagerUninstallAsync(object sender, UninstallNuGetProjectEventArgs e)
         {
             StartLoadingTimerOrInvalidateData();
         }
 
-        private async Task OnProjectManagerInstall(object sender, InstallNuGetProjectEventArgs e)
+        private async Task OnProjectManagerInstallAsync(object sender, InstallNuGetProjectEventArgs e)
         {
             StartLoadingTimerOrInvalidateData();
         }
 
-        private async Task OnProjectManagerUpdate(object sender, UpdateNuGetProjectEventArgs e)
+        private async Task OnProjectManagerUpdateAsync(object sender, UpdateNuGetProjectEventArgs e)
         {
             StartLoadingTimerOrInvalidateData();
         }
@@ -646,7 +646,7 @@
         #region commands
         public TaskCommand LoadNextPackagePage { get; set; }
 
-        private async Task LoadNextPackagePageExecute()
+        private async Task LoadNextPackagePageExecuteAsync()
         {
             var pageInfo = PageInfo;
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
@@ -655,7 +655,7 @@
 
         public TaskCommand CancelPageLoading { get; set; }
 
-        private async Task CancelPageLoadingExecute()
+        private async Task CancelPageLoadingExecuteAsync()
         {
             IsCancellationForced = true;
 
@@ -673,7 +673,7 @@
 
         public TaskCommand RefreshCurrentPage { get; set; }
 
-        private async Task RefreshCurrentPageExecute()
+        private async Task RefreshCurrentPageExecuteAsync()
         {
             StartLoadingTimerOrInvalidateData();
         }

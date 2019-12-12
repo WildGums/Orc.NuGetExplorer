@@ -51,10 +51,10 @@
                 return;
             }
 
-            await RunTaskExecutionLoop();
+            await RunTaskExecutionLoopAsync();
         }
 
-        private async Task RunTaskExecutionLoop()
+        private async Task RunTaskExecutionLoopAsync()
         {
             try
             {

@@ -66,7 +66,7 @@
             AddCustomButton(btn);
         }
 
-        private async Task WrapDialogOption(Func<Task> commonButtonTask, IDialogOption dialogOption)
+        private async Task WrapDialogOptionAsync(Func<Task> commonButtonTask, IDialogOption dialogOption)
         {
             await OnExecuteWithDialogOptionActionAsync(dialogOption);
             await commonButtonTask();

@@ -24,14 +24,14 @@
         public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
         {
             var searchRes = new MultiplySourceSearchResource();
-            await searchRes.LoadResources(sourceRepositories);
+            await searchRes.LoadResourcesAsync(sourceRepositories);
 
             return searchRes;
         }
 
-        private async Task LoadResources(SourceRepository[] sourceRepositories)
+        private async Task LoadResourcesAsync(SourceRepository[] sourceRepositories)
         {
-            await ResolveResources(sourceRepositories);
+            await ResolveResourcesAsync(sourceRepositories);
 
             _v2Used = _resolvedResources.Values.Any(resource => resource is PackageSearchResourceV2Feed);
         }
@@ -39,7 +39,7 @@
         /// <summary>
         /// Get optimized resources
         /// </summary>
-        private async Task ResolveResources(SourceRepository[] sourceRepositories)
+        private async Task ResolveResourcesAsync(SourceRepository[] sourceRepositories)
         {
             //get one source for repositories with same uri
             //nonetheless repository provider is already aware of source duplicates, so check is unnecessary

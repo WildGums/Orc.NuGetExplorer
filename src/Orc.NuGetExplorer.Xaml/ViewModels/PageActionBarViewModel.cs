@@ -42,7 +42,7 @@
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;
 
-            BatchUpdate = new TaskCommand(BatchUpdateExecute, BatchUpdateCanExecute);
+            BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
         }
 
         protected override Task InitializeAsync()
@@ -60,7 +60,7 @@
 
         public TaskCommand BatchUpdate { get; set; }
 
-        private async Task BatchUpdateExecute()
+        private async Task BatchUpdateExecuteAsync()
         {
             try
             {

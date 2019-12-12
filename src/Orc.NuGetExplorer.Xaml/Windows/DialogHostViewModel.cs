@@ -12,7 +12,7 @@
 
             //TODO
             //provide a way to set message as hostable content
-            RunOption = new TaskCommand<IDialogOption>(RunOptionExecute);
+            RunOption = new TaskCommand<IDialogOption>(RunOptionExecuteAsync);
 
             Result = result;
         }
@@ -23,7 +23,7 @@
 
         public TaskCommand<IDialogOption> RunOption { get; set; }
 
-        private async Task RunOptionExecute(IDialogOption option)
+        private async Task RunOptionExecuteAsync(IDialogOption option)
         {
             Result.SetResult(option);
         }

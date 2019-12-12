@@ -66,8 +66,8 @@
             _packageCommandService = packageCommandService;
 
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
-            InstallPackage = new TaskCommand(OnInstallPackageExecute, OnInstallPackageCanExecute);
-            UninstallPackage = new TaskCommand(OnUninstallPackageExecute, OnUninstallPackageCanExecute);
+            InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
+            UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
         }
 
         [Model(SupportIEditableObject = false)]
@@ -122,7 +122,7 @@
 
         public TaskCommand InstallPackage { get; set; }
 
-        private async Task OnInstallPackageExecute()
+        private async Task OnInstallPackageExecuteAsync()
         {
             try
             {
@@ -163,7 +163,7 @@
 
         public TaskCommand UninstallPackage { get; set; }
 
-        private async Task OnUninstallPackageExecute()
+        private async Task OnUninstallPackageExecuteAsync()
         {
             try
             {

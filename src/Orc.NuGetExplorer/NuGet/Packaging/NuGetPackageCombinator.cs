@@ -22,7 +22,7 @@
 
             if (tokenPage == MetadataOrigin.Browse)
             {
-                await package.MergeMetadata(metadata, tokenPage);
+                await package.MergeMetadataAsync(metadata, tokenPage);
 
                 //keep installed version same, because this NuGetPackage
                 //created from local installed nupkg metadata.
@@ -33,7 +33,7 @@
                 //then original package retrived from real source and should be merged with
                 //installed local metadata
 
-                await package.MergeMetadata(metadata, tokenPage);
+                await package.MergeMetadataAsync(metadata, tokenPage);
 
                 if (metadata.Identity.HasVersion)
                 {
