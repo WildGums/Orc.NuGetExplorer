@@ -40,6 +40,16 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(DefaultFeedProperty, value); }
         }
 
+        public static readonly DependencyProperty CanResetProperty =
+            DependencyProperty.Register("CanReset", typeof(bool), typeof(PackageSourceSettingControl), new PropertyMetadata(false));
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        public bool CanReset
+        {
+            get { return (bool)GetValue(CanResetProperty); }
+            set { SetValue(CanResetProperty, value); }
+        }
+
         public static readonly DependencyProperty DefaultSourceNameProperty =
             DependencyProperty.Register("DefaultSourceName", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
 

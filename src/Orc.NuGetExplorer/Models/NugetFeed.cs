@@ -91,7 +91,7 @@
 
         public override string ToString()
         {
-            return $"{Name}\n{Source}";
+            return $"{Name} {Source}";
         }
 
         public void ForceCancelEdit()

@@ -69,10 +69,12 @@
                             <CheckBox VerticalAlignment="Center" Margin="4 2 4 2"
                                   IsChecked="{Binding IsEnabled}"/>
 
-                            <TextBlock Text="{Binding Path=., NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
-                                   Grid.Column="1"
-                                   TextTrimming="WordEllipsis"
-                                   Margin="4 0 4 0">
+                            <TextBlock Grid.Column="1"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="4 0 4 0">
+                                       <Run Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"/>
+                                       <LineBreak/>
+                                       <Run Text="{Binding Source, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"/>
                             </TextBlock>
 
                             <controls:RotationProgressBar Speed="5" x:Name="CircularBar" 
@@ -147,7 +149,7 @@
                         <DataTemplate>
                             <Viewbox>
                                 <Canvas Width="24" Height="24">
-                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
                                 </Canvas>
                             </Viewbox>
                             <DataTemplate.Triggers>
@@ -167,7 +169,29 @@
                         <DataTemplate>
                             <Viewbox>
                                 <Canvas Width="24" Height="24">
-                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}"  Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}"  Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                                </Canvas>
+                            </Viewbox>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                                    <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+                <Button x:Name="ResetBtn"
+                        Command="{Binding Reset}"
+                        Visibility="{Binding CanReset, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                        ToolTip="Reset package source settings">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Path x:Name="Icon" Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
                                 </Canvas>
                             </Viewbox>
                             <DataTemplate.Triggers>

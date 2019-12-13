@@ -1,27 +1,15 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using System.Threading.Tasks;
-    using Catel;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using NuGetExplorer.Models;
-    using NuGetExplorer.Providers;
 
     public class FeedDetailViewModel : ViewModelBase
     {
-        private readonly IModelProvider<NuGetFeed> _modelProvider;
-
-        public FeedDetailViewModel(NuGetFeed feed, IModelProvider<NuGetFeed> modelProvider)
+        public FeedDetailViewModel(NuGetFeed feed)
         {
-            Argument.IsNotNull(() => feed);
-            Argument.IsNotNull(() => modelProvider);
-
-            _modelProvider = modelProvider;
-
             //work with model clone
-            Feed = feed.Clone();
-
-            UpdateFeed = new Command(OnUpdateFeedExecute, OnUpdateFeedCanExecute);
+            Feed = feed; // = feed.Clone();
             OpenChooseLocalPathToSourceDialog = new Command(OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
         }
 
@@ -34,25 +22,22 @@
         [ViewModelToModel]
         public string Source { get; set; }
 
-        public Command UpdateFeed { get; set; }
-
-        private void OnUpdateFeedExecute()
+        private void UpdateFeed()
         {
-            //manually save model and pass forward
+            if (!IsInitialized || Feed is null)
+            {
+                return;
+            }
+
+            // manually save model and pass forward
             Feed.ForceEndEdit();
-            _modelProvider.Model = Feed;
-        }
-
-        private bool OnUpdateFeedCanExecute()
-        {
-            return Feed != null;
         }
 
         public Command OpenChooseLocalPathToSourceDialog { get; set; }
 
         private void OnOpenChooseLocalPathToSourceDialogExecute()
         {
-            CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
+            var folderDialog = new CommonOpenFileDialog();
 
             folderDialog.InitialDirectory = @"C:\Users";
             folderDialog.IsFolderPicker = true;
@@ -65,11 +50,6 @@
         private bool OnOpenChooseLocalPathToSourceDialogCanExecute()
         {
             return Feed != null;
-        }
-
-        protected override Task<bool> SaveAsync()
-        {
-            return Task.FromResult(true);
         }
     }
 }
