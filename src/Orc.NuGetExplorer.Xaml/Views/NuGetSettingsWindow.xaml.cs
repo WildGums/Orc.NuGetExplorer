@@ -18,11 +18,6 @@
         public NuGetSettingsWindow(NuGetSettingsViewModel viewModel)
             : base(viewModel, DataWindowMode.OkCancel)
         {
-            if (viewModel.CanReset)
-            {
-                AddCustomButton(new DataWindowButton("Reset", "Reset"));
-            }
-
             Title = viewModel.Title;
 
             InitializeComponent();

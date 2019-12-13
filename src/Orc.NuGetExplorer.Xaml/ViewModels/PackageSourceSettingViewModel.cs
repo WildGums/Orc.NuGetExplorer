@@ -1,13 +1,16 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Timers;
     using Catel;
     using Catel.Collections;
     using Catel.Data;
+    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using Orc.NuGetExplorer.Models;
@@ -16,15 +19,21 @@
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly int ValidationDelay = 800;
+        private static readonly int VerificationBatch = 5;
 
+        private readonly IServiceLocator _serviceLocator;
         private readonly INuGetConfigurationService _configurationService;
-
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
-        private readonly IModelProvider<NuGetFeed> _modelProvider;
+        private readonly Queue<NuGetFeed> _validationQueue = new Queue<NuGetFeed>();
 
-        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-            IModelProvider<NuGetFeed> modelProvider) : this(configurationService, feedVerificationService, modelProvider)
+        private static readonly System.Timers.Timer ValidationTimer = new System.Timers.Timer(ValidationDelay);
+
+        private INuGetConfigurationResetService _nuGetConfigurationResetService;
+
+        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, IServiceLocator serviceLocator) 
+            : this(configurationService, feedVerificationService, serviceLocator)
         {
             Argument.IsNotNull(() => configuredFeeds);
 
@@ -33,19 +42,17 @@
         }
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-            IModelProvider<NuGetFeed> modelProvider)
+            IServiceLocator serviceLocator)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => modelProvider);
             Argument.IsNotNull(() => feedVerificationService);
+            Argument.IsNotNull(() => serviceLocator);
 
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
-            _modelProvider = modelProvider;
+            _serviceLocator = serviceLocator;
 
             RemovedFeeds = new List<NuGetFeed>();
-
-            CommandInitialize();
 
             DeferValidationUntilFirstSaveCall = true;
 
@@ -54,6 +61,10 @@
 
             SettingsFeeds = new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>();
+
+            ValidationTimer.Elapsed += OnValidationTimerElapsed;
+
+            CommandInitialize();
         }
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
@@ -69,6 +80,7 @@
 
         #region ViewToViewModel
 
+        public bool CanReset { get; set; }
         public string DefaultFeed { get; set; }
         public string DefaultSourceName { get; set; }
         public IEnumerable<IPackageSource> PackageSources { get; set; }
@@ -76,6 +88,9 @@
         #endregion
 
         private bool ListenViewToViewModelPropertyChanges { get; set; } = true;
+        private bool SupressCollectionChanged { get; set; } = true;
+
+        private bool IsVerifying { get; set; }
 
         #region Commands
 
@@ -108,6 +123,18 @@
             Feeds.Add(new NuGetFeed(DefaultSourceName, DefaultFeed, true));
         }
 
+        public TaskCommand Reset { get; private set; }
+
+        private async Task OnResetExecuteAsync()
+        {
+            await _nuGetConfigurationResetService.Reset();
+        }
+
+        private bool OnResetCanExecute()
+        {
+            return _nuGetConfigurationResetService != null;
+        }
+
         #endregion
 
         protected void CommandInitialize()
@@ -116,16 +143,14 @@
             MoveUpFeed = new Command(OnMoveUpFeedExecute);
             MoveDownFeed = new Command(OnMoveDownFeedExecute);
             AddFeed = new Command(OnAddFeedExecute);
+            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
         protected override async Task InitializeAsync()
         {
             Title = "Settings";
 
-            _modelProvider.PropertyChanged += OnModelProviderPropertyChanged;
             Feeds.CollectionChanged += OnFeedsCollectionChanged;
-
-            Feeds.ForEach(async x => await VerifyFeedAsync(x));
         }
 
         protected override Task<bool> SaveAsync()
@@ -144,8 +169,8 @@
 
         protected override Task CloseAsync()
         {
-            _modelProvider.PropertyChanged -= OnModelProviderPropertyChanged;
             Feeds.CollectionChanged -= OnFeedsCollectionChanged;
+            Feeds.ForEach(f => UnsubscribeFromFeedPropertyChanged(f));
 
             return base.CloseAsync();
         }
@@ -191,6 +216,13 @@
                 return;
             }
 
+            if (feed.IsLocal())
+            {
+                //should be truly checked?
+                feed.VerificationResult = FeedVerificationResult.Valid;
+                return;
+            }
+
             feed.IsVerifiedNow = true;
 
             using (var cts = new CancellationTokenSource())
@@ -202,14 +234,65 @@
             feed.IsVerifiedNow = false;
         }
 
-
-        private void OnModelProviderPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void StartValidationTimer()
         {
-            var index = Feeds.IndexOf(SelectedFeed);
+            if (ValidationTimer.Enabled)
+            {
+                ValidationTimer.Stop();
+            }
 
-            Feeds[index] = _modelProvider.Model;
+            ValidationTimer.Start();
+        }
 
-            SelectedFeed = _modelProvider.Model;
+        private async void OnValidationTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (IsVerifying)
+            {
+                return;
+            }
+
+            IsVerifying = true;
+
+            while (_validationQueue.Any())
+            {
+                var validationList = new List<NuGetFeed>();
+
+                for(int i = 0; i < Math.Min(_validationQueue.Count, VerificationBatch); i++)
+                {
+                    validationList.Add(_validationQueue.Dequeue());
+                }
+
+                await Task.WhenAll(validationList.Select(x => VerifyFeedAsync(x)));
+            }
+
+            IsVerifying = false;
+        }
+
+        private void AddToValidationQueue(NuGetFeed feed)
+        {
+            if (_validationQueue.Contains(feed))
+            {
+                return;
+            }
+
+            _validationQueue.Enqueue(feed);
+        }
+
+        protected void OnFeedPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            //run verification if source changed
+            if (string.Equals(nameof(NuGetFeed.Source), e.PropertyName))
+            {
+                StartValidationTimer();
+            }
+        }
+
+        private void OnResetChanged()
+        {
+            if(CanReset)
+            {
+                _nuGetConfigurationResetService = _serviceLocator.ResolveType<INuGetConfigurationResetService>();
+            }
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
@@ -224,18 +307,31 @@
                 var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();
                 SettingsFeeds.AddRange(passedFeeds);
                 Feeds.AddRange(passedFeeds);
+
+                //validate items on first initialization
+                SupressCollectionChanged = false;
+                Feeds.ForEach(async x => await VerifyFeedAsync(x));
+
             }
 
             base.OnPropertyChanged(e);
         }
 
-
-        private async void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //verify all new feeds in collection
+            if(SupressCollectionChanged)
+            {
+                return;
+            }
 
-            if (!(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
-                e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace))
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                var removedFeeds = e.OldItems.OfType<NuGetFeed>().ToList();
+                removedFeeds.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
+            }
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
             {
                 return;
             }
@@ -251,18 +347,25 @@
 
             foreach (NuGetFeed item in newFeeds)
             {
-                if (item.IsLocal())
-                {
-                    //should be truly checked?
-                    item.VerificationResult = FeedVerificationResult.Valid;
-                    return;
-                }
+                SubscribeToFeedPropertyChanged(item);
 
                 if (item.VerificationResult == FeedVerificationResult.Unknown)
                 {
-                    await VerifyFeedAsync(item);
+                    AddToValidationQueue(item);
                 }
             }
+
+            StartValidationTimer();
+        }
+
+        private void SubscribeToFeedPropertyChanged(NuGetFeed feed)
+        {
+            feed.PropertyChanged += OnFeedPropertyPropertyChanged;
+        }
+
+        private void UnsubscribeFromFeedPropertyChanged(NuGetFeed feed)
+        {
+            feed.PropertyChanged -= OnFeedPropertyPropertyChanged;
         }
     }
 }

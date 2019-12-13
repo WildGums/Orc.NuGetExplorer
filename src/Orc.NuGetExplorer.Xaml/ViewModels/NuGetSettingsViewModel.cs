@@ -15,7 +15,6 @@
         private const string DefaultTitle = "Package source settings";
 
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
         private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
 
         public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
@@ -49,11 +48,8 @@
 
             if (serviceLocator.IsTypeRegistered<INuGetConfigurationResetService>())
             {
-                _nuGetConfigurationResetService = serviceLocator.ResolveType<INuGetConfigurationResetService>();
                 CanReset = true;
             }
-
-            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
 
@@ -103,20 +99,5 @@
 
             Settings.NuGetFeeds.AddRange(PackageSources.OfType<NuGetFeed>());
         }
-
-        #region Commands
-        public TaskCommand Reset { get; private set; }
-
-        private async Task OnResetExecuteAsync()
-        {
-            await _nuGetConfigurationResetService.Reset();
-        }
-
-        private bool OnResetCanExecute()
-        {
-            return _nuGetConfigurationResetService != null;
-        }
-        #endregion
-
     }
 }

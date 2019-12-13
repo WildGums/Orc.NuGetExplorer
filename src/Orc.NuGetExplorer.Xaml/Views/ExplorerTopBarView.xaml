@@ -190,7 +190,7 @@
                 <DataTemplate>
                     <Viewbox>
                         <Canvas Width="24" Height="24">
-                            <Path x:Name="Icon" Data="{Binding Source={StaticResource Broom}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                            <Path x:Name="Icon" Data="{Binding Source={StaticResource Erase}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
                         </Canvas>
                     </Viewbox>
                     <DataTemplate.Triggers>
