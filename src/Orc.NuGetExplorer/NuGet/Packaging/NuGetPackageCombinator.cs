@@ -52,9 +52,7 @@
 
             var comparison = package.InstalledVersion.CompareTo(package.LastVersion, NuGet.Versioning.VersionComparison.VersionRelease);
 
-
-
-            if (comparison < (int)PackageStatus.NotInstalled || comparison >= (int)PackageStatus.Pending)
+            if (comparison <= (int)PackageStatus.NotInstalled || comparison >= (int)PackageStatus.Pending)
             {
                 //because of version comparer fallen back to StringComparison of non-numeric labels.
 
