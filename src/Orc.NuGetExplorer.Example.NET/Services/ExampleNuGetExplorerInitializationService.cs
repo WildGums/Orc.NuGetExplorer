@@ -26,6 +26,8 @@
 
             var serviceLocator = ServiceLocator.Default;
 
+            serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
+
             //add loggers
             serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
             var catelListener = serviceLocator.RegisterTypeAndInstantiate<CatelLogListener>();

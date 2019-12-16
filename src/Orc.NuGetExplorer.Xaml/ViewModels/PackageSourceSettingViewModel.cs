@@ -22,7 +22,6 @@
         private static readonly int ValidationDelay = 800;
         private static readonly int VerificationBatch = 5;
 
-        private readonly IServiceLocator _serviceLocator;
         private readonly INuGetConfigurationService _configurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
@@ -30,27 +29,15 @@
 
         private static readonly System.Timers.Timer ValidationTimer = new System.Timers.Timer(ValidationDelay);
 
-        private INuGetConfigurationResetService _nuGetConfigurationResetService;
+        private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
 
-        public PackageSourceSettingViewModel(List<NuGetFeed> configuredFeeds, INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, IServiceLocator serviceLocator) 
-            : this(configurationService, feedVerificationService, serviceLocator)
-        {
-            Argument.IsNotNull(() => configuredFeeds);
-
-            SettingsFeeds = configuredFeeds ?? new List<NuGetFeed>();
-            Feeds.AddRange(SettingsFeeds);
-        }
-
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-            IServiceLocator serviceLocator)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => serviceLocator);
 
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
-            _serviceLocator = serviceLocator;
 
             RemovedFeeds = new List<NuGetFeed>();
 
@@ -65,6 +52,14 @@
             ValidationTimer.Elapsed += OnValidationTimerElapsed;
 
             CommandInitialize();
+        }
+
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+           INuGetConfigurationResetService nuGetConfigurationResetService)
+            : this(configurationService, feedVerificationService)
+        {
+            Argument.IsNotNull(() => nuGetConfigurationResetService);
+            _nuGetConfigurationResetService = nuGetConfigurationResetService;
         }
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
@@ -127,12 +122,16 @@
 
         private async Task OnResetExecuteAsync()
         {
+            if(_nuGetConfigurationResetService is null)
+            {
+                return;
+            }
             await _nuGetConfigurationResetService.Reset();
         }
 
         private bool OnResetCanExecute()
         {
-            return _nuGetConfigurationResetService != null;
+            return CanReset;
         }
 
         #endregion
@@ -284,14 +283,6 @@
             if (string.Equals(nameof(NuGetFeed.Source), e.PropertyName))
             {
                 StartValidationTimer();
-            }
-        }
-
-        private void OnResetChanged()
-        {
-            if(CanReset)
-            {
-                _nuGetConfigurationResetService = _serviceLocator.ResolveType<INuGetConfigurationResetService>();
             }
         }
 
