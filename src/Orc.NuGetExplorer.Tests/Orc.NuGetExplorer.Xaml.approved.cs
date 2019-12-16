@@ -316,7 +316,7 @@ namespace Orc.NuGetExplorer.ViewModels
         public static readonly Catel.Data.PropertyData FeedProperty;
         public static readonly Catel.Data.PropertyData NameProperty;
         public static readonly Catel.Data.PropertyData SourceProperty;
-        public FeedDetailViewModel(Orc.NuGetExplorer.Models.NuGetFeed feed, Orc.NuGetExplorer.Providers.IModelProvider<Orc.NuGetExplorer.Models.NuGetFeed> modelProvider) { }
+        public FeedDetailViewModel(Orc.NuGetExplorer.Models.NuGetFeed feed) { }
         [Catel.MVVM.ModelAttribute()]
         public Orc.NuGetExplorer.Models.NuGetFeed Feed { get; set; }
         [Catel.MVVM.ViewModelToModelAttribute("", "")]
@@ -324,18 +324,19 @@ namespace Orc.NuGetExplorer.ViewModels
         public Catel.MVVM.Command OpenChooseLocalPathToSourceDialog { get; set; }
         [Catel.MVVM.ViewModelToModelAttribute("", "")]
         public string Source { get; set; }
-        public Catel.MVVM.Command UpdateFeed { get; set; }
-        protected override System.Threading.Tasks.Task<bool> SaveAsync() { }
     }
 }
 namespace Orc.NuGetExplorer.Views
 {
     public sealed class PackageSourceSettingControl : Catel.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector
     {
+        public static readonly System.Windows.DependencyProperty CanResetProperty;
         public static readonly System.Windows.DependencyProperty DefaultFeedProperty;
         public static readonly System.Windows.DependencyProperty DefaultSourceNameProperty;
         public static readonly System.Windows.DependencyProperty PackageSourcesProperty;
         public PackageSourceSettingControl() { }
+        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
+        public bool CanReset { get; set; }
         [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultFeed { get; set; }
         [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
