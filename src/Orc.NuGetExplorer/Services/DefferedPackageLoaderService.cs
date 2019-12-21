@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
+    using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
     using NuGetExplorer.Management;
@@ -73,7 +74,7 @@
                 {
                     _aliveCancellationToken = cts.Token;
 
-                    //form tasklist
+
                     var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
@@ -82,14 +83,14 @@
                     {
                         var nextCompletedTask = await Task.WhenAny(taskList.Keys);
 
-                        var executedToken = taskList[nextCompletedTask];
-
                         PackageStatus updateStateValue;
                         IPackageSearchMetadata result = null;
+                        DeferToken executedToken = null;
 
                         try
                         {
-                            result = await nextCompletedTask;
+                            executedToken = await nextCompletedTask;
+                            result = executedToken?.Result;
                         }
                         catch (Exception ex)
                         {
@@ -98,7 +99,7 @@
 
                         if (result != null)
                         {
-                            updateStateValue = await NuGetPackageCombinator.Combine(executedToken.Package, executedToken.LoadType, nextCompletedTask.Result);
+                            updateStateValue = await NuGetPackageCombinator.Combine(executedToken.Package, executedToken.LoadType, result);
                         }
                         else
                         {
@@ -122,17 +123,17 @@
             }
         }
 
-        private Task<IPackageSearchMetadata> CreateTaskFromToken(DeferToken token, CancellationToken ct)
+        private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
             bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
             if (token.LoadType == MetadataOrigin.Installed)
             {
                 //from local
-                return GetMetadataFromLocalSources(token, ct);
+                return GetMetadataFromLocalSources(token, cancellationToken);
             }
 
-            return _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, ct);
+            return GetMetadataFromRemoteSources(token, cancellationToken);
         }
 
         public IPackageMetadataProvider InitializeMetadataProvider()
@@ -157,35 +158,45 @@
             }
         }
 
-        private async Task<IPackageSearchMetadata> GetMetadataFromLocalSources(DeferToken token, CancellationToken ct)
+        /// <summary>
+        /// Get installed local metadata based on package.config
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async Task<DeferToken> GetMetadataFromLocalSources(DeferToken token, CancellationToken cancellationToken)
         {
-            var metadata = await _packageMetadataProvider.GetLowestLocalPackageMetadataAsync(token.Package.Identity.Id, token.Package.Identity.Version.IsPrerelease, ct);
+            var project = _extensibleProjectLocator.GetAllExtensibleProjects().FirstOrDefault();
+            string packageId = token.Package.Identity.Id;
 
-            return await ValidateIsLocalPackageInstalledAsync(metadata) ? metadata : null;
+            if (project == null)
+            {
+                return token;
+            }
+
+            var installedVersion = await _projectManager.GetVersionInstalledAsync(project, packageId, cancellationToken);
+
+            if(installedVersion == null)
+            {
+                return token;
+            }
+
+            var metadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageId, installedVersion), true, cancellationToken);
+
+            token.Result = metadata;
+
+            return token;
         }
 
-        /// <summary>
-        /// Validate is local package resources has record in packages.config
-        /// </summary>
-        /// <returns></returns>
-        private async Task<bool> ValidateIsLocalPackageInstalledAsync(IPackageSearchMetadata package)
+        private async Task<DeferToken> GetMetadataFromRemoteSources(DeferToken token, CancellationToken cancellationToken)
         {
-            if (package == null)
-            {
-                return false;
-            }
+            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
-            var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
+            var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);
 
-            foreach (var project in projects)
-            {
-                if (await _projectManager.IsPackageInstalledAsync(project, package.Identity, default))
-                {
-                    return true;
-                }
-            }
+            token.Result = searchMetadata;
 
-            return false;
+            return token;
         }
 
         public void Add(DeferToken token)

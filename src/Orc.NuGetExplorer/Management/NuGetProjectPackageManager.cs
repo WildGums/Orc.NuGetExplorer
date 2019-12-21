@@ -155,7 +155,7 @@
 
             var installedReferences = await GetInstalledPackagesAsync(project, token);
 
-            var installedPackage = installedReferences.FirstOrDefault(x => x.PackageIdentity.Equals(package, NuGet.Versioning.VersionComparison.Version));
+            var installedPackage = installedReferences.FirstOrDefault(x => x.PackageIdentity.Equals(package, NuGet.Versioning.VersionComparison.VersionRelease));
 
             return installedPackage != null;
         }

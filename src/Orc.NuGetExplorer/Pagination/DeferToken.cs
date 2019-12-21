@@ -13,6 +13,8 @@
 
         public NuGetPackage Package { get; set; }
 
+        public IPackageSearchMetadata Result { get; set; }
+
         public Action<PackageStatus> UpdateAction { get; set; }
     }
 }
