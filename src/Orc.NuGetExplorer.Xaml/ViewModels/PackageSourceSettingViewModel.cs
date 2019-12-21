@@ -83,7 +83,7 @@
         #endregion
 
         private bool ListenViewToViewModelPropertyChanges { get; set; } = true;
-        private bool SupressCollectionChanged { get; set; } = true;
+        private bool SupressVerificationOnCollectionChanged { get; set; } = true;
 
         private bool IsVerifying { get; set; }
 
@@ -282,6 +282,7 @@
             //run verification if source changed
             if (string.Equals(nameof(NuGetFeed.Source), e.PropertyName))
             {
+                AddToValidationQueue(sender as NuGetFeed);
                 StartValidationTimer();
             }
         }
@@ -300,7 +301,7 @@
                 Feeds.AddRange(passedFeeds);
 
                 //validate items on first initialization
-                SupressCollectionChanged = false;
+                SupressVerificationOnCollectionChanged = false;
                 Feeds.ForEach(async x => await VerifyFeedAsync(x));
 
             }
@@ -310,12 +311,6 @@
 
         private void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            //verify all new feeds in collection
-            if(SupressCollectionChanged)
-            {
-                return;
-            }
-
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
                 var removedFeeds = e.OldItems.OfType<NuGetFeed>().ToList();
@@ -339,6 +334,11 @@
             foreach (NuGetFeed item in newFeeds)
             {
                 SubscribeToFeedPropertyChanged(item);
+
+                if(SupressVerificationOnCollectionChanged)
+                {
+                    continue;
+                }
 
                 if (item.VerificationResult == FeedVerificationResult.Unknown)
                 {

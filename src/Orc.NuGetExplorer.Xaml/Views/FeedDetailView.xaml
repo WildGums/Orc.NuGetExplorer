@@ -36,7 +36,6 @@
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
                  Text="{Binding Name}">
             <i:Interaction.Behaviors>
-                <catel:SelectTextOnFocus/>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
             </i:Interaction.Behaviors>
         </TextBox>
@@ -55,7 +54,6 @@
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
                  Text="{Binding Source}">
             <i:Interaction.Behaviors>
-                <catel:SelectTextOnFocus/>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
             </i:Interaction.Behaviors>
         </TextBox>
