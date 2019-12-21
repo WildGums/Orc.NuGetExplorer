@@ -16,17 +16,17 @@
     using Catel.MVVM;
     using Catel.Services;
     using Catel.Windows.Threading;
-    using Enums;
-    using Management;
-    using Management.EventArgs;
-    using Models;
+    using Orc.NuGetExplorer.Enums;
+    using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Models;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Providers;
-    using Pagination;
-    using Services;
-    using Web;
+    using Orc.NuGetExplorer.Pagination;
+    using Orc.NuGetExplorer.Services;
+    using Orc.NuGetExplorer.Web;
     using Timer = System.Timers.Timer;
+    using Orc.NuGetExplorer;
 
     internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
@@ -48,6 +48,7 @@
 
         private readonly MetadataOrigin _pageType;
         private readonly INuGetPackageManager _projectManager;
+        private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryContextService _repositoryService;
 
         private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
@@ -60,7 +61,7 @@
         public ExplorerPageViewModel(INuGetExplorerInitialState pageInitialState, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager)
+            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService)
         {
             Argument.IsNotNull(() => pageInitialState);
             Argument.IsNotNull(() => packagesLoaderService);
@@ -73,6 +74,7 @@
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
+            Argument.IsNotNull(() => packageOperationContextService);
 
             Title = pageInitialState.Tab.Name;
 
@@ -82,6 +84,7 @@
             _repositoryService = repositoryService;
             _defferedPackageLoaderService = defferedPackageLoaderService;
             _projectManager = projectManager;
+            _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
 
             _packagesLoaderService = packagesLoaderService;
@@ -250,9 +253,7 @@
 
                 PackageItems.CollectionChanged += OnPackageItemsCollectionChanged;
 
-                _projectManager.Install += OnProjectManagerInstallAsync;
-                _projectManager.Uninstall += OnProjectManagerUninstallAsync;
-                _projectManager.Update += OnProjectManagerUpdateAsync;
+                _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
 
                 IsFirstLoaded = false;
 
@@ -313,6 +314,7 @@
             PackageItems.CollectionChanged -= OnPackageItemsCollectionChanged;
             Settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
             SingleDelayTimer.Elapsed -= OnTimerElapsed;
+            _packageOperationContextService.OperationContextDisposing -= OnOperationContextDisposing;
         }
 
         private void StartLoadingTimer()
@@ -590,17 +592,7 @@
             await Task.CompletedTask;
         }
 
-        private async Task OnProjectManagerUninstallAsync(object sender, UninstallNuGetProjectEventArgs e)
-        {
-            StartLoadingTimerOrInvalidateData();
-        }
-
-        private async Task OnProjectManagerInstallAsync(object sender, InstallNuGetProjectEventArgs e)
-        {
-            StartLoadingTimerOrInvalidateData();
-        }
-
-        private async Task OnProjectManagerUpdateAsync(object sender, UpdateNuGetProjectEventArgs e)
+        private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             StartLoadingTimerOrInvalidateData();
         }

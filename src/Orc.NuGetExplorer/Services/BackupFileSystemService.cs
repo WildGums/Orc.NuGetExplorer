@@ -71,6 +71,11 @@ namespace Orc.NuGetExplorer
 
             try
             {
+                if (File.Exists(fullPath))
+                {
+                    fullPath = Catel.IO.Path.GetDirectoryName(fullPath);
+                }
+
                 var sourceDirectory = GetBackupFolder(fullPath);
 
                 _fileSystemService.CopyDirectory(sourceDirectory, fullPath);
@@ -89,6 +94,7 @@ namespace Orc.NuGetExplorer
 
             return backupDirectory;
         }
+
         #endregion
     }
 }
