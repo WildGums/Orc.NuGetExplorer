@@ -73,11 +73,16 @@ namespace Orc.NuGetExplorer
             {
                 if (File.Exists(fullPath))
                 {
+                    //restore only single file on this path
                     fullPath = Catel.IO.Path.GetDirectoryName(fullPath);
+                }
+                else
+                {
+                    //clean-up directory from files created after backup, like .deleteme etc
+                    _fileSystemService.DeleteDirectory(fullPath);
                 }
 
                 var sourceDirectory = GetBackupFolder(fullPath);
-
                 _fileSystemService.CopyDirectory(sourceDirectory, fullPath);
             }
             catch (Exception ex)
