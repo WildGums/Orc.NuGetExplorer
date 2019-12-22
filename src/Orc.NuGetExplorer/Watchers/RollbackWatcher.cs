@@ -12,41 +12,37 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Logging;
 
-    public class RollbackWatcher : PackageManagerWatcherBase
+    public class RollbackWatcher : PackageManagerContextWatcherBase
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IBackupFileSystemService _backupFileSystemService;
         private readonly IFileSystemService _fileSystemService;
-        private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
         #endregion
 
         #region Constructors
         public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
             IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService)
-            : base(packageOperationNotificationService)
+            : base(packageOperationNotificationService, packageOperationContextService)
         {
-            Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => rollbackPackageOperationService);
             Argument.IsNotNull(() => backupFileSystemService);
             Argument.IsNotNull(() => fileSystemService);
 
-            _packageOperationContextService = packageOperationContextService;
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
             _fileSystemService = fileSystemService;
-
-            packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
         }
         #endregion
 
         #region Methods
-        private void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
+        protected override void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
-            if (context.Exceptions.Any())
+
+            if (HasContextErrors)
             {
                 _rollbackPackageOperationService.Rollback(context);
             }
@@ -58,7 +54,6 @@ namespace Orc.NuGetExplorer
 
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
-            var context = _packageOperationContextService.CurrentContext;
             var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
 
             if (e.PackageOperationType == PackageOperationType.Uninstall)
@@ -70,7 +65,7 @@ namespace Orc.NuGetExplorer
                         _backupFileSystemService.Restore(e.InstallPath);
                         _backupFileSystemService.Restore(packagesConfig);
                     },
-                    context
+                    CurrentContext
                 );
                 return;
             }
@@ -89,7 +84,7 @@ namespace Orc.NuGetExplorer
                             Log.Error("Failed to delete directory during rollback actions", ex);
                         }
                     },
-                    context
+                    CurrentContext
                 );
             }
 
