@@ -17,7 +17,7 @@
             _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
         }
 
-        public bool HasContextErrors => CurrentContext.Exceptions.Any();
+        public bool HasContextErrors => CurrentContext?.Exceptions?.Any() ?? false;
 
         public IPackageOperationContext CurrentContext => _packageOperationContextService.CurrentContext;
 
