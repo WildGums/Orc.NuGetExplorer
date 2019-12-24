@@ -59,8 +59,8 @@
 
             var subFolders = folderProject.GetPackageDirectories();
 
-            List<PackageIdentity> failedIdentities = new List<PackageIdentity>();
-            List<IPackageDetails> parsedPackages = new List<IPackageDetails>();
+            var failedIdentities = new List<PackageIdentity>();
+            var parsedPackages = new List<IPackageDetails>();
 
             bool anyUpgraded = false;
 
