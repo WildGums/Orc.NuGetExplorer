@@ -16,17 +16,17 @@
     using Catel.MVVM;
     using Catel.Services;
     using Catel.Windows.Threading;
+    using NuGet.Configuration;
+    using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Models;
-    using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
-    using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Pagination;
+    using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;
     using Orc.NuGetExplorer.Web;
     using Timer = System.Timers.Timer;
-    using Orc.NuGetExplorer;
 
     internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {

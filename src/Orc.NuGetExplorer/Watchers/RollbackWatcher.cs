@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Linq;
     using Catel;
     using Catel.Logging;
 

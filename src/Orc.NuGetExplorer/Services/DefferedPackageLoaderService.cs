@@ -176,7 +176,7 @@
 
             var installedVersion = await _projectManager.GetVersionInstalledAsync(project, packageId, cancellationToken);
 
-            if(installedVersion == null)
+            if (installedVersion == null)
             {
                 return token;
             }

@@ -10,11 +10,9 @@
     using Catel;
     using Catel.Collections;
     using Catel.Data;
-    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Providers;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
@@ -122,7 +120,7 @@
 
         private async Task OnResetExecuteAsync()
         {
-            if(_nuGetConfigurationResetService is null)
+            if (_nuGetConfigurationResetService is null)
             {
                 return;
             }
@@ -256,7 +254,7 @@
             {
                 var validationList = new List<NuGetFeed>();
 
-                for(int i = 0; i < Math.Min(_validationQueue.Count, VerificationBatch); i++)
+                for (int i = 0; i < Math.Min(_validationQueue.Count, VerificationBatch); i++)
                 {
                     validationList.Add(_validationQueue.Dequeue());
                 }
@@ -335,7 +333,7 @@
             {
                 SubscribeToFeedPropertyChanged(item);
 
-                if(SupressVerificationOnCollectionChanged)
+                if (SupressVerificationOnCollectionChanged)
                 {
                     continue;
                 }
