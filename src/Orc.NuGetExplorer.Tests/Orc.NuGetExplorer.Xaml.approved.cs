@@ -72,11 +72,6 @@ namespace Orc.NuGetExplorer.Controls.Helpers
         public static childItem FindVisualChild<childItem>(System.Windows.DependencyObject obj)
             where childItem : System.Windows.DependencyObject { }
     }
-    public class XamlExportHelper
-    {
-        public XamlExportHelper() { }
-        public static string Save(object element) { }
-    }
 }
 namespace Orc.NuGetExplorer.Controls.Templating
 {
