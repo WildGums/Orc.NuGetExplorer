@@ -79,10 +79,10 @@
 
     <Grid Width="840" Margin="0 0 0 30" Name="TopGrid"
           Height="720">
-
         <Grid.Resources>
             <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
         </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="6*"/>
@@ -104,26 +104,21 @@
                         Grid.Column="0" Grid.Row="1"
                         MinHeight="230"
                         Margin="10 10 0 0"
-                        LoadTabItems="LazyLoading"
-                        ItemsSource="{Binding ExplorerPages}">
+                        ItemsSource="{Binding Pages}"
+                        LoadTabItems="LazyLoading">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Setter Property="IsSelected" Value="{Binding IsActive}"/>
                 </Style>
             </TabControl.ItemContainerStyle>
-            <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type TabItem}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Title}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
+
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
+
         </orc:TabControl>
 
         <!--detail of current selected package -->
@@ -133,7 +128,7 @@
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 
 
-        <!-- own log viewer commented -->
+        <!-- nested log viewer -->
         <!--<GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Bottom"

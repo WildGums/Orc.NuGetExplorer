@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
+    using Catel.Collections;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
@@ -12,7 +13,6 @@
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
     {
@@ -20,12 +20,11 @@
 
         private const string DefaultStartPage = ExplorerPageName.Browse;
         private readonly IConfigurationService _configurationService;
-        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ITypeFactory _typeFactory;
 
         private readonly IDictionary<string, INuGetExplorerInitialState> _pageSetup = new Dictionary<string, INuGetExplorerInitialState>()
         {
-            { ExplorerPageName.Browse, new NuGetExplorerInitialState(ExplorerTab.Browse, null)},
+            { ExplorerPageName.Browse, new NuGetExplorerInitialState(ExplorerTab.Browse, null) },
             { ExplorerPageName.Installed, new NuGetExplorerInitialState(ExplorerTab.Installed, null)},
             { ExplorerPageName.Updates, new NuGetExplorerInitialState(ExplorerTab.Update, null)}
         };
@@ -33,18 +32,16 @@
         private string _startPage = DefaultStartPage;
 
 
-        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
-            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
+        public ExplorerViewModel(ICommandManager commandManager, ITypeFactory typeFactory,
+            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => initializationService);
+            Argument.IsNotNull(() => typeFactory);
 
-            _typeFactory = typeFactory;
             _configurationService = configurationService;
-            _initializationService = initializationService;
+            _typeFactory = typeFactory;
 
             CreateApplicationWideCommands(commandManager);
 
@@ -57,21 +54,10 @@
             Settings = settingsProvider.Model;
 
             Title = "Package management";
-
-            IsLogAutoScroll = true;
         }
-
-        protected override Task InitializeAsync()
-        {
-            ExplorerPages = new ObservableCollection<ExplorerPageViewModel>();
-
-            CreatePages();
-            return base.InitializeAsync();
-        }
-
 
         //View to viewmodel
-        public string StartPage { get; set; } = DefaultStartPage;
+        public string StartPage { get; set; } = null;
 
         public ExplorerSettingsContainer Settings { get; set; }
 
@@ -79,9 +65,13 @@
 
         public NuGetPackage SelectedPackageItem { get; set; }
 
-        public ObservableCollection<ExplorerPageViewModel> ExplorerPages { get; set; }
+        public INuGetExplorerInitialState BrowsePageParameters { get; set; }
 
-        public bool IsLogAutoScroll { get; set; }
+        public INuGetExplorerInitialState InstalledPageParameters { get; set; }
+
+        public INuGetExplorerInitialState UpdatesPageParameters { get; set; }
+
+        public ObservableCollection<ExplorerPage> Pages { get; set; } = new ObservableCollection<ExplorerPage>();
 
         public void ChangeStartPage(string name)
         {
@@ -104,19 +94,11 @@
             }
         }
 
-        private void CreatePages()
+        protected override Task InitializeAsync()
         {
-            foreach (var page in _pageSetup)
-            {
-                var newPage = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPageViewModel>(page.Value);
+            InitializePages();
 
-                if (newPage != null)
-                {
-                    ExplorerPages.Add(newPage);
-                }
-            }
-
-            StartPage = _startPage;
+            return base.InitializeAsync();
         }
 
         protected override Task OnClosingAsync()
@@ -126,6 +108,18 @@
             Settings.Clear();
 
             return base.OnClosingAsync();
+        }
+
+        private void InitializePages()
+        {
+            BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
+            InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
+            UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
+
+            _pageSetup.Values.ForEach(page => 
+                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
+
+            StartPage = _startPage;
         }
 
         private void CreateApplicationWideCommands(ICommandManager cm)

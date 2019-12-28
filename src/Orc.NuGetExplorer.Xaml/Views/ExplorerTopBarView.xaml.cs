@@ -44,7 +44,7 @@
 
         private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            string selectPageWithName = e.NewValue.ToString();
+            string selectPageWithName = e.NewValue?.ToString() ?? "Browse";
 
             switch (selectPageWithName)
             {

@@ -44,9 +44,7 @@
         private readonly IDispatcherService _dispatcherService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
-        private readonly IPackageLoaderService _packagesLoaderService;
 
-        private readonly MetadataOrigin _pageType;
         private readonly INuGetPackageManager _projectManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryContextService _repositoryService;
@@ -55,15 +53,15 @@
         private readonly ITypeFactory _typeFactory;
 
         private readonly PackageSearchParameters _initialSearchParams;
-
+        private readonly IPackageLoaderService _packagesLoaderService;
+        private readonly MetadataOrigin _pageType;
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(INuGetExplorerInitialState pageInitialState, IPackageLoaderService packagesLoaderService,
+        public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService)
         {
-            Argument.IsNotNull(() => pageInitialState);
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => packageMetadataMediaDownloadService);
@@ -76,8 +74,6 @@
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
 
-            Title = pageInitialState.Tab.Name;
-
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
@@ -88,7 +84,17 @@
             _typeFactory = typeFactory;
 
             _packagesLoaderService = packagesLoaderService;
-            _initialSearchParams = pageInitialState.InitialSearchParameters; //if null, standard Settings will not be overriden
+
+            Settings = settingsProvider.Model;
+
+            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
+            CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
+            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
+
+            commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
+
+            Title = page.Parameters.Tab.Name;
+            _initialSearchParams = page.Parameters.InitialSearchParameters; //if null, standard Settings will not be overriden
 
             if (Title != "Browse")
             {
@@ -102,13 +108,7 @@
 
             CanBatchProjectActions = _pageType == MetadataOrigin.Updates;
 
-            Settings = settingsProvider.Model;
-
-            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
-            CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
-            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
-
-            commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
+            Page = page;
         }
 
         /// <summary>
@@ -159,8 +159,14 @@
         }
 
 
+        //view to view model
         public NuGetPackage SelectedPackageItem { get; set; }
 
+        //view to viewmodel
+        [Model(SupportIEditableObject = false)]
+        public ExplorerPage Page { get; set; }
+
+        [ViewModelToModel]
         public bool IsActive { get; set; }
 
         /// <summary>
