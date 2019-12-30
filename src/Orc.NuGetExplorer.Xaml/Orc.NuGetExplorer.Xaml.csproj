@@ -10,11 +10,11 @@
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec;xaml;wpf</PackageTags>
     <UseWpf>true</UseWpf>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <!-- SonarQube requires a project guid -->
     <ProjectGuid>{6A1494F8-88AA-41CE-B899-6B2CFAA8C678}</ProjectGuid>
-  </PropertyGroup
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Catel.Analyzers" Version="1.0.0" PrivateAssets="all" />
