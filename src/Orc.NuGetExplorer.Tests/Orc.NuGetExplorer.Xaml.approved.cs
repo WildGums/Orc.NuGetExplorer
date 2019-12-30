@@ -270,6 +270,17 @@ namespace Orc.NuGetExplorer.Logging
         public void Write(Catel.Logging.ILog log, string message, Catel.Logging.LogEvent logEvent, object extraData, Catel.Logging.LogData logData, System.DateTime time) { }
     }
 }
+namespace Orc.NuGetExplorer.Models
+{
+    public class ExplorerPage : Catel.Data.ModelBase
+    {
+        public static readonly Catel.Data.PropertyData IsActiveProperty;
+        public static readonly Catel.Data.PropertyData ParametersProperty;
+        public ExplorerPage(Orc.NuGetExplorer.INuGetExplorerInitialState parameters) { }
+        public bool IsActive { get; set; }
+        public Orc.NuGetExplorer.INuGetExplorerInitialState Parameters { get; set; }
+    }
+}
 namespace Orc.NuGetExplorer.MVVM
 {
     public class BindingProxy : System.Windows.Freezable
