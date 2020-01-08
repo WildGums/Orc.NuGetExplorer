@@ -19,6 +19,7 @@
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer;
+    using Orc.NuGetExplorer.Cache;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Models;
@@ -44,23 +45,25 @@
         private readonly IDispatcherService _dispatcherService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
-
-        private readonly INuGetPackageManager _projectManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryContextService _repositoryService;
+        private readonly IPackageLoaderService _packagesLoaderService;
 
-        private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
+        private readonly INuGetPackageManager _projectManager;
+        private readonly INuGetCacheManager _nuGetCacheManager;
+
         private readonly ITypeFactory _typeFactory;
+        private readonly MetadataOrigin _pageType;
 
         private readonly PackageSearchParameters _initialSearchParams;
-        private readonly IPackageLoaderService _packagesLoaderService;
-        private readonly MetadataOrigin _pageType;
+        private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
+
         private ExplorerSettingsContainer _settings;
 
         public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService)
+            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager)
         {
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
@@ -73,6 +76,7 @@
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
+            Argument.IsNotNull(() => nuGetCacheManager);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -82,8 +86,8 @@
             _projectManager = projectManager;
             _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
-
             _packagesLoaderService = packagesLoaderService;
+            _nuGetCacheManager = nuGetCacheManager;
 
             Settings = settingsProvider.Model;
 
@@ -673,6 +677,7 @@
 
         private async Task RefreshCurrentPageExecuteAsync()
         {
+            _nuGetCacheManager.ClearHttpCache();
             StartLoadingTimerOrInvalidateData();
         }
         #endregion
