@@ -147,7 +147,7 @@
         /// <param name="package"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token = default)
+        public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
             Argument.IsNotNull(() => project);
             Argument.IsNotNull(() => package);

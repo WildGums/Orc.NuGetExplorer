@@ -108,7 +108,7 @@
                         continue;
                     }
 
-                    if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package))
+                    if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, default))
                     {
                         Log.Info($"Skipping package '{package}', package is valid");
                         continue;
