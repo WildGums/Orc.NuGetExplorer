@@ -99,24 +99,26 @@
                         continue;
                     }
 
+                    var installationPath = _defaultProject.GetInstallPath(package);
+
+                    var isV2packageInstalled = folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
+                    if (!isV2packageInstalled)
+                    {
+                        Log.Warning($"Package '{package}' is recognized in project folder as v2 NuGet installed package");
+                        continue;
+                    }
+
+                    if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package))
+                    {
+                        Log.Info($"Skipping package '{package}', package is valid");
+                        continue;
+                    }
+
+                    _packageOperationNotificationService.NotifyOperationStarting(installationPath, PackageOperationType.Install, packageDetails);
+
+                    //reinstall
                     try
                     {
-                        var isV2packageInstalled = package != null && folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
-                        if (!isV2packageInstalled)
-                        {
-                            Log.Warning($"Package '{package}' is recognized in project folder as v2 NuGet installed package");
-                            continue;
-                        }
-
-                        //reinstall
-                        if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, default))
-                        {
-                            Log.Info($"Skipping package '{package}', package is valid");
-                            continue;
-                        }
-
-                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
-
                         var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default, false);
 
                         if (!isInstalled)
@@ -125,8 +127,6 @@
                         }
 
                         anyUpgraded = isInstalled || anyUpgraded;
-
-                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
                     }
 
                     catch (Exception ex)
@@ -134,6 +134,8 @@
                         failedIdentities.Add(package);
                         Log.Error(ex);
                     }
+
+                    _packageOperationNotificationService.NotifyOperationFinished(installationPath, PackageOperationType.Install, packageDetails);
                 }
 
                 await _logger.LogAsync(LogLevel.Information, $"Update completed. Package count {subFolders.Count()}");

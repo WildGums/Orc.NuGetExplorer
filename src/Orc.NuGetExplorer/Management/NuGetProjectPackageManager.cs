@@ -147,17 +147,24 @@
         /// <param name="package"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+        public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token = default)
         {
-            //var underluyingFolderProject = new FolderNuGetProject(project.ContentPath);
+            Argument.IsNotNull(() => project);
+            Argument.IsNotNull(() => package);
 
-            //var result = underluyingFolderProject.PackageExists(package);
+            try
+            {
+                var installedReferences = await GetInstalledPackagesAsync(project, token);
 
-            var installedReferences = await GetInstalledPackagesAsync(project, token);
+                var installedPackage = installedReferences.FirstOrDefault(x => x.PackageIdentity.Equals(package, NuGet.Versioning.VersionComparison.VersionRelease));
 
-            var installedPackage = installedReferences.FirstOrDefault(x => x.PackageIdentity.Equals(package, NuGet.Versioning.VersionComparison.VersionRelease));
-
-            return installedPackage != null;
+                return installedPackage != null;
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex);
+                return false;
+            }
         }
 
         public async Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
