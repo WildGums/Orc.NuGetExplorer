@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Orc.NuGetExplorer.Controls"
                     xmlns:catel="http://schemas.catelproject.com"
+                    xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
                     xmlns:orc="http://schemas.wildgums.com/orc/controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Orc.Controls;component/Themes/Generic.xaml" />
@@ -211,6 +212,54 @@
                             <Setter Property="Visibility" TargetName="_underline" 
                                     Value="Collapsed">
                             </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type CheckBox}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <BulletDecorator Background="Transparent" SnapsToDevicePixels="true"
+                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+                        <BulletDecorator.Bullet>
+                            <Border x:Name="CheckBoxBorder"
+                                    Height="12"
+                                    Width="12"
+                                    BorderBrush="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderColor}"
+                                    BorderThickness="1"
+                                    Background="White">
+                                <Path x:Name="CheckMark"
+                                      Data="M7.2,5 L5.5,7.16 4.16,6.3 3.5,6.7 5.5,8.4 8.6,5.25 C8.6,5.25 8,4.7 7.22,5"
+                                      Height="Auto"
+                                      Width="Auto"
+                                      Stretch="Fill"
+                                      Fill="{DynamicResource DefaultButtonIconColorBrush}"
+                                      Margin="1,1.007,1,1"/>
+                            </Border>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"
+                                          RecognizesAccessKey="True"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{orccontrols:ThemeColorBrush ThemeColorStyle=ForegroundDisabled}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BackgroundMouseOver}"/>
+                            <Setter Property="BorderBrush" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderMouseOver}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

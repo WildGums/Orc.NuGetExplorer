@@ -2,6 +2,7 @@
 {
     using System.ComponentModel;
     using System.Threading.Tasks;
+    using System.Windows.Input;
     using Catel;
     using Catel.Fody;
     using Catel.Logging;
@@ -24,6 +25,9 @@
             _repositoryService = repositoryService;
 
             Package = package;
+
+            //command
+            CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
         }
 
         [Model(SupportIEditableObject = false)]
@@ -34,11 +38,13 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
-        [Expose("IsChecked")]
         public NuGetPackage Package { get; set; }
 
         [ViewModelToModel]
         public PackageStatus Status { get; set; }
+
+        [ViewModelToModel]
+        public bool IsChecked { get; set; }
 
         public bool IsDownloadCountShowed { get; private set; }
 
@@ -49,6 +55,18 @@
         public NuGetVersion FirstVersion { get; set; }
 
         public NuGetVersion SecondaryVersion { get; set; }
+
+        public Command<MouseButtonEventArgs> CheckItem { get; set; }
+
+        private void CheckItemExecute(MouseButtonEventArgs parameter)
+        {
+            if (parameter.ClickCount < 2)
+            {
+                return;
+            }
+
+            IsChecked = !IsChecked;
+        }
 
         protected override Task InitializeAsync()
         {
