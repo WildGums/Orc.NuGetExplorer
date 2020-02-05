@@ -24,7 +24,6 @@ namespace Orc.NuGetExplorer.Views
         {
             CreateWarningAndErrorValidatorForViewModel = true;
             SkipSearchingForInfoBarMessageControl = false;
-            AccentColorHelper.CreateAccentColorResourceDictionary();
 
             InitializeComponent();
         }
@@ -39,6 +38,16 @@ namespace Orc.NuGetExplorer.Views
         {
             get { return (string)GetValue(DefaultFeedProperty); }
             set { SetValue(DefaultFeedProperty, value); }
+        }
+
+        public static readonly DependencyProperty CanResetProperty =
+            DependencyProperty.Register("CanReset", typeof(bool), typeof(PackageSourceSettingControl), new PropertyMetadata(false));
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        public bool CanReset
+        {
+            get { return (bool)GetValue(CanResetProperty); }
+            set { SetValue(CanResetProperty, value); }
         }
 
         public static readonly DependencyProperty DefaultSourceNameProperty =

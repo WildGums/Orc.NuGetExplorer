@@ -1,14 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Example.ViewModels
+﻿namespace Orc.NuGetExplorer.Example.ViewModels
 {
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Fody;
@@ -16,6 +10,7 @@ namespace Orc.NuGetExplorer.Example.ViewModels
     using Catel.Services;
     using Catel.Threading;
     using Models;
+    using Orc.NuGetExplorer.Services;
 
     public class MainViewModel : ViewModelBase
     {
@@ -23,31 +18,34 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IPackageBatchService _packageBatchService;
+        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
+        private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
         #endregion
 
         #region Constructors
-        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
+        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            IPackageBatchService packageBatchService, IUIVisualizerService uiVisualizerService)
+            INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
             Argument.IsNotNull(() => nuGetConfigurationService);
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => packageBatchService);
             Argument.IsNotNull(() => uiVisualizerService);
+            Argument.IsNotNull(() => initializationService);
+            Argument.IsNotNull(() => nuGetProjectUpgradeService);
 
+            _initializationService = initializationService;
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
             _feedVerificationService = feedVerificationService;
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
-            _packageBatchService = packageBatchService;
+            _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
             _uiVisualizerService = uiVisualizerService;
 
             Echo = echoService.GetPackageManagementEcho();
@@ -55,11 +53,11 @@ namespace Orc.NuGetExplorer.Example.ViewModels
             AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
             ShowExplorer = new TaskCommand(OnShowExplorerExecuteAsync);
-            AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecute, OnAdddPackageSourceCanExecute);
-            VerifyFeed = new TaskCommand(OnVerifyFeedExecute, OnVerifyFeedCanExecute);
-            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecute);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecute, OnOpenUpdateWindowCanExecute);
-            Settings = new TaskCommand(OnSettingsExecute);
+            AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecuteAsync, OnAdddPackageSourceCanExecute);
+            VerifyFeed = new TaskCommand(OnVerifyFeedExecuteAsync, OnVerifyFeedCanExecute);
+            CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecuteAsync);
+            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
+            Settings = new TaskCommand(OnSettingsExecuteAsync);
 
             Title = "Orc.NuGetExplorer example";
         }
@@ -76,19 +74,25 @@ namespace Orc.NuGetExplorer.Example.ViewModels
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
         #endregion
 
+        protected async override Task InitializeAsync()
+        {
+            await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
+        }
+
         #region Commands
         public TaskCommand Settings { get; private set; }
 
-        private Task OnSettingsExecute()
+        private async Task OnSettingsExecuteAsync()
         {
-            return _uiVisualizerService.ShowDialogAsync<SettingsViewModel>();
+            await _packagesUiService.ShowPackagesSourceSettingsAsync();
         }
 
         public TaskCommand OpenUpdateWindow { get; private set; }
 
-        private async Task OnOpenUpdateWindowExecute()
+        private async Task OnOpenUpdateWindowExecuteAsync()
         {
-            await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
+            //show batch update
+            //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         private bool OnOpenUpdateWindowCanExecute()
@@ -98,19 +102,22 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         public TaskCommand CheckForUpdates { get; private set; }
 
-        private async Task OnCheckForUpdatesExecute()
+        private async Task OnCheckForUpdatesExecuteAsync()
         {
             AvailableUpdates.Clear();
 
-            var packages = await TaskHelper.Run(() => _packagesUpdatesSearcherService.SearchForUpdates(AllowPrerelease, false), true);
+            using (var cts = new CancellationTokenSource())
+            {
+                var packages = await _packagesUpdatesSearcherService.SearchForUpdatesAsync(AllowPrerelease, false, cts.Token);
 
-            // Note: AddRange doesn't refresh button state
-            AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+                // Note: AddRange doesn't refresh button state
+                AvailableUpdates = new ObservableCollection<IPackageDetails>(packages);
+            }
         }
 
         public TaskCommand AdddPackageSource { get; private set; }
 
-        private async Task OnAdddPackageSourceExecute()
+        private async Task OnAdddPackageSourceExecuteAsync()
         {
             var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
             if (!packageSourceSaved)
@@ -126,9 +133,9 @@ namespace Orc.NuGetExplorer.Example.ViewModels
 
         public TaskCommand VerifyFeed { get; private set; }
 
-        private async Task OnVerifyFeedExecute()
+        private async Task OnVerifyFeedExecuteAsync()
         {
-            await TaskHelper.Run(() => _feedVerificationService.VerifyFeed(PackageSourceUrl), true);
+            await _feedVerificationService.VerifyFeedAsync(PackageSourceUrl);
         }
 
         private bool OnVerifyFeedCanExecute()

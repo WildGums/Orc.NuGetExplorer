@@ -12,6 +12,7 @@ namespace Orc.NuGetExplorer
         Unknown,
         Valid,
         AuthenticationRequired,
+        AuthorizationRequired, // what is different from  AuthenticationRequired?
         Invalid
     }
 }

@@ -8,36 +8,56 @@
 namespace Orc.NuGetExplorer
 {
     using System.IO;
-    using Path = Catel.IO.Path;
+    using Catel;
+    using Orc.NuGetExplorer.Management;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
+        private readonly IFileSystemService _fileSystemService;
+        private readonly INuGetPackageManager _nuGetPackageManager;
+        private readonly IExtensibleProject _defaultProject;
         #region Constructors
-        public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService) : base(packageOperationNotificationService)
+        public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
+            INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider) : base(packageOperationNotificationService)
         {
+            Argument.IsNotNull(() => fileSystemService);
+            Argument.IsNotNull(() => nuGetPackageManager);
+            Argument.IsNotNull(() => projectProvider);
+
+            _fileSystemService = fileSystemService;
+            _nuGetPackageManager = nuGetPackageManager;
+            _defaultProject = projectProvider.GetDefaultProject();
         }
         #endregion
 
         #region Methods
-        protected override void OnOperationFinished(object sender, PackageOperationEventArgs e)
+        protected override async void OnOperationFinished(object sender, PackageOperationEventArgs e)
         {
-            if (e.PackageOperationType != PackageOperationType.Uninstall)
+            if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
-                return;
+                if (!Directory.Exists(e.InstallPath))
+                {
+                    return;
+                }
+
+                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
             }
 
-            if (!Directory.Exists(e.InstallPath))
+            if (e.PackageOperationType == PackageOperationType.Install)
             {
-                return;
-            }
+                _fileSystemService.RemoveDeleteme(e.PackageDetails.Id, e.InstallPath);
 
-            var fileName = $"{e.PackageDetails.Id}.deleteme";
-            var fullName = Path.Combine(e.InstallPath, fileName);
+                //check is folder broken installation or not
+                //this handle cases where we perform installation of version, previously not correctly removed
+                if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, e.PackageDetails.GetIdentity(), default))
+                {
+                    return;
+                }
 
-            using (File.Create(fullName))
-            {
+                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
             }
         }
+
         #endregion
     }
 }

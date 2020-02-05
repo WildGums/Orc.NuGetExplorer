@@ -1,10 +1,18 @@
-﻿using System;
-using Catel.IoC;
-using Catel.Services;
+﻿using Catel.IoC;
+using NuGet.Common;
+using NuGet.Configuration;
+using NuGet.Credentials;
+using NuGet.Frameworks;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
-using NuGet;
-using IPackageManager = Orc.NuGetExplorer.IPackageManager;
-using PackageManager = Orc.NuGetExplorer.PackageManager;
+using Orc.NuGetExplorer.Cache;
+using Orc.NuGetExplorer.Configuration;
+using Orc.NuGetExplorer.Loggers;
+using Orc.NuGetExplorer.Management;
+using Orc.NuGetExplorer.Providers;
+using Orc.NuGetExplorer.Services;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
@@ -18,63 +26,69 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+        serviceLocator.RegisterType<ILogger, NuGetLogger>();
+
+        serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();
+        serviceLocator.RegisterType<IFrameworkCompatibilityProvider, DefaultCompatibilityProvider>();
+        serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
+        serviceLocator.RegisterType<ISourceRepositoryProvider, DefaultSourceRepositoryProvider>();
+        serviceLocator.RegisterType<INuGetProjectContextProvider, EmptyProjectContextProvider>();
+        serviceLocator.RegisterType<IPackageCoreReader, PackageReaderBase>();
+
+        serviceLocator.RegisterType<IDefaultNuGetFramework, DefaultNuGetFramework>();
+        serviceLocator.RegisterType<IExtendedSourceRepositoryProvider, DefaultSourceRepositoryProvider>();
+
+        serviceLocator.RegisterType<INuGetProjectConfigurationProvider, PackagesConfigProvider>();
+
+        serviceLocator.RegisterType<ISettings, NuGetSettings>();
+        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
+
         // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
-        serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
-        serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
+
+        //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
-        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
-        serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
-        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
-        serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
-        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, PackagesUpdatesSearcherService>();
-        serviceLocator.RegisterType<IRepositoryCacheService, RepositoryCacheService>();
+
+        //serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
-        serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
+        //serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
+        serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
+        serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();
 
-        serviceLocator.RegisterType<ILogger, NuGetLogger>();
-
-        serviceLocator.RegisterType<IPackageManager, PackageManager>();
-
-        serviceLocator.RegisterInstance<IPackageRepositoryFactory>(PackageRepositoryFactory.Default);
+        serviceLocator.RegisterType<INuGetFeedVerificationService, NuGetFeedVerificationService>();
 
         serviceLocator.RegisterType<IAuthenticationProvider, AuthenticationProvider>();
-        serviceLocator.RegisterType<IPackageSourceProvider, NuGetPackageSourceProvider>();
-        serviceLocator.RegisterType<ICredentialProvider, CredentialProvider>();
-        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, EmptyDefaultPackageSourcesProvider>();
+        serviceLocator.RegisterType<IPackageOperationNotificationService, PackageOperationNotificationService>();
 
-        serviceLocator.RegisterType<ISettings, NuGetSettings>();
-        
-        serviceLocator.RegisterType<INuGetInitializer, NuGetInitializer>();
+        serviceLocator.RegisterType<IExtensibleProjectLocator, ExtensibleProjectLocator>();
+        serviceLocator.RegisterType<INuGetPackageManager, NuGetProjectPackageManager>();
+        serviceLocator.RegisterType<IFileDirectoryService, FileDirectoryService>();
+        serviceLocator.RegisterType<IPackageInstallationService, PackageInstallationService>();
 
-        var typeFactory = serviceLocator.ResolveType<ITypeFactory>();
-        HttpClient.DefaultCredentialProvider = typeFactory.CreateInstance<NuGetSettingsCredentialProvider>();
+        serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, DefaultExtensibleProjectProvider>();
+        serviceLocator.RegisterType<IPackageMetadataProvider, PackageMetadataProvider>();
 
-        try
-        {
-            // Note: this is only for the hotfix. 
-            //       do not initialize anything here. Only register types.
-            //       Use NuGetInitializer
-            var nuGetPackageManager = serviceLocator.ResolveType<IPackageManager>();
-            serviceLocator.RegisterInstance(typeof(IPackageOperationNotificationService), nuGetPackageManager);
+        serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
+        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
 
-            serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-            serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-        }
-        catch (Exception)
-        {
-            // Do nothing
-        }
+        //package loaders
+        serviceLocator.RegisterType<IPackageLoaderService, PackagesLoaderService>();
+        serviceLocator.RegisterTypeWithTag<IPackageLoaderService, LocalPackagesLoaderService>("Installed");
+        serviceLocator.RegisterTypeWithTag<IPackageLoaderService, UpdatePackagesLoaderService>("Updates");
 
-        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+        serviceLocator.RegisterType<IDefferedPackageLoaderService, DefferedPackageLoaderService>();
+        serviceLocator.RegisterType<IPackagesUpdatesSearcherService, UpdatePackagesLoaderService>();
 
-        var languageService = serviceLocator.ResolveType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-
+        serviceLocator.RegisterType<INuGetCacheManager, NuGetCacheManager>();
         serviceLocator.RegisterType<IApiPackageRegistry, ApiPackageRegistry>();
+
+        serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
+        serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
+
+        serviceLocator.RegisterType<INuGetProjectUpgradeService, NuGetProjectUpgradeService>();
     }
 }

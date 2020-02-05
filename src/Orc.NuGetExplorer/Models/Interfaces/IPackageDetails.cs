@@ -11,6 +11,8 @@ namespace Orc.NuGetExplorer
     using System.Collections.Generic;
 
     using Catel.Data;
+    using NuGet.Packaging.Core;
+    using NuGet.Versioning;
 
     public interface IPackageDetails
     {
@@ -24,6 +26,8 @@ namespace Orc.NuGetExplorer
         Uri IconUrl { get; }
 
         Version Version { get; }
+
+        NuGetVersion NuGetVersion { get; }
 
         string SpecialVersion { get; }
 
@@ -55,6 +59,9 @@ namespace Orc.NuGetExplorer
 
         #region Methods
         void ResetValidationContext();
+
+        PackageIdentity GetIdentity();
+
         #endregion
     }
 }

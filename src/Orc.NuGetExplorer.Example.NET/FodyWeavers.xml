@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Weavers VerifyAssembly="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+<Weavers VerifyAssembly="true" VerifyIgnoreCodes="0x80131869,0x8013124F,0x8013124C,0x801312BF" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
   <ModuleInit />
   <LoadAssembliesOnStartup>
     <ExcludeAssemblies>
-        Microsoft.Web.XmlTransform
+      Microsoft.Web.XmlTransform
     </ExcludeAssemblies>
   </LoadAssembliesOnStartup>
   <Catel />

@@ -28,7 +28,7 @@ namespace Orc.NuGetExplorer
             configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
         }
 
-        public static string GetLastRepository(this IConfigurationService configurationService, RepositoryCategory repositoryCategory)
+        public static string GetLastRepository(this IConfigurationService configurationService, string repositoryCategory)
         {
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => repositoryCategory);
@@ -39,19 +39,27 @@ namespace Orc.NuGetExplorer
             return value;
         }
 
-        public static void SetLastRepository(this IConfigurationService configurationService, RepositoryCategory repositoryCategory, IRepository repository)
+        public static void SetLastRepository(this IConfigurationService configurationService, string page, IRepository repository)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repositoryCategory);
             Argument.IsNotNull(() => repository);
 
-            var key = GetLastRepositoryKey(repositoryCategory);
+            var key = GetLastRepositoryKey(page);
             configurationService.SetRoamingValue(key, repository.Name);
         }
 
-        private static string GetLastRepositoryKey(RepositoryCategory repositoryCategory)
+        public static void SetLastRepository(this IConfigurationService configurationService, string page, string repositoryName)
         {
-            return string.Format("{0}.{1}", AppSettings.NuGetExplorer.LastRepository, repositoryCategory.Name);
+            Argument.IsNotNull(() => configurationService);
+            Argument.IsNotNull(() => repositoryName);
+
+            var key = GetLastRepositoryKey(page);
+            configurationService.SetRoamingValue(key, repositoryName);
+        }
+
+        private static string GetLastRepositoryKey(string repositoryCategory)
+        {
+            return string.Format("{0}.{1}", AppSettings.NuGetExplorer.LastRepository, repositoryCategory);
         }
     }
 }

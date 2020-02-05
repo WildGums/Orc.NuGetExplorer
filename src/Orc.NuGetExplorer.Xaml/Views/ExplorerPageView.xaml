@@ -1,0 +1,117 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.ExplorerPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
+             xmlns:views="clr-namespace:Orc.NuGetExplorer.Views"
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:orc="http://schemas.wildgums.com/orc/controls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
+             xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
+             xmlns:template="clr-namespace:Orc.NuGetExplorer.Controls.Templating"
+             mc:Ignorable="d" 
+             x:ClassModifier="internal"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <catel:UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+    </catel:UserControl.Resources>
+    
+    <Grid x:Name="PageGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <Grid.Resources>
+            <mvvm:BindingProxy Data="{Binding }" x:Key="ContextProxy"/>
+        </Grid.Resources>
+
+        <views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                             DataContext="{Binding}"
+                             Margin="0 0 0 2"/>
+
+
+        <nugetc:InfiniteScrollListBox x:Name="infinitybox"
+                                      ItemsSource="{Binding PackageItems}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                      Command="{Binding LoadNextPackagePage}"
+                                      ScrollSize="7"
+                                      IsCommandExecuting="{Binding IsCancellationTokenAlive}"
+                                      HorizontalContentAlignment="Stretch"
+                                      SelectedItem="{Binding SelectedPackageItem}"
+                                      Grid.Row="1"
+                                      MaxHeight="{Binding ElementName=PageGrid, Path=ActualHeight}">
+            <nugetc:InfiniteScrollListBox.ItemTemplate>
+                <DataTemplate>
+                    <views:PageItemView/>
+                </DataTemplate>
+            </nugetc:InfiniteScrollListBox.ItemTemplate>
+            <nugetc:InfiniteScrollListBox.ItemContainerStyle>
+                <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+                </Style>
+            </nugetc:InfiniteScrollListBox.ItemContainerStyle>
+        </nugetc:InfiniteScrollListBox>
+        
+        <!--loading indication -->
+        <Border x:Name="indicatorScreen"
+                Panel.ZIndex="1" Height="80"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource AccentColorBrushRGB3}"
+                BorderBrush="{DynamicResource IndicatorBorderBrushKey}"
+                Grid.Row="1"
+                HorizontalAlignment="Left"
+                BorderThickness="1"
+                SnapsToDevicePixels ="True"
+                Visibility="{Binding ElementName=infinitybox, Path=IsCommandExecuting, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                IsVisibleChanged="Border_IsVisibleChanged">
+            <StackPanel>
+                <Button Command="{Binding Data.CancelPageLoading, Source={StaticResource ContextProxy}}" 
+                        Width="60" Height="20" 
+                        Margin="0 10 0 0">
+                    <Button.Content>
+                        <TextBlock>Cancel</TextBlock>
+                    </Button.Content>
+                </Button>
+
+                <Viewbox Height="30" Width="30"
+                         Margin="0 8 0 0">
+                    <Canvas Name="indicatorCanvas" Width="30" Height="30"
+                            RenderTransformOrigin="0.5, 0.5">
+                        <Canvas.RenderTransform>
+                            <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                        </Canvas.RenderTransform>
+                        <Ellipse    Canvas.Left="0" 
+                                    Width="30" Height="30"
+                                    StrokeThickness="2" 
+                                    Stroke="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}" 
+                                    StrokeStartLineCap="Round" 
+                                    StrokeDashArray="10 5"
+                                    StrokeEndLineCap="Round">
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard >
+                                            <DoubleAnimation Storyboard.TargetName="indicatorCanvas"
+                                                Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
+                                                                     To="-360" 
+                                                                     Duration="0:0:2" RepeatBehavior="Forever"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </Canvas>
+                </Viewbox>
+            </StackPanel>
+        </Border>
+    </Grid>
+</catel:UserControl>

@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Themes.Brushes">
+
+    <!-- list box item brushes -->
+    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="{DynamicResource AccentColor4}"/>
+    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="{DynamicResource AccentColor}"/>
+    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="{DynamicResource AccentColor4}"/>
+    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="{DynamicResource AccentColor2}"/>
+    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="{DynamicResource AccentColor3}"/>
+    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="{DynamicResource AccentColor}" />
+
+    <!-- labeled tab items brushes-->
+    <SolidColorBrush x:Key="TabSelectedBrushKey" Color="#575757"/>
+    <SolidColorBrush x:Key="TabPopupBrushKey" Color="{x:Static SystemColors.ActiveCaptionTextColor}"/>
+
+    <SolidColorBrush x:Key="IndicatorBorderBrushKey" Color="{x:Static SystemColors.ActiveBorderColor}"/>
+
+    <SolidColorBrush x:Key="DefaultButtonIconColorBrush" Color="#575757"/>
+    <SolidColorBrush x:Key="PressedButtonIconColorBrush" Color="White"/>
+    <SolidColorBrush x:Key="DisabledButtonIconColorBrush" Color="#ADADAD"/>
+
+    <!--Package status badges brushes and colors-->
+    <Color x:Key="InstalledBadgeBackgroundColor">#329932</Color>
+    <Color x:Key="AvaialableUpdateBadgeBackgroundColor">#1BA1E2</Color>
+
+    <SolidColorBrush x:Key="InstalledBadgeBackgroundBrush" Color="{DynamicResource InstalledBadgeBackgroundColor}"/>
+    <SolidColorBrush x:Key="AvaialableUpdateBadgeBackgroundBrush" Color="{DynamicResource AvaialableUpdateBadgeBackgroundColor}"/>
+</ResourceDictionary>

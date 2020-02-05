@@ -21,7 +21,7 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        
+
         private readonly IConfigurationService _configurationService;
 
         // Ideally we would inject this, but some classes are constructed in ModuleInitializer which don't allow

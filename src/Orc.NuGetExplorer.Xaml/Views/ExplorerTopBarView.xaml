@@ -1,0 +1,209 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.ExplorerTopBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+             xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
+             xmlns:orc="http://schemas.wildgums.com/orc/controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d"
+             x:ClassModifier="internal"
+             d:DesignHeight="450" d:DesignWidth="1300">
+    <Grid Margin="0 0 10 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" MinHeight="27"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- navigation panel-->
+        <StackPanel Grid.Column="0" 
+                    Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type nugetc:TabControllerButton}" BasedOn="{StaticResource LabelButton}">
+                    <Setter Property="Margin" Value="10 0 10 0"/>
+                </Style>
+            </StackPanel.Resources>
+            <nugetc:TabControllerButton x:Name="Browse"
+                TabSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type catel:UserControl}}, Path=UsedOn}"
+                Next="{Binding ElementName=Installed}">
+                Browse
+            </nugetc:TabControllerButton>
+            <nugetc:TabControllerButton x:Name="Installed" 
+                Next="{Binding ElementName=Updates}">
+                Installed
+            </nugetc:TabControllerButton>
+            <nugetc:TabControllerButton x:Name="Updates">
+                Updates
+            </nugetc:TabControllerButton>
+        </StackPanel>
+
+
+        <!-- Hide title for manager, until it uneditable -->
+        <TextBlock Text="{Binding Title}"
+                   Grid.Column="5" Grid.ColumnSpan="5"
+                   HorizontalAlignment="Right"
+                   FontSize="16"
+                   Margin="0 0 0 10"
+                   Visibility="Hidden"/>
+
+        <!-- tool bar -->
+
+        <orc:WatermarkTextBox Grid.Row="1"
+                  Text="{Binding SearchString}"
+                  Margin="10 0 0 0">
+            <orc:WatermarkTextBox.Watermark>
+                <StackPanel Orientation="Horizontal">
+                    <Viewbox Width="12" Height="12">
+                        <Canvas Width="12" Height="12">
+                            <Path Data="{Binding Source={StaticResource Search-web}, Path=Data}" 
+                                  Margin="0 -4 0 0"
+                                  Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
+                        </Canvas>
+                    </Viewbox>
+
+                    <TextBlock Text="Enter package id"
+                               Margin="14 0 0 0"/>
+                </StackPanel>
+            </orc:WatermarkTextBox.Watermark>
+            <i:Interaction.Behaviors>
+                <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
+            </i:Interaction.Behaviors>
+        </orc:WatermarkTextBox>
+        
+        <Button Grid.Row="1" Grid.Column="1"
+                Command="{catel:CommandManagerBinding RefreshCurrentPage}"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Margin="3 0 3 0">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <Viewbox>
+                        <Canvas Width="24" Height="24">
+                            <Path x:Name="Icon" Data="{Binding Source={StaticResource Refresh}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                        </Canvas>
+                    </Viewbox>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Button.ContentTemplate>
+            <i:Interaction.Behaviors>
+                <catel:FocusOnKeyPress Key="Return"/>
+            </i:Interaction.Behaviors>
+        </Button>
+
+        <CheckBox Grid.Row="1" Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Margin="3 0 3 0"
+                  IsChecked="{Binding IsPreReleaseIncluded}">
+            <TextBlock Margin="4 0 0 0"> Include prerelease</TextBlock>
+        </CheckBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="5"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right"
+                   Margin="4 0 4 0">
+            Package source:
+        </TextBlock>
+
+        <!--selecting source feed-->
+
+        <ComboBox Grid.Row="1" Grid.Column="6" 
+                  Grid.ColumnSpan="2"
+                  Width="120"
+                  ItemsSource="{Binding ActiveFeeds}"
+                  Margin="3 0 0 0"
+                  HorizontalAlignment="Right"
+                  IsSynchronizedWithCurrentItem="True"
+                  SelectedItem="{Binding ObservedFeed, Mode=TwoWay}"
+                  DisplayMemberPath="Name">
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="MaxWidth" Value="118"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+        </ComboBox>
+
+
+        <!-- Open project configuration window -->
+         <!--<Button Grid.Row="1" Grid.Column="7"
+                Command="{Binding ShowExtensibles}"
+                Margin="3 0 3 0"
+                Height="24" Width="24"
+                ToolTip="Configure projects">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Data="{Binding Source={StaticResource App-box}, Path=Data}" Fill="{StaticResource AccentColorBrush}"/>
+                </Canvas>
+            </Viewbox>
+        </Button>-->
+
+        <Button Grid.Row="1" Grid.Column="8"
+                Command="{Binding ShowPackageSourceSettings}"
+                HorizontalAlignment="Right"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                ToolTip="Show package source settings">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <Viewbox>
+                        <Canvas Width="24" Height="24">
+                            <Path x:Name="Icon" Data="{Binding Source={StaticResource Settings-out}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                        </Canvas>
+                    </Viewbox>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+        
+        <Button Grid.Row="1" Grid.Column="9"
+                Command="{Binding RunNuGetCachesClearing}"
+                Height="27" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Margin="0"
+                HorizontalAlignment="Right"
+                ToolTip="Clear NuGet caches">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <Viewbox>
+                        <Canvas Width="24" Height="24">
+                            <Path x:Name="Icon" Data="{Binding Source={StaticResource Erase}, Path=Data}" Fill="{DynamicResource DefaultButtonIconColorBrush}"/>
+                        </Canvas>
+                    </Viewbox>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsPressed}" Value="True">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource PressedButtonIconColorBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger  Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=IsEnabled}" Value="False">
+                            <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource DisabledButtonIconColorBrush}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Button.ContentTemplate>
+           
+        </Button>
+    </Grid>
+</catel:UserControl>

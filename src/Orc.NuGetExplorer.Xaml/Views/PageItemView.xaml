@@ -1,0 +1,171 @@
+﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.PageItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+             xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
+             xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
+             xmlns:template="clr-namespace:Orc.NuGetExplorer.Controls.Templating"
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             x:ClassModifier="internal"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <catel:UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Generic.xaml"/>
+                <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </catel:UserControl.Resources>
+    <Grid>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseDown">
+                <catel:EventToCommand Command="{Binding CheckItem}" PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <Border Background="Transparent">
+            <Grid Margin="0 8 0 0" Height="96">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" MinHeight="8"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.RowSpan="3" Orientation="Horizontal"
+                        VerticalAlignment="Top">
+                    <CheckBox   
+                        Margin="4 0 4 4"
+                        Visibility="{Binding CanBeAddedInBatchOperation, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                        IsChecked="{Binding IsChecked}">
+                        <CheckBox.LayoutTransform>
+                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                        </CheckBox.LayoutTransform>
+                    </CheckBox>
+
+                    <nugetc:Badged Margin="0 4 8 0"
+                        BorderBrush="WhiteSmoke"
+                        IsShowed="{Binding Status, Converter={converters:PackageStatusEnumToBoolConverter}}"
+                        BadgeForeground="WhiteSmoke">
+                        <nugetc:Badged.Resources>
+                            <DataTemplate x:Key="NotAvailable">
+                                <Viewbox>
+                                    <Canvas Width="24" Height="24" ClipToBounds="True">
+                                        <Path Data="{Binding Source={StaticResource Arrow-down-bold}, Path=Data}" 
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=nugetc:Badged}, Path=BadgeForeground}"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </DataTemplate>
+                            <DataTemplate x:Key="Available">
+                                <Viewbox>
+                                    <Canvas Width="24" Height="24" ClipToBounds="True">
+                                        <Path Data="{Binding Source={StaticResource Arrow-up-bold}, Path=Data}" 
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=nugetc:Badged}, Path=BadgeForeground}"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </DataTemplate>
+                            <DataTemplate x:Key="DefaultTemplate">
+                                <!-- default -->
+                            </DataTemplate>
+                        </nugetc:Badged.Resources>
+                        <nugetc:Badged.Background>
+                            <Binding Path="Status" Converter="{converters:PackageStatusEnumToBrushConverter}">
+                                <Binding.ConverterParameter>
+                                    <x:Array Type="sys:String">
+                                        <sys:String>AvaialableUpdateBadgeBackgroundBrush</sys:String>
+                                        <sys:String>InstalledBadgeBackgroundBrush</sys:String>
+                                    </x:Array>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </nugetc:Badged.Background>
+                        <nugetc:Badged.Badge>
+                            <ContentControl Content="{Binding Status}">
+                                <ContentControl.ContentTemplateSelector>
+                                    <template:BadgeContentTemplateSelector Available="{StaticResource Available}"
+                                                                   NotAvailable="{StaticResource NotAvailable}"
+                                                                   Default="{StaticResource DefaultTemplate}"/>
+                                </ContentControl.ContentTemplateSelector>
+                            </ContentControl>
+                        </nugetc:Badged.Badge>
+                        <Image Source="{Binding Path=IconUrl, Converter={converters:UriToBitmapConverter}, IsAsync=True}"
+                                       RenderOptions.BitmapScalingMode="Fant"
+                                       Height="32" Width="32"/>
+                    </nugetc:Badged>
+                </StackPanel>
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock HorizontalAlignment="Left"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Bottom"
+                           LineHeight="20"
+                           LineStackingStrategy="BlockLineHeight">
+                         <Run Text="{Binding Title}" FontSize="14" FontWeight="DemiBold" ToolTip="{Binding Title}"></Run>
+                         <Run xml:space="preserve" Text="  by:" ToolTip="{Binding Authors}"/>
+                         <Run Text="{Binding Authors}" ToolTip="{Binding Authors}"/>
+                    </TextBlock>
+
+
+                    <!-- version -->
+                    <TextBlock Text="{Binding FirstVersion}"
+                           Grid.Column="1"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           LineHeight="20"
+                           LineStackingStrategy="BlockLineHeight"
+                           ToolTip="{Binding FirstVersion}"/>
+
+                </Grid>
+
+                <Grid Grid.Column="1" Grid.Row="1"
+                                  Margin="0 4 0 0"
+                                  Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                                  Height="28">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                           Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                           VerticalAlignment="Stretch">
+                    
+                    <Run Text="{Binding DownloadCount}"/>
+                    <Run Text=" total downloads"/>
+                    </TextBlock>
+
+
+                    <!-- secondary version -->
+                    <TextBlock Text="{Binding SecondaryVersion}"
+                           Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                           VerticalAlignment="Stretch"
+                           Grid.Column="1" Grid.Row="1"
+                           HorizontalAlignment="Right"
+                           ToolTip="{Binding SecondaryVersion}"/>
+                </Grid>
+
+                <TextBlock Text="{Binding Summary }" TextWrapping="WrapWithOverflow"
+                       VerticalAlignment="Stretch"
+                       Grid.Column="1" Grid.Row="2"
+                       TextTrimming="WordEllipsis"
+                       MaxHeight="50"/>
+            </Grid>
+        </Border>
+
+    </Grid>
+</catel:UserControl>

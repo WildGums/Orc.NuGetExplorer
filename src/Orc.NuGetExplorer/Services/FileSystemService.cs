@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="fileSystemService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +14,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Methods
+
         public bool DeleteDirectory(string path)
         {
             Argument.IsNotNullOrEmpty(() => path);
@@ -49,10 +43,10 @@ namespace Orc.NuGetExplorer
                 {
                     Directory.Delete(path, false);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to delete directory {0}", path);
+                    Log.Error(ex, "Failed to delete directory {0}", path);
                 }
             }
 
@@ -83,6 +77,22 @@ namespace Orc.NuGetExplorer
             }
         }
 
+        public void CreateDeleteme(string name, string path)
+        {
+            var fullPath = GetDeletemePath(name, path);
+
+            using (File.Create(fullPath))
+            {
+            }
+        }
+
+        public void RemoveDeleteme(string name, string path)
+        {
+            var fullPath = GetDeletemePath(name, path);
+
+            File.Delete(fullPath);
+        }
+
         private static bool CopyFiles(string sourceDirectory, string destinationDirectory, HashSet<string> failedDirectories)
         {
             Argument.IsNotNullOrWhitespace(() => sourceDirectory);
@@ -103,10 +113,10 @@ namespace Orc.NuGetExplorer
                 {
                     File.Copy(sourceFileName, destFileName, true);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to copy file {0} to {1}.", sourceFileName, destinationDirectory);
+                    Log.Error(ex, "Failed to copy file {0} to {1}.", sourceFileName, destinationDirectory);
                 }
             }
             return success;
@@ -130,11 +140,11 @@ namespace Orc.NuGetExplorer
                         Directory.CreateDirectory(newDir);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
                     failedDirectories.Add(newDir);
-                    Log.Error(exception, "Failed to create directory {0}.", newDir);
+                    Log.Error(ex, "Failed to create directory {0}.", newDir);
                 }
             }
             return success;
@@ -153,10 +163,10 @@ namespace Orc.NuGetExplorer
                 {
                     DeleteDirectory(subDirectory);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
-                    Log.Error(exception, "Failed to delete directory {0}.", directory);
+                    Log.Error(ex, "Failed to delete directory {0}.", directory);
                 }
             }
             return success;
@@ -176,15 +186,20 @@ namespace Orc.NuGetExplorer
                     File.SetAttributes(file, FileAttributes.Normal);
                     File.Delete(file);
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     success = false;
                     var directoryName = Path.GetDirectoryName(file);
                     failedDirectories.Add(directoryName);
-                    Log.Error(exception, "Failed to delete file {0}.", file);
+                    Log.Error(ex, "Failed to delete file {0}.", file);
                 }
             }
             return success;
+        }
+
+        private static string GetDeletemePath(string name, string path)
+        {
+            return Path.Combine(path, $"{name}.deleteme");
         }
         #endregion
     }

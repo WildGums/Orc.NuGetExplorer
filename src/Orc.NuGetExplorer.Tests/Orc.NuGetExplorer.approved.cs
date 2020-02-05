@@ -1,6 +1,7 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguageAttribute("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Orc.NuGetExplorer.Tests")]
 [assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.6", FrameworkDisplayName=".NET Framework 4.6")]
+public class static LoadAssembliesOnStartup { }
 public class static ModuleInitializer
 {
     public static void Initialize() { }
@@ -62,10 +63,6 @@ namespace Orc.NuGetExplorer
         Orc.NuGetExplorer.FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = True);
     }
     public class static INuGetFeedVerificationServiceExtensions { }
-    public interface INuGetInitializer
-    {
-        void Initialize();
-    }
     public interface INuGetLogListeningSevice
     {
         public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Debug;
@@ -188,11 +185,6 @@ namespace Orc.NuGetExplorer
         string RootDirectory { get; }
         string GetDirectory(string relativeDirectoryName);
         string GetFile(string relativeFilePath);
-    }
-    public class NuGetInitializer : Orc.NuGetExplorer.INuGetInitializer
-    {
-        public NuGetInitializer(Catel.IoC.IServiceLocator serviceLocator) { }
-        public void Initialize() { }
     }
     public class NuGetLogRecordEventArgs : System.EventArgs
     {

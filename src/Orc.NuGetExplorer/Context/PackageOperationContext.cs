@@ -17,7 +17,7 @@ namespace Orc.NuGetExplorer
         public PackageOperationContext()
         {
             UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
-            CatchedExceptions = new List<Exception>();
+            Exceptions = new List<Exception>();
         }
         #endregion
 
@@ -27,7 +27,7 @@ namespace Orc.NuGetExplorer
         public IPackageDetails[] Packages { get; set; }
         public PackageOperationType OperationType { get; set; }
         public IPackageOperationContext Parent { get; set; }
-        public IList<Exception> CatchedExceptions { get; private set; }
+        public IList<Exception> Exceptions { get; private set; }
         public ITemporaryFileSystemContext FileSystemContext { get; set; }
         #endregion
 

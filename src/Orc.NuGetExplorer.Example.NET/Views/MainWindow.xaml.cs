@@ -8,10 +8,10 @@
 namespace Orc.NuGetExplorer.Example.Views
 {
     using Catel.Windows;
-    using ViewModels;
+    using Orc.NuGetExplorer.Example.ViewModels;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml.
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : DataWindow
     {

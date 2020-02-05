@@ -1,6 +1,8 @@
 ﻿using Catel.IoC;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Example;
+using Orc.NuGetExplorer.Example.Services;
+using Orc.NuGetExplorer.Services;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
@@ -17,6 +19,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IEchoService, EchoService>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
-        serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
+        serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
     }
 }

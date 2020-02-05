@@ -1,135 +1,118 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="repositoryService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Catel;
-    using Catel.IoC;
-    using NuGet;
+    using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Management;
 
     internal class RepositoryService : IRepositoryService
     {
-        #region Fields
+        private readonly IRepositoryContextService _repositoryContextService;
+        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
+        private readonly INuGetPackageManager _projectManager;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly IRepositoryCacheService _repositoryCacheService;
-        private readonly IPackageRepositoryFactory _repositoryFactory;
-        private readonly ITypeFactory _typeFactory;
-        #endregion
+        private readonly IDefaultExtensibleProjectProvider _defaultExtensibleProjectProvider;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
 
-        #region Constructors
-        public RepositoryService(INuGetConfigurationService nuGetConfigurationService, IPackageRepositoryFactory packageRepositoryFactory,
-            IRepositoryCacheService repositoryCacheService, ITypeFactory typeFactory)
+        public RepositoryService(IRepositoryContextService repositoryContextService, IExtensibleProjectLocator extensibleProjectLocator,
+            INuGetPackageManager projectManager, INuGetConfigurationService nuGetConfigurationService,
+            IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
         {
+            Argument.IsNotNull(() => repositoryContextService);
+            Argument.IsNotNull(() => extensibleProjectLocator);
+            Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => repositoryCacheService);
-            Argument.IsNotNull(() => typeFactory);
+            Argument.IsNotNull(() => defaultExtensibleProjectProvider);
+            Argument.IsNotNull(() => repositoryProvider);
 
+            _repositoryContextService = repositoryContextService;
+            _extensibleProjectLocator = extensibleProjectLocator;
+            _projectManager = projectManager;
             _nuGetConfigurationService = nuGetConfigurationService;
-            _repositoryFactory = packageRepositoryFactory;
-            _repositoryCacheService = repositoryCacheService;
-            _typeFactory = typeFactory;
-
-            LocalRepository = GetLocalRepository();
-            LocalNuGetRepository = _repositoryCacheService.GetNuGetRepository(LocalRepository);
+            _defaultExtensibleProjectProvider = defaultExtensibleProjectProvider;
+            _repositoryProvider = repositoryProvider;
+            LocalRepository = GetMainProjectRepository();
         }
-        #endregion
 
-        #region Properties
-        public IRepository LocalRepository { get; private set; }
-        private IPackageRepository LocalNuGetRepository { get; set; }
-        #endregion
+        public IRepository LocalRepository { get; }
 
-        #region Methods
         public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
         {
-            var result = new List<IRepository>();
-            switch (packageOperationType)
+            //todo get repositories based on packageOperationType
+            //currenly returns all available repositories
+            //create package metadata provider from context
+            using (var context = _repositoryContextService.AcquireContext())
             {
-                case PackageOperationType.Uninstall:
-                    result.Add(LocalRepository);
-                    break;
+                var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
-                case PackageOperationType.Install:
-                    result.Add(GetSourceAggregateRepository());
-                    var remoteRepositories = GetSourceRepositories();
-                    result.AddRange(remoteRepositories);
-                    break;
+                var localRepos = _projectManager.AsLocalRepositories(projects);
 
-                case PackageOperationType.Update:
-                    result.Add(GetUpdateAggeregateRepository());
-                    var updateRepositories = GetUpdateRepositories();
-                    result.AddRange(updateRepositories);
-                    break;
+                var repos = context == SourceContext.EmptyContext ? new List<SourceRepository>()
+                    : context.Repositories ?? context.PackageSources.Select(src => _repositoryContextService.GetRepository(src));
+
+                var repositoryModelList = new List<IRepository>();
+
+                //wrap all source repository object in repository model
+                repositoryModelList.AddRange(
+                    repos.Select(
+                        source => CreateModelRepositoryFromSourceRepository(source)
+                ));
+
+                repositoryModelList.AddRange(
+                    localRepos.Select(
+                        source => CreateModelRepositoryFromSourceRepository(source)
+
+                ));
+
+                return repositoryModelList;
             }
-
-            return result;
         }
 
-        public IEnumerable<IRepository> GetUpdateRepositories()
-        {
-            return GetSourceRepositories().Select(sourceRepository =>
-            {
-                return _repositoryCacheService.GetSerializableRepository(sourceRepository.Name, sourceRepository.Source, PackageOperationType.Update, 
-                    () => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<UpdateRepository>(LocalRepository, sourceRepository));
-            });
-        }
 
         public IRepository GetSourceAggregateRepository()
-        {            
-            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Install,
-                () =>
-                {
-                    var packageSources = GetPackageSources();
-                    return new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-                }, true);
+        {
+            //todo
+            //var packageSource = new CombinedNuGetSource(GetSourceRepositories()
+            //    .Select(x => new NuGetFeed(x.Name, x.Source, x.));
+
+            //var allInOneSource = new CombinedNuGetSource(;
+            return null;
         }
 
         public IEnumerable<IRepository> GetSourceRepositories()
         {
-            var packageSources = GetPackageSources();
-            foreach (var packageSource in packageSources)
-            {
-                var source = packageSource;
-                yield return _repositoryCacheService.GetSerializableRepository(packageSource.Name, packageSource.Source, PackageOperationType.Install, () => _repositoryFactory.CreateRepository(source.Source));
-            }
+            return GetRepositories(PackageOperationType.None);
         }
+
 
         public IRepository GetUpdateAggeregateRepository()
-        {            
-            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Update, () =>
-            {
-                var packageSources = GetPackageSources();
-                var sourceRepository = new AggregateRepository(_repositoryFactory, packageSources.Select(x => x.Source), true);
-                return new UpdateRepository(LocalNuGetRepository, sourceRepository);
-            }, true);
-        }
-
-        private IEnumerable<IPackageSource> GetPackageSources()
         {
-            return _nuGetConfigurationService.LoadPackageSources(true);
+            //todo
+            return null;
         }
 
-        private IRepository GetLocalRepository()
+        public IEnumerable<IRepository> GetUpdateRepositories()
         {
-            return _repositoryCacheService.GetSerializableRepository(RepositoryName.All, "all", PackageOperationType.Uninstall, () =>
-            {
-                var path = _nuGetConfigurationService.GetDestinationFolder();
-
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                return new LocalPackageRepository(path, true);
-            });
+            return GetRepositories(PackageOperationType.Update);
         }
-        #endregion
+
+        private IRepository GetMainProjectRepository()
+        {
+            var repository = _defaultExtensibleProjectProvider.GetDefaultProject().AsSourceRepository(_repositoryProvider);
+
+            return CreateModelRepositoryFromSourceRepository(repository);
+        }
+
+        private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository repository)
+        {
+            return new Repository()
+            {
+                Id = 0, //todo create serializable repos
+                Name = repository.PackageSource.Name,
+                Source = repository.PackageSource.Source,
+                OperationType = PackageOperationType.None
+            };
+        }
     }
 }

@@ -1,34 +1,51 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExplorerWindow.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
+    using System.Windows;
+    using Catel.MVVM.Views;
     using Catel.Windows;
-    using ViewModels;
+    using Orc.NuGetExplorer.ViewModels;
 
     /// <summary>
-    /// Interaction logic for ExplorerWindow.xaml.
+    /// Interaction logic for ExplorerWindow.xaml
     /// </summary>
-    internal partial class ExplorerWindow
+    internal partial class ExplorerWindow : DataWindow
     {
-        #region Constructors
-        public ExplorerWindow()
-            : this(null)
+        static ExplorerWindow()
+        {
+            typeof(ExplorerWindow).AutoDetectViewPropertiesToSubscribe();
+        }
+
+        public ExplorerWindow() : this(null)
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExplorerWindow"/> class.
-        /// </summary>
         public ExplorerWindow(ExplorerViewModel viewModel)
             : base(viewModel, DataWindowMode.Custom)
         {
             InitializeComponent();
+            ShowInTaskbar = false;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            Title = viewModel.Title;
         }
+
+        #region DependencyProperty
+
+        public static readonly DependencyProperty StartPageProperty =
+            DependencyProperty.Register("StartPage", typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+        public string StartPage
+        {
+            get { return (string)GetValue(StartPageProperty); }
+            set { SetValue(StartPageProperty, value); }
+        }
+
+        private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
         #endregion
     }
 }

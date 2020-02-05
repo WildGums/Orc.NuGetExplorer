@@ -1,52 +1,54 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetConfigurationService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Catel;
     using Catel.Configuration;
-    using Catel.IO;
-    using MethodTimer;
-    using NuGet;
+    using Catel.IoC;
+    using Catel.Logging;
+    using Catel.Services;
+    using NuGet.Configuration;
+    using NuGetExplorer.Configuration;
+    using Settings = Settings;
 
-    internal class NuGetConfigurationService : INuGetConfigurationService
+    public class NuGetConfigurationService : INuGetConfigurationService
     {
-        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
-        private readonly INuGetFeedVerificationService _feedVerificationService;
-        private readonly IPackageSourceProvider _packageSourceProvider;
-        #endregion
 
-        #region Constructors
-        public NuGetConfigurationService(IConfigurationService configurationService, IPackageSourceProvider packageSourceProvider,
-            INuGetFeedVerificationService feedVerificationService)
+        //had to doing this, because settings is as parameter in ctor caused loop references
+        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
+                () =>
+                {
+                    return ServiceLocator.Default.ResolveType<IPackageSourceProvider>();
+                }
+            );
+
+        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new Dictionary<ConfigurationSection, string>()
+        {
+            { ConfigurationSection.Feeds, $"NuGet_{ConfigurationSection.Feeds}" },
+            { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
+        };
+
+        public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => packageSourceProvider);
-            Argument.IsNotNull(() => feedVerificationService);
 
             _configurationService = configurationService;
-            _packageSourceProvider = packageSourceProvider;
-            _feedVerificationService = feedVerificationService;
 
-            var applicationDataDirectory = Path.GetApplicationDataDirectory();
-            _defaultDestinationFolder = Path.Combine(applicationDataDirectory, "plugins");
+            _defaultDestinationFolder = Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "plugins");
         }
-        #endregion
 
-        #region Methods
+
+        #region INuGetConfigurationService
+
         public string GetDestinationFolder()
         {
             var destinationFolder = _configurationService.GetRoamingValue(Settings.NuGet.DestinationFolder, _defaultDestinationFolder);
-
             return string.IsNullOrEmpty(destinationFolder) ? _defaultDestinationFolder : destinationFolder;
         }
 
@@ -59,7 +61,7 @@ namespace Orc.NuGetExplorer
 
         public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
         {
-            var packageSources = _packageSourceProvider.LoadPackageSources();
+            var packageSources = _packageSourceProvider.Value.LoadPackageSources();
 
             if (onlyEnabled)
             {
@@ -69,7 +71,6 @@ namespace Orc.NuGetExplorer
             return packageSources.ToPackageSourceInterfaces();
         }
 
-        [Time]
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)
         {
             Argument.IsNotNullOrWhitespace(() => name);
@@ -77,18 +78,10 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                if (verifyFeed)
-                {
-                    var verificationResult = _feedVerificationService.VerifyFeed(source, false);
-                    if (verificationResult == FeedVerificationResult.Invalid || verificationResult == FeedVerificationResult.Unknown)
-                    {
-                        return false;
-                    }
-                }
-
-                var packageSources = _packageSourceProvider.LoadPackageSources().ToList();
+                var packageSources = _packageSourceProvider.Value.LoadPackageSources().ToList();
 
                 var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
+
                 if (existedSource == null)
                 {
                     existedSource = new PackageSource(source, name);
@@ -98,7 +91,7 @@ namespace Orc.NuGetExplorer
                 existedSource.IsEnabled = isEnabled;
                 existedSource.IsOfficial = isOfficial;
 
-                _packageSourceProvider.SavePackageSources(packageSources);
+                _packageSourceProvider.Value.SavePackageSources(packageSources);
             }
             catch
             {
@@ -108,25 +101,22 @@ namespace Orc.NuGetExplorer
             return true;
         }
 
-        [Time]
-        public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
-        {
-            Argument.IsNotNull(() => packageSources);
-
-            _packageSourceProvider.SavePackageSources(packageSources.Cast<PackageSource>());
-        }
-
-        [Obsolete("Use DisablePackageSource")]
-        public void DeletePackageSource(string name, string source)
-        {
-            DisablePackageSource(name, source);
-        }
-
         public void DisablePackageSource(string name, string source)
         {
             Argument.IsNotNullOrWhitespace(() => name);
 
-            _packageSourceProvider.DisablePackageSource(new PackageSource(source, name));
+            _packageSourceProvider.Value.DisablePackageSource(name);
+        }
+
+        public void RemovePackageSource(IPackageSource source)
+        {
+            //todo implement packageSource removal
+        }
+
+        public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
+        {
+            Argument.IsNotNull(() => packageSources);
+            _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
         }
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
@@ -155,6 +145,26 @@ namespace Orc.NuGetExplorer
         {
             return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
         }
+
+        public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
+        {
+            foreach (var project in extensibleProjects)
+            {
+                var key = GetProjectKey(project);
+                _configurationService.SetRoamingValue(key, project);
+            }
+        }
+
+        public bool IsProjectConfigured(IExtensibleProject project)
+        {
+            return _configurationService.GetRoamingValue<bool>(GetProjectKey(project));
+        }
+
         #endregion
+
+        private string GetProjectKey(IExtensibleProject extensibleProject)
+        {
+            return $"{_masterKeys[ConfigurationSection.ProjectExtensions]}_{extensibleProject.GetType().FullName}";
+        }
     }
 }

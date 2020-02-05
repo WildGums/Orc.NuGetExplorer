@@ -1,57 +1,117 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetLogger.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer.Loggers
 {
+    using System.Threading.Tasks;
     using Catel;
-    using NuGet;
+    using Catel.Logging;
+    using NuGet.Common;
 
-    internal class NuGetLogger : ILogger
+    public class NuGetLogger : ILogger
     {
-        #region Fields
-        private readonly INuGetLogListeningSevice _logListeningService;
-        #endregion
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        #region Constructors
-        public NuGetLogger(INuGetLogListeningSevice logListeningService)
+        private readonly bool _verbose;
+        private readonly INuGetLogListeningSevice _logListeningService;
+
+        public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
         {
             Argument.IsNotNull(() => logListeningService);
 
             _logListeningService = logListeningService;
+            _verbose = verbose;
         }
-        #endregion
 
-        #region Methods
-        public FileConflictResolution ResolveFileConflict(string message)
+        public NuGetLogger(INuGetLogListeningSevice logListeningService) : this(true, logListeningService)
         {
-            return FileConflictResolution.IgnoreAll;
+
         }
 
-        public void Log(MessageLevel level, string message, params object[] args)
+        #region ILogger
+        void ILogger.Log(LogLevel level, string data)
         {
             switch (level)
             {
-                case MessageLevel.Debug:
-                    _logListeningService.SendDebug(string.Format(message, args));
+                case LogLevel.Debug:
+                    LogDebug(data);
                     break;
 
-                case MessageLevel.Info:
-                    _logListeningService.SendInfo(string.Format(message, args));
+                case LogLevel.Error:
+                    LogError(data);
                     break;
 
-                case MessageLevel.Error:
-                    _logListeningService.SendError(string.Format(message, args));
+                case LogLevel.Information:
+                    LogInformation(data);
                     break;
 
-                case MessageLevel.Warning:
-                    _logListeningService.SendWarning(string.Format(message, args));
+                case LogLevel.Warning:
+                    LogWarning(data);
+                    break;
+
+                case LogLevel.Minimal:
+                    LogMinimal(data);
+                    break;
+
+                case LogLevel.Verbose:
+                    LogVerbose(data);
                     break;
             }
         }
+
+        void ILogger.Log(ILogMessage message)
+        {
+            Log.Debug($"Send {message.Level} message to log listeners");
+            ((ILogger)this).Log(message.Level, message.Message);
+        }
+
+        public async Task LogAsync(ILogMessage message)
+        {
+            Log.Debug($"Send {message.Level} message to log listeners");
+            await LogAsync(message.Level, message.Message);
+        }
+
+        public async Task LogAsync(LogLevel level, string data)
+        {
+            var logginTask = Task.Run(() => ((ILogger)this).Log(level, data));
+            await logginTask;
+        }
+
+        public void LogDebug(string data)
+        {
+            _logListeningService.SendDebug(data);
+        }
+
+        public void LogError(string data)
+        {
+            _logListeningService.SendError(data);
+        }
+
+        public void LogInformation(string data)
+        {
+            _logListeningService.SendInfo(data);
+        }
+
+        public void LogWarning(string data)
+        {
+            _logListeningService.SendWarning(data);
+        }
+
+        public void LogInformationSummary(string data)
+        {
+            _logListeningService.SendInfo(data);
+        }
+
+        public void LogMinimal(string data)
+        {
+            LogInformation(data);
+        }
+
+        public void LogVerbose(string data)
+        {
+            if (_verbose)
+            {
+                LogInformation(data);
+            }
+        }
+
         #endregion
     }
 }

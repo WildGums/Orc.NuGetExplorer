@@ -1,25 +1,30 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageDetailsView.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
-    /// <summary>
-    /// Interaction logic for PackageDetailsView.xaml.
-    /// </summary>
+    using System.Windows;
+    using Catel.MVVM.Views;
+    using Models;
+
     internal partial class PackageDetailsView
     {
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PackageDetailsView"/> class.
-        /// </summary>
+        static PackageDetailsView()
+        {
+            typeof(PackageDetailsView).AutoDetectViewPropertiesToSubscribe();
+
+        }
+
         public PackageDetailsView()
         {
             InitializeComponent();
         }
-        #endregion
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
+        public NuGetPackage Package
+        {
+            get { return (NuGetPackage)GetValue(PackageProperty); }
+            set { SetValue(PackageProperty, value); }
+        }
+
+        public static readonly DependencyProperty PackageProperty = DependencyProperty.Register(
+            "Package", typeof(NuGetPackage), typeof(PackageDetailsView), new PropertyMetadata(default(NuGetPackage)));
     }
 }
