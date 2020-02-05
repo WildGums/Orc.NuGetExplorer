@@ -53,7 +53,7 @@
 
             if (!Directory.Exists(_defaultProject.ContentPath))
             {
-                Log.Info($"plugins folder does not exist");
+                Log.Info($"Plugins folder does not exist");
                 return false;
             }
 
@@ -94,26 +94,31 @@
                 foreach (var packageDetails in parsedPackages)
                 {
                     var package = packageDetails.GetIdentity();
+                    if (package is null)
+                    {
+                        continue;
+                    }
 
+                    var installationPath = _defaultProject.GetInstallPath(package);
+
+                    var isV2packageInstalled = folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
+                    if (!isV2packageInstalled)
+                    {
+                        Log.Warning($"Package '{package}' is recognized in project folder as v2 NuGet installed package");
+                        continue;
+                    }
+
+                    if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, default))
+                    {
+                        Log.Info($"Skipping package '{package}', package is valid");
+                        continue;
+                    }
+
+                    _packageOperationNotificationService.NotifyOperationStarting(installationPath, PackageOperationType.Install, packageDetails);
+
+                    //reinstall
                     try
                     {
-                        var isV2packageInstalled = package != null && folderProject.PackageExists(package, NuGet.Packaging.PackageSaveMode.Defaultv2);
-
-                        if (!isV2packageInstalled)
-                        {
-                            Log.Warning($"Package {package} does not recognized in project folder as v2 NuGet installed package");
-                            continue;
-                        }
-
-                        //reinstall
-                        if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, package, default))
-                        {
-                            Log.Info($"Skip package {package}, package is valid");
-                            continue;
-                        }
-
-                        _packageOperationNotificationService.NotifyOperationStarting(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
-
                         var isInstalled = await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package, default, false);
 
                         if (!isInstalled)
@@ -129,10 +134,8 @@
                         failedIdentities.Add(package);
                         Log.Error(ex);
                     }
-                    finally
-                    {
-                        _packageOperationNotificationService.NotifyOperationFinished(_defaultProject.GetInstallPath(package), PackageOperationType.Install, packageDetails);
-                    }
+
+                    _packageOperationNotificationService.NotifyOperationFinished(installationPath, PackageOperationType.Install, packageDetails);
                 }
 
                 await _logger.LogAsync(LogLevel.Information, $"Update completed. Package count {subFolders.Count()}");

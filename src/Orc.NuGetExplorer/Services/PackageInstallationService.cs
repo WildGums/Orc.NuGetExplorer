@@ -288,8 +288,8 @@
                     if (relatedDepInfo != null)
                     {
                         downloadStack.Push(relatedDepInfo);
+                        continue;
                     }
-
 
                     if (ignoreMissingPackages)
                     {

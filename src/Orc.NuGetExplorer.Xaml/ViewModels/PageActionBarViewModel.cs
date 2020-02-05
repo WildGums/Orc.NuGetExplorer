@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGetExplorer.Management;
@@ -43,7 +44,10 @@
             _packageCommandService = packageCommandService;
 
             BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
+            CheckAll = new TaskCommand(CheckAllExecuteAsync);
         }
+
+        public bool IsCheckAll { get; set; }
 
         protected override Task InitializeAsync()
         {
@@ -122,6 +126,14 @@
             }
 
             return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+        }
+
+        public TaskCommand CheckAll { get; set; }
+
+        private async Task CheckAllExecuteAsync()
+        {
+            var packages = _parentManagerPage.PackageItems;
+            packages.ForEach(package => package.IsChecked = IsCheckAll);
         }
 
         private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
