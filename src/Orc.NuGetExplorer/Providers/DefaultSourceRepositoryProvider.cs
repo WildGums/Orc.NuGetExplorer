@@ -43,6 +43,22 @@
             return repo;
         }
 
+        public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
+        {
+            if (forceUpdate)
+            {
+                var repo = _repositoryStore.AddOrUpdate(
+                    source,
+                    key => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined),
+                    (key, oldValue) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined)
+                );
+
+                return repo;
+            }
+
+            return CreateRepository(source);
+        }
+
         public IEnumerable<SourceRepository> GetRepositories()
         {
             List<SourceRepository> repos = new List<SourceRepository>();
@@ -50,16 +66,6 @@
             //from config
             var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)
                 .ToPackageSourceInstances().ToList();
-
-            //constructed manually from outside 
-            //todo add this to model settings right after creating
-            //foreach(var storedSource in _repositoryStore.Keys)
-            //{
-            //    if(configuredSources.FirstOrDefault(source => source.Name == storedSource.Name) == null)
-            //    {
-            //        configuredSources.Add(storedSource);
-            //    }
-            //}
 
             //from settings model
             foreach (var source in _settings.GetAllPackageSources())

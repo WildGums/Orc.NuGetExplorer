@@ -21,9 +21,9 @@ namespace Orc.NuGetExplorer
 
         private readonly ILogger _nugetLogger;
         private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
-        private readonly ISourceRepositoryProvider _repositoryProvider;
+        private readonly IExtendedSourceRepositoryProvider _repositoryProvider;
 
-        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
+        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, IExtendedSourceRepositoryProvider repositoryProvider, ILogger logger)
         {
             Argument.IsNotNull(() => credentialProviderLoaderService);
             Argument.IsNotNull(() => repositoryProvider);
@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             _nugetLogger = logger;
         }
 
-        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = true, CancellationToken ct = default)
+        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken ct = default)
         {
             Argument.IsNotNull(() => source);
 
@@ -48,13 +48,14 @@ namespace Orc.NuGetExplorer
             {
                 var packageSource = new PackageSource(source);
 
-                var repository = _repositoryProvider.CreateRepository(packageSource);
+                //Create new repository if we want to force credentials retry
+                var repository = _repositoryProvider.CreateRepository(packageSource, authenticateIfRequired);
 
                 try
                 {
                     var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
+                    var metadata = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                 }
                 catch (Exception)
                 {

@@ -73,10 +73,6 @@
         public IRepository GetSourceAggregateRepository()
         {
             //todo
-            //var packageSource = new CombinedNuGetSource(GetSourceRepositories()
-            //    .Select(x => new NuGetFeed(x.Name, x.Source, x.));
-
-            //var allInOneSource = new CombinedNuGetSource(;
             return null;
         }
 
@@ -108,7 +104,7 @@
         {
             return new Repository()
             {
-                Id = 0, //todo create serializable repos
+                Id = 0,
                 Name = repository.PackageSource.Name,
                 Source = repository.PackageSource.Source,
                 OperationType = PackageOperationType.None
