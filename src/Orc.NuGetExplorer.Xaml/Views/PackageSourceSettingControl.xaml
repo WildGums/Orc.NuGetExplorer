@@ -20,7 +20,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </catel:UserControl.Resources>
-    
+
     <catel:InfoBarMessageControl>
         <Grid Margin="4 2 4 2">
             <Grid.Resources>
@@ -80,7 +80,8 @@
                             <controls:RotationProgressBar Speed="5" x:Name="CircularBar" 
                                                           Maximum="2" Minimum="0" 
                                                           Grid.Column="2"
-                                                          Success="{Binding IsAccessible}"
+                                                          ShowError="{Binding VerificationResult, Converter={converters:InvalidFeedToBoolConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                                          ShowWarning="{Binding IsRestricted, UpdateSourceTrigger=PropertyChanged}"
                                                           Value="{Binding IsVerifiedNow, Converter={converters:BoolToIntConverter}, UpdateSourceTrigger=PropertyChanged}">
                                 <controls:RotationProgressBar.IconData>
                                     <Path Data="{Binding Source={StaticResource RotationArrow}, Path=Data}"/>
@@ -213,7 +214,7 @@
                             Grid.ColumnSpan="2"
                             Margin="0 12 0 0">
             </local:FeedDetailView>
-            
+
 
             <Separator Grid.Row="3" Grid.ColumnSpan="2"
                    Margin="0 8 0 0"/>

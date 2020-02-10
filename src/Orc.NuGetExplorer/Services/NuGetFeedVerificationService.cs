@@ -21,9 +21,9 @@ namespace Orc.NuGetExplorer
 
         private readonly ILogger _nugetLogger;
         private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
-        private readonly IExtendedSourceRepositoryProvider _repositoryProvider;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
 
-        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, IExtendedSourceRepositoryProvider repositoryProvider, ILogger logger)
+        public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
             Argument.IsNotNull(() => credentialProviderLoaderService);
             Argument.IsNotNull(() => repositoryProvider);
@@ -48,8 +48,7 @@ namespace Orc.NuGetExplorer
             {
                 var packageSource = new PackageSource(source);
 
-                //Create new repository if we want to force credentials retry
-                var repository = _repositoryProvider.CreateRepository(packageSource, authenticateIfRequired);
+                var repository = _repositoryProvider.CreateRepository(packageSource);
 
                 try
                 {

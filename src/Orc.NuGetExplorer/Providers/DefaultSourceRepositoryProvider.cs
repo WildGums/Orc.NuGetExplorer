@@ -45,10 +45,10 @@
 
         public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
         {
-            if (forceUpdate)
+            if(forceUpdate)
             {
                 var repo = _repositoryStore.AddOrUpdate(
-                    source,
+                    source, 
                     key => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined),
                     (key, oldValue) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined)
                 );
