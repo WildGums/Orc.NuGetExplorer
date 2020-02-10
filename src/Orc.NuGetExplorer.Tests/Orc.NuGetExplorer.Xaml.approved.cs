@@ -45,11 +45,15 @@ namespace Orc.NuGetExplorer.Controls
     {
         public static readonly System.Windows.DependencyProperty IconDataProperty;
         public static readonly System.Windows.DependencyProperty IsInProgressProperty;
+        public static readonly System.Windows.DependencyProperty ShowErrorProperty;
+        public static readonly System.Windows.DependencyProperty ShowWarningProperty;
         public static readonly System.Windows.DependencyProperty SpeedProperty;
         public static readonly System.Windows.DependencyProperty SuccessProperty;
         public RotationProgressBar() { }
         public System.Windows.Shapes.Path IconData { get; set; }
         public bool IsInProgress { get; set; }
+        public bool ShowError { get; set; }
+        public bool ShowWarning { get; set; }
         public double Speed { get; set; }
         public bool Success { get; set; }
     }
@@ -96,6 +100,11 @@ namespace Orc.NuGetExplorer.Converters
     {
         public EmptyCollectionToVisibleConverter() { }
         protected override object Convert(System.Collections.ICollection value, System.Type targetType, object parameter) { }
+    }
+    public class InvalidFeedToBoolConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.FeedVerificationResult, bool>
+    {
+        public InvalidFeedToBoolConverter() { }
+        protected override object Convert(Orc.NuGetExplorer.FeedVerificationResult value, System.Type targetType, object parameter) { }
     }
     public class NuGetFrameworkToStringConverter : Catel.MVVM.Converters.ValueConverterBase<NuGet.Frameworks.NuGetFramework, string>
     {
