@@ -59,50 +59,33 @@ namespace Orc.NuGetExplorer
             {
                 _backupFileSystemService.BackupFolder(e.InstallPath);
                 _backupFileSystemService.BackupFile(packagesConfig);
-                _rollbackPackageOperationService.PushRollbackAction(() =>
-                    {
-                        bool success = true;
-                        try
-                        {
-                            success = _fileSystemService.DeleteDirectory(e.InstallPath);
-                        }
-                        catch (Exception)
-                        {
-                            success = false;
-                        }
-                        finally
-                        {
-                            if (!success)
-                            {
-                                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
-                                Log.Error("Failed to delete directory during rollback actions");
-                            }
-                        }
-                    },
-                    CurrentContext
-                );
-                return;
             }
 
-            if (e.PackageOperationType == PackageOperationType.Install)
+            if(e.PackageOperationType == PackageOperationType.Install || e.PackageOperationType == PackageOperationType.Uninstall)
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
+                {
+                    bool success = true;
+                    try
                     {
-                        try
-                        {
-                            _fileSystemService.DeleteDirectory(e.InstallPath);
-                        }
-                        catch (Exception ex)
+                        success = _fileSystemService.DeleteDirectory(e.InstallPath);
+                    }
+                    catch (Exception)
+                    {
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
                         {
                             _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
-                            Log.Error("Failed to delete directory during rollback actions", ex);
+                            Log.Error($"Failed to delete directory {e.InstallPath} during rollback actions.");
                         }
-                    },
+                    }
+                },
                     CurrentContext
                 );
             }
-
-            base.OnOperationStarting(sender, e);
         }
         #endregion
     }
