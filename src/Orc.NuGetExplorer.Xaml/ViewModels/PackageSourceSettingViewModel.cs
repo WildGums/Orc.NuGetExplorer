@@ -283,6 +283,12 @@
                 AddToValidationQueue(sender as NuGetFeed);
                 StartValidationTimer();
             }
+
+            //check business rule if any error expected
+            if (HasErrors)
+            {
+                Validate(true);
+            }
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
