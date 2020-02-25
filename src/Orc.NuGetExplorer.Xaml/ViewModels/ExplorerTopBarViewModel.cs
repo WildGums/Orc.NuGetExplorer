@@ -30,8 +30,6 @@
 
         private readonly INuGetConfigurationService _configurationService;
 
-        //private readonly INotificationService _notificationService;
-
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
             INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
@@ -79,12 +77,10 @@
         {
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
-            var lastSelectedSourceName = (_configurationService as IConfigurationService)?.GetLastRepository("Browse") ?? String.Empty;
-
-            //"all" feed
+            //"all" feed is default
             DefaultFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, Constants.CombinedSourceName));
 
-            ObservedFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, lastSelectedSourceName)) ?? DefaultFeed;
+            ObservedFeed = SetObservedFeed(ActiveFeeds, DefaultFeed);
 
             return base.InitializeAsync();
         }
@@ -171,6 +167,13 @@
             activefeeds.Insert(0, allInOneSource);
 
             return activefeeds;
+        }
+
+        private INuGetSource SetObservedFeed(IEnumerable<INuGetSource> feeds, INuGetSource defaultFeed)
+        {
+            var lastSelectedSourceName = (_configurationService as IConfigurationService)?.GetLastRepository("Browse") ?? string.Empty;
+
+            return feeds.FirstOrDefault(x => string.Equals(x.Name, lastSelectedSourceName)) ?? defaultFeed;
         }
     }
 }

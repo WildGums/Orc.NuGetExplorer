@@ -122,6 +122,7 @@
         protected override Task OnClosingAsync()
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
+            _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
 
             Settings.Clear();
 
