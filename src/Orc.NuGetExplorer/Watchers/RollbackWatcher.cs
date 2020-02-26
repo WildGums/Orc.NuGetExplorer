@@ -59,9 +59,15 @@ namespace Orc.NuGetExplorer
             {
                 _backupFileSystemService.BackupFolder(e.InstallPath);
                 _backupFileSystemService.BackupFile(packagesConfig);
+
+                _rollbackPackageOperationService.PushRollbackAction(() =>
+                {
+                    _backupFileSystemService.Restore(e.InstallPath);
+                    _backupFileSystemService.Restore(packagesConfig);
+                }, CurrentContext);
             }
 
-            if(e.PackageOperationType == PackageOperationType.Install || e.PackageOperationType == PackageOperationType.Uninstall)
+            if(e.PackageOperationType == PackageOperationType.Install)
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
