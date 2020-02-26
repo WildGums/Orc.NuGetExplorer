@@ -67,7 +67,7 @@ namespace Orc.NuGetExplorer
                 }, CurrentContext);
             }
 
-            if(e.PackageOperationType == PackageOperationType.Install)
+            if (e.PackageOperationType == PackageOperationType.Install)
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
