@@ -1,12 +1,17 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
     using System.Xml.Serialization;
     using Catel.Data;
 
-    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, IDataErrorInfo, INuGetSource
+    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, INotifyDataErrorInfo, IDataErrorInfo, INuGetSource
     {
+        private readonly IDictionary<string, string> _propertyNameToDataError = new Dictionary<string, string>();
+
         public NuGetFeed()
         {
             VerificationResult = FeedVerificationResult.Unknown;
@@ -89,6 +94,46 @@
         }
         #endregion
 
+        #region INotifyDataErrorInfo
+        public bool HasErrors => _propertyNameToDataError.Any();
+
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public IEnumerable GetErrors(string propertyName)
+        {
+            if (propertyName is null)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            return _propertyNameToDataError.ContainsKey(propertyName) ? new[] { _propertyNameToDataError[propertyName] } : Enumerable.Empty<string>();
+        }
+
+        private void RaiseErrorsChanged(string propertyName)
+        {
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        }
+
+        private void ValidateAndRaiseErrorsChanged(string propertyName)
+        {
+            var error = this[propertyName];
+
+            if (!_propertyNameToDataError.TryGetValue(propertyName, out string oldError))
+            {
+                oldError = string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                _propertyNameToDataError[propertyName] = error;
+            }
+
+            if (string.Equals(error, oldError))
+            {
+                RaiseErrorsChanged(propertyName);
+            }
+        }
+        #endregion
+
         public override string ToString()
         {
             return $"{Name} {Source}";
@@ -151,6 +196,7 @@
             {
                 //reset verification
                 VerificationResult = FeedVerificationResult.Unknown;
+                ValidateAndRaiseErrorsChanged(e.PropertyName);
             }
             if (e.PropertyName == nameof(VerificationResult))
             {
@@ -160,6 +206,7 @@
             if (e.PropertyName == nameof(Name))
             {
                 IsNameValid = !string.IsNullOrEmpty(Name);
+                ValidateAndRaiseErrorsChanged(e.PropertyName);
             }
             base.OnPropertyChanged(e);
         }
