@@ -208,8 +208,14 @@
 
         private async Task VerifyFeedAsync(NuGetFeed feed)
         {
-            if (feed == null || !feed.IsValid())
+            if (feed == null)
             {
+                return;
+            }
+
+            if (!feed.IsValid())
+            {
+                feed.VerificationResult = FeedVerificationResult.Invalid;
                 return;
             }
 

@@ -62,8 +62,8 @@
                         </Trigger.ExitActions>
                         <Setter Property="Data" TargetName="Icon" Value="{Binding IconData.Data, RelativeSource={RelativeSource TemplatedParent}}"/>
                     </Trigger>
-                    
-                     <!--progress ends with warning-->
+
+                    <!--progress ends with warning-->
                     <MultiTrigger>
                         <MultiTrigger.Conditions>
                             <Condition Property="IsInProgress" Value="False"></Condition>

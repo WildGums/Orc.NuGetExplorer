@@ -12,6 +12,12 @@
         public RotationProgressBar()
         {
             ValueChanged += OnRotationProgressBarValueChanged;
+            DataContextChanged += OnDataContextChanged;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
         private void OnRotationProgressBarValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -58,8 +64,6 @@
 
         public static readonly DependencyProperty IsInProgressProperty = IsInProgressPropertyKey.DependencyProperty;
 
-
-        //TODO make readonly or even depricate this
         public bool Success
         {
             get { return (bool)GetValue(SuccessProperty); }
@@ -81,6 +85,7 @@
         private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
+            Log.Debug($"Set RotationProgressBar status to {Success}");
         }
 
 
@@ -96,6 +101,7 @@
         private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-        }
+            Log.Debug($"Set RotationProgressBar status to {Success}");
+        } 
     }
 }
