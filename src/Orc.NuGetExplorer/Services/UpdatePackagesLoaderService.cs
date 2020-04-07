@@ -115,9 +115,6 @@
 
         public async Task<IEnumerable<IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
-            //todo auth scopes?
-            var scopeManagers = new List<ScopeManager<AuthenticationScope>>();
-
             var updateList = new List<IPackageSearchMetadata>();
             var emptySearchTerm = String.Empty;
 
@@ -159,15 +156,6 @@
             catch (Exception ex) when (token.IsCancellationRequested)
             {
                 throw new OperationCanceledException("Search request was canceled", ex, token);
-            }
-            finally
-            {
-                foreach (var scopeManager in scopeManagers)
-                {
-                    scopeManager.Dispose();
-                }
-
-                scopeManagers.Clear();
             }
         }
 
