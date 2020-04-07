@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
@@ -15,7 +16,7 @@
         public DialogHost(IViewModel vm)
             : base(vm, DataWindowMode.Custom)
         {
-            var dialogOptions = (ViewModel as IDialogViewModel)?.Dialog;
+            var dialogOptions = (ViewModel as IDialogViewModel)?.Dialog ?? GetDefaultParameters();
 
             if (dialogOptions.IsCloseButtonAvaialble)
             {
@@ -37,6 +38,11 @@
             SetCurrentValue(DialogCommandProperty, (ViewModel as IDialogViewModel)?.RunOption);
 
             base.Initialize();
+        }
+
+        private DialogCustomization GetDefaultParameters()
+        {
+            return new DialogCustomization(new List<IDialogOption>(), true);
         }
 
         private void CreateDataWindowButtonForDialog(IDialogOption option)
