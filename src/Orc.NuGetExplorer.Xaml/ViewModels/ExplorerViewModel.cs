@@ -9,9 +9,11 @@
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
+    using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -21,6 +23,7 @@
         private const string DefaultStartPage = ExplorerPageName.Browse;
         private readonly IConfigurationService _configurationService;
         private readonly INuGetExplorerInitializationService _initializationService;
+        private readonly ISettings _nuGetSettings;
         private readonly ITypeFactory _typeFactory;
 
         private readonly IDictionary<string, INuGetExplorerInitialState> _pageSetup = new Dictionary<string, INuGetExplorerInitialState>()
@@ -33,8 +36,8 @@
         private string _startPage = DefaultStartPage;
 
 
-        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager,
-            IModelProvider<ExplorerSettingsContainer> settingsProvider, IConfigurationService configurationService, INuGetExplorerInitializationService initializationService)
+        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+            IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => commandManager);
@@ -45,7 +48,7 @@
             _typeFactory = typeFactory;
             _configurationService = configurationService;
             _initializationService = initializationService;
-
+            _nuGetSettings = nuGetSettings;
             CreateApplicationWideCommands(commandManager);
 
             if (settingsProvider is ExplorerSettingsContainerModelProvider settingsLazyProvider)
@@ -123,6 +126,11 @@
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
             _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
+            
+            if(_nuGetSettings is IVersionedSettings versionedSettings)
+            {
+                versionedSettings.UpdateVersion();
+            }
 
             Settings.Clear();
 
