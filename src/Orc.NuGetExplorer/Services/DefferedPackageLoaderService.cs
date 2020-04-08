@@ -74,7 +74,6 @@
                 {
                     _aliveCancellationToken = cts.Token;
 
-
                     var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
@@ -94,7 +93,11 @@
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, "Cannot get result for background package loading task");
+                            Log.Error(ex, "Package loading background task failed, cannot get result");
+                        }
+                        finally
+                        {
+                            taskList.Remove(nextCompletedTask);
                         }
 
                         if (result != null)
@@ -106,9 +109,7 @@
                             updateStateValue = PackageStatus.NotInstalled;
                         }
 
-                        taskList.Remove(nextCompletedTask);
-
-                        executedToken.UpdateAction(updateStateValue);
+                        executedToken?.UpdateAction(updateStateValue);
                     }
                 }
             }

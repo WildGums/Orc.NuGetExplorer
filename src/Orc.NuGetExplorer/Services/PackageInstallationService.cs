@@ -258,11 +258,6 @@
 
             downloadStack.Push(dependencyInfo); //and add it to package store
 
-
-            //commented code, used for testing target framework versions resolving
-            //var httpClient = typeof(DependencyInfoResourceV3).GetFieldEx("_client").GetValue(dependencyInfoResource);
-            //var regInfo = await ResolverMetadataClient.GetRegistrationInfo(httpClient as HttpSource, testUri, identity.Id, singleVersion, cacheContext, targetFramework, logger, cancellationToken);
-
             while (downloadStack.Count > 0)
             {
                 var rootDependency = downloadStack.Pop();

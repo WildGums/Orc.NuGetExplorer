@@ -28,6 +28,8 @@ namespace Orc.NuGetExplorer
 
             public const string FallbackUrl = "Plugins.FeedUrl";
 
+            public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";
+
             public const int PackageCount = 200;
 
             #endregion

@@ -12,6 +12,12 @@
         public RotationProgressBar()
         {
             ValueChanged += OnRotationProgressBarValueChanged;
+            DataContextChanged += OnDataContextChanged;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
         private void OnRotationProgressBarValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -29,6 +35,7 @@
         public static readonly DependencyProperty SpeedProperty =
             DependencyProperty.Register("Speed", typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
 
+
         public Path IconData
         {
             get { return (Path)GetValue(IconDataProperty); }
@@ -39,6 +46,7 @@
         public static readonly DependencyProperty IconDataProperty =
             DependencyProperty.Register("IconData", typeof(Path), typeof(RotationProgressBar), new PropertyMetadata());
 
+
         public bool IsInProgress
         {
             get { return (bool)GetValue(IsInProgressProperty); }
@@ -46,14 +54,14 @@
         }
 
         private static readonly DependencyPropertyKey IsInProgressPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsInProgress", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, OnIsInProgressChanged));
+            DependencyProperty.RegisterReadOnly("IsInProgress", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnIsInProgressChanged(e)));
 
-        private static void OnIsInProgressChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
         {
             Log.Debug($"Progress status changed: { ((bool)e.NewValue ? "activated" : "ended") }");
+            SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
-        // Using a DependencyProperty as the backing store for IsInProgress.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsInProgressProperty = IsInProgressPropertyKey.DependencyProperty;
 
         public bool Success
@@ -62,7 +70,38 @@
             set { SetValue(SuccessProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Success.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SuccessProperty = DependencyProperty.Register("Success", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false));
+
+
+        public bool ShowWarning
+        {
+            get { return (bool)GetValue(ShowWarningProperty); }
+            set { SetValue(ShowWarningProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowWarningProperty =
+            DependencyProperty.Register("ShowWarning", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowWarningChanged(e)));
+
+        private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
+            Log.Debug($"Set RotationProgressBar status to {Success}");
+        }
+
+
+        public bool ShowError
+        {
+            get { return (bool)GetValue(ShowErrorProperty); }
+            set { SetValue(ShowErrorProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowErrorProperty =
+            DependencyProperty.Register("ShowError", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowErrorChanged(e)));
+
+        private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
+            Log.Debug($"Set RotationProgressBar status to {Success}");
+        } 
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using Catel;
+    using Catel.Configuration;
     using Catel.IoC;
     using Orc.NuGetExplorer.Models;
 
@@ -10,15 +11,19 @@
     {
         private readonly ITypeFactory _typeFactory;
         private readonly INuGetConfigurationService _nugetConfigurationService;
+        private readonly IConfigurationService _configurationService;
         private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
 
-        public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService) : base(typeFactory)
+        public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
+            : base(typeFactory)
         {
-            Argument.IsNotNull(() => nugetConfigurationService);
             Argument.IsNotNull(() => typeFactory);
+            Argument.IsNotNull(() => nugetConfigurationService);
+            Argument.IsNotNull(() => configurationService);
 
             _typeFactory = typeFactory;
             _nugetConfigurationService = nugetConfigurationService;
+            _configurationService = configurationService;
 
             _explorerSettings = new Lazy<ExplorerSettingsContainer>(() => Create());
         }
@@ -38,7 +43,7 @@
                 {
                     var currentValue = base.Model;
                     currentValue.Clear();
-                    base.Model = ModelInitialize(base.Model);
+                    base.Model = InitializeModel(base.Model);
                     IsInitialized = true;
                 }
 
@@ -55,16 +60,18 @@
 
         public override ExplorerSettingsContainer Create()
         {
-            return ModelInitialize(base.Create());
+            return InitializeModel(base.Create());
         }
 
-        private ExplorerSettingsContainer ModelInitialize(ExplorerSettingsContainer value)
+        private ExplorerSettingsContainer InitializeModel(ExplorerSettingsContainer value)
         {
             var feeds = _nugetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
+            var prerelease = _configurationService.GetIsPrereleaseIncluded();
 
             feeds.ForEach(feed => feed.Initialize());
 
             value.NuGetFeeds.AddRange(feeds);
+            value.IsPreReleaseIncluded = prerelease;
 
             return value;
         }

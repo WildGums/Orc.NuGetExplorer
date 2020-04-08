@@ -56,6 +56,8 @@
         [XmlIgnore]
         public bool IsAccessible { get; set; }
 
+        public bool IsRestricted { get; set; }
+
         [XmlIgnore]
         public bool IsVerified { get; private set; }
 
@@ -200,8 +202,10 @@
             }
             if (e.PropertyName == nameof(VerificationResult))
             {
-                IsAccessible = VerificationResult == FeedVerificationResult.Valid || VerificationResult == FeedVerificationResult.AuthorizationRequired;
+                IsAccessible = VerificationResult == FeedVerificationResult.Valid;
                 IsVerified = VerificationResult != FeedVerificationResult.Unknown;
+                IsRestricted = IsVerified &&
+                    (VerificationResult == FeedVerificationResult.AuthenticationRequired || VerificationResult == FeedVerificationResult.AuthorizationRequired);
             }
             if (e.PropertyName == nameof(Name))
             {
@@ -217,8 +221,10 @@
         public void Initialize()
         {
             IsNameValid = !string.IsNullOrEmpty(Name);
-            IsAccessible = VerificationResult == FeedVerificationResult.Valid || VerificationResult == FeedVerificationResult.AuthorizationRequired;
+            IsAccessible = VerificationResult == FeedVerificationResult.Valid;
             IsVerified = VerificationResult != FeedVerificationResult.Unknown;
+            IsRestricted = IsVerified &&
+                (VerificationResult == FeedVerificationResult.AuthenticationRequired || VerificationResult == FeedVerificationResult.AuthorizationRequired);
         }
     }
 }

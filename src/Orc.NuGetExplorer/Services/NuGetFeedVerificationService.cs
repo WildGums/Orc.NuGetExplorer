@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             _nugetLogger = logger;
         }
 
-        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = true, CancellationToken ct = default)
+        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken ct = default)
         {
             Argument.IsNotNull(() => source);
 
@@ -54,7 +54,7 @@ namespace Orc.NuGetExplorer
                 {
                     var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                    var metadata = await searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
+                    var metadata = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
                 }
                 catch (Exception)
                 {
