@@ -37,8 +37,9 @@
         private string _startPage = DefaultStartPage;
 
 
-            IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
-        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+
+        public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+                        IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
@@ -112,8 +113,8 @@
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
             _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
-            
-            if(_nuGetSettings is IVersionedSettings versionedSettings)
+
+            if (_nuGetSettings is IVersionedSettings versionedSettings)
             {
                 versionedSettings.UpdateVersion();
             }
@@ -129,7 +130,7 @@
             InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
             UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
 
-            _pageSetup.Values.ForEach(page => 
+            _pageSetup.Values.ForEach(page =>
                 Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
 
             StartPage = _startPage;
