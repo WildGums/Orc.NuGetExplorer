@@ -21,12 +21,7 @@
 
         public void Dispose()
         {
-            var credentialsService = _repositoryHttpHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
-            if (credentialsService != null)
-            {
-                credentialsService.ClearRetryCache();
-            }
+            _repositoryHttpHandler.ResetCredentials();
         }
     }
 }

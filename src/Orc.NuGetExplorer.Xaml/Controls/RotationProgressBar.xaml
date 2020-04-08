@@ -17,15 +17,16 @@
 
             <SolidColorBrush Color="{DynamicResource ErrorMaterialColor}" x:Key="ErrorMaterialColorBrush"/>
             <SolidColorBrush Color="{DynamicResource SuccessMaterialColor}" x:Key="SuccessMaterialColorBrush"/>
+            <SolidColorBrush Color="{DynamicResource WarningMaterialColor}" x:Key="WarningMaterialColorBrush"/>
 
             <Color x:Key="ErrorMaterialColor">#ff1744</Color>
             <Color x:Key="SuccessMaterialColor">#00bfa5</Color>
-            
-            
+            <Color x:Key="WarningMaterialColor">#ff1744</Color>
+
 
             <ControlTemplate TargetType="{x:Type local:RotationProgressBar}" x:Key="RotationProgressBar">
                 <Grid Name="TemplateRoot">
-                        <!--animation using path geometry-->
+                        <!--animate using path geometry-->
                         <Viewbox Width="24" Height="24">
                         <Canvas Width="24" Height="24" x:Name="Content_Canvas"
                                 RenderTransformOrigin="0.5, 0.5">
@@ -61,25 +62,35 @@
                         </Trigger.ExitActions>
                         <Setter Property="Data" TargetName="Icon" Value="{Binding IconData.Data, RelativeSource={RelativeSource TemplatedParent}}"/>
                     </Trigger>
-                    <Trigger Property="IsInProgress" Value="False">
-                        <Setter Property="Data" TargetName="Icon" Value="{DynamicResource WarningGeometry}"/>
-                    </Trigger>
-                    
-                    <!-- executed work result invalid -->
+
+                    <!--progress ends with warning-->
                     <MultiTrigger>
                         <MultiTrigger.Conditions>
                             <Condition Property="IsInProgress" Value="False"></Condition>
                             <Condition Property="Success" Value="False"></Condition>
+                            <Condition Property="ShowWarning" Value="True"></Condition>
+                            <Condition Property="ShowError" Value="False"></Condition>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Data" TargetName="Icon" Value="{DynamicResource WarningGeometry}"/>
+                        <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource WarningMaterialColorBrush}"/>
+                    </MultiTrigger>
+
+                    <!-- progress ends with error -->
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsInProgress" Value="False"></Condition>
+                            <Condition Property="Success" Value="False"></Condition>
+                            <Condition Property="ShowError" Value="True"></Condition>
                         </MultiTrigger.Conditions>
                         <Setter Property="Data" TargetName="Icon" Value="{DynamicResource ErrorGeometry}"/>
                         <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource ErrorMaterialColorBrush}"/>
                     </MultiTrigger>
-                    
-                    <!--executed work result fine -->
+
+                    <!--progress ends successfully-->
                     <MultiTrigger>
                         <MultiTrigger.Conditions>
                             <Condition Property="IsInProgress" Value="False"></Condition>
-                            <Condition Property="Success" Value="true"></Condition>
+                            <Condition Property="Success" Value="True"></Condition>
                         </MultiTrigger.Conditions>
                         <Setter Property="Data" TargetName="Icon" Value="{DynamicResource CompleteGeometry}"/>
                         <Setter Property="Fill" TargetName="Icon" Value="{DynamicResource SuccessMaterialColorBrush}"/>

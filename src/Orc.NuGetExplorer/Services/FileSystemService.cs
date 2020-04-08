@@ -81,6 +81,11 @@
         {
             var fullPath = GetDeletemePath(name, path);
 
+            if(File.Exists(fullPath))
+            {
+                return;
+            }
+
             using (File.Create(fullPath))
             {
             }
@@ -89,6 +94,11 @@
         public void RemoveDeleteme(string name, string path)
         {
             var fullPath = GetDeletemePath(name, path);
+
+            if(!File.Exists(fullPath))
+            {
+                return;
+            }
 
             File.Delete(fullPath);
         }

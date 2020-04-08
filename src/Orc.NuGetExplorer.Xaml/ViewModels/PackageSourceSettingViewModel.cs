@@ -208,8 +208,14 @@
 
         private async Task VerifyFeedAsync(NuGetFeed feed)
         {
-            if (feed == null || !feed.IsValid())
+            if (feed == null)
             {
+                return;
+            }
+
+            if (!feed.IsValid())
+            {
+                feed.VerificationResult = FeedVerificationResult.Invalid;
                 return;
             }
 
@@ -282,6 +288,12 @@
             {
                 AddToValidationQueue(sender as NuGetFeed);
                 StartValidationTimer();
+            }
+
+            //check business rule if any error expected
+            if (HasErrors)
+            {
+                Validate(true);
             }
         }
 

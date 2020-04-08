@@ -57,6 +57,18 @@ namespace Orc.NuGetExplorer
             configurationService.SetRoamingValue(key, repositoryName);
         }
 
+        public static bool GetIsPrereleaseIncluded(this IConfigurationService configurationService)
+        {
+            Argument.IsNotNull(() => configurationService);
+            return configurationService.GetRoamingValue<bool>(Settings.NuGet.IncludePrereleasePackages, false);
+        }
+
+        public static void SetIsPrereleaseIncluded(this IConfigurationService configurationService, bool isPrereleaseIncluded)
+        {
+            Argument.IsNotNull(() => configurationService);
+            configurationService.SetRoamingValue(Settings.NuGet.IncludePrereleasePackages, isPrereleaseIncluded);
+        }
+
         private static string GetLastRepositoryKey(string repositoryCategory)
         {
             return string.Format("{0}.{1}", AppSettings.NuGetExplorer.LastRepository, repositoryCategory);

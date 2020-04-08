@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using Catel.Data;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using NuGetExplorer.Models;
@@ -8,8 +9,7 @@
     {
         public FeedDetailViewModel(NuGetFeed feed)
         {
-            //work with model clone
-            Feed = feed; // = feed.Clone();
+            Feed = feed;
             OpenChooseLocalPathToSourceDialog = new Command(OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
         }
 

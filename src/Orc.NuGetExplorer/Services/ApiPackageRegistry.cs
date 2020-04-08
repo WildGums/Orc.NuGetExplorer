@@ -73,15 +73,18 @@ namespace Orc.NuGetExplorer
 
             IEnumerable<PackageDependencyGroup> dependencyGroups = null;
 
-            if (package is NuGetPackage modelPackage)
+            switch(package)
             {
-                //then dependencies loaded inside already
-                dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
-            }
+                case NuGetPackage modelPackage:
+                    dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
+                    break;
 
-            if (package is PackageDetails details)
-            {
-                dependencyGroups = details.DependencySets;
+                case PackageDetails details:
+                    dependencyGroups = details.DependencySets;
+                    break;
+
+                default: Log.Warning($"{package} package API cannot be validated, because dependencies aren't recognized"); 
+                    return;
             }
 
             lock (_syncObj)
