@@ -25,6 +25,10 @@ namespace Orc.NuGetExplorer
         #region Properties
         public IPackageDetails[] Packages { get; private set; }
         public PackageOperationType OperationType { get; private set; }
+        /// <summary>
+        /// Determine is event raised by user actions or automatically
+        /// </summary>
+        public bool IsAutomatic { get; set; }
         #endregion
     }
 }

@@ -89,7 +89,7 @@
                     return false;
                 }
 
-                _packageOperationNotificationService.NotifyOperationBatchStarting(PackageOperationType.Install, parsedPackages.ToArray());
+                _packageOperationNotificationService.NotifyAutomaticOperationBatchStarting(PackageOperationType.Install, parsedPackages.ToArray());
 
                 foreach (var packageDetails in parsedPackages)
                 {
@@ -114,7 +114,7 @@
                         continue;
                     }
 
-                    _packageOperationNotificationService.NotifyOperationStarting(installationPath, PackageOperationType.Install, packageDetails);
+                    _packageOperationNotificationService.NotifyAutomaticOperationStarting(installationPath, PackageOperationType.Install, packageDetails);
 
                     //reinstall
                     try
@@ -135,7 +135,7 @@
                         Log.Error(ex);
                     }
 
-                    _packageOperationNotificationService.NotifyOperationFinished(installationPath, PackageOperationType.Install, packageDetails);
+                    _packageOperationNotificationService.NotifyAutomaticOperationFinished(installationPath, PackageOperationType.Install, packageDetails);
                 }
 
                 await _logger.LogAsync(LogLevel.Information, $"Update completed. Package count {subFolders.Count()}");
@@ -146,7 +146,7 @@
                     failedIdentities.ForEach(async failed => await _logger.LogAsync(LogLevel.Information, failed.ToString()));
                 }
 
-                _packageOperationNotificationService.NotifyOperationBatchFinished(PackageOperationType.Install, parsedPackages.ToArray());
+                _packageOperationNotificationService.NotifyAutomaticOperationBatchFinished(PackageOperationType.Install, parsedPackages.ToArray());
 
                 return anyUpgraded;
             }
