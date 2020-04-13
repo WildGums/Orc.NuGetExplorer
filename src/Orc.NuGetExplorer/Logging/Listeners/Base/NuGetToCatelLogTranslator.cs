@@ -13,11 +13,6 @@ namespace Orc.NuGetExplorer
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly string GetHttpRequestInfoPattern = "  GET https";
-        private static readonly string SetHttpRequestInfoPattern = "  SET https";
-        private static readonly string OkHttpRequestInfoPattern = "  OK https";
-        private static readonly string NotFoundHttpRequestInfoPattern = "  NotFound https";
-        private static readonly string CacheHttpRequestInfoPattern = "  CACHE https";
         #endregion
 
         #region Constructors
@@ -30,12 +25,6 @@ namespace Orc.NuGetExplorer
         #region Methods
         protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
         {
-            if (e.Message.StartsWith(GetHttpRequestInfoPattern) || e.Message.StartsWith(SetHttpRequestInfoPattern) 
-                || e.Message.StartsWith(OkHttpRequestInfoPattern) || e.Message.StartsWith(NotFoundHttpRequestInfoPattern) || e.Message.StartsWith(CacheHttpRequestInfoPattern))
-            {
-                Log.Debug(e.Message);
-                return;
-            }
             Log.Info(e.Message);
         }
 

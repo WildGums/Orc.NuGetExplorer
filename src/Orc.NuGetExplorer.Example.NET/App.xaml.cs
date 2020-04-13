@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer.Example
         {
 #if DEBUG
             LogManager.IsDebugEnabled = true;
-            LogManager.AddDebugListener(true);
+            LogManager.AddDebugListener(false);
 #endif
 
             var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();

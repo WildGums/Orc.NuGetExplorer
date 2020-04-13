@@ -20,5 +20,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
         serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
+        serviceLocator.RegisterType<INuGetLogListeningSevice, NoVerboseHttpNuGetLogListeningService>();
     }
 }

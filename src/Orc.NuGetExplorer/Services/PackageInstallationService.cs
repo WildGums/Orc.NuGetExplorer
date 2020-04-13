@@ -74,11 +74,11 @@
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
-            Log.Info($"Uninstall package {package}, Target framework: {targetFramework}");
+            _nugetLogger.LogInformation($"Uninstall package {package}, Target framework: {targetFramework}");
 
             if (projectConfig == null)
             {
-                Log.Warning("Current project does not implement configuration for own packages");
+                _nugetLogger.LogWarning("Current project doesn't implement any configuration for own packages");
             }
 
             //gather all dependencies
@@ -118,13 +118,14 @@
 
                     if (!result)
                     {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                        _nugetLogger.LogError($"Saving package configuration failed in project {project} when installing package {package}");
                     }
                 }
             }
             catch (IOException ex)
             {
-                Log.Error(ex, "Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
+                Log.Error(ex);
+                _nugetLogger.LogError("Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
             }
             finally
             {
@@ -144,7 +145,7 @@
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-                Log.Info($"Installing package {package}, Target framework: {targetFramework}");
+                _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
                 //todo check is this context needed
                 //var resContext = new NuGet.PackageManagement.ResolutionContext();
@@ -168,7 +169,7 @@
                 if (!availabePackageStorage.Any())
                 {
                     var errorMessage = $"Package {package} cannot be resolved with current settings for chosen destination";
-                    Log.Error(errorMessage);
+                    _nugetLogger.LogError(errorMessage);
                     return new InstallerResult(errorMessage);
                 }
 
@@ -185,7 +186,7 @@
                         //download failed, possible because of package goes deleted during operation or feed is valid only for searching
                         //or connection failed
                         var errorMessage = $"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress";
-                        Log.Error(errorMessage);
+                        _nugetLogger.LogError(errorMessage);
                         return new InstallerResult(errorMessage);
                     }
 
@@ -252,7 +253,7 @@
 
             if (dependencyInfo == null)
             {
-                Log.Error($"Cannot resolve {identity} package for target framework {targetFramework}");
+                _nugetLogger.LogError($"Cannot resolve {identity} package for target framework {targetFramework}");
                 return resolvedBehavior;
             }
 
@@ -363,10 +364,10 @@
 
                     if (alreadyInstalled)
                     {
-                        Log.Info($"Package {packageIdentity} already location in extraction directory");
+                        _nugetLogger.LogInformation($"Package {packageIdentity} already location in extraction directory");
                     }
 
-                    Log.Info($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
+                    _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
 
                     var extractedPaths = await PackageExtractor.ExtractPackageAsync(
                         downloadedPart.PackageSource,
@@ -376,7 +377,7 @@
                         cancellationToken
                     );
 
-                    Log.Info($"Successfully unpacked {extractedPaths.Count()} files");
+                    _nugetLogger.LogInformation($"Successfully unpacked {extractedPaths.Count()} files"); ;
 
                     if (!alreadyInstalled)
                     {
@@ -386,7 +387,8 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"An error occured during package extraction");
+                Log.Error(ex);
+                _nugetLogger.LogError($"An error occured during package extraction");
 
                 var extractionEx = new ProjectInstallException(ex.Message, ex)
                 {
@@ -476,7 +478,7 @@
 
                     if (externalDependants.Count > 0)
                     {
-                        Log.Info($"{identity} package skipped, because one or more installed packages depends on it");
+                        _nugetLogger.LogInformation($"{identity} package skipped, because one or more installed packages depends on it");
                     }
 
                     externalDependants.ForEach(d => shouldBeExcludedSet.Add(d));
