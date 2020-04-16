@@ -8,6 +8,7 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using Catel;
     using Catel.Logging;
 
     public interface IPackageOperationNotificationService
@@ -25,6 +26,7 @@ namespace Orc.NuGetExplorer
         void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
         void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        IDisposable DisableNotifications();
         #endregion
 
         #region Events
@@ -37,7 +39,8 @@ namespace Orc.NuGetExplorer
 
     public class PackageOperationNotificationService : IPackageOperationNotificationService
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger(); 
+        private bool _isNotificationsDisabled = true;
 
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
@@ -45,28 +48,54 @@ namespace Orc.NuGetExplorer
         public event EventHandler<PackageOperationEventArgs> OperationFinished;
 
         public bool MuteAutomaticEvents { get; set; }
+        public bool IsNotificationsDisabled { get => _isNotificationsDisabled; private set => _isNotificationsDisabled = value; }
 
         public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
+            if(IsNotificationsDisabled)
+            {
+                return;
+            }
+
             OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
 
         public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
         public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
         }
 
         public void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             if (MuteAutomaticEvents)
             {
                 Log.Info($"{operationType} notification was muted by notification service");
@@ -77,6 +106,11 @@ namespace Orc.NuGetExplorer
 
         public void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             if (MuteAutomaticEvents)
             {
                 Log.Info($"{operationType} notification was muted by notification service");
@@ -87,6 +121,11 @@ namespace Orc.NuGetExplorer
 
         public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             if (MuteAutomaticEvents)
             {
                 Log.Info($"{operationType} notification was muted by notification service");
@@ -97,6 +136,11 @@ namespace Orc.NuGetExplorer
 
         public void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
+            if (IsNotificationsDisabled)
+            {
+                return;
+            }
+
             if (MuteAutomaticEvents)
             {
                 Log.Info($"{operationType} notification was muted by notification service");
@@ -104,6 +148,24 @@ namespace Orc.NuGetExplorer
             }
             OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
         }
-    }
 
+        public IDisposable DisableNotifications()
+        {
+            return new DisableNotificationToken(this);
+        }
+
+        private class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
+        {
+            public DisableNotificationToken(PackageOperationNotificationService instance) : this(instance, token => token.Instance.IsNotificationsDisabled = true, 
+                token => token.Instance.IsNotificationsDisabled = true, null)
+            {
+
+            }
+
+            public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object tag = null) 
+                : base(instance, initialize, dispose, tag)
+            {
+            }
+        }
+    }
 }
