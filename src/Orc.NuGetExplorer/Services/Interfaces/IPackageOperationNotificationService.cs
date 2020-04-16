@@ -40,7 +40,7 @@ namespace Orc.NuGetExplorer
     public class PackageOperationNotificationService : IPackageOperationNotificationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger(); 
-        private bool _isNotificationsDisabled = true;
+        private bool _isNotificationsDisabled = false;
 
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
