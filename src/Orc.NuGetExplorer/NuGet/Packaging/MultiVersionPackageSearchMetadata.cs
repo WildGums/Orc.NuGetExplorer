@@ -56,7 +56,7 @@
             }
         }
 
-        public IValidationContext ValidationContext { get; private set; }
+        public IValidationContext ValidationContext { get; private set; } = new ValidationContext();
 
         IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
@@ -69,7 +69,7 @@
 
         public void ResetValidationContext()
         {
-            //empty context
+            ValidationContext = new ValidationContext();
         }
     }
 }

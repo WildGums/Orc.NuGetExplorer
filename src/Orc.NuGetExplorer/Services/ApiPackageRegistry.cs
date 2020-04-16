@@ -83,6 +83,10 @@ namespace Orc.NuGetExplorer
                     dependencyGroups = details.DependencySets;
                     break;
 
+                case MultiVersionPackageSearchMetadata packageMetadata:
+                    dependencyGroups = packageMetadata.DependencySets;
+                    break;
+
                 default: Log.Warning($"{package} package API cannot be validated, because dependencies aren't recognized"); 
                     return;
             }
