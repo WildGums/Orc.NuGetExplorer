@@ -15,12 +15,10 @@
     internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, IPackageDetails
     {
         private readonly List<string> _availableVersions = new List<string>();
+        private string _overridenVersion = null;
 
         public MultiVersionPackageSearchMetadata(IEnumerable<IPackageSearchMetadata> availableVersions)
         {
-            DownloadCount = (int?)DownloadCount;
-            SelectedVersion = Identity.Version.ToString(); //selected version by default is version from identity
-
             _availableVersions.AddRange(availableVersions.Select(x => x.Identity.Version.ToFullString()));
         }
 
@@ -49,13 +47,20 @@
 
         public IList<string> AvailableVersions => _availableVersions;
 
-        public string SelectedVersion { get; set; }
+        public string SelectedVersion
+        {
+            get { return _overridenVersion ?? Identity?.Version?.ToString(); } //selected version by default is version from identity
+            set
+            {
+                _overridenVersion = value;
+            }
+        }
 
         public IValidationContext ValidationContext { get; private set; }
 
         IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
-        int? IPackageDetails.DownloadCount { get; }
+        int? IPackageDetails.DownloadCount => (int?)DownloadCount;
 
         public PackageIdentity GetIdentity()
         {
