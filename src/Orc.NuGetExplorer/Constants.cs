@@ -66,7 +66,7 @@ namespace Orc.NuGetExplorer
         public static class Messages
         {
             public const string CacheClearEndedSuccessful = "NuGet cache cleared";
-            public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. Is means some cached files  ";
+            public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. It means some cached files may kept on cache folder";
             public const string CacheClearFailed = "Fatal error during cache clearing";
 
             public const string PackageParserInvalidIdentity = "parameter doesn't contain valid package identity";
