@@ -179,7 +179,10 @@
                     var mainPackageInfo = availabePackageStorage.FirstOrDefault(p => p.Id == package.Id);
 
                     //try to download main package and check it target version
+                    _nugetLogger.LogInformation($"Downloading {package}...");
                     var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
+
+                    _nugetLogger.LogInformation($"{package} download completed");
 
                     if (!mainDownloadedFiles.IsAvailable())
                     {
@@ -210,7 +213,9 @@
 
 
                     //accure downloadResourceResults for all package identities
+                    _nugetLogger.LogInformation($"Downloading package dependencies...");
                     var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, cacheContext, cancellationToken);
+                    _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
 
                     var extractionContext = GetExtractionContext();
 
