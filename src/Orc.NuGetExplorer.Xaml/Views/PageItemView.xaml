@@ -122,15 +122,23 @@
 
 
                     <!-- version -->
-                    <TextBlock Text="{Binding FirstVersion}"
+                    <TextBlock Text="{Binding PrimaryVersion}"
                            Grid.Column="1"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
                            LineHeight="20"
                            LineStackingStrategy="BlockLineHeight"
-                           ToolTip="{Binding FirstVersion}"/>
+                           ToolTip="{Binding PrimaryVersionDescription}"/>
 
                 </Grid>
+
+                <!-- secondary version -->
+                <TextBlock Text="{Binding SecondaryVersion}"
+                           Margin="0 4 0 0"
+                           VerticalAlignment="Stretch"
+                           Grid.Column="1" Grid.Row="1"
+                           HorizontalAlignment="Right"
+                           ToolTip="{Binding SecondaryVersionDescription}"/>
 
                 <Grid Grid.Column="1" Grid.Row="1"
                                   Margin="0 4 0 0"
@@ -145,18 +153,10 @@
                            Visibility="{Binding IsDownloadCountShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                            VerticalAlignment="Stretch">
                     
-                    <Run Text="{Binding DownloadCount}"/>
-                    <Run Text=" total downloads"/>
+                        <Run Text="{Binding DownloadCount}"/>
+                        <Run Text=" total downloads"/>
                     </TextBlock>
-
-
-                    <!-- secondary version -->
-                    <TextBlock Text="{Binding SecondaryVersion}"
-                           Visibility="{Binding IsSecondaryVersionShowed, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                           VerticalAlignment="Stretch"
-                           Grid.Column="1" Grid.Row="1"
-                           HorizontalAlignment="Right"
-                           ToolTip="{Binding SecondaryVersion}"/>
+                    
                 </Grid>
 
                 <TextBlock Text="{Binding Summary }" TextWrapping="WrapWithOverflow"
