@@ -9,19 +9,13 @@
 
     public class NoVerboseHttpNuGetLogListeningService : INuGetLogListeningSevice
     {
-        private static readonly string GetHttpRequestInfoPattern = "  GET https";
-        private static readonly string SetHttpRequestInfoPattern = "  SET https";
-        private static readonly string OkHttpRequestInfoPattern = "  OK https";
-        private static readonly string NotFoundHttpRequestInfoPattern = "  NotFound https";
-        private static readonly string CacheHttpRequestInfoPattern = "  CACHE https";
-
         #region Methods
         public void SendInfo(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
 
-            if (message.StartsWith(GetHttpRequestInfoPattern) || message.StartsWith(SetHttpRequestInfoPattern)
-               || message.StartsWith(OkHttpRequestInfoPattern) || message.StartsWith(NotFoundHttpRequestInfoPattern) || message.StartsWith(CacheHttpRequestInfoPattern))
+            if (message.StartsWith(Constants.Log.GetHttpRequestInfoPattern) || message.StartsWith(Constants.Log.SetHttpRequestInfoPattern)
+               || message.StartsWith(Constants.Log.OkHttpRequestInfoPattern) || message.StartsWith(Constants.Log.NotFoundHttpRequestInfoPattern) || message.StartsWith(Constants.Log.CacheHttpRequestInfoPattern))
             {
                 SendDebug(message);
                 return;

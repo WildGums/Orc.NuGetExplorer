@@ -72,5 +72,14 @@ namespace Orc.NuGetExplorer
             public const string PackageParserInvalidIdentity = "parameter doesn't contain valid package identity";
             public const string PackageParserInvalidVersion = "parameter doesn't contain valid package version";
         }
+
+        public static class Log
+        {
+            public const string GetHttpRequestInfoPattern = "  GET https";
+            public const string SetHttpRequestInfoPattern = "  SET https";
+            public const string OkHttpRequestInfoPattern = "  OK https";
+            public const string NotFoundHttpRequestInfoPattern = "  NotFound https";
+            public const string CacheHttpRequestInfoPattern = "  CACHE https";
+        }
     }
 }
