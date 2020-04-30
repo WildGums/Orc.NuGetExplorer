@@ -84,9 +84,14 @@
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (string.Equals(e.PropertyName, nameof(Package.InstalledVersion)))
+            if (string.Equals(e.PropertyName, nameof(Package.LastVersion)))
             {
                 GetSecondaryVersionInfo(Package.FromPage, Package);
+            }
+
+            if (string.Equals(e.PropertyName, nameof(Package.InstalledVersion)))
+            {
+                GetPrimaryVersionInfo(Package.FromPage, Package);
             }
 
             base.OnModelPropertyChanged(sender, e);
@@ -94,13 +99,6 @@
 
         private void GetSecondaryVersionInfo(MetadataOrigin fromPage, NuGetPackage package)
         {
-            if (MetadataOrigin.Browse == fromPage)
-            {
-                SecondaryVersion = package.InstalledVersion;
-                SecondaryVersionDescription = $"{InstalledVersionText}: {SecondaryVersion}";
-                return;
-            }
-
             SecondaryVersion = package.LastVersion;
 
             if (MetadataOrigin.Updates == fromPage)
@@ -114,13 +112,6 @@
 
         private void GetPrimaryVersionInfo(MetadataOrigin fromPage, NuGetPackage package)
         {
-            if (MetadataOrigin.Browse == fromPage)
-            {
-                PrimaryVersion = package.Identity.Version;
-                PrimaryVersionDescription = $"{LastVersionText}: {PrimaryVersion}";
-                return;
-            }
-
             PrimaryVersion = package.InstalledVersion;
             PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";
         }
