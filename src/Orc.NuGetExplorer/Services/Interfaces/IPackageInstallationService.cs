@@ -17,5 +17,6 @@
             CancellationToken cancellationToken = default);
         Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
             CancellationToken cancellationToken = default);
+        Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository);
     }
 }

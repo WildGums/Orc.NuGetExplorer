@@ -16,6 +16,8 @@
     using NuGet.Packaging.Core;
     using NuGet.Packaging.Signing;
     using NuGet.ProjectManagement;
+    using NuGet.ProjectModel;
+    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using NuGetExplorer.Cache;
@@ -409,7 +411,7 @@
         {
             var idArray = new[] { package.Id };
 
-            var requiredPackages = Enumerable.Empty<string>(); //new List<string>() { "ChameleonApi" };
+            var requiredPackages = Enumerable.Empty<string>();
 
             var packagesConfig = Enumerable.Empty<PackageReference>();
 
@@ -542,6 +544,25 @@
             satelliteFiles.AddRange(satelliteFilesInGroup);
 
             return satelliteFiles;
+        }
+
+        public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
+        {
+            var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
+            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
+            var packageMetadataStr = rawPackageMetadata.ToString();
+
+            if (rawPackageMetadata is null)
+            {
+                return null;
+            }
+
+            var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
+            var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
+            var catalogItemStr = rawCatalogItem.ToString();
+
+            return rawCatalogItem?.GetValue<long>("packageSize");
         }
     }
 }
