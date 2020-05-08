@@ -43,8 +43,4 @@
   
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
-
-  <ItemGroup>
-    <SourceRoot Include="C:\Source\orc.nugetexplorer\" RepositoryUrl="https://github.com/WildGums/Orc.NuGetExplorer" SourceControl="git" RevisionId="78b8390a0c5c15732eb49dc0cb3731baa71f2eb4" />
-  </ItemGroup>
 </Project>
