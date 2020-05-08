@@ -31,7 +31,7 @@
 
         // Using a DependencyProperty as the backing store for OverlayGrid.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty OverlayGridProperty =
-            DependencyProperty.Register("OverlayGrid", typeof(Grid), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null, (s, e) => OnOverlayGridChanged(s, e)));
+            DependencyProperty.Register(nameof(OverlayGrid), typeof(Grid), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null, (s, e) => OnOverlayGridChanged(s, e)));
 
         private static void OnOverlayGridChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
@@ -52,7 +52,7 @@
 
         // Using a DependencyProperty as the backing store for ActiveDialogContainer.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ActiveContentContainerProperty =
-            DependencyProperty.Register("ActiveContentContainer", typeof(Grid), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null, (s, e) => OnActiveContentContainerChanged(s, e)));
+            DependencyProperty.Register(nameof(ActiveContentContainer), typeof(Grid), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null, (s, e) => OnActiveContentContainerChanged(s, e)));
 
         private static void OnActiveContentContainerChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
@@ -72,7 +72,7 @@
         }
 
         public static readonly DependencyProperty OverlayContentProperty =
-            DependencyProperty.Register("OverlayContent", typeof(UIElement), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(OverlayContent), typeof(UIElement), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null));
 
         #endregion
 
@@ -256,9 +256,7 @@
 
             _overlayStoryboard = storyboard;
 
-            DoubleAnimation animation;
-
-            if (CanUseOverlayFadingStoryboard(storyboard, out animation))
+            if (CanUseOverlayFadingStoryboard(storyboard, out var animation))
             {
                 animation.SetCurrentValue(DoubleAnimation.ToProperty, 0d);
 

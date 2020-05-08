@@ -31,7 +31,7 @@ namespace Orc.NuGetExplorer.Views
 
         #region DependencyProperty
         public static readonly DependencyProperty DefaultFeedProperty =
-            DependencyProperty.Register("DefaultFeed", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceFeed));
+            DependencyProperty.Register(nameof(DefaultFeed), typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceFeed));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultFeed
@@ -41,7 +41,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty CanResetProperty =
-            DependencyProperty.Register("CanReset", typeof(bool), typeof(PackageSourceSettingControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(CanReset), typeof(bool), typeof(PackageSourceSettingControl), new PropertyMetadata(false));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public bool CanReset
@@ -51,7 +51,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty DefaultSourceNameProperty =
-            DependencyProperty.Register("DefaultSourceName", typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
+            DependencyProperty.Register(nameof(DefaultSourceName), typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultSourceName
@@ -61,7 +61,7 @@ namespace Orc.NuGetExplorer.Views
         }
 
         public static readonly DependencyProperty PackageSourcesProperty =
-            DependencyProperty.Register("PackageSources", typeof(IEnumerable<IPackageSource>), typeof(PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
+            DependencyProperty.Register(nameof(PackageSources), typeof(IEnumerable<IPackageSource>), typeof(PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
         public IEnumerable<IPackageSource> PackageSources

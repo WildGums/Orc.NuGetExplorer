@@ -24,7 +24,7 @@
         }
 
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(Command), typeof(LoadItemsOnDropDownBehavior), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Command), typeof(Command), typeof(LoadItemsOnDropDownBehavior), new PropertyMetadata(null));
 
         protected void ExecuteItemSourceInitializationCommand()
         {

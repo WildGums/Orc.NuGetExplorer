@@ -25,6 +25,6 @@
         }
 
         public static readonly DependencyProperty PackageProperty = DependencyProperty.Register(
-            "Package", typeof(NuGetPackage), typeof(PackageDetailsView), new PropertyMetadata(default(NuGetPackage)));
+            nameof(Package), typeof(NuGetPackage), typeof(PackageDetailsView), new PropertyMetadata(default(NuGetPackage)));
     }
 }
