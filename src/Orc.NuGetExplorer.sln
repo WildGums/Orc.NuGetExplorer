@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.NuGetExplorer", "Orc.Nu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Xaml\Orc.NuGetExplorer.Xaml.csproj", "{6A1494F8-88AA-41CE-B899-6B2CFAA8C678}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.NuGetExplorer.Example.NET", "Orc.NuGetExplorer.Example.NET\Orc.NuGetExplorer.Example.NET.csproj", "{38FD92C6-5F88-4E90-9CB9-8B3CA504ED5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.NuGetExplorer.Example", "Orc.NuGetExplorer.Example\Orc.NuGetExplorer.Example.csproj", "{38FD92C6-5F88-4E90-9CB9-8B3CA504ED5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.NuGetExplorer.Tests", "Orc.NuGetExplorer.Tests\Orc.NuGetExplorer.Tests.csproj", "{20CEFFCF-75A0-4EFE-A337-A9178DAAFAE8}"
 EndProject
