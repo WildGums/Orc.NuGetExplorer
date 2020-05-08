@@ -89,5 +89,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
 
         serviceLocator.RegisterType<INuGetProjectUpgradeService, NuGetProjectUpgradeService>();
+        serviceLocator.RegisterType<IDownloadingProgressTrackerService, DownloadingProgressTrackerService>();
     }
 }

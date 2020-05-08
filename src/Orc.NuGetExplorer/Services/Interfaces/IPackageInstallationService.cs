@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -9,6 +10,11 @@
 
     public interface IPackageInstallationService
     {
+        /// <summary>
+        /// V3 package path resolver
+        /// </summary>
+        VersionFolderPathResolver InstallerPathResolver { get; }
+
         Task<InstallerResult> InstallAsync(
             PackageIdentity package,
             IExtensibleProject project,

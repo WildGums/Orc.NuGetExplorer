@@ -7,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -23,24 +24,21 @@
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
+    using Orc.NuGetExplorer.Watchers;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ILogger _nugetLogger;
-
         private readonly IFrameworkNameProvider _frameworkNameProvider;
-
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
-
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
-
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
-
         private readonly IFileDirectoryService _fileDirectoryService;
-
         private readonly INuGetCacheManager _nuGetCacheManager;
+
+        private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
         public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider,
@@ -65,7 +63,15 @@
             _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
+
+            var serviceLocator = ServiceLocator.Default;
+            if (serviceLocator.IsTypeRegistered<IDownloadingProgressTrackerService>())
+            {
+                _downloadingProgressTrackerService = serviceLocator.ResolveType<IDownloadingProgressTrackerService>();
+            }
         }
+
+        public VersionFolderPathResolver InstallerPathResolver => new VersionFolderPathResolver(_fileDirectoryService.GetGlobalPackagesFolder());
 
         public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
             CancellationToken cancellationToken = default)
@@ -134,7 +140,6 @@
                 LogHelper.LogUnclearedPaths(failedEntries, Log);
             }
         }
-
 
         public async Task<InstallerResult> InstallAsync(
             PackageIdentity package,
@@ -239,6 +244,23 @@
             }
         }
 
+        public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
+        {
+            var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
+            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
+
+            if (rawPackageMetadata is null)
+            {
+                return null;
+            }
+
+            var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
+            var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
+
+            return rawCatalogItem?.GetValue<long>("packageSize");
+        }
+
         private async Task<DependencyBehavior> ResolveDependenciesRecursivelyAsync(PackageIdentity identity, NuGetFramework targetFramework,
             DependencyInfoResourceCollection dependencyInfoResource,
             SourceCacheContext cacheContext,
@@ -334,18 +356,23 @@
                 globalFolder = _fileDirectoryService.GetGlobalPackagesFolder();
             }
 
-            var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
+            using (var progressToken = await _downloadingProgressTrackerService?.TrackDownloadOperationAsync(this, package)) 
+            {
+                var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
-            var downloadResult = await downloadResource.GetDownloadResourceResultAsync
-                (
-                    package,
-                    new PackageDownloadContext(cacheContext),
-                    globalFolder,
-                    _nugetLogger,
-                    cancellationToken
-                );
+                var packageDownloadContext = new PackageDownloadContext(cacheContext);
 
-            return downloadResult;
+                var downloadResult = await downloadResource.GetDownloadResourceResultAsync
+                    (
+                        package,
+                        new PackageDownloadContext(cacheContext),
+                        globalFolder,
+                        _nugetLogger,
+                        cancellationToken
+                    );
+
+                return downloadResult;
+            }
         }
 
         private async Task ExtractPackagesResourcesAsync(
@@ -546,23 +573,14 @@
             return satelliteFiles;
         }
 
-        public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
+        private void ReportProgressDownload(IDisposableToken<IProgress<float>> disposableToken, float newValue)
         {
-            var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
-            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
-            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
-            var packageMetadataStr = rawPackageMetadata.ToString();
+            disposableToken.Instance?.Report(newValue);
+        }
 
-            if (rawPackageMetadata is null)
-            {
-                return null;
-            }
-
-            var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
-            var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
-            var catalogItemStr = rawCatalogItem.ToString();
-
-            return rawCatalogItem?.GetValue<long>("packageSize");
+        private void ReportProgressDownload(IDisposableToken<IProgress<float>> disposableToken, long absoluteEndValue, long absoluteCurrentValue)
+        {
+            disposableToken.Instance?.Report((float)absoluteCurrentValue / absoluteEndValue);
         }
     }
 }
