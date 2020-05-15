@@ -9,7 +9,9 @@ namespace Orc.NuGetExplorer
 {
     using System.Windows;
     using System.Windows.Media;
+    using Catel.IoC;
     using Orc.Controls;
+    using Orc.Theming;
 
     internal static class ColorExtensions
     {
@@ -24,8 +26,10 @@ namespace Orc.NuGetExplorer
             {
                 return AccentColorResourceDictionary;
             }
-            var resourceDictionary = new ResourceDictionary();
 
+            var themeManager = ThemeManager.Current;
+
+            var resourceDictionary = new ResourceDictionary();
 
             resourceDictionary.Add("AccentColor", color);
             resourceDictionary.Add("AccentColorBrush", new SolidColorBrush((Color)resourceDictionary["AccentColor"]));
@@ -33,14 +37,14 @@ namespace Orc.NuGetExplorer
             //accent colors
             for (int accent = 1; accent <= 5; accent++)
             {
-                var brush = ThemeHelper.GetThemeColorBrush((ThemeColorStyle)accent);
+                var brush = themeManager.GetThemeColorBrush((ThemeColorStyle)accent);
                 resourceDictionary.Add($"AccentColor{accent}", brush.Color);
                 resourceDictionary.Add($"AccentColorBrush{accent}", brush);
             }
 
             //non-alpha accent color
-            var nonAlphaAccentColor3 = AccentColorHelper.ConvertToNonAlphaColor(Colors.White, ThemeColorStyle.AccentColor3);
-            var nonAlphaAccentColor3Brush = ThemeHelper.GetSolidColorBrush(nonAlphaAccentColor3);
+            var nonAlphaAccentColor3 = AccentColorHelper.ConvertToNonAlphaColor(Colors.White, ThemeColorStyle.AccentColor40);
+            var nonAlphaAccentColor3Brush = nonAlphaAccentColor3.ToSolidColorBrush();
 
             resourceDictionary.Add("AccentColorRGB3", nonAlphaAccentColor3);
             resourceDictionary.Add("AccentColorBrushRGB3", nonAlphaAccentColor3Brush);
@@ -48,21 +52,21 @@ namespace Orc.NuGetExplorer
             //borders
             for (int border = 6; border <= 11; border++)
             {
-                var brush = ThemeHelper.GetThemeColorBrush((ThemeColorStyle)border);
+                var brush = themeManager.GetThemeColorBrush((ThemeColorStyle)border);
                 resourceDictionary.Add($"BorderColor{border}", brush.Color);
                 resourceDictionary.Add($"BorderColorBrush{border}", brush);
             }
 
-            var backgroundBrush = ThemeHelper.GetThemeColorBrush(ThemeColorStyle.BackgroundColor);
+            var backgroundBrush = themeManager.GetThemeColorBrush(ThemeColorStyle.BackgroundColor);
             resourceDictionary.Add($"BackgroundColor", backgroundBrush.Color);
             resourceDictionary.Add($"BackgroundColorBrush", backgroundBrush);
 
 
-            var foregroundBrush = ThemeHelper.GetThemeColorBrush(ThemeColorStyle.ForegroundColor);
+            var foregroundBrush = themeManager.GetThemeColorBrush(ThemeColorStyle.ForegroundColor);
             resourceDictionary.Add($"ForegroundColor", foregroundBrush.Color);
             resourceDictionary.Add($"ForegroundColorBrush", foregroundBrush);
 
-            var foregroundAlternativeBrush = ThemeHelper.GetThemeColorBrush(ThemeColorStyle.ForegroundAlternativeColor);
+            var foregroundAlternativeBrush = themeManager.GetThemeColorBrush(ThemeColorStyle.MouseOverForeground);
             resourceDictionary.Add($"ForegroundAlternativeColor", foregroundAlternativeBrush.Color);
             resourceDictionary.Add($"ForegroundAlternativeColorBrush", foregroundAlternativeBrush);
 

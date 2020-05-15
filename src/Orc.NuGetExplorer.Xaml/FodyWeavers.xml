@@ -4,5 +4,9 @@
   <ModuleInit />
   <Obsolete />
   <Catel />
-  <LoadAssembliesOnStartup />
+  <LoadAssembliesOnStartup>
+    <IncludeAssemblies>
+      Orc.NuGetExplorer
+    </IncludeAssemblies>
+  </LoadAssembliesOnStartup>
 </Weavers>

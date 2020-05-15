@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using System.Windows.Media;
     using Orc.Controls;
+    using Orc.Theming;
 
     internal static class AccentColorHelper
     {
@@ -39,12 +40,13 @@ namespace Orc.NuGetExplorer
             {
                 return accentColorBrush;
             }
-            return Orc.Controls.ThemeHelper.GetThemeColorBrush(themeColor);
+
+            return ThemeManager.Current.GetThemeColorBrush(themeColor);
         }
 
         public static Color ConvertToNonAlphaColor(Color backgroundColor, ThemeColorStyle themeColor = ThemeColorStyle.AccentColor)
         {
-            var accentColor = ThemeHelper.GetThemeColor(themeColor);
+            var accentColor = ThemeManager.Current.GetThemeColor(themeColor);
 
             var alphaNormalized = accentColor.A / (double)255;
 

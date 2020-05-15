@@ -3,8 +3,10 @@
                     xmlns:local="clr-namespace:Orc.NuGetExplorer.Controls"
                     xmlns:catel="http://schemas.catelproject.com"
                     xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
-                    xmlns:orc="http://schemas.wildgums.com/orc/controls">
+                    xmlns:orctheming="http://schemas.wildgums.com/orc/theming">
+    
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Orc.Theming;component/Themes/Generic.xaml" />
         <ResourceDictionary Source="/Orc.Controls;component/Themes/Generic.xaml" />
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Brushes.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>
@@ -34,7 +36,7 @@
 
     <Style x:Key="DefaultListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Style.Resources>
-            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{orc:ThemeColor ThemeColorStyle=AccentColor4}"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{orctheming:ThemeColor ThemeColorStyle=AccentColor4}"/>
         </Style.Resources>
 
         <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -231,7 +233,7 @@
                             <Border x:Name="CheckBoxBorder"
                                     Height="12"
                                     Width="12"
-                                    BorderBrush="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderColor}"
+                                    BorderBrush="{orctheming:ThemeColorBrush ThemeColorStyle=BorderColor}"
                                     BorderThickness="1"
                                     Background="White">
                                 <Path x:Name="CheckMark"
@@ -252,11 +254,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground"
-                                    Value="{orccontrols:ThemeColorBrush ThemeColorStyle=ForegroundDisabled}"/>
+                                    Value="{orctheming:ThemeColorBrush ThemeColorStyle=DisabledForeground}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BackgroundMouseOver}"/>
-                            <Setter Property="BorderBrush" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderMouseOver}"/>
+                            <Setter Property="Background" TargetName="CheckBoxBorder" Value="{orctheming:ThemeColorBrush ThemeColorStyle=MouseOverBackground}"/>
+                            <Setter Property="BorderBrush" TargetName="CheckBoxBorder" Value="{orctheming:ThemeColorBrush ThemeColorStyle=MouseOverBackground}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="False">
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
