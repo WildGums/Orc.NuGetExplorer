@@ -50,7 +50,6 @@
         }
 
 
-
         public static PackageMetadataProvider CreateFromSourceContext(IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
         {
             var context = repositoryService.AcquireContext();
@@ -73,11 +72,6 @@
             {
                 sources.AddRange(_optionalLocalRepositories);
             }
-
-            //if (_sourceRepositories != null)
-            //{
-            //    sources.AddRange(_sourceRepositories);
-            //}
 
             // Take the package from the first source it is found in
             foreach (var source in sources)
@@ -129,11 +123,6 @@
 
             var tasks = _sourceRepositories
                .Select(r => GetPackageMetadataAsyncFromSource(r, identity, includePrerelease, cancellationToken)).ToArray();
-
-            //if (_localRepository != null)
-            //{
-            //    tasks.Add(_localRepository.GetPackageMetadataFromLocalSourceAsync(identity, cancellationToken));
-            //}
 
             var completed = (await tasks.WhenAllOrException()).Where(x => x.IsSuccess)
                 .Select(x => x.UnwrapResult())

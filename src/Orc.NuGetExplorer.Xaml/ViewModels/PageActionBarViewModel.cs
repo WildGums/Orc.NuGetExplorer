@@ -11,6 +11,7 @@
     using Catel.MVVM;
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
+    using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
 
@@ -21,27 +22,27 @@
         private readonly IManagerPage _parentManagerPage;
 
         private readonly INuGetPackageManager _projectManager;
-
         private readonly IExtensibleProjectLocator _projectLocator;
-
         private readonly IProgressManager _progressManager;
-
         private readonly IPackageCommandService _packageCommandService;
+        private readonly IPackageOperationContextService _packageOperationContextService;
 
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
-            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService)
+            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
         {
             Argument.IsNotNull(() => managerPage);
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => packageCommandService);
+            Argument.IsNotNull(() => packageOperationContextService);
 
             _parentManagerPage = managerPage;
             _projectManager = projectManager;
             _projectLocator = projectLocator;
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;
+            _packageOperationContextService = packageOperationContextService;
 
             BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
             CheckAll = new TaskCommand(CheckAllExecuteAsync);
@@ -77,6 +78,8 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
+                    var updatePackageList = new List<IPackageDetails>();
+
                     foreach (var package in batchedPackages)
                     {
                         var targetProjects = new List<IExtensibleProject>();
@@ -99,8 +102,15 @@
 
 
                         var updatePackageDetails = PackageDetailsFactory.Create(PackageOperationType.Update, package.GetMetadata(), targetVersion, null);
-                        await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token);
-                        //await _projectManager.UpdatePackageForProjectAsync(targetProjects.FirstOrDefault(), package.Identity.Id, targetVersion, cts.Token);
+                        updatePackageList.Add(updatePackageDetails);
+                    }
+
+                    using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Update, updatePackageList.ToArray()))
+                    {
+                        foreach (var updatePackageDetails in updatePackageList)
+                        {
+                            await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token, operationContext);
+                        }
                     }
                 }
 

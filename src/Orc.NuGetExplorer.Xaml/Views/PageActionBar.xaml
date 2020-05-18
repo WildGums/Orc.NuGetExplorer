@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel Orientation="Horizontal">
-            <CheckBox HorizontalAlignment="Left" Margin="10 4 4 4"
+            <CheckBox HorizontalAlignment="Left" Margin="10 4 0 4"
                       Name="CheckAllBox"
                       Command="{Binding CheckAll}"
                       IsChecked="{Binding IsCheckAll}">
@@ -20,7 +20,7 @@
             </CheckBox>
             <TextBlock Text="Select all packages"
                        VerticalAlignment="Center"
-                       Margin="4 0 0 0"/>
+                       Margin="8 0 0 0"/>
         </StackPanel>
         <Button
             HorizontalAlignment="Right" Margin="4 4 0 4"

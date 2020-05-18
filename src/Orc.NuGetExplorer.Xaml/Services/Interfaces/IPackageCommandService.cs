@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,6 +23,7 @@ namespace Orc.NuGetExplorer
         Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token);
+        Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext);
         #endregion
     }
 }

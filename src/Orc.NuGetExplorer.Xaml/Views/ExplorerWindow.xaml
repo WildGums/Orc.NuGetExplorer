@@ -80,7 +80,8 @@
     </i:Interaction.Behaviors>
 
     <Grid Width="900" Margin="0 0 0 30" Name="TopGrid"
-          Height="720">
+          MaxHeight="720">
+
         <Grid.Resources>
             <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
         </Grid.Resources>
@@ -130,7 +131,7 @@
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 
 
-        <!-- nested log viewer -->
+        <!-- own log viewer commented -->
         <!--<GridSplitter Grid.Row="2" Grid.ColumnSpan="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Bottom"

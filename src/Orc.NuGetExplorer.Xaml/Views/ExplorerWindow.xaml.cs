@@ -26,6 +26,9 @@
             ShowInTaskbar = false;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
+            var screenHeight = SystemParameters.PrimaryScreenHeight;
+            TopGrid.Height = screenHeight * 2 / 3;
+
             Title = viewModel.Title;
         }
 

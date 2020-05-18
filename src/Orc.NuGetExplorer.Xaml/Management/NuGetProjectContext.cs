@@ -48,19 +48,19 @@
             switch (level)
             {
                 case MessageLevel.Debug:
-                    Log.Debug(message);
+                    Log.Debug(string.Format(message, args));
                     break;
 
                 case MessageLevel.Error:
-                    Log.Error(message);
+                    Log.Error(string.Format(message, args));
                     break;
 
                 case MessageLevel.Info:
-                    Log.Info(message);
+                    Log.Info(string.Format(message, args));
                     break;
 
                 case MessageLevel.Warning:
-                    Log.Warning(message);
+                    Log.Warning(string.Format(message, args));
                     break;
             }
         }

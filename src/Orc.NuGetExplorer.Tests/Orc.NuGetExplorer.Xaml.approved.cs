@@ -175,6 +175,7 @@ namespace Orc.NuGetExplorer
         System.Threading.Tasks.Task ExecuteInstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task ExecuteUninstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token, System.IDisposable packageOperationContext);
         string GetActionName(Orc.NuGetExplorer.PackageOperationType operationType);
         string GetPluralActionName(Orc.NuGetExplorer.PackageOperationType operationType);
         bool IsRefreshRequired(Orc.NuGetExplorer.PackageOperationType operationType);

@@ -37,19 +37,13 @@
 
         public async Task<bool> PackageExists(IRepository packageRepository, string packageId)
         {
-
-            //TODO add suport for local packages
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, true, false, CancellationToken.None);
-
-            return versionsMetadata.Any();
+            var versionsMetadata = await _packageMetadataProvider.GetLowestLocalPackageMetadataAsync(packageId, true, CancellationToken.None);
+            return versionsMetadata != null;
         }
 
         public async Task<bool> PackageExists(IRepository packageRepository, IPackageDetails packageDetails)
         {
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(new PackageIdentity(packageDetails.Id, packageDetails.NuGetVersion), true, CancellationToken.None);
-
+            var versionsMetadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageDetails.Id, packageDetails.NuGetVersion), true, CancellationToken.None);
             return versionsMetadata != null;
         }
 
