@@ -7,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -16,29 +17,28 @@
     using NuGet.Packaging.Core;
     using NuGet.Packaging.Signing;
     using NuGet.ProjectManagement;
+    using NuGet.ProjectModel;
+    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
+    using Orc.NuGetExplorer.Watchers;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ILogger _nugetLogger;
-
         private readonly IFrameworkNameProvider _frameworkNameProvider;
-
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
-
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
-
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
-
         private readonly IFileDirectoryService _fileDirectoryService;
-
         private readonly INuGetCacheManager _nuGetCacheManager;
+
+        private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
         public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider,
@@ -63,7 +63,15 @@
             _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
+
+            var serviceLocator = ServiceLocator.Default;
+            if (serviceLocator.IsTypeRegistered<IDownloadingProgressTrackerService>())
+            {
+                _downloadingProgressTrackerService = serviceLocator.ResolveType<IDownloadingProgressTrackerService>();
+            }
         }
+
+        public VersionFolderPathResolver InstallerPathResolver => new VersionFolderPathResolver(_fileDirectoryService.GetGlobalPackagesFolder());
 
         public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
             CancellationToken cancellationToken = default)
@@ -74,11 +82,11 @@
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
-            Log.Info($"Uninstall package {package}, Target framework: {targetFramework}");
+            _nugetLogger.LogInformation($"Uninstall package {package}, Target framework: {targetFramework}");
 
             if (projectConfig == null)
             {
-                Log.Warning("Current project does not implement configuration for own packages");
+                _nugetLogger.LogWarning("Current project doesn't implement any configuration for own packages");
             }
 
             //gather all dependencies
@@ -118,20 +126,20 @@
 
                     if (!result)
                     {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                        _nugetLogger.LogError($"Saving package configuration failed in project {project} when installing package {package}");
                     }
                 }
             }
             catch (IOException ex)
             {
-                Log.Error(ex, "Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
+                Log.Error(ex);
+                _nugetLogger.LogError("Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
             }
             finally
             {
                 LogHelper.LogUnclearedPaths(failedEntries, Log);
             }
         }
-
 
         public async Task<InstallerResult> InstallAsync(
             PackageIdentity package,
@@ -144,7 +152,7 @@
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-                Log.Info($"Installing package {package}, Target framework: {targetFramework}");
+                _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
                 //todo check is this context needed
                 //var resContext = new NuGet.PackageManagement.ResolutionContext();
@@ -168,7 +176,7 @@
                 if (!availabePackageStorage.Any())
                 {
                     var errorMessage = $"Package {package} cannot be resolved with current settings for chosen destination";
-                    Log.Error(errorMessage);
+                    _nugetLogger.LogError(errorMessage);
                     return new InstallerResult(errorMessage);
                 }
 
@@ -178,14 +186,17 @@
                     var mainPackageInfo = availabePackageStorage.FirstOrDefault(p => p.Id == package.Id);
 
                     //try to download main package and check it target version
+                    _nugetLogger.LogInformation($"Downloading {package}...");
                     var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
+
+                    _nugetLogger.LogInformation($"{package} download completed");
 
                     if (!mainDownloadedFiles.IsAvailable())
                     {
                         //download failed, possible because of package goes deleted during operation or feed is valid only for searching
                         //or connection failed
                         var errorMessage = $"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress";
-                        Log.Error(errorMessage);
+                        _nugetLogger.LogError(errorMessage);
                         return new InstallerResult(errorMessage);
                     }
 
@@ -209,7 +220,9 @@
 
 
                     //accure downloadResourceResults for all package identities
+                    _nugetLogger.LogInformation($"Downloading package dependencies...");
                     var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, cacheContext, cancellationToken);
+                    _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
 
                     var extractionContext = GetExtractionContext();
 
@@ -229,6 +242,23 @@
                 Log.Error(ex);
                 throw;
             }
+        }
+
+        public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
+        {
+            var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
+            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
+
+            if (rawPackageMetadata is null)
+            {
+                return null;
+            }
+
+            var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
+            var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
+
+            return rawCatalogItem?.GetValue<long>("packageSize");
         }
 
         private async Task<DependencyBehavior> ResolveDependenciesRecursivelyAsync(PackageIdentity identity, NuGetFramework targetFramework,
@@ -252,7 +282,7 @@
 
             if (dependencyInfo == null)
             {
-                Log.Error($"Cannot resolve {identity} package for target framework {targetFramework}");
+                _nugetLogger.LogError($"Cannot resolve {identity} package for target framework {targetFramework}");
                 return resolvedBehavior;
             }
 
@@ -326,18 +356,23 @@
                 globalFolder = _fileDirectoryService.GetGlobalPackagesFolder();
             }
 
-            var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
+            using (var progressToken = await _downloadingProgressTrackerService?.TrackDownloadOperationAsync(this, package)) 
+            {
+                var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
-            var downloadResult = await downloadResource.GetDownloadResourceResultAsync
-                (
-                    package,
-                    new PackageDownloadContext(cacheContext),
-                    globalFolder,
-                    _nugetLogger,
-                    cancellationToken
-                );
+                var packageDownloadContext = new PackageDownloadContext(cacheContext);
 
-            return downloadResult;
+                var downloadResult = await downloadResource.GetDownloadResourceResultAsync
+                    (
+                        package,
+                        new PackageDownloadContext(cacheContext),
+                        globalFolder,
+                        _nugetLogger,
+                        cancellationToken
+                    );
+
+                return downloadResult;
+            }
         }
 
         private async Task ExtractPackagesResourcesAsync(
@@ -363,10 +398,10 @@
 
                     if (alreadyInstalled)
                     {
-                        Log.Info($"Package {packageIdentity} already location in extraction directory");
+                        _nugetLogger.LogInformation($"Package {packageIdentity} already location in extraction directory");
                     }
 
-                    Log.Info($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
+                    _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
 
                     var extractedPaths = await PackageExtractor.ExtractPackageAsync(
                         downloadedPart.PackageSource,
@@ -376,7 +411,7 @@
                         cancellationToken
                     );
 
-                    Log.Info($"Successfully unpacked {extractedPaths.Count()} files");
+                    _nugetLogger.LogInformation($"Successfully unpacked {extractedPaths.Count()} files"); ;
 
                     if (!alreadyInstalled)
                     {
@@ -386,7 +421,8 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"An error occured during package extraction");
+                Log.Error(ex);
+                _nugetLogger.LogError($"An error occured during package extraction");
 
                 var extractionEx = new ProjectInstallException(ex.Message, ex)
                 {
@@ -402,7 +438,7 @@
         {
             var idArray = new[] { package.Id };
 
-            var requiredPackages = Enumerable.Empty<string>(); //new List<string>() { "ChameleonApi" };
+            var requiredPackages = Enumerable.Empty<string>();
 
             var packagesConfig = Enumerable.Empty<PackageReference>();
 
@@ -476,7 +512,7 @@
 
                     if (externalDependants.Count > 0)
                     {
-                        Log.Info($"{identity} package skipped, because one or more installed packages depends on it");
+                        _nugetLogger.LogInformation($"{identity} package skipped, because one or more installed packages depends on it");
                     }
 
                     externalDependants.ForEach(d => shouldBeExcludedSet.Add(d));
@@ -535,6 +571,16 @@
             satelliteFiles.AddRange(satelliteFilesInGroup);
 
             return satelliteFiles;
+        }
+
+        private void ReportProgressDownload(IDisposableToken<IProgress<float>> disposableToken, float newValue)
+        {
+            disposableToken.Instance?.Report(newValue);
+        }
+
+        private void ReportProgressDownload(IDisposableToken<IProgress<float>> disposableToken, long absoluteEndValue, long absoluteCurrentValue)
+        {
+            disposableToken.Instance?.Report((float)absoluteCurrentValue / absoluteEndValue);
         }
     }
 }

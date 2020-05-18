@@ -158,7 +158,8 @@
         {
             var anyProject = NuGetActionTarget?.IsValid ?? false;
 
-            return anyProject; //allow to install version if already installed but launch 'Upgrade scenario' // && !IsInstalled();
+            // TODO: provider a way to customize install/uninstall restrictions
+            return anyProject && !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
         }
 
         public TaskCommand UninstallPackage { get; set; }
@@ -365,6 +366,11 @@
         private bool IsInstalled()
         {
             return InstalledVersion != null;
+        }
+
+        private bool IsVersionInstalled()
+        {
+            return InstalledVersion == SelectedVersion;
         }
 
         private void GetPackageValidationErrors(NuGetPackage package)

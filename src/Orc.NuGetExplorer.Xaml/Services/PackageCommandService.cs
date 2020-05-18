@@ -110,6 +110,14 @@ namespace Orc.NuGetExplorer
             }
         }
 
+        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext)
+        {
+            using(_pleaseWaitService.WaitingScope())
+            {
+                await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
+            }
+        }
+
         public async Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package)
         {
             if (package == null)
