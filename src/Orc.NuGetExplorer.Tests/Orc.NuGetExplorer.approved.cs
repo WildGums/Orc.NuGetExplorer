@@ -26,11 +26,20 @@ namespace Orc.NuGetExplorer
         public const string PackageInstallationConflictMessage = "Conflict during package installation";
         public const string PackageManagement = "Package management";
         public const string ProductName = "NuGetPackageManager";
+        public static class Log
+        {
+            public const string CacheHttpRequestInfoPattern = "  CACHE https";
+            public const string GetHttpRequestInfoPattern = "  GET https";
+            public const string NotFoundHttpRequestInfoPattern = "  NotFound https";
+            public const string OkHttpRequestInfoPattern = "  OK https";
+            public const string SetHttpRequestInfoPattern = "  SET https";
+        }
         public static class Messages
         {
             public const string CacheClearEndedSuccessful = "NuGet cache cleared";
             public const string CacheClearFailed = "Fatal error during cache clearing";
-            public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. Is means some cached files  ";
+            public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. It means some cached files may kept on cach" +
+                "e folder";
             public const string PackageParserInvalidIdentity = "parameter doesn\'t contain valid package identity";
             public const string PackageParserInvalidVersion = "parameter doesn\'t contain valid package version";
         }
@@ -246,10 +255,16 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackageOperationNotificationService
     {
+        bool MuteAutomaticEvents { get; set; }
         event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationFinished;
         event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationStarting;
         event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchFinished;
         event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchStarting;
+        System.IDisposable DisableNotifications();
+        void NotifyAutomaticOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
+        void NotifyAutomaticOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
+        void NotifyAutomaticOperationFinished(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails);
+        void NotifyAutomaticOperationStarting(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails);
         void NotifyOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
         void NotifyOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
         void NotifyOperationFinished(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails);
@@ -347,6 +362,18 @@ namespace Orc.NuGetExplorer
         public override System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) { }
         public static System.Threading.Tasks.Task<Orc.NuGetExplorer.MultiplySourceSearchResource> CreateAsync(NuGet.Protocol.Core.Types.SourceRepository[] sourceRepositories) { }
     }
+    public class NoVerboseHttpNuGetLogListeningService : Orc.NuGetExplorer.INuGetLogListeningSevice
+    {
+        public NoVerboseHttpNuGetLogListeningService() { }
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Debug;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Error;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Info;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Warning;
+        public void SendDebug(string message) { }
+        public void SendError(string message) { }
+        public void SendInfo(string message) { }
+        public void SendWarning(string message) { }
+    }
     public class NuGetLogRecordEventArgs : System.EventArgs
     {
         public NuGetLogRecordEventArgs(string message) { }
@@ -403,22 +430,31 @@ namespace Orc.NuGetExplorer
     }
     public class PackageOperationBatchEventArgs : System.ComponentModel.CancelEventArgs
     {
+        public bool IsAutomatic { get; set; }
         public Orc.NuGetExplorer.PackageOperationType OperationType { get; }
         public Orc.NuGetExplorer.IPackageDetails[] Packages { get; }
     }
     public class PackageOperationEventArgs : System.ComponentModel.CancelEventArgs
     {
         public string InstallPath { get; }
+        public bool IsAutomatic { get; set; }
         public Orc.NuGetExplorer.IPackageDetails PackageDetails { get; }
         public Orc.NuGetExplorer.PackageOperationType PackageOperationType { get; }
     }
     public class PackageOperationNotificationService : Orc.NuGetExplorer.IPackageOperationNotificationService
     {
         public PackageOperationNotificationService() { }
+        public bool IsNotificationsDisabled { get; }
+        public bool MuteAutomaticEvents { get; set; }
         public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationFinished;
         public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationStarting;
         public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchFinished;
         public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchStarting;
+        public System.IDisposable DisableNotifications() { }
+        public void NotifyAutomaticOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
+        public void NotifyAutomaticOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
+        public void NotifyAutomaticOperationFinished(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails) { }
+        public void NotifyAutomaticOperationStarting(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails) { }
         public void NotifyOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
         public void NotifyOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
         public void NotifyOperationFinished(string installPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails) { }
@@ -1125,10 +1161,19 @@ namespace Orc.NuGetExplorer.Scopes
 }
 namespace Orc.NuGetExplorer.Services
 {
+    public class DownloadingProgressTrackerService : Orc.NuGetExplorer.Services.IDownloadingProgressTrackerService
+    {
+        public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger) { }
+        public System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo) { }
+    }
     public interface IDefferedPackageLoaderService
     {
         void Add(Orc.NuGetExplorer.Pagination.DeferToken token);
         System.Threading.Tasks.Task StartLoadingAsync();
+    }
+    public interface IDownloadingProgressTrackerService
+    {
+        System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo);
     }
     public interface IFileDirectoryService
     {
@@ -1151,7 +1196,9 @@ namespace Orc.NuGetExplorer.Services
     }
     public interface IPackageInstallationService
     {
+        NuGet.Packaging.VersionFolderPathResolver InstallerPathResolver { get; }
         System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<long?> MeasurePackageSizeFromRepositoryAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository);
         System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Threading.CancellationToken cancellationToken = default);
     }
     public class NuGetConfigurationService : Orc.NuGetExplorer.INuGetConfigurationService
