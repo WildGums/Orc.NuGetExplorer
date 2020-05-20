@@ -17,7 +17,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Catel.Analyzers" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Catel.Fody" Version="4.4.2" PrivateAssets="all" />
     <PackageReference Include="Catel.MVVM" Version="5.12.5" />
     <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="all">
@@ -29,7 +28,6 @@
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="5.2.1" PrivateAssets="all" />
     <PackageReference Include="Orc.Controls" Version="4.0.0-alpha0135" />
-    <PackageReference Include="WpfAnalyzers" Version="2.4.5" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
