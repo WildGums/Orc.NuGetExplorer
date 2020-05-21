@@ -9,7 +9,7 @@
              xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:global="clr-namespace:Orc.NuGetExplorer"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:b="clr-namespace:Orc.NuGetExplorer.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
@@ -49,10 +49,10 @@
                  VerticalContentAlignment="Stretch"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding Feeds}">
-                <i:Interaction.Behaviors>
+                <xamlbehaviors:Interaction.Behaviors>
                     <catel:Focus/>
                     <b:SelectFirstItemOnContextBehavior/>
-                </i:Interaction.Behaviors>
+                </xamlbehaviors:Interaction.Behaviors>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="4">

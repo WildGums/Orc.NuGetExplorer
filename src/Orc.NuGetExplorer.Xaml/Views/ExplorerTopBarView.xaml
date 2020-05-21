@@ -8,7 +8,7 @@
                    xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
                    xmlns:orctheming="http://schemas.wildgums.com/orc/theming"
                    xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
                    mc:Ignorable="d"
                    x:ClassModifier="internal"
                    d:DesignHeight="450" d:DesignWidth="1300">
@@ -82,9 +82,9 @@
                 </StackPanel>
             </orccontrols:WatermarkTextBox.Watermark>
             
-            <i:Interaction.Behaviors>
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
-            </i:Interaction.Behaviors>
+            </xamlbehaviors:Interaction.Behaviors>
         </orccontrols:WatermarkTextBox>
         
         <Button Grid.Row="1" Grid.Column="1"
@@ -108,9 +108,9 @@
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </Button.ContentTemplate>
-            <i:Interaction.Behaviors>
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:FocusOnKeyPress Key="Return"/>
-            </i:Interaction.Behaviors>
+            </xamlbehaviors:Interaction.Behaviors>
         </Button>
 
         <CheckBox Grid.Row="1" Grid.Column="2"

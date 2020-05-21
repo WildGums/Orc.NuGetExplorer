@@ -3,11 +3,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows;
-    using System.Windows.Interactivity;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Windows;
     using Catel.Windows.Interactivity;
+    using Microsoft.Xaml.Behaviors;
     using NuGetExplorer.Behaviors;
 
     internal class ProgressManager : IProgressManager

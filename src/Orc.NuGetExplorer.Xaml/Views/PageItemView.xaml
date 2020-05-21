@@ -9,7 +9,7 @@
              xmlns:template="clr-namespace:Orc.NuGetExplorer.Controls.Templating"
              xmlns:catel="http://schemas.catelproject.com"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              x:ClassModifier="internal"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -24,11 +24,11 @@
 
     </catel:UserControl.Resources>
     <Grid>
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="MouseDown">
+        <xamlbehaviors:Interaction.Triggers>
+            <xamlbehaviors:EventTrigger EventName="MouseDown">
                 <catel:EventToCommand Command="{Binding CheckItem}" PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
+            </xamlbehaviors:EventTrigger>
+        </xamlbehaviors:Interaction.Triggers>
 
         <Border Background="Transparent">
             <Grid Margin="0 8 0 0" Height="96">

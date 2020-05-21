@@ -5,7 +5,7 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
-                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
                   xmlns:orctheming="http://schemas.wildgums.com/orc/theming"
                   xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
                   xmlns:mvvm="clr-namespace:Orc.NuGetExplorer.MVVM"
@@ -16,7 +16,7 @@
                   xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
                   d:DesignWidth="1000">
     
-    <i:Interaction.Behaviors>
+    <xamlbehaviors:Interaction.Behaviors>
         <behaviors:AnimatedOverlayBehavior IsEnabled="False">
             <behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
                 
@@ -77,7 +77,7 @@
                 </Viewbox>
             </behaviors:AnimatedOverlayBehavior.OverlayContent>
         </behaviors:AnimatedOverlayBehavior>
-    </i:Interaction.Behaviors>
+    </xamlbehaviors:Interaction.Behaviors>
 
     <Grid Width="900" Margin="0 0 0 30" Name="TopGrid"
           MaxHeight="720">
