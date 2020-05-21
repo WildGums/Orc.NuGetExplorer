@@ -3,6 +3,7 @@
   <ModuleInit />
   <LoadAssembliesOnStartup>
     <IncludeAssemblies>
+      Catel.*
       Orc.*
     </IncludeAssemblies>
   </LoadAssembliesOnStartup>

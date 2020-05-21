@@ -6,6 +6,7 @@
   <Catel />
   <LoadAssembliesOnStartup>
     <IncludeAssemblies>
+      Catel.*
       Orc.*
     </IncludeAssemblies>
   </LoadAssembliesOnStartup>
