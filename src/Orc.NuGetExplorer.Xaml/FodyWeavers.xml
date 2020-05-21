@@ -6,7 +6,7 @@
   <Catel />
   <LoadAssembliesOnStartup>
     <IncludeAssemblies>
-      Orc.NuGetExplorer
+      Orc.*
     </IncludeAssemblies>
   </LoadAssembliesOnStartup>
 </Weavers>

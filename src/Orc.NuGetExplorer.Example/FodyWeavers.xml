@@ -2,9 +2,9 @@
 <Weavers VerifyAssembly="true" VerifyIgnoreCodes="0x80131869,0x8013124F,0x8013124C,0x801312BF" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
   <ModuleInit />
   <LoadAssembliesOnStartup>
-    <ExcludeAssemblies>
-      Microsoft.Web.XmlTransform
-    </ExcludeAssemblies>
+    <IncludeAssemblies>
+      Orc.*
+    </IncludeAssemblies>
   </LoadAssembliesOnStartup>
   <Catel />
 </Weavers>
