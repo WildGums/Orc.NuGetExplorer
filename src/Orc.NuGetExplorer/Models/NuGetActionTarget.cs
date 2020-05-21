@@ -20,14 +20,14 @@
         {
             _extensibleProjects.Add(project);
 
-            RaisePropertyChanged(() => TargetProjects);
+            RaisePropertyChanged(nameof(TargetProjects));
         }
 
         public void Remove(IExtensibleProject project)
         {
             _extensibleProjects.Remove(project);
 
-            RaisePropertyChanged(() => TargetProjects);
+            RaisePropertyChanged(nameof(TargetProjects));
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
