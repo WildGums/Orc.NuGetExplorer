@@ -65,8 +65,7 @@
         <!-- tool bar -->
 
         <orccontrols:WatermarkTextBox Grid.Row="1"
-                                      Text="{Binding SearchString}"
-                                      Margin="10 0 0 0">
+                                      Text="{Binding SearchString}">
             <orccontrols:WatermarkTextBox.Watermark>
                 <StackPanel Orientation="Horizontal">
                     <Viewbox Width="12" Height="12">

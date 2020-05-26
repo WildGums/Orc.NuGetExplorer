@@ -20,8 +20,6 @@
 
             var serviceLocator = ServiceLocator.Default;
 
-            AccentColorHelper.CreateAccentColorResourceDictionary();
-
             //instantiate watchers
             serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
             serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();

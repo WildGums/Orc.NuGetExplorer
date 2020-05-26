@@ -137,6 +137,11 @@ namespace Orc.NuGetExplorer.Converters
         public PackageStatusEnumToBrushConverter() { }
         protected override object Convert(Orc.NuGetExplorer.Enums.PackageStatus value, System.Type targetType, object parameter) { }
     }
+    public class RemoveTransparencyColorBrushConverter : Catel.MVVM.Converters.ValueConverterBase<System.Windows.Media.Color, System.Windows.Media.SolidColorBrush>
+    {
+        public RemoveTransparencyColorBrushConverter() { }
+        protected override object Convert(System.Windows.Media.Color value, System.Type targetType, object parameter) { }
+    }
     public class UriToBitmapConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, System.Windows.Media.Imaging.BitmapImage>
     {
         public UriToBitmapConverter() { }

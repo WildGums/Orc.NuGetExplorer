@@ -106,7 +106,6 @@
         <orccontrols:TabControl Name="ExplorerPagesTabControl"
                                 Grid.Column="0" Grid.Row="1"
                                 MinHeight="230"
-                                Margin="10 10 0 0"
                                 ItemsSource="{Binding Pages}"
                                 LoadTabItems="LazyLoading">
             <TabControl.ItemContainerStyle>
