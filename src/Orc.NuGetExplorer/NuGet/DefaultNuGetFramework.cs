@@ -40,7 +40,7 @@
 
             var frameworkStringList = new List<string>();
 
-            if (revision < 42000)
+            if (revision < 42000 && revision > 0)
             {
                 GetOlderFrameworkVersionsFromRegistry(frameworkStringList);
             }
@@ -48,6 +48,8 @@
             {
                 GetNewerFrameworkVersionsFromRegistry(frameworkStringList);
             }
+
+            GetNewerFrameworkVersionsFromRegistry(frameworkStringList);
 
             foreach (var frameworkName in frameworkStringList)
             {

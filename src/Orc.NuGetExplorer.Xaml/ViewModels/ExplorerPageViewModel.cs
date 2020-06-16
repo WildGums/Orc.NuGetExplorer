@@ -110,7 +110,7 @@
                 Log.Error("Unrecognized page type");
             }
 
-            CanBatchProjectActions = _pageType == MetadataOrigin.Updates;
+            CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
             Page = page;
         }
@@ -192,6 +192,10 @@
         ///     on this page in one operation
         /// </summary>
         public bool CanBatchProjectActions { get; set; }
+
+        public bool CanBatchUpdateOperations => _pageType == MetadataOrigin.Updates;
+
+        public bool CanBatchInstallOperations => _pageType == MetadataOrigin.Browse;
 
         public CancellationTokenSource PageLoadingTokenSource { get; set; }
 

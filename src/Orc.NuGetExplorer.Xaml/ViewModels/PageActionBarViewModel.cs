@@ -45,10 +45,18 @@
             _packageOperationContextService = packageOperationContextService;
 
             BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
+            BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
             CheckAll = new TaskCommand(CheckAllExecuteAsync);
+
+            CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
+            CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
         }
 
         public bool IsCheckAll { get; set; }
+
+        public bool CanBatchUpdate { get; set; }
+
+        public bool CanBatchInstall { get; set; }
 
         protected override Task InitializeAsync()
         {
@@ -62,6 +70,8 @@
             _parentManagerPage.PackageItems.CollectionChanged -= OnParentPagePackageItemsCollectionChanged;
             return base.OnClosingAsync();
         }
+
+        #region Commands
 
         public TaskCommand BatchUpdate { get; set; }
 
@@ -138,6 +148,64 @@
             return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
         }
 
+        public TaskCommand BatchInstall { get; set; }
+
+        private async Task BatchInstallExecuteAsync()
+        {
+            try
+            {
+                _progressManager.ShowBar(this);
+
+                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+                var targetProjects = _projectLocator.GetAllExtensibleProjects()
+                            .Where(x => _projectLocator.IsEnabled(x)).ToList();
+
+                using (var cts = new CancellationTokenSource())
+                {
+                    var installPackageList = new List<IPackageDetails>();
+
+                    foreach (var package in batchedPackages)
+                    {
+                        var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
+
+                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
+                        installPackageList.Add(installPackageDetails);
+                    }
+
+                    using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Install, installPackageList.ToArray()))
+                    {
+                        foreach (var packageDetails in installPackageList)
+                        {
+                            await _packageCommandService.ExecuteInstallAsync(packageDetails, cts.Token, operationContext);
+                        }
+                    }
+                }
+
+                await Task.Delay(200);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Error when updating package");
+            }
+            finally
+            {
+                _progressManager.HideBar(this);
+
+                _parentManagerPage.StartLoadingTimerOrInvalidateData();
+            }
+        }
+
+        private bool BatchInstallCanExecute()
+        {
+            if (_parentManagerPage is null)
+            {
+                return false;
+            }
+
+            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+        }
+
         public TaskCommand CheckAll { get; set; }
 
         private async Task CheckAllExecuteAsync()
@@ -145,6 +213,8 @@
             var packages = _parentManagerPage.PackageItems;
             packages.ForEach(package => package.IsChecked = IsCheckAll);
         }
+
+        #endregion
 
         private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

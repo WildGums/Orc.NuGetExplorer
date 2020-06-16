@@ -24,6 +24,7 @@ namespace Orc.NuGetExplorer
         Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext);
+        Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext);
         #endregion
     }
 }
