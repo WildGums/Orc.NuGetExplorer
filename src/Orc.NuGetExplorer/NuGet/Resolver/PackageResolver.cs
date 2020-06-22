@@ -139,9 +139,11 @@ namespace Orc.NuGetExplorer.Resolver
                 grouped.Add(curSet);
             }
 
-            // find all needed dependencies
+            // find all needed dependencies, excluding manually ignored dependencies
             var dependencyIds = resolverPackages.Where(e => e.Dependencies != null)
-                .SelectMany(e => e.Dependencies.Select(d => d.Id).Distinct(StringComparer.OrdinalIgnoreCase));
+                .SelectMany(e => e.Dependencies.Select(d => d.Id)).Distinct(StringComparer.OrdinalIgnoreCase);
+
+            //var ignoredDependencyIds = dependencyIds.
 
             foreach (string depId in dependencyIds)
             {
@@ -203,7 +205,7 @@ namespace Orc.NuGetExplorer.Resolver
                     stopWatch.Stop();
                     context.Log.LogMinimal(
                         string.Format("Resolving dependency information took {0}", DatetimeUtility.ToReadableTimeFormat(stopWatch.Elapsed)));
-                    return sortedSolution.ToArray();
+                    return sortedSolution.Where(x => !context.IgnoredIds.Contains(x.Id)).ToArray();
                 }
             }
 

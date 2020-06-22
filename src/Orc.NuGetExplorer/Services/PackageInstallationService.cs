@@ -282,18 +282,18 @@
 
             while (downloadStack.Count > 0)
             {
-                var rootDependency = downloadStack.Pop();
+                var topPackage = downloadStack.Pop();
 
-                if (!packageStore.Contains(rootDependency))
+                if (!packageStore.Contains(topPackage))
                 {
-                    packageStore.Add(rootDependency);
+                    packageStore.Add(topPackage);
                 }
                 else
                 {
                     continue;
                 }
 
-                foreach (var dependency in rootDependency.Dependencies)
+                foreach (var dependency in topPackage.Dependencies)
                 {
                     // currently we use specific version during child dependency resolving 
                     // but possibly it should be configured in project
@@ -312,6 +312,12 @@
                         if (_apiPackageRegistry.IsRegistered(dependencyIdentity.Id))
                         {
                             resolvingBehavior = DependencyBehavior.Lowest;
+                            
+                            if (!packageStore.Contains(dependencyIdentity))
+                            {
+                                packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id, dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
+                            }
+
                             ignoredPackages.Add(dependencyIdentity);
                             await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
                         }
