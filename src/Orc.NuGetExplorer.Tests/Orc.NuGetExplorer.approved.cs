@@ -8,6 +8,7 @@ public static class ModuleInitializer
 }
 namespace Orc.NuGetExplorer
 {
+    [System.Serializable]
     public class ApiValidationException : System.Exception
     {
         public ApiValidationException() { }
@@ -936,6 +937,7 @@ namespace Orc.NuGetExplorer.Models
 }
 namespace Orc.NuGetExplorer.Native
 {
+    [System.Serializable]
     public class CredentialException : System.ComponentModel.Win32Exception
     {
         public CredentialException() { }
@@ -1129,6 +1131,24 @@ namespace Orc.NuGetExplorer.Providers
         public WindowsCredentialProvider(Catel.Configuration.IConfigurationService configurationService) { }
         public string Id { get; }
         public System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { }
+    }
+}
+namespace Orc.NuGetExplorer.Resolver
+{
+    public class PackageResolver
+    {
+        public PackageResolver() { }
+        public System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> Resolve(Orc.NuGetExplorer.Resolver.PackageResolverContext context, System.Threading.CancellationToken token) { }
+    }
+    public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
+    {
+        public static Orc.NuGetExplorer.Resolver.PackageResolverContext Empty;
+        public PackageResolverContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IEnumerable<string> targetIds, System.Collections.Generic.IEnumerable<string> requiredPackageIds, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> preferredVersions, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> packageSources, System.Collections.Generic.IEnumerable<string> ignoredIds, NuGet.Common.ILogger log) { }
+        public System.Collections.Generic.IEnumerable<string> IgnoredIds { get; set; }
+    }
+    public static class PackageResolverExtensions
+    {
+        public static System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> Resolve(this Orc.NuGetExplorer.Resolver.PackageResolver resolver, Orc.NuGetExplorer.Resolver.PackageResolverContext context, System.Threading.CancellationToken token) { }
     }
 }
 namespace Orc.NuGetExplorer.Scenario

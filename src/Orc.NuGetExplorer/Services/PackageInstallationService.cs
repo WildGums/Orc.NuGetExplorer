@@ -88,6 +88,7 @@
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
+            var uninstallationContext = new UninstallationContext(false, false);
 
             _nugetLogger.LogInformation($"Uninstall package {package}, Target framework: {targetFramework}");
 
@@ -107,7 +108,14 @@
 
                 var packageReferences = installedPackageReferences.ToList();
 
-                uninstalledPackages = await GetPackagesCanBeUninstalled(resolverContext.AvailablePackages, packageReferences.Select(x => x.PackageIdentity), null);
+                if (uninstallationContext.RemoveDependencies)
+                {
+                    uninstalledPackages = await GetPackagesCanBeUninstalled(resolverContext.AvailablePackages, packageReferences.Select(x => x.PackageIdentity));
+                }
+                else
+                {
+                    uninstalledPackages = new List<PackageIdentity>() { package };
+                }
             }
 
             try
@@ -260,7 +268,7 @@
             return rawCatalogItem?.GetValue<long>("packageSize");
         }
 
-        private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer, 
+        private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
             DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
         {
             HashSet<SourcePackageDependencyInfo> packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
@@ -312,7 +320,7 @@
                         if (_apiPackageRegistry.IsRegistered(dependencyIdentity.Id))
                         {
                             resolvingBehavior = DependencyBehavior.Lowest;
-                            
+
                             if (!packageStore.Contains(dependencyIdentity))
                             {
                                 packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id, dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
@@ -493,8 +501,7 @@
 
         private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
             IEnumerable<SourcePackageDependencyInfo> markedForUninstall,
-            IEnumerable<PackageIdentity> installedPackages,
-            UninstallationContext uninstallationContext)
+            IEnumerable<PackageIdentity> installedPackages)
         {
             IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDictionary;
             var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out dependenciesDictionary);
