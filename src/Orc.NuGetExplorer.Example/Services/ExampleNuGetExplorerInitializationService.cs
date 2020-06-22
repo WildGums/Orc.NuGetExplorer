@@ -45,6 +45,10 @@
 
             // add project extensions
             projectLocator.Register<ExampleFolderPackageManagement>(fileDirectoryService.GetApplicationRoamingFolder());
+
+            // IApiPackageRegistry testing
+            var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
+            apiRegistry.Register("CogScreen.Api", "2.0.0-alpha0397");
         }
     }
 }
