@@ -409,42 +409,52 @@
 
                     var nupkgPath = pathResolver.GetInstalledPackageFilePath(packageIdentity);
 
-                    bool alreadyInstalled = Directory.Exists(nupkgPath);
+                    bool alreadyInstalled = File.Exists(nupkgPath);
 
-                    if (alreadyInstalled)
+                    try
                     {
-                        _nugetLogger.LogInformation($"Package {packageIdentity} already location in extraction directory");
+                        _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
+                        var extractedPaths = await PackageExtractor.ExtractPackageAsync(
+                                downloadedPart.PackageSource,
+                                downloadedPart.PackageStream,
+                                pathResolver,
+                                extractionContext,
+                                cancellationToken
+                        );
+
+                        _nugetLogger.LogInformation($"Successfully unpacked {extractedPaths.Count()} files");
+
+                        if (!alreadyInstalled)
+                        {
+                            extractedPackages.Add(packageIdentity);
+                        }
                     }
-
-                    _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
-
-                    var extractedPaths = await PackageExtractor.ExtractPackageAsync(
-                        downloadedPart.PackageSource,
-                        downloadedPart.PackageStream,
-                        pathResolver,
-                        extractionContext,
-                        cancellationToken
-                    );
-
-                    _nugetLogger.LogInformation($"Successfully unpacked {extractedPaths.Count()} files"); ;
-
-                    if (!alreadyInstalled)
+                    catch (IOException ex)
                     {
-                        extractedPackages.Add(packageIdentity);
-                    }
+                        if (alreadyInstalled)
+                        {
+                            // supress error
+                            _nugetLogger.LogInformation($"Package {packageIdentity} already located in extraction directory");
+
+                            // TODO: verify installation?
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("An error occured during package extraction", ex);
+                        }
+                    }                    
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
-                _nugetLogger.LogError($"An error occured during package extraction");
 
-                var extractionEx = new ProjectInstallException(ex.Message, ex)
+                var extractionException = new ProjectInstallException(ex.Message, ex)
                 {
                     CurrentBatch = extractedPackages
                 };
 
-                throw extractionEx;
+                throw extractionException;
             }
         }
 
