@@ -20,6 +20,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
+    using Orc.NuGetExplorer.Extensions;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PackageDetailsViewModel : ViewModelBase
@@ -88,6 +89,9 @@
 
         [ViewModelToModel]
         public PackageStatus Status { get; set; }
+
+        [ViewModelToModel]
+        public IValidationContext ValidationContext { get; set; }
 
         public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
 
@@ -158,7 +162,7 @@
         {
             var anyProject = NuGetActionTarget?.IsValid ?? false;
 
-            // TODO: provider a way to customize install/uninstall restrictions
+            // TODO: provide a way to customize install/uninstall restrictions
             return anyProject && !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
         }
 
@@ -270,7 +274,10 @@
 
                 if (Package != null)
                 {
-                    ValidateCurrentPackage(Package);
+                    // TODO: remove this workaround, this is a hack version to set specific version of package
+                    var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
+                    tempPackage.AddDependencyInfo(VersionData.Identity.Version, VersionData.DependencySets);
+                    ValidateCurrentPackage(tempPackage);
                 }
             }
         }
@@ -333,6 +340,12 @@
             _apiPackageRegistry.Validate(package);
 
             GetPackageValidationErrors(package);
+
+            // Note: this is a workaround to pass validation context from specific version package to main model
+            if (!ReferenceEquals(Package, package))
+            {
+                ValidationContext = package.ValidationContext;
+            }
         }
 
         private IPackageMetadataProvider InitMetadataProvider()
@@ -377,27 +390,8 @@
         {
             Argument.IsNotNull(() => package);
 
-            ApiValidationMessages = GetAlertRecords(_languageService.GetString("NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors"),
-                package.ValidationContext.GetErrors(ValidationTags.Api).Select(s => " - " + s.Message).ToArray());
-        }
-
-        private string[] GetAlertRecords(string title, params string[] stringLines)
-        {
-            Argument.IsNotNullOrWhitespace(() => title);
-
-            if (stringLines == null)
-            {
-                return null;
-            }
-
-            var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-            if (!valuableLines.Any())
-            {
-                return null;
-            }
-
-            return valuableLines;
+            // title: NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors
+            ApiValidationMessages = package.ValidationContext.GetAlertMessages(ValidationTags.Api);
         }
     }
 }
