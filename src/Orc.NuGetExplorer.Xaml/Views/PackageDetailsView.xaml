@@ -194,8 +194,8 @@
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
-                               Text="{Binding VersionData.ProjectUrl}"
-                               ToolTip="{Binding VersionData.ProjectUrl}"/>
+                               Text="{Binding VersionData.ProjectUrl, Converter={converters:ExtendedUriToStringConverter}}"
+                               ToolTip="{Binding VersionData.ProjectUrl, Converter={converters:ExtendedUriToStringConverter}}"/>
 
                     <!-- todo collapse this with Property in UserControl-->
                     <Label Grid.Row="6"
@@ -206,8 +206,8 @@
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
-                               Text="{Binding VersionData.ReportAbuseUrl}"
-                               ToolTip="{Binding VersionData.ReportAbuseUrl}"/>
+                               Text="{Binding VersionData.ReportAbuseUrl, Converter={converters:ExtendedUriToStringConverter}}"
+                               ToolTip="{Binding VersionData.ReportAbuseUrl, Converter={converters:ExtendedUriToStringConverter}}"/>
 
 
                     <Label Grid.Row="7">Tags:</Label>
@@ -216,7 +216,6 @@
                                MaxWidth="210"
                                Text="{Binding VersionData.Tags}"
                                ToolTip="{Binding VersionData.Tags}"/>
-
 
                 </Grid>
 
