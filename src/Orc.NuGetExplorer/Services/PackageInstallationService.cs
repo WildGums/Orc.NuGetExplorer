@@ -28,6 +28,8 @@
     using Orc.NuGetExplorer.Watchers;
     using System.IO.Packaging;
     using System.Runtime.CompilerServices;
+    using System.Windows;
+    using NuGet.Versioning;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
@@ -40,18 +42,14 @@
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly IFileDirectoryService _fileDirectoryService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
+        private readonly IFileSystemService _fileSystemService;
         private readonly INuGetCacheManager _nuGetCacheManager;
 
         private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
-        public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider,
-            ISourceRepositoryProvider sourceRepositoryProvider,
-            INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            INuGetProjectContextProvider nuGetProjectContextProvider,
-            IFileDirectoryService fileDirectoryService,
-            IApiPackageRegistry apiPackageRegistry,
-            ILogger logger)
+        public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider, ISourceRepositoryProvider sourceRepositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
+            INuGetProjectContextProvider nuGetProjectContextProvider, IFileDirectoryService fileDirectoryService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, ILogger logger)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => sourceRepositoryProvider);
@@ -59,6 +57,7 @@
             Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => fileDirectoryService);
             Argument.IsNotNull(() => apiPackageRegistry);
+            Argument.IsNotNull(() => fileSystemService);
             Argument.IsNotNull(() => logger);
 
             _frameworkNameProvider = frameworkNameProvider;
@@ -67,6 +66,7 @@
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _fileDirectoryService = fileDirectoryService;
             _apiPackageRegistry = apiPackageRegistry;
+            _fileSystemService = fileSystemService;
             _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
@@ -94,7 +94,7 @@
 
             if (projectConfig == null)
             {
-                _nugetLogger.LogWarning("Current project doesn't implement any configuration for own packages");
+                _nugetLogger.LogWarning($"Project {project.Name} doesn't implement any configuration for own packages");
             }
 
             using (var cacheContext = new SourceCacheContext())  // _nuGetCacheManager.GetCacheContext())
@@ -104,7 +104,7 @@
 
                 var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
-                var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, cacheContext, true, cancellationToken);
+                var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, cacheContext, project, true, cancellationToken);
 
                 var packageReferences = installedPackageReferences.ToList();
 
@@ -162,7 +162,7 @@
         {
             try
             {
-                // Step 1. Decide what framework version to use on package resolving
+                // Step 1. Decide what framework version used on package resolving
 
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
@@ -183,7 +183,7 @@
 
                     var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
-                    resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, ignoreMissingPackages, cancellationToken);
+                    resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, project, ignoreMissingPackages, cancellationToken);
                 }
 
                 if (!resolverContext?.AvailablePackages?.Any() ?? false)
@@ -219,14 +219,17 @@
                         throw new IncompatiblePackageException($"Package {package} incompatible with project target platform {targetFramework}");
                     }
 
-                    // Step 5. Build install list using NuGet Resolver and select available resources
+                    // Step 5. Build install list using NuGet Resolver and select available resources. 
+                    // Track packages which already installed and make sure only one version of package exists
                     var resolver = new Resolver.PackageResolver();
                     var packagesInstallationList = resolver.Resolve(resolverContext, cancellationToken);
 
                     var availablePackagesToInstall = packagesInstallationList
                         .Select(
                             x => resolverContext.AvailablePackages
-                                .Single(p => PackageIdentityComparer.Default.Equals(p, x)));
+                                .Single(p => PackageIdentityComparer.Default.Equals(p, x))).ToList();
+
+                    await OverrideExistingPackagesAsync(project, availablePackagesToInstall, resolverContext, DependencyBehavior.Highest);
 
                     // Step 6. Download and extract all
                     _nugetLogger.LogInformation($"Downloading package dependencies...");
@@ -269,7 +272,7 @@
         }
 
         private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
-            DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
+            DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
         {
             HashSet<SourcePackageDependencyInfo> packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
             HashSet<PackageIdentity> ignoredPackages = new HashSet<PackageIdentity>();
@@ -342,8 +345,13 @@
                 }
             }
 
-            // Construct context for package resovler
-            return GetResolverContext(identity, resolvingBehavior, packageStore, ignoredPackages);
+
+            // Pass packages.config to resolver
+            var nugetPackagesConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
+            var packagesConfigReferences = await nugetPackagesConfigProject.GetInstalledPackagesAsync(cancellationToken);
+
+            // Construct context for package resolver
+            return GetResolverContext(identity, resolvingBehavior, packageStore, packagesConfigReferences, ignoredPackages);
         }
 
         private async Task<IDictionary<SourcePackageDependencyInfo, DownloadResourceResult>> DownloadPackagesResourcesAsync(
@@ -442,7 +450,7 @@
                         {
                             throw new InvalidOperationException("An error occured during package extraction", ex);
                         }
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)
@@ -459,7 +467,8 @@
         }
 
 
-        private Resolver.PackageResolverContext GetResolverContext(PackageIdentity package, DependencyBehavior dependencyBehavior, IEnumerable<SourcePackageDependencyInfo> availablePackages, IEnumerable<PackageIdentity> ignoredDependenciesList)
+        private Resolver.PackageResolverContext GetResolverContext(PackageIdentity package, DependencyBehavior dependencyBehavior, IEnumerable<SourcePackageDependencyInfo> availablePackages,
+            IEnumerable<PackageReference> packagesConfig, IEnumerable<PackageIdentity> ignoredDependenciesList)
         {
             var idArray = new[] { package.Id };
 
@@ -467,7 +476,7 @@
                 dependencyBehavior,
                 idArray,
                 requiredPackageIds: Enumerable.Empty<string>(),
-                packagesConfig: Enumerable.Empty<PackageReference>(),
+                packagesConfig: packagesConfig,
                 preferredVersions: Enumerable.Empty<PackageIdentity>(),
                 availablePackages,
                 _sourceRepositoryProvider.GetRepositories().Select(x => x.PackageSource),
@@ -589,6 +598,54 @@
             satelliteFiles.AddRange(satelliteFilesInGroup);
 
             return satelliteFiles;
+        }
+
+        private async Task OverrideExistingPackagesAsync(IExtensibleProject nugetProject, List<SourcePackageDependencyInfo> installablePackages, PackageResolverContext resolverContext, DependencyBehavior dependencyBehavior)
+        {
+            var incomingPackages = installablePackages.ToList();
+            foreach (var package in incomingPackages)
+            {
+                var packagesConfig = resolverContext.PackagesConfig;
+
+                var packageConflicts = resolverContext.PackagesConfig
+                    .Where(reference => string.Equals(reference.PackageIdentity.Id, package.Id)
+                    && reference.PackageIdentity.Version.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) != 0).ToList();
+
+                // Note: workaround to make only one version of package appears in the same time. The correct package version set in packages.config
+                // while local files handled by extensibility
+
+                foreach (var conflict in packageConflicts)
+                {
+                    bool needToFix = false;
+                    var conflictedVersion = conflict.PackageIdentity.Version;
+
+                    switch (dependencyBehavior)
+                    {
+                        case DependencyBehavior.HighestMinor:
+                        case DependencyBehavior.HighestPatch:
+                        case DependencyBehavior.Highest:
+                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) < 0;
+                            break;
+
+                        case DependencyBehavior.Lowest:
+                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) > 0;
+                            break;
+
+                        case DependencyBehavior.Ignore:
+                            continue;
+                    }
+
+                    if (needToFix)
+                    {
+                        _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, nugetProject.GetInstallPath(conflict.PackageIdentity));
+                    }
+                    else
+                    {
+                        // cancel package installation
+                        installablePackages.Remove(package);
+                    }
+                }
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Orc.NuGetExplorer
         private readonly IFileSystemService _fileSystemService;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IExtensibleProject _defaultProject;
+        
         #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
             INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider) : base(packageOperationNotificationService)

@@ -101,6 +101,11 @@ namespace Orc.NuGetExplorer.Converters
         public EmptyCollectionToVisibleConverter() { }
         protected override object Convert(System.Collections.ICollection value, System.Type targetType, object parameter) { }
     }
+    public class ExtendedUriToStringConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, string>
+    {
+        public ExtendedUriToStringConverter() { }
+        protected override object Convert(System.Uri value, System.Type targetType, object parameter) { }
+    }
     public class InvalidFeedToBoolConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.FeedVerificationResult, bool>
     {
         public InvalidFeedToBoolConverter() { }
@@ -259,6 +264,13 @@ namespace Orc.NuGetExplorer
     {
         public XamlPleaseWaitInterruptService(Catel.Services.IPleaseWaitService pleaseWaitService) { }
         public System.IDisposable InterruptTemporarily() { }
+    }
+}
+namespace Orc.NuGetExplorer.Extensions
+{
+    public static class IValidationContextExtensions
+    {
+        public static string[] GetAlertMessages(this Catel.Data.IValidationContext validationContext, string validationTag) { }
     }
 }
 namespace Orc.NuGetExplorer.Logging

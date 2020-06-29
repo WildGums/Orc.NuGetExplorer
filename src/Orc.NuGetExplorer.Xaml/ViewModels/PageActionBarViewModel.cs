@@ -9,6 +9,7 @@
     using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Services;
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
@@ -26,9 +27,10 @@
         private readonly IProgressManager _progressManager;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageOperationContextService _packageOperationContextService;
+        private readonly IMessageService _messageService;
 
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
-            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
+            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, IMessageService messageService)
         {
             Argument.IsNotNull(() => managerPage);
             Argument.IsNotNull(() => projectManager);
@@ -36,6 +38,7 @@
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => packageCommandService);
             Argument.IsNotNull(() => packageOperationContextService);
+            Argument.IsNotNull(() => messageService);
 
             _parentManagerPage = managerPage;
             _projectManager = projectManager;
@@ -43,7 +46,7 @@
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;
             _packageOperationContextService = packageOperationContextService;
-
+            _messageService = messageService;
             BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
             BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
             CheckAll = new TaskCommand(CheckAllExecuteAsync);
@@ -82,6 +85,12 @@
                 _progressManager.ShowBar(this);
 
                 var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                {
+                    await _messageService.ShowErrorAsync("Can't perform update. One or multiple package cannot be updated due to validation errors", "Can't update packages");
+                    return;
+                }
 
                 var projects = _projectLocator.GetAllExtensibleProjects()
                             .Where(x => _projectLocator.IsEnabled(x)).ToList();
@@ -157,6 +166,12 @@
                 _progressManager.ShowBar(this);
 
                 var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                {
+                    await _messageService.ShowErrorAsync("Can't perform install. One or multiple package cannot be installed due to validation errors", "Can't install packages");
+                    return;
+                }
 
                 var targetProjects = _projectLocator.GetAllExtensibleProjects()
                             .Where(x => _projectLocator.IsEnabled(x)).ToList();
