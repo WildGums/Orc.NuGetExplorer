@@ -48,7 +48,7 @@
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
-            apiRegistry.Register("CogScreen.Api", "2.0.0-alpha0397");
+            //apiRegistry.Register("PackageName.Api", "1.0.0-version");
         }
     }
 }
