@@ -70,7 +70,6 @@
             set { SetValue(CommandProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(nameof(Command), typeof(TaskCommand), typeof(InfiniteScrollListBox), new PropertyMetadata(null));
 
@@ -80,7 +79,6 @@
             set { SetValue(CommandParameterProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for CommandParameter.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandParameterProperty =
             DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
 
@@ -92,7 +90,6 @@
             set { SetValue(IsCommandExecutingProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsCommandExecuting.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsCommandExecutingProperty =
             DependencyProperty.Register(nameof(IsCommandExecuting), typeof(bool), typeof(InfiniteScrollListBox),
                 new PropertyMetadata(false, (s, e) => ((InfiniteScrollListBox)s).OnIsCommandExecutingChanged(e)));
@@ -107,10 +104,8 @@
             set { SetValue(ScrollSizeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ScrollSize.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ScrollSizeProperty =
             DependencyProperty.Register(nameof(ScrollSize), typeof(int), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
-
 
     }
 }

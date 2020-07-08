@@ -5,18 +5,24 @@
 
     public class WpfHelper
     {
-        public static childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
+        public static TChild FindVisualChild<TChild>(DependencyObject obj) where TChild : DependencyObject
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-                if (child != null && child is childItem)
-                    return (childItem)child;
+                
+                if (child != null && child is TChild item)
+                {
+                    return item;
+                }
                 else
                 {
-                    childItem childOfChild = FindVisualChild<childItem>(child);
-                    if (childOfChild != null)
-                        return childOfChild;
+                    var nestedChild = FindVisualChild<TChild>(child);
+                    
+                    if (nestedChild != null)
+                    {
+                        return nestedChild;
+                    }
                 }
             }
             return null;
