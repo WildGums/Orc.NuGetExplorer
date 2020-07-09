@@ -1,17 +1,17 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     x:Class="Themes.Brushes">
 
     <!-- list box item brushes -->
-    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="{DynamicResource AccentColor4}"/>
-    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="{DynamicResource AccentColor}"/>
-    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="{DynamicResource AccentColor4}"/>
-    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="{DynamicResource AccentColor2}"/>
-    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="{DynamicResource AccentColor3}"/>
-    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="{DynamicResource Orc.Colors.AccentColor20}"/>
+    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="{DynamicResource Orc.Colors.AccentBaseColor}"/>
+    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="{DynamicResource Orc.Colors.AccentColor20}"/>
+    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="{DynamicResource Orc.Colors.AccentColor60}"/>
+    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="{DynamicResource Orc.Colors.AccentColor40}"/>
+    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="{DynamicResource Orc.Colors.AccentBaseColor}" />
 
     <!-- labeled tab items brushes-->
-    <SolidColorBrush x:Key="TabSelectedBrushKey" Color="#575757"/>
     <SolidColorBrush x:Key="TabPopupBrushKey" Color="{x:Static SystemColors.ActiveCaptionTextColor}"/>
 
     <SolidColorBrush x:Key="IndicatorBorderBrushKey" Color="{x:Static SystemColors.ActiveBorderColor}"/>

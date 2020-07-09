@@ -30,7 +30,7 @@
             </xamlbehaviors:EventTrigger>
         </xamlbehaviors:Interaction.Triggers>
 
-        <Border Background="Transparent">
+        <Border>
             <Grid Margin="0 8 0 0" Height="96">
 
                 <Grid.ColumnDefinitions>

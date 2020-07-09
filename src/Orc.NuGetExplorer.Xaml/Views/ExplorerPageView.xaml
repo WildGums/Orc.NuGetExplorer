@@ -45,6 +45,7 @@
                                       ItemsSource="{Binding PackageItems}"
                                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                       ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                      Background="{DynamicResource Orc.Brushes.TransparentWhiteBrush}"
                                       Command="{Binding LoadNextPackagePage}"
                                       ScrollSize="7"
                                       IsCommandExecuting="{Binding IsCancellationTokenAlive}"
