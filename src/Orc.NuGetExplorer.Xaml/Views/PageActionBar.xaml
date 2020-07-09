@@ -14,7 +14,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <CheckBox HorizontalAlignment="Left" Margin="10 4 0 4"
+        <CheckBox HorizontalAlignment="Left"
                   Grid.Column="0"
                       Name="CheckAllBox"
                       Command="{Binding CheckAll}"
@@ -26,6 +26,7 @@
         <TextBlock Text="Select all packages"
                    Grid.Column="1"
                    VerticalAlignment="Center"
+                   MouseLeftButtonDown="OnSelectAllPackagesTextBlockMouseLeftButtonDown"
                    Margin="8 0 0 0"/>
         <Button Grid.Column="2"
             HorizontalAlignment="Right" Margin="4 4 0 4"

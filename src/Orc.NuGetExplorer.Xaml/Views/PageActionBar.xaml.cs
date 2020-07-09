@@ -11,5 +11,10 @@
         {
             InitializeComponent();
         }
+
+        private void OnSelectAllPackagesTextBlockMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            CheckAllBox.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, !CheckAllBox.IsChecked);
+        }
     }
 }
