@@ -73,8 +73,8 @@ namespace Orc.NuGetExplorer.Controls.Helpers
     public class WpfHelper
     {
         public WpfHelper() { }
-        public static childItem FindVisualChild<childItem>(System.Windows.DependencyObject obj)
-            where childItem : System.Windows.DependencyObject { }
+        public static TChild FindVisualChild<TChild>(System.Windows.DependencyObject obj)
+            where TChild : System.Windows.DependencyObject { }
     }
 }
 namespace Orc.NuGetExplorer.Controls.Templating
