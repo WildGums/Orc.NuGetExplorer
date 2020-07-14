@@ -59,7 +59,7 @@
             {
                 _nugetLogger.LogInformation($"[Please wait]Download complete");
             }
-            _nugetLogger.LogInformation($"[Please wait]Downloading in proсess.. {progress / (1024 * 1024):0.##} Mb");
+            _nugetLogger.LogInformation($"[Please wait]Download in progress.. {progress / (1024 * 1024):0.##} Mb");
         }
     }
 
