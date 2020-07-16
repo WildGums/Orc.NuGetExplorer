@@ -1,6 +1,6 @@
 #l "buildserver.cake"
 
-#tool "nuget:?package=GitVersion.CommandLine&version=5.3.2"
+#tool "nuget:?package=GitVersion.CommandLine&version=5.3.5"
 
 //-------------------------------------------------------------
 
@@ -9,6 +9,7 @@ public class GeneralContext : BuildContextWithItemsBase
     public GeneralContext(IBuildContext parentBuildContext)
         : base(parentBuildContext)
     {
+        SkipComponentsThatAreNotDeployable = true;
     }
 
     public string Target { get; set; }
@@ -23,6 +24,7 @@ public class GeneralContext : BuildContextWithItemsBase
     public bool MaximizePerformance { get; set; }
     public bool UseVisualStudioPrerelease { get; set; }
     public bool VerifyDependencies { get; set; }
+    public bool SkipComponentsThatAreNotDeployable { get; set; }
 
     public VersionContext Version { get; set; }
     public CopyrightContext Copyright { get; set; }
@@ -79,7 +81,7 @@ public class VersionContext : BuildContextBase
                     
                     // Make a *BIG* assumption that the solution name == repository name
                     var repositoryName = generalContext.Solution.Name;
-                    var tempDirectory = $"{System.IO.Path.GetTempPath()}\\{repositoryName}";
+                    var tempDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), repositoryName);
                     
                     if (CakeContext.DirectoryExists(tempDirectory))
                     {
@@ -202,16 +204,11 @@ public class SolutionContext : BuildContextBase
         get
         {
             var directory = System.IO.Directory.GetParent(FileName).FullName;
-            if (!directory.EndsWith("/") && !directory.EndsWith("\\"))
+            var separator = System.IO.Path.DirectorySeparatorChar.ToString();
+
+            if (!directory.EndsWith(separator))
             {
-                if (directory.Contains("\\"))
-                {
-                    directory += "\\";
-                }
-                else
-                {
-                    directory += "/";
-                }
+                directory += separator;
             }
 
             return directory;
@@ -389,6 +386,7 @@ private GeneralContext InitializeGeneralContext(BuildContext buildContext, IBuil
     data.MaximizePerformance = buildContext.BuildServer.GetVariableAsBool("MaximizePerformance", true, showValue: true);
     data.UseVisualStudioPrerelease = buildContext.BuildServer.GetVariableAsBool("UseVisualStudioPrerelease", false, showValue: true);
     data.VerifyDependencies = !buildContext.BuildServer.GetVariableAsBool("DependencyCheckDisabled", false, showValue: true);
+    data.SkipComponentsThatAreNotDeployable = buildContext.BuildServer.GetVariableAsBool("SkipComponentsThatAreNotDeployable", true, showValue: true);
 
     // If local, we want full pdb, so do a debug instead
     if (data.IsLocalBuild)

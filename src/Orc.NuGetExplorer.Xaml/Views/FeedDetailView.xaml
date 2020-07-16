@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:catel="http://schemas.catelproject.com"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
              xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
              mc:Ignorable="d"
@@ -35,9 +35,9 @@
                  VerticalAlignment="Top" 
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
                  Text="{Binding Name}">
-            <i:Interaction.Behaviors>
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
-            </i:Interaction.Behaviors>
+            </xamlbehaviors:Interaction.Behaviors>
         </TextBox>
 
         <TextBlock Grid.Column="0"
@@ -53,9 +53,9 @@
                  VerticalAlignment="Top" 
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
                  Text="{Binding Source}">
-            <i:Interaction.Behaviors>
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
-            </i:Interaction.Behaviors>
+            </xamlbehaviors:Interaction.Behaviors>
         </TextBox>
 
         <Button Grid.Column="2"

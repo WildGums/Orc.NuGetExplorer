@@ -145,6 +145,8 @@
         {
             try
             {
+                // TODO: revise this part
+
                 _additionalMetadata.Add(searchMetadata);
 
                 //merge versions
@@ -152,21 +154,31 @@
 
                 if (!Versions.Any())
                 {
-                    //currently package versions doesn't loaded from metadata,
-                    //but we still can add current version to list and check it as our LastVersion
+                    // currently package versions doesn't loaded from metadata,
+                    // but we still can add current version to list and check it as our LastVersion
 
                     var singleVersion = searchMetadata.Identity.Version;
                     _versions.Add(singleVersion);
                 }
 
+                // add basic versions
+                var basicVersions = new VersionInfo[]
+                {
+                    new VersionInfo(searchMetadata.Identity.Version),
+                    new VersionInfo(_packageMetadata.Identity.Version)
+                };
+
+                VersionsInfo = VersionsInfo.Union(basicVersions).Distinct();
+
                 if (versInfo != null)
                 {
+
                     VersionsInfo = VersionsInfo.Union(versInfo).Distinct();
 
                     Versions = VersionsInfo.Select(x => x.Version).OrderByDescending(x => x).ToList();
                 }
 
-                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
+                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;          
             }
             catch (NullReferenceException ex)
             {

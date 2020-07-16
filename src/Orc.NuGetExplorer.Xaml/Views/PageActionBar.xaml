@@ -9,8 +9,13 @@
              x:ClassModifier="internal"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <StackPanel Orientation="Horizontal">
-            <CheckBox HorizontalAlignment="Left" Margin="10 4 0 4"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <CheckBox HorizontalAlignment="Left"
+                  Grid.Column="0"
                       Name="CheckAllBox"
                       Command="{Binding CheckAll}"
                       IsChecked="{Binding IsCheckAll}">
@@ -18,15 +23,26 @@
                     <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
                 </CheckBox.LayoutTransform>
             </CheckBox>
-            <TextBlock Text="Select all packages"
-                       VerticalAlignment="Center"
-                       Margin="8 0 0 0"/>
-        </StackPanel>
-        <Button
+        <TextBlock Text="Select all packages"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   MouseLeftButtonDown="OnSelectAllPackagesTextBlockMouseLeftButtonDown"
+                   Margin="8 0 0 0"/>
+        <Button Grid.Column="2"
             HorizontalAlignment="Right" Margin="4 4 0 4"
             Width="100" Height="28"
+            Visibility="{Binding CanBatchUpdate, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
             Command="{Binding BatchUpdate}">
             Update
         </Button>
-    </Grid>
+
+        <Button Grid.Column="2"
+                HorizontalAlignment="Right"
+                Margin="4 4 0 4"
+                Width="100" Height="28"
+                Visibility="{Binding CanBatchInstall, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                Command="{Binding BatchInstall}">
+            Install Latest
+        </Button>
+   </Grid>
 </catel:UserControl>

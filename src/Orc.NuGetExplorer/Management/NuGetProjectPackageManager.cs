@@ -108,7 +108,7 @@
 
         public async Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token)
         {
-            //TODO should local metadata is also be checked?
+            // TODO should local metadata is also be checked?
 
             var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
@@ -160,7 +160,7 @@
 
                 return installedPackage != null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex);
                 return false;
@@ -194,7 +194,7 @@
                 {
                     Log.Error($"Failed to install package {package}");
 
-                    //todo PackageCommandService or context is better place for messaging
+                    // todo PackageCommandService or context is better place for messaging
 
                     if (showErrors)
                     {
@@ -209,18 +209,22 @@
                     var dependencyIdentity = packageDownloadResultPair.Key;
                     var downloadResult = packageDownloadResultPair.Value;
 
-                    var result = await packageConfigProject.InstallPackageAsync(
-                        dependencyIdentity,
-                        downloadResult,
-                        _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
-                        token);
+                    try
+                    {
+                        var result = await packageConfigProject.InstallPackageAsync(
+                            dependencyIdentity,
+                            downloadResult,
+                            _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
+                            token);
 
-                    if (!result)
+                        dependencyInstallResult &= true;
+                    }
+                    catch (InvalidOperationException ex)
                     {
                         Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                        Log.Error(ex);
+                        dependencyInstallResult &= false;
                     }
-
-                    dependencyInstallResult &= result;
                 }
 
                 await OnInstallAsync(project, package, dependencyInstallResult);
@@ -241,13 +245,13 @@
                     return false;
                 }
 
-                //Mark all partially-extracted packages to removal;
+                // Mark all partially-extracted packages to removal;
                 foreach (var canceledPackage in ex.CurrentBatch)
                 {
                     _fileSystemService.CreateDeleteme(canceledPackage.Id, project.GetInstallPath(canceledPackage));
                 }
 
-                //throw exception to add exception in operation context
+                // throw exception to add exception in operation context
                 throw;
             }
             catch (Exception ex)
@@ -267,7 +271,7 @@
                 }
             }
 
-            //raise supressed events
+            // raise supressed events
             foreach (var args in _batchToken.GetInvokationList<InstallNuGetProjectEventArgs>())
             {
                 await Install.SafeInvokeAsync(this, args);
@@ -300,7 +304,7 @@
                 }
             }
 
-            //raise supressed events
+            // raise supressed events
             foreach (var args in _batchToken.GetInvokationList<UninstallNuGetProjectEventArgs>())
             {
                 await Uninstall.SafeInvokeAsync(this, args);

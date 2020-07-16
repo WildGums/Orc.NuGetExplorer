@@ -3,14 +3,15 @@
                     xmlns:local="clr-namespace:Orc.NuGetExplorer.Controls"
                     xmlns:catel="http://schemas.catelproject.com"
                     xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
-                    xmlns:orc="http://schemas.wildgums.com/orc/controls">
+                    xmlns:orctheming="http://schemas.wildgums.com/orc/theming">
+    
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Orc.Theming;component/Themes/Generic.xaml" />
         <ResourceDictionary Source="/Orc.Controls;component/Themes/Generic.xaml" />
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Brushes.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/MaterialIcons.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/RotationProgressBar.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Controls/Badged.xaml"/>
-        <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/Shadows.xaml"/>
         <ResourceDictionary Source="/Orc.NuGetExplorer.Xaml;component/Themes/CompiledResources.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
@@ -34,53 +35,70 @@
 
     <Style x:Key="DefaultListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Style.Resources>
-            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{orc:ThemeColor ThemeColorStyle=AccentColor4}"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{orctheming:ThemeColor ThemeColorStyle=AccentColor4}"/>
         </Style.Resources>
 
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Padding" Value="4,1"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="#FFABADB3"/>
+        <Setter Property="Background" Value="{DynamicResource Orc.Brushes.TransparentWhiteBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orc.Brushes.WhiteBrush20}"/>
         <Setter Property="BorderThickness" Value="0 0 0 1"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border x:Name="Bd"
-                            BorderBrush="{TemplateBinding BorderBrush}" 
+                    <Grid x:Name="ChromeGrid"
+                          Background="{DynamicResource Orc.Brushes.TransparentWhiteBrush}">
+                        <Border x:Name="Bd"
+                            BorderBrush="{DynamicResource Orc.Brushes.Control.Border}" 
                             BorderThickness="{TemplateBinding BorderThickness}" 
-                            Background="{TemplateBinding Background}" 
+                            Background="{DynamicResource Orc.Brushes.Control.Background}" 
                             Padding="{TemplateBinding Padding}"
                             SnapsToDevicePixels="true">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </Border>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
-                            <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>
+                            <Setter Property="Background" 
+                                    TargetName="Bd" 
+                                    Value="{DynamicResource Item.MouseOver.Background}"/>
+                            <Setter Property="BorderBrush" 
+                                    TargetName="Bd" 
+                                    Value="{StaticResource Item.MouseOver.Border}"/>
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="Selector.IsSelectionActive" Value="False"/>
                                 <Condition Property="IsSelected" Value="True"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
-                            <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
+                            <Setter Property="Background" 
+                                    TargetName="Bd" 
+                                    Value="{StaticResource Item.SelectedInactive.Background}"/>
+                            <Setter Property="BorderBrush" 
+                                    TargetName="Bd" 
+                                    Value="{StaticResource Item.SelectedInactive.Border}"/>
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="Selector.IsSelectionActive" Value="True"/>
                                 <Condition Property="IsSelected" Value="True"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
-                            <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
+                            <Setter Property="Background" 
+                                    TargetName="Bd" 
+                                    Value="{StaticResource Item.SelectedActive.Background}"/>
+                            <Setter Property="BorderBrush" 
+                                    TargetName="Bd" 
+                                    Value="{StaticResource Item.SelectedActive.Border}"/>
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="TextElement.Foreground" 
+                                    TargetName="Bd" 
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -89,13 +107,11 @@
     </Style>
 
     <Style TargetType="{x:Type RadioButton}" x:Key="LabelButton">
-        <Style.Resources>
-            <SolidColorBrush x:Key="TransparenBrush" Color="Transparent"/>
-        </Style.Resources>
+        <Setter Property="Background" Value="{DynamicResource Orc.Brushes.TransparentWhiteBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <Grid Background="#00FFFFFF"
+                    <Grid Background="{DynamicResource Orc.Brushes.TransparentWhiteBrush}"
                           Name="templateRoot"
                           SnapsToDevicePixels="True">
                         <Grid.RowDefinitions>
@@ -103,7 +119,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Border BorderThickness="{TemplateBinding Border.BorderThickness}"
-                            BorderBrush="{StaticResource TransparenBrush}"
+                            BorderBrush="{DynamicResource Orc.Brushes.TransparentWhiteBrush}"
                             Background="{TemplateBinding Panel.Background}"
                             Name="radioButtonBorder"
                             Margin="0"
@@ -130,7 +146,7 @@
                                    Margin="0"
                                    Height="3"
                                    Visibility="Hidden"
-                                   Fill="{DynamicResource TabSelectedBrushKey}"/>
+                                   Fill="{DynamicResource Orc.Brushes.GrayBrush2}"/>
 
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -144,7 +160,7 @@
                                         <Setter Property="Control.Template">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <Rectangle Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                                                    <Rectangle Stroke="{DynamicResource Orc.Brushes.Text}"
                                                         StrokeThickness="1"
                                                         StrokeDashArray="1 2"
                                                         Margin="14,0,0,0"
@@ -161,48 +177,6 @@
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
-                        <Trigger Property="UIElement.IsMouseOver" Value="True">
-                            <!--<Setter Property="Panel.Background"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FFF3F9FF</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Border.BorderBrush"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FF5593FF</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>-->
-                        </Trigger>
-                        <Trigger Property="UIElement.IsEnabled" Value="False">
-                            <!--<Setter Property="Panel.Background"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FFE6E6E6</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Border.BorderBrush"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FFBCBCBC</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>-->
-                        </Trigger>
-                        <Trigger Property="ButtonBase.IsPressed" Value="True">
-                            <!--<Setter Property="Panel.Background"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FFD9ECFF</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Border.BorderBrush"
-                                    TargetName="radioButtonBorder">
-                                <Setter.Value>
-                                    <SolidColorBrush>#FF3C77DD</SolidColorBrush>
-                                </Setter.Value>
-                            </Setter>-->
-                        </Trigger>
                         <Trigger Property="ToggleButton.IsChecked" Value="True">
                             <Setter Property="Visibility" TargetName="_underline" 
                                     Value="Visible">
@@ -212,54 +186,6 @@
                             <Setter Property="Visibility" TargetName="_underline" 
                                     Value="Collapsed">
                             </Setter>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="{x:Type CheckBox}">
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CheckBox}">
-                    <BulletDecorator Background="Transparent" SnapsToDevicePixels="true"
-                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
-                        <BulletDecorator.Bullet>
-                            <Border x:Name="CheckBoxBorder"
-                                    Height="12"
-                                    Width="12"
-                                    BorderBrush="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderColor}"
-                                    BorderThickness="1"
-                                    Background="White">
-                                <Path x:Name="CheckMark"
-                                      Data="M7.2,5 L5.5,7.16 4.16,6.3 3.5,6.7 5.5,8.4 8.6,5.25 C8.6,5.25 8,4.7 7.22,5"
-                                      Height="Auto"
-                                      Width="Auto"
-                                      Stretch="Fill"
-                                      Fill="{DynamicResource DefaultButtonIconColorBrush}"
-                                      Margin="1,1.007,1,1"/>
-                            </Border>
-                        </BulletDecorator.Bullet>
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          Margin="{TemplateBinding Padding}"
-                                          RecognizesAccessKey="True"
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </BulletDecorator>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground"
-                                    Value="{orccontrols:ThemeColorBrush ThemeColorStyle=ForegroundDisabled}"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BackgroundMouseOver}"/>
-                            <Setter Property="BorderBrush" TargetName="CheckBoxBorder" Value="{orccontrols:ThemeColorBrush ThemeColorStyle=BorderMouseOver}"/>
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="False">
-                            <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

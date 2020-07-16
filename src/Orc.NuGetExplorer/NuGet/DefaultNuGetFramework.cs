@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Catel;
     using Catel.Logging;
     using Microsoft.Win32;
@@ -36,11 +37,12 @@
 
         private void LoadAvailableFrameworks()
         {
-            var revision = Environment.Version.Revision;
+            var version = Environment.Version;
+            var revision = version.Revision;
 
             var frameworkStringList = new List<string>();
 
-            if (revision < 42000)
+            if (revision < 42000 && revision > 0)
             {
                 GetOlderFrameworkVersionsFromRegistry(frameworkStringList);
             }
@@ -49,7 +51,15 @@
                 GetNewerFrameworkVersionsFromRegistry(frameworkStringList);
             }
 
-            foreach (var frameworkName in frameworkStringList)
+#if NETCORE 
+            var netCoreDescription = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
+            if (netCoreDescription.Contains(".NET Core"))
+            {
+                frameworkStringList.Add($".NETCoreApp,Version=v{version.Major}.{version.Minor}");
+            }
+
+#endif
+            foreach (var frameworkName in frameworkStringList.Distinct())
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(frameworkName, _frameworkNameProvider);
 

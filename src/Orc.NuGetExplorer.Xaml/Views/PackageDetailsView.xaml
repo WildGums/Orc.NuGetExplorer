@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
              xmlns:nugcontrols="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
@@ -88,9 +88,9 @@
                   MinWidth="90"
                   SelectedValue="{Binding SelectedVersion}"
                   ItemsSource="{Binding VersionsCollection}">
-                <i:Interaction.Behaviors>
+                <xamlbehaviors:Interaction.Behaviors>
                     <behaviors:LoadItemsOnDropDownBehavior Command="{Binding LoadInfoAboutVersions}"/>
-                </i:Interaction.Behaviors>
+                </xamlbehaviors:Interaction.Behaviors>
             </ComboBox>
 
             <Button Grid.Row="2" Grid.Column="2"
@@ -128,29 +128,18 @@
                 <Grid Grid.Row="1" Margin="10 0 0 0">
 
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-
-                    <Grid.Resources>
-                        <Style TargetType="{x:Type Label}">
-                            <Setter Property="Margin" Value="0 0 13 0"/>
-                            <Setter Property="Padding" Value="0 5 0 5"/>
-                        </Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Padding" Value="5 5 5 5"/>
-                        </Style>
-                    </Grid.Resources>
 
                     <Label>Version:</Label>
                     <TextBlock Grid.Column="1"
@@ -160,8 +149,8 @@
                                ToolTip="{Binding VersionData.Identity.Version}"/>
 
 
-                    <Label Grid.Row="2">Author(s):</Label>
-                    <TextBlock Grid.Column="1" Grid.Row="2"
+                    <Label Grid.Row="1">Author(s):</Label>
+                    <TextBlock Grid.Column="1" Grid.Row="1"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
                                Text="{Binding VersionData.Authors}"
@@ -169,9 +158,9 @@
                     </TextBlock>
 
                     <!-- todo collapse this with Property in UserControl-->
-                    <Label Grid.Row="3" Visibility="Collapsed">License:
+                    <Label Grid.Row="2" Visibility="Collapsed">License:
                     </Label>
-                    <TextBlock Grid.Column="1" Grid.Row="3"
+                    <TextBlock Grid.Column="1" Grid.Row="2"
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
@@ -179,44 +168,43 @@
                                ToolTip="{Binding VersionData.LicenseMetadata.License}"/>
 
 
-                    <Label Grid.Row="4">Date published:</Label>
-                    <TextBlock Grid.Column="1" Grid.Row="4"
+                    <Label Grid.Row="3">Date published:</Label>
+                    <TextBlock Grid.Column="1" Grid.Row="3"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
                                Text="{Binding VersionData.Published, StringFormat=D}"
                                ToolTip="{Binding VersionData.Published, StringFormat=D}"/>
 
-                    <Label Grid.Row="5"
+                    <Label Grid.Row="4"
                            Visibility="Collapsed">
                         Project URL:
+                    </Label>
+                    <TextBlock Grid.Column="1" Grid.Row="4"
+                               TextTrimming="WordEllipsis"
+                               Visibility="Collapsed"
+                               MaxWidth="210"
+                               Text="{Binding VersionData.ProjectUrl, Converter={converters:ExtendedUriToStringConverter}}"
+                               ToolTip="{Binding VersionData.ProjectUrl, Converter={converters:ExtendedUriToStringConverter}}"/>
+
+                    <!-- todo collapse this with Property in UserControl-->
+                    <Label Grid.Row="5"
+                           Visibility="Collapsed">
+                        Report Abuse:
                     </Label>
                     <TextBlock Grid.Column="1" Grid.Row="5"
                                TextTrimming="WordEllipsis"
                                Visibility="Collapsed"
                                MaxWidth="210"
-                               Text="{Binding VersionData.ProjectUrl}"
-                               ToolTip="{Binding VersionData.ProjectUrl}"/>
+                               Text="{Binding VersionData.ReportAbuseUrl, Converter={converters:ExtendedUriToStringConverter}}"
+                               ToolTip="{Binding VersionData.ReportAbuseUrl, Converter={converters:ExtendedUriToStringConverter}}"/>
 
-                    <!-- todo collapse this with Property in UserControl-->
-                    <Label Grid.Row="6"
-                           Visibility="Collapsed">
-                        Report Abuse:
-                    </Label>
+
+                    <Label Grid.Row="6">Tags:</Label>
                     <TextBlock Grid.Column="1" Grid.Row="6"
-                               TextTrimming="WordEllipsis"
-                               Visibility="Collapsed"
-                               MaxWidth="210"
-                               Text="{Binding VersionData.ReportAbuseUrl}"
-                               ToolTip="{Binding VersionData.ReportAbuseUrl}"/>
-
-
-                    <Label Grid.Row="7">Tags:</Label>
-                    <TextBlock Grid.Column="1" Grid.Row="7"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
                                Text="{Binding VersionData.Tags}"
                                ToolTip="{Binding VersionData.Tags}"/>
-
 
                 </Grid>
 

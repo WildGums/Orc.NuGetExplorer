@@ -9,6 +9,7 @@
     using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Services;
     using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
@@ -26,9 +27,10 @@
         private readonly IProgressManager _progressManager;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageOperationContextService _packageOperationContextService;
+        private readonly IMessageService _messageService;
 
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
-            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
+            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, IMessageService messageService)
         {
             Argument.IsNotNull(() => managerPage);
             Argument.IsNotNull(() => projectManager);
@@ -36,6 +38,7 @@
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => packageCommandService);
             Argument.IsNotNull(() => packageOperationContextService);
+            Argument.IsNotNull(() => messageService);
 
             _parentManagerPage = managerPage;
             _projectManager = projectManager;
@@ -43,12 +46,20 @@
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;
             _packageOperationContextService = packageOperationContextService;
-
+            _messageService = messageService;
             BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
+            BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
             CheckAll = new TaskCommand(CheckAllExecuteAsync);
+
+            CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
+            CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
         }
 
         public bool IsCheckAll { get; set; }
+
+        public bool CanBatchUpdate { get; set; }
+
+        public bool CanBatchInstall { get; set; }
 
         protected override Task InitializeAsync()
         {
@@ -63,6 +74,8 @@
             return base.OnClosingAsync();
         }
 
+        #region Commands
+
         public TaskCommand BatchUpdate { get; set; }
 
         private async Task BatchUpdateExecuteAsync()
@@ -72,6 +85,12 @@
                 _progressManager.ShowBar(this);
 
                 var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                {
+                    await _messageService.ShowErrorAsync("Can't perform update. One or multiple package cannot be updated due to validation errors", "Can't update packages");
+                    return;
+                }
 
                 var projects = _projectLocator.GetAllExtensibleProjects()
                             .Where(x => _projectLocator.IsEnabled(x)).ToList();
@@ -138,6 +157,70 @@
             return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
         }
 
+        public TaskCommand BatchInstall { get; set; }
+
+        private async Task BatchInstallExecuteAsync()
+        {
+            try
+            {
+                _progressManager.ShowBar(this);
+
+                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                {
+                    await _messageService.ShowErrorAsync("Can't perform install. One or multiple package cannot be installed due to validation errors", "Can't install packages");
+                    return;
+                }
+
+                var targetProjects = _projectLocator.GetAllExtensibleProjects()
+                            .Where(x => _projectLocator.IsEnabled(x)).ToList();
+
+                using (var cts = new CancellationTokenSource())
+                {
+                    var installPackageList = new List<IPackageDetails>();
+
+                    foreach (var package in batchedPackages)
+                    {
+                        var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
+
+                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
+                        installPackageList.Add(installPackageDetails);
+                    }
+
+                    using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Install, installPackageList.ToArray()))
+                    {
+                        foreach (var packageDetails in installPackageList)
+                        {
+                            await _packageCommandService.ExecuteInstallAsync(packageDetails, cts.Token, operationContext);
+                        }
+                    }
+                }
+
+                await Task.Delay(200);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Error when updating package");
+            }
+            finally
+            {
+                _progressManager.HideBar(this);
+
+                _parentManagerPage.StartLoadingTimerOrInvalidateData();
+            }
+        }
+
+        private bool BatchInstallCanExecute()
+        {
+            if (_parentManagerPage is null)
+            {
+                return false;
+            }
+
+            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+        }
+
         public TaskCommand CheckAll { get; set; }
 
         private async Task CheckAllExecuteAsync()
@@ -145,6 +228,8 @@
             var packages = _parentManagerPage.PackageItems;
             packages.ForEach(package => package.IsChecked = IsCheckAll);
         }
+
+        #endregion
 
         private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

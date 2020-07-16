@@ -4,7 +4,7 @@
     public interface INuGetCacheManager
     {
         bool ClearAll();
-
+        bool ClearHttpCache();
         SourceCacheContext GetCacheContext();
 
         HttpSourceCacheContext GetHttpCacheContext();

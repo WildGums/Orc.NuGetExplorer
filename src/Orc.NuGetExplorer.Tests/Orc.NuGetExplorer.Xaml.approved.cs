@@ -1,21 +1,21 @@
-﻿[assembly: System.Resources.NeutralResourcesLanguageAttribute("en-US")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Orc.NuGetExplorer.Tests")]
-[assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.6", FrameworkDisplayName=".NET Framework 4.6")]
-[assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer")]
-[assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Controls")]
-[assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Converters")]
-[assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Views")]
-[assembly: System.Windows.Markup.XmlnsPrefixAttribute("http://schemas.wildgums.com/orc/nugetexplorer", "orcnugetexplorer")]
-[assembly: System.Windows.ThemeInfoAttribute(System.Windows.ResourceDictionaryLocation.SourceAssembly, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
-public class static LoadAssembliesOnStartup { }
-public class static ModuleInitializer
+﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v3.1", FrameworkDisplayName="")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Controls")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Converters")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Views")]
+[assembly: System.Windows.Markup.XmlnsPrefix("http://schemas.wildgums.com/orc/nugetexplorer", "orcnugetexplorer")]
+[assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.SourceAssembly, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
+public static class LoadAssembliesOnStartup { }
+public static class ModuleInitializer
 {
     public static void Initialize() { }
 }
 namespace Orc.NuGetExplorer.Controls
 {
-    [System.Windows.TemplatePartAttribute(Name="PART_Badge", Type=typeof(System.Windows.FrameworkElement))]
-    [System.Windows.TemplatePartAttribute(Name="PART_BadgeContent", Type=typeof(System.Windows.FrameworkElement))]
+    [System.Windows.TemplatePart(Name="PART_Badge", Type=typeof(System.Windows.FrameworkElement))]
+    [System.Windows.TemplatePart(Name="PART_BadgeContent", Type=typeof(System.Windows.FrameworkElement))]
     public class Badged : System.Windows.Controls.ContentControl
     {
         public static readonly System.Windows.DependencyProperty BadgeForegroundProperty;
@@ -73,8 +73,8 @@ namespace Orc.NuGetExplorer.Controls.Helpers
     public class WpfHelper
     {
         public WpfHelper() { }
-        public static childItem FindVisualChild<childItem>(System.Windows.DependencyObject obj)
-            where childItem : System.Windows.DependencyObject { }
+        public static TChild FindVisualChild<TChild>(System.Windows.DependencyObject obj)
+            where TChild : System.Windows.DependencyObject { }
     }
 }
 namespace Orc.NuGetExplorer.Controls.Templating
@@ -95,11 +95,16 @@ namespace Orc.NuGetExplorer.Converters
         public BoolToIntConverter() { }
         protected override object Convert(bool value, System.Type targetType, object parameter) { }
     }
-    [System.Windows.Data.ValueConversionAttribute(typeof(System.Collections.ICollection), typeof(System.Windows.Visibility))]
+    [System.Windows.Data.ValueConversion(typeof(System.Collections.ICollection), typeof(System.Windows.Visibility))]
     public class EmptyCollectionToVisibleConverter : Catel.MVVM.Converters.ValueConverterBase<System.Collections.ICollection, System.Windows.Visibility>
     {
         public EmptyCollectionToVisibleConverter() { }
         protected override object Convert(System.Collections.ICollection value, System.Type targetType, object parameter) { }
+    }
+    public class ExtendedUriToStringConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, string>
+    {
+        public ExtendedUriToStringConverter() { }
+        protected override object Convert(System.Uri value, System.Type targetType, object parameter) { }
     }
     public class InvalidFeedToBoolConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.FeedVerificationResult, bool>
     {
@@ -121,10 +126,10 @@ namespace Orc.NuGetExplorer.Converters
         public NuGetVersionToStringConverter() { }
         protected override object Convert(NuGet.Versioning.NuGetVersion value, System.Type targetType, object parameter) { }
     }
-    public class NullableBooleanTrueConverter : Catel.MVVM.Converters.ValueConverterBase<System.Nullable<bool>>
+    public class NullableBooleanTrueConverter : Catel.MVVM.Converters.ValueConverterBase<bool?>
     {
         public NullableBooleanTrueConverter() { }
-        protected override object Convert(System.Nullable<bool> value, System.Type targetType, object parameter) { }
+        protected override object Convert(bool? value, System.Type targetType, object parameter) { }
         protected override object ConvertBack(object value, System.Type targetType, object parameter) { }
     }
     public class PackageStatusEnumToBoolConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.NuGetExplorer.Enums.PackageStatus, bool>
@@ -136,6 +141,11 @@ namespace Orc.NuGetExplorer.Converters
     {
         public PackageStatusEnumToBrushConverter() { }
         protected override object Convert(Orc.NuGetExplorer.Enums.PackageStatus value, System.Type targetType, object parameter) { }
+    }
+    public class RemoveTransparencyColorBrushConverter : Catel.MVVM.Converters.ValueConverterBase<System.Windows.Media.Color, System.Windows.Media.SolidColorBrush>
+    {
+        public RemoveTransparencyColorBrushConverter() { }
+        protected override object Convert(System.Windows.Media.Color value, System.Type targetType, object parameter) { }
     }
     public class UriToBitmapConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, System.Windows.Media.Imaging.BitmapImage>
     {
@@ -157,18 +167,6 @@ namespace Orc.NuGetExplorer
         System.Windows.Media.ImageSource ResolveImageFromUri(System.Uri uri, string defaultUrl = null);
         System.Threading.Tasks.Task<System.Windows.Media.ImageSource> ResolveImageFromUriAsync(System.Uri uri, string defaultUrl = null);
     }
-    public class static InlineCollectionExtensions
-    {
-        public static void AddIfNotNull(this System.Windows.Documents.InlineCollection inlineCollection, System.Windows.Documents.Inline inline) { }
-    }
-    public class static InlineExtensions
-    {
-        public static System.Windows.Documents.Inline Append(this System.Windows.Documents.Inline inline, System.Windows.Documents.Inline inlineToAdd) { }
-        public static System.Windows.Documents.Inline AppendRange(this System.Windows.Documents.Inline inline, System.Collections.Generic.IEnumerable<System.Windows.Documents.Inline> inlines) { }
-        public static System.Windows.Documents.Bold Bold(this System.Windows.Documents.Inline inline) { }
-        public static System.Windows.Documents.Inline Insert(this System.Windows.Documents.Inline inline, System.Windows.Documents.Inline inlineToAdd) { }
-        public static System.Windows.Documents.Inline InsertRange(this System.Windows.Documents.Inline inline, System.Collections.Generic.IEnumerable<System.Windows.Documents.Inline> inlines) { }
-    }
     public interface INuGetConfigurationResetService
     {
         System.Threading.Tasks.Task Reset();
@@ -181,10 +179,11 @@ namespace Orc.NuGetExplorer
     public interface IPackageCommandService
     {
         System.Threading.Tasks.Task<bool> CanExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails package);
-        [System.ObsoleteAttribute("Use `ExecuteAsync` instead. Will be removed in version 5.0.0.", true)]
-        System.Threading.Tasks.Task ExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails, Orc.NuGetExplorer.IRepository sourceRepository = null, bool allowedPrerelease = False);
         System.Threading.Tasks.Task ExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails);
+        [System.Obsolete("Use `ExecuteAsync` instead. Will be removed in version 5.0.0.", true)]
+        System.Threading.Tasks.Task ExecuteAsync(Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails packageDetails, Orc.NuGetExplorer.IRepository sourceRepository = null, bool allowedPrerelease = false);
         System.Threading.Tasks.Task ExecuteInstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task ExecuteInstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token, System.IDisposable packageOperationContext);
         System.Threading.Tasks.Task ExecuteUninstallAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token, System.IDisposable packageOperationContext);
@@ -201,11 +200,23 @@ namespace Orc.NuGetExplorer
         string SettingsTitle { get; set; }
         System.Threading.Tasks.Task ShowPackagesExplorerAsync();
         System.Threading.Tasks.Task ShowPackagesExplorerAsync(Orc.NuGetExplorer.INuGetExplorerInitialState initialState);
-        System.Threading.Tasks.Task<System.Nullable<bool>> ShowPackagesSourceSettingsAsync();
+        System.Threading.Tasks.Task<bool?> ShowPackagesSourceSettingsAsync();
     }
-    public class static IPleaseWaitServiceExtensions
+    public static class IPleaseWaitServiceExtensions
     {
         public static System.IDisposable WaitingScope(this Catel.Services.IPleaseWaitService pleaseWaitService) { }
+    }
+    public static class InlineCollectionExtensions
+    {
+        public static void AddIfNotNull(this System.Windows.Documents.InlineCollection inlineCollection, System.Windows.Documents.Inline inline) { }
+    }
+    public static class InlineExtensions
+    {
+        public static System.Windows.Documents.Inline Append(this System.Windows.Documents.Inline inline, System.Windows.Documents.Inline inlineToAdd) { }
+        public static System.Windows.Documents.Inline AppendRange(this System.Windows.Documents.Inline inline, System.Collections.Generic.IEnumerable<System.Windows.Documents.Inline> inlines) { }
+        public static System.Windows.Documents.Bold Bold(this System.Windows.Documents.Inline inline) { }
+        public static System.Windows.Documents.Inline Insert(this System.Windows.Documents.Inline inline, System.Windows.Documents.Inline inlineToAdd) { }
+        public static System.Windows.Documents.Inline InsertRange(this System.Windows.Documents.Inline inline, System.Collections.Generic.IEnumerable<System.Windows.Documents.Inline> inlines) { }
     }
     public class NuGetExplorerInitialState : Orc.NuGetExplorer.INuGetExplorerInitialState
     {
@@ -213,7 +224,7 @@ namespace Orc.NuGetExplorer
         public Orc.NuGetExplorer.PackageSearchParameters InitialSearchParameters { get; }
         public Orc.NuGetExplorer.ExplorerTab Tab { get; }
     }
-    public class static ObservableCollectionExtensions
+    public static class ObservableCollectionExtensions
     {
         public static void MoveDown<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, T item) { }
         public static void MoveUp<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, T item) { }
@@ -231,7 +242,7 @@ namespace Orc.NuGetExplorer
         public Orc.NuGetExplorer.PackageOperationType OperationType { get; set; }
         public System.Collections.ObjectModel.ObservableCollection<Orc.NuGetExplorer.IPackageDetails> PackageList { get; set; }
     }
-    public class static StringExtensions
+    public static class StringExtensions
     {
         public static System.Windows.Documents.Inline ToInline(this string text) { }
         public static System.Windows.Documents.Inline ToInline(this string text, System.Windows.Media.Brush brush) { }
@@ -253,6 +264,13 @@ namespace Orc.NuGetExplorer
     {
         public XamlPleaseWaitInterruptService(Catel.Services.IPleaseWaitService pleaseWaitService) { }
         public System.IDisposable InterruptTemporarily() { }
+    }
+}
+namespace Orc.NuGetExplorer.Extensions
+{
+    public static class IValidationContextExtensions
+    {
+        public static string[] GetAlertMessages(this Catel.Data.IValidationContext validationContext, string validationTag) { }
     }
 }
 namespace Orc.NuGetExplorer.Logging
@@ -290,6 +308,17 @@ namespace Orc.NuGetExplorer.MVVM
         protected override System.Windows.Freezable CreateInstanceCore() { }
     }
 }
+namespace Orc.NuGetExplorer.Models
+{
+    public class ExplorerPage : Catel.Data.ModelBase
+    {
+        public static readonly Catel.Data.PropertyData IsActiveProperty;
+        public static readonly Catel.Data.PropertyData ParametersProperty;
+        public ExplorerPage(Orc.NuGetExplorer.INuGetExplorerInitialState parameters) { }
+        public bool IsActive { get; set; }
+        public Orc.NuGetExplorer.INuGetExplorerInitialState Parameters { get; set; }
+    }
+}
 namespace Orc.NuGetExplorer.Providers
 {
     public class ExplorerSettingsContainerModelProvider : Orc.NuGetExplorer.Providers.ModelProvider<Orc.NuGetExplorer.Models.ExplorerSettingsContainer>
@@ -322,12 +351,12 @@ namespace Orc.NuGetExplorer.ViewModels
         public static readonly Catel.Data.PropertyData NameProperty;
         public static readonly Catel.Data.PropertyData SourceProperty;
         public FeedDetailViewModel(Orc.NuGetExplorer.Models.NuGetFeed feed) { }
-        [Catel.MVVM.ModelAttribute()]
+        [Catel.MVVM.Model]
         public Orc.NuGetExplorer.Models.NuGetFeed Feed { get; set; }
-        [Catel.MVVM.ViewModelToModelAttribute("", "")]
+        [Catel.MVVM.ViewModelToModel("", "")]
         public string Name { get; set; }
         public Catel.MVVM.Command OpenChooseLocalPathToSourceDialog { get; set; }
-        [Catel.MVVM.ViewModelToModelAttribute("", "")]
+        [Catel.MVVM.ViewModelToModel("", "")]
         public string Source { get; set; }
     }
 }
@@ -340,13 +369,13 @@ namespace Orc.NuGetExplorer.Views
         public static readonly System.Windows.DependencyProperty DefaultSourceNameProperty;
         public static readonly System.Windows.DependencyProperty PackageSourcesProperty;
         public PackageSourceSettingControl() { }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public bool CanReset { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultFeed { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public string DefaultSourceName { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewWins)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewWins)]
         public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> PackageSources { get; set; }
         public void InitializeComponent() { }
     }
@@ -392,17 +421,5 @@ namespace Themes
     {
         public Compiled() { }
         public void InitializeComponent() { }
-    }
-}
-namespace XamlGeneratedNamespace
-{
-    public sealed class GeneratedInternalTypeHelper : System.Windows.Markup.InternalTypeHelper
-    {
-        public GeneratedInternalTypeHelper() { }
-        protected override void AddEventHandler(System.Reflection.EventInfo eventInfo, object target, System.Delegate handler) { }
-        protected override System.Delegate CreateDelegate(System.Type delegateType, object target, string handler) { }
-        protected override object CreateInstance(System.Type type, System.Globalization.CultureInfo culture) { }
-        protected override object GetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, System.Globalization.CultureInfo culture) { }
-        protected override void SetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, object value, System.Globalization.CultureInfo culture) { }
     }
 }

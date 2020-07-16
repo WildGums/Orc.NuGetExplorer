@@ -12,6 +12,7 @@ namespace Orc.NuGetExplorer.Example
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
+    using Orc.Theming;
     using Orchestra;
 
     /// <summary>
@@ -22,21 +23,23 @@ namespace Orc.NuGetExplorer.Example
         public App()
         {
 #if DEBUG
-            LogManager.IsDebugEnabled = true;
-            LogManager.AddDebugListener(false);
+            LogManager.AddDebugListener(true);
 #endif
 
             var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();
-
-            StyleHelper.CreateStyleForwardersForDefaultStyles();
 
             // Note: it's best to use .CurrentUICulture in actual apps since it will use the preferred language
             // of the user. But in order to demo multilingual features for devs (who mostly have en-US as .CurrentUICulture),
             // we use .CurrentCulture for the sake of the demo
             languageService.PreferredCulture = CultureInfo.CurrentCulture;
             languageService.FallbackCulture = new CultureInfo("en-US");
+        }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
             this.ApplyTheme();
+
+            base.OnStartup(e);
         }
     }
 }

@@ -32,7 +32,7 @@
 
         private void OnIsCheckedChanged(DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue == true)
+            if ((bool)e.NewValue)
             {
                 if (_group != null)
                 {
@@ -49,7 +49,7 @@
 
         // Using a DependencyProperty as the backing store for TabSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TabSourceProperty =
-            DependencyProperty.Register("TabSource", typeof(TabControl), typeof(TabControllerButton), new PropertyMetadata(null, OnTabSourceChanged));
+            DependencyProperty.Register(nameof(TabSource), typeof(TabControl), typeof(TabControllerButton), new PropertyMetadata(null, OnTabSourceChanged));
 
         public TabControllerButton Next
         {
@@ -59,7 +59,7 @@
 
         // Using a DependencyProperty as the backing store for Next.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty NextProperty =
-            DependencyProperty.Register("Next", typeof(TabControllerButton), typeof(TabControllerButton),
+            DependencyProperty.Register(nameof(Next), typeof(TabControllerButton), typeof(TabControllerButton),
                 new PropertyMetadata(null, (s, e) => ((TabControllerButton)s).OnNextChanged()));
 
         public bool IsFirst
@@ -70,7 +70,7 @@
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsFirstProperty =
-            DependencyProperty.Register("IsFirst", typeof(bool), typeof(TabControllerButton), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsFirst), typeof(bool), typeof(TabControllerButton), new PropertyMetadata(false));
 
         private static void OnTabSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -95,8 +95,7 @@
 
         private void OnNextChanged()
         {
-            var nextButton = Next as TabControllerButton;
-
+            var nextButton = Next;
             if (nextButton != null)
             {
                 //todo should throw exception or break chain?

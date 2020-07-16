@@ -70,9 +70,8 @@
             set { SetValue(CommandProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Command.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(TaskCommand), typeof(InfiniteScrollListBox), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Command), typeof(TaskCommand), typeof(InfiniteScrollListBox), new PropertyMetadata(null));
 
         public object CommandParameter
         {
@@ -80,9 +79,8 @@
             set { SetValue(CommandParameterProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for CommandParameter.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register("CommandParameter", typeof(object), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
 
 
 
@@ -92,9 +90,8 @@
             set { SetValue(IsCommandExecutingProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsCommandExecuting.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsCommandExecutingProperty =
-            DependencyProperty.Register("IsCommandExecuting", typeof(bool), typeof(InfiniteScrollListBox),
+            DependencyProperty.Register(nameof(IsCommandExecuting), typeof(bool), typeof(InfiniteScrollListBox),
                 new PropertyMetadata(false, (s, e) => ((InfiniteScrollListBox)s).OnIsCommandExecutingChanged(e)));
 
         private void OnIsCommandExecutingChanged(DependencyPropertyChangedEventArgs e)
@@ -107,10 +104,8 @@
             set { SetValue(ScrollSizeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ScrollSize.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ScrollSizeProperty =
-            DependencyProperty.Register("ScrollSize", typeof(int), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
-
+            DependencyProperty.Register(nameof(ScrollSize), typeof(int), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
 
     }
 }

@@ -27,7 +27,7 @@
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty BadgeProperty =
-            DependencyProperty.Register("Badge", typeof(object), typeof(Badged), new FrameworkPropertyMetadata(null));
+            DependencyProperty.Register(nameof(Badge), typeof(object), typeof(Badged), new FrameworkPropertyMetadata(null));
 
         public Brush BadgeForeground
         {
@@ -36,7 +36,7 @@
         }
 
         public static readonly DependencyProperty BadgeForegroundProperty =
-            DependencyProperty.Register("BadgeForeground", typeof(Brush), typeof(Badged), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(BadgeForeground), typeof(Brush), typeof(Badged), new PropertyMetadata(null));
 
         public bool IsShowed
         {
@@ -46,7 +46,7 @@
 
         // Using a DependencyProperty as the backing store for IsShowed.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsShowedProperty =
-            DependencyProperty.Register("IsShowed", typeof(bool), typeof(Badged), new PropertyMetadata(true, (s, e) => OnIsShowedChanged(s, e)));
+            DependencyProperty.Register(nameof(IsShowed), typeof(bool), typeof(Badged), new PropertyMetadata(true, (s, e) => OnIsShowedChanged(s, e)));
 
         public event DependencyPropertyChangedEventHandler IsShowedChanged;
 

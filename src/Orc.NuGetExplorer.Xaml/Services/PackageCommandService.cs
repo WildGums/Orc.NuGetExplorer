@@ -92,6 +92,14 @@ namespace Orc.NuGetExplorer
             }
         }
 
+        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext)
+        {
+            using (_pleaseWaitService.WaitingScope())
+            {
+                await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
+            }
+        }
+
         public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
             using (_pleaseWaitService.WaitingScope())

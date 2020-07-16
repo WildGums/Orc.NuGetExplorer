@@ -19,6 +19,7 @@
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer;
+    using Orc.NuGetExplorer.Cache;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Models;
@@ -44,26 +45,26 @@
         private readonly IDispatcherService _dispatcherService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
-        private readonly IPackageLoaderService _packagesLoaderService;
-
-        private readonly MetadataOrigin _pageType;
-        private readonly INuGetPackageManager _projectManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryContextService _repositoryService;
+        private readonly IPackageLoaderService _packagesLoaderService;
 
-        private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
+        private readonly INuGetPackageManager _projectManager;
+        private readonly INuGetCacheManager _nuGetCacheManager;
+
         private readonly ITypeFactory _typeFactory;
+        private readonly MetadataOrigin _pageType;
 
         private readonly PackageSearchParameters _initialSearchParams;
+        private readonly HashSet<CancellationTokenSource> _tokenSource = new HashSet<CancellationTokenSource>();
 
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(INuGetExplorerInitialState pageInitialState, IPackageLoaderService packagesLoaderService,
+        public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService)
+            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager)
         {
-            Argument.IsNotNull(() => pageInitialState);
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => packageMetadataMediaDownloadService);
@@ -75,8 +76,7 @@
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
-
-            Title = pageInitialState.Tab.Name;
+            Argument.IsNotNull(() => nuGetCacheManager);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -86,9 +86,19 @@
             _projectManager = projectManager;
             _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
-
             _packagesLoaderService = packagesLoaderService;
-            _initialSearchParams = pageInitialState.InitialSearchParameters; //if null, standard Settings will not be overriden
+            _nuGetCacheManager = nuGetCacheManager;
+
+            Settings = settingsProvider.Model;
+
+            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
+            CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
+            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
+
+            commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
+
+            Title = page.Parameters.Tab.Name;
+            _initialSearchParams = page.Parameters.InitialSearchParameters; //if null, standard Settings will not be overriden
 
             if (Title != "Browse")
             {
@@ -100,15 +110,9 @@
                 Log.Error("Unrecognized page type");
             }
 
-            CanBatchProjectActions = _pageType == MetadataOrigin.Updates;
+            CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
-            Settings = settingsProvider.Model;
-
-            LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
-            CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
-            RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
-
-            commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
+            Page = page;
         }
 
         /// <summary>
@@ -159,8 +163,14 @@
         }
 
 
+        //view to view model
         public NuGetPackage SelectedPackageItem { get; set; }
 
+        //view to viewmodel
+        [Model(SupportIEditableObject = false)]
+        public ExplorerPage Page { get; set; }
+
+        [ViewModelToModel]
         public bool IsActive { get; set; }
 
         /// <summary>
@@ -182,6 +192,10 @@
         ///     on this page in one operation
         /// </summary>
         public bool CanBatchProjectActions { get; set; }
+
+        public bool CanBatchUpdateOperations => _pageType == MetadataOrigin.Updates;
+
+        public bool CanBatchInstallOperations => _pageType == MetadataOrigin.Browse;
 
         public CancellationTokenSource PageLoadingTokenSource { get; set; }
 
@@ -667,6 +681,7 @@
 
         private async Task RefreshCurrentPageExecuteAsync()
         {
+            _nuGetCacheManager.ClearHttpCache();
             StartLoadingTimerOrInvalidateData();
         }
         #endregion

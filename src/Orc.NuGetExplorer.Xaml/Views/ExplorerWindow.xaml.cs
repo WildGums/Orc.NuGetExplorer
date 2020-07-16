@@ -35,7 +35,7 @@
         #region DependencyProperty
 
         public static readonly DependencyProperty StartPageProperty =
-            DependencyProperty.Register("StartPage", typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
+            DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
         public string StartPage

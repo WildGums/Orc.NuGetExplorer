@@ -2,8 +2,8 @@
 {
     public interface INuGetExplorerInitialState
     {
-        public ExplorerTab Tab { get; }
+        ExplorerTab Tab { get; }
 
-        public PackageSearchParameters InitialSearchParameters { get; }
+        PackageSearchParameters InitialSearchParameters { get; }
     }
 }

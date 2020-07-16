@@ -33,7 +33,7 @@
 
         //Basic rotation speed
         public static readonly DependencyProperty SpeedProperty =
-            DependencyProperty.Register("Speed", typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
+            DependencyProperty.Register(nameof(Speed), typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
 
 
         public Path IconData
@@ -44,7 +44,7 @@
 
         // Using a DependencyProperty as the backing store for Icon.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IconDataProperty =
-            DependencyProperty.Register("IconData", typeof(Path), typeof(RotationProgressBar), new PropertyMetadata());
+            DependencyProperty.Register(nameof(IconData), typeof(Path), typeof(RotationProgressBar), new PropertyMetadata());
 
 
         public bool IsInProgress
@@ -54,7 +54,7 @@
         }
 
         private static readonly DependencyPropertyKey IsInProgressPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsInProgress", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnIsInProgressChanged(e)));
+            DependencyProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnIsInProgressChanged(e)));
 
         private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
         {
@@ -70,7 +70,7 @@
             set { SetValue(SuccessProperty, value); }
         }
 
-        public static readonly DependencyProperty SuccessProperty = DependencyProperty.Register("Success", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false));
+        public static readonly DependencyProperty SuccessProperty = DependencyProperty.Register(nameof(Success), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false));
 
 
         public bool ShowWarning
@@ -80,7 +80,7 @@
         }
 
         public static readonly DependencyProperty ShowWarningProperty =
-            DependencyProperty.Register("ShowWarning", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowWarningChanged(e)));
+            DependencyProperty.Register(nameof(ShowWarning), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowWarningChanged(e)));
 
         private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
         {
@@ -96,9 +96,11 @@
         }
 
         public static readonly DependencyProperty ShowErrorProperty =
-            DependencyProperty.Register("ShowError", typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowErrorChanged(e)));
+            DependencyProperty.Register(nameof(ShowError), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowErrorChanged(e)));
 
+#pragma warning disable S4144 // Methods should not have identical implementations
         private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
+#pragma warning restore S4144 // Methods should not have identical implementations
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
             Log.Debug($"Set RotationProgressBar status to {Success}");

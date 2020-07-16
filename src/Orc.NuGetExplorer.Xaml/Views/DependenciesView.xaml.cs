@@ -28,6 +28,6 @@
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CollectionProperty =
-            DependencyProperty.Register("Collection", typeof(object), typeof(DependenciesView), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Collection), typeof(object), typeof(DependenciesView), new PropertyMetadata(null));
     }
 }

@@ -27,13 +27,18 @@
         public bool ClearAll()
         {
             bool noErrors = true;
-            noErrors &= ClearNuGetFolder(SettingsUtility.GetHttpCacheFolder(), "Http-cache");
+            noErrors &= ClearHttpCache();
             noErrors &= ClearNuGetFolder(_fileDirectoryService.GetGlobalPackagesFolder(), "Global-packages");
             noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");
 
             Log.Info("Cache clearing operation finished");
 
             return noErrors;
+        }
+
+        public bool ClearHttpCache()
+        {
+            return ClearNuGetFolder(SettingsUtility.GetHttpCacheFolder(), "Http-cache");
         }
 
         public HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false)

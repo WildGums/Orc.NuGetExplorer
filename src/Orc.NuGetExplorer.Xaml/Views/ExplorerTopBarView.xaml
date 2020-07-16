@@ -1,16 +1,18 @@
 ﻿<catel:UserControl x:Class="Orc.NuGetExplorer.Views.ExplorerTopBarView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:catel="http://schemas.catelproject.com"
-             xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
-             xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
-             xmlns:orc="http://schemas.wildgums.com/orc/controls"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             mc:Ignorable="d"
-             x:ClassModifier="internal"
-             d:DesignHeight="450" d:DesignWidth="1300">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                   xmlns:catel="http://schemas.catelproject.com"
+                   xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
+                   xmlns:nugetc="clr-namespace:Orc.NuGetExplorer.Controls"
+                   xmlns:orctheming="http://schemas.wildgums.com/orc/theming"
+                   xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
+                   xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
+                   mc:Ignorable="d"
+                   x:ClassModifier="internal"
+                   d:DesignHeight="450" d:DesignWidth="1300">
+                   
     <Grid Margin="0 0 10 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -62,27 +64,27 @@
 
         <!-- tool bar -->
 
-        <orc:WatermarkTextBox Grid.Row="1"
-                  Text="{Binding SearchString}"
-                  Margin="10 0 0 0">
-            <orc:WatermarkTextBox.Watermark>
+        <orccontrols:WatermarkTextBox Grid.Row="1"
+                                      Text="{Binding SearchString}">
+            <orccontrols:WatermarkTextBox.Watermark>
                 <StackPanel Orientation="Horizontal">
                     <Viewbox Width="12" Height="12">
                         <Canvas Width="12" Height="12">
                             <Path Data="{Binding Source={StaticResource Search-web}, Path=Data}" 
                                   Margin="0 -4 0 0"
-                                  Fill="{orc:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
+                                  Fill="{orctheming:ThemeColorBrush ThemeColorStyle=AccentColor}"/>
                         </Canvas>
                     </Viewbox>
 
                     <TextBlock Text="Enter package id"
                                Margin="14 0 0 0"/>
                 </StackPanel>
-            </orc:WatermarkTextBox.Watermark>
-            <i:Interaction.Behaviors>
+            </orccontrols:WatermarkTextBox.Watermark>
+            
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
-            </i:Interaction.Behaviors>
-        </orc:WatermarkTextBox>
+            </xamlbehaviors:Interaction.Behaviors>
+        </orccontrols:WatermarkTextBox>
         
         <Button Grid.Row="1" Grid.Column="1"
                 Command="{catel:CommandManagerBinding RefreshCurrentPage}"
@@ -105,9 +107,9 @@
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </Button.ContentTemplate>
-            <i:Interaction.Behaviors>
+            <xamlbehaviors:Interaction.Behaviors>
                 <catel:FocusOnKeyPress Key="Return"/>
-            </i:Interaction.Behaviors>
+            </xamlbehaviors:Interaction.Behaviors>
         </Button>
 
         <CheckBox Grid.Row="1" Grid.Column="2"

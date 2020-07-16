@@ -4,5 +4,10 @@
   <ModuleInit />
   <Obsolete />
   <Catel />
-  <LoadAssembliesOnStartup />
+  <LoadAssembliesOnStartup>
+    <IncludeAssemblies>
+      Catel.*
+      Orc.*
+    </IncludeAssemblies>
+  </LoadAssembliesOnStartup>
 </Weavers>

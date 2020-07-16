@@ -22,8 +22,11 @@
 
             var lowest = defaultFramework.GetLowest();
 
+#if NETCORE
+            Framework = lowest.FirstOrDefault()?.ToString();
+#else
             Framework = lowest.LastOrDefault()?.ToString();
-
+#endif
             Log.Info($"Current target framework for plugins set as '{Framework}'");
 
             _pathResolver = new PackagePathResolver(ContentPath);

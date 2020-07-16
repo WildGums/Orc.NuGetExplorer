@@ -8,6 +8,10 @@ namespace Orc.NuGetExplorer
     {
         FastObservableCollection<NuGetPackage> PackageItems { get; }
 
+        bool CanBatchUpdateOperations { get; }
+
+        bool CanBatchInstallOperations { get; }
+
         void StartLoadingTimerOrInvalidateData();
     }
 }

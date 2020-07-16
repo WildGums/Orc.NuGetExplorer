@@ -101,7 +101,7 @@
 
         // Using a DependencyProperty as the backing store for DialogCommand.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DialogCommandProperty =
-            DependencyProperty.Register("DialogCommand", typeof(ICommand), typeof(DialogHost), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(DialogCommand), typeof(ICommand), typeof(DialogHost), new PropertyMetadata(null));
 
     }
 }

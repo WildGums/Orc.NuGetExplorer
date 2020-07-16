@@ -10,27 +10,11 @@ namespace Orc.NuGetExplorer
     using System.Windows;
     using System.Windows.Media;
     using Orc.Controls;
+    using Orc.Theming;
 
     internal static class AccentColorHelper
     {
-        #region Fields
-        private static bool IsAccentColorResourceDictionaryCreated;
-        #endregion
-
         #region Methods
-        public static void CreateAccentColorResourceDictionary()
-        {
-            if (IsAccentColorResourceDictionaryCreated)
-            {
-                return;
-            }
-
-            var accentColor = GetAccentColorBrush().Color;
-
-            accentColor.CreateAccentColorResourceDictionary();
-
-            IsAccentColorResourceDictionaryCreated = true;
-        }
 
         private static SolidColorBrush GetAccentColorBrush(ThemeColorStyle themeColor = ThemeColorStyle.AccentColor)
         {
@@ -39,13 +23,12 @@ namespace Orc.NuGetExplorer
             {
                 return accentColorBrush;
             }
-            return Orc.Controls.ThemeHelper.GetThemeColorBrush(themeColor);
+
+            return ThemeManager.Current.GetThemeColorBrush(themeColor);
         }
 
-        public static Color ConvertToNonAlphaColor(Color backgroundColor, ThemeColorStyle themeColor = ThemeColorStyle.AccentColor)
+        public static Color ConvertToNonAlphaColor(Color backgroundColor, Color accentColor)
         {
-            var accentColor = ThemeHelper.GetThemeColor(themeColor);
-
             var alphaNormalized = accentColor.A / (double)255;
 
             //calculate rgb from argb with same color

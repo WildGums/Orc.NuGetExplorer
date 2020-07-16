@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:cnv="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:catel="http://schemas.catelproject.com"
              xmlns:local="clr-namespace:Orc.NuGetExplorer.Views"
@@ -13,10 +13,9 @@
     <catel:UserControl.Resources>
         <cnv:NuGetFrameworkToStringConverter x:Key="NuGetFrameworkToStringConverter"/>
         <cnv:NuGetFrameworkToVisibilityConverter x:Key="NuGetFrameworkToVisibilityConverter"/>
-        
         <cnv:EmptyCollectionToVisibleConverter x:Key="EmptyCollectionToVisibleConverter"/>
-
     </catel:UserControl.Resources>
+    
     <Grid>
 
         <Grid.RowDefinitions>
@@ -24,44 +23,50 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label Margin="0 0 3 2" Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
-            Dependencies
+        <Label Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
+            Dependencies:
         </Label>
 
-        <ItemsControl Grid.Row="1"
-                ItemsSource="{Binding Collection}"
-                Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                IsTabStop="False">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel
-                        Orientation="Vertical"
-                        Margin="0,8,0,0">
+        <TreeView Grid.Row="1"
+                  ItemsSource="{Binding Collection}"
+                  Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                  IsTabStop="False"
+                  BorderThickness="0"
+                  Margin="0">
+            
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Packages}">
+
+                    <StackPanel Orientation="Vertical">
                         <TextBlock
                             Text="{Binding TargetFramework, Converter={StaticResource NuGetFrameworkToStringConverter}}"
                             FontWeight="Bold"
                             x:Name="_targetFramework"
-                            Visibility="{Binding TargetFramework, Converter={StaticResource NuGetFrameworkToVisibilityConverter}}" />
-                        <ItemsControl
-                            ItemsSource="{Binding Packages}"
-                            IsTabStop="False">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock x:Name="_dependencies"
-                                                 Text="{Binding Mode=OneWay}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            Visibility="{Binding TargetFramework, Converter={StaticResource NuGetFrameworkToVisibilityConverter}}"/>
+
                         <TextBlock
                             FontStyle="Italic"
                             Text="No Dependencies"
                             x:Name="_noDependencies"
-                            Visibility="{Binding Packages, Converter={StaticResource EmptyCollectionToVisibleConverter}}">
-
-                        </TextBlock>
+                            Visibility="{Binding Packages, Converter={StaticResource EmptyCollectionToVisibleConverter}}"/>
                     </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                   
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="_dependencies"
+                                                 Text="{Binding Mode=OneWay}"/>
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                    
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+        </TreeView>
     </Grid>
 </catel:UserControl>

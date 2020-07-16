@@ -9,7 +9,7 @@
              xmlns:controls="clr-namespace:Orc.NuGetExplorer.Controls"
              xmlns:converters="clr-namespace:Orc.NuGetExplorer.Converters"
              xmlns:global="clr-namespace:Orc.NuGetExplorer"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:b="clr-namespace:Orc.NuGetExplorer.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
@@ -22,11 +22,6 @@
     </catel:UserControl.Resources>
 
         <Grid Margin="4 2 4 2">
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="4 0 0 0"/>
-                </Style>
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -39,20 +34,19 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Package source" 
-                   VerticalAlignment="Center" 
-                   Margin="2 2 2 2"/>
+                       VerticalAlignment="Center"
+                       Margin="6 2 2 2"/>
 
             <ListBox Grid.Row="1" Grid.ColumnSpan="2"
-                 Margin="0 4 2 0"
                  SelectedItem="{Binding SelectedFeed}"
                  HorizontalContentAlignment="Stretch"
                  VerticalContentAlignment="Stretch"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding Feeds}">
-                <i:Interaction.Behaviors>
+                <xamlbehaviors:Interaction.Behaviors>
                     <catel:Focus/>
                     <b:SelectFirstItemOnContextBehavior/>
-                </i:Interaction.Behaviors>
+                </xamlbehaviors:Interaction.Behaviors>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="4">
@@ -94,9 +88,10 @@
 
 
             <StackPanel x:Name="ButtonsPanel"
-                    Orientation="Horizontal"
-                    Grid.Column="1"
-                    HorizontalAlignment="Right">
+                        Orientation="Horizontal"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Margin="0 4 3 0">
                 <StackPanel.Resources>
                     <Style TargetType="Button" BasedOn="{StaticResource SettingsButton}">
                     </Style>
@@ -209,7 +204,7 @@
                                   HorizontalAlignment="Stretch"
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
-                            Margin="0 12 0 0">
+                            Margin="4 12 4 0">
             </local:FeedDetailView>
 
 
