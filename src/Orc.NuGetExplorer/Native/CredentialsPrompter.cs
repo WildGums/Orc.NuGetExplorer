@@ -92,7 +92,7 @@ namespace Orc.NuGetExplorer.Native
         {
             if (!AllowStoredCredentials)
             {
-                Log.Debug("Stored credentials are now allowed on retry");
+                Log.Debug("Stored credentials are not allowed on retry");
                 return false;
             }
 
