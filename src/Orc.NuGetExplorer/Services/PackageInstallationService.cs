@@ -310,15 +310,8 @@
                     // but possibly it should be configured in project
                     var dependencyIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
-                    var relatedDepInfo = await dependencyInfoResource.ResolvePackage(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
-
                     var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-                    //if (relatedDepInfo != null)
-                    //{
-                    //    downloadStack.Push(relatedDepInfo);
-                    //    continue;
-                    //}
 
                     foreach(var relatedDepedencyInfoResource in relatedDepInfos)
                     {
@@ -343,8 +336,10 @@
                                 packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id, dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
                             }
 
-                            ignoredPackages.Add(dependencyIdentity);
-                            await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                            if (ignoredPackages.Add(dependencyIdentity))
+                            {
+                                await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                            }         
                         }
                         else
                         {
