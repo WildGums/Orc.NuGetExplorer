@@ -312,12 +312,26 @@
 
                     var relatedDepInfo = await dependencyInfoResource.ResolvePackage(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-                    if (relatedDepInfo != null)
+                    var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+
+                    //if (relatedDepInfo != null)
+                    //{
+                    //    downloadStack.Push(relatedDepInfo);
+                    //    continue;
+                    //}
+
+                    foreach(var relatedDepedencyInfoResource in relatedDepInfos)
                     {
-                        downloadStack.Push(relatedDepInfo);
+                        downloadStack.Push(relatedDepedencyInfoResource);
+                    }
+
+                    if(relatedDepInfos.Any())
+                    {
+                        // we found compatible (at least with target framework) packages and leave checks to Package Resolver in the future
                         continue;
                     }
 
+                    // Determine behavior if package cannot be resolved in any way
                     if (ignoreMissingPackages)
                     {
                         if (_apiPackageRegistry.IsRegistered(dependencyIdentity.Id))
@@ -472,10 +486,12 @@
         {
             var idArray = new[] { package.Id };
 
+            var requiredPackageIds = availablePackages.Select(x => x.Id).Distinct();
+
             var resolverContext = new Resolver.PackageResolverContext(
                 dependencyBehavior,
                 idArray,
-                requiredPackageIds: Enumerable.Empty<string>(),
+                requiredPackageIds: requiredPackageIds,
                 packagesConfig: packagesConfig,
                 preferredVersions: Enumerable.Empty<PackageIdentity>(),
                 availablePackages,
