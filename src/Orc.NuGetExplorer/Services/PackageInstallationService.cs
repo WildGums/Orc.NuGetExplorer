@@ -313,12 +313,12 @@
                     var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
 
-                    foreach(var relatedDepedencyInfoResource in relatedDepInfos)
+                    foreach (var relatedDepedencyInfoResource in relatedDepInfos)
                     {
                         downloadStack.Push(relatedDepedencyInfoResource);
                     }
 
-                    if(relatedDepInfos.Any())
+                    if (relatedDepInfos.Any())
                     {
                         // we found compatible (at least with target framework) packages and leave checks to Package Resolver in the future
                         continue;
@@ -338,8 +338,12 @@
 
                             if (ignoredPackages.Add(dependencyIdentity))
                             {
-                                await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
-                            }         
+                                // Show only for top package, not much effort to see this message multiple times
+                                if (topPackage == dependencyInfo)
+                                {
+                                    await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                                }
+                            }
                         }
                         else
                         {
