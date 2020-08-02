@@ -293,18 +293,18 @@
 
             while (downloadStack.Count > 0)
             {
-                var topPackage = downloadStack.Pop();
+                var nextPackage = downloadStack.Pop();
 
-                if (!packageStore.Contains(topPackage))
-                {
-                    packageStore.Add(topPackage);
-                }
-                else
+                if (packageStore.Contains(nextPackage))
                 {
                     continue;
                 }
+                else
+                {
+                    packageStore.Add(nextPackage);
+                }
 
-                foreach (var dependency in topPackage.Dependencies)
+                foreach (var dependency in nextPackage.Dependencies)
                 {
                     // currently we use specific version during child dependency resolving 
                     // but possibly it should be configured in project
@@ -312,6 +312,8 @@
 
                     var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
+                    // Truncate inappropriate versions
+                    relatedDepInfos = relatedDepInfos.Where(x => dependency.VersionRange.Satisfies(x.Version)).ToList();
 
                     foreach (var relatedDepedencyInfoResource in relatedDepInfos)
                     {
@@ -339,7 +341,7 @@
                             if (ignoredPackages.Add(dependencyIdentity))
                             {
                                 // Show only for top package, not much effort to see this message multiple times
-                                if (topPackage == dependencyInfo)
+                                if (nextPackage == dependencyInfo)
                                 {
                                     await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
                                 }
