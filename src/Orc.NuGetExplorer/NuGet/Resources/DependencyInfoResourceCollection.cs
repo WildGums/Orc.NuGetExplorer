@@ -56,5 +56,22 @@
 
             return null;
         }
+
+        public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackages(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+        {
+            HashSet<SourcePackageDependencyInfo> packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
+
+            foreach (var resource in _resources)
+            {
+                var packageDependencyInfo = await resource.ResolvePackages(package.Id, projectFramework, cacheContext, log, token);
+
+                foreach (var packageInfo in packageDependencyInfo)
+                {
+                    packageDependencyInfos.Add(packageInfo);
+                }
+            }
+
+            return packageDependencyInfos;
+        }
     }
 }

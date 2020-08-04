@@ -293,31 +293,40 @@
 
             while (downloadStack.Count > 0)
             {
-                var topPackage = downloadStack.Pop();
+                var nextPackage = downloadStack.Pop();
 
-                if (!packageStore.Contains(topPackage))
-                {
-                    packageStore.Add(topPackage);
-                }
-                else
+                if (packageStore.Contains(nextPackage))
                 {
                     continue;
                 }
+                else
+                {
+                    packageStore.Add(nextPackage);
+                }
 
-                foreach (var dependency in topPackage.Dependencies)
+                foreach (var dependency in nextPackage.Dependencies)
                 {
                     // currently we use specific version during child dependency resolving 
                     // but possibly it should be configured in project
                     var dependencyIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
-                    var relatedDepInfo = await dependencyInfoResource.ResolvePackage(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+                    var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-                    if (relatedDepInfo != null)
+                    // Truncate inappropriate versions
+                    relatedDepInfos = relatedDepInfos.Where(x => dependency.VersionRange.Satisfies(x.Version)).ToList();
+
+                    foreach (var relatedDepedencyInfoResource in relatedDepInfos)
                     {
-                        downloadStack.Push(relatedDepInfo);
+                        downloadStack.Push(relatedDepedencyInfoResource);
+                    }
+
+                    if (relatedDepInfos.Any())
+                    {
+                        // we found compatible (at least with target framework) packages and leave checks to Package Resolver in the future
                         continue;
                     }
 
+                    // Determine behavior if package cannot be resolved in any way
                     if (ignoreMissingPackages)
                     {
                         if (_apiPackageRegistry.IsRegistered(dependencyIdentity.Id))
@@ -329,8 +338,14 @@
                                 packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id, dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
                             }
 
-                            ignoredPackages.Add(dependencyIdentity);
-                            await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                            if (ignoredPackages.Add(dependencyIdentity))
+                            {
+                                // Show only for top package, not much effort to see this message multiple times
+                                if (nextPackage == dependencyInfo)
+                                {
+                                    await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                                }
+                            }
                         }
                         else
                         {
@@ -472,10 +487,12 @@
         {
             var idArray = new[] { package.Id };
 
+            var requiredPackageIds = availablePackages.Select(x => x.Id).Distinct();
+
             var resolverContext = new Resolver.PackageResolverContext(
                 dependencyBehavior,
                 idArray,
-                requiredPackageIds: Enumerable.Empty<string>(),
+                requiredPackageIds: requiredPackageIds,
                 packagesConfig: packagesConfig,
                 preferredVersions: Enumerable.Empty<PackageIdentity>(),
                 availablePackages,
