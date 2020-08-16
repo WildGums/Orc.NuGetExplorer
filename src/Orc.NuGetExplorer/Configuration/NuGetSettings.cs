@@ -229,7 +229,7 @@
                 return;
             }
 
-            Log.Warning($"Cannot add or update unknown item of type {item.GetType()}");
+            Log.Debug($"Cannot add or update unknown item of type {item.GetType()}");
         }
 
         public void Remove(string sectionName, SettingItem item)
@@ -240,13 +240,13 @@
                 return;
             }
 
-            Log.Warning($"Cannot remove unknown item of type {item.GetType()}");
+            Log.Debug($"Cannot remove unknown item of type {item.GetType()}");
         }
 
         public void SaveToDisk()
         {
             //should flush in-memory updates in file, but currently all changes saved manually instant in configuration file via Catel Configuration
-            Log.Info("SaveToDisk method called from PackageSourceProvider");
+            Log.Debug("SaveToDisk method called from PackageSourceProvider");
         }
 
         public IList<string> GetConfigFilePaths()
