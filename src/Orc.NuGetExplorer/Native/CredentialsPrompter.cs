@@ -13,12 +13,14 @@ namespace Orc.NuGetExplorer.Native
     using Catel.Configuration;
     using Catel.Logging;
     using NuGetExplorer.Crypto;
+    using Orc.NuGetExplorer.Enums;
 
     internal class CredentialsPrompter
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IConfigurationService _configurationService;
+        private readonly CredentialStoragePolicy _credentialStoragePolicy;
 
         #region Fields
         private bool _isSaveChecked;
@@ -29,13 +31,14 @@ namespace Orc.NuGetExplorer.Native
             Argument.IsNotNull(() => configurationService);
 
             _configurationService = configurationService;
+            _credentialStoragePolicy = _configurationService.GetCredentialStoragePolicy();
         }
 
         #region Properties
         public string Target { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public bool AllowStoredCredentials { get; set; }
+        public bool AllowStoredCredentials { get; set; } // Should we try stored credentials or skip
         public bool ShowSaveCheckBox { get; set; }
 
         public bool IsSaveChecked => _isSaveChecked;
@@ -98,7 +101,7 @@ namespace Orc.NuGetExplorer.Native
 
             Log.Debug("Stored credentials are allowed");
 
-            var credentials = ReadCredential(Target, true);
+            var credentials = ReadCredential(Target, true && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback);
             if (credentials == null)
             {
                 return false;
@@ -205,6 +208,15 @@ namespace Orc.NuGetExplorer.Native
             return encryptionKey;
         }
 
+        private static string GetUserNameConfigurationKey(string key)
+        {
+            var configurationKeyPostfix = $"{key}";
+            configurationKeyPostfix = EncryptionHelper.GetMd5Hash(configurationKeyPostfix);
+
+            var configurationKey = $"NuGet.FeedInfo.{configurationKeyPostfix}";
+            return configurationKey;
+        }
+
         private static string GetPasswordConfigurationKey(string key, string username)
         {
             var configurationKeyPostfix = $"{key}__{username}";
@@ -217,6 +229,20 @@ namespace Orc.NuGetExplorer.Native
         private CredUi.SimpleCredentials ReadCredential(string key, bool allowConfigurationFallback)
         {
             Log.Debug("Trying to read credentials for key '{0}'", key);
+
+            // Immediately return if saved credentials disabled by policy
+            if (_credentialStoragePolicy == CredentialStoragePolicy.None)
+            {
+                return null;
+            }
+
+            var credential = new CredUi.SimpleCredentials();
+
+            if (_credentialStoragePolicy == CredentialStoragePolicy.Configuration)
+            {
+                ReadCredentialFromConfiguration(key, credential);
+                return credential;
+            }
 
             var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out var nCredPtr);
             var lastError = Marshal.GetLastWin32Error();
@@ -231,8 +257,6 @@ namespace Orc.NuGetExplorer.Native
 
                 throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
             }
-
-            var credential = new CredUi.SimpleCredentials();
 
             using (var criticalCredentialHandle = new CredUi.CriticalCredentialHandle(nCredPtr))
             {
@@ -251,17 +275,7 @@ namespace Orc.NuGetExplorer.Native
                     {
                         try
                         {
-                            var configurationKey = GetPasswordConfigurationKey(key, credential.UserName);
-                            var encryptionKey = GetEncryptionKey(key, credential.UserName);
-
-                            Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
-
-                            var encryptedPassword = _configurationService.GetRoamingValue(configurationKey, string.Empty);
-                            if (!string.IsNullOrWhiteSpace(encryptedPassword))
-                            {
-                                var decryptedPassword = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
-                                credential.Password = decryptedPassword;
-                            }
+                            ReadCredentialFromConfiguration(key, credential);
                         }
                         catch (Exception ex)
                         {
@@ -280,8 +294,44 @@ namespace Orc.NuGetExplorer.Native
             return credential;
         }
 
+        private void ReadCredentialFromConfiguration(string key, CredUi.SimpleCredentials credential)
+        {
+            var configurationUserNameKey = GetUserNameConfigurationKey(key);
+            var userName = credential.UserName ?? _configurationService.GetRoamingValue(configurationUserNameKey, string.Empty);
+            var configurationKey = GetPasswordConfigurationKey(key, userName);
+            var encryptionKey = GetEncryptionKey(key, userName);
+
+            Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
+
+            var encryptedPassword = _configurationService.GetRoamingValue(configurationKey, string.Empty);
+
+            if (!string.IsNullOrEmpty(userName))
+            {
+                credential.UserName = userName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(encryptedPassword))
+            {
+                var decryptedPassword = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
+                credential.Password = decryptedPassword;
+            }
+        }
+
         private void WriteCredential(string key, string userName, string secret)
         {
+            if (_credentialStoragePolicy == CredentialStoragePolicy.None)
+            {
+                Log.Debug("Writing credentials disabled according to used storage policy");
+                return;
+            }
+
+            if (_credentialStoragePolicy == CredentialStoragePolicy.Configuration)
+            {
+                Log.Debug("Force writing credentials to configuration");
+                WriteCredentialToConfiguration(key, userName, secret);
+                return;
+            }
+
             var byteArray = Encoding.Unicode.GetBytes(secret);
             if (byteArray.Length > 512)
             {
@@ -316,18 +366,25 @@ namespace Orc.NuGetExplorer.Native
 
             // Note: immediately read it for ORCOMP-229
             var credential = ReadCredential(key, false);
-            if (credential == null || string.IsNullOrWhiteSpace(credential.Password))
+            if ((credential == null || string.IsNullOrWhiteSpace(credential.Password)) && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback)
             {
-                var configurationKey = GetPasswordConfigurationKey(key, cred.UserName);
-                var encryptionKey = GetEncryptionKey(key, cred.UserName);
-
-                Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
-
-                var encryptedPassword = EncryptionHelper.Encrypt(secret, encryptionKey);
-                _configurationService.SetRoamingValue(configurationKey, encryptedPassword);
+                WriteCredentialToConfiguration(key, cred.UserName, secret);
             }
 
             Log.Debug("Successfully written credentials for key '{0}'", key);
+        }
+
+        private void WriteCredentialToConfiguration(string key, string userName, string secret)
+        {
+            var configurationUserNameKey = GetUserNameConfigurationKey(key);
+            var configurationKey = GetPasswordConfigurationKey(key, userName);
+            var encryptionKey = GetEncryptionKey(key, userName);
+
+            Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
+
+            var encryptedPassword = EncryptionHelper.Encrypt(secret, encryptionKey);
+            _configurationService.SetRoamingValue(configurationKey, encryptedPassword);
+            _configurationService.SetRoamingValue(configurationUserNameKey, userName);
         }
 
         private void DeleteCredential(string key)

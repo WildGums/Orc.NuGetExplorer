@@ -30,6 +30,8 @@ namespace Orc.NuGetExplorer
 
             public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";
 
+            public const string CredentialStorage = "NuGetExplorer.CredentialStoragePolicy";
+
             public const int PackageCount = 200;
 
             #endregion

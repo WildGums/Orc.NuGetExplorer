@@ -130,9 +130,15 @@ namespace Orc.NuGetExplorer
     {
         T Clone();
     }
+    public static class IConfigurationServiceExtensions
+    {
+        public static Orc.NuGetExplorer.Enums.CredentialStoragePolicy GetCredentialStoragePolicy(this Catel.Configuration.IConfigurationService configurationService) { }
+        public static void SetCredentialStoragePolicy(this Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.Enums.CredentialStoragePolicy value) { }
+    }
     public interface ICredentialProviderLoaderService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>> GetCredentialProvidersAsync();
+        void SetCredentialPolicy(Orc.NuGetExplorer.Enums.CredentialStoragePolicy storagePolicy);
     }
     public interface IDefaultNuGetFramework
     {
@@ -515,6 +521,7 @@ namespace Orc.NuGetExplorer
     {
         public static class NuGet
         {
+            public const string CredentialStorage = "NuGetExplorer.CredentialStoragePolicy";
             public const string DestinationFolder = "DestFolder";
             public const string FallbackUrl = "Plugins.FeedUrl";
             public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";
@@ -607,6 +614,13 @@ namespace Orc.NuGetExplorer.Configuration
 }
 namespace Orc.NuGetExplorer.Enums
 {
+    public enum CredentialStoragePolicy
+    {
+        None = 0,
+        WindowsVault = 1,
+        WindowsVaultConfigurationFallback = 2,
+        Configuration = 3,
+    }
     public enum MetadataOrigin
     {
         Browse = 0,

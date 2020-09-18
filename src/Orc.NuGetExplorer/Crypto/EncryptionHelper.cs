@@ -47,8 +47,11 @@ namespace Orc.NuGetExplorer.Crypto
 
             var crypto = CreateCryptoServiceProvider(encoding, key);
 
-            var result = Convert.ToBase64String(crypto.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-            return result;
+            using (var encryptor = crypto.CreateEncryptor())
+            {
+                var result = Convert.ToBase64String(encryptor.TransformFinalBlock(buffer, 0, buffer.Length));
+                return result;
+            }
         }
 
         public static string Decrypt(string s, string key)
@@ -63,8 +66,11 @@ namespace Orc.NuGetExplorer.Crypto
             var crypto = CreateCryptoServiceProvider(encoding, key);
             var buffer = Convert.FromBase64String(s);
 
-            var result = encoding.GetString(crypto.CreateDecryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-            return result;
+            using (var decryptor = crypto.CreateDecryptor())
+            {
+                var result = encoding.GetString(decryptor.TransformFinalBlock(buffer, 0, buffer.Length));
+                return result;
+            }
         }
 
         private static Aes CreateCryptoServiceProvider(Encoding encoding, string key)
@@ -73,7 +79,12 @@ namespace Orc.NuGetExplorer.Crypto
             var md5 = new MD5CryptoServiceProvider();
 
             aes.Key = md5.ComputeHash(encoding.GetBytes(key));
-            aes.GenerateIV();
+            aes.IV = new byte[] {
+                0x2, 0x4, 0x8, 0x16,
+                0x1, 0x3, 0x5, 0x7,
+                0x11, 0x12, 0x13, 0x14,
+                0x16, 0x16, 0x16, 0x16,
+            };
             aes.Padding = PaddingMode.PKCS7;
             aes.Mode = CipherMode.CBC;
 

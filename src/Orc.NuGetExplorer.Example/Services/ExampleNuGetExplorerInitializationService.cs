@@ -49,6 +49,9 @@
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
             //apiRegistry.Register("PackageName.Api", "1.0.0-version");
+
+            // Example: changing storage for Credentials
+            //credentialProviderLoaderService.SetCredentialPolicy(Enums.CredentialStoragePolicy.WindowsVaultConfigurationFallback);
         }
     }
 }
