@@ -79,6 +79,10 @@ namespace Orc.NuGetExplorer.Crypto
             var md5 = new MD5CryptoServiceProvider();
 
             aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+
+            // Important notes on changing implementation: 
+            // You need to keep IV value of aes provider the same per encryption/decryption operation
+            // if you select CBC mode, otherwise it will fails with wrong offset
             aes.IV = new byte[] {
                 0x2, 0x4, 0x8, 0x16,
                 0x1, 0x3, 0x5, 0x7,
