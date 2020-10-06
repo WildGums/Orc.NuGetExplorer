@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Enums
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;

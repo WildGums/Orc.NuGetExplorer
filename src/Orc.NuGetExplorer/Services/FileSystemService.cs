@@ -89,7 +89,7 @@
                     return;
                 }
 
-                if (Directory.Exists(directoryPath))
+                if (!Directory.Exists(directoryPath))
                 {
                     Directory.CreateDirectory(directoryPath);
                 }

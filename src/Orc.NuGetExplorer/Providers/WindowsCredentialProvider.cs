@@ -23,7 +23,7 @@
             Argument.IsNotNull(() => configurationService);
 
             _configurationService = configurationService;
-            _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != Enums.CredentialStoragePolicy.None;
+            _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;
         }
 
         public string Id => "Windows Credentials";

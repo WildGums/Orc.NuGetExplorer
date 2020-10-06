@@ -2,14 +2,13 @@
 {
     using Catel;
     using Catel.Configuration;
-    using Orc.NuGetExplorer.Enums;
 
     public static class IConfigurationServiceExtensions
     {
         public static CredentialStoragePolicy GetCredentialStoragePolicy(this IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
-            return configurationService.GetRoamingValue<CredentialStoragePolicy>(Settings.NuGet.CredentialStorage, CredentialStoragePolicy.WindowsVaultConfigurationFallback);
+            return configurationService.GetRoamingValue(Settings.NuGet.CredentialStorage, CredentialStoragePolicy.WindowsVaultConfigurationFallback);
         }
 
         public static void SetCredentialStoragePolicy(this IConfigurationService configurationService, CredentialStoragePolicy value)
