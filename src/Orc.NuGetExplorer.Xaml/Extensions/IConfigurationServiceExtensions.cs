@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using Catel;
     using Catel.Configuration;
+    using Orc.NuGetExplorer.Enums;
 
     internal static class IConfigurationServiceExtensions
     {

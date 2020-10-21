@@ -45,6 +45,13 @@ namespace Orc.NuGetExplorer
             public const string PackageParserInvalidVersion = "parameter doesn\'t contain valid package version";
         }
     }
+    public enum CredentialStoragePolicy
+    {
+        None = 0,
+        WindowsVault = 1,
+        WindowsVaultConfigurationFallback = 2,
+        Configuration = 3,
+    }
     public static class DefaultNuGetComparers
     {
         public static System.Collections.Generic.IEqualityComparer<NuGet.Configuration.PackageSource> PackageSource { get; set; }
@@ -130,9 +137,15 @@ namespace Orc.NuGetExplorer
     {
         T Clone();
     }
+    public static class IConfigurationServiceExtensions
+    {
+        public static Orc.NuGetExplorer.CredentialStoragePolicy GetCredentialStoragePolicy(this Catel.Configuration.IConfigurationService configurationService) { }
+        public static void SetCredentialStoragePolicy(this Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.CredentialStoragePolicy value) { }
+    }
     public interface ICredentialProviderLoaderService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>> GetCredentialProvidersAsync();
+        void SetCredentialPolicy(Orc.NuGetExplorer.CredentialStoragePolicy storagePolicy);
     }
     public interface IDefaultNuGetFramework
     {
@@ -515,6 +528,7 @@ namespace Orc.NuGetExplorer
     {
         public static class NuGet
         {
+            public const string CredentialStorage = "NuGetExplorer.CredentialStoragePolicy";
             public const string DestinationFolder = "DestFolder";
             public const string FallbackUrl = "Plugins.FeedUrl";
             public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";

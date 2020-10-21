@@ -5,14 +5,17 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Configuration;
+    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Credentials;
     using NuGet.Protocol;
     using NuGetExplorer.Providers;
+    using Orc.NuGetExplorer.Enums;
 
     internal class CredentialProviderLoaderService : ICredentialProviderLoaderService
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IConfigurationService _configurationService;
 
         public CredentialProviderLoaderService(IConfigurationService configurationService)
@@ -29,6 +32,12 @@
                     false,
                     true)
                 );
+        }
+
+        public void SetCredentialPolicy(CredentialStoragePolicy storagePolicy)
+        {
+            Log.Info($"Changing credential storage policy to {storagePolicy}");
+            _configurationService.SetCredentialStoragePolicy(storagePolicy);
         }
 
         public async Task<IEnumerable<ICredentialProvider>> GetCredentialProvidersAsync()

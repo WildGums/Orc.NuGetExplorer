@@ -80,14 +80,28 @@
         public void CreateDeleteme(string name, string path)
         {
             var fullPath = GetDeletemePath(name, path);
+            var directoryPath = Path.GetDirectoryName(fullPath);
 
-            if(File.Exists(fullPath))
+            try
             {
-                return;
+                if (File.Exists(fullPath))
+                {
+                    return;
+                }
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using (File.Create(fullPath))
+                {
+                }
             }
-
-            using (File.Create(fullPath))
+            catch (Exception ex)
             {
+                Log.Error(ex);
+                Log.Info($"Cannot create requested deleteme file on path {fullPath}");
             }
         }
 
@@ -95,12 +109,20 @@
         {
             var fullPath = GetDeletemePath(name, path);
 
-            if(!File.Exists(fullPath))
+            try
             {
-                return;
-            }
+                if (!File.Exists(fullPath))
+                {
+                    return;
+                }
 
-            File.Delete(fullPath);
+                File.Delete(fullPath);
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex);
+                Log.Info($"Cannot remove deleteme file on path {fullPath}");
+            }
         }
 
         private static bool CopyFiles(string sourceDirectory, string destinationDirectory, HashSet<string> failedDirectories)

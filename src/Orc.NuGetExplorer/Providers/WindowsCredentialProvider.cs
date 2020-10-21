@@ -16,12 +16,14 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IConfigurationService _configurationService;
+        private readonly bool _canAccessStoredCredentials;
 
         public WindowsCredentialProvider(IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
 
             _configurationService = configurationService;
+            _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;
         }
 
         public string Id => "Windows Credentials";
@@ -37,7 +39,6 @@
                 Log.Debug($"Requesting credentials for '{uri}'");
             }
 
-
             bool? result = null;
 
             var uriString = uri.ToString().ToLower();
@@ -45,7 +46,7 @@
             var credentialsPrompter = new CredentialsPrompter(_configurationService)
             {
                 Target = uriString,
-                AllowStoredCredentials = !isRetry,
+                AllowStoredCredentials = !isRetry && _canAccessStoredCredentials,
                 ShowSaveCheckBox = true,
                 WindowTitle = "Credentials required",
                 MainInstruction = "Credentials are required to access this feed",
