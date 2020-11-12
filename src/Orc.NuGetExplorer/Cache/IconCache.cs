@@ -27,16 +27,20 @@
             _cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
         }
 
+        // TODO stream should be disposed when item removed from cache
         public BitmapImage GetFromCache(Uri iconUri)
         {
-            //todo stream should be disposed when item removed from cache
             if (iconUri == null)
             {
                 return FallbackValue;
             }
 
-            string key = iconUri.ToString();
-            var cachedItem = _cache.Get(key);
+            if (iconUri.IsLoopback)
+            {
+                return CreateImage(iconUri);
+            }
+
+            var cachedItem = _cache.Get(iconUri.ToString());
 
             if (cachedItem == null)
             {
@@ -45,19 +49,7 @@
 
             using (var stream = new MemoryStream(cachedItem))
             {
-                var image = new BitmapImage();
-
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = stream;
-                image.EndInit();
-
-                if (!image.IsFrozen)
-                {
-                    image.Freeze();
-                }
-
-                return image;
+                return CreateImage(stream);
             }
         }
 
@@ -71,6 +63,53 @@
             var cachedItem = _cache.Get(iconUri.ToString());
 
             return cachedItem != null;
+        }
+
+        private BitmapImage CreateImage(Stream stream)
+        {
+            var image = new BitmapImage();
+
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+
+            if (!image.IsFrozen)
+            {
+                image.Freeze();
+            }
+
+            return image;
+        }
+
+        private BitmapImage CreateImage(Uri uri)
+        {
+            var image = new BitmapImage();
+
+            // Find extracted resource in folder from uri
+            var iconUri = uri;
+
+            if (!string.IsNullOrEmpty(uri.Fragment))
+            {
+                var fileName = uri.Fragment.Substring(1, uri.Fragment.Length - 1);
+                var folderPath = Path.GetDirectoryName(uri.AbsolutePath);
+
+                // Decode spaces
+                folderPath = folderPath.Replace("%20", " ");
+                iconUri = new Uri(Path.Combine(folderPath, fileName));
+            }
+
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = iconUri;
+            image.EndInit();
+
+            if (!image.IsFrozen)
+            {
+                image.Freeze();
+            }
+
+            return image;
         }
     }
 }

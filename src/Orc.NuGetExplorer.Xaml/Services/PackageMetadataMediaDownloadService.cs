@@ -41,6 +41,12 @@
                     return;
                 }
 
+                if (packageMetadata.IconUrl.IsLoopback)
+                {
+                    // No need to cache local files
+                    return;
+                }
+
                 await DownloadFromAsync(packageMetadata.IconUrl);
             }
             catch (WebException ex)

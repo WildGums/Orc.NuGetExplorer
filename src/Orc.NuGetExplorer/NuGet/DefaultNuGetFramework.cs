@@ -10,6 +10,7 @@
 
     public class DefaultNuGetFramework : IDefaultNuGetFramework
     {
+        private const string BaseFrameworkName = ".NETFramework, Version=";
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly FrameworkReducer _frameworkReducer = new FrameworkReducer();
@@ -57,7 +58,14 @@
             {
                 frameworkStringList.Add($".NETCoreApp,Version=v{version.Major}.{version.Minor}");
             }
-
+            else
+            {
+                if (version.Major == 5)
+                {
+                    // Support .NET 5 
+                    frameworkStringList.Add($"{BaseFrameworkName}v5.0");
+                }
+            }
 #endif
             foreach (var frameworkName in frameworkStringList.Distinct())
             {
@@ -154,7 +162,6 @@
         private static void GetNewerFrameworkVersionsFromRegistry(List<string> frameworkList)
         {
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
-            const string baseFrameworkName = ".NETFramework, Version=";
 
             using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
             {
@@ -172,47 +179,47 @@
             }
 
             // Checking the version using >= enables forward compatibility.
-            string CheckFor45PlusVersion(int releaseKey)
+            static string CheckFor45PlusVersion(int releaseKey)
             {
                 if (releaseKey >= 528040)
                 {
-                    return $"{baseFrameworkName}v4.7.2";    //current version of nuget lib doesn't know about 4.8 
+                    return $"{BaseFrameworkName}v4.7.2";    //current version of nuget lib doesn't know about 4.8 
                 }
                 if (releaseKey >= 461808)
                 {
-                    return $"{baseFrameworkName}v4.7.2";
+                    return $"{BaseFrameworkName}v4.7.2";
                 }
                 if (releaseKey >= 461308)
                 {
-                    return $"{baseFrameworkName}v4.7.1";
+                    return $"{BaseFrameworkName}v4.7.1";
                 }
                 if (releaseKey >= 460798)
                 {
-                    return $"{baseFrameworkName}v4.7";
+                    return $"{BaseFrameworkName}v4.7";
                 }
                 if (releaseKey >= 394802)
                 {
-                    return $"{baseFrameworkName}v4.6.2";
+                    return $"{BaseFrameworkName}v4.6.2";
                 }
                 if (releaseKey >= 394254)
                 {
-                    return $"{baseFrameworkName}v4.6.1";
+                    return $"{BaseFrameworkName}v4.6.1";
                 }
                 if (releaseKey >= 393295)
                 {
-                    return $"{baseFrameworkName}v4.6.0";
+                    return $"{BaseFrameworkName}v4.6.0";
                 }
                 if (releaseKey >= 379893)
                 {
-                    return $"{baseFrameworkName}v4.5.2";
+                    return $"{BaseFrameworkName}v4.5.2";
                 }
                 if (releaseKey >= 378675)
                 {
-                    return $"{baseFrameworkName}v4.5.1";
+                    return $"{BaseFrameworkName}v4.5.1";
                 }
                 if (releaseKey >= 378389)
                 {
-                    return $"{baseFrameworkName}v4.5";
+                    return $"{BaseFrameworkName}v4.5";
                 }
 
                 // This code should never execute. A non-null release key should mean

@@ -20,12 +20,10 @@
         {
             ContentPath = destinationFolder;
 
-            var lowest = defaultFramework.GetLowest();
-
 #if NETCORE
-            Framework = lowest.FirstOrDefault()?.ToString();
+            Framework = defaultFramework.GetHighest().FirstOrDefault().ToString();
 #else
-            Framework = lowest.LastOrDefault()?.ToString();
+            Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();
 #endif
             Log.Info($"Current target framework for plugins set as '{Framework}'");
 

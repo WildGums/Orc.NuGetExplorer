@@ -58,7 +58,7 @@
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
-            var searchResource = sourceRepository.GetResource<PackageSearchResource>();
+            var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
 
             var searchFilters = new SearchFilter(allowPrereleaseVersions);
 

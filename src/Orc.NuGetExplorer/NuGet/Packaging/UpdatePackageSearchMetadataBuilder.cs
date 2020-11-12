@@ -26,6 +26,8 @@
 
         public IPackageSearchMetadata Build()
         {
+            var firstClone = FromMetadata(_metadata);
+
             var clonedMetadata = new UpdatePackageSearchMetadata
             {
                 Authors = _metadata.Authors,
@@ -43,10 +45,10 @@
                 Summary = _metadata.Summary,
                 Tags = _metadata.Tags,
                 Title = _metadata.Title,
-                LazyVersionsFactory = _metadata.LazyVersionsFactory,
                 IsListed = _metadata.IsListed,
                 PrefixReserved = _metadata.PrefixReserved,
                 LicenseMetadata = _metadata.LicenseMetadata,
+                LazyVersionsFactory = new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<VersionInfo>>(async() => await _metadata.GetVersionsAsync()),
                 FromVersion = new VersionInfo(_updatedVersionMetadata.Identity.Version, _updatedVersionMetadata.DownloadCount)
                 {
                     PackageSearchMetadata = _updatedVersionMetadata
