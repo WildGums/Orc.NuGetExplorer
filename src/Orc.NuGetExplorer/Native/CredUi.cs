@@ -118,7 +118,7 @@ namespace Orc.NuGetExplorer.Native
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CredRead(string TargetName, CredTypes Type, int Flags, out IntPtr Credential);
 
-        [DllImport("advapi32.dll"), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport("advapi32.dll")]
         internal static extern void CredFree(IntPtr Buffer);
 
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "CredDeleteW", SetLastError = true)]

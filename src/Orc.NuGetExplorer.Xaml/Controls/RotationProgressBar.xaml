@@ -20,7 +20,7 @@
             <SolidColorBrush Color="{DynamicResource WarningMaterialColor}" x:Key="WarningMaterialColorBrush"/>
 
             <Color x:Key="ErrorMaterialColor">#ff1744</Color>
-            <Color x:Key="SuccessMaterialColor">#00bfa5</Color>
+            <Color x:Key="SuccessMaterialColor">#00BFA5</Color>
             <Color x:Key="WarningMaterialColor">#ff1744</Color>
 
 

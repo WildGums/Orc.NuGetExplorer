@@ -25,7 +25,6 @@ namespace Orc.NuGetExplorer.Native
         /// <summary>
         /// Initializes a new instance of the <see cref="CredentialException" /> class.
         /// </summary>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public CredentialException()
             : base(CredentialError)
         {
@@ -35,7 +34,6 @@ namespace Orc.NuGetExplorer.Native
         /// Initializes a new instance of the <see cref="CredentialException" /> class with the specified error. 
         /// </summary>
         /// <param name="error">The Win32 error code associated with this exception.</param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public CredentialException(int error)
             : base(error)
         {
@@ -45,7 +43,6 @@ namespace Orc.NuGetExplorer.Native
         /// Initializes a new instance of the <see cref="CredentialException" /> class with a specified error message.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public CredentialException(string message)
             : base(message)
         {
@@ -56,7 +53,6 @@ namespace Orc.NuGetExplorer.Native
         /// </summary>
         /// <param name="error">The Win32 error code associated with this exception.</param>
         /// <param name="message">A detailed description of the error.</param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public CredentialException(int error, string message)
             : base(error, message)
         {
@@ -67,7 +63,6 @@ namespace Orc.NuGetExplorer.Native
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="innerException">A reference to the inner exception that is the cause of the current exception.</param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public CredentialException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -78,7 +73,6 @@ namespace Orc.NuGetExplorer.Native
         /// </summary>
         /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
             : base(info, context)
         {
