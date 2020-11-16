@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer
     using System;
     using Catel;
     using Catel.Logging;
+    using Orc.FileSystem;
 
     public class RollbackWatcher : PackageManagerContextWatcherBase
     {
@@ -18,21 +19,25 @@ namespace Orc.NuGetExplorer
 
         private readonly IBackupFileSystemService _backupFileSystemService;
         private readonly IFileSystemService _fileSystemService;
+        private readonly IDirectoryService _directoryService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
         #endregion
 
         #region Constructors
         public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService)
+            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService, 
+            IDirectoryService directoryService)
             : base(packageOperationNotificationService, packageOperationContextService)
         {
             Argument.IsNotNull(() => rollbackPackageOperationService);
             Argument.IsNotNull(() => backupFileSystemService);
             Argument.IsNotNull(() => fileSystemService);
+            Argument.IsNotNull(() => directoryService);
 
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
             _fileSystemService = fileSystemService;
+            _directoryService = directoryService;
         }
         #endregion
 
@@ -74,7 +79,8 @@ namespace Orc.NuGetExplorer
                     bool success = true;
                     try
                     {
-                        success = _fileSystemService.DeleteDirectory(e.InstallPath);
+                        _directoryService.Delete(e.InstallPath);
+                        success = !_directoryService.Exists(e.InstallPath);
                     }
                     catch (Exception)
                     {

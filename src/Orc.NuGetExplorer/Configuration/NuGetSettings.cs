@@ -25,17 +25,14 @@
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
-        private readonly IFileDirectoryService _fileDirectoryService;
         #endregion
 
         #region Constructors
-        public NuGetSettings(IConfigurationService configurationService, IFileDirectoryService fileDirectoryService)
+        public NuGetSettings(IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => fileDirectoryService);
 
             _configurationService = configurationService;
-            _fileDirectoryService = fileDirectoryService;
 
             //version of configuration is a version of assembly
             //get version from configuration
@@ -88,7 +85,6 @@
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
         }
 
-
         public IList<KeyValuePair<string, string>> GetNestedValues(string section, string subSection)
         {
             Argument.IsNotNullOrWhitespace(() => section);
@@ -122,7 +118,6 @@
 
             RaiseSettingsChanged();
         }
-
 
         public bool DeleteValue(string section, string key)
         {
@@ -251,18 +246,15 @@
 
         public IList<string> GetConfigFilePaths()
         {
-            var localFolderConfig = Path.Combine(_fileDirectoryService.GetApplicationLocalFolder(), ConfigurationFileName);
-            var roamingFolderConfig = Path.Combine(_fileDirectoryService.GetApplicationRoamingFolder(), ConfigurationFileName);
+            var localFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
+            var roamingFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
 
             return new string[] { localFolderConfig, roamingFolderConfig };
         }
 
         public IList<string> GetConfigRoots()
         {
-            var localFolderConfig = _fileDirectoryService.GetApplicationLocalFolder();
-            var roamingFolderConfig = _fileDirectoryService.GetApplicationRoamingFolder();
-
-            return new string[] { localFolderConfig, roamingFolderConfig };
+            return new string[] { DefaultNuGetFolders.GetApplicationLocalFolder(), DefaultNuGetFolders.GetApplicationRoamingFolder() };
         }
 
         /* obsolete members */

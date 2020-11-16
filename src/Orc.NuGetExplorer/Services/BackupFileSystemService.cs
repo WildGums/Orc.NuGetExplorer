@@ -11,23 +11,24 @@ namespace Orc.NuGetExplorer
     using System.IO;
     using Catel;
     using Catel.Logging;
+    using Orc.FileSystem;
 
     internal class BackupFileSystemService : IBackupFileSystemService
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IFileSystemService _fileSystemService;
         private readonly IPackageOperationContextService _operationContextService;
+        private readonly IDirectoryService _directoryService;
         #endregion
 
         #region Constructors
-        public BackupFileSystemService(IPackageOperationContextService operationContextService, IFileSystemService fileSystemService)
+        public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => operationContextService);
-            Argument.IsNotNull(() => fileSystemService);
+            Argument.IsNotNull(() => directoryService);
 
             _operationContextService = operationContextService;
-            _fileSystemService = fileSystemService;
+            _directoryService = directoryService;
         }
         #endregion
 
@@ -40,7 +41,7 @@ namespace Orc.NuGetExplorer
             {
                 var destinationDirectory = GetBackupFolder(fullPath);
 
-                _fileSystemService.CopyDirectory(fullPath, destinationDirectory);
+                _directoryService.Copy(fullPath, destinationDirectory);
             }
             catch (Exception ex)
             {
@@ -79,11 +80,11 @@ namespace Orc.NuGetExplorer
                 else
                 {
                     //clean-up directory from files created after backup, like .deleteme etc
-                    _fileSystemService.DeleteDirectory(fullPath);
+                    _directoryService.Delete(fullPath);
                 }
 
                 var sourceDirectory = GetBackupFolder(fullPath);
-                _fileSystemService.CopyDirectory(sourceDirectory, fullPath);
+                _directoryService.Copy(sourceDirectory, fullPath);
             }
             catch (Exception ex)
             {

@@ -57,6 +57,13 @@ namespace Orc.NuGetExplorer
         public static System.Collections.Generic.IEqualityComparer<NuGet.Configuration.PackageSource> PackageSource { get; set; }
         public static System.Collections.Generic.IEqualityComparer<NuGet.Protocol.Core.Types.SourceRepository> SourceRepository { get; set; }
     }
+    public static class DefaultNuGetFolders
+    {
+        public static readonly string DefaultGlobalPackagesFolderPath;
+        public static string GetApplicationLocalFolder() { }
+        public static string GetApplicationRoamingFolder() { }
+        public static string GetGlobalPackagesFolder() { }
+    }
     public class DefaultNuGetFramework : Orc.NuGetExplorer.IDefaultNuGetFramework
     {
         public DefaultNuGetFramework(NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
@@ -157,6 +164,10 @@ namespace Orc.NuGetExplorer
         string DefaultSource { get; set; }
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> GetDefaultPackages();
     }
+    public static class IDirectoryServiceExtensions
+    {
+        public static void ForceDeleteDirectory(this Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService, string folderPath, out System.Collections.Generic.List<string> failedEntries) { }
+    }
     public interface IExtendedSourceRepositoryProvider : NuGet.Protocol.Core.Types.ISourceRepositoryProvider
     {
         NuGet.Protocol.Core.Types.SourceRepository CreateLocalRepository(string source);
@@ -176,11 +187,14 @@ namespace Orc.NuGetExplorer
     {
         public static NuGet.Protocol.Core.Types.SourceRepository AsSourceRepository(this Orc.NuGetExplorer.IExtensibleProject project, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
     }
+    public static class IFileServiceExtensions
+    {
+        public static void ForceDeleteFiles(this Orc.FileSystem.IFileService fileService, string filePath, System.Collections.Generic.List<string> failedEntries) { }
+        public static void SetAttributes(this Orc.FileSystem.IFileService fileService, string filePath, System.IO.FileAttributes attribute) { }
+    }
     public interface IFileSystemService
     {
-        void CopyDirectory(string sourceDirectory, string destinationDirectory);
         void CreateDeleteme(string name, string path);
-        bool DeleteDirectory(string path);
         void RemoveDeleteme(string name, string path);
     }
     public interface INuGetConfigurationService
@@ -520,7 +534,7 @@ namespace Orc.NuGetExplorer
     }
     public class RollbackWatcher : Orc.NuGetExplorer.PackageManagerContextWatcherBase
     {
-        public RollbackWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService, Orc.NuGetExplorer.IRollbackPackageOperationService rollbackPackageOperationService, Orc.NuGetExplorer.IBackupFileSystemService backupFileSystemService, Orc.NuGetExplorer.IFileSystemService fileSystemService) { }
+        public RollbackWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService, Orc.NuGetExplorer.IRollbackPackageOperationService rollbackPackageOperationService, Orc.NuGetExplorer.IBackupFileSystemService backupFileSystemService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService) { }
         protected override void OnOperationContextDisposing(object sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
         protected override void OnOperationStarting(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
     }
@@ -589,7 +603,7 @@ namespace Orc.NuGetExplorer.Cache
     }
     public class NuGetCacheManager : Orc.NuGetExplorer.Cache.INuGetCacheManager
     {
-        public NuGetCacheManager(Orc.NuGetExplorer.Services.IFileDirectoryService fileDirectoryService) { }
+        public NuGetCacheManager(Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService) { }
         public bool ClearAll() { }
         public bool ClearHttpCache() { }
         public NuGet.Protocol.Core.Types.SourceCacheContext GetCacheContext() { }
@@ -1046,6 +1060,7 @@ namespace Orc.NuGetExplorer.Packaging
     {
         public UpdatePackageSearchMetadata() { }
         public NuGet.Protocol.Core.Types.VersionInfo FromVersion { get; set; }
+        public new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> LazyVersionsFactory { get; set; }
     }
     public class UpdatePackageSearchMetadataBuilder
     {
@@ -1209,13 +1224,6 @@ namespace Orc.NuGetExplorer.Services
     public interface IDownloadingProgressTrackerService
     {
         System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo);
-    }
-    public interface IFileDirectoryService
-    {
-        void DeleteDirectoryTree(string folderPath, out System.Collections.Generic.List<string> failedEntries);
-        string GetApplicationLocalFolder();
-        string GetApplicationRoamingFolder();
-        string GetGlobalPackagesFolder();
     }
     public interface INuGetExplorerInitializationService
     {

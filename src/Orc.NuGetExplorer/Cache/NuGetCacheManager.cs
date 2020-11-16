@@ -1,34 +1,37 @@
 ﻿namespace Orc.NuGetExplorer.Cache
 {
+    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using Orc.NuGetExplorer.Services;
+    using Orc.FileSystem;
 
     public class NuGetCacheManager : INuGetCacheManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IFileDirectoryService _fileDirectoryService;
+        //private readonly IFileDirectoryService _fileDirectoryService;
         private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
+        private readonly IDirectoryService _directoryService;
+        private readonly IFileService _fileService;
 
-        public NuGetCacheManager(IFileDirectoryService fileDirectoryService)
+        public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => fileDirectoryService);
-
-            _fileDirectoryService = fileDirectoryService;
+            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => fileService);
+            _directoryService = directoryService;
+            _fileService = fileService;
         }
 
         public bool ClearAll()
         {
             bool noErrors = true;
             noErrors &= ClearHttpCache();
-            noErrors &= ClearNuGetFolder(_fileDirectoryService.GetGlobalPackagesFolder(), "Global-packages");
+            noErrors &= ClearNuGetFolder(DefaultNuGetFolders.GetGlobalPackagesFolder(), "Global-packages");
             noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");
 
             Log.Info("Cache clearing operation finished");
@@ -81,13 +84,13 @@
 
         private bool ClearCacheDirectory(string folderPath)
         {
-            List<string> failedDeletes = new List<string>();
+            var failedDeletes = new List<string>();
 
             try
             {
-                _fileDirectoryService.DeleteDirectoryTree(folderPath, out failedDeletes);
+                _directoryService.ForceDeleteDirectory(_fileService, folderPath, out failedDeletes);
             }
-            catch (IOException)
+            catch (Exception)
             {
                 Log.Error("Cache clear ended unsuccessfully, directory is in use by another process");
             }

@@ -21,11 +21,9 @@
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            IFileDirectoryService fileDirectoryService,
             Orc.Theming.IAccentColorService accentColorService) : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
-            Argument.IsNotNull(() => fileDirectoryService);
             Argument.IsNotNull(() => accentColorService);
 
             var serviceLocator = ServiceLocator.Default;
@@ -44,7 +42,7 @@
             serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
 
             // add project extensions
-            projectLocator.Register<ExampleFolderPackageManagement>(fileDirectoryService.GetApplicationRoamingFolder());
+            projectLocator.Register<ExampleFolderPackageManagement>(DefaultNuGetFolders.GetApplicationRoamingFolder());
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
