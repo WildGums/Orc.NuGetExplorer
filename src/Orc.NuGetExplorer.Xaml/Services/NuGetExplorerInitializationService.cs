@@ -5,18 +5,21 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
+    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
     {
         private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
 
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
+            INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => languageService);
             Argument.IsNotNull(() => credentialProviderLoaderService);
             Argument.IsNotNull(() => nuGetProjectUpgradeService);
+            Argument.IsNotNull(() => nuGetConfigurationService);
 
             var serviceLocator = ServiceLocator.Default;
 
@@ -37,9 +40,19 @@
             nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
+            _nuGetConfigurationService = nuGetConfigurationService;
         }
 
         public string DefaultSourceKey => Settings.NuGet.FallbackUrl;
+
+        public int PackageQuerySize
+        {
+            get { return _nuGetConfigurationService.GetPackageQuerySize(); }
+            set
+            {
+                _nuGetConfigurationService.SetPackageQuerySize(value);
+            }
+        }
 
         public virtual async Task<bool> UpgradeNuGetPackagesIfNeededAsync()
         {

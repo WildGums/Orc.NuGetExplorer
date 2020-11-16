@@ -6,6 +6,8 @@
     {
         string DefaultSourceKey { get; }
 
+        int PackageQuerySize { get; set; }
+
         Task<bool> UpgradeNuGetPackagesIfNeededAsync();
     }
 }

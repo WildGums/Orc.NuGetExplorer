@@ -32,7 +32,6 @@
     internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly int PageSize = 17;
         private static readonly int SingleTasksDelayMs = 800;
         private static readonly IHttpExceptionHandler<FatalProtocolException> PackageLoadingExceptionHandler = new FatalProtocolExceptionHandler();
 
@@ -51,7 +50,7 @@
 
         private readonly INuGetPackageManager _projectManager;
         private readonly INuGetCacheManager _nuGetCacheManager;
-
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly ITypeFactory _typeFactory;
         private readonly MetadataOrigin _pageType;
 
@@ -63,7 +62,8 @@
         public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager)
+            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
+            INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
@@ -77,6 +77,7 @@
             Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => nuGetCacheManager);
+            Argument.IsNotNull(() => nuGetConfigurationService);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -88,7 +89,7 @@
             _typeFactory = typeFactory;
             _packagesLoaderService = packagesLoaderService;
             _nuGetCacheManager = nuGetCacheManager;
-
+            _nuGetConfigurationService = nuGetConfigurationService;
             Settings = settingsProvider.Model;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
@@ -270,15 +271,16 @@
                 _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
 
                 IsFirstLoaded = false;
+                var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
 
                 if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
-                    PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
+                    PageInfo = new PageContinuation(pageSize, Settings.ObservedFeed.GetPackageSource());
 
                     var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
 
-                    await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
+                    await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
                 }
                 else
                 {
@@ -348,13 +350,14 @@
             Log.Info("Timer elapsed");
             var currentFeed = Settings.ObservedFeed;
             //reset page
-            PageInfo = new PageContinuation(PageSize, currentFeed.GetPackageSource());
+            PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
 
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
-            await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
+            var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
+            await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
         }
 
-        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters searchParams)
+        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters searchParams, int pageSize)
         {
             try
             {
@@ -433,7 +436,7 @@
                 IsCancellationTokenAlive = false;
 
                 //backward page if needed
-                if (PageInfo.LastNumber > PageSize)
+                if (PageInfo.LastNumber > pageSize)
                 {
                     PageInfo.GetPrevious();
                 }
@@ -445,7 +448,7 @@
                     var awaitedSeachParams = AwaitedSearchParameters;
                     AwaitedPageInfo = null;
                     AwaitedSearchParameters = null;
-                    await VerifySourceAndLoadPackagesAsync(awaitedPageinfo, Settings.ObservedFeed, awaitedSeachParams);
+                    await VerifySourceAndLoadPackagesAsync(awaitedPageinfo, Settings.ObservedFeed, awaitedSeachParams, pageSize);
                 }
                 else
                 {
@@ -655,8 +658,9 @@
         private async Task LoadNextPackagePageExecuteAsync()
         {
             var pageInfo = PageInfo;
+            var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
-            await VerifySourceAndLoadPackagesAsync(pageInfo, Settings.ObservedFeed, searchParams);
+            await VerifySourceAndLoadPackagesAsync(pageInfo, Settings.ObservedFeed, searchParams, pageSize);
         }
 
         public TaskCommand CancelPageLoading { get; set; }

@@ -18,10 +18,12 @@
             ILanguageService languageService,
             ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService,
+            INuGetConfigurationService nuGetConfigurationService,
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            Orc.Theming.IAccentColorService accentColorService) : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, vmLocator, typeFactory)
+            IAccentColorService accentColorService) 
+            : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => accentColorService);
@@ -50,6 +52,9 @@
 
             // Example: changing storage for Credentials
             //credentialProviderLoaderService.SetCredentialPolicy(Enums.CredentialStoragePolicy.WindowsVaultConfigurationFallback);
+
+            // Override size of packages queries
+            nuGetConfigurationService.SetPackageQuerySize(40);
         }
     }
 }
