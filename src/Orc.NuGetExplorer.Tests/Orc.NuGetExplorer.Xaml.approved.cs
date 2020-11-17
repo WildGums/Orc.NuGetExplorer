@@ -338,8 +338,9 @@ namespace Orc.NuGetExplorer.Services
 {
     public class NuGetExplorerInitializationService : Orc.NuGetExplorer.Services.INuGetExplorerInitializationService
     {
-        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
+        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
         public string DefaultSourceKey { get; }
+        public int PackageQuerySize { get; set; }
         public virtual System.Threading.Tasks.Task<bool> UpgradeNuGetPackagesIfNeededAsync() { }
     }
 }

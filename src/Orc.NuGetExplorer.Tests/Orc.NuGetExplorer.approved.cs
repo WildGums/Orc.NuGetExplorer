@@ -202,6 +202,7 @@ namespace Orc.NuGetExplorer
         void DisablePackageSource(string name, string source);
         string GetDestinationFolder();
         bool GetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository);
+        int GetPackageQuerySize();
         bool IsProjectConfigured(Orc.NuGetExplorer.IExtensibleProject project);
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> LoadPackageSources(bool onlyEnabled = false);
         void RemovePackageSource(Orc.NuGetExplorer.IPackageSource source);
@@ -210,6 +211,7 @@ namespace Orc.NuGetExplorer
         void SaveProjects(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> extensibleProjects);
         void SetDestinationFolder(string value);
         void SetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository, bool value);
+        void SetPackageQuerySize(int size);
     }
     public interface INuGetFeedVerificationService
     {
@@ -234,10 +236,6 @@ namespace Orc.NuGetExplorer
     public interface INuGetProjectContextProvider
     {
         NuGet.ProjectManagement.INuGetProjectContext GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction);
-    }
-    public interface IPackageBatchService
-    {
-        void ShowPackagesBatch(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails> packageDetails, Orc.NuGetExplorer.PackageOperationType operationType);
     }
     public interface IPackageDetails
     {
@@ -1228,6 +1226,7 @@ namespace Orc.NuGetExplorer.Services
     public interface INuGetExplorerInitializationService
     {
         string DefaultSourceKey { get; }
+        int PackageQuerySize { get; set; }
         System.Threading.Tasks.Task<bool> UpgradeNuGetPackagesIfNeededAsync();
     }
     public interface INuGetProjectUpgradeService
@@ -1250,6 +1249,7 @@ namespace Orc.NuGetExplorer.Services
         public void DisablePackageSource(string name, string source) { }
         public string GetDestinationFolder() { }
         public bool GetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository) { }
+        public int GetPackageQuerySize() { }
         public bool IsProjectConfigured(Orc.NuGetExplorer.IExtensibleProject project) { }
         public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> LoadPackageSources(bool onlyEnabled = false) { }
         public void RemovePackageSource(Orc.NuGetExplorer.IPackageSource source) { }
@@ -1258,6 +1258,7 @@ namespace Orc.NuGetExplorer.Services
         public void SaveProjects(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> extensibleProjects) { }
         public void SetDestinationFolder(string value) { }
         public void SetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository, bool value) { }
+        public void SetPackageQuerySize(int size) { }
     }
 }
 namespace Orc.NuGetExplorer.Watchers.Base
