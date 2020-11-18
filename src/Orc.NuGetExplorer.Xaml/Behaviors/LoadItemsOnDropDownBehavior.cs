@@ -23,10 +23,13 @@
             set { SetValue(CommandProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="Command"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(nameof(Command), typeof(Command), typeof(LoadItemsOnDropDownBehavior), new PropertyMetadata(null));
 
-        protected void ExecuteItemSourceInitializationCommand()
+        private void ExecuteItemSourceInitializationCommand()
         {
             using (SynchronizationContextScopeManager.OutOfContext())
             {

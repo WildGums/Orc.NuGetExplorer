@@ -3,7 +3,7 @@
     using System.Windows;
     using System.Windows.Media;
 
-    public class WpfHelper
+    public static class WpfHelper
     {
         public static TChild FindVisualChild<TChild>(DependencyObject obj) where TChild : DependencyObject
         {
@@ -11,7 +11,7 @@
             {
                 DependencyObject child = VisualTreeHelper.GetChild(obj, i);
                 
-                if (child != null && child is TChild item)
+                if (child is TChild item)
                 {
                     return item;
                 }

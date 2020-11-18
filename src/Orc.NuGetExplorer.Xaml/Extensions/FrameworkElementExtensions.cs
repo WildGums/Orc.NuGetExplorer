@@ -16,7 +16,6 @@ namespace Orc.NuGetExplorer
 
     internal static class FrameworkElementExtensions
     {
-        #region Methods
         public static void UpdateItemSource(this FrameworkElement frameworkElement)
         {
             Argument.IsNotNull(() => frameworkElement);
@@ -48,6 +47,15 @@ namespace Orc.NuGetExplorer
                 }
             }
         }
-        #endregion
+
+        public static Visibility ToVisibleOrHidden(this FrameworkElement element, bool value)
+        {
+            return value ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public static Visibility ToVisibleOrCollapsed(this FrameworkElement element, bool value)
+        {
+            return value ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }

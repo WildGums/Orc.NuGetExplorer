@@ -17,27 +17,23 @@
 
         private void ListBoxLoaded(object sender, RoutedEventArgs e)
         {
-            ScrollViewer = WpfHelper.FindVisualChild<ScrollViewer>(this);
+            SetScrollViewer(WpfHelper.FindVisualChild<ScrollViewer>(this));
         }
 
-        private ScrollViewer ScrollViewer
+        private void SetScrollViewer(ScrollViewer value)
         {
-            get { return _scrollViewer; }
-            set
+            if (value != _scrollViewer)
             {
-                if (value != _scrollViewer)
+                if (_scrollViewer != null)
                 {
-                    if (_scrollViewer != null)
-                    {
-                        _scrollViewer.ScrollChanged -= OnScrollViewerScrollChanged;
-                    }
+                    _scrollViewer.ScrollChanged -= OnScrollViewerScrollChanged;
+                }
 
-                    _scrollViewer = value;
+                _scrollViewer = value;
 
-                    if (_scrollViewer != null)
-                    {
-                        _scrollViewer.ScrollChanged += OnScrollViewerScrollChanged;
-                    }
+                if (_scrollViewer != null)
+                {
+                    _scrollViewer.ScrollChanged += OnScrollViewerScrollChanged;
                 }
             }
         }
@@ -70,6 +66,9 @@
             set { SetValue(CommandProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="Command"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(nameof(Command), typeof(TaskCommand), typeof(InfiniteScrollListBox), new PropertyMetadata(null));
 
@@ -79,9 +78,11 @@
             set { SetValue(CommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CommandParameter"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty CommandParameterProperty =
             DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
-
 
 
         public bool IsCommandExecuting
@@ -90,6 +91,9 @@
             set { SetValue(IsCommandExecutingProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsCommandExecuting"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty IsCommandExecutingProperty =
             DependencyProperty.Register(nameof(IsCommandExecuting), typeof(bool), typeof(InfiniteScrollListBox),
                 new PropertyMetadata(false, (s, e) => ((InfiniteScrollListBox)s).OnIsCommandExecutingChanged(e)));
@@ -104,6 +108,9 @@
             set { SetValue(ScrollSizeProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ScrollSize"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty ScrollSizeProperty =
             DependencyProperty.Register(nameof(ScrollSize), typeof(int), typeof(InfiniteScrollListBox), new PropertyMetadata(0));
 

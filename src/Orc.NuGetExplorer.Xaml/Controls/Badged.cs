@@ -16,7 +16,7 @@
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            SetTemplatePartVisibility(this, ToVisibility(IsShowed));
+            SetTemplatePartVisibility(IsShowed);
         }
 
         public object Badge
@@ -25,7 +25,9 @@
             set { SetValue(BadgeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="Badge"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty BadgeProperty =
             DependencyProperty.Register(nameof(Badge), typeof(object), typeof(Badged), new FrameworkPropertyMetadata(null));
 
@@ -35,6 +37,9 @@
             set { SetValue(BadgeForegroundProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="BadgeForeground"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty BadgeForegroundProperty =
             DependencyProperty.Register(nameof(BadgeForeground), typeof(Brush), typeof(Badged), new PropertyMetadata(null));
 
@@ -44,7 +49,9 @@
             set { SetValue(IsShowedProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsShowed.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="IsShowed"/> 
+        /// dependency property.</summary>
         public static readonly DependencyProperty IsShowedProperty =
             DependencyProperty.Register(nameof(IsShowed), typeof(bool), typeof(Badged), new PropertyMetadata(true, (s, e) => OnIsShowedChanged(s, e)));
 
@@ -57,31 +64,21 @@
 
         private static void OnIsShowedChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var badged = sender as Badged;
-
-            if (badged == null)
+            if (sender is Badged badged)
             {
-                return;
+                badged.SetTemplatePartVisibility((bool)e.NewValue);
+
+                badged.RaiseIsShowedChanged(e);
             }
-
-            var visibility = badged.ToVisibility((bool)e.NewValue);
-            badged.SetTemplatePartVisibility(badged, visibility);
-
-            badged.RaiseIsShowedChanged(e);
         }
 
-        private void SetTemplatePartVisibility(Badged b, Visibility visibility)
+        private void SetTemplatePartVisibility(bool visibility)
         {
-            var templateBadgeContent = b.GetTemplateChild(BadgeContentPartName);
-            var templateBadge = b.GetTemplateChild(BadgePartName);
+            var templateBadgeContent = GetTemplateChild(BadgeContentPartName);
+            var templateBadge = GetTemplateChild(BadgePartName);
 
-            templateBadgeContent?.SetCurrentValue(VisibilityProperty, visibility);
-            templateBadge?.SetCurrentValue(VisibilityProperty, visibility);
-        }
-
-        private Visibility ToVisibility(bool value)
-        {
-            return value ? Visibility.Visible : Visibility.Hidden;
+            templateBadgeContent?.SetCurrentValue(VisibilityProperty, this.ToVisibleOrHidden(visibility));
+            templateBadge?.SetCurrentValue(VisibilityProperty, this.ToVisibleOrHidden(visibility));
         }
     }
 }
