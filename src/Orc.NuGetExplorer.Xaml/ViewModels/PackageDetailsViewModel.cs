@@ -36,10 +36,6 @@
 
         private readonly IProgressManager _progressManager;
 
-        private readonly INuGetPackageManager _projectManager;
-
-        private readonly ILanguageService _languageService;
-
         private readonly IApiPackageRegistry _apiPackageRegistry;
 
         private readonly IPackageCommandService _packageCommandService;
@@ -47,22 +43,17 @@
         private bool _packageApplied;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, INuGetPackageManager projectManager, ILanguageService languageService, IApiPackageRegistry apiPackageRegistry,
-            IPackageCommandService packageCommandService)
+            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => projectManager);
-            Argument.IsNotNull(() => languageService);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => packageCommandService);
 
             _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
-            _projectManager = projectManager;
-            _languageService = languageService;
             _apiPackageRegistry = apiPackageRegistry;
             _packageCommandService = packageCommandService;
 
@@ -176,7 +167,7 @@
 
                 using (var cts = new CancellationTokenSource())
                 {
-                    //InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
+                    // InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
                     var uninstallPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Uninstall, Package.GetMetadata(), InstalledPackage, null);
                     await _packageCommandService.ExecuteUninstallAsync(uninstallPackageDetails, cts.Token);
                 }
@@ -258,13 +249,13 @@
             {
                 if ((e.OldValue == null && SelectedVersion == Package.Identity.Version) || e.NewValue == null)
                 {
-                    //skip loading on version list first load
+                    // Skip loading on version list first load
                     return;
                 }
 
                 if (!_packageApplied)
                 {
-                    //skip until model is applied
+                    // Skip until model is applied
                     return;
                 }
 
@@ -274,7 +265,7 @@
 
                 if (Package != null)
                 {
-                    // TODO: remove this workaround, this is a hack version to set specific version of package
+                    // Note: Workaround, this is a hack way to set specific version of package
                     var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
                     tempPackage.AddDependencyInfo(VersionData.Identity.Version, VersionData.DependencySets);
                     ValidateCurrentPackage(tempPackage);

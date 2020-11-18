@@ -34,6 +34,9 @@
 
         #region DependencyProperty
 
+        /// <summary>
+        /// Identifies the <see cref="StartPage"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty StartPageProperty =
             DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
 

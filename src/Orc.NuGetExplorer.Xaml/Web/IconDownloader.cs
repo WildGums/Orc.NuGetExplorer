@@ -32,7 +32,7 @@
             return array;
         }
 
-        private void SetProtocolSecurity()
+        private static void SetProtocolSecurity()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Tls13;
         }

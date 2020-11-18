@@ -18,7 +18,6 @@
 
         private static readonly IconDownloader IconDownloader = new IconDownloader();
 
-        private readonly object _lockObject = new object();
         private readonly IconCache _iconCache;
 
         private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
@@ -52,7 +51,6 @@
             catch (WebException ex)
             {
                 Log.Error(ex);
-                return;
             }
         }
 

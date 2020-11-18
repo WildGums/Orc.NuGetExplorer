@@ -136,7 +136,7 @@
             StartPage = _startPage;
         }
 
-        private void CreateApplicationWideCommands(ICommandManager cm)
+        private static void CreateApplicationWideCommands(ICommandManager cm)
         {
             if (!cm.IsCommandCreated("RefreshCurrentPage"))
             {

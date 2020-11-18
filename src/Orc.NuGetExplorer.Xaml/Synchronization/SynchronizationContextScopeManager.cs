@@ -25,7 +25,7 @@
 
             public void Dispose()
             {
-                //return context;
+                // Restore context;
                 SynchronizationContext.SetSynchronizationContext(_synchContext);
             }
         }

@@ -35,8 +35,6 @@
 
             _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;
             _arrowDownResource = FindResource(ArrowDownResourceKey) as FrameworkElement;
-
-
         }
 
         [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
@@ -46,6 +44,9 @@
             set { SetValue(SelectedItemOnPageProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="SelectedItemOnPage"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty SelectedItemOnPageProperty =
             DependencyProperty.Register(nameof(SelectedItemOnPage), typeof(NuGetPackage), typeof(ExplorerPageView), new PropertyMetadata(null));
 

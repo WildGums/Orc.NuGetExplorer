@@ -45,17 +45,17 @@
 
         public void Install()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public void Uninstall()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public void Update()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public override string ToString()

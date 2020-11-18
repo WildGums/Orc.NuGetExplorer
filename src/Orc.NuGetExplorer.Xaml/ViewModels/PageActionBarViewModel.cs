@@ -128,7 +128,7 @@
                     {
                         foreach (var updatePackageDetails in updatePackageList)
                         {
-                            await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, cts.Token, operationContext);
+                            await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, operationContext, cts.Token);
                         }
                     }
                 }
@@ -149,12 +149,7 @@
 
         private bool BatchUpdateCanExecute()
         {
-            if (_parentManagerPage is null)
-            {
-                return false;
-            }
-
-            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+            return AnyItemOnPageChecked();
         }
 
         public TaskCommand BatchInstall { get; set; }
@@ -173,9 +168,6 @@
                     return;
                 }
 
-                var targetProjects = _projectLocator.GetAllExtensibleProjects()
-                            .Where(x => _projectLocator.IsEnabled(x)).ToList();
-
                 using (var cts = new CancellationTokenSource())
                 {
                     var installPackageList = new List<IPackageDetails>();
@@ -192,7 +184,7 @@
                     {
                         foreach (var packageDetails in installPackageList)
                         {
-                            await _packageCommandService.ExecuteInstallAsync(packageDetails, cts.Token, operationContext);
+                            await _packageCommandService.ExecuteInstallAsync(packageDetails, operationContext, cts.Token);
                         }
                     }
                 }
@@ -213,12 +205,7 @@
 
         private bool BatchInstallCanExecute()
         {
-            if (_parentManagerPage is null)
-            {
-                return false;
-            }
-
-            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+            return AnyItemOnPageChecked();
         }
 
         public TaskCommand CheckAll { get; set; }
@@ -245,6 +232,16 @@
         {
             var commandManager = this.GetViewModelCommandManager();
             commandManager.InvalidateCommands();
+        }
+
+        private bool AnyItemOnPageChecked()
+        {
+            if (_parentManagerPage is null)
+            {
+                return false;
+            }
+
+            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
         }
     }
 }

@@ -30,6 +30,9 @@ namespace Orc.NuGetExplorer.Views
         #endregion
 
         #region DependencyProperty
+        /// <summary>
+        /// Identifies the <see cref="DefaultFeed"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty DefaultFeedProperty =
             DependencyProperty.Register(nameof(DefaultFeed), typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceFeed));
 
@@ -40,6 +43,9 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(DefaultFeedProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CanReset"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty CanResetProperty =
             DependencyProperty.Register(nameof(CanReset), typeof(bool), typeof(PackageSourceSettingControl), new PropertyMetadata(false));
 
@@ -50,6 +56,9 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(CanResetProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="DefaultSourceName"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty DefaultSourceNameProperty =
             DependencyProperty.Register(nameof(DefaultSourceName), typeof(string), typeof(PackageSourceSettingControl), new PropertyMetadata(DefaultName.PackageSourceName));
 
@@ -60,6 +69,9 @@ namespace Orc.NuGetExplorer.Views
             set { SetValue(DefaultSourceNameProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="PackageSources"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty PackageSourcesProperty =
             DependencyProperty.Register(nameof(PackageSources), typeof(IEnumerable<IPackageSource>), typeof(PackageSourceSettingControl), new PropertyMetadata(Enumerable.Empty<IPackageSource>()));
 

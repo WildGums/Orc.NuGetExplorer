@@ -45,7 +45,7 @@ public static class ModuleInitializer
 
         var vmLocator = serviceLocator.ResolveType<IViewModelLocator>();
 
-        //register some view models
+        // register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
     }
 }

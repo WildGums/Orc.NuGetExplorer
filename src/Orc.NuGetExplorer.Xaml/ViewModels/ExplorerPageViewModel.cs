@@ -235,13 +235,10 @@
 
         private void OnPackageItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewStartingIndex == 0 && IsActive)
             {
-                //item added on first place, collection was empty
-                if (e.NewStartingIndex == 0 && IsActive)
-                {
-                    SelectedPackageItem = PackageItems.FirstOrDefault();
-                }
+                // Item added on first place, collection was empty
+                SelectedPackageItem = PackageItems.FirstOrDefault();
             }
         }
 
@@ -251,14 +248,14 @@
             {
                 if (IsActive && _initialSearchParams != null)
                 {
-                    //set page initial search params as Settings parameters
-                    //only on first loaded page
+                    // Set page initial search params as Settings parameters
+                    // Only on first loaded page
                     Settings.IsPreReleaseIncluded = _initialSearchParams.IsPrereleaseIncluded;
                     Settings.SearchString = _initialSearchParams.SearchString;
                     Settings.IsRecommendedOnly = _initialSearchParams.IsRecommendedOnly;
                 }
 
-                //execution delay
+                // Execution delay
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
 
@@ -297,20 +294,17 @@
         {
             base.OnPropertyChanged(e);
 
-            if (string.Equals(e.PropertyName, nameof(Invalidated)))
+            if (e.HasPropertyChanged(nameof(Invalidated)))
             {
                 Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
             }
 
-            if (string.Equals(e.PropertyName, nameof(IsActive)))
+            if (e.HasPropertyChanged(nameof(IsActive)) && (bool)e.NewValue)
             {
-                if ((bool)e.NewValue)
-                {
-                    Log.Info($"Switching page: {Title} is active");
+                Log.Info($"Switching page: {Title} is active");
 
-                    //force update selected item
-                    SelectedPackageItem = PackageItems?.FirstOrDefault();
-                }
+                // Force update selected item
+                SelectedPackageItem = PackageItems?.FirstOrDefault();
             }
 
             if (IsFirstLoaded)
@@ -318,9 +312,9 @@
                 return;
             }
 
-            if (string.Equals(e.PropertyName, nameof(IsActive)) && Invalidated)
+            if (e.HasPropertyChanged(nameof(IsActive)) && Invalidated)
             {
-                //just switching page, no need to invalidate data
+                // Just switching page, no need to invalidate data
                 StartLoadingTimer();
             }
         }
@@ -392,7 +386,7 @@
                     {
                         if (!currentSource.IsVerified)
                         {
-                            await CanFeedBeLoadedAsync(VerificationTokenSource.Token, currentSource);
+                            await CanFeedBeLoadedAsync(currentSource, VerificationTokenSource.Token);
                         }
 
                         if (!currentSource.IsAccessible && _pageType != MetadataOrigin.Installed)
@@ -403,7 +397,7 @@
 
                         if (!IsLoadingInProcess)
                         {
-                            await LoadPackagesAsync(pageinfo, pageTcs.Token, searchParams);
+                            await LoadPackagesAsync(pageinfo, searchParams, pageTcs.Token);
                         }
                         else
                         {
@@ -503,7 +497,7 @@
             }
         }
 
-        private async Task LoadPackagesAsync(PageContinuation pageInfo, CancellationToken cancellationToken, PackageSearchParameters searchParameters)
+        private async Task LoadPackagesAsync(PageContinuation pageInfo, PackageSearchParameters searchParameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -614,7 +608,7 @@
             StartLoadingTimerOrInvalidateData();
         }
 
-        private async Task CanFeedBeLoadedAsync(CancellationToken cancelToken, INuGetSource source)
+        private async Task CanFeedBeLoadedAsync(INuGetSource source, CancellationToken cancelToken)
         {
             Log.Info($"'{source}' package source is verified");
 
