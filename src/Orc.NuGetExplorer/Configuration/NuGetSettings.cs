@@ -9,7 +9,6 @@
     using Catel.IO;
     using Catel.Logging;
     using NuGet.Configuration;
-    using Orc.NuGetExplorer.Services;
 
     internal class NuGetSettings : IVersionedSettings
     {

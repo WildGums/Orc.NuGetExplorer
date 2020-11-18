@@ -12,7 +12,6 @@ namespace Orc.NuGetExplorer.Example
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
-    using Orc.Theming;
     using Orchestra;
 
     /// <summary>

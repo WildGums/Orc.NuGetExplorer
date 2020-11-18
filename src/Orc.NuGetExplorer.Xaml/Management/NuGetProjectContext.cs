@@ -65,9 +65,34 @@
             }
         }
 
-        public void ReportError(string message)
+        void INuGetProjectContext.Log(ILogMessage message)
         {
-            Log.Error(message);
+            switch (message.Level)
+            {
+                case LogLevel.Debug:
+                    Log.Debug(FormatStringMessage(message));
+                    break;
+
+                case LogLevel.Verbose:
+                    Log.Debug(FormatStringMessage(message));
+                    break;
+
+                case LogLevel.Information:
+                    Log.Info(FormatStringMessage(message));
+                    break;
+
+                case LogLevel.Minimal:
+                    Log.Info(FormatStringMessage(message));
+                    break;
+
+                case LogLevel.Warning:
+                    Log.Warning(FormatStringMessage(message));
+                    break;
+
+                case LogLevel.Error:
+                    Log.Error(FormatStringMessage(message));
+                    break;
+            }
         }
 
         public FileConflictAction ResolveFileConflict(string message)
@@ -97,34 +122,9 @@
             return result;
         }
 
-        void INuGetProjectContext.Log(ILogMessage message)
+        public void ReportError(string message)
         {
-            switch(message.Level)
-            {
-                case LogLevel.Debug:
-                    Log.Debug(FormatStringMessage(message));
-                    break;
-                
-                case LogLevel.Verbose:
-                    Log.Debug(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Information:
-                    Log.Info(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Minimal:
-                    Log.Info(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Warning:
-                    Log.Warning(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Error:
-                    Log.Error(FormatStringMessage(message));
-                    break;
-            }
+            Log.Error(message);
         }
 
         public void ReportError(ILogMessage message)
@@ -132,7 +132,7 @@
             Log.Error(FormatStringMessage(message));
         }
 
-        private string FormatStringMessage(ILogMessage logMessage)
+        private static string FormatStringMessage(ILogMessage logMessage)
         {
             // For now simple write Code + Message
             return $"{logMessage.Code}: {logMessage.Message}";

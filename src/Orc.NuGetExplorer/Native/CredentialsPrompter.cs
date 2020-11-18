@@ -13,7 +13,6 @@ namespace Orc.NuGetExplorer.Native
     using Catel.Configuration;
     using Catel.Logging;
     using NuGetExplorer.Crypto;
-    using Orc.NuGetExplorer.Enums;
 
     internal class CredentialsPrompter
     {

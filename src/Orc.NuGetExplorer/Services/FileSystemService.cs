@@ -1,10 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using Catel;
     using Catel.Logging;
 
     internal class FileSystemService : IFileSystemService

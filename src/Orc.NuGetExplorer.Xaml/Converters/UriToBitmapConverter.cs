@@ -9,19 +9,17 @@
     using NuGetExplorer.Cache;
     using NuGetExplorer.Providers;
 
+    [System.Windows.Data.ValueConversion(typeof(Uri), typeof(BitmapImage))]
     public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
     {
-        private static readonly IconCache IconCache;
+        private static readonly IconCache IconCache = InitCache();
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        static UriToBitmapConverter()
+        private static IconCache InitCache()
         {
-            if (IconCache == null)
-            {
-                var appCacheProvider = ServiceLocator.Default.ResolveType<IApplicationCacheProvider>();
+            var appCacheProvider = ServiceLocator.Default.ResolveType<IApplicationCacheProvider>();
 
-                IconCache = appCacheProvider.EnsureIconCache();
-            }
+            return appCacheProvider.EnsureIconCache();
         }
 
         protected override object Convert(Uri value, Type targetType, object parameter)

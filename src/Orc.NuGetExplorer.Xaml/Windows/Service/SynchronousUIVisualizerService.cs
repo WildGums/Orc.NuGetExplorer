@@ -1,13 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Threading;
     using Catel;
     using Catel.Logging;
     using Catel.MVVM;
-    using Catel.Reflection;
     using Catel.Services;
 
     /// <summary>

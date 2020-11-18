@@ -1,10 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Resolver
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel.IoC;
     using NuGet.Common;
     using NuGet.Configuration;

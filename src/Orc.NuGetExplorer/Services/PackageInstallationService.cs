@@ -25,10 +25,6 @@
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
-    using Orc.NuGetExplorer.Watchers;
-    using System.IO.Packaging;
-    using System.Runtime.CompilerServices;
-    using System.Windows;
     using NuGet.Versioning;
     using Orc.FileSystem;
 

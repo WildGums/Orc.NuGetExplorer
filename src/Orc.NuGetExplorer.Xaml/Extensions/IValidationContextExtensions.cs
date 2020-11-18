@@ -1,10 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Extensions
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Data;
 
@@ -15,7 +11,7 @@
             Argument.IsNotNull(() => validationContext);
 
             var stringLines = validationContext.GetErrors(validationTag).Select(s => " - " + s.Message).ToArray();
-            
+
             if (stringLines == null)
             {
                 return null;

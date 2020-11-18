@@ -8,7 +8,6 @@
 namespace Orc.NuGetExplorer.Native
 {
     using System;
-    using System.Security.Permissions;
 
     /// <summary>
     /// The exception that is thrown when an error occurs getting credentials.

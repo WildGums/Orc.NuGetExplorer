@@ -11,7 +11,6 @@
     using NuGet.Credentials;
     using NuGet.Protocol;
     using NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Enums;
 
     internal class CredentialProviderLoaderService : ICredentialProviderLoaderService
     {

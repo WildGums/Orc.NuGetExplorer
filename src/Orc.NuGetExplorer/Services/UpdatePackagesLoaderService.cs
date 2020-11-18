@@ -8,13 +8,11 @@
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
-    using Catel.Scoping;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Pagination;
-    using Orc.NuGetExplorer.Scopes;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
     internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpdatesSearcherService

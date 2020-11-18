@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Controls
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows;
@@ -32,12 +33,9 @@
 
         private void OnIsCheckedChanged(DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue)
+            if ((bool)e.NewValue && _group != null)
             {
-                if (_group != null)
-                {
-                    SelectTab();
-                }
+                SelectTab();
             }
         }
 
@@ -47,7 +45,10 @@
             set { SetValue(TabSourceProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for TabSource.  This enables animation, styling, binding, etc...
+
+        /// <summary>
+        /// Identifies the <see cref="TabSource"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty TabSourceProperty =
             DependencyProperty.Register(nameof(TabSource), typeof(TabControl), typeof(TabControllerButton), new PropertyMetadata(null, OnTabSourceChanged));
 
@@ -57,7 +58,9 @@
             set { SetValue(NextProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Next.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="Next"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty NextProperty =
             DependencyProperty.Register(nameof(Next), typeof(TabControllerButton), typeof(TabControllerButton),
                 new PropertyMetadata(null, (s, e) => ((TabControllerButton)s).OnNextChanged()));
@@ -68,19 +71,20 @@
             set { SetValue(IsFirstProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="IsFirst"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty IsFirstProperty =
             DependencyProperty.Register(nameof(IsFirst), typeof(bool), typeof(TabControllerButton), new PropertyMetadata(false));
 
         private static void OnTabSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var tabBtn = d as TabControllerButton;
-            if (tabBtn != null)
+            if (d is TabControllerButton tabBtn)
             {
                 foreach (var t in tabBtn._group)
                 {
                     t.SetCurrentValue(TabControllerButton.TabSourceProperty, tabBtn.TabSource);
-                    //Log.Debug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
+                    Log.Debug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
                 }
             }
         }
@@ -95,23 +99,29 @@
 
         private void OnNextChanged()
         {
-            var nextButton = Next;
-            if (nextButton != null)
+            try
             {
-                //todo should throw exception or break chain?
-                nextButton.SetCurrentValue(TabSourceProperty, TabSource);
-                nextButton._group = _group;   //keep reference on sibling memeber's group
-
-                var current = _group.Find(this);
-
-
-                if (_group.Count == 0 && current == null)
+                var nextButton = Next;
+                if (nextButton != null)
                 {
-                    _group.AddFirst(this);
-                    current = _group.Find(this);
-                }
+                    nextButton.SetCurrentValue(TabSourceProperty, TabSource);
+                    nextButton._group = _group;   //keep reference on sibling memeber's group
 
-                _group.AddAfter(current, nextButton);
+                    var current = _group.Find(this);
+
+
+                    if (_group.Count == 0 && current == null)
+                    {
+                        _group.AddFirst(this);
+                        current = _group.Find(this);
+                    }
+
+                    _group.AddAfter(current, nextButton);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
             }
         }
 
@@ -124,7 +134,6 @@
         {
             if (TabSource != null)
             {
-                var items = TabSource.Items;
                 var index = MyIndex();
 
                 int i = 0;

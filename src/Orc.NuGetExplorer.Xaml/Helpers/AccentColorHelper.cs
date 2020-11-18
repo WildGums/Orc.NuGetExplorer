@@ -7,25 +7,11 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Windows;
     using System.Windows.Media;
-    using Orc.Controls;
-    using Orc.Theming;
 
     internal static class AccentColorHelper
     {
         #region Methods
-
-        private static SolidColorBrush GetAccentColorBrush(ThemeColorStyle themeColor = ThemeColorStyle.AccentColor)
-        {
-            var accentColorBrush = Application.Current.TryFindResource($"{themeColor}") as SolidColorBrush;
-            if (accentColorBrush != null)
-            {
-                return accentColorBrush;
-            }
-
-            return ThemeManager.Current.GetThemeColorBrush(themeColor);
-        }
 
         public static Color ConvertToNonAlphaColor(Color backgroundColor, Color accentColor)
         {

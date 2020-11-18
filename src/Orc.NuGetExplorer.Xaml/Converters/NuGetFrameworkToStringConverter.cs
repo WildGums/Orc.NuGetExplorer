@@ -4,6 +4,7 @@
     using Catel.MVVM.Converters;
     using NuGet.Frameworks;
 
+    [System.Windows.Data.ValueConversion(typeof(NuGetFramework), typeof(string))]
     public class NuGetFrameworkToStringConverter : ValueConverterBase<NuGetFramework, string>
     {
         protected override object Convert(NuGetFramework value, Type targetType, object parameter)

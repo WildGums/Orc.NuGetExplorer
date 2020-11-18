@@ -5,7 +5,6 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
-    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
