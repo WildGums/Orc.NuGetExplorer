@@ -438,7 +438,8 @@
 
                     try
                     {
-                        _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
+                        _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder");
+
                         var extractedPaths = await PackageExtractor.ExtractPackageAsync(
                                 downloadedPart.PackageSource,
                                 downloadedPart.PackageStream,
