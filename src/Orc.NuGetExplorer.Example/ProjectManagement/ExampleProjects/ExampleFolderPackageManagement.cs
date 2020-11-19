@@ -1,6 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System.Collections.Immutable;
     using Catel.Logging;
+    using NuGet.Frameworks;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
 
@@ -21,6 +23,8 @@
         public string Framework => ".NETStandard,Version=v2.1";
 
         public string ContentPath { get; }
+
+        public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; } = ImmutableList.Create<NuGetFramework>();
 
         public string GetInstallPath(PackageIdentity packageIdentity)
         {

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using Catel;
     using Catel.Logging;
     using Microsoft.Win32;
@@ -36,6 +37,7 @@
             return _frameworkReducer.ReduceUpwards(_nuGetFrameworks);
         }
 
+        
         private void LoadAvailableFrameworks()
         {
             var version = Environment.Version;
@@ -63,7 +65,7 @@
                 if (version.Major == 5)
                 {
                     // Support .NET 5 
-                    frameworkStringList.Add($"{BaseFrameworkName}v5.0");
+                    frameworkStringList.Add($".NETCoreApp,Version=v{version.Major}.0");
                 }
             }
 #endif

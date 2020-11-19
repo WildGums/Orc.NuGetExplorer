@@ -532,8 +532,23 @@
             var frameworkReducer = new FrameworkReducer();
 
             var libraries = await packageReader.GetLibItemsAsync(token);
+            var libraryTfms = libraries.Select(x => x.TargetFramework).ToList();
 
-            var bestMatches = frameworkReducer.GetNearest(targetFramework, libraries.Select(x => x.TargetFramework));
+            var bestMatches = frameworkReducer.GetNearest(targetFramework, libraryTfms);
+
+            if (bestMatches is null)
+            {
+                // Try to find first supported platform-specific version
+                foreach (var platformSpecific in project.SupportedPlatforms)
+                {
+                    bestMatches = frameworkReducer.GetNearest(platformSpecific, libraryTfms);
+
+                    if (bestMatches != null)
+                    {
+                        break;
+                    }
+                }
+            }
 
             return bestMatches != null;
         }

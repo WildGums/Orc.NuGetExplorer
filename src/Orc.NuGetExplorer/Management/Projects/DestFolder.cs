@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
     using NuGet.Frameworks;
@@ -21,11 +22,19 @@
             ContentPath = destinationFolder;
 
 #if NETCORE
-            Framework = defaultFramework.GetHighest().FirstOrDefault().ToString();
+            var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
+            Framework = targetFramework.ToString();
+            SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 #else
             Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();
 #endif
             Log.Info($"Current target framework for plugins set as '{Framework}'");
+
+            // Default initialization
+            if (SupportedPlatforms is null)
+            {
+                SupportedPlatforms = ImmutableList.Create<NuGetFramework>();
+            }
 
             _pathResolver = new PackagePathResolver(ContentPath);
         }
@@ -34,7 +43,7 @@
 
         public string Framework { get; private set; }
 
-        public IEnumerable<NuGetFramework> SupportedFrameworks { get; set; }
+        public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
         public string ContentPath { get; private set; }
 
