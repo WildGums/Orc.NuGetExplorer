@@ -434,8 +434,7 @@
                     var packageIdentity = packageResource.Key;
 
                     var nupkgPath = pathResolver.GetInstalledPackageFilePath(packageIdentity);
-
-                    bool alreadyInstalled = _fileService.Exists(nupkgPath);
+                    var alreadyInstalled = string.IsNullOrEmpty(nupkgPath) ? false : _fileService.Exists(nupkgPath);
 
                     try
                     {
