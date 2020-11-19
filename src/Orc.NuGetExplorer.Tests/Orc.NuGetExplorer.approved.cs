@@ -120,6 +120,7 @@ namespace Orc.NuGetExplorer
     }
     public static class FrameworkParser
     {
+        public static NuGet.Frameworks.NuGetFramework ToSpecificPlatform(NuGet.Frameworks.NuGetFramework framework) { }
         public static NuGet.Frameworks.NuGetFramework TryParseFrameworkName(string frameworkString, NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
     }
     public static class HttpHandlerResourceV3Extensions
@@ -178,6 +179,7 @@ namespace Orc.NuGetExplorer
         string ContentPath { get; }
         string Framework { get; }
         string Name { get; }
+        System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
         void Install();
         void Uninstall();
@@ -672,7 +674,7 @@ namespace Orc.NuGetExplorer.Management
         public string ContentPath { get; }
         public string Framework { get; }
         public string Name { get; }
-        public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> SupportedFrameworks { get; set; }
+        public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public void Install() { }
         public override string ToString() { }
