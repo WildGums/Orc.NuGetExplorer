@@ -19,7 +19,7 @@
 
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
-        private int _packageQuerySize = 17;
+        private int _packageQuerySize = 40;
 
         //had to doing this, because settings is as parameter in ctor caused loop references
         private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
