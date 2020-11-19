@@ -68,7 +68,7 @@
 
                 try
                 {
-                    Directory.Delete(folderPath, true);
+                    directoryService.Delete(folderPath, true);
                 }
                 catch (UnauthorizedAccessException)
                 {

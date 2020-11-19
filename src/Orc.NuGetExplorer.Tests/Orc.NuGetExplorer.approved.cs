@@ -72,7 +72,7 @@ namespace Orc.NuGetExplorer
     }
     public class DeletemeWatcher : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
-        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider) { }
+        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider) { }
         protected override void OnOperationFinished(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
     }
     public class DependencyInfoResourceCollection : System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.DependencyInfoResource>, System.Collections.IEnumerable
@@ -1144,15 +1144,15 @@ namespace Orc.NuGetExplorer.Providers
     }
     public class PackageMetadataProvider : Orc.NuGetExplorer.Providers.IPackageMetadataProvider
     {
-        public PackageMetadataProvider(Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
-        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
+        public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
+        public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
-        public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
+        public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
     }
     public class WindowsCredentialProvider : NuGet.Credentials.ICredentialProvider
     {
@@ -1193,7 +1193,7 @@ namespace Orc.NuGetExplorer.Scenario
     }
     public class V3RestorePackageConfigAndReinstall : Orc.NuGetExplorer.Scenario.IUpgradeScenario
     {
-        public V3RestorePackageConfigAndReinstall(Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.IRepositoryContextService repositoryContextService, NuGet.Common.ILogger logger, Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
+        public V3RestorePackageConfigAndReinstall(Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.IRepositoryContextService repositoryContextService, NuGet.Common.ILogger logger, Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.FileSystem.IDirectoryService directoryService) { }
         public System.Threading.Tasks.Task<bool> RunAsync() { }
         public override string ToString() { }
     }
@@ -1211,7 +1211,7 @@ namespace Orc.NuGetExplorer.Services
 {
     public class DownloadingProgressTrackerService : Orc.NuGetExplorer.Services.IDownloadingProgressTrackerService
     {
-        public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger) { }
+        public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger, Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService) { }
         public System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo) { }
     }
     public interface IDefferedPackageLoaderService

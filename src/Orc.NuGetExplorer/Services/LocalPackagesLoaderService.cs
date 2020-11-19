@@ -12,6 +12,7 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
+    using Orc.FileSystem;
 
     internal class LocalPackagesLoaderService : IPackageLoaderService
     {
@@ -19,14 +20,16 @@
 
         private readonly INuGetPackageManager _projectManager;
         private readonly ISourceRepositoryProvider _repositoryProvider;
+        private readonly IDirectoryService _directoryService;
         private readonly IRepositoryContextService _repositoryService;
 
         public IPackageMetadataProvider PackageMetadataProvider =>
-            Providers.PackageMetadataProvider.CreateFromSourceContext(_repositoryService, _extensibleProjectLocator, _projectManager);
+            Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _projectManager);
 
-        public LocalPackagesLoaderService(IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
+        public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
+            Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => repositoryService);
@@ -34,6 +37,7 @@
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;
+            _directoryService = directoryService;
             _repositoryService = repositoryService;
         }
 

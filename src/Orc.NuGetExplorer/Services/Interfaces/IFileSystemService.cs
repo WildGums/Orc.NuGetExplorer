@@ -9,9 +9,7 @@ namespace Orc.NuGetExplorer
 {
     public interface IFileSystemService
     {
-        #region Methods
         void CreateDeleteme(string name, string path);
         void RemoveDeleteme(string name, string path);
-        #endregion
     }
 }

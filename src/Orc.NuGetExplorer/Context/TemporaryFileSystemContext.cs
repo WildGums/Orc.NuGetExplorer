@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
                 "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
-            Directory.CreateDirectory(_rootDirectory);
+            _directoryService.Create(_rootDirectory);
         }
         #endregion
 

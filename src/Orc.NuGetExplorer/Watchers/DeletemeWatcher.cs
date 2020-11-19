@@ -9,23 +9,28 @@ namespace Orc.NuGetExplorer
 {
     using System.IO;
     using Catel;
+    using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
         private readonly IFileSystemService _fileSystemService;
+        private readonly IDirectoryService _directoryService;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IExtensibleProject _defaultProject;
         
         #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
-            INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider) : base(packageOperationNotificationService)
+            IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider) 
+            : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => fileSystemService);
+            Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => projectProvider);
 
             _fileSystemService = fileSystemService;
+            _directoryService = directoryService;
             _nuGetPackageManager = nuGetPackageManager;
             _defaultProject = projectProvider.GetDefaultProject();
         }
@@ -36,7 +41,7 @@ namespace Orc.NuGetExplorer
         {
             if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
-                if (!Directory.Exists(e.InstallPath))
+                if (!_directoryService.Exists(e.InstallPath))
                 {
                     return;
                 }

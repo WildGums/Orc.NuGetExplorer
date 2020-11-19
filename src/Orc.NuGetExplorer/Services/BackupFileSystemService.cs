@@ -19,16 +19,19 @@ namespace Orc.NuGetExplorer
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IPackageOperationContextService _operationContextService;
         private readonly IDirectoryService _directoryService;
+        private readonly IFileService _fileService;
         #endregion
 
         #region Constructors
-        public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService)
+        public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
         {
             Argument.IsNotNull(() => operationContextService);
             Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => fileService);
 
             _operationContextService = operationContextService;
             _directoryService = directoryService;
+            _fileService = fileService;
         }
         #endregion
 
@@ -72,7 +75,7 @@ namespace Orc.NuGetExplorer
 
             try
             {
-                if (File.Exists(fullPath))
+                if (_fileService.Exists(fullPath))
                 {
                     //restore only single file on this path
                     fullPath = Catel.IO.Path.GetDirectoryName(fullPath);

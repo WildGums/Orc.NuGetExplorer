@@ -9,16 +9,24 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.FileSystem;
 
     public class DownloadingProgressTrackerService : IDownloadingProgressTrackerService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly ILogger _nugetLogger;
+        private readonly IDirectoryService _directoryService;
+        private readonly IFileService _fileService;
 
-        public DownloadingProgressTrackerService(ILogger nugetLogger)
+        public DownloadingProgressTrackerService(ILogger nugetLogger, IDirectoryService directoryService, IFileService fileService)
         {
             Argument.IsNotNull(() => nugetLogger);
+            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => fileService);
+
             _nugetLogger = nugetLogger;
+            _directoryService = directoryService;
+            _fileService = fileService;
         }
 
         public async Task<IDisposableToken<IProgress<float>>> TrackDownloadOperationAsync(IPackageInstallationService packageInstallationService, SourcePackageDependencyInfo packageDependencyInfo)
@@ -28,20 +36,17 @@
 
             try
             {
-                FileSystemWatcher watcher = new FileSystemWatcher();
+                var watcher = new FileSystemWatcher();
                 var downloadPath = packageInstallationService.InstallerPathResolver.GetPackageFilePath(packageDependencyInfo.Id, packageDependencyInfo.Version);
                 var downloadDirectoryPath = Path.GetDirectoryName(downloadPath);
 
                 // the download method creates directory itself, but we need to create it eager to start watching
-                if (!Directory.Exists(downloadDirectoryPath))
-                {
-                    Directory.CreateDirectory(downloadDirectoryPath);
-                }
+                _directoryService.Create(downloadDirectoryPath);
 
                 watcher.Path = Path.GetDirectoryName(downloadPath);
                 // determine package size
                 var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, packageDependencyInfo.Source);
-                var trackToken = new DownloadProgressTrackToken(this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
+                var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
 
                 return trackToken;
             }
@@ -56,23 +61,25 @@
         {
             if (double.IsNaN(progress))
             {
-                _nugetLogger.LogInformation($"[Please wait]Download complete");
+                _nugetLogger.LogInformation($"[Please wait] Download complete");
             }
-            _nugetLogger.LogInformation($"[Please wait]Download in progress.. {progress / (1024 * 1024):0.##} Mb");
+
+            _nugetLogger.LogInformation($"[Please wait] Download in progress.. {progress / (1024 * 1024):0.##} Mb");
         }
     }
 
     internal class DownloadProgressTrackToken : DisposableToken<IProgress<float>>
     {
         private readonly long _downloadSize;
+        private readonly IFileService _fileService;
         private readonly FileSystemWatcher _fileSystemWatcher;
         private readonly Timer _trackerTimer;
 
         private string _nupkgFilePath;
 
-        public DownloadProgressTrackToken(IDownloadingProgressTrackerService downloadingProgressTrackerService, PackageIdentity packageIdentity, SourceRepository source, FileSystemWatcher fileSystemWatcher,
-            EventHandler<float> progressCallback, long downloadSize) :
-            this(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
+        public DownloadProgressTrackToken(IFileService fileService, IDownloadingProgressTrackerService downloadingProgressTrackerService, PackageIdentity packageIdentity, SourceRepository source, FileSystemWatcher fileSystemWatcher,
+            EventHandler<float> progressCallback, long downloadSize) 
+            : this(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
         {
             Argument.IsNotNull(() => downloadingProgressTrackerService);
             Argument.IsNotNull(() => packageIdentity);
@@ -80,6 +87,7 @@
             Argument.IsNotNull(() => fileSystemWatcher);
 
             _downloadSize = downloadSize;
+            _fileService = fileService;
             DownloadingProgressTrackerInstance = downloadingProgressTrackerService;
             PackageIdentity = packageIdentity;
             SourceRepository = source;
@@ -136,7 +144,7 @@
 
         private void OnTrackerTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (File.Exists(_nupkgFilePath))
+            if (_fileService.Exists(_nupkgFilePath))
             {
                 var fileInfo = new FileInfo(_nupkgFilePath);
                 var mbSize = fileInfo.Length;
@@ -150,6 +158,7 @@
             {
                 return currentSize;
             }
+
             return (float)currentSize / _downloadSize;
         }
     }

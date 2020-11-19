@@ -1,62 +1,47 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.IO;
+    using Catel;
     using Catel.Logging;
+    using Orc.FileSystem;
 
     internal class FileSystemService : IFileSystemService
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
+        private readonly IFileService _fileService;
+        private readonly IDirectoryService _directoryService;
 
-        #region Methods
+        public FileSystemService(IFileService fileService, IDirectoryService directoryService)
+        {
+            Argument.IsNotNull(() => fileService);
+            Argument.IsNotNull(() => directoryService);
+
+            _fileService = fileService;
+            _directoryService = directoryService;
+        }
 
         public void CreateDeleteme(string name, string path)
         {
             var fullPath = GetDeletemePath(name, path);
             var directoryPath = Path.GetDirectoryName(fullPath);
 
-            try
+            if (_fileService.Exists(fullPath))
             {
-                if (File.Exists(fullPath))
-                {
-                    return;
-                }
-
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                using (File.Create(fullPath))
-                {
-                }
+                return;
             }
-            catch (Exception ex)
+
+            _directoryService.Create(directoryPath);
+
+            using (_fileService.Create(fullPath))
             {
-                Log.Error(ex);
-                Log.Info($"Cannot create requested deleteme file on path {fullPath}");
             }
         }
 
         public void RemoveDeleteme(string name, string path)
         {
             var fullPath = GetDeletemePath(name, path);
-
-            try
             {
-                if (!File.Exists(fullPath))
-                {
-                    return;
-                }
-
-                File.Delete(fullPath);
-            }
-            catch(Exception ex)
-            {
-                Log.Error(ex);
-                Log.Info($"Cannot remove deleteme file on path {fullPath}");
+                _fileService.Delete(fullPath);
             }
         }
 
@@ -64,6 +49,5 @@
         {
             return Path.Combine(path, $"{name}.deleteme");
         }
-        #endregion
     }
 }

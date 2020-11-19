@@ -12,6 +12,7 @@
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
 
     public class PackageMetadataProvider : IPackageMetadataProvider
@@ -19,7 +20,7 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private static readonly ILogger NuGetLogger;
-
+        private readonly IDirectoryService _directoryService;
         private readonly IEnumerable<SourceRepository> _sourceRepositories;
 
         private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
@@ -33,25 +34,34 @@
             NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
         }
 
-        public PackageMetadataProvider(IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
+        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
         {
+            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => repositoryProvider);
+
+            _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
             _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource()) };
         }
 
-        public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories,
+        public PackageMetadataProvider(IDirectoryService directoryService, IEnumerable<SourceRepository> sourceRepositories,
             IEnumerable<SourceRepository> optionalGlobalLocalRepositories, SourceRepository localRepository = null)
         {
+            Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => sourceRepositories);
 
+            _directoryService = directoryService;
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
             _localRepository = localRepository;
         }
 
 
-        public static PackageMetadataProvider CreateFromSourceContext(IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
+        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
         {
+            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => repositoryService);
+
             var context = repositoryService.AcquireContext();
 
             var projects = projectSource.GetAllExtensibleProjects();
@@ -60,7 +70,7 @@
 
             var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
 
-            return new PackageMetadataProvider(repos, localRepos);
+            return new PackageMetadataProvider(directoryService, repos, localRepos);
         }
 
 
@@ -199,7 +209,7 @@
                 //sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
 
                 //force creating folder for cache even http retry count is 0
-                Directory.CreateDirectory(sourceCacheContext.GeneratedTempFolder);
+                _directoryService.Create(sourceCacheContext.GeneratedTempFolder);
 
                 Log.Debug($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
 

@@ -20,6 +20,7 @@
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
+    using Orc.FileSystem;
     using Orc.NuGetExplorer.Extensions;
     using Orc.NuGetExplorer.Packaging;
 
@@ -39,23 +40,26 @@
         private readonly IApiPackageRegistry _apiPackageRegistry;
 
         private readonly IPackageCommandService _packageCommandService;
-
+        private readonly IDirectoryService _directoryService;
         private bool _packageApplied;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService)
+            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService,
+            IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => packageCommandService);
+            Argument.IsNotNull(() => directoryService);
 
             _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _apiPackageRegistry = apiPackageRegistry;
             _packageCommandService = packageCommandService;
+            _directoryService = directoryService;
 
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
@@ -345,7 +349,7 @@
 
             var repositories = currentSourceContext.Repositories ?? currentSourceContext?.PackageSources.Select(src => _repositoryService.GetRepository(src));
 
-            return new PackageMetadataProvider(repositories, null);
+            return new PackageMetadataProvider(_directoryService, repositories, null);
         }
 
         private void PopulateVersionCollection()
