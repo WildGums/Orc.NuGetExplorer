@@ -49,7 +49,7 @@
 
         private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-
+            // Property changed callback
         }
 
         #endregion

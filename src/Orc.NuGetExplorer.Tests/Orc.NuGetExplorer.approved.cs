@@ -1172,7 +1172,7 @@ namespace Orc.NuGetExplorer.Resolver
     }
     public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
     {
-        public static Orc.NuGetExplorer.Resolver.PackageResolverContext Empty;
+        public static readonly Orc.NuGetExplorer.Resolver.PackageResolverContext Empty;
         public PackageResolverContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IEnumerable<string> targetIds, System.Collections.Generic.IEnumerable<string> requiredPackageIds, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> preferredVersions, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> packageSources, System.Collections.Generic.IEnumerable<string> ignoredIds, NuGet.Common.ILogger log) { }
         public System.Collections.Generic.IEnumerable<string> IgnoredIds { get; set; }
     }

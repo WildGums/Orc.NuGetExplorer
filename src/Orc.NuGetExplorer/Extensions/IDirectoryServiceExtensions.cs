@@ -40,31 +40,7 @@
             // Do some preparations and try again
             if (fallbackFlag)
             {
-                var directoryStack = new Stack<string>();
-
-                directoryStack.Push(folderPath);
-
-                while (directoryStack.Count > 0)
-                {
-                    var path = directoryStack.Pop();
-
-                    // Using the default SearchOption.TopDirectoryOnly, as SearchOption.AllDirectories would also
-                    // include reparse points such as mounted drives and symbolic links in the search.
-                    foreach (var subFolderPath in directoryService.GetDirectories(path, searchOption: SearchOption.TopDirectoryOnly))
-                    {
-                        directoryStack.Push(subFolderPath);
-                    }
-
-                    var directoryInfo = new DirectoryInfo(path);
-
-                    if (!directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                    {
-                        foreach (var filePath in directoryService.GetFiles(path))
-                        {
-                            fileService.ForceDeleteFiles(filePath, failedEntries);
-                        }
-                    }
-                }
+                ForceDeleteFilesFromSubDirectories(folderPath, directoryService, fileService, failedEntries);
 
                 try
                 {
@@ -84,6 +60,35 @@
                 catch (IOException)
                 {
                     throw;
+                }
+            }
+        }
+
+        private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
+        {
+            var directoryStack = new Stack<string>();
+
+            directoryStack.Push(folderPath);
+
+            while (directoryStack.Count > 0)
+            {
+                var path = directoryStack.Pop();
+
+                // Using the default SearchOption.TopDirectoryOnly, as SearchOption.AllDirectories would also
+                // include reparse points such as mounted drives and symbolic links in the search.
+                foreach (var subFolderPath in directoryService.GetDirectories(path, searchOption: SearchOption.TopDirectoryOnly))
+                {
+                    directoryStack.Push(subFolderPath);
+                }
+
+                var directoryInfo = new DirectoryInfo(path);
+
+                if (!directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                {
+                    foreach (var filePath in directoryService.GetFiles(path))
+                    {
+                        fileService.ForceDeleteFiles(filePath, failedEntries);
+                    }
                 }
             }
         }
