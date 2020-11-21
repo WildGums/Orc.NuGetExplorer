@@ -256,65 +256,6 @@
             return new string[] { DefaultNuGetFolders.GetApplicationLocalFolder(), DefaultNuGetFolders.GetApplicationRoamingFolder() };
         }
 
-        /* obsolete members */
-        // Note: use ObsoleteEx
-        [Obsolete]
-        public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
-        {
-            RaiseSettingsRead();
-            return new List<SettingValue>();
-        }
-
-        [Obsolete]
-        public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
-        {
-            RaiseSettingsRead();
-            return new List<SettingValue>();
-        }
-
-        [Obsolete]
-        public void SetValues(string section, IReadOnlyList<SettingValue> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
-
-            SetNuGetValues(section, addItems);
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void SetNestedSettingValues(string section, string subsection, IList<SettingValue> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
-            SetNuGetValues(section, subsection, addItems);
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void UpdateSections(string section, IReadOnlyList<SettingValue> values)
-        {
-            DeleteSection(section);
-
-            foreach (var value in values)
-            {
-                SetValue(section, value.Key, value.Value);
-            }
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void UpdateSubsections(string section, string subsection, IReadOnlyList<SettingValue> values)
-        {
-
-        }
-
         #endregion
 
         #region Methods
