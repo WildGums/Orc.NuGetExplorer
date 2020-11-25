@@ -1,6 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v3.1", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
 [assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer")]
 [assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Controls")]
 [assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer.Converters")]
