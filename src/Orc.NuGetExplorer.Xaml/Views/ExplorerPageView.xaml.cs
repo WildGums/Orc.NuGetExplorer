@@ -30,7 +30,6 @@
 
         public ExplorerPageView()
         {
-            //prevent closing view models
             InitializeComponent();
 
             _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;

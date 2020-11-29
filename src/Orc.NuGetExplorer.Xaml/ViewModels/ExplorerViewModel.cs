@@ -36,8 +36,6 @@
 
         private string _startPage = DefaultStartPage;
 
-
-
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
                         IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
@@ -136,6 +134,7 @@
             StartPage = _startPage;
         }
 
+        // TODO: Provide a better way to create command (Don't hold gesture for whole application)
         private static void CreateApplicationWideCommands(ICommandManager cm)
         {
             if (!cm.IsCommandCreated("RefreshCurrentPage"))

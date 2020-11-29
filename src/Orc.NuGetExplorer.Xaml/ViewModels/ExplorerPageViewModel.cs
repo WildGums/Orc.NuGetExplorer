@@ -48,7 +48,6 @@
         private readonly IRepositoryContextService _repositoryService;
         private readonly IPackageLoaderService _packagesLoaderService;
 
-        private readonly INuGetPackageManager _projectManager;
         private readonly INuGetCacheManager _nuGetCacheManager;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly ITypeFactory _typeFactory;
@@ -62,7 +61,7 @@
         public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
+            IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
             INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => packagesLoaderService);
@@ -74,7 +73,6 @@
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
-            Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => nuGetCacheManager);
             Argument.IsNotNull(() => nuGetConfigurationService);
@@ -84,7 +82,6 @@
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
             _repositoryService = repositoryService;
             _defferedPackageLoaderService = defferedPackageLoaderService;
-            _projectManager = projectManager;
             _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
             _packagesLoaderService = packagesLoaderService;

@@ -76,7 +76,7 @@
             string message,
             CancellationToken cancellationToken)
         {
-            if (uri == null)
+            if (uri is null)
             {
                 throw new ArgumentNullException(nameof(uri));
             }
@@ -114,10 +114,9 @@
                             cancellationToken);
 
                         // Check that the provider gave us a valid response.
-                        if (response == null || !Enum.IsDefined(typeof(CredentialStatus), response.Status))
+                        if (!IsValidResponse(response))
                         {
-                            //malformed response
-                            throw new ProviderException("Credential provider gave an invalid response.");
+                            throw new ProviderException("Credential provider gaves malformed response.");
                         }
 
                         if (response.Status == CredentialStatus.UserCanceled)
@@ -138,10 +137,6 @@
                         creds = response.Credentials;
                         break;
                     }
-                    else
-                    {
-
-                    }
                 }
                 catch (Exception)
                 {
@@ -154,6 +149,11 @@
             }
 
             return creds;
+        }
+
+        public bool IsValidResponse(CredentialResponse response)
+        {
+            return response != null && Enum.IsDefined(typeof(CredentialStatus), response.Status);
         }
 
         /// <summary>

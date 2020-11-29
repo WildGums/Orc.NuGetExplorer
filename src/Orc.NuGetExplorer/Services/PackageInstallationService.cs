@@ -286,7 +286,7 @@
             var dependencyInfo = await dependencyInfoResource.ResolvePackage(
                             identity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-            if (dependencyInfo == null)
+            if (dependencyInfo is null)
             {
                 _nugetLogger.LogError($"Cannot resolve {identity} package for target framework {targetFramework}");
                 return Resolver.PackageResolverContext.Empty;
