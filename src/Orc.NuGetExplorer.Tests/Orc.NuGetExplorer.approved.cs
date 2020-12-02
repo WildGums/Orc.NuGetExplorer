@@ -104,6 +104,7 @@ namespace Orc.NuGetExplorer
         public bool HandlesDefaultCredentials { get; }
         public void ClearRetryCache() { }
         public System.Threading.Tasks.Task<System.Net.ICredentials> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
+        public bool IsValidResponse(NuGet.Credentials.CredentialResponse response) { }
         public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) { }
     }
     public enum FeedVerificationResult
@@ -1282,11 +1283,6 @@ namespace Orc.NuGetExplorer.Web
     {
         public FatalProtocolExceptionHandler() { }
         public Orc.NuGetExplorer.FeedVerificationResult HandleException(NuGet.Protocol.Core.Types.FatalProtocolException exception, string source) { }
-    }
-    public class HttpSource
-    {
-        public HttpSource() { }
-        public System.Threading.Tasks.Task EnsureHttpClientAsync() { }
     }
     public class HttpWebExceptionHandler : Orc.NuGetExplorer.Web.IHttpExceptionHandler<System.Net.WebException>
     {

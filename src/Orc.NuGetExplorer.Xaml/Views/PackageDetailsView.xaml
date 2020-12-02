@@ -29,12 +29,13 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Margin="10 4 10 0"
-                   FontSize="20"
-                   Grid.ColumnSpan="3"
+        <Label FontSize="20" Grid.ColumnSpan="3" Margin="4 0 4 0">
+            <TextBlock
                    Text="{Binding Title}"
                    TextTrimming="WordEllipsis">
-        </TextBlock>
+            </TextBlock>
+        </Label>
+        
 
         <!-- We can use this view to allow user to select different project when performing install/uninstall actions
         -->
