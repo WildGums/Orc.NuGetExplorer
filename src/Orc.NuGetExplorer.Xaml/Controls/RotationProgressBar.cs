@@ -31,7 +31,9 @@
             set { SetValue(SpeedProperty, value); }
         }
 
-        //Basic rotation speed
+        /// <summary>
+        /// Identifies the <see cref="Speed"/> dependency property. Represents basic rotation speed
+        /// </summary>
         public static readonly DependencyProperty SpeedProperty =
             DependencyProperty.Register(nameof(Speed), typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
 
@@ -42,7 +44,9 @@
             set { SetValue(IconDataProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Icon.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="IconData"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty IconDataProperty =
             DependencyProperty.Register(nameof(IconData), typeof(Path), typeof(RotationProgressBar), new PropertyMetadata());
 
@@ -62,6 +66,9 @@
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsInProgress"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty IsInProgressProperty = IsInProgressPropertyKey.DependencyProperty;
 
         public bool Success
@@ -70,6 +77,9 @@
             set { SetValue(SuccessProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="Success"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty SuccessProperty = DependencyProperty.Register(nameof(Success), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false));
 
 
@@ -79,6 +89,9 @@
             set { SetValue(ShowWarningProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowWarning"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ShowWarningProperty =
             DependencyProperty.Register(nameof(ShowWarning), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowWarningChanged(e)));
 
@@ -95,6 +108,9 @@
             set { SetValue(ShowErrorProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowError"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ShowErrorProperty =
             DependencyProperty.Register(nameof(ShowError), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s,e) => (s as RotationProgressBar).OnShowErrorChanged(e)));
 

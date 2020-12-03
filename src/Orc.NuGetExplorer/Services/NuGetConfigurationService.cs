@@ -19,6 +19,7 @@
 
         private readonly IConfigurationService _configurationService;
         private readonly string _defaultDestinationFolder;
+        private int _packageQuerySize = 40;
 
         //had to doing this, because settings is as parameter in ctor caused loop references
         private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
@@ -165,6 +166,16 @@
         private string GetProjectKey(IExtensibleProject extensibleProject)
         {
             return $"{_masterKeys[ConfigurationSection.ProjectExtensions]}_{extensibleProject.GetType().FullName}";
+        }
+
+        public void SetPackageQuerySize(int size)
+        {
+            _packageQuerySize = size;
+        }
+
+        public int GetPackageQuerySize()
+        {
+            return _packageQuerySize;
         }
     }
 }

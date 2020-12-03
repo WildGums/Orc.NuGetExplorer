@@ -3,7 +3,6 @@
     using System;
     using Catel;
     using Catel.Services;
-    using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
     using Orc.NuGetExplorer.Services;
 

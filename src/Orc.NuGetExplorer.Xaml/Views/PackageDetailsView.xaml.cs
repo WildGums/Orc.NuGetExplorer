@@ -24,6 +24,9 @@
             set { SetValue(PackageProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="Package"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty PackageProperty = DependencyProperty.Register(
             nameof(Package), typeof(NuGetPackage), typeof(PackageDetailsView), new PropertyMetadata(default(NuGetPackage)));
     }

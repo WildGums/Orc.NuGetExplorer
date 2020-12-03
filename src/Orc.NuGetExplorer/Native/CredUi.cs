@@ -12,7 +12,6 @@
 namespace Orc.NuGetExplorer.Native
 {
     using System;
-    using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
     using System.Text;
     using Microsoft.Win32.SafeHandles;
@@ -20,27 +19,6 @@ namespace Orc.NuGetExplorer.Native
     internal static class CredUi
     {
         #region Delegates
-        [Flags]
-        public enum CredUiFlags
-        {
-            INCORRECT_PASSWORD = 0x1,
-            DO_NOT_PERSIST = 0x2,
-            REQUEST_ADMINISTRATOR = 0x4,
-            EXCLUDE_CERTIFICATES = 0x8,
-            REQUIRE_CERTIFICATE = 0x10,
-            SHOW_SAVE_CHECK_BOX = 0x40,
-            ALWAYS_SHOW_UI = 0x80,
-            REQUIRE_SMARTCARD = 0x100,
-            PASSWORD_ONLY_OK = 0x200,
-            VALIDATE_USERNAME = 0x400,
-            COMPLETE_USERNAME = 0x800,
-            PERSIST = 0x1000,
-            SERVER_CREDENTIAL = 0x4000,
-            EXPECT_CONFIRMATION = 0x20000,
-            GENERIC_CREDENTIALS = 0x40000,
-            USERNAME_TARGET_CREDENTIALS = 0x80000,
-            KEEP_USERNAME = 0x100000
-        }
 
         public enum CredUIReturnCodes
         {
@@ -55,7 +33,7 @@ namespace Orc.NuGetExplorer.Native
         }
 
         [Flags]
-        public enum CredUiWinFlags
+        public enum PromptForWindowsCredentials
         {
             Generic = 0x1,
             Checkbox = 0x2,
@@ -112,13 +90,13 @@ namespace Orc.NuGetExplorer.Native
             out IntPtr ppvOutAuthBuffer,
             out uint pulOutAuthBufferSize,
             [MarshalAs(UnmanagedType.Bool)] ref bool pfSave,
-            CredUiWinFlags dwFlags);
+            PromptForWindowsCredentials dwFlags);
 
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "CredReadW", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CredRead(string TargetName, CredTypes Type, int Flags, out IntPtr Credential);
 
-        [DllImport("advapi32.dll"), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport("advapi32.dll")]
         internal static extern void CredFree(IntPtr Buffer);
 
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "CredDeleteW", SetLastError = true)]

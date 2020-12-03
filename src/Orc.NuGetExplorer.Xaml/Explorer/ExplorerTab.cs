@@ -2,11 +2,11 @@
 {
     public class ExplorerTab
     {
-        public static ExplorerTab Browse = new ExplorerTab(ExplorerPageName.Browse);
+        public readonly static ExplorerTab Browse = new ExplorerTab(ExplorerPageName.Browse);
 
-        public static ExplorerTab Update = new ExplorerTab(ExplorerPageName.Updates);
+        public readonly static ExplorerTab Update = new ExplorerTab(ExplorerPageName.Updates);
 
-        public static ExplorerTab Installed = new ExplorerTab(ExplorerPageName.Installed);
+        public readonly static ExplorerTab Installed = new ExplorerTab(ExplorerPageName.Installed);
 
         private ExplorerTab(string name)
         {

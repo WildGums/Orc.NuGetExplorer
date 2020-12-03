@@ -18,14 +18,14 @@
             ILanguageService languageService,
             ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService,
+            INuGetConfigurationService nuGetConfigurationService,
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            IFileDirectoryService fileDirectoryService,
-            Orc.Theming.IAccentColorService accentColorService) : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, vmLocator, typeFactory)
+            IAccentColorService accentColorService) 
+            : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
-            Argument.IsNotNull(() => fileDirectoryService);
             Argument.IsNotNull(() => accentColorService);
 
             var serviceLocator = ServiceLocator.Default;
@@ -44,7 +44,7 @@
             serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
 
             // add project extensions
-            projectLocator.Register<ExampleFolderPackageManagement>(fileDirectoryService.GetApplicationRoamingFolder());
+            projectLocator.Register<ExampleFolderPackageManagement>(DefaultNuGetFolders.GetApplicationRoamingFolder());
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
@@ -52,6 +52,9 @@
 
             // Example: changing storage for Credentials
             //credentialProviderLoaderService.SetCredentialPolicy(Enums.CredentialStoragePolicy.WindowsVaultConfigurationFallback);
+
+            // Override size of packages queries
+            nuGetConfigurationService.SetPackageQuerySize(40);
         }
     }
 }

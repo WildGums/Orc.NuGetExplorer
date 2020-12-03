@@ -118,7 +118,7 @@
 
             if (extensiblesVM != null)
             {
-                var result = await _uIVisualizerService.ShowDialogAsync(extensiblesVM);
+                await _uIVisualizerService.ShowDialogAsync(extensiblesVM);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
-    using Catel.Data;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using NuGetExplorer.Models;

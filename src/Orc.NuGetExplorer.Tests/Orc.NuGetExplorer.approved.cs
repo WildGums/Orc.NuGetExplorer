@@ -1,6 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v3.1", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
 public static class LoadAssembliesOnStartup { }
 public static class ModuleInitializer
 {
@@ -57,6 +57,13 @@ namespace Orc.NuGetExplorer
         public static System.Collections.Generic.IEqualityComparer<NuGet.Configuration.PackageSource> PackageSource { get; set; }
         public static System.Collections.Generic.IEqualityComparer<NuGet.Protocol.Core.Types.SourceRepository> SourceRepository { get; set; }
     }
+    public static class DefaultNuGetFolders
+    {
+        public static readonly string DefaultGlobalPackagesFolderPath;
+        public static string GetApplicationLocalFolder() { }
+        public static string GetApplicationRoamingFolder() { }
+        public static string GetGlobalPackagesFolder() { }
+    }
     public class DefaultNuGetFramework : Orc.NuGetExplorer.IDefaultNuGetFramework
     {
         public DefaultNuGetFramework(NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
@@ -65,7 +72,7 @@ namespace Orc.NuGetExplorer
     }
     public class DeletemeWatcher : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
-        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider) { }
+        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider) { }
         protected override void OnOperationFinished(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
     }
     public class DependencyInfoResourceCollection : System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.DependencyInfoResource>, System.Collections.IEnumerable
@@ -97,6 +104,7 @@ namespace Orc.NuGetExplorer
         public bool HandlesDefaultCredentials { get; }
         public void ClearRetryCache() { }
         public System.Threading.Tasks.Task<System.Net.ICredentials> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
+        public bool IsValidResponse(NuGet.Credentials.CredentialResponse response) { }
         public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) { }
     }
     public enum FeedVerificationResult
@@ -113,6 +121,7 @@ namespace Orc.NuGetExplorer
     }
     public static class FrameworkParser
     {
+        public static NuGet.Frameworks.NuGetFramework ToSpecificPlatform(NuGet.Frameworks.NuGetFramework framework) { }
         public static NuGet.Frameworks.NuGetFramework TryParseFrameworkName(string frameworkString, NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
     }
     public static class HttpHandlerResourceV3Extensions
@@ -157,6 +166,10 @@ namespace Orc.NuGetExplorer
         string DefaultSource { get; set; }
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> GetDefaultPackages();
     }
+    public static class IDirectoryServiceExtensions
+    {
+        public static void ForceDeleteDirectory(this Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService, string folderPath, out System.Collections.Generic.List<string> failedEntries) { }
+    }
     public interface IExtendedSourceRepositoryProvider : NuGet.Protocol.Core.Types.ISourceRepositoryProvider
     {
         NuGet.Protocol.Core.Types.SourceRepository CreateLocalRepository(string source);
@@ -167,6 +180,7 @@ namespace Orc.NuGetExplorer
         string ContentPath { get; }
         string Framework { get; }
         string Name { get; }
+        System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
         void Install();
         void Uninstall();
@@ -176,11 +190,14 @@ namespace Orc.NuGetExplorer
     {
         public static NuGet.Protocol.Core.Types.SourceRepository AsSourceRepository(this Orc.NuGetExplorer.IExtensibleProject project, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
     }
+    public static class IFileServiceExtensions
+    {
+        public static void ForceDeleteFiles(this Orc.FileSystem.IFileService fileService, string filePath, System.Collections.Generic.List<string> failedEntries) { }
+        public static void SetAttributes(this Orc.FileSystem.IFileService fileService, string filePath, System.IO.FileAttributes attribute) { }
+    }
     public interface IFileSystemService
     {
-        void CopyDirectory(string sourceDirectory, string destinationDirectory);
         void CreateDeleteme(string name, string path);
-        bool DeleteDirectory(string path);
         void RemoveDeleteme(string name, string path);
     }
     public interface INuGetConfigurationService
@@ -188,6 +205,7 @@ namespace Orc.NuGetExplorer
         void DisablePackageSource(string name, string source);
         string GetDestinationFolder();
         bool GetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository);
+        int GetPackageQuerySize();
         bool IsProjectConfigured(Orc.NuGetExplorer.IExtensibleProject project);
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> LoadPackageSources(bool onlyEnabled = false);
         void RemovePackageSource(Orc.NuGetExplorer.IPackageSource source);
@@ -196,6 +214,7 @@ namespace Orc.NuGetExplorer
         void SaveProjects(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> extensibleProjects);
         void SetDestinationFolder(string value);
         void SetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository, bool value);
+        void SetPackageQuerySize(int size);
     }
     public interface INuGetFeedVerificationService
     {
@@ -220,10 +239,6 @@ namespace Orc.NuGetExplorer
     public interface INuGetProjectContextProvider
     {
         NuGet.ProjectManagement.INuGetProjectContext GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction);
-    }
-    public interface IPackageBatchService
-    {
-        void ShowPackagesBatch(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails> packageDetails, Orc.NuGetExplorer.PackageOperationType operationType);
     }
     public interface IPackageDetails
     {
@@ -520,7 +535,7 @@ namespace Orc.NuGetExplorer
     }
     public class RollbackWatcher : Orc.NuGetExplorer.PackageManagerContextWatcherBase
     {
-        public RollbackWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService, Orc.NuGetExplorer.IRollbackPackageOperationService rollbackPackageOperationService, Orc.NuGetExplorer.IBackupFileSystemService backupFileSystemService, Orc.NuGetExplorer.IFileSystemService fileSystemService) { }
+        public RollbackWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService, Orc.NuGetExplorer.IRollbackPackageOperationService rollbackPackageOperationService, Orc.NuGetExplorer.IBackupFileSystemService backupFileSystemService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService) { }
         protected override void OnOperationContextDisposing(object sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
         protected override void OnOperationStarting(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
     }
@@ -589,7 +604,7 @@ namespace Orc.NuGetExplorer.Cache
     }
     public class NuGetCacheManager : Orc.NuGetExplorer.Cache.INuGetCacheManager
     {
-        public NuGetCacheManager(Orc.NuGetExplorer.Services.IFileDirectoryService fileDirectoryService) { }
+        public NuGetCacheManager(Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService) { }
         public bool ClearAll() { }
         public bool ClearHttpCache() { }
         public NuGet.Protocol.Core.Types.SourceCacheContext GetCacheContext() { }
@@ -660,7 +675,7 @@ namespace Orc.NuGetExplorer.Management
         public string ContentPath { get; }
         public string Framework { get; }
         public string Name { get; }
-        public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> SupportedFrameworks { get; set; }
+        public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public void Install() { }
         public override string ToString() { }
@@ -1046,6 +1061,7 @@ namespace Orc.NuGetExplorer.Packaging
     {
         public UpdatePackageSearchMetadata() { }
         public NuGet.Protocol.Core.Types.VersionInfo FromVersion { get; set; }
+        public new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> LazyVersionsFactory { get; set; }
     }
     public class UpdatePackageSearchMetadataBuilder
     {
@@ -1131,15 +1147,15 @@ namespace Orc.NuGetExplorer.Providers
     }
     public class PackageMetadataProvider : Orc.NuGetExplorer.Providers.IPackageMetadataProvider
     {
-        public PackageMetadataProvider(Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
-        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
+        public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
+        public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
-        public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
+        public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
     }
     public class WindowsCredentialProvider : NuGet.Credentials.ICredentialProvider
     {
@@ -1157,7 +1173,7 @@ namespace Orc.NuGetExplorer.Resolver
     }
     public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
     {
-        public static Orc.NuGetExplorer.Resolver.PackageResolverContext Empty;
+        public static readonly Orc.NuGetExplorer.Resolver.PackageResolverContext Empty;
         public PackageResolverContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IEnumerable<string> targetIds, System.Collections.Generic.IEnumerable<string> requiredPackageIds, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> preferredVersions, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> packageSources, System.Collections.Generic.IEnumerable<string> ignoredIds, NuGet.Common.ILogger log) { }
         public System.Collections.Generic.IEnumerable<string> IgnoredIds { get; set; }
     }
@@ -1180,7 +1196,7 @@ namespace Orc.NuGetExplorer.Scenario
     }
     public class V3RestorePackageConfigAndReinstall : Orc.NuGetExplorer.Scenario.IUpgradeScenario
     {
-        public V3RestorePackageConfigAndReinstall(Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.IRepositoryContextService repositoryContextService, NuGet.Common.ILogger logger, Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
+        public V3RestorePackageConfigAndReinstall(Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.IRepositoryContextService repositoryContextService, NuGet.Common.ILogger logger, Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.FileSystem.IDirectoryService directoryService) { }
         public System.Threading.Tasks.Task<bool> RunAsync() { }
         public override string ToString() { }
     }
@@ -1198,7 +1214,7 @@ namespace Orc.NuGetExplorer.Services
 {
     public class DownloadingProgressTrackerService : Orc.NuGetExplorer.Services.IDownloadingProgressTrackerService
     {
-        public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger) { }
+        public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger, Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService) { }
         public System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo) { }
     }
     public interface IDefferedPackageLoaderService
@@ -1210,16 +1226,10 @@ namespace Orc.NuGetExplorer.Services
     {
         System.Threading.Tasks.Task<Catel.IDisposableToken<System.IProgress<float>>> TrackDownloadOperationAsync(Orc.NuGetExplorer.Services.IPackageInstallationService packageInstallationService, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo packageDependencyInfo);
     }
-    public interface IFileDirectoryService
-    {
-        void DeleteDirectoryTree(string folderPath, out System.Collections.Generic.List<string> failedEntries);
-        string GetApplicationLocalFolder();
-        string GetApplicationRoamingFolder();
-        string GetGlobalPackagesFolder();
-    }
     public interface INuGetExplorerInitializationService
     {
         string DefaultSourceKey { get; }
+        int PackageQuerySize { get; set; }
         System.Threading.Tasks.Task<bool> UpgradeNuGetPackagesIfNeededAsync();
     }
     public interface INuGetProjectUpgradeService
@@ -1242,6 +1252,7 @@ namespace Orc.NuGetExplorer.Services
         public void DisablePackageSource(string name, string source) { }
         public string GetDestinationFolder() { }
         public bool GetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository) { }
+        public int GetPackageQuerySize() { }
         public bool IsProjectConfigured(Orc.NuGetExplorer.IExtensibleProject project) { }
         public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> LoadPackageSources(bool onlyEnabled = false) { }
         public void RemovePackageSource(Orc.NuGetExplorer.IPackageSource source) { }
@@ -1250,6 +1261,7 @@ namespace Orc.NuGetExplorer.Services
         public void SaveProjects(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> extensibleProjects) { }
         public void SetDestinationFolder(string value) { }
         public void SetIsPrereleaseAllowed(Orc.NuGetExplorer.IRepository repository, bool value) { }
+        public void SetPackageQuerySize(int size) { }
     }
 }
 namespace Orc.NuGetExplorer.Watchers.Base
@@ -1271,11 +1283,6 @@ namespace Orc.NuGetExplorer.Web
     {
         public FatalProtocolExceptionHandler() { }
         public Orc.NuGetExplorer.FeedVerificationResult HandleException(NuGet.Protocol.Core.Types.FatalProtocolException exception, string source) { }
-    }
-    public class HttpSource
-    {
-        public HttpSource() { }
-        public System.Threading.Tasks.Task EnsureHttpClientAsync() { }
     }
     public class HttpWebExceptionHandler : Orc.NuGetExplorer.Web.IHttpExceptionHandler<System.Net.WebException>
     {

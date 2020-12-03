@@ -34,7 +34,7 @@ namespace Orc.NuGetExplorer
             _nugetLogger = logger;
         }
 
-        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken ct = default)
+        public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken cancellationToken = default)
         {
             Argument.IsNotNull(() => source);
 
@@ -54,7 +54,7 @@ namespace Orc.NuGetExplorer
                 {
                     var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
 
-                    var metadata = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, ct);
+                    var metadata = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
                 }
                 catch (Exception)
                 {
@@ -63,10 +63,10 @@ namespace Orc.NuGetExplorer
             }
             catch (FatalProtocolException ex)
             {
-                if (ct.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                 {
                     //cancel operation
-                    throw new OperationCanceledException("Verification was canceled", ex, ct);
+                    throw new OperationCanceledException("Verification was canceled", ex, cancellationToken);
                 }
                 result = FatalProtocolExceptionHandler.HandleException(ex, source);
             }
@@ -81,7 +81,7 @@ namespace Orc.NuGetExplorer
 
                 result = FeedVerificationResult.Invalid;
             }
-            catch (Exception ex) when (!ct.IsCancellationRequested)
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
                 Log.Debug(ex, errorMessage.ToString());
 

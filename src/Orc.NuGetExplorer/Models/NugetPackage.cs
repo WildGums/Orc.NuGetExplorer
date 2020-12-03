@@ -196,6 +196,12 @@
             //Error on v2 feed
             var versinfo = await _packageMetadata.GetVersionsAsync();
 
+            //Workaround for Updates metadata
+            if(!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
+            {
+                versinfo = await updateMetadata.LazyVersionsFactory;
+            }
+
             var versions = versinfo.Select(x => x.Version).Union(Versions).OrderByDescending(x => x)
                 .ToList();
 

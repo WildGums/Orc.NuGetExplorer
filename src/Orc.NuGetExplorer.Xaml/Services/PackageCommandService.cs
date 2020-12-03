@@ -92,7 +92,7 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext)
+        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
             using (_pleaseWaitService.WaitingScope())
             {
@@ -118,7 +118,7 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext)
+        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
             using(_pleaseWaitService.WaitingScope())
             {

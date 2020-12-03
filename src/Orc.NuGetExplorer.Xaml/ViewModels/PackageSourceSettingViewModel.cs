@@ -52,8 +52,7 @@
             CommandInitialize();
         }
 
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-           INuGetConfigurationResetService nuGetConfigurationResetService)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
             : this(configurationService, feedVerificationService)
         {
             Argument.IsNotNull(() => nuGetConfigurationResetService);
@@ -163,7 +162,6 @@
             return base.SaveAsync();
         }
 
-
         protected override Task CloseAsync()
         {
             Feeds.CollectionChanged -= OnFeedsCollectionChanged;
@@ -172,6 +170,15 @@
             return base.CloseAsync();
         }
 
+        private static void StartValidationTimer()
+        {
+            if (ValidationTimer.Enabled)
+            {
+                ValidationTimer.Stop();
+            }
+
+            ValidationTimer.Start();
+        }
 
         protected override void ValidateBusinessRules(List<IBusinessRuleValidationResult> validationResults)
         {
@@ -191,7 +198,6 @@
 
             _configurationService.SavePackageSources(Feeds);
         }
-
 
         private bool IsNamesNotUniqueRule(out IEnumerable<string> invalidNames)
         {
@@ -235,16 +241,6 @@
             }
 
             feed.IsVerifiedNow = false;
-        }
-
-        private void StartValidationTimer()
-        {
-            if (ValidationTimer.Enabled)
-            {
-                ValidationTimer.Stop();
-            }
-
-            ValidationTimer.Start();
         }
 
         private async void OnValidationTimerElapsed(object sender, ElapsedEventArgs e)

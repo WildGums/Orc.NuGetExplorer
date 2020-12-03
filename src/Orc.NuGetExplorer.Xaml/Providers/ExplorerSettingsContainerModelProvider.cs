@@ -9,7 +9,6 @@
 
     public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
     {
-        private readonly ITypeFactory _typeFactory;
         private readonly INuGetConfigurationService _nugetConfigurationService;
         private readonly IConfigurationService _configurationService;
         private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
@@ -21,7 +20,6 @@
             Argument.IsNotNull(() => nugetConfigurationService);
             Argument.IsNotNull(() => configurationService);
 
-            _typeFactory = typeFactory;
             _nugetConfigurationService = nugetConfigurationService;
             _configurationService = configurationService;
 

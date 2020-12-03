@@ -12,6 +12,7 @@
     using NuGet.Configuration;
     using NuGet.Packaging.Core;
     using NuGet.ProjectManagement;
+    using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Packaging;
     using Settings = NuGetExplorer.Settings;
@@ -29,15 +30,17 @@
         private readonly ILogger _logger;
         private readonly IConfigurationService _configurationService;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+        private readonly IDirectoryService _directoryService;
 
         public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager, IRepositoryContextService repositoryContextService,
-            ILogger logger, IConfigurationService configurationService, IPackageOperationNotificationService packageOperationNotificationService)
+            ILogger logger, IConfigurationService configurationService, IPackageOperationNotificationService packageOperationNotificationService, IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => projectProvider);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => repositoryContextService);
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => packageOperationNotificationService);
+            Argument.IsNotNull(() => directoryService);
 
             _defaultProject = projectProvider.GetDefaultProject();
             _nuGetPackageManager = nuGetPackageManager;
@@ -45,13 +48,14 @@
             _logger = logger;
             _configurationService = configurationService;
             _packageOperationNotificationService = packageOperationNotificationService;
+            _directoryService = directoryService;
         }
 
         public async Task<bool> RunAsync()
         {
             var folderProject = new FolderNuGetProject(_defaultProject.ContentPath);
 
-            if (!Directory.Exists(_defaultProject.ContentPath))
+            if (!_directoryService.Exists(_defaultProject.ContentPath))
             {
                 Log.Info($"Plugins folder does not exist");
                 return false;

@@ -12,28 +12,29 @@ namespace Orc.NuGetExplorer
     using Catel;
     using Catel.Logging;
     using Catel.Reflection;
+    using Orc.FileSystem;
 
     internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IFileSystemService _fileSystemService;
+        private readonly IDirectoryService _directoryService;
         private readonly string _rootDirectory;
         #endregion
 
         #region Constructors
-        public TemporaryFileSystemContext(IFileSystemService fileSystemService)
+        public TemporaryFileSystemContext(IDirectoryService directoryService)
         {
-            Argument.IsNotNull(() => fileSystemService);
+            Argument.IsNotNull(() => directoryService);
 
-            _fileSystemService = fileSystemService;
+            _directoryService = directoryService;
 
             var assembly = AssemblyHelper.GetEntryAssembly();
 
             _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
                 "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
-            Directory.CreateDirectory(_rootDirectory);
+            _directoryService.Create(_rootDirectory);
         }
         #endregion
 
@@ -53,15 +54,17 @@ namespace Orc.NuGetExplorer
 
         protected virtual void Dispose(bool disposing)
         {
-            Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+            try
+            {
+                Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
-            if (!_fileSystemService.DeleteDirectory(_rootDirectory))
+                _directoryService.Delete(_rootDirectory, true);
+
+                Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
+            }
+            catch (Exception)
             {
                 Log.Error("Failed to delete temporary files");
-            }
-            else
-            {
-                Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
             }
         }
 
@@ -69,9 +72,9 @@ namespace Orc.NuGetExplorer
         {
             var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
 
-            if (!Directory.Exists(fullPath))
+            if (!_directoryService.Exists(fullPath))
             {
-                Directory.CreateDirectory(fullPath);
+                _directoryService.Create(fullPath);
             }
 
             return fullPath;
@@ -80,11 +83,11 @@ namespace Orc.NuGetExplorer
         public string GetFile(string relativeFilePath)
         {
             var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
-
             var directory = Path.GetDirectoryName(fullPath);
-            if (!Directory.Exists(directory))
+
+            if (!_directoryService.Exists(directory))
             {
-                Directory.CreateDirectory(directory);
+                _directoryService.Create(directory);
             }
 
             return fullPath;

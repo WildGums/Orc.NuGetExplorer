@@ -32,7 +32,6 @@
     internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly int PageSize = 17;
         private static readonly int SingleTasksDelayMs = 800;
         private static readonly IHttpExceptionHandler<FatalProtocolException> PackageLoadingExceptionHandler = new FatalProtocolExceptionHandler();
 
@@ -49,9 +48,8 @@
         private readonly IRepositoryContextService _repositoryService;
         private readonly IPackageLoaderService _packagesLoaderService;
 
-        private readonly INuGetPackageManager _projectManager;
         private readonly INuGetCacheManager _nuGetCacheManager;
-
+        private readonly INuGetConfigurationService _nuGetConfigurationService;
         private readonly ITypeFactory _typeFactory;
         private readonly MetadataOrigin _pageType;
 
@@ -63,7 +61,8 @@
         public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, INuGetPackageManager projectManager, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager)
+            IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
+            INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
@@ -74,21 +73,20 @@
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
-            Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => nuGetCacheManager);
+            Argument.IsNotNull(() => nuGetConfigurationService);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
             _repositoryService = repositoryService;
             _defferedPackageLoaderService = defferedPackageLoaderService;
-            _projectManager = projectManager;
             _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
             _packagesLoaderService = packagesLoaderService;
             _nuGetCacheManager = nuGetCacheManager;
-
+            _nuGetConfigurationService = nuGetConfigurationService;
             Settings = settingsProvider.Model;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
@@ -234,13 +232,10 @@
 
         private void OnPackageItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewStartingIndex == 0 && IsActive)
             {
-                //item added on first place, collection was empty
-                if (e.NewStartingIndex == 0 && IsActive)
-                {
-                    SelectedPackageItem = PackageItems.FirstOrDefault();
-                }
+                // Item added on first place, collection was empty
+                SelectedPackageItem = PackageItems.FirstOrDefault();
             }
         }
 
@@ -250,14 +245,14 @@
             {
                 if (IsActive && _initialSearchParams != null)
                 {
-                    //set page initial search params as Settings parameters
-                    //only on first loaded page
+                    // Set page initial search params as Settings parameters
+                    // Only on first loaded page
                     Settings.IsPreReleaseIncluded = _initialSearchParams.IsPrereleaseIncluded;
                     Settings.SearchString = _initialSearchParams.SearchString;
                     Settings.IsRecommendedOnly = _initialSearchParams.IsRecommendedOnly;
                 }
 
-                //execution delay
+                // Execution delay
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
 
@@ -270,15 +265,16 @@
                 _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
 
                 IsFirstLoaded = false;
+                var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
 
                 if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
-                    PageInfo = new PageContinuation(PageSize, Settings.ObservedFeed.GetPackageSource());
+                    PageInfo = new PageContinuation(pageSize, Settings.ObservedFeed.GetPackageSource());
 
                     var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
 
-                    await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
+                    await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
                 }
                 else
                 {
@@ -295,20 +291,17 @@
         {
             base.OnPropertyChanged(e);
 
-            if (string.Equals(e.PropertyName, nameof(Invalidated)))
+            if (e.HasPropertyChanged(nameof(Invalidated)))
             {
                 Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
             }
 
-            if (string.Equals(e.PropertyName, nameof(IsActive)))
+            if (e.HasPropertyChanged(nameof(IsActive)) && (bool)e.NewValue)
             {
-                if ((bool)e.NewValue)
-                {
-                    Log.Info($"Switching page: {Title} is active");
+                Log.Info($"Switching page: {Title} is active");
 
-                    //force update selected item
-                    SelectedPackageItem = PackageItems?.FirstOrDefault();
-                }
+                // Force update selected item
+                SelectedPackageItem = PackageItems?.FirstOrDefault();
             }
 
             if (IsFirstLoaded)
@@ -316,9 +309,9 @@
                 return;
             }
 
-            if (string.Equals(e.PropertyName, nameof(IsActive)) && Invalidated)
+            if (e.HasPropertyChanged(nameof(IsActive)) && Invalidated)
             {
-                //just switching page, no need to invalidate data
+                // Just switching page, no need to invalidate data
                 StartLoadingTimer();
             }
         }
@@ -348,13 +341,14 @@
             Log.Info("Timer elapsed");
             var currentFeed = Settings.ObservedFeed;
             //reset page
-            PageInfo = new PageContinuation(PageSize, currentFeed.GetPackageSource());
+            PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
 
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
-            await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams);
+            var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
+            await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
         }
 
-        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters searchParams)
+        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters searchParams, int pageSize)
         {
             try
             {
@@ -389,7 +383,7 @@
                     {
                         if (!currentSource.IsVerified)
                         {
-                            await CanFeedBeLoadedAsync(VerificationTokenSource.Token, currentSource);
+                            await CanFeedBeLoadedAsync(currentSource, VerificationTokenSource.Token);
                         }
 
                         if (!currentSource.IsAccessible && _pageType != MetadataOrigin.Installed)
@@ -400,7 +394,7 @@
 
                         if (!IsLoadingInProcess)
                         {
-                            await LoadPackagesAsync(pageinfo, pageTcs.Token, searchParams);
+                            await LoadPackagesAsync(pageinfo, searchParams, pageTcs.Token);
                         }
                         else
                         {
@@ -433,7 +427,7 @@
                 IsCancellationTokenAlive = false;
 
                 //backward page if needed
-                if (PageInfo.LastNumber > PageSize)
+                if (PageInfo.LastNumber > pageSize)
                 {
                     PageInfo.GetPrevious();
                 }
@@ -445,7 +439,7 @@
                     var awaitedSeachParams = AwaitedSearchParameters;
                     AwaitedPageInfo = null;
                     AwaitedSearchParameters = null;
-                    await VerifySourceAndLoadPackagesAsync(awaitedPageinfo, Settings.ObservedFeed, awaitedSeachParams);
+                    await VerifySourceAndLoadPackagesAsync(awaitedPageinfo, Settings.ObservedFeed, awaitedSeachParams, pageSize);
                 }
                 else
                 {
@@ -500,7 +494,7 @@
             }
         }
 
-        private async Task LoadPackagesAsync(PageContinuation pageInfo, CancellationToken cancellationToken, PackageSearchParameters searchParameters)
+        private async Task LoadPackagesAsync(PageContinuation pageInfo, PackageSearchParameters searchParameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -611,7 +605,7 @@
             StartLoadingTimerOrInvalidateData();
         }
 
-        private async Task CanFeedBeLoadedAsync(CancellationToken cancelToken, INuGetSource source)
+        private async Task CanFeedBeLoadedAsync(INuGetSource source, CancellationToken cancelToken)
         {
             Log.Info($"'{source}' package source is verified");
 
@@ -655,8 +649,9 @@
         private async Task LoadNextPackagePageExecuteAsync()
         {
             var pageInfo = PageInfo;
+            var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
-            await VerifySourceAndLoadPackagesAsync(pageInfo, Settings.ObservedFeed, searchParams);
+            await VerifySourceAndLoadPackagesAsync(pageInfo, Settings.ObservedFeed, searchParams, pageSize);
         }
 
         public TaskCommand CancelPageLoading { get; set; }

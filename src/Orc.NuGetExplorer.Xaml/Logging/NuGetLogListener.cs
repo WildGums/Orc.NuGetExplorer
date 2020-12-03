@@ -79,7 +79,7 @@
             Warning(Log, e.Message, null, EmptyAdditionalData, DateTime.Now);
         }
 
-        private LogMessageEventArgs CreateMessageEventArgs(ILog log, string message, object extraData, LogData logData, LogEvent logEvent, DateTime time)
+        private static LogMessageEventArgs CreateMessageEventArgs(ILog log, string message, object extraData, LogData logData, LogEvent logEvent, DateTime time)
         {
             return new LogMessageEventArgs(log, message, extraData, logData, logEvent, time);
         }

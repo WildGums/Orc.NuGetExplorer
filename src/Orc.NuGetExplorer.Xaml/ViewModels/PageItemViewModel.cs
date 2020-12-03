@@ -76,7 +76,7 @@
             IsDownloadCountShowed = packageOrigin == MetadataOrigin.Browse;
             CanBeAddedInBatchOperation = packageOrigin != MetadataOrigin.Installed;
 
-            GetPrimaryVersionInfo(packageOrigin, Package);
+            GetPrimaryVersionInfo(Package);
             GetSecondaryVersionInfo(packageOrigin, Package);
 
             return base.InitializeAsync();
@@ -91,7 +91,7 @@
 
             if (string.Equals(e.PropertyName, nameof(Package.InstalledVersion)))
             {
-                GetPrimaryVersionInfo(Package.FromPage, Package);
+                GetPrimaryVersionInfo(Package);
             }
 
             base.OnModelPropertyChanged(sender, e);
@@ -110,7 +110,7 @@
             SecondaryVersionDescription = $"{LastVersionText}: {SecondaryVersion}";
         }
 
-        private void GetPrimaryVersionInfo(MetadataOrigin fromPage, NuGetPackage package)
+        private void GetPrimaryVersionInfo(NuGetPackage package)
         {
             PrimaryVersion = package.InstalledVersion;
             PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";

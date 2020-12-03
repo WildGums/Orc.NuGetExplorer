@@ -21,10 +21,10 @@ namespace Orc.NuGetExplorer
         bool IsRefreshRequired(PackageOperationType operationType);
         string GetPluralActionName(PackageOperationType operationType);
         Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token);
+        Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token);
         Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token);
-        Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext);
-        Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token, IDisposable packageOperationContext);
+        Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token);
         #endregion
     }
 }

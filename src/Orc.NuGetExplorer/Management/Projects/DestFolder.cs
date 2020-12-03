@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
     using NuGet.Frameworks;
@@ -20,14 +21,20 @@
         {
             ContentPath = destinationFolder;
 
-            var lowest = defaultFramework.GetLowest();
-
 #if NETCORE
-            Framework = lowest.FirstOrDefault()?.ToString();
+            var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
+            Framework = targetFramework.ToString();
+            SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 #else
-            Framework = lowest.LastOrDefault()?.ToString();
+            Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();
 #endif
             Log.Info($"Current target framework for plugins set as '{Framework}'");
+
+            // Default initialization
+            if (SupportedPlatforms is null)
+            {
+                SupportedPlatforms = ImmutableList.Create<NuGetFramework>();
+            }
 
             _pathResolver = new PackagePathResolver(ContentPath);
         }
@@ -36,7 +43,7 @@
 
         public string Framework { get; private set; }
 
-        public IEnumerable<NuGetFramework> SupportedFrameworks { get; set; }
+        public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
         public string ContentPath { get; private set; }
 
@@ -47,17 +54,17 @@
 
         public void Install()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public void Uninstall()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public void Update()
         {
-
+            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public override string ToString()

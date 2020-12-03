@@ -25,37 +25,37 @@
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
-    using Orc.NuGetExplorer.Watchers;
-    using System.IO.Packaging;
-    using System.Runtime.CompilerServices;
-    using System.Windows;
     using NuGet.Versioning;
+    using Orc.FileSystem;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private readonly VersionFolderPathResolver _installerPathResolver;
 
         private readonly ILogger _nugetLogger;
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
-        private readonly IFileDirectoryService _fileDirectoryService;
+        private readonly IDirectoryService _directoryService;
+        private readonly IFileService _fileService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IFileSystemService _fileSystemService;
         private readonly INuGetCacheManager _nuGetCacheManager;
-
         private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
         public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider, ISourceRepositoryProvider sourceRepositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            INuGetProjectContextProvider nuGetProjectContextProvider, IFileDirectoryService fileDirectoryService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, ILogger logger)
+            INuGetProjectContextProvider nuGetProjectContextProvider, IDirectoryService directoryService, IFileService fileService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, ILogger logger)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
             Argument.IsNotNull(() => sourceRepositoryProvider);
             Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => fileDirectoryService);
+            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => fileService);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => fileSystemService);
             Argument.IsNotNull(() => logger);
@@ -64,21 +64,24 @@
             _sourceRepositoryProvider = sourceRepositoryProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
-            _fileDirectoryService = fileDirectoryService;
+            _directoryService = directoryService;
+            _fileService = fileService;
             _apiPackageRegistry = apiPackageRegistry;
             _fileSystemService = fileSystemService;
             _nugetLogger = logger;
 
-            _nuGetCacheManager = new NuGetCacheManager(_fileDirectoryService);
+            _nuGetCacheManager = new NuGetCacheManager(_directoryService, _fileService);
 
             var serviceLocator = ServiceLocator.Default;
             if (serviceLocator.IsTypeRegistered<IDownloadingProgressTrackerService>())
             {
                 _downloadingProgressTrackerService = serviceLocator.ResolveType<IDownloadingProgressTrackerService>();
             }
+
+            _installerPathResolver = new VersionFolderPathResolver(DefaultNuGetFolders.GetGlobalPackagesFolder());
         }
 
-        public VersionFolderPathResolver InstallerPathResolver => new VersionFolderPathResolver(_fileDirectoryService.GetGlobalPackagesFolder());
+        public VersionFolderPathResolver InstallerPathResolver => _installerPathResolver;
 
         public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
             CancellationToken cancellationToken = default)
@@ -126,7 +129,7 @@
 
                     if (folderProject.PackageExists(removedPackage))
                     {
-                        _fileDirectoryService.DeleteDirectoryTree(folderProject.GetInstalledPath(removedPackage), out failedEntries);
+                        _directoryService.ForceDeleteDirectory(_fileService, folderProject.GetInstalledPath(removedPackage), out failedEntries);
                     }
 
                     if (projectConfig == null)
@@ -283,7 +286,7 @@
             var dependencyInfo = await dependencyInfoResource.ResolvePackage(
                             identity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
-            if (dependencyInfo == null)
+            if (dependencyInfo is null)
             {
                 _nugetLogger.LogError($"Cannot resolve {identity} package for target framework {targetFramework}");
                 return Resolver.PackageResolverContext.Empty;
@@ -374,7 +377,7 @@
         {
             var downloaded = new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
 
-            string globalFolderPath = _fileDirectoryService.GetGlobalPackagesFolder();
+            string globalFolderPath = DefaultNuGetFolders.GetGlobalPackagesFolder();
 
             foreach (var package in packageIdentities)
             {
@@ -391,7 +394,7 @@
         {
             if (string.Equals(globalFolder, ""))
             {
-                globalFolder = _fileDirectoryService.GetGlobalPackagesFolder();
+                globalFolder = DefaultNuGetFolders.GetGlobalPackagesFolder();
             }
 
             using (var progressToken = await _downloadingProgressTrackerService?.TrackDownloadOperationAsync(this, package))
@@ -431,12 +434,12 @@
                     var packageIdentity = packageResource.Key;
 
                     var nupkgPath = pathResolver.GetInstalledPackageFilePath(packageIdentity);
-
-                    bool alreadyInstalled = File.Exists(nupkgPath);
+                    var alreadyInstalled = string.IsNullOrEmpty(nupkgPath) ? false : _fileService.Exists(nupkgPath);
 
                     try
                     {
-                        _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder..");
+                        _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder");
+
                         var extractedPaths = await PackageExtractor.ExtractPackageAsync(
                                 downloadedPart.PackageSource,
                                 downloadedPart.PackageStream,
@@ -529,8 +532,23 @@
             var frameworkReducer = new FrameworkReducer();
 
             var libraries = await packageReader.GetLibItemsAsync(token);
+            var libraryTfms = libraries.Select(x => x.TargetFramework).ToList();
 
-            var bestMatches = frameworkReducer.GetNearest(targetFramework, libraries.Select(x => x.TargetFramework));
+            var bestMatches = frameworkReducer.GetNearest(targetFramework, libraryTfms);
+
+            if (bestMatches is null)
+            {
+                // Try to find first supported platform-specific version
+                foreach (var platformSpecific in project.SupportedPlatforms)
+                {
+                    bestMatches = frameworkReducer.GetNearest(platformSpecific, libraryTfms);
+
+                    if (bestMatches != null)
+                    {
+                        break;
+                    }
+                }
+            }
 
             return bestMatches != null;
         }

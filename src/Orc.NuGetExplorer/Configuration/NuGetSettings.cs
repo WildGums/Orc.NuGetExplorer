@@ -9,7 +9,6 @@
     using Catel.IO;
     using Catel.Logging;
     using NuGet.Configuration;
-    using Orc.NuGetExplorer.Services;
 
     internal class NuGetSettings : IVersionedSettings
     {
@@ -25,17 +24,14 @@
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
-        private readonly IFileDirectoryService _fileDirectoryService;
         #endregion
 
         #region Constructors
-        public NuGetSettings(IConfigurationService configurationService, IFileDirectoryService fileDirectoryService)
+        public NuGetSettings(IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => fileDirectoryService);
 
             _configurationService = configurationService;
-            _fileDirectoryService = fileDirectoryService;
 
             //version of configuration is a version of assembly
             //get version from configuration
@@ -88,7 +84,6 @@
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
         }
 
-
         public IList<KeyValuePair<string, string>> GetNestedValues(string section, string subSection)
         {
             Argument.IsNotNullOrWhitespace(() => section);
@@ -122,7 +117,6 @@
 
             RaiseSettingsChanged();
         }
-
 
         public bool DeleteValue(string section, string key)
         {
@@ -251,77 +245,15 @@
 
         public IList<string> GetConfigFilePaths()
         {
-            var localFolderConfig = Path.Combine(_fileDirectoryService.GetApplicationLocalFolder(), ConfigurationFileName);
-            var roamingFolderConfig = Path.Combine(_fileDirectoryService.GetApplicationRoamingFolder(), ConfigurationFileName);
+            var localFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
+            var roamingFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
 
             return new string[] { localFolderConfig, roamingFolderConfig };
         }
 
         public IList<string> GetConfigRoots()
         {
-            var localFolderConfig = _fileDirectoryService.GetApplicationLocalFolder();
-            var roamingFolderConfig = _fileDirectoryService.GetApplicationRoamingFolder();
-
-            return new string[] { localFolderConfig, roamingFolderConfig };
-        }
-
-        /* obsolete members */
-        // Note: use ObsoleteEx
-        [Obsolete]
-        public IList<SettingValue> GetSettingValues(string section, bool isPath = false)
-        {
-            RaiseSettingsRead();
-            return new List<SettingValue>();
-        }
-
-        [Obsolete]
-        public IReadOnlyList<SettingValue> GetNestedSettingValues(string section, string subSection)
-        {
-            RaiseSettingsRead();
-            return new List<SettingValue>();
-        }
-
-        [Obsolete]
-        public void SetValues(string section, IReadOnlyList<SettingValue> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
-
-            SetNuGetValues(section, addItems);
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void SetNestedSettingValues(string section, string subsection, IList<SettingValue> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
-            SetNuGetValues(section, subsection, addItems);
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void UpdateSections(string section, IReadOnlyList<SettingValue> values)
-        {
-            DeleteSection(section);
-
-            foreach (var value in values)
-            {
-                SetValue(section, value.Key, value.Value);
-            }
-
-            RaiseSettingsChanged();
-        }
-
-        [Obsolete]
-        public void UpdateSubsections(string section, string subsection, IReadOnlyList<SettingValue> values)
-        {
-
+            return new string[] { DefaultNuGetFolders.GetApplicationLocalFolder(), DefaultNuGetFolders.GetApplicationRoamingFolder() };
         }
 
         #endregion

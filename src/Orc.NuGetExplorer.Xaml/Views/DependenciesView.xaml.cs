@@ -26,8 +26,10 @@
             set { SetValue(CollectionProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="Collection"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty CollectionProperty =
-            DependencyProperty.Register(nameof(Collection), typeof(object), typeof(DependenciesView), new PropertyMetadata(null));
+                  DependencyProperty.Register(nameof(Collection), typeof(object), typeof(DependenciesView), new PropertyMetadata(null));
     }
 }

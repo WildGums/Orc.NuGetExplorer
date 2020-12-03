@@ -1,10 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Resolver
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Catel.IoC;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -15,7 +12,7 @@
 
     public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
     {
-        public static PackageResolverContext Empty = new PackageResolverContext(
+        public static readonly PackageResolverContext Empty = new PackageResolverContext(
             DependencyBehavior.Lowest,
             Enumerable.Empty<string>(),
             Enumerable.Empty<string>(),

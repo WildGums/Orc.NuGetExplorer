@@ -28,12 +28,11 @@
             set { SetValue(UsedOnProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for TabSource.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Identifies the <see cref="UsedOn"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty UsedOnProperty =
             DependencyProperty.Register(nameof(UsedOn), typeof(TabControl), typeof(ExplorerTopBarView), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty StartPageProperty =
-             DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView), new PropertyMetadata("", (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
         public string StartPage
@@ -41,6 +40,13 @@
             get { return (string)GetValue(StartPageProperty); }
             set { SetValue(StartPageProperty, value); }
         }
+
+        /// <summary>
+        /// Identifies the <see cref="StartPage"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty StartPageProperty =
+            DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView), new PropertyMetadata("", (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
+
 
         private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {

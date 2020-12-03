@@ -1,14 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Converters
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Media;
     using Catel.MVVM.Converters;
     using Orc.Theming;
 
+    [System.Windows.Data.ValueConversion(typeof(Color), typeof(SolidColorBrush))]
     public class RemoveTransparencyColorBrushConverter : ValueConverterBase<Color, SolidColorBrush>
     {
         private SolidColorBrush _cachedBrush;

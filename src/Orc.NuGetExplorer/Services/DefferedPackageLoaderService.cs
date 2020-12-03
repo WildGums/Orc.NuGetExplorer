@@ -14,6 +14,7 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
+    using Orc.FileSystem;
     using Orc.NuGetExplorer.Models;
 
     internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
@@ -29,20 +30,24 @@
         private readonly INuGetPackageManager _projectManager;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
+        private readonly IDirectoryService _directoryService;
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(IRepositoryContextService repositoryService,
-            INuGetPackageManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager, 
+            IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+            IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => settingsProvider);
+            Argument.IsNotNull(() => directoryService);
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
             _extensibleProjectLocator = extensibleProjectLocator;
             _settignsProvider = settingsProvider;
+            _directoryService = directoryService;
         }
 
         public async Task StartLoadingAsync()
@@ -155,7 +160,7 @@
 
                 var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
 
-                return new PackageMetadataProvider(repos, localRepos);
+                return new PackageMetadataProvider(_directoryService, repos, localRepos);
             }
         }
 

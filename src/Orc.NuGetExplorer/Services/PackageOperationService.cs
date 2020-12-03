@@ -18,15 +18,12 @@ namespace Orc.NuGetExplorer
     using NuGet.Resolver;
     using Orc.NuGetExplorer.Management;
 
-    internal class PackageOperationService : IPackageOperationService
+    internal sealed class PackageOperationService : IPackageOperationService
     {
         #region Fields
-        private readonly IRepository _localRepository; //todo was IPackageRepository
-        private readonly SourceRepository _localSourceRepository;
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
-        //private readonly IRepositoryCacheService _repositoryCacheService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly IExtensibleProject _defaultProject;
@@ -41,7 +38,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => repositoryService);
-            //Argument.IsNotNull(() => repositoryCacheService);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => sourceRepositoryProvider);
             Argument.IsNotNull(() => defaultExtensibleProjectProvider);
@@ -50,12 +46,11 @@ namespace Orc.NuGetExplorer
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
             _nuGetPackageManager = nuGetPackageManager;
-            //_repositoryCacheService = repositoryCacheService;
             _apiPackageRegistry = apiPackageRegistry;
             _packageOperationNotificationService = packageOperationNotificationService;
             _defaultProject = defaultExtensibleProjectProvider.GetDefaultProject();
-            _localSourceRepository = _defaultProject.AsSourceRepository(sourceRepositoryProvider);
-            _localRepository = repositoryService.LocalRepository;
+            //_localSourceRepository = _defaultProject.AsSourceRepository(sourceRepositoryProvider);
+            //_localRepository = repositoryService.LocalRepository;
 
             DependencyVersion = DependencyBehavior.Lowest;  //todo use it into resolver, which replaced old InstallWalker
         }
@@ -121,7 +116,7 @@ namespace Orc.NuGetExplorer
         }
 
 
-        public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease, CancellationToken token = default)
+        public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
 
@@ -178,16 +173,6 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        //private PackageWrapper EnsurePackageDependencies(IPackage nuGetPackage)
-        //{
-        //    List<PackageDependencySet> dependencySets = new List<PackageDependencySet>();
-        //    foreach (PackageDependencySet dependencySet in nuGetPackage.DependencySets)
-        //    {
-        //        dependencySets.Add(new PackageDependencySet(dependencySet.TargetFramework, dependencySet.Dependencies.Where(dependency => !_apiPackageRegistry.IsRegistered(dependency.Id))));
-        //    }
-
-        //    return new PackageWrapper(nuGetPackage, dependencySets);
-        //}
         #endregion
     }
 }

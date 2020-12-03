@@ -5,6 +5,7 @@
     using Catel.MVVM.Converters;
     using NuGetExplorer.Enums;
 
+    [System.Windows.Data.ValueConversion(typeof(PackageStatus), typeof(Brush))]
     public class PackageStatusEnumToBrushConverter : ValueConverterBase<PackageStatus, Brush>
     {
         private static readonly int Offset = -1;

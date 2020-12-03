@@ -13,7 +13,6 @@ namespace Orc.NuGetExplorer.Native
     using Catel.Configuration;
     using Catel.Logging;
     using NuGetExplorer.Crypto;
-    using Orc.NuGetExplorer.Enums;
 
     internal class CredentialsPrompter
     {
@@ -118,10 +117,10 @@ namespace Orc.NuGetExplorer.Native
         private bool PromptForCredentials(IntPtr owner, bool storedCredentials, ref IntPtr inBuffer, ref IntPtr outBuffer)
         {
             var info = CreateCredUIInfo(owner, false);
-            var flags = CredUi.CredUiWinFlags.Generic;
+            var flags = CredUi.PromptForWindowsCredentials.Generic;
             if (ShowSaveCheckBox)
             {
-                flags |= CredUi.CredUiWinFlags.Checkbox;
+                flags |= CredUi.PromptForWindowsCredentials.Checkbox;
             }
 
             uint inBufferSize = 0;
