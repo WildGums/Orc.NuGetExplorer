@@ -7,10 +7,12 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.IO;
+    using System.Threading.Tasks;
     using Catel;
+    using Catel.Messaging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Messaging;
 
     public class DeletemeWatcher : PackageManagerWatcherBase
     {
@@ -18,52 +20,55 @@ namespace Orc.NuGetExplorer
         private readonly IDirectoryService _directoryService;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IExtensibleProject _defaultProject;
-        
+
         #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
-            IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider) 
+            IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => fileSystemService);
             Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => nuGetPackageManager);
             Argument.IsNotNull(() => projectProvider);
+            Argument.IsNotNull(() => messageMediator);
 
             _fileSystemService = fileSystemService;
             _directoryService = directoryService;
             _nuGetPackageManager = nuGetPackageManager;
+
+            messageMediator.Register<PackagingDeletemeMessage>(this, OnDeletemeMessageAsync);
+
             _defaultProject = projectProvider.GetDefaultProject();
         }
         #endregion
 
         #region Methods
-        protected override async void OnOperationFinished(object sender, PackageOperationEventArgs e)
+        private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
         {
-            if (e.PackageOperationType == PackageOperationType.Uninstall)
+            if (message.Data.OperationType == PackageOperationType.Uninstall)
             {
-                if (!_directoryService.Exists(e.InstallPath))
+                if (!_directoryService.Exists(message.Data.OperationPath))
                 {
                     return;
                 }
 
-                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
+                _fileSystemService.CreateDeleteme(message.Data.Package.Id, message.Data.OperationPath);
             }
 
-            if (e.PackageOperationType == PackageOperationType.Install)
+            if (message.Data.OperationType == PackageOperationType.Install)
             {
-                _fileSystemService.RemoveDeleteme(e.PackageDetails.Id, e.InstallPath);
+                _fileSystemService.RemoveDeleteme(message.Data.Package.Id, message.Data.OperationPath);
 
                 //check is folder broken installation or not
                 //this handle cases where we perform installation of version, previously not correctly removed
-                if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, e.PackageDetails.GetIdentity(), default))
+                if (await _nuGetPackageManager.IsPackageInstalledAsync(_defaultProject, message.Data.Package.GetIdentity(), default))
                 {
                     return;
                 }
 
-                _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
+                _fileSystemService.CreateDeleteme(message.Data.Package.Id, message.Data.OperationPath);
             }
         }
-
         #endregion
     }
 }

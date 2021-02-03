@@ -72,8 +72,7 @@ namespace Orc.NuGetExplorer
     }
     public class DeletemeWatcher : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
-        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider) { }
-        protected override void OnOperationFinished(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
+        public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Catel.Messaging.IMessageMediator messageMediator) { }
     }
     public class DependencyInfoResourceCollection : System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.DependencyInfoResource>, System.Collections.IEnumerable
     {
@@ -790,6 +789,15 @@ namespace Orc.NuGetExplorer.Management.Exceptions
         public MissingPackageException(string message, System.Exception innerException) { }
     }
 }
+namespace Orc.NuGetExplorer.Messaging
+{
+    public interface INuGetExplorerServiceMessage { }
+    public class PackagingDeletemeMessage : Catel.Messaging.MessageBase<Orc.NuGetExplorer.Messaging.PackagingDeletemeMessage, Orc.NuGetExplorer.Packaging.PackageOperationInfo>, Orc.NuGetExplorer.Messaging.INuGetExplorerServiceMessage
+    {
+        public PackagingDeletemeMessage() { }
+        public PackagingDeletemeMessage(Orc.NuGetExplorer.Packaging.PackageOperationInfo content) { }
+    }
+}
 namespace Orc.NuGetExplorer.Models
 {
     public sealed class CombinedNuGetSource : Orc.NuGetExplorer.IPackageSource, Orc.NuGetExplorer.Models.INuGetSource
@@ -1056,6 +1064,13 @@ namespace Orc.NuGetExplorer.Packaging
         public static Orc.NuGetExplorer.IPackageDetails Create(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata versionMetadata, NuGet.Packaging.Core.PackageIdentity packageIdentity, bool? isLastVersion) { }
         public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata versionMetadata, NuGet.Versioning.NuGetVersion packageVersion, bool? isLastVersion) { }
+    }
+    public class PackageOperationInfo
+    {
+        public PackageOperationInfo(string operationPath, Orc.NuGetExplorer.PackageOperationType operationType, Orc.NuGetExplorer.IPackageDetails package) { }
+        public string OperationPath { get; }
+        public Orc.NuGetExplorer.PackageOperationType OperationType { get; }
+        public Orc.NuGetExplorer.IPackageDetails Package { get; }
     }
     public class UpdatePackageSearchMetadata : NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata
     {

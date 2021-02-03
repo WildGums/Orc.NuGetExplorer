@@ -17,6 +17,8 @@ namespace Orc.NuGetExplorer
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using Orc.NuGetExplorer.Management;
+    using Orc.NuGetExplorer.Messaging;
+    using Orc.NuGetExplorer.Packaging;
 
     internal sealed class PackageOperationService : IPackageOperationService
     {
@@ -49,10 +51,9 @@ namespace Orc.NuGetExplorer
             _apiPackageRegistry = apiPackageRegistry;
             _packageOperationNotificationService = packageOperationNotificationService;
             _defaultProject = defaultExtensibleProjectProvider.GetDefaultProject();
-            //_localSourceRepository = _defaultProject.AsSourceRepository(sourceRepositoryProvider);
-            //_localRepository = repositoryService.LocalRepository;
 
-            DependencyVersion = DependencyBehavior.Lowest;  //todo use it into resolver, which replaced old InstallWalker
+            // Note: this setting should be global, probably set by Resolver (which replaced the old one InstallWalker);
+            DependencyVersion = DependencyBehavior.Lowest;
         }
         #endregion
 
@@ -66,12 +67,12 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             var uninstalledIdentity = package.GetIdentity();
-            var operationPath = _defaultProject.GetInstallPath(uninstalledIdentity);
+            var uninstallPath = _defaultProject.GetInstallPath(uninstalledIdentity);
 
             try
             {
                 //nuPackage should provide identity of installed package, which targeted for uninstall action
-                _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Uninstall, package);
+                _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
                 await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
             catch (Exception ex)
@@ -81,7 +82,7 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                _packageOperationNotificationService.NotifyOperationFinished(operationPath, PackageOperationType.Uninstall, package);
+                FinishOperation(PackageOperationType.Uninstall, uninstallPath, package);
             }
         }
 
@@ -111,10 +112,9 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                _packageOperationNotificationService.NotifyOperationFinished(operationPath, PackageOperationType.Install, package);
+                FinishOperation(PackageOperationType.Install, operationPath, package);
             }
         }
-
 
         public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
@@ -155,9 +155,9 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                _packageOperationNotificationService.NotifyOperationFinished(uninstallPath, PackageOperationType.Uninstall, package);
-                _packageOperationNotificationService.NotifyOperationFinished(installPath, PackageOperationType.Install, package);
-                _packageOperationNotificationService.NotifyOperationFinished(installPath, PackageOperationType.Update, package);
+                FinishOperation(PackageOperationType.Uninstall, uninstallPath, package);
+                FinishOperation(PackageOperationType.Install, installPath, package);
+                FinishOperation(PackageOperationType.Update, installPath, package); // The install path the same for update;
             }
         }
 
@@ -171,6 +171,12 @@ namespace Orc.NuGetExplorer
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
             }
+        }
+
+        private void FinishOperation(PackageOperationType type, string operationPath, IPackageDetails package)
+        {
+            PackagingDeletemeMessage.SendWith(new PackageOperationInfo(operationPath, type, package));
+            _packageOperationNotificationService.NotifyOperationFinished(operationPath, type, package);
         }
 
         #endregion
