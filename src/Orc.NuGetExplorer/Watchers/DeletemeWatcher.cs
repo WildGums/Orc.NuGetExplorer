@@ -36,14 +36,14 @@ namespace Orc.NuGetExplorer
             _directoryService = directoryService;
             _nuGetPackageManager = nuGetPackageManager;
 
-            messageMediator.Register<PackagingDeletemeMessage>(this, async (data) => await OnDeletemeMessage(data));
+            messageMediator.Register<PackagingDeletemeMessage>(this, OnDeletemeMessageAsync);
 
             _defaultProject = projectProvider.GetDefaultProject();
         }
         #endregion
 
         #region Methods
-        private async Task OnDeletemeMessage(PackagingDeletemeMessage message)
+        private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
         {
             if (message.Data.OperationType == PackageOperationType.Uninstall)
             {
