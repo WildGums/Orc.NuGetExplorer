@@ -90,9 +90,13 @@
             {
                 _directoryService.ForceDeleteDirectory(_fileService, folderPath, out failedDeletes);
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException)
             {
-                Log.Error("Cache clear ended unsuccessfully, directory is in use by another process");
+                Log.Warning("Cache clear ended unsuccessfully, directory is in use by another process");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Cache clear ended unsuccessfully, {ex}");
             }
             finally
             {
