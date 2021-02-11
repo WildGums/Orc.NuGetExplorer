@@ -82,7 +82,7 @@
 
                     if (clonedMetadata == null)
                     {
-                        Log.Error($"Couldn't retrieve update metadata for installed {package.Identity}");
+                        Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
                         continue;
                     }
 
@@ -138,7 +138,7 @@
 
                     if (clonedMetadata == null)
                     {
-                        Log.Error($"Couldn't retrieve update metadata for installed {package.Identity}");
+                        Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
                         continue;
                     }
 

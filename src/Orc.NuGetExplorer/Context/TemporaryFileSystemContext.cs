@@ -64,7 +64,7 @@ namespace Orc.NuGetExplorer
             }
             catch (Exception)
             {
-                Log.Error("Failed to delete temporary files");
+                Log.Warning("Unable to cleanup temporary files");
             }
         }
 
