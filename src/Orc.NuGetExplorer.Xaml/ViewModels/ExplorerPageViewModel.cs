@@ -50,6 +50,7 @@
 
         private readonly INuGetCacheManager _nuGetCacheManager;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+        private readonly IDispatcherProviderService _dispatcherProviderService;
         private readonly ITypeFactory _typeFactory;
         private readonly MetadataOrigin _pageType;
 
@@ -62,7 +63,7 @@
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
-            INuGetConfigurationService nuGetConfigurationService)
+            INuGetConfigurationService nuGetConfigurationService, IDispatcherProviderService dispatcherProviderService)
         {
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
@@ -76,6 +77,7 @@
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => nuGetCacheManager);
             Argument.IsNotNull(() => nuGetConfigurationService);
+            Argument.IsNotNull(() => dispatcherProviderService);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -87,6 +89,7 @@
             _packagesLoaderService = packagesLoaderService;
             _nuGetCacheManager = nuGetCacheManager;
             _nuGetConfigurationService = nuGetConfigurationService;
+            _dispatcherProviderService = dispatcherProviderService;
             Settings = settingsProvider.Model;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
@@ -256,7 +259,8 @@
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
 
-                SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(DispatcherHelper.CurrentDispatcher);
+                SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(
+                    _dispatcherProviderService.GetCurrentDispatcher());
 
                 PackageItems = new FastObservableCollection<NuGetPackage>();
 
