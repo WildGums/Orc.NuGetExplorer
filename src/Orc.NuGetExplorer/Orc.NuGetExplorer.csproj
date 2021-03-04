@@ -29,7 +29,7 @@
     <PackageReference Include="NuGet.Credentials" Version="5.9.0" />
     <PackageReference Include="NuGet.DependencyResolver.Core" Version="5.9.0" />
     <PackageReference Include="NuGet.PackageManagement" Version="5.9.0" />
-    <PackageReference Include="NuGet.ProjectModel" Version="5.8.0" />
+    <PackageReference Include="NuGet.ProjectModel" Version="5.9.0" />
     <PackageReference Include="NuGet.Protocol" Version="5.9.0" />
     <PackageReference Include="NuGet.Resolver" Version="5.9.0" />
     <PackageReference Include="Obsolete.Fody" Version="5.2.1" PrivateAssets="all" />
