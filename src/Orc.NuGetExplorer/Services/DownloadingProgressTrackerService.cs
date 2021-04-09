@@ -114,7 +114,7 @@
         protected override void DisposeManaged()
         {
             base.DisposeManaged();
-            if (_fileSystemWatcher != null)
+            if (_fileSystemWatcher is not null)
             {
                 _fileSystemWatcher.Dispose();
             }

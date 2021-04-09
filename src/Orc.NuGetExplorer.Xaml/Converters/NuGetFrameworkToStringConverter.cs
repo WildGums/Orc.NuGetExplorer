@@ -9,7 +9,7 @@
     {
         protected override object Convert(NuGetFramework value, Type targetType, object parameter)
         {
-            if (value == null)
+            if (value is null)
             {
                 return string.Empty;
             }

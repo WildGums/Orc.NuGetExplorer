@@ -170,7 +170,7 @@
 
                 VersionsInfo = VersionsInfo.Union(basicVersions).Distinct();
 
-                if (versInfo != null)
+                if (versInfo is not null)
                 {
 
                     VersionsInfo = VersionsInfo.Union(versInfo).Distinct();
@@ -243,7 +243,7 @@
         {
             base.OnPropertyChanged(e);
 
-            if (_packageMetadata == null)
+            if (_packageMetadata is null)
             {
                 return;
             }

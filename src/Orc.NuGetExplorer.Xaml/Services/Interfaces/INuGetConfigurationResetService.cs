@@ -4,6 +4,6 @@
 
     public interface INuGetConfigurationResetService
     {
-        Task Reset();
+        Task ResetAsync();
     }
 }

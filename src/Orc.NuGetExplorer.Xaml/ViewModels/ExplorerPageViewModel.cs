@@ -149,14 +149,14 @@
             get { return _settings; }
             set
             {
-                if (_settings != null)
+                if (_settings is not null)
                 {
                     _settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
                 }
 
                 _settings = value;
 
-                if (_settings != null)
+                if (_settings is not null)
                 {
                     _settings.PropertyChanged += OnSettingsPropertyPropertyChanged;
                 }
@@ -216,7 +216,7 @@
 
         private void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (Settings.ObservedFeed == null)
+            if (Settings.ObservedFeed is null)
             {
                 return;
             }
@@ -246,7 +246,7 @@
         {
             try
             {
-                if (IsActive && _initialSearchParams != null)
+                if (IsActive && _initialSearchParams is not null)
                 {
                     // Set page initial search params as Settings parameters
                     // Only on first loaded page
@@ -271,7 +271,7 @@
                 IsFirstLoaded = false;
                 var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
 
-                if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
+                if (Settings.ObservedFeed is not null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(pageSize, Settings.ObservedFeed.GetPackageSource());
@@ -437,7 +437,7 @@
                 }
 
                 //restart
-                if (AwaitedPageInfo != null)
+                if (AwaitedPageInfo is not null)
                 {
                     var awaitedPageinfo = AwaitedPageInfo;
                     var awaitedSeachParams = AwaitedSearchParameters;
@@ -594,7 +594,7 @@
         {
             foreach (var metadata in metadatas)
             {
-                if (metadata.IconUrl != null)
+                if (metadata.IconUrl is not null)
                 {
                     token.ThrowIfCancellationRequested();
                     await _packageMetadataMediaDownloadService.DownloadMediaForMetadataAsync(metadata);

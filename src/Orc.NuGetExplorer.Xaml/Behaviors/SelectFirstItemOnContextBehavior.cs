@@ -13,7 +13,7 @@
 
         private void TrySelectFirstItemFromSource()
         {
-            if (AssociatedObject.Items != null && AssociatedObject.Items.Count > 0)
+            if (AssociatedObject.Items is not null && AssociatedObject.Items.Count > 0)
             {
                 AssociatedObject.SetCurrentValue(Selector.SelectedIndexProperty, 0);
             }

@@ -35,7 +35,7 @@
 
         private void ValidateFadeAnimation(Storyboard sb, DependencyObject dependencyObject, string key)
         {
-            if (sb != null && sb.Children.Count > 0)
+            if (sb is not null && sb.Children.Count > 0)
             {
                 Storyboard.SetTarget(sb.Children.First(), dependencyObject);
             }

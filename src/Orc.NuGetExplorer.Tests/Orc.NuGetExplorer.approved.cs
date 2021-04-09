@@ -79,8 +79,8 @@ namespace Orc.NuGetExplorer
         public DependencyInfoResourceCollection(NuGet.Protocol.Core.Types.DependencyInfoResource resource) { }
         public DependencyInfoResourceCollection(System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.DependencyInfoResource> resources) { }
         public System.Collections.Generic.IEnumerator<NuGet.Protocol.Core.Types.DependencyInfoResource> GetEnumerator() { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> ResolvePackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
-        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolvePackages(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> ResolvePackageAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolvePackagesAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
     }
     public static class DispatchHelper
     {
@@ -307,12 +307,12 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackageQueryService
     {
-        System.Threading.Tasks.Task<Orc.NuGetExplorer.IPackageDetails> GetPackage(Orc.NuGetExplorer.IRepository packageRepository, string packageId, string version);
+        System.Threading.Tasks.Task<Orc.NuGetExplorer.IPackageDetails> GetPackageAsync(Orc.NuGetExplorer.IRepository packageRepository, string packageId, string version);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> GetPackagesAsync(Orc.NuGetExplorer.IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10);
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetVersionsOfPackage(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails package, bool allowPrereleaseVersions, int skip);
-        System.Threading.Tasks.Task<bool> PackageExists(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails packageDetails);
-        System.Threading.Tasks.Task<bool> PackageExists(Orc.NuGetExplorer.IRepository packageRepository, string packageId);
-        System.Threading.Tasks.Task<bool> PackageExists(Orc.NuGetExplorer.IRepository packageRepository, string filter, bool allowPrereleaseVersions);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetVersionsOfPackageAsync(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails package, bool allowPrereleaseVersions, int skip);
+        System.Threading.Tasks.Task<bool> PackageExistsAsync(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails packageDetails);
+        System.Threading.Tasks.Task<bool> PackageExistsAsync(Orc.NuGetExplorer.IRepository packageRepository, string packageId);
+        System.Threading.Tasks.Task<bool> PackageExistsAsync(Orc.NuGetExplorer.IRepository packageRepository, string filter, bool allowPrereleaseVersions);
     }
     public interface IPackageSource
     {
@@ -557,8 +557,8 @@ namespace Orc.NuGetExplorer
     }
     public static class TaskExtensions
     {
-        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<>[]> WhenAllOrException<T>(this System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<T>> tasks) { }
-        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<T>> WrapResultOrException<T>(this System.Threading.Tasks.Task<T> task) { }
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<>[]> WhenAllOrExceptionAsync<T>(this System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<T>> tasks) { }
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this System.Threading.Tasks.Task<T> task) { }
     }
     public class TaskResultOrException<T>
     {
@@ -616,7 +616,7 @@ namespace Orc.NuGetExplorer.Configuration
     public abstract class ConfigurationListenerBase
     {
         protected ConfigurationListenerBase(NuGet.Configuration.ISettings settings) { }
-        public virtual System.Threading.Tasks.Task OnSettingsRead() { }
+        public virtual System.Threading.Tasks.Task OnSettingsReadAsync() { }
     }
     public enum ConfigurationSection
     {
@@ -1017,7 +1017,7 @@ namespace Orc.NuGetExplorer.Packaging
     public class NuGetPackageCombinator
     {
         public NuGetPackageCombinator() { }
-        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.Enums.PackageStatus> Combine(Orc.NuGetExplorer.Models.NuGetPackage package, Orc.NuGetExplorer.Enums.MetadataOrigin tokenPage, NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata) { }
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.Enums.PackageStatus> CombineAsync(Orc.NuGetExplorer.Models.NuGetPackage package, Orc.NuGetExplorer.Enums.MetadataOrigin tokenPage, NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata) { }
     }
     public sealed class PackageCollection : System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Packaging.PackageCollectionItem>, System.Collections.IEnumerable
     {
@@ -1169,7 +1169,7 @@ namespace Orc.NuGetExplorer.Providers
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
-        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
     }
     public class WindowsCredentialProvider : NuGet.Credentials.ICredentialProvider

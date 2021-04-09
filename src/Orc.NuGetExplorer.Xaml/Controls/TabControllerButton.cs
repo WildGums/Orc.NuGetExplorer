@@ -33,7 +33,7 @@
 
         private void OnIsCheckedChanged(DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && _group != null)
+            if ((bool)e.NewValue && _group is not null)
             {
                 SelectTab();
             }
@@ -91,7 +91,7 @@
 
         private void OnTabControllerButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (_group != null)
+            if (_group is not null)
             {
                 SelectTab();
             }
@@ -102,7 +102,7 @@
             try
             {
                 var nextButton = Next;
-                if (nextButton != null)
+                if (nextButton is not null)
                 {
                     nextButton.SetCurrentValue(TabSourceProperty, TabSource);
                     nextButton._group = _group;   //keep reference on sibling memeber's group
@@ -110,7 +110,7 @@
                     var current = _group.Find(this);
 
 
-                    if (_group.Count == 0 && current == null)
+                    if (_group.Count == 0 && current is null)
                     {
                         _group.AddFirst(this);
                         current = _group.Find(this);
@@ -132,13 +132,13 @@
 
         private void SelectTab()
         {
-            if (TabSource != null)
+            if (TabSource is not null)
             {
                 var index = MyIndex();
 
                 int i = 0;
 
-                if (TabSource.ItemsSource == null)
+                if (TabSource.ItemsSource is null)
                 {
                     return;
                 }
@@ -148,7 +148,7 @@
                     //try to get container from source
                     var tab = TabSource.ItemContainerGenerator.ContainerFromItem(item);
 
-                    if (tab != null)
+                    if (tab is not null)
                     {
                         tab.SetCurrentValue(TabItem.IsSelectedProperty, i == index);
                     }

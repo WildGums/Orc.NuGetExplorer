@@ -48,7 +48,7 @@
 
         private bool OnOpenChooseLocalPathToSourceDialogCanExecute()
         {
-            return Feed != null;
+            return Feed is not null;
         }
     }
 }

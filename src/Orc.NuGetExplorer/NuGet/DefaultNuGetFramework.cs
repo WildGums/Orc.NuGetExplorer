@@ -168,7 +168,7 @@
             using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
             {
                 var ndpKeyRelease = ndpKey.GetValue("Release");
-                if (ndpKey != null && ndpKeyRelease != null)
+                if (ndpKey is not null && ndpKeyRelease is not null)
                 {
                     var version = CheckFor45PlusVersion((int)ndpKeyRelease);
 

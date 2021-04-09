@@ -32,8 +32,8 @@ namespace Orc.NuGetExplorer
             unchecked
             {
                 var hashCode = Id;
-                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Source != null ? Source.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Name is not null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Source is not null ? Source.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (int)OperationType;
                 return hashCode;
             }
@@ -42,7 +42,7 @@ namespace Orc.NuGetExplorer
         public override bool Equals(object obj)
         {
             var repository = obj as Repository;
-            if (repository == null)
+            if (repository is null)
             {
                 return false;
             }

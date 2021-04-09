@@ -123,7 +123,7 @@
             {
                 return;
             }
-            await _nuGetConfigurationResetService.Reset();
+            await _nuGetConfigurationResetService.ResetAsync();
         }
 
         private bool OnResetCanExecute()
@@ -214,7 +214,7 @@
 
         private async Task VerifyFeedAsync(NuGetFeed feed)
         {
-            if (feed == null)
+            if (feed is null)
             {
                 return;
             }
@@ -300,7 +300,7 @@
                 return;
             }
 
-            if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources != null)
+            if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources is not null)
             {
                 var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();
                 SettingsFeeds.AddRange(passedFeeds);

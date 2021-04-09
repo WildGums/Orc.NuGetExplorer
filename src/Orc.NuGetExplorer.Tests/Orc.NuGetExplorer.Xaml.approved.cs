@@ -67,9 +67,6 @@ namespace Orc.NuGetExplorer.Controls
         public Orc.NuGetExplorer.Controls.TabControllerButton Next { get; set; }
         public System.Windows.Controls.TabControl TabSource { get; set; }
     }
-}
-namespace Orc.NuGetExplorer.Controls.Helpers
-{
     public static class WpfHelper
     {
         public static TChild FindVisualChild<TChild>(System.Windows.DependencyObject obj)
@@ -179,7 +176,7 @@ namespace Orc.NuGetExplorer
     }
     public interface INuGetConfigurationResetService
     {
-        System.Threading.Tasks.Task Reset();
+        System.Threading.Tasks.Task ResetAsync();
     }
     public interface INuGetExplorerInitialState
     {
@@ -215,6 +212,10 @@ namespace Orc.NuGetExplorer
     public static class IPleaseWaitServiceExtensions
     {
         public static System.IDisposable WaitingScope(this Catel.Services.IPleaseWaitService pleaseWaitService) { }
+    }
+    public static class IValidationContextExtensions
+    {
+        public static string[] GetAlertMessages(this Catel.Data.IValidationContext validationContext, string validationTag) { }
     }
     public static class InlineCollectionExtensions
     {
@@ -274,13 +275,6 @@ namespace Orc.NuGetExplorer
     {
         public XamlPleaseWaitInterruptService(Catel.Services.IPleaseWaitService pleaseWaitService) { }
         public System.IDisposable InterruptTemporarily() { }
-    }
-}
-namespace Orc.NuGetExplorer.Extensions
-{
-    public static class IValidationContextExtensions
-    {
-        public static string[] GetAlertMessages(this Catel.Data.IValidationContext validationContext, string validationTag) { }
     }
 }
 namespace Orc.NuGetExplorer.Logging

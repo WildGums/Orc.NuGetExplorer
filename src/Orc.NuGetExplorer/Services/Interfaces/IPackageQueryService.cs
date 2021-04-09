@@ -14,13 +14,13 @@ namespace Orc.NuGetExplorer
     public interface IPackageQueryService
     {
         #region Methods
-        Task<bool> PackageExists(IRepository packageRepository, string filter, bool allowPrereleaseVersions);
-        Task<bool> PackageExists(IRepository packageRepository, string packageId);
-        Task<bool> PackageExists(IRepository packageRepository, IPackageDetails packageDetails);
+        Task<bool> PackageExistsAsync(IRepository packageRepository, string filter, bool allowPrereleaseVersions);
+        Task<bool> PackageExistsAsync(IRepository packageRepository, string packageId);
+        Task<bool> PackageExistsAsync(IRepository packageRepository, IPackageDetails packageDetails);
 
-        Task<IPackageDetails> GetPackage(IRepository packageRepository, string packageId, string version);
+        Task<IPackageDetails> GetPackageAsync(IRepository packageRepository, string packageId, string version);
         Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10);
-        Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackage(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, int skip);
+        Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackageAsync(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, int skip);
         #endregion
 
     }

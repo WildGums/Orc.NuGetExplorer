@@ -70,7 +70,7 @@
 
             var settingValue = GetNuGetValues(section, isPath).FirstOrDefault(x => string.Equals(x.Key, key));
 
-            var result = settingValue == null ? string.Empty : settingValue.Value;
+            var result = settingValue is null ? string.Empty : settingValue.Value;
 
             RaiseSettingsRead();
 
@@ -168,7 +168,7 @@
                 _configurationService.SetRoamingValue(SectionListKey, sectionsString);
 
                 var values = GetNuGetValues(section, false);
-                if (values == null)
+                if (values is null)
                 {
                     return false;
                 }

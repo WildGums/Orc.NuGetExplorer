@@ -118,7 +118,7 @@ namespace Orc.NuGetExplorer
             var versionSpec = dependency.VersionRange;
 
             var minVersion = versionSpec.MinVersion;
-            if (minVersion != null)
+            if (minVersion is not null)
             {
                 if (versionSpec.IsMinInclusive && currentVersion < minVersion)
                 {
@@ -132,7 +132,7 @@ namespace Orc.NuGetExplorer
             }
 
             var maxVersion = versionSpec.MaxVersion;
-            if (maxVersion == null)
+            if (maxVersion is null)
             {
                 return;
             }

@@ -9,7 +9,7 @@
     {
         private readonly HttpHandlerResourceV3 _repositoryHttpHandler;
 
-        public static async Task<CredentialsToken> Create(SourceRepository repository)
+        public static async Task<CredentialsToken> CreateAsync(SourceRepository repository)
         {
             return new CredentialsToken(await repository.GetResourceAsync<HttpHandlerResourceV3>());
         }

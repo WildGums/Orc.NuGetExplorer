@@ -45,7 +45,7 @@
 
             lock (_lockObject)
             {
-                if (_rootContext == null)
+                if (_rootContext is null)
                 {
                     context.Exceptions.Clear();
 
@@ -67,7 +67,7 @@
 
             lock (_lockObject)
             {
-                if (CurrentContext.Parent == null)
+                if (CurrentContext.Parent is null)
                 {
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
                     context.FileSystemContext.Dispose();

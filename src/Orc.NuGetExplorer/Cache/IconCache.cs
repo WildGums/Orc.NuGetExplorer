@@ -30,7 +30,7 @@
         // TODO stream should be disposed when item removed from cache
         public BitmapImage GetFromCache(Uri iconUri)
         {
-            if (iconUri == null)
+            if (iconUri is null)
             {
                 return FallbackValue;
             }
@@ -42,7 +42,7 @@
 
             var cachedItem = _cache.Get(iconUri.ToString());
 
-            if (cachedItem == null)
+            if (cachedItem is null)
             {
                 return FallbackValue;
             }
@@ -55,14 +55,14 @@
 
         public bool IsCached(Uri iconUri)
         {
-            if (iconUri == null)
+            if (iconUri is null)
             {
                 return false;
             }
 
             var cachedItem = _cache.Get(iconUri.ToString());
 
-            return cachedItem != null;
+            return cachedItem is not null;
         }
 
         private BitmapImage CreateImage(Stream stream)

@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Controls.Helpers
+﻿namespace Orc.NuGetExplorer.Controls
 {
     using System.Windows;
     using System.Windows.Media;
@@ -19,7 +19,7 @@
                 {
                     var nestedChild = FindVisualChild<TChild>(child);
                     
-                    if (nestedChild != null)
+                    if (nestedChild is not null)
                     {
                         return nestedChild;
                     }

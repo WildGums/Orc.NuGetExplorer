@@ -7,12 +7,12 @@
 
     public static class TaskExtensions
     {
-        public static async Task<TaskResultOrException<T>[]> WhenAllOrException<T>(this IEnumerable<Task<T>> tasks)
+        public static async Task<TaskResultOrException<T>[]> WhenAllOrExceptionAsync<T>(this IEnumerable<Task<T>> tasks)
         {
-            return await Task.WhenAll(tasks.Select(task => WrapResultOrException(task)));
+            return await Task.WhenAll(tasks.Select(task => WrapResultOrExceptionAsync(task)));
         }
 
-        public static async Task<TaskResultOrException<T>> WrapResultOrException<T>(this Task<T> task)
+        public static async Task<TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this Task<T> task)
         {
             try
             {

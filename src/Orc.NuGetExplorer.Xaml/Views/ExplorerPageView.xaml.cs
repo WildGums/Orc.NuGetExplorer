@@ -6,7 +6,7 @@
     using System.Windows.Controls;
     using Catel.MVVM.Views;
     using Models;
-    using Orc.NuGetExplorer.Controls.Helpers;
+    using Orc.NuGetExplorer.Controls;
 
     /// <summary>
     /// Interaction logic for ExplorerPageView.xaml
@@ -54,7 +54,7 @@
             //fix loading indicator part size
             _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
 
-            if (_infinityboxScrollViewer == null)
+            if (_infinityboxScrollViewer is null)
             {
                 return;
             }
@@ -91,7 +91,7 @@
 
         private void UnsubscribeFromScrollViewerProperyChanged()
         {
-            if (_isViewportWidthListened && _infinityboxScrollViewer != null)
+            if (_isViewportWidthListened && _infinityboxScrollViewer is not null)
             {
                 DependencyPropertyDescriptor
                    .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))

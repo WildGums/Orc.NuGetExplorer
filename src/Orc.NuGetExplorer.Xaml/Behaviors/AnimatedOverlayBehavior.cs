@@ -186,7 +186,7 @@
         {
             var activeContent = ActiveContentContainer.Children.Cast<UIElement>().SingleOrDefault();
 
-            if (activeContent != null)
+            if (activeContent is not null)
             {
                 ActiveContentContainer.Children.Remove(activeContent);
             }

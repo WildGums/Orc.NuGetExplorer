@@ -153,7 +153,7 @@
 
         public bool IsValidResponse(CredentialResponse response)
         {
-            return response != null && Enum.IsDefined(typeof(CredentialStatus), response.Status);
+            return response is not null && Enum.IsDefined(typeof(CredentialStatus), response.Status);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@
             bool isProxy,
             out ICredentials credentials)
         {
-            if (uri == null)
+            if (uri is null)
             {
                 throw new ArgumentNullException(nameof(uri));
             }

@@ -57,13 +57,13 @@
             }
             else
             {
-                var packages = await LoadAsyncFromSources(searchTerm, pageContinuation, searchFilter, token);
+                var packages = await LoadAsyncFromSourcesAsync(searchTerm, pageContinuation, searchFilter, token);
 
                 return packages;
             }
         }
 
-        public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSources(string searchTerm, PageContinuation pageContinuation,
+        public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
             SearchFilter searchFilter, CancellationToken token)
         {
             SourceRepository tempRepoLocal = null;

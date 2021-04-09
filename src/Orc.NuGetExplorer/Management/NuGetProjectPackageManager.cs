@@ -57,13 +57,13 @@
         {
             var args = new InstallNuGetProjectEventArgs(project, package, result);
 
-            if (_batchToken != null && !_batchToken.IsDisposed)
+            if (_batchToken is not null && !_batchToken.IsDisposed)
             {
                 _batchToken.Add(new BatchedInstallNuGetProjectEventArgs(args));
                 return;
             }
 
-            if (_updateToken != null && !_updateToken.IsDisposed)
+            if (_updateToken is not null && !_updateToken.IsDisposed)
             {
                 _updateToken.Add(args);
                 return;
@@ -78,13 +78,13 @@
         {
             var args = new UninstallNuGetProjectEventArgs(project, package, result);
 
-            if (_batchToken != null && !_batchToken.IsDisposed)
+            if (_batchToken is not null && !_batchToken.IsDisposed)
             {
                 _batchToken.Add(new BatchedUninstallNuGetProjectEventArgs(args));
                 return;
             }
 
-            if (_updateToken != null && !_updateToken.IsDisposed)
+            if (_updateToken is not null && !_updateToken.IsDisposed)
             {
                 _updateToken.Add(args);
                 return;
@@ -97,7 +97,7 @@
 
         private async Task OnUpdateAsync(UpdateNuGetProjectEventArgs args)
         {
-            if (_batchToken != null && !_batchToken.IsDisposed)
+            if (_batchToken is not null && !_batchToken.IsDisposed)
             {
                 _batchToken.Add(args);
                 return;
@@ -158,7 +158,7 @@
 
                 var installedPackage = installedReferences.FirstOrDefault(x => x.PackageIdentity.Equals(package, NuGet.Versioning.VersionComparison.VersionRelease));
 
-                return installedPackage != null;
+                return installedPackage is not null;
             }
             catch (Exception ex)
             {
@@ -240,7 +240,7 @@
                     await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{ex.Message}");
                 }
 
-                if (ex?.CurrentBatch == null)
+                if (ex?.CurrentBatch is null)
                 {
                     return false;
                 }
@@ -406,7 +406,7 @@
             {
                 var last = _supressedInvokationEventArgs.LastOrDefault();
 
-                if (last != null)
+                if (last is not null)
                 {
                     switch (last)
                     {

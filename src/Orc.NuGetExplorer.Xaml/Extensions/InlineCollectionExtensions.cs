@@ -11,7 +11,7 @@ namespace Orc.NuGetExplorer
     {
         public static void AddIfNotNull(this InlineCollection inlineCollection, Inline inline)
         {
-            if (inline == null)
+            if (inline is null)
             {
                 return;
             }

@@ -19,14 +19,14 @@
             _settings.SettingsRead += OnConfigurationSettingsRead;
         }
 
-        public async virtual Task OnSettingsRead()
+        public async virtual Task OnSettingsReadAsync()
         {
 
         }
 
         private async void OnConfigurationSettingsRead(object sender, EventArgs e)
         {
-            await OnSettingsRead();
+            await OnSettingsReadAsync();
         }
     }
 }

@@ -83,7 +83,7 @@
 
                 var existedSource = packageSources.FirstOrDefault(x => string.Equals(x.Name, name));
 
-                if (existedSource == null)
+                if (existedSource is null)
                 {
                     existedSource = new PackageSource(source, name);
                     packageSources.Add(existedSource);

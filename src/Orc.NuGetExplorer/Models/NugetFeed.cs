@@ -155,7 +155,7 @@
 
         public bool IsValid()
         {
-            return IsNameValid && GetUriSource() != null;
+            return IsNameValid && GetUriSource() is not null;
         }
 
         public bool IsLocal()

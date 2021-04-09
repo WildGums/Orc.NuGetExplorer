@@ -80,7 +80,7 @@
 
         private async Task OnExecuteWithDialogOptionActionAsync(IDialogOption dialogOption)
         {
-            if (DialogCommand != null)
+            if (DialogCommand is not null)
             {
                 Log.Info("User pressed dialog option, executing command");
 

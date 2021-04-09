@@ -26,7 +26,7 @@ namespace Orc.NuGetExplorer
             {
                 var dp = (DependencyProperty)field.GetValue(null);
                 var bindingExpression = frameworkElement.GetBindingExpression(dp);
-                if (bindingExpression == null)
+                if (bindingExpression is null)
                 {
                     continue;
                 }
@@ -41,7 +41,7 @@ namespace Orc.NuGetExplorer
             for (var i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(frameworkElement, i) as FrameworkElement;
-                if (child != null)
+                if (child is not null)
                 {
                     child.UpdateItemSource();
                 }

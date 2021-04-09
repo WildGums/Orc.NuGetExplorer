@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     {
         public static string GetSafeScopeName(this string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return "null";
             }

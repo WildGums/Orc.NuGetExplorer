@@ -15,7 +15,7 @@
         /// Combines NuGet Package with other metadata
         /// and produce state from their relation
         /// </summary>
-        public static async Task<PackageStatus> Combine(NuGetPackage package, MetadataOrigin tokenPage, IPackageSearchMetadata metadata)
+        public static async Task<PackageStatus> CombineAsync(NuGetPackage package, MetadataOrigin tokenPage, IPackageSearchMetadata metadata)
         {
             Argument.IsNotNull(() => metadata);
             Argument.IsNotNull(() => package);

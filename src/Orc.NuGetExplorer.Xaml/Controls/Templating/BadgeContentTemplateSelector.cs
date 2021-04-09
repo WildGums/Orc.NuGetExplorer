@@ -15,7 +15,7 @@ namespace Orc.NuGetExplorer.Controls.Templating
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item != null)
+            if (item is not null)
             {
                 var state = (PackageStatus)item;
 
