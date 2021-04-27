@@ -233,9 +233,17 @@
             public static string GetCacheKey(Uri uri, CredentialRequestType type, ICredentialProvider provider)
             {
                 // Note: don't cache by root uri, just remove catalog info
+                //var rootUri = uri.GetRootUri();
 
-                var rootUri = uri.GetRootUri();
-                return GetUriKey(rootUri, type, provider);
+                const string IndexName = "index.json";
+
+                var rootUrl = uri.ToString();
+                if (rootUrl.EndsWithIgnoreCase(IndexName))
+                {
+                    rootUrl = rootUrl.Substring(0, rootUrl.Length - IndexName.Length);
+                }
+
+                return GetUriKey(new Uri(rootUrl, UriKind.RelativeOrAbsolute), type, provider);
             }
 
             public static string GetUriKey(Uri uri, CredentialRequestType type, ICredentialProvider provider)

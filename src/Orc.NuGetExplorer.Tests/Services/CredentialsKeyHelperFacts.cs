@@ -18,7 +18,7 @@
         {
             var uri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-            var actual = ExplorerCredentialService.CredentialsKeyHelper.GetUriKey(uri, NuGet.Configuration.CredentialRequestType.Forbidden, new DummyCredentialsProvider());
+            var actual = ExplorerCredentialService.CredentialsKeyHelper.GetCacheKey(uri, NuGet.Configuration.CredentialRequestType.Forbidden, new DummyCredentialsProvider());
             var expected = $"dummy_{false}_{expectedUrlPart}";
 
             Assert.AreEqual(expected, actual);
