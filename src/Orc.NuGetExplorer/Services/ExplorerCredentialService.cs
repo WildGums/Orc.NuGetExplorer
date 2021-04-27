@@ -29,7 +29,7 @@
         /// </summary>
         private AsyncLazy<IEnumerable<ICredentialProvider>> _providers { get; }
 
-        private readonly Semaphore _proivderSemaphore = new Semaphore(1, 1);
+        private readonly Semaphore _providerSemaphore = new Semaphore(1, 1);
 
         public bool HandlesDefaultCredentials { get; }
 
@@ -96,13 +96,11 @@
                     //in fact unecessary, because service called
                     //only when no one provider cached
 
-                    _proivderSemaphore.WaitOne();
-
-                    CredentialResponse response;
+                    _providerSemaphore.WaitOne();
 
                     Log.Debug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
 
-                    if (!TryFromCredentialCache(uri, type, isRetry, provider, out response))
+                    if (!TryFromCredentialCache(uri, type, isRetry, provider, out var response))
                     {
                         response = await provider.GetAsync(
                             uri,
@@ -144,7 +142,7 @@
                 }
                 finally
                 {
-                    _proivderSemaphore.Release();
+                    _providerSemaphore.Release();
                 }
             }
 
@@ -230,13 +228,24 @@
             Log.Debug($"_retryCache count {_retryCache.Count}");
         }
 
-        private static class CredentialsKeyHelper
+        internal static class CredentialsKeyHelper
         {
             public static string GetCacheKey(Uri uri, CredentialRequestType type, ICredentialProvider provider)
             {
-                var rootUri = uri.GetRootUri();
-                return GetUriKey(rootUri, type, provider);
+                // Note: don't cache by root uri, just remove catalog info
+                //var rootUri = uri.GetRootUri();
+
+                const string IndexName = "index.json";
+
+                var rootUrl = uri.ToString();
+                if (rootUrl.EndsWithIgnoreCase(IndexName))
+                {
+                    rootUrl = rootUrl.Substring(0, rootUrl.Length - IndexName.Length);
+                }
+
+                return GetUriKey(new Uri(rootUrl, UriKind.RelativeOrAbsolute), type, provider);
             }
+
             public static string GetUriKey(Uri uri, CredentialRequestType type, ICredentialProvider provider)
             {
                 return $"{provider.Id}_{type == CredentialRequestType.Proxy}_{uri}";
