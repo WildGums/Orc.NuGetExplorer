@@ -36,6 +36,7 @@
         public void SetCredentialPolicy(CredentialStoragePolicy storagePolicy)
         {
             Log.Info($"Changing credential storage policy to {storagePolicy}");
+
             _configurationService.SetCredentialStoragePolicy(storagePolicy);
         }
 
