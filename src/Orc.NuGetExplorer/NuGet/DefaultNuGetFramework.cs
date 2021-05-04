@@ -37,6 +37,11 @@
             return _frameworkReducer.ReduceUpwards(_nuGetFrameworks);
         }
 
+        public NuGetFramework GetFirst()
+        {
+            return _nuGetFrameworks.FirstOrDefault();
+        }
+
         
         private void LoadAvailableFrameworks()
         {
