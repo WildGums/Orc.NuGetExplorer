@@ -145,6 +145,9 @@
         {
             ValidationTimer.Elapsed += OnValidationTimerElapsed;
             Feeds.CollectionChanged += OnFeedsCollectionChanged;
+
+            // Enforce subscription, validation etc on feeds
+            HandleFeedCollectionChanges(Feeds);
         }
 
         protected override async Task<bool> SaveAsync()
@@ -328,8 +331,11 @@
                 return;
             }
 
-            var newFeeds = e.NewItems.OfType<NuGetFeed>().ToList();
+            HandleFeedCollectionChanges(e.NewItems.OfType<NuGetFeed>().ToList());
+        }
 
+        private void HandleFeedCollectionChanges(ICollection<NuGetFeed> newFeeds)
+        {
             SelectedFeed = newFeeds.LastOrDefault();
 
             foreach (var item in newFeeds)

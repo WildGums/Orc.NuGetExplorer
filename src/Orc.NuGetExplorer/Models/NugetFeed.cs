@@ -122,16 +122,21 @@
 
         private void ValidateAndRaiseErrorsChanged(string propertyName)
         {
-            _propertyNameToDataError.Clear();
-
             var error = this[propertyName];
 
-            if (!_propertyNameToDataError.TryGetValue(propertyName, out string oldError))
+            if (!_propertyNameToDataError.TryGetValue(propertyName, out var oldError))
             {
                 oldError = string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(error))
+            if (string.IsNullOrEmpty(error))
+            {
+                if (_propertyNameToDataError.ContainsKey(propertyName))
+                {
+                    _propertyNameToDataError.Remove(propertyName);
+                }
+            }
+            else
             {
                 _propertyNameToDataError[propertyName] = error;
             }
