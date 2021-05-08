@@ -107,7 +107,12 @@
                 return Enumerable.Empty<string>();
             }
 
-            return _propertyNameToDataError.ContainsKey(propertyName) ? new[] { _propertyNameToDataError[propertyName] } : Enumerable.Empty<string>();
+            if (_propertyNameToDataError.TryGetValue(propertyName, out var error))
+            {
+                return new[] { error };
+            }
+
+            return Enumerable.Empty<string>();
         }
 
         private void RaiseErrorsChanged(string propertyName)
@@ -117,6 +122,8 @@
 
         private void ValidateAndRaiseErrorsChanged(string propertyName)
         {
+            _propertyNameToDataError.Clear();
+
             var error = this[propertyName];
 
             if (!_propertyNameToDataError.TryGetValue(propertyName, out string oldError))
@@ -129,7 +136,7 @@
                 _propertyNameToDataError[propertyName] = error;
             }
 
-            if (string.Equals(error, oldError))
+            if (!string.Equals(error, oldError))
             {
                 RaiseErrorsChanged(propertyName);
             }
@@ -171,7 +178,7 @@
             }
             catch (UriFormatException)
             {
-                Error = "Incorrect feed source can`t be recognized as Uri";
+                // Error = "Incorrect feed source can`t be recognized as Uri";
                 return null;
             }
         }
@@ -190,7 +197,6 @@
                 SerializationIdentifier = SerializationIdentifier
             };
         }
-
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
