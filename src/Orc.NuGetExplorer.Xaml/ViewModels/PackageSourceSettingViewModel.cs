@@ -47,9 +47,9 @@
             SettingsFeeds = new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>();
 
-            ValidationTimer.Elapsed += OnValidationTimerElapsed;
+            Title = "Settings";
 
-            CommandInitialize();
+            InitializeCommands();
         }
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
@@ -79,8 +79,7 @@
 
         #endregion
 
-        private bool ListenViewToViewModelPropertyChanges { get; set; } = true;
-        private bool SupressVerificationOnCollectionChanged { get; set; } = true;
+        private bool SupressFeedVerificationOnCollectionChanged { get; set; } = true;
 
         private bool IsVerifying { get; set; }
 
@@ -133,7 +132,7 @@
 
         #endregion
 
-        protected void CommandInitialize()
+        protected void InitializeCommands()
         {
             RemoveFeed = new Command(OnRemoveFeedExecute);
             MoveUpFeed = new Command(OnMoveUpFeedExecute);
@@ -144,30 +143,23 @@
 
         protected override async Task InitializeAsync()
         {
-            Title = "Settings";
-
+            ValidationTimer.Elapsed += OnValidationTimerElapsed;
             Feeds.CollectionChanged += OnFeedsCollectionChanged;
         }
 
-        protected override Task<bool> SaveAsync()
+        protected override async Task<bool> SaveAsync()
         {
             SaveFeeds();
-
-            ListenViewToViewModelPropertyChanges = false;
-
             PackageSources = Feeds.ToList();
-
-            ListenViewToViewModelPropertyChanges = true;
-
-            return base.SaveAsync();
+            return true;
         }
 
-        protected override Task CloseAsync()
+        protected override async Task CloseAsync()
         {
+            ValidationTimer.Stop();
             Feeds.CollectionChanged -= OnFeedsCollectionChanged;
+            ValidationTimer.Elapsed -= OnValidationTimerElapsed;
             Feeds.ForEach(f => UnsubscribeFromFeedPropertyChanged(f));
-
-            return base.CloseAsync();
         }
 
         private static void StartValidationTimer()
@@ -256,7 +248,7 @@
             {
                 var validationList = new List<NuGetFeed>();
 
-                for (int i = 0; i < Math.Min(_validationQueue.Count, VerificationBatch); i++)
+                for (var i = 0; i < Math.Min(_validationQueue.Count, VerificationBatch); i++)
                 {
                     validationList.Add(_validationQueue.Dequeue());
                 }
@@ -295,21 +287,20 @@
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
-            if (!ListenViewToViewModelPropertyChanges)
+            if (IsSaving)
             {
                 return;
             }
 
             if (string.Equals(e.PropertyName, nameof(PackageSources)) && PackageSources is not null)
             {
-                var passedFeeds = PackageSources.OfType<NuGetFeed>().ToList();
-                SettingsFeeds.AddRange(passedFeeds);
-                Feeds.AddRange(passedFeeds);
+                var storedPackageSources = PackageSources.OfType<NuGetFeed>().ToList();
+                SettingsFeeds.AddRange(storedPackageSources);
+                Feeds.AddRange(storedPackageSources);
 
-                //validate items on first initialization
-                SupressVerificationOnCollectionChanged = false;
+                // Validate items on first initialization
+                SupressFeedVerificationOnCollectionChanged = false;
                 Feeds.ForEach(async x => await VerifyFeedAsync(x));
-
             }
 
             base.OnPropertyChanged(e);
@@ -337,11 +328,10 @@
 
             SelectedFeed = newFeeds.LastOrDefault();
 
-            foreach (NuGetFeed item in newFeeds)
+            foreach (var item in newFeeds)
             {
                 SubscribeToFeedPropertyChanged(item);
-
-                if (SupressVerificationOnCollectionChanged)
+                if (SupressFeedVerificationOnCollectionChanged)
                 {
                     continue;
                 }
