@@ -128,7 +128,7 @@
                 _isLoading = false;
             }
         }
-
+#pragma warning disable CL0002 // Use async suffix
         private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
             bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
@@ -141,6 +141,7 @@
 
             return GetMetadataFromRemoteSourcesAsync(token, cancellationToken);
         }
+#pragma warning restore CL0002 // Use async suffix
 
         public IPackageMetadataProvider InitializeMetadataProvider()
         {
