@@ -34,7 +34,7 @@
                  Margin="4 4 2 0"
                  VerticalAlignment="Top" 
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
-                 Text="{Binding Name}">
+                 Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True}">
             <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
             </xamlbehaviors:Interaction.Behaviors>
@@ -52,7 +52,7 @@
                  Margin="4 4 2 0"
                  VerticalAlignment="Top" 
                  IsEnabled="{Binding Path=., Converter={catel:ReferenceToBooleanConverter}}"
-                 Text="{Binding Source}">
+                 Text="{Binding Source, ValidatesOnDataErrors=True, NotifyOnValidationError=True}">
             <xamlbehaviors:Interaction.Behaviors>
                 <catel:UpdateBindingOnTextChanged UpdateDelay="500"/>
             </xamlbehaviors:Interaction.Behaviors>

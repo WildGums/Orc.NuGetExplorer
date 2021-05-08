@@ -269,7 +269,7 @@
             EnsureSectionExists(section);
 
             var valuesListKey = GetSectionValuesListKey(section);
-            UpdateKeysList(values, valuesListKey);
+            UpdateKeyList(values, valuesListKey);
 
             foreach (var item in values)
             {
@@ -300,14 +300,14 @@
             EnsureSectionExists(section);
 
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            UpdateKeysList(values, valuesListKey);
+            UpdateKeyList(values, valuesListKey);
             foreach (var keyValuePair in values)
             {
                 SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
             }
         }
 
-        private void UpdateKeysList(IList<AddItem> values, string valuesListKey)
+        private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
         {
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
@@ -315,6 +315,15 @@
 
             var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
             _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
+        }
+
+        public void UpdatePackageSourcesKeyListSorting(List<string> packageSourceNames)
+        {
+            var packageSourcesKeyListKey = GetSectionValuesListKey(ConfigurationConstants.PackageSources);
+            var enabledPackageSourcesKeys = _configurationService.GetRoamingValue<string>(packageSourcesKeyListKey).Split(Separator);
+            var sortedKeys = enabledPackageSourcesKeys.OrderBy(key => packageSourceNames.IndexOf(key));
+            var sortedKeysStringValue = string.Join(Separator, sortedKeys);
+            _configurationService.SetRoamingValue(packageSourcesKeyListKey, sortedKeysStringValue);
         }
 
         private string ConvertToFullPath(string result)

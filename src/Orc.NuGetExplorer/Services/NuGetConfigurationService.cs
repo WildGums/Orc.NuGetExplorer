@@ -118,6 +118,11 @@
         {
             Argument.IsNotNull(() => packageSources);
             _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
+
+            if (_packageSourceProvider.Value is NuGetPackageSourceProvider nugetPackageSourceProvider)
+            {
+                nugetPackageSourceProvider.SortPackageSources(packageSources.Select(x => x.Name).ToList());
+            }
         }
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
