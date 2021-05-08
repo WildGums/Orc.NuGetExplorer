@@ -206,7 +206,8 @@
 
             RaiseSettingsRead();
 
-            return new NuGetSettingsSection(sectionName, subsections);
+            var section = new NuGetSettingsSection(sectionName, subsections);
+            return section;
         }
 
         public void AddOrUpdate(string sectionName, SettingItem item)
@@ -239,7 +240,8 @@
 
         public void SaveToDisk()
         {
-            //should flush in-memory updates in file, but currently all changes saved manually instant in configuration file via Catel Configuration
+            // Note: Implementations of ISettings designed assuming that all updates are storing in-memory and flushed to disk file only on call of SaveToDisk()
+            // Here we are using Catel's configuration and saving all changes instantly, thats why implementation of this method is empty
             Log.Debug("SaveToDisk method called from PackageSourceProvider");
         }
 

@@ -189,6 +189,10 @@
             SettingsFeeds.AddRange(Feeds);
 
             _configurationService.SavePackageSources(Feeds);
+            foreach(var feed in RemovedFeeds)
+            {
+                _configurationService.RemovePackageSource(feed);
+            }
         }
 
         private bool IsNamesNotUniqueRule(out IEnumerable<string> invalidNames)

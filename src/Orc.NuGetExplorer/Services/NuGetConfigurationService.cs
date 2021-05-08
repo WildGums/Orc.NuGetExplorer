@@ -21,7 +21,7 @@
         private readonly string _defaultDestinationFolder;
         private int _packageQuerySize = 40;
 
-        //had to doing this, because settings is as parameter in ctor caused loop references
+        // Note: Lazy allows to avoid circular types resolving if construct from TypeFactory
         private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
                 () =>
                 {
@@ -111,7 +111,7 @@
 
         public void RemovePackageSource(IPackageSource source)
         {
-            //todo implement packageSource removal
+            _packageSourceProvider.Value.RemovePackageSource(source.Name);
         }
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
