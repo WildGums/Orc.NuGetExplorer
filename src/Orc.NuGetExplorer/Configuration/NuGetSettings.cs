@@ -206,7 +206,8 @@
 
             RaiseSettingsRead();
 
-            return new NuGetSettingsSection(sectionName, subsections);
+            var section = new NuGetSettingsSection(sectionName, subsections);
+            return section;
         }
 
         public void AddOrUpdate(string sectionName, SettingItem item)
@@ -239,7 +240,8 @@
 
         public void SaveToDisk()
         {
-            //should flush in-memory updates in file, but currently all changes saved manually instant in configuration file via Catel Configuration
+            // Note: Implementations of ISettings designed assuming that all updates are storing in-memory and flushed to disk file only on call of SaveToDisk()
+            // Here we are using Catel's configuration and saving all changes instantly, thats why implementation of this method is empty
             Log.Debug("SaveToDisk method called from PackageSourceProvider");
         }
 
@@ -267,7 +269,7 @@
             EnsureSectionExists(section);
 
             var valuesListKey = GetSectionValuesListKey(section);
-            UpdateKeysList(values, valuesListKey);
+            UpdateKeyList(values, valuesListKey);
 
             foreach (var item in values)
             {
@@ -298,14 +300,14 @@
             EnsureSectionExists(section);
 
             var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            UpdateKeysList(values, valuesListKey);
+            UpdateKeyList(values, valuesListKey);
             foreach (var keyValuePair in values)
             {
                 SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
             }
         }
 
-        private void UpdateKeysList(IList<AddItem> values, string valuesListKey)
+        private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
         {
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
@@ -313,6 +315,15 @@
 
             var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
             _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
+        }
+
+        public void UpdatePackageSourcesKeyListSorting(List<string> packageSourceNames)
+        {
+            var packageSourcesKeyListKey = GetSectionValuesListKey(ConfigurationConstants.PackageSources);
+            var enabledPackageSourcesKeys = _configurationService.GetRoamingValue<string>(packageSourcesKeyListKey).Split(Separator);
+            var sortedKeys = enabledPackageSourcesKeys.OrderBy(key => packageSourceNames.IndexOf(key));
+            var sortedKeysStringValue = string.Join(Separator, sortedKeys);
+            _configurationService.SetRoamingValue(packageSourcesKeyListKey, sortedKeysStringValue);
         }
 
         private string ConvertToFullPath(string result)

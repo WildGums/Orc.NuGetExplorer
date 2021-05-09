@@ -21,17 +21,6 @@
         [ViewModelToModel]
         public string Source { get; set; }
 
-        private void UpdateFeed()
-        {
-            if (!IsInitialized || Feed is null)
-            {
-                return;
-            }
-
-            // manually save model and pass forward
-            Feed.ForceEndEdit();
-        }
-
         public Command OpenChooseLocalPathToSourceDialog { get; set; }
 
         private void OnOpenChooseLocalPathToSourceDialogExecute()

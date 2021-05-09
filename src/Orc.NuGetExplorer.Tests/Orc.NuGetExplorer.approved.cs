@@ -67,6 +67,7 @@ namespace Orc.NuGetExplorer
     public class DefaultNuGetFramework : Orc.NuGetExplorer.IDefaultNuGetFramework
     {
         public DefaultNuGetFramework(NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
+        public NuGet.Frameworks.NuGetFramework GetFirst() { }
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetHighest() { }
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetLowest() { }
     }
