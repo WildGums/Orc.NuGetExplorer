@@ -131,10 +131,7 @@
 
             if (string.IsNullOrEmpty(error))
             {
-                if (_propertyNameToDataError.ContainsKey(propertyName))
-                {
-                    _propertyNameToDataError.Remove(propertyName);
-                }
+                _propertyNameToDataError.Remove(propertyName);
             }
             else
             {
