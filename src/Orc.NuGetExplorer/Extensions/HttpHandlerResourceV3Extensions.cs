@@ -8,7 +8,7 @@
     {
         public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler) where T : class, ICredentialService
         {
-            if (HttpHandlerResourceV3.CredentialService != null)
+            if (HttpHandlerResourceV3.CredentialService is not null)
             {
                 return HttpHandlerResourceV3.CredentialService.Value as T;
             }
@@ -20,7 +20,7 @@
         {
             var credentialsService = httpResourceHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
 
-            if (credentialsService != null)
+            if (credentialsService is not null)
             {
                 credentialsService.ClearRetryCache();
             }

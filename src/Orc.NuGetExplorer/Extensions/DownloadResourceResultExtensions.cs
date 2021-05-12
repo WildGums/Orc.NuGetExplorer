@@ -12,7 +12,7 @@
 
             var fileStream = downloadResourceResult.PackageStream as FileStream;
 
-            if (fileStream != null)
+            if (fileStream is not null)
             {
                 return fileStream.Name;
             }

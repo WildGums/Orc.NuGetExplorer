@@ -10,7 +10,7 @@
     {
         protected override object Convert(NuGetFramework value, Type targetType, object parameter)
         {
-            if (value == null || value.IsAny)
+            if (value is null || value.IsAny)
             {
                 return Visibility.Collapsed;
             }

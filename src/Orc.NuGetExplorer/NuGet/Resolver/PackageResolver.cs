@@ -29,7 +29,7 @@ namespace Orc.NuGetExplorer.Resolver
             var stopWatch = new Stopwatch();
             token.ThrowIfCancellationRequested();
 
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
@@ -56,12 +56,12 @@ namespace Orc.NuGetExplorer.Resolver
                             StringComparer.OrdinalIgnoreCase.Equals(p.Id, package.Id) &&
                             p.Version.Equals(package.Version));
 
-                if (existingPackage != null)
+                if (existingPackage is not null)
                 {
                     // check if each dependency can be satisfied with existing packages
                     var brokenDependencies = GetBrokenDependencies(existingPackage, installedPackages);
 
-                    if (brokenDependencies != null && brokenDependencies.Any())
+                    if (brokenDependencies is not null && brokenDependencies.Any())
                     {
                         invalidExistingPackages.AddRange(brokenDependencies.Select(dependency => FormatDependencyConstraint(existingPackage, dependency)));
                     }
@@ -76,7 +76,7 @@ namespace Orc.NuGetExplorer.Resolver
                                 StringComparer.OrdinalIgnoreCase.Equals(p.Id, package.Id) &&
                                 VersionComparer.Default.Compare(p.Version, package.Version) > 0);
 
-                    if (existingPackage == null)
+                    if (existingPackage is null)
                     {
                         var packageString = $"'{package.Id} {package.Version.ToNormalizedString()}'";
                         invalidExistingPackages.Add(packageString);
@@ -140,7 +140,7 @@ namespace Orc.NuGetExplorer.Resolver
             }
 
             // find all needed dependencies, excluding manually ignored dependencies
-            var dependencyIds = resolverPackages.Where(e => e.Dependencies != null)
+            var dependencyIds = resolverPackages.Where(e => e.Dependencies is not null)
                 .SelectMany(e => e.Dependencies.Select(d => d.Id)).Distinct(StringComparer.OrdinalIgnoreCase);
 
             //var ignoredDependencyIds = dependencyIds.
@@ -180,7 +180,7 @@ namespace Orc.NuGetExplorer.Resolver
                 diagnosticOutput: diagnosticOutput);
 
             // check if a solution was found
-            if (solution != null)
+            if (solution is not null)
             {
                 var nonAbsentCandidates = solution.Where(c => !c.Absent);
 
@@ -310,13 +310,13 @@ namespace Orc.NuGetExplorer.Resolver
         private static bool ShouldRejectPackagePair(ResolverPackage p1, ResolverPackage p2)
         {
             var p1ToP2Dependency = p1.FindDependencyRange(p2.Id);
-            if (p1ToP2Dependency != null)
+            if (p1ToP2Dependency is not null)
             {
                 return p2.Absent || !p1ToP2Dependency.Satisfies(p2.Version);
             }
 
             var p2ToP1Dependency = p2.FindDependencyRange(p1.Id);
-            if (p2ToP1Dependency != null)
+            if (p2ToP1Dependency is not null)
             {
                 return p1.Absent || !p2ToP1Dependency.Satisfies(p1.Version);
             }

@@ -12,7 +12,7 @@
 
         protected override object Convert(Color value, Type targetType, object parameter)
         {
-            if (_cachedBrush != null)
+            if (_cachedBrush is not null)
             {
                 return _cachedBrush;
             }

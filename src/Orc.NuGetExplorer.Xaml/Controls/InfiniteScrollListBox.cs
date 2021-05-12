@@ -4,7 +4,6 @@
     using System.Windows;
     using System.Windows.Controls;
     using Catel.MVVM;
-    using NuGetExplorer.Controls.Helpers;
 
     public class InfiniteScrollListBox : ListBox
     {
@@ -24,14 +23,14 @@
         {
             if (value != _scrollViewer)
             {
-                if (_scrollViewer != null)
+                if (_scrollViewer is not null)
                 {
                     _scrollViewer.ScrollChanged -= OnScrollViewerScrollChanged;
                 }
 
                 _scrollViewer = value;
 
-                if (_scrollViewer != null)
+                if (_scrollViewer is not null)
                 {
                     _scrollViewer.ScrollChanged += OnScrollViewerScrollChanged;
                 }

@@ -22,7 +22,7 @@
         {
             var resourceKeys = parameter as string[];
 
-            if (resourceKeys == null)
+            if (resourceKeys is null)
             {
                 return new SolidColorBrush(Colors.Transparent);
             }

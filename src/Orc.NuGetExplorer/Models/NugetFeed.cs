@@ -107,7 +107,12 @@
                 return Enumerable.Empty<string>();
             }
 
-            return _propertyNameToDataError.ContainsKey(propertyName) ? new[] { _propertyNameToDataError[propertyName] } : Enumerable.Empty<string>();
+            if (_propertyNameToDataError.TryGetValue(propertyName, out var error))
+            {
+                return new[] { error };
+            }
+
+            return Enumerable.Empty<string>();
         }
 
         private void RaiseErrorsChanged(string propertyName)
@@ -119,17 +124,21 @@
         {
             var error = this[propertyName];
 
-            if (!_propertyNameToDataError.TryGetValue(propertyName, out string oldError))
+            if (!_propertyNameToDataError.TryGetValue(propertyName, out var oldError))
             {
                 oldError = string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(error))
+            if (string.IsNullOrEmpty(error))
+            {
+                _propertyNameToDataError.Remove(propertyName);
+            }
+            else
             {
                 _propertyNameToDataError[propertyName] = error;
             }
 
-            if (string.Equals(error, oldError))
+            if (!string.Equals(error, oldError))
             {
                 RaiseErrorsChanged(propertyName);
             }
@@ -155,7 +164,7 @@
 
         public bool IsValid()
         {
-            return IsNameValid && GetUriSource() != null;
+            return IsNameValid && GetUriSource() is not null;
         }
 
         public bool IsLocal()
@@ -171,7 +180,7 @@
             }
             catch (UriFormatException)
             {
-                Error = "Incorrect feed source can`t be recognized as Uri";
+                // Error = "Incorrect feed source can`t be recognized as Uri";
                 return null;
             }
         }
@@ -190,7 +199,6 @@
                 SerializationIdentifier = SerializationIdentifier
             };
         }
-
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {

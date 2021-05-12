@@ -17,7 +17,7 @@
             {
                 var innerException = exception.InnerException;
 
-                if (innerException == null)
+                if (innerException is null)
                 {
                     //handle based on protocol error messages
                     if (exception.HidesUnauthorizedError())

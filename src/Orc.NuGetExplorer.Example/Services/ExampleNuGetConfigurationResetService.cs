@@ -4,7 +4,7 @@
 
     public class ExampleNuGetConfigurationResetService : INuGetConfigurationResetService
     {
-        public async Task Reset()
+        public async Task ResetAsync()
         {
             
         }

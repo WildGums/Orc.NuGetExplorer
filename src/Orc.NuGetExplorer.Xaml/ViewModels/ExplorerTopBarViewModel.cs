@@ -98,7 +98,7 @@
         {
             var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetSettingsViewModel>();
 
-            if (nugetSettingsVm != null)
+            if (nugetSettingsVm is not null)
             {
                 var result = await _uIVisualizerService.ShowDialogAsync(nugetSettingsVm);
 
@@ -116,7 +116,7 @@
         {
             var extensiblesVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExtensiblesViewModel>();
 
-            if (extensiblesVM != null)
+            if (extensiblesVM is not null)
             {
                 await _uIVisualizerService.ShowDialogAsync(extensiblesVM);
             }

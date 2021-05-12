@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Extensions
+﻿namespace Orc.NuGetExplorer
 {
     using System.Linq;
     using Catel;
@@ -12,7 +12,7 @@
 
             var stringLines = validationContext.GetErrors(validationTag).Select(s => " - " + s.Message).ToArray();
 
-            if (stringLines == null)
+            if (stringLines is null)
             {
                 return null;
             }

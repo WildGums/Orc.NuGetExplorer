@@ -128,12 +128,12 @@ namespace Orc.NuGetExplorer
 
         public async Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return false;
             }
 
-            var selectedPackage = await GetPackageDetailsFromSelectedVersion(package, _localRepository) ?? package;
+            var selectedPackage = await GetPackageDetailsFromSelectedVersionAsync(package, _localRepository) ?? package;
 
             switch (operationType)
             {
@@ -172,11 +172,11 @@ namespace Orc.NuGetExplorer
             return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
         }
 
-        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersion(IPackageDetails packageDetails, IRepository repository)
+        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
         {
             if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
             {
-                packageDetails = await _packageQueryService.GetPackage(repository, packageDetails.Id, packageDetails.SelectedVersion);
+                packageDetails = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
             }
 
             return packageDetails;
@@ -186,22 +186,22 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
 
-            if (package.IsInstalled == null)
+            if (package.IsInstalled is null)
             {
-                package.IsInstalled = await _packageQueryService.PackageExists(_localRepository, package.Id);
+                package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
                 ValidatePackage(package);
             }
 
-            return package.IsInstalled != null && !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
+            return package.IsInstalled is not null && !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
         }
 
         private async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            if (package.IsInstalled == null)
+            if (package.IsInstalled is null)
             {
-                package.IsInstalled = await _packageQueryService.PackageExists(_localRepository, package);
+                package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package);
 
                 ValidatePackage(package);
             }

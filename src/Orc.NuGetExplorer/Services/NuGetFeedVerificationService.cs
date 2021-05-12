@@ -128,7 +128,7 @@ namespace Orc.NuGetExplorer
                         throw new TimeoutException("Search operation has timed out");
                     }
 
-                    if (searchTask.IsFaulted && searchTask.Exception != null)
+                    if (searchTask.IsFaulted && searchTask.Exception is not null)
                     {
                         throw searchTask.Exception;
                     }

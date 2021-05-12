@@ -50,6 +50,7 @@
 
         private readonly INuGetCacheManager _nuGetCacheManager;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
+        private readonly IDispatcherProviderService _dispatcherProviderService;
         private readonly ITypeFactory _typeFactory;
         private readonly MetadataOrigin _pageType;
 
@@ -62,7 +63,7 @@
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
             ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
-            INuGetConfigurationService nuGetConfigurationService)
+            INuGetConfigurationService nuGetConfigurationService, IDispatcherProviderService dispatcherProviderService)
         {
             Argument.IsNotNull(() => packagesLoaderService);
             Argument.IsNotNull(() => settingsProvider);
@@ -76,6 +77,7 @@
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => nuGetCacheManager);
             Argument.IsNotNull(() => nuGetConfigurationService);
+            Argument.IsNotNull(() => dispatcherProviderService);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
@@ -87,6 +89,7 @@
             _packagesLoaderService = packagesLoaderService;
             _nuGetCacheManager = nuGetCacheManager;
             _nuGetConfigurationService = nuGetConfigurationService;
+            _dispatcherProviderService = dispatcherProviderService;
             Settings = settingsProvider.Model;
 
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
@@ -146,14 +149,14 @@
             get { return _settings; }
             set
             {
-                if (_settings != null)
+                if (_settings is not null)
                 {
                     _settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
                 }
 
                 _settings = value;
 
-                if (_settings != null)
+                if (_settings is not null)
                 {
                     _settings.PropertyChanged += OnSettingsPropertyPropertyChanged;
                 }
@@ -213,7 +216,7 @@
 
         private void OnSettingsPropertyPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (Settings.ObservedFeed == null)
+            if (Settings.ObservedFeed is null)
             {
                 return;
             }
@@ -243,7 +246,7 @@
         {
             try
             {
-                if (IsActive && _initialSearchParams != null)
+                if (IsActive && _initialSearchParams is not null)
                 {
                     // Set page initial search params as Settings parameters
                     // Only on first loaded page
@@ -256,7 +259,8 @@
                 SingleDelayTimer.Elapsed += OnTimerElapsed;
                 SingleDelayTimer.AutoReset = false;
 
-                SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(DispatcherHelper.CurrentDispatcher);
+                SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(
+                    _dispatcherProviderService.GetCurrentDispatcher());
 
                 PackageItems = new FastObservableCollection<NuGetPackage>();
 
@@ -267,7 +271,7 @@
                 IsFirstLoaded = false;
                 var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
 
-                if (Settings.ObservedFeed != null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
+                if (Settings.ObservedFeed is not null && !string.IsNullOrEmpty(Settings.ObservedFeed.Source))
                 {
                     var currentFeed = Settings.ObservedFeed;
                     PageInfo = new PageContinuation(pageSize, Settings.ObservedFeed.GetPackageSource());
@@ -433,7 +437,7 @@
                 }
 
                 //restart
-                if (AwaitedPageInfo != null)
+                if (AwaitedPageInfo is not null)
                 {
                     var awaitedPageinfo = AwaitedPageInfo;
                     var awaitedSeachParams = AwaitedSearchParameters;
@@ -590,7 +594,7 @@
         {
             foreach (var metadata in metadatas)
             {
-                if (metadata.IconUrl != null)
+                if (metadata.IconUrl is not null)
                 {
                     token.ThrowIfCancellationRequested();
                     await _packageMetadataMediaDownloadService.DownloadMediaForMetadataAsync(metadata);

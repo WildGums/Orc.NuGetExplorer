@@ -28,7 +28,7 @@
 
             var windowTask = CreateWindowAsync(name, data, completedProc, true);
             var window = windowTask.Result;
-            if (window != null)
+            if (window is not null)
             {
                 //aware this place
                 //awaiting on this method in async implementation causes hardly avoidable deadlock

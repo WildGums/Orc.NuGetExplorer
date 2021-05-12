@@ -30,6 +30,11 @@
 #endif
             Log.Info($"Current target framework for plugins set as '{Framework}'");
 
+            // Note: commented part for testing correct package resolving to 4.X versions
+            //var tfm472 = (defaultFramework as DefaultNuGetFramework).GetFirst();
+            //Framework = tfm472.ToString();
+            // SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(tfm472));
+
             // Default initialization
             if (SupportedPlatforms is null)
             {

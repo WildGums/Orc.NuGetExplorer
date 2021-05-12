@@ -101,7 +101,7 @@ namespace Orc.NuGetExplorer.Native
             Log.Debug("Stored credentials are allowed");
 
             var credentials = ReadCredential(Target, true && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback);
-            if (credentials == null)
+            if (credentials is null)
             {
                 return false;
             }
@@ -365,7 +365,7 @@ namespace Orc.NuGetExplorer.Native
 
             // Note: immediately read it for ORCOMP-229
             var credential = ReadCredential(key, false);
-            if ((credential == null || string.IsNullOrWhiteSpace(credential.Password)) && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback)
+            if ((credential is null || string.IsNullOrWhiteSpace(credential.Password)) && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback)
             {
                 WriteCredentialToConfiguration(key, cred.UserName, secret);
             }

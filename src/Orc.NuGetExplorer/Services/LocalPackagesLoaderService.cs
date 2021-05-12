@@ -50,7 +50,7 @@
 
             SourceRepository repository = null;
 
-            if (source != null)
+            if (source is not null)
             {
                 repository = _repositoryProvider.CreateRepository(source);
             }
@@ -81,7 +81,7 @@
                 {
                     var metadata = await GetPackageMetadataAsync(package, searchFilter.IncludePrerelease, token);
 
-                    if (metadata != null)
+                    if (metadata is not null)
                     {
                         combinedFindedMetadata.Add(metadata);
                     }
@@ -101,7 +101,7 @@
             // first we try and load the metadata from a local package
             var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
 
-            if (packageMetadata == null)
+            if (packageMetadata is null)
             {
                 //fallback network package if local installation exists but package cannot be read
                 packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);

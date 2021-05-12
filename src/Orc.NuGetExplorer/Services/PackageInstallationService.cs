@@ -95,7 +95,7 @@
 
             _nugetLogger.LogInformation($"Uninstall package {package}, Target framework: {targetFramework}");
 
-            if (projectConfig == null)
+            if (projectConfig is null)
             {
                 _nugetLogger.LogWarning($"Project {project.Name} doesn't implement any configuration for own packages");
             }
@@ -113,7 +113,7 @@
 
                 if (uninstallationContext.RemoveDependencies)
                 {
-                    uninstalledPackages = await GetPackagesCanBeUninstalled(resolverContext.AvailablePackages, packageReferences.Select(x => x.PackageIdentity));
+                    uninstalledPackages = await GetPackagesCanBeUninstalledAsync(resolverContext.AvailablePackages, packageReferences.Select(x => x.PackageIdentity));
                 }
                 else
                 {
@@ -132,7 +132,7 @@
                         _directoryService.ForceDeleteDirectory(_fileService, folderProject.GetInstalledPath(removedPackage), out failedEntries);
                     }
 
-                    if (projectConfig == null)
+                    if (projectConfig is null)
                     {
                         continue;
                     }
@@ -181,7 +181,7 @@
                 {
                     var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
 
-                    var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrException()).Where(x => x.IsSuccess && x.Result != null)
+                    var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess && x.Result is not null)
                         .Select(x => x.Result).ToArray();
 
                     var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
@@ -283,7 +283,7 @@
             var resolvingBehavior = DependencyBehavior.Lowest;
 
             // get top dependency
-            var dependencyInfo = await dependencyInfoResource.ResolvePackage(
+            var dependencyInfo = await dependencyInfoResource.ResolvePackageAsync(
                             identity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
             if (dependencyInfo is null)
@@ -313,7 +313,7 @@
                     // but possibly it should be configured in project
                     var dependencyIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
-                    var relatedDepInfos = await dependencyInfoResource.ResolvePackages(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+                    var relatedDepInfos = await dependencyInfoResource.ResolvePackagesAsync(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
 
                     // Truncate inappropriate versions
                     relatedDepInfos = relatedDepInfos.Where(x => dependency.VersionRange.Satisfies(x.Version)).ToList();
@@ -543,17 +543,17 @@
                 {
                     bestMatches = frameworkReducer.GetNearest(platformSpecific, libraryTfms);
 
-                    if (bestMatches != null)
+                    if (bestMatches is not null)
                     {
                         break;
                     }
                 }
             }
 
-            return bestMatches != null;
+            return bestMatches is not null;
         }
 
-        private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalled(
+        private async Task<ICollection<PackageIdentity>> GetPackagesCanBeUninstalledAsync(
             IEnumerable<SourcePackageDependencyInfo> markedForUninstall,
             IEnumerable<PackageIdentity> installedPackages)
         {
@@ -569,7 +569,7 @@
 
                 HashSet<PackageIdentity> dependents;
 
-                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out dependents) && dependents != null)
+                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out dependents) && dependents is not null)
                 {
                     var externalDependants = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
 
@@ -611,12 +611,12 @@
 
                 foreach (var libItemGroup in libraries)
                 {
-                    var satelliteFiles = await GetSatelliteFilesForLibrary(libItemGroup, packageReader, cancellationToken);
+                    var satelliteFiles = await GetSatelliteFilesForLibraryAsync(libItemGroup, packageReader, cancellationToken);
                 }
             }
         }
 
-        private async Task<List<string>> GetSatelliteFilesForLibrary(FrameworkSpecificGroup libraryFrameworkSpecificGroup, PackageReaderBase packageReader,
+        private async Task<List<string>> GetSatelliteFilesForLibraryAsync(FrameworkSpecificGroup libraryFrameworkSpecificGroup, PackageReaderBase packageReader,
             CancellationToken cancellationToken)
         {
             var satelliteFiles = new List<string>();

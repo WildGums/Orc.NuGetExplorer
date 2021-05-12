@@ -31,7 +31,7 @@ namespace Orc.NuGetExplorer.Behaviors
         private void OnIsVisibleChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             var binding = AssociatedObject.GetBindingExpression(Selector.SelectedItemProperty);
-            if (binding != null)
+            if (binding is not null)
             {
                 binding.UpdateSource();
             }

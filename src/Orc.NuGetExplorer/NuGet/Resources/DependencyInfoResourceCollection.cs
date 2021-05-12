@@ -41,14 +41,14 @@
             _resources = new List<DependencyInfoResource>() { resource };
         }
 
-        public async Task<SourcePackageDependencyInfo> ResolvePackage(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+        public async Task<SourcePackageDependencyInfo> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
             foreach (var resource in _resources)
             {
                 var packageDependencyInfo = await resource.ResolvePackage(package, projectFramework, cacheContext, log, token);
 
                 //just returns first existed package 
-                if (packageDependencyInfo != null)
+                if (packageDependencyInfo is not null)
                 {
                     return packageDependencyInfo;
                 }
@@ -57,7 +57,7 @@
             return null;
         }
 
-        public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackages(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+        public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
             HashSet<SourcePackageDependencyInfo> packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
 

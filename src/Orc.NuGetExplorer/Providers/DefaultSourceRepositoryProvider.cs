@@ -75,7 +75,7 @@
 
             foreach (var configSource in configuredSources)
             {
-                if (repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) == null)
+                if (repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) is null)
                 {
                     repos.Add(CreateRepository(configSource));
                 }

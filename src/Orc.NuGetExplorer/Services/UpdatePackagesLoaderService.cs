@@ -80,7 +80,7 @@
 
                     var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
 
-                    if (clonedMetadata == null)
+                    if (clonedMetadata is null)
                     {
                         Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
                         continue;
@@ -136,7 +136,7 @@
                     var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
                     var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
-                    if (clonedMetadata == null)
+                    if (clonedMetadata is null)
                     {
                         Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
                         continue;

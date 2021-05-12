@@ -18,7 +18,7 @@ namespace Orc.NuGetExplorer.Example
         #region Methods
         public PackageManagementEcho GetPackageManagementEcho()
         {
-            if (_echo == null)
+            if (_echo is null)
             {
                 _echo = new PackageManagementEcho();
             }

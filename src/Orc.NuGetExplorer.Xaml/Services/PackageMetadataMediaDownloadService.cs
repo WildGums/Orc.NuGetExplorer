@@ -56,7 +56,7 @@
 
         private async Task DownloadFromAsync(Uri uri)
         {
-            if (uri == null)
+            if (uri is null)
             {
                 //default picture
                 return;
@@ -71,7 +71,7 @@
 
         private void DownloadFrom(Uri uri)
         {
-            if (uri == null)
+            if (uri is null)
             {
                 //default picture
                 return;
@@ -90,7 +90,7 @@
         {
             try
             {
-                if (uri != null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
+                if (uri is not null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
                 {
                     return GetFromCacheOrFetch(uri);
                 }
@@ -116,7 +116,7 @@
         {
             try
             {
-                if (uri != null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
+                if (uri is not null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
                 {
                     return await GetFromCacheOrFetchAsync(uri);
                 }

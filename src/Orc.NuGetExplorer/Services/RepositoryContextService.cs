@@ -37,7 +37,7 @@
         {
             var repo = GetRepository(source);
 
-            if (repo == null)
+            if (repo is null)
             {
                 return SourceContext.EmptyContext;
             }

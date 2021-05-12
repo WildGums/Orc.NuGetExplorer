@@ -50,10 +50,10 @@
                     return new KeyValuePair<SourceRepository, PackageSearchResource>(x, resource);
                 }).ToList();
 
-            var taskResults = (await combinedResourcesTasks.WhenAllOrException()).Where(x => x.IsSuccess)
+            var taskResults = (await combinedResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
                .Select(x => x.UnwrapResult());
 
-            _resolvedResources = taskResults.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
+            _resolvedResources = taskResults.Where(x => x.Value is not null).ToDictionary(x => x.Key, x => x.Value);
         }
 
 

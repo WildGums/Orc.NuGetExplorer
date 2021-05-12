@@ -23,7 +23,7 @@
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
-            if (Value == null)
+            if (Value is null)
             {
                 return;
             }

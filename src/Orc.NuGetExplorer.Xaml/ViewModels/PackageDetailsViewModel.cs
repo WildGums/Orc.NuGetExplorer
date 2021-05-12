@@ -21,7 +21,7 @@
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
     using Orc.FileSystem;
-    using Orc.NuGetExplorer.Extensions;
+    using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PackageDetailsViewModel : ViewModelBase
@@ -61,7 +61,7 @@
             _packageCommandService = packageCommandService;
             _directoryService = directoryService;
 
-            LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package != null);
+            LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
         }
@@ -204,7 +204,7 @@
                 var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(
                     identity, isPreReleaseIncluded, CancellationToken.None);
 
-                if (versionMetadata?.Identity?.Version != null)
+                if (versionMetadata?.Identity?.Version is not null)
                 {
                     packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
                 }
@@ -251,7 +251,7 @@
 
             if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
             {
-                if ((e.OldValue == null && SelectedVersion == Package.Identity.Version) || e.NewValue == null)
+                if ((e.OldValue is null && SelectedVersion == Package.Identity.Version) || e.NewValue is null)
                 {
                     // Skip loading on version list first load
                     return;
@@ -267,7 +267,7 @@
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
-                if (Package != null)
+                if (Package is not null)
                 {
                     // Note: Workaround, this is a hack way to set specific version of package
                     var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
@@ -311,7 +311,7 @@
 
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
-                if (Package != null)
+                if (Package is not null)
                 {
                     ValidateCurrentPackage(Package);
                 }
@@ -373,7 +373,7 @@
 
         private bool IsInstalled()
         {
-            return InstalledVersion != null;
+            return InstalledVersion is not null;
         }
 
         private bool IsVersionInstalled()

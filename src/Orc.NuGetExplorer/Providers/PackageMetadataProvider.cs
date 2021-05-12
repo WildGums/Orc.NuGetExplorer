@@ -78,7 +78,7 @@
         {
             var sources = new List<SourceRepository>();
 
-            if (_optionalLocalRepositories != null)
+            if (_optionalLocalRepositories is not null)
             {
                 sources.AddRange(_optionalLocalRepositories);
             }
@@ -88,7 +88,7 @@
             {
                 var result = await GetPackageMetadataFromLocalSourceAsync(source, identity, cancellationToken);
 
-                if (result != null)
+                if (result is not null)
                 {
                     //TODO why additional fetching needed?
                     //return result.WithVersions(
@@ -104,16 +104,16 @@
         {
             var sources = new List<SourceRepository>();
 
-            if (_optionalLocalRepositories != null)
+            if (_optionalLocalRepositories is not null)
             {
                 sources.AddRange(_optionalLocalRepositories);
             }
 
             var tasks = sources.Select(r => GetPackageMetadataFromLocalSourceAsync(r, packageid, cancellationToken)).ToArray();
 
-            var completed = (await tasks.WhenAllOrException()).Where(x => x.IsSuccess)
+            var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
                 .Select(x => x.UnwrapResult())
-                .Where(metadata => metadata != null);
+                .Where(metadata => metadata is not null);
 
             var lowest = completed.SelectMany(p => p)
                 .OrderBy(p => p.Identity.Version)
@@ -132,11 +132,11 @@
             }
 
             var tasks = _sourceRepositories
-               .Select(r => GetPackageMetadataAsyncFromSource(r, identity, includePrerelease, cancellationToken)).ToArray();
+               .Select(r => GetPackageMetadataAsyncFromSourceAsync(r, identity, includePrerelease, cancellationToken)).ToArray();
 
-            var completed = (await tasks.WhenAllOrException()).Where(x => x.IsSuccess)
+            var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
                 .Select(x => x.UnwrapResult())
-                .Where(metadata => metadata != null);
+                .Where(metadata => metadata is not null);
 
 
             var master = completed.FirstOrDefault(m => !string.IsNullOrEmpty(m.Summary))
@@ -161,11 +161,11 @@
 
         public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken)
         {
-            var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSource(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
+            var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
 
-            var completed = (await tasks.WhenAllOrException()).Where(x => x.IsSuccess).
+            var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess).
                 Select(x => x.UnwrapResult())
-                .Where(metadata => metadata != null);
+                .Where(metadata => metadata is not null);
 
             var packages = completed.SelectMany(p => p);
 
@@ -186,7 +186,7 @@
         /// <param name="includeUnlisted"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSource(SourceRepository repository,
+        public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(SourceRepository repository,
             string packageId,
             bool includePrerelease,
             bool includeUnlisted,
@@ -237,7 +237,7 @@
         /// <param name="takeVersions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<IPackageSearchMetadata> GetPackageMetadataAsyncFromSource(SourceRepository repository,
+        private async Task<IPackageSearchMetadata> GetPackageMetadataAsyncFromSourceAsync(SourceRepository repository,
             PackageIdentity identity,
             bool includePrerelease,
             CancellationToken cancellationToken,
@@ -246,7 +246,7 @@
             if (takeVersions)
             {
                 //query all versions and pack them in a single object
-                var versionsMetadatas = await GetPackageMetadataListAsyncFromSource(repository, identity.Id, includePrerelease, false, cancellationToken);
+                var versionsMetadatas = await GetPackageMetadataListAsyncFromSourceAsync(repository, identity.Id, includePrerelease, false, cancellationToken);
 
                 if (!versionsMetadatas?.Any() ?? false)
                 {

@@ -69,7 +69,7 @@
 
                 _packageMetadataProvider = InitializeMetadataProvider();
 
-                if (_packageMetadataProvider == null)
+                if (_packageMetadataProvider is null)
                 {
                     Log.Info("Cannot acquire metadata provider for background loading tasks");
                     return;
@@ -105,9 +105,9 @@
                             taskList.Remove(nextCompletedTask);
                         }
 
-                        if (result != null)
+                        if (result is not null)
                         {
-                            updateStateValue = await NuGetPackageCombinator.Combine(executedToken.Package, executedToken.LoadType, result);
+                            updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
                         }
                         else
                         {
@@ -128,7 +128,7 @@
                 _isLoading = false;
             }
         }
-
+#pragma warning disable CL0002 // Use async suffix
         private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
             bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
@@ -136,11 +136,12 @@
             if (token.LoadType == MetadataOrigin.Installed)
             {
                 //from local
-                return GetMetadataFromLocalSources(token, cancellationToken);
+                return GetMetadataFromLocalSourcesAsync(token, cancellationToken);
             }
 
-            return GetMetadataFromRemoteSources(token, cancellationToken);
+            return GetMetadataFromRemoteSourcesAsync(token, cancellationToken);
         }
+#pragma warning restore CL0002 // Use async suffix
 
         public IPackageMetadataProvider InitializeMetadataProvider()
         {
@@ -170,19 +171,19 @@
         /// <param name="token"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<DeferToken> GetMetadataFromLocalSources(DeferToken token, CancellationToken cancellationToken)
+        private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
             var project = _extensibleProjectLocator.GetAllExtensibleProjects().FirstOrDefault();
             string packageId = token.Package.Identity.Id;
 
-            if (project == null)
+            if (project is null)
             {
                 return token;
             }
 
             var installedVersion = await _projectManager.GetVersionInstalledAsync(project, packageId, cancellationToken);
 
-            if (installedVersion == null)
+            if (installedVersion is null)
             {
                 return token;
             }
@@ -194,7 +195,7 @@
             return token;
         }
 
-        private async Task<DeferToken> GetMetadataFromRemoteSources(DeferToken token, CancellationToken cancellationToken)
+        private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
             bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
