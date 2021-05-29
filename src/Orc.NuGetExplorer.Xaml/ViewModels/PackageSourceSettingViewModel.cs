@@ -134,9 +134,9 @@
 
         protected void InitializeCommands()
         {
-            RemoveFeed = new Command(OnRemoveFeedExecute);
-            MoveUpFeed = new Command(OnMoveUpFeedExecute);
-            MoveDownFeed = new Command(OnMoveDownFeedExecute);
+            RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
+            MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
+            MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
             AddFeed = new Command(OnAddFeedExecute);
             Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
