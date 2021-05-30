@@ -23,7 +23,7 @@
 
 #if NETCORE
             var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
-            Framework = targetFramework.ToString();
+            Framework = targetFramework.DotNetFrameworkName;
             SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 #else
             Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();

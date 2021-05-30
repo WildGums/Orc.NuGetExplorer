@@ -90,6 +90,13 @@
             ICollection<PackageIdentity> uninstalledPackages;
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+
+#if NETCORE5
+            var reducer = new FrameworkReducer();
+            var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
+            targetFramework = mostSpecific;
+#endif
+
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
             var uninstallationContext = new UninstallationContext(false, false);
 
@@ -166,8 +173,15 @@
             try
             {
                 // Step 1. Decide what framework version used on package resolving
+                // Enforce platform-specific framework for .NET 5.0
 
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+                var reducer = new FrameworkReducer();
+#if NETCORE5
+
+                var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
+                targetFramework = mostSpecific;
+#endif
 
                 _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
