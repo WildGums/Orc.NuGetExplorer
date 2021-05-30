@@ -90,6 +90,13 @@
             ICollection<PackageIdentity> uninstalledPackages;
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+
+#if NETCORE5
+            var reducer = new FrameworkReducer();
+            var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
+            targetFramework = mostSpecific;
+#endif
+
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
             var uninstallationContext = new UninstallationContext(false, false);
 
