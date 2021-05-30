@@ -166,8 +166,15 @@
             try
             {
                 // Step 1. Decide what framework version used on package resolving
+                // Enforce platform-specific framework for .NET 5.0
 
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+                var reducer = new FrameworkReducer();
+#if NETCORE5
+
+                var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
+                targetFramework = mostSpecific;
+#endif
 
                 _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
