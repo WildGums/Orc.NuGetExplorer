@@ -38,7 +38,11 @@
         public DependencyInfoResourceCollection(DependencyInfoResource resource)
         {
             Argument.IsNotNull(() => resource);
-            _resources = new List<DependencyInfoResource>() { resource };
+
+            _resources = new List<DependencyInfoResource>
+            { 
+                resource 
+            };
         }
 
         public async Task<SourcePackageDependencyInfo> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
