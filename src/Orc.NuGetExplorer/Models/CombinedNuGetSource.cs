@@ -46,7 +46,7 @@
 
         public IEnumerable<NuGetFeed> GetAllSources()
         {
-            return _sourceList.Select(x => x as NuGetFeed);
+            return _sourceList.Select(x => x as NuGetFeed).ToList();
         }
 
         public override string ToString()
