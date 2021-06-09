@@ -248,9 +248,11 @@
 
                     await OverrideExistingPackagesAsync(project, availablePackagesToInstall, resolverContext, DependencyBehavior.Highest);
 
-                    // Step 6. Download and extract all
+                    // Step 6. Download everything except main package and extract all
+                    availablePackagesToInstall.Remove(mainPackageInfo);
                     _nugetLogger.LogInformation($"Downloading package dependencies...");
                     var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, cacheContext, cancellationToken);
+                    downloadResults[mainPackageInfo] = mainDownloadedFiles;
                     _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
                     var extractionContext = GetExtractionContext();
                     await ExtractPackagesResourcesAsync(downloadResults, project, extractionContext, cancellationToken);
