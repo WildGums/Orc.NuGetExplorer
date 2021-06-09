@@ -205,8 +205,8 @@
 
                 if (!resolverContext?.AvailablePackages?.Any() ?? false)
                 {
-                    var errorMessage = $"Package {package} cannot be resolved with current settings for chosen destination";
-                    _nugetLogger.LogError(errorMessage);
+                    var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
+                    _nugetLogger.LogWarning(errorMessage);
                     return new InstallerResult(errorMessage);
                 }
 
