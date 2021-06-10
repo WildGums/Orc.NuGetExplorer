@@ -202,7 +202,8 @@
                     resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, project, ignoreMissingPackages, cancellationToken);
                 }
 
-                if (!resolverContext?.AvailablePackages?.Any() ?? false)
+                if (resolverContext is null ||
+                    !(resolverContext?.AvailablePackages?.Any() ?? false))
                 {
                     var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
                     _nugetLogger.LogWarning(errorMessage);
