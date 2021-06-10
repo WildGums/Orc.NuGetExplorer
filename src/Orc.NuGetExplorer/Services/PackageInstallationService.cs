@@ -21,12 +21,11 @@
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
-    using Resolver = Orc.NuGetExplorer.Resolver;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
-    using NuGet.Versioning;
     using Orc.FileSystem;
+    using Resolver = Orc.NuGetExplorer.Resolver;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
@@ -644,54 +643,6 @@
             satelliteFiles.AddRange(satelliteFilesInGroup);
 
             return satelliteFiles;
-        }
-
-        private async Task OverrideExistingPackagesAsync(IExtensibleProject nugetProject, List<SourcePackageDependencyInfo> installablePackages, PackageResolverContext resolverContext, DependencyBehavior dependencyBehavior)
-        {
-            var incomingPackages = installablePackages.ToList();
-            foreach (var package in incomingPackages)
-            {
-                var packagesConfig = resolverContext.PackagesConfig;
-
-                var packageConflicts = resolverContext.PackagesConfig
-                    .Where(reference => string.Equals(reference.PackageIdentity.Id, package.Id)
-                    && reference.PackageIdentity.Version.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) != 0).ToList();
-
-                // Note: workaround to make only one version of package appears in the same time. The correct package version set in packages.config
-                // while local files handled by extensibility
-
-                foreach (var conflict in packageConflicts)
-                {
-                    bool needToFix = false;
-                    var conflictedVersion = conflict.PackageIdentity.Version;
-
-                    switch (dependencyBehavior)
-                    {
-                        case DependencyBehavior.HighestMinor:
-                        case DependencyBehavior.HighestPatch:
-                        case DependencyBehavior.Highest:
-                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) < 0;
-                            break;
-
-                        case DependencyBehavior.Lowest:
-                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) > 0;
-                            break;
-
-                        case DependencyBehavior.Ignore:
-                            continue;
-                    }
-
-                    if (needToFix)
-                    {
-                        _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, nugetProject.GetInstallPath(conflict.PackageIdentity));
-                    }
-                    else
-                    {
-                        // cancel package installation
-                        installablePackages.Remove(package);
-                    }
-                }
-            }
         }
     }
 }
