@@ -1186,7 +1186,7 @@ namespace Orc.NuGetExplorer.Resolver
     {
         public PackageResolver() { }
         public System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> Resolve(Orc.NuGetExplorer.Resolver.PackageResolverContext context, System.Threading.CancellationToken token) { }
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolveWithVersionOverrideAsync(Orc.NuGetExplorer.Resolver.PackageResolverContext context, Orc.NuGetExplorer.IExtensibleProject project, NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Action<Orc.NuGetExplorer.IExtensibleProject, NuGet.Packaging.PackageReference> conflictResolveAction, System.Threading.CancellationToken token) { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolveWithVersionOverrideAsync(Orc.NuGetExplorer.Resolver.PackageResolverContext context, Orc.NuGetExplorer.IExtensibleProject project, NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Action<Orc.NuGetExplorer.IExtensibleProject, NuGet.Packaging.PackageReference> conflictResolveAction, System.Threading.CancellationToken cancellationToken) { }
     }
     public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
     {
