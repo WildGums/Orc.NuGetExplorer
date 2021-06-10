@@ -9,7 +9,9 @@ namespace Orc.NuGetExplorer.Resolver
     using System.Globalization;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using NuGet.Common;
+    using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
@@ -24,7 +26,7 @@ namespace Orc.NuGetExplorer.Resolver
         /// <summary>
         /// Resolve a package closure
         /// </summary>
-        public IEnumerable<PackageIdentity> Resolve(PackageResolverContext context, CancellationToken token)
+        public IEnumerable<SourcePackageDependencyInfo> Resolve(PackageResolverContext context, CancellationToken token)
         {
             var stopWatch = new Stopwatch();
             token.ThrowIfCancellationRequested();
@@ -212,6 +214,65 @@ namespace Orc.NuGetExplorer.Resolver
             // no solution was found, throw an error with a diagnostic message
             var message = ResolverUtility.GetDiagnosticMessage(bestSolution, context.AvailablePackages, context.PackagesConfig, context.TargetIds, context.PackageSources);
             throw new NuGetResolverConstraintException(message);
+        }
+
+        public async Task<List<SourcePackageDependencyInfo>> ResolveWithVersionOverrideAsync(PackageResolverContext context,
+            IExtensibleProject project,
+            DependencyBehavior dependencyBehavior,
+            Action<IExtensibleProject, PackageReference> conflictResolveAction,
+            CancellationToken token)
+        {
+            var availablePackages = Resolve(context, token);
+            // note: probably this is not required
+            var installablePackages = availablePackages
+                        .Select(
+                            x => context.AvailablePackages
+                                .Single(p => PackageIdentityComparer.Default.Equals(p, x))).ToList();
+
+            var incomingPackages = installablePackages.ToList();
+            foreach (var package in incomingPackages)
+            {
+                var packageConflicts = context.PackagesConfig
+                    .Where(reference => string.Equals(reference.PackageIdentity.Id, package.Id)
+                    && reference.PackageIdentity.Version.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) != 0).ToList();
+
+                // Note: workaround to make only one version of package appears in the same time. The correct package version set in packages.config
+                // while local files handled by extensibility
+
+                foreach (var conflict in packageConflicts)
+                {
+                    bool needToFix = false;
+                    var conflictedVersion = conflict.PackageIdentity.Version;
+
+                    switch (dependencyBehavior)
+                    {
+                        case DependencyBehavior.HighestMinor:
+                        case DependencyBehavior.HighestPatch:
+                        case DependencyBehavior.Highest:
+                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) < 0;
+                            break;
+
+                        case DependencyBehavior.Lowest:
+                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) > 0;
+                            break;
+
+                        case DependencyBehavior.Ignore:
+                            continue;
+                    }
+
+                    if (needToFix)
+                    {
+                        conflictResolveAction(project, conflict);
+                    }
+                    else
+                    {
+                        // cancel package installation
+                        installablePackages.Remove(package);
+                    }
+                }
+            }
+
+            return installablePackages;
         }
 
         private static IEnumerable<PackageDependency> GetBrokenDependencies(SourcePackageDependencyInfo package, IEnumerable<PackageIdentity> packages)

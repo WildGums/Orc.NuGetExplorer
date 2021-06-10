@@ -239,14 +239,9 @@
                     // Step 5. Build install list using NuGet Resolver and select available resources. 
                     // Track packages which already installed and make sure only one version of package exists
                     var resolver = new Resolver.PackageResolver();
-                    var packagesInstallationList = resolver.Resolve(resolverContext, cancellationToken);
-
-                    var availablePackagesToInstall = packagesInstallationList
-                        .Select(
-                            x => resolverContext.AvailablePackages
-                                .Single(p => PackageIdentityComparer.Default.Equals(p, x))).ToList();
-
-                    await OverrideExistingPackagesAsync(project, availablePackagesToInstall, resolverContext, DependencyBehavior.Highest);
+                    var availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
+                        (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
+                        cancellationToken);
 
                     // Step 6. Download everything except main package and extract all
                     availablePackagesToInstall.Remove(mainPackageInfo);
