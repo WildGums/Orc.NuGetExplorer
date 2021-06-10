@@ -24,7 +24,7 @@
             ServiceLocator.Default.ResolveType<ILogger>()
             );
 
-        public PackageResolverContext(DependencyBehavior dependencyBehavior, IEnumerable<string> targetIds, IEnumerable<string> requiredPackageIds, IEnumerable<PackageReference> packagesConfig, IEnumerable<PackageIdentity> preferredVersions, IEnumerable<SourcePackageDependencyInfo> availablePackages, IEnumerable<PackageSource> packageSources, IEnumerable<string> ignoredIds, ILogger log) 
+        public PackageResolverContext(DependencyBehavior dependencyBehavior, IEnumerable<string> targetIds, IEnumerable<string> requiredPackageIds, IEnumerable<PackageReference> packagesConfig, IEnumerable<PackageIdentity> preferredVersions, IEnumerable<SourcePackageDependencyInfo> availablePackages, IEnumerable<PackageSource> packageSources, IEnumerable<string> ignoredIds, ILogger log)
             : base(dependencyBehavior, targetIds, requiredPackageIds, packagesConfig, preferredVersions, availablePackages, packageSources, log)
         {
             IgnoredIds = ignoredIds;

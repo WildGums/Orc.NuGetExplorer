@@ -8,6 +8,6 @@
     public class UpdatePackageSearchMetadata : ClonedPackageSearchMetadata
     {
         public VersionInfo FromVersion { get; set; }
-        public AsyncLazy<IEnumerable<VersionInfo>> LazyVersionsFactory { get; set; } 
+        public AsyncLazy<IEnumerable<VersionInfo>> LazyVersionsFactory { get; set; }
     }
 }

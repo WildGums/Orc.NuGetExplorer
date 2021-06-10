@@ -48,7 +48,7 @@
                 IsListed = _metadata.IsListed,
                 PrefixReserved = _metadata.PrefixReserved,
                 LicenseMetadata = _metadata.LicenseMetadata,
-                LazyVersionsFactory = new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<VersionInfo>>(async() => await _metadata.GetVersionsAsync()),
+                LazyVersionsFactory = new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<VersionInfo>>(async () => await _metadata.GetVersionsAsync()),
                 FromVersion = new VersionInfo(_updatedVersionMetadata.Identity.Version, _updatedVersionMetadata.DownloadCount)
                 {
                     PackageSearchMetadata = _updatedVersionMetadata
