@@ -10,7 +10,6 @@
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
-    using Catel.Services;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
@@ -32,16 +31,11 @@
         private static IPackageMetadataProvider PackageMetadataProvider;
 
         private readonly IRepositoryContextService _repositoryService;
-
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
-
         private readonly IProgressManager _progressManager;
-
         private readonly IApiPackageRegistry _apiPackageRegistry;
-
         private readonly IPackageCommandService _packageCommandService;
         private readonly IDirectoryService _directoryService;
-        private bool _packageApplied;
 
         public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService,
@@ -65,6 +59,8 @@
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
         }
+
+        private bool IsPackageApplied { get; set; }
 
         [Model(SupportIEditableObject = false)]
         [Expose("Title")]
@@ -155,10 +151,17 @@
 
         private bool OnInstallPackageCanExecute()
         {
-            var anyProject = NuGetActionTarget?.IsValid ?? false;
+            if (!IsPackageApplied)
+            {
+                return false;
+            }
 
-            // TODO: provide a way to customize install/uninstall restrictions
-            return anyProject && !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
+            if (!IsProjectValid())
+            {
+                return false;
+            }
+
+            return !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
         }
 
         public TaskCommand UninstallPackage { get; set; }
@@ -190,9 +193,17 @@
 
         private bool OnUninstallPackageCanExecute()
         {
-            var anyProject = NuGetActionTarget?.IsValid ?? false;
+            if (!IsPackageApplied)
+            {
+                return false;
+            }
 
-            return anyProject && IsInstalled();
+            if (!IsProjectValid())
+            {
+                return false;
+            }
+
+            return IsInstalled();
         }
 
         #endregion
@@ -257,7 +268,7 @@
                     return;
                 }
 
-                if (!_packageApplied)
+                if (!IsPackageApplied)
                 {
                     // Skip until model is applied
                     return;
@@ -281,7 +292,7 @@
         {
             Log.Debug("Package changed");
 
-            _packageApplied = false;
+            IsPackageApplied = false;
 
             if (Package is null)
             {
@@ -322,7 +333,7 @@
             }
             finally
             {
-                _packageApplied = true;
+                IsPackageApplied = true;
             }
         }
 
@@ -369,6 +380,11 @@
             {
                 Log.Error(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
             }
+        }
+
+        private bool IsProjectValid()
+        {
+            return NuGetActionTarget?.IsValid ?? false;
         }
 
         private bool IsInstalled()

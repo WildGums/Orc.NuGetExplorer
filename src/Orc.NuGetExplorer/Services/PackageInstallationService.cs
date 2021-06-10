@@ -21,12 +21,11 @@
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
-    using Resolver = Orc.NuGetExplorer.Resolver;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Management;
     using NuGetExplorer.Management.Exceptions;
-    using NuGet.Versioning;
     using Orc.FileSystem;
+    using Resolver = Orc.NuGetExplorer.Resolver;
 
     internal class PackageInstallationService : IPackageInstallationService
     {
@@ -205,8 +204,8 @@
 
                 if (!resolverContext?.AvailablePackages?.Any() ?? false)
                 {
-                    var errorMessage = $"Package {package} cannot be resolved with current settings for chosen destination";
-                    _nugetLogger.LogError(errorMessage);
+                    var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
+                    _nugetLogger.LogWarning(errorMessage);
                     return new InstallerResult(errorMessage);
                 }
 
@@ -239,18 +238,15 @@
                     // Step 5. Build install list using NuGet Resolver and select available resources. 
                     // Track packages which already installed and make sure only one version of package exists
                     var resolver = new Resolver.PackageResolver();
-                    var packagesInstallationList = resolver.Resolve(resolverContext, cancellationToken);
+                    var availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
+                        (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
+                        cancellationToken);
 
-                    var availablePackagesToInstall = packagesInstallationList
-                        .Select(
-                            x => resolverContext.AvailablePackages
-                                .Single(p => PackageIdentityComparer.Default.Equals(p, x))).ToList();
-
-                    await OverrideExistingPackagesAsync(project, availablePackagesToInstall, resolverContext, DependencyBehavior.Highest);
-
-                    // Step 6. Download and extract all
+                    // Step 6. Download everything except main package and extract all
+                    availablePackagesToInstall.Remove(mainPackageInfo);
                     _nugetLogger.LogInformation($"Downloading package dependencies...");
                     var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, cacheContext, cancellationToken);
+                    downloadResults[mainPackageInfo] = mainDownloadedFiles;
                     _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
                     var extractionContext = GetExtractionContext();
                     await ExtractPackagesResourcesAsync(downloadResults, project, extractionContext, cancellationToken);
@@ -647,54 +643,6 @@
             satelliteFiles.AddRange(satelliteFilesInGroup);
 
             return satelliteFiles;
-        }
-
-        private async Task OverrideExistingPackagesAsync(IExtensibleProject nugetProject, List<SourcePackageDependencyInfo> installablePackages, PackageResolverContext resolverContext, DependencyBehavior dependencyBehavior)
-        {
-            var incomingPackages = installablePackages.ToList();
-            foreach (var package in incomingPackages)
-            {
-                var packagesConfig = resolverContext.PackagesConfig;
-
-                var packageConflicts = resolverContext.PackagesConfig
-                    .Where(reference => string.Equals(reference.PackageIdentity.Id, package.Id)
-                    && reference.PackageIdentity.Version.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) != 0).ToList();
-
-                // Note: workaround to make only one version of package appears in the same time. The correct package version set in packages.config
-                // while local files handled by extensibility
-
-                foreach (var conflict in packageConflicts)
-                {
-                    bool needToFix = false;
-                    var conflictedVersion = conflict.PackageIdentity.Version;
-
-                    switch (dependencyBehavior)
-                    {
-                        case DependencyBehavior.HighestMinor:
-                        case DependencyBehavior.HighestPatch:
-                        case DependencyBehavior.Highest:
-                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) < 0;
-                            break;
-
-                        case DependencyBehavior.Lowest:
-                            needToFix = conflictedVersion.CompareTo(package.Version, VersionComparison.VersionReleaseMetadata) > 0;
-                            break;
-
-                        case DependencyBehavior.Ignore:
-                            continue;
-                    }
-
-                    if (needToFix)
-                    {
-                        _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, nugetProject.GetInstallPath(conflict.PackageIdentity));
-                    }
-                    else
-                    {
-                        // cancel package installation
-                        installablePackages.Remove(package);
-                    }
-                }
-            }
         }
     }
 }
