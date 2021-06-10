@@ -220,9 +220,9 @@ namespace Orc.NuGetExplorer.Resolver
             IExtensibleProject project,
             DependencyBehavior dependencyBehavior,
             Action<IExtensibleProject, PackageReference> conflictResolveAction,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var availablePackages = Resolve(context, token);
+            var availablePackages = Resolve(context, cancellationToken);
             // note: probably this is not required
             var installablePackages = availablePackages
                         .Select(
