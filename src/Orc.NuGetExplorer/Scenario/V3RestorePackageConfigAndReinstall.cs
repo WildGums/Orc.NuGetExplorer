@@ -168,21 +168,25 @@
 
             if (context == SourceContext.EmptyContext)
             {
-                Log.Warning($"Source context is empty, trying to get fallback plugins Uri");
+                Log.Info($"Source context is empty, trying to create package source from configured extension's fallback Uri");
 
-                context = CreateSourceFromFallbackPluginsUri();
+                context = CreateSourceFromFallbackExtensionUri();
             }
 
             return context;
         }
 
-        private SourceContext CreateSourceFromFallbackPluginsUri()
+        private SourceContext CreateSourceFromFallbackExtensionUri()
         {
             var defaultPluginUri = _configurationService.GetRoamingValue<string>(FallbackUriKey);
 
             if (string.IsNullOrEmpty(defaultPluginUri))
             {
                 return SourceContext.EmptyContext;
+            }
+            else
+            {
+                Log.Info($"Default Uri for installed extension {defaultPluginUri}");
             }
 
             var context = _repositoryContextService.AcquireContext(new PackageSource(defaultPluginUri));

@@ -39,7 +39,7 @@ namespace Orc.NuGetExplorer
 
     public class PackageOperationNotificationService : IPackageOperationNotificationService
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger(); 
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private bool _isNotificationsDisabled = false;
 
         public event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
@@ -52,7 +52,7 @@ namespace Orc.NuGetExplorer
 
         public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            if(IsNotificationsDisabled)
+            if (IsNotificationsDisabled)
             {
                 return;
             }
@@ -116,7 +116,7 @@ namespace Orc.NuGetExplorer
                 Log.Info($"{operationType} notification was muted by notification service");
                 return;
             }
-            OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true }) ;
+            OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
         }
 
         public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
@@ -156,13 +156,13 @@ namespace Orc.NuGetExplorer
 
         private class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
         {
-            public DisableNotificationToken(PackageOperationNotificationService instance) : this(instance, token => token.Instance.IsNotificationsDisabled = true, 
+            public DisableNotificationToken(PackageOperationNotificationService instance) : this(instance, token => token.Instance.IsNotificationsDisabled = true,
                 token => token.Instance.IsNotificationsDisabled = false, null)
             {
 
             }
 
-            public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object tag = null) 
+            public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object tag = null)
                 : base(instance, initialize, dispose, tag)
             {
             }
