@@ -22,7 +22,7 @@
     internal partial class NuGetProjectPackageManager : INuGetPackageManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(0, 1);
+        private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(1, 1);
 
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
@@ -47,8 +47,6 @@
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _messageService = messageService;
             _fileSystemService = fileSystemService;
-
-            UpdateLocker.Release(1);
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
