@@ -19,14 +19,14 @@
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Services;
 
-    internal class NuGetProjectPackageManager : INuGetPackageManager
+    internal partial class NuGetProjectPackageManager : INuGetPackageManager
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(0, 1);
 
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
-        private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly IFileSystemService _fileSystemService;
         private readonly IMessageService _messageService;
 
@@ -35,20 +35,20 @@
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            IPackageOperationNotificationService packageOperationNotificationService, IMessageService messageService, IFileSystemService fileSystemService)
+            IMessageService messageService, IFileSystemService fileSystemService)
         {
             Argument.IsNotNull(() => packageInstallationService);
             Argument.IsNotNull(() => nuGetProjectContextProvider);
             Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
-            Argument.IsNotNull(() => packageOperationNotificationService);
             Argument.IsNotNull(() => messageService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
-            _packageOperationNotificationService = packageOperationNotificationService;
             _messageService = messageService;
             _fileSystemService = fileSystemService;
+
+            UpdateLocker.Release(1);
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
@@ -176,7 +176,6 @@
 
             return installedVersion;
         }
-
 
         public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true)
         {
@@ -365,9 +364,18 @@
 
         private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
-            await UninstallPackageForProjectAsync(project, installedVersion, token);
+            await UpdateLocker.WaitAsync();
 
-            await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
+            try
+            {
+
+                await UninstallPackageForProjectAsync(project, installedVersion, token);
+                await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
+            }
+            finally
+            {
+                UpdateLocker.Release();
+            }
         }
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
@@ -378,84 +386,6 @@
                 ));
 
             return repos;
-        }
-
-        private class BatchOperationToken : IDisposable
-        {
-            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
-
-            public void Add(NuGetProjectEventArgs eventArgs)
-            {
-                _supressedInvokationEventArgs.Add(eventArgs);
-            }
-
-            public bool IsDisposed { get; private set; }
-
-            public IEnumerable<T> GetInvokationList<T>() where T : NuGetProjectEventArgs
-            {
-                if (_supressedInvokationEventArgs.All(args => args is T))
-                {
-                    return _supressedInvokationEventArgs.Cast<T>();
-                }
-
-                Log.Warning("Mixed batched event args");
-                return Enumerable.Empty<T>();
-            }
-
-            public void Dispose()
-            {
-                var last = _supressedInvokationEventArgs.LastOrDefault();
-
-                if (last is not null)
-                {
-                    switch (last)
-                    {
-                        case BatchedInstallNuGetProjectEventArgs b:
-                            b.IsBatchEnd = true;
-                            break;
-
-                        case BatchedUninstallNuGetProjectEventArgs b:
-                            b.IsBatchEnd = true;
-                            break;
-                    }
-                }
-
-                IsDisposed = true;
-            }
-        }
-
-        private class BatchUpdateToken : IDisposable
-        {
-            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
-
-            private readonly PackageIdentity _identity;
-
-            public BatchUpdateToken(PackageIdentity identity)
-            {
-                _identity = identity;
-            }
-
-            public bool IsDisposed { get; private set; }
-
-            public void Add(NuGetProjectEventArgs eventArgs)
-            {
-                _supressedInvokationEventArgs.Add(eventArgs);
-            }
-
-            public IEnumerable<UpdateNuGetProjectEventArgs> GetUpdateEventArgs()
-            {
-                return _supressedInvokationEventArgs
-                    .GroupBy(e => new { e.Package.Id, e.Project })
-                    .Select(group =>
-                            new UpdateNuGetProjectEventArgs(group.Key.Project, _identity, group))
-                    .ToList();
-
-            }
-
-            public void Dispose()
-            {
-                IsDisposed = true;
-            }
         }
     }
 }
