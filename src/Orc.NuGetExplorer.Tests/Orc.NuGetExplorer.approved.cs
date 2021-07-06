@@ -669,6 +669,16 @@ namespace Orc.NuGetExplorer.Loggers
 }
 namespace Orc.NuGetExplorer.Management
 {
+    public class BatchedInstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.InstallNuGetProjectEventArgs
+    {
+        public BatchedInstallNuGetProjectEventArgs(Orc.NuGetExplorer.Management.InstallNuGetProjectEventArgs eventArgs) { }
+        public bool IsBatchEnd { get; set; }
+    }
+    public class BatchedUninstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.UninstallNuGetProjectEventArgs
+    {
+        public BatchedUninstallNuGetProjectEventArgs(Orc.NuGetExplorer.Management.UninstallNuGetProjectEventArgs eventArgs) { }
+        public bool IsBatchEnd { get; set; }
+    }
     public class DestFolder : Orc.NuGetExplorer.IExtensibleProject
     {
         public DestFolder(string destinationFolder, Orc.NuGetExplorer.IDefaultNuGetFramework defaultFramework) { }
@@ -703,9 +713,9 @@ namespace Orc.NuGetExplorer.Management
     }
     public interface INuGetPackageManager : Orc.NuGetExplorer.IPackageManager
     {
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.EventArgs.InstallNuGetProjectEventArgs> Install;
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.EventArgs.UninstallNuGetProjectEventArgs> Uninstall;
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.EventArgs.UpdateNuGetProjectEventArgs> Update;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.InstallNuGetProjectEventArgs> Install;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UninstallNuGetProjectEventArgs> Uninstall;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UpdateNuGetProjectEventArgs> Update;
         System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> AsLocalRepositories(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects);
         System.Threading.Tasks.Task<Orc.NuGetExplorer.Packaging.PackageCollection> CreatePackagesCollectionFromProjectsAsync(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>> GetInstalledPackagesAsync(Orc.NuGetExplorer.IExtensibleProject project, System.Threading.CancellationToken token);
@@ -714,6 +724,17 @@ namespace Orc.NuGetExplorer.Management
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task UninstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task UpdatePackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageid, NuGet.Versioning.NuGetVersion targetVersion, System.Threading.CancellationToken token);
+    }
+    public class InstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.NuGetProjectEventArgs
+    {
+        public InstallNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, bool result) { }
+        public bool Result { get; }
+    }
+    public class NuGetProjectEventArgs : System.EventArgs
+    {
+        public NuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package) { }
+        public NuGet.Packaging.Core.PackageIdentity Package { get; }
+        public Orc.NuGetExplorer.IExtensibleProject Project { get; }
     }
     public class ProjectInstallException : Orc.NuGetExplorer.Management.ProjectManageException
     {
@@ -740,39 +761,15 @@ namespace Orc.NuGetExplorer.Management
         public static Orc.NuGetExplorer.Management.SourceContext EmptyContext { get; set; }
         public void Dispose() { }
     }
-}
-namespace Orc.NuGetExplorer.Management.EventArgs
-{
-    public class BatchedInstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.EventArgs.InstallNuGetProjectEventArgs
-    {
-        public BatchedInstallNuGetProjectEventArgs(Orc.NuGetExplorer.Management.EventArgs.InstallNuGetProjectEventArgs eventArgs) { }
-        public bool IsBatchEnd { get; set; }
-    }
-    public class BatchedUninstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.EventArgs.UninstallNuGetProjectEventArgs
-    {
-        public BatchedUninstallNuGetProjectEventArgs(Orc.NuGetExplorer.Management.EventArgs.UninstallNuGetProjectEventArgs eventArgs) { }
-        public bool IsBatchEnd { get; set; }
-    }
-    public class InstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.EventArgs.NuGetProjectEventArgs
-    {
-        public InstallNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, bool result) { }
-        public bool Result { get; }
-    }
-    public class NuGetProjectEventArgs : System.EventArgs
-    {
-        public NuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package) { }
-        public NuGet.Packaging.Core.PackageIdentity Package { get; }
-        public Orc.NuGetExplorer.IExtensibleProject Project { get; }
-    }
-    public class UninstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.EventArgs.NuGetProjectEventArgs
+    public class UninstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.NuGetProjectEventArgs
     {
         public UninstallNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, bool result) { }
         public bool Result { get; }
     }
-    public class UpdateNuGetProjectEventArgs : Orc.NuGetExplorer.Management.EventArgs.NuGetProjectEventArgs
+    public class UpdateNuGetProjectEventArgs : Orc.NuGetExplorer.Management.NuGetProjectEventArgs
     {
         public UpdateNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package) { }
-        public UpdateNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity beforeUpdate, System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Management.EventArgs.NuGetProjectEventArgs> updateEventArgs) { }
+        public UpdateNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity beforeUpdate, System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Management.NuGetProjectEventArgs> updateEventArgs) { }
         public NuGet.Versioning.NuGetVersion InstalledVersion { get; set; }
         public System.Collections.Generic.List<NuGet.Versioning.NuGetVersion> RemovedVersions { get; set; }
     }

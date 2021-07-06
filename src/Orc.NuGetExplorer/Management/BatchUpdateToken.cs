@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using NuGet.Packaging.Core;
-    using Orc.NuGetExplorer.Management.EventArgs;
 
     internal partial class NuGetProjectPackageManager
     {
@@ -29,11 +28,13 @@
             public IEnumerable<UpdateNuGetProjectEventArgs> GetUpdateEventArgs()
             {
                 return _supressedInvokationEventArgs
-                    .GroupBy(e => new { e.Package.Id, e.Project })
-                    .Select(group =>
-                            new UpdateNuGetProjectEventArgs(group.Key.Project, _identity, group))
+                    .GroupBy(e => new
+                    {
+                        e.Package.Id,
+                        e.Project
+                    })
+                    .Select(group => new UpdateNuGetProjectEventArgs(group.Key.Project, _identity, group))
                     .ToList();
-
             }
 
             public void Dispose()

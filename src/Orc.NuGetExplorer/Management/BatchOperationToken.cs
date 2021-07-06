@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Catel.Logging;
-    using Orc.NuGetExplorer.Management.EventArgs;
 
     internal partial class NuGetProjectPackageManager
     {
@@ -19,7 +18,8 @@
 
             public bool IsDisposed { get; private set; }
 
-            public IEnumerable<T> GetInvokationList<T>() where T : NuGetProjectEventArgs
+            public IEnumerable<T> GetInvokationList<T>()
+                where T : NuGetProjectEventArgs
             {
                 if (_supressedInvokationEventArgs.All(args => args is T))
                 {

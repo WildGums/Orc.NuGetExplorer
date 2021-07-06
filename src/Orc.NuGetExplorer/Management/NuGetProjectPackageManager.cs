@@ -15,7 +15,6 @@
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using Orc.NuGetExplorer.Management.EventArgs;
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Services;
 
@@ -362,10 +361,9 @@
 
         private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
-            await UpdateLocker.WaitAsync();
-
             try
             {
+                await UpdateLocker.WaitAsync(token);
 
                 await UninstallPackageForProjectAsync(project, installedVersion, token);
                 await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
@@ -382,6 +380,7 @@
                  new SourceRepository(
                         new PackageSource(x.ContentPath), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
                 ));
+
 
             return repos;
         }

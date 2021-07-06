@@ -8,7 +8,6 @@
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using Orc.NuGetExplorer.Management.EventArgs;
     using Orc.NuGetExplorer.Packaging;
 
     public interface INuGetPackageManager : IPackageManager

@@ -32,7 +32,7 @@
             catch (Exception ex)
             {
                 // Don't list this as error, it's possible to have pacakges with missed icon.png
-                Log.Warning($"Error occured during value conversion [{nameof(UriToBitmapConverter)}]", ex);
+                Log.Warning($"Error occured during value conversion, {ex}");
                 return DependencyProperty.UnsetValue;
             }
         }

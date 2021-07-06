@@ -195,7 +195,11 @@ namespace Orc.NuGetExplorer
         System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task ExecuteUpdateAsync(Orc.NuGetExplorer.IPackageDetails packageDetails, System.IDisposable packageOperationContext, System.Threading.CancellationToken token);
         string GetActionName(Orc.NuGetExplorer.PackageOperationType operationType);
+        [System.Obsolete("Will be treated as an error from version 4.5.0. Will be removed in version 5.0.0." +
+            "", false)]
         string GetPluralActionName(Orc.NuGetExplorer.PackageOperationType operationType);
+        [System.Obsolete("Will be treated as an error from version 4.5.0. Will be removed in version 5.0.0." +
+            "", false)]
         bool IsRefreshRequired(Orc.NuGetExplorer.PackageOperationType operationType);
     }
     public interface IPackageMetadataMediaDownloadService
