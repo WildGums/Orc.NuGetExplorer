@@ -271,9 +271,18 @@
         public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
         {
             var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
-            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
-            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
+            if (registrationResource is null)
+            {
+                return null;
+            }
 
+            var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            if(httpSourceResource is null)
+            {
+                return null;
+            }
+
+            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
             if (rawPackageMetadata is null)
             {
                 return null;
