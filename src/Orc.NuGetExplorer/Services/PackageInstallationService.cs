@@ -277,7 +277,7 @@
             }
 
             var httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
-            if(httpSourceResource is null)
+            if (httpSourceResource is null)
             {
                 return null;
             }
@@ -333,20 +333,20 @@
                     // but possibly it should be configured in project
                     var dependencyIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
-                    var relatedDepInfos = await dependencyInfoResource.ResolvePackagesAsync(dependencyIdentity, targetFramework, cacheContext, _nugetLogger, cancellationToken);
-
-                    // Truncate inappropriate versions
-                    relatedDepInfos = relatedDepInfos.Where(x => dependency.VersionRange.Satisfies(x.Version)).ToList();
-
-                    foreach (var relatedDepedencyInfoResource in relatedDepInfos)
+                    var isPackageRequiresOwnDependencies = !_apiPackageRegistry.IsRegistered(dependencyIdentity.Id);
+                    if (isPackageRequiresOwnDependencies)
                     {
-                        downloadStack.Push(relatedDepedencyInfoResource);
-                    }
+                        var relatedDepInfos = await dependencyInfoResource.ResolvePackagesWithVersionSatisfyRangeAsync(dependencyIdentity, dependency.VersionRange, targetFramework, cacheContext, _nugetLogger, cancellationToken);
+                        foreach (var relatedDepedencyInfoResource in relatedDepInfos)
+                        {
+                            downloadStack.Push(relatedDepedencyInfoResource);
+                        }
 
-                    if (relatedDepInfos.Any())
-                    {
-                        // we found compatible (at least with target framework) packages and leave checks to Package Resolver in the future
-                        continue;
+                        if (relatedDepInfos.Any())
+                        {
+                            // we found compatible (at least with target framework) packages and leave decision to Package Resolver in the future
+                            continue;
+                        }
                     }
 
                     // Determine behavior if package cannot be resolved in any way
