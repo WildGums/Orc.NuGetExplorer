@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using global::NuGet.Protocol.Core.Types;
     using MethodTimer;
     using NuGet.Common;
@@ -18,6 +19,8 @@
     /// </summary>
     public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResource>
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IReadOnlyList<DependencyInfoResource> _resources;
 
         public IEnumerator<DependencyInfoResource> GetEnumerator()
@@ -55,6 +58,7 @@
             // Check is this package satisfy requirements, if not, retrieve all dependency infos and find required package
             if (singlePackage is not null && versionRange.Satisfies(singlePackage.Version))
             {
+                Log.Debug($"Found package {package} satisfying version range {versionRange}. Going to skip request of package with same identity");
                 return new[] { singlePackage };
             }
 
