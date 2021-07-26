@@ -723,6 +723,7 @@ namespace Orc.NuGetExplorer.Management
         System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion> GetVersionInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token, bool showErrors = true);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task UninstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task UpdatePackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageid, NuGet.Versioning.NuGetVersion targetVersion, System.Threading.CancellationToken token);
     }

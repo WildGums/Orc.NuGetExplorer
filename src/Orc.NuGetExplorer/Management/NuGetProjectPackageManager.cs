@@ -164,6 +164,30 @@
             }
         }
 
+        public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
+        {
+            Argument.IsNotNull(() => project);
+
+            if (string.IsNullOrEmpty(packageId))
+            {
+                throw Log.ErrorAndCreateException((string message) => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");
+            }
+
+            try
+            {
+                var installedReferences = await GetInstalledPackagesAsync(project, token);
+
+                var isInstalled = installedReferences.Any(x => string.Equals(x.PackageIdentity.Id, packageId, StringComparison.OrdinalIgnoreCase));
+
+                return isInstalled;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return false;
+            }
+        }
+
         public async Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
             var installedReferences = await GetInstalledPackagesAsync(project, token);
