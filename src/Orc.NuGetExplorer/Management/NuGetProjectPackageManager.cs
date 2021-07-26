@@ -170,16 +170,16 @@
 
             if (string.IsNullOrEmpty(packageId))
             {
-                throw new ArgumentException("Cannot be null or empty string", nameof(packageId));
+                throw Log.ErrorAndCreateException((string message) => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");
             }
 
             try
             {
                 var installedReferences = await GetInstalledPackagesAsync(project, token);
 
-                var installedPackage = installedReferences.FirstOrDefault(x => string.Equals(x.PackageIdentity.Id, packageId, StringComparison.OrdinalIgnoreCase));
+                var isInstalled = installedReferences.Any(x => string.Equals(x.PackageIdentity.Id, packageId, StringComparison.OrdinalIgnoreCase));
 
-                return installedPackage is not null;
+                return isInstalled;
             }
             catch (Exception ex)
             {
