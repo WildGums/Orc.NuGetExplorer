@@ -6,16 +6,21 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using global::NuGet.Protocol.Core.Types;
+    using MethodTimer;
     using NuGet.Common;
     using NuGet.Frameworks;
     using NuGet.Packaging.Core;
+    using NuGet.Versioning;
 
     /// <summary>
     /// Wrapper against list of dependency recources from multiple repositories
     /// </summary>
     public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResource>
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IReadOnlyList<DependencyInfoResource> _resources;
 
         public IEnumerator<DependencyInfoResource> GetEnumerator()
@@ -40,9 +45,25 @@
             Argument.IsNotNull(() => resource);
 
             _resources = new List<DependencyInfoResource>
-            { 
-                resource 
+            {
+                resource
             };
+        }
+
+        public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesWithVersionSatisfyRangeAsync(PackageIdentity package, VersionRange versionRange, NuGetFramework projectFramework, SourceCacheContext cacheContext,
+            ILogger log, CancellationToken token)
+        {
+            var singlePackage = await ResolvePackageAsync(package, projectFramework, cacheContext, log, token);
+
+            // Check is this package satisfy requirements, if not, retrieve all dependency infos and find required package
+            if (singlePackage is not null && versionRange.Satisfies(singlePackage.Version))
+            {
+                Log.Debug($"Found package {package} satisfying version range {versionRange}. Going to skip request of package with same identity");
+                return new[] { singlePackage };
+            }
+
+            var packagesInRange = (await ResolvePackagesAsync(package, projectFramework, cacheContext, log, token)).Where(package => versionRange.Satisfies(package.Version)).ToList();
+            return packagesInRange;
         }
 
         public async Task<SourcePackageDependencyInfo> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
@@ -61,6 +82,7 @@
             return null;
         }
 
+        [Time]
         public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
             HashSet<SourcePackageDependencyInfo> packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();

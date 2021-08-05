@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Management.EventArgs
+﻿namespace Orc.NuGetExplorer.Management
 {
     using System.Collections.Generic;
     using NuGet.Packaging.Core;

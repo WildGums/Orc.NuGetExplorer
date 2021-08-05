@@ -8,7 +8,6 @@
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
-    using Orc.NuGetExplorer.Management.EventArgs;
     using Orc.NuGetExplorer.Packaging;
 
     public interface INuGetPackageManager : IPackageManager
@@ -22,6 +21,7 @@
         Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token);
 
         Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
+        Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token);
 
         Task<PackageCollection> CreatePackagesCollectionFromProjectsAsync(IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken);
 

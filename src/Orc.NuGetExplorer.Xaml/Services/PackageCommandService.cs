@@ -79,9 +79,7 @@ namespace Orc.NuGetExplorer
                     await ExecuteUpdateAsync(packageDetails, default);
                     break;
             }
-
         }
-
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
@@ -199,12 +197,8 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
 
-            if (package.IsInstalled is null)
-            {
-                package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package);
-
-                ValidatePackage(package);
-            }
+            package.IsInstalled ??= await _packageQueryService.PackageExistsAsync(_localRepository, package);
+            ValidatePackage(package);
 
             return !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
         }

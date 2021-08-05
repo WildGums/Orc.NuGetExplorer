@@ -178,7 +178,7 @@
                     Versions = VersionsInfo.Select(x => x.Version).OrderByDescending(x => x).ToList();
                 }
 
-                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
+                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;          
             }
             catch (NullReferenceException ex)
             {
@@ -197,7 +197,7 @@
             var versinfo = await _packageMetadata.GetVersionsAsync();
 
             //Workaround for Updates metadata
-            if (!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
+            if(!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
             {
                 versinfo = await updateMetadata.LazyVersionsFactory;
             }
