@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
@@ -15,6 +17,7 @@
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Configuration;
+    using Orc.NuGetExplorer.Messaging;
     using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -111,6 +114,7 @@
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
             _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
+            _configurationService.SetIsHideInstalled(Settings.IsHideInstalled);
 
             if (_nuGetSettings is IVersionedSettings versionedSettings)
             {
@@ -131,7 +135,24 @@
             _pageSetup.Values.ForEach(page =>
                 Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
 
+            foreach (var page in Pages)
+            {
+                page.PropertyChanged += OnPageActiveChanged;
+            }
+
             StartPage = _startPage;
+        }
+
+        private void OnPageActiveChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.HasPropertyChanged(nameof(ExplorerPage.IsActive)))
+            {
+                var activeTab = Pages.FirstOrDefault(p => p.IsActive)?.Parameters.Tab;
+                if (activeTab is not null)
+                {
+                    ActivatedExplorerTabMessage.SendWith(activeTab);
+                }
+            }
         }
 
         // TODO: Provide a better way to create command (Don't hold gesture for whole application)

@@ -60,6 +60,8 @@
             </nugetc:InfiniteScrollListBox.ItemTemplate>
             <nugetc:InfiniteScrollListBox.ItemContainerStyle>
                 <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Visibility"
+                            Value="{Binding IsDelisted, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=true}" />
                 </Style>
             </nugetc:InfiniteScrollListBox.ItemContainerStyle>
         </nugetc:InfiniteScrollListBox>
