@@ -103,11 +103,30 @@
             }
         }
 
-        protected override Task InitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            InitializePages();
+            // Pages initializaiton
+            BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
+            InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
+            UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
 
-            return base.InitializeAsync();
+            _pageSetup.Values.ForEach(page =>
+                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
+
+            foreach (var page in Pages)
+            {
+                page.PropertyChanged += OnExplorerPagePropertyChanged;
+            }
+
+            StartPage = _startPage;
+        }
+
+        protected override async Task CloseAsync()
+        {
+            foreach (var page in Pages)
+            {
+                page.PropertyChanged -= OnExplorerPagePropertyChanged;
+            }
         }
 
         protected override Task OnClosingAsync()
@@ -126,32 +145,20 @@
             return base.OnClosingAsync();
         }
 
-        private void InitializePages()
-        {
-            BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
-            InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
-            UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
-
-            _pageSetup.Values.ForEach(page =>
-                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
-
-            foreach (var page in Pages)
-            {
-                page.PropertyChanged += OnPageActiveChanged;
-            }
-
-            StartPage = _startPage;
-        }
-
-        private void OnPageActiveChanged(object sender, PropertyChangedEventArgs e)
+        private void OnExplorerPagePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.HasPropertyChanged(nameof(ExplorerPage.IsActive)))
             {
-                var activeTab = Pages.FirstOrDefault(p => p.IsActive)?.Parameters.Tab;
-                if (activeTab is not null)
-                {
-                    ActivatedExplorerTabMessage.SendWith(activeTab);
-                }
+                SendIsActivePageChanged();
+            }
+        }
+
+        private void SendIsActivePageChanged()
+        {
+            var activeTab = Pages.FirstOrDefault(p => p.IsActive)?.Parameters.Tab;
+            if (activeTab is not null)
+            {
+                ActivatedExplorerTabMessage.SendWith(activeTab);
             }
         }
 

@@ -98,12 +98,14 @@
 
         private void OnNuGetSettingsChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.HasPropertyChanged(nameof(ExplorerSettingsContainer.IsHideInstalled)))
+            if (!e.HasPropertyChanged(nameof(ExplorerSettingsContainer.IsHideInstalled)))
             {
-                if (Package.Status == PackageStatus.LastVersionInstalled || Package.Status == PackageStatus.UpdateAvailable)
-                {
-                    Package.IsDelisted = _nugetSettings.IsHideInstalled;
-                }
+                return;
+            }
+
+            if (Package.Status == PackageStatus.LastVersionInstalled || Package.Status == PackageStatus.UpdateAvailable)
+            {
+                Package.IsDelisted = _nugetSettings.IsHideInstalled;
             }
         }
 
