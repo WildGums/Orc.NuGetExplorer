@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using System.ComponentModel;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
@@ -119,7 +118,7 @@
                     _nugetSettings.PropertyChanged -= OnNuGetSettingsChanged;
                 }
             }
-            
+
             return base.CloseAsync();
         }
 
