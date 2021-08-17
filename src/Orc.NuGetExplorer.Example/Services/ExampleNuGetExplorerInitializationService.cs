@@ -22,7 +22,7 @@
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            IAccentColorService accentColorService) 
+            IAccentColorService accentColorService)
             : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
