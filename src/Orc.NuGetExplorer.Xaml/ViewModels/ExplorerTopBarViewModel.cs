@@ -67,7 +67,7 @@
         [ViewModelToModel]
         public bool IsHideInstalled { get; set; }
 
-        public bool IsHideInstalledOptionEnabled { get; set; }
+        public bool IsHideInstalledOptionEnabled { get; private set; }
 
         [ViewModelToModel]
         public string SearchString { get; set; }
@@ -95,6 +95,12 @@
             ObservedFeed = SetObservedFeed(ActiveFeeds, DefaultFeed);
 
             return base.InitializeAsync();
+        }
+
+        protected override Task CloseAsync()
+        {
+            _messageMediator.Unregister<ActivatedExplorerTabMessage>(this, OnActivatedExplorerTabMessageReceived);
+            return base.CloseAsync();
         }
 
         protected void CommandInitialize()
