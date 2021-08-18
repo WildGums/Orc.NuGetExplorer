@@ -15,7 +15,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService) 
+        public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService)
             : base(viewLocator, dispatcherService)
         {
         }

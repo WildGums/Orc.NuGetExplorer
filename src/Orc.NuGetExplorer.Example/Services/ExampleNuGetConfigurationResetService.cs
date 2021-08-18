@@ -6,7 +6,7 @@
     {
         public async Task ResetAsync()
         {
-            
+
         }
     }
 }

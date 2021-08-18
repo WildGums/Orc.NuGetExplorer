@@ -29,6 +29,7 @@ namespace Orc.NuGetExplorer
             public const string FallbackUrl = "Plugins.FeedUrl";
 
             public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";
+            public const string HideInstalledPackages = "NuGetExplorer.HideInstalled";
 
             public const string CredentialStorage = "NuGetExplorer.CredentialStoragePolicy";
 

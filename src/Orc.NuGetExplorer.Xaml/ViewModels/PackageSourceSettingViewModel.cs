@@ -192,7 +192,7 @@
             SettingsFeeds.AddRange(Feeds);
 
             _configurationService.SavePackageSources(Feeds);
-            foreach(var feed in RemovedFeeds)
+            foreach (var feed in RemovedFeeds)
             {
                 _configurationService.RemovePackageSource(feed);
             }

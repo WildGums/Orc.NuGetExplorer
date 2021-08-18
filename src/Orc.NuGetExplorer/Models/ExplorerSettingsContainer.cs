@@ -21,6 +21,8 @@
 
         public bool IsPreReleaseIncluded { get; set; }
 
+        public bool IsHideInstalled { get; set; }
+
         public bool IsRecommendedOnly { get; set; }
 
         public string SearchString { get; set; } = string.Empty;

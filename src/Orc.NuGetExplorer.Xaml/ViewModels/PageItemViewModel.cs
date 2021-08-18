@@ -10,6 +10,7 @@
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Providers;
 
     internal class PageItemViewModel : ViewModelBase
     {
@@ -17,12 +18,15 @@
         private static readonly string InstalledVersionText = "Installed version";
         private static readonly string LastVersionText = "Latest version";
         private static readonly string UpdateVersionText = "Update version";
+        private readonly ExplorerSettingsContainer _nugetSettings;
 
-        public PageItemViewModel(NuGetPackage package)
+        public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider)
         {
             Argument.IsNotNull(() => package);
+            Argument.IsNotNull(() => settingsProvider);
 
             Package = package;
+            _nugetSettings = settingsProvider.Model;
 
             //command
             CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
@@ -71,6 +75,16 @@
 
         protected override Task InitializeAsync()
         {
+            // Handle only on Browse page
+            if (ParentViewModel is ExplorerPageViewModel explorerParent)
+            {
+                if (explorerParent.Page.Parameters.Tab == ExplorerTab.Browse)
+                {
+                    Package.StatusChanged += OnPackageStatusChanged;
+                    _nugetSettings.PropertyChanged += OnNuGetSettingsChanged;
+                }
+            }
+
             var packageOrigin = Package.FromPage;
 
             IsDownloadCountShowed = packageOrigin == MetadataOrigin.Browse;
@@ -80,6 +94,42 @@
             GetSecondaryVersionInfo(packageOrigin, Package);
 
             return base.InitializeAsync();
+        }
+
+        private void OnNuGetSettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!e.HasPropertyChanged(nameof(ExplorerSettingsContainer.IsHideInstalled)))
+            {
+                return;
+            }
+
+            if (Package.Status == PackageStatus.LastVersionInstalled || Package.Status == PackageStatus.UpdateAvailable)
+            {
+                Package.IsDelisted = _nugetSettings.IsHideInstalled;
+            }
+        }
+
+        protected override Task CloseAsync()
+        {
+            // Handle only on Browse page
+            if (ParentViewModel is ExplorerPageViewModel explorerParent)
+            {
+                if (explorerParent.Page.Parameters.Tab == ExplorerTab.Browse)
+                {
+                    Package.StatusChanged -= OnPackageStatusChanged;
+                    _nugetSettings.PropertyChanged -= OnNuGetSettingsChanged;
+                }
+            }
+
+            return base.CloseAsync();
+        }
+
+        private void OnPackageStatusChanged(object sender, PackageModelStatusEventArgs e)
+        {
+            if (e.NewStatus == PackageStatus.LastVersionInstalled || e.NewStatus == PackageStatus.UpdateAvailable)
+            {
+                Package.IsDelisted = _nugetSettings.IsHideInstalled;
+            }
         }
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)

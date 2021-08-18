@@ -314,6 +314,14 @@ namespace Orc.NuGetExplorer.MVVM
         protected override System.Windows.Freezable CreateInstanceCore() { }
     }
 }
+namespace Orc.NuGetExplorer.Messaging
+{
+    public class ActivatedExplorerTabMessage : Catel.Messaging.MessageBase<Orc.NuGetExplorer.Messaging.ActivatedExplorerTabMessage, Orc.NuGetExplorer.ExplorerTab>
+    {
+        public ActivatedExplorerTabMessage() { }
+        public ActivatedExplorerTabMessage(Orc.NuGetExplorer.ExplorerTab data) { }
+    }
+}
 namespace Orc.NuGetExplorer.Models
 {
     public class ExplorerPage : Catel.Data.ModelBase

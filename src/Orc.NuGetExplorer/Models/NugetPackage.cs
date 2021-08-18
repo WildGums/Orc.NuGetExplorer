@@ -13,7 +13,7 @@
     using Orc.NuGetExplorer.Enums;
     using Packaging;
 
-    public sealed class NuGetPackage : ModelBase, IPackageDetails
+    public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackage
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -57,8 +57,22 @@
         }
 
         public static event EventHandler AnyNuGetPackageCheckedChanged;
+        public event EventHandler<PackageModelStatusEventArgs> StatusChanged;
 
-        public bool IsChecked { get; set; }
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get
+            {
+                if (IsDelisted)
+                {
+                    return false;
+                }
+
+                return _isChecked;
+            }
+            set => _isChecked = value;
+        }
 
         public MetadataOrigin FromPage { get; }
 
@@ -77,7 +91,6 @@
         public PackageIdentity Identity => _packageMetadata?.Identity;
 
         private List<NuGetVersion> _versions = new List<NuGetVersion>();
-
         public IReadOnlyList<NuGetVersion> Versions
         {
             get
@@ -93,6 +106,8 @@
         public IEnumerable<VersionInfo> VersionsInfo { get; private set; } = new List<VersionInfo>();
 
         public bool IsLoaded { get; private set; }
+
+        public bool IsDelisted { get; set; }
 
         public NuGetVersion LastVersion { get; private set; }
 
@@ -178,7 +193,7 @@
                     Versions = VersionsInfo.Select(x => x.Version).OrderByDescending(x => x).ToList();
                 }
 
-                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;          
+                LastVersion = Versions?.FirstOrDefault() ?? Identity.Version;
             }
             catch (NullReferenceException ex)
             {
@@ -197,7 +212,7 @@
             var versinfo = await _packageMetadata.GetVersionsAsync();
 
             //Workaround for Updates metadata
-            if(!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
+            if (!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
             {
                 versinfo = await updateMetadata.LazyVersionsFactory;
             }
@@ -250,6 +265,7 @@
 
             if (string.Equals(e.PropertyName, nameof(Status)))
             {
+                RaiseStatusChanged((PackageStatus)e.OldValue, (PackageStatus)e.NewValue);
                 Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
             }
         }
@@ -257,6 +273,11 @@
         private void OnIsCheckedChanged()
         {
             AnyNuGetPackageCheckedChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseStatusChanged(PackageStatus oldValue, PackageStatus newValue)
+        {
+            StatusChanged?.Invoke(this, new PackageModelStatusEventArgs(oldValue, newValue));
         }
     }
 }
