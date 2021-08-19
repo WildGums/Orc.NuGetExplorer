@@ -42,6 +42,7 @@
         private readonly IDefferedPackageLoaderService _defferedPackageLoaderService;
         private readonly IDispatcherService _dispatcherService;
         private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
+        private readonly ICommandManager _commandManager;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IRepositoryContextService _repositoryService;
@@ -81,6 +82,7 @@
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
+            _commandManager = commandManager;
             _repositoryService = repositoryService;
             _defferedPackageLoaderService = defferedPackageLoaderService;
             _packageOperationContextService = packageOperationContextService;
@@ -94,8 +96,6 @@
             LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
             CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
             RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
-
-            commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
 
             Title = page.Parameters.Tab.Name;
             _initialSearchParams = page.Parameters.InitialSearchParameters; //if null, standard Settings will not be overriden
@@ -161,7 +161,6 @@
                 }
             }
         }
-
 
         //view to view model
         public NuGetPackage SelectedPackageItem { get; set; }
@@ -245,6 +244,8 @@
         {
             try
             {
+                _commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage);
+
                 if (IsActive && _initialSearchParams is not null)
                 {
                     // Set page initial search params as Settings parameters
@@ -319,15 +320,16 @@
             }
         }
 
-        protected override async Task OnClosedAsync(bool? result)
+        protected override async Task CloseAsync()
         {
+            _commandManager.UnregisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage);
             PackageItems.CollectionChanged -= OnPackageItemsCollectionChanged;
             Settings.PropertyChanged -= OnSettingsPropertyPropertyChanged;
             SingleDelayTimer.Elapsed -= OnTimerElapsed;
             _packageOperationContextService.OperationContextDisposing -= OnOperationContextDisposing;
         }
 
-        private void StartLoadingTimer()
+        private static void StartLoadingTimer()
         {
             if (SingleDelayTimer.Enabled)
             {
@@ -576,7 +578,7 @@
             }
             );
 
-            MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
+            static MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
             {
                 switch (page)
                 {
@@ -679,6 +681,11 @@
 
         private async Task RefreshCurrentPageExecuteAsync()
         {
+            if (!IsActive)
+            {
+                return;
+            }
+
             _nuGetCacheManager.ClearHttpCache();
             StartLoadingTimerOrInvalidateData();
         }

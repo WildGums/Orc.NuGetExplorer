@@ -20,13 +20,13 @@
 
         public NuGetProjectContext(FileConflictAction fileConflictAction, IMessageDialogService messageDialogService, ILogger logger)
         {
-            Argument.IsNotNull(() => messageDialogService);
             Argument.IsNotNull(() => logger);
+            Argument.IsNotNull(() => messageDialogService);
 
             FileConflictAction = fileConflictAction;
 
-            _messageDialogService = messageDialogService;
             _nugetLogger = logger;
+            _messageDialogService = messageDialogService;
         }
 
         public PackageExtractionContext PackageExtractionContext { get; set; }

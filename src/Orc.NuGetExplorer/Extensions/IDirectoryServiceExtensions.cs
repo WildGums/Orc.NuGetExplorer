@@ -56,11 +56,6 @@
                     // Exceed the system maximum length
                     failedEntries.Add(folderPath);
                 }
-
-                catch (IOException)
-                {
-                    throw;
-                }
             }
         }
 

@@ -43,4 +43,9 @@ namespace Orc.NuGetExplorer
             public const string LastRepositoryDefaultValue = RepositoryName.All;
         }
     }
+
+    internal static class Commands
+    {
+        public const string RefreshCurrentPageCommandName = "RefreshCurrentPage";
+    }
 }

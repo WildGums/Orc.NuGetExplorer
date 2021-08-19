@@ -262,21 +262,6 @@
 
         #region Methods
 
-        private void SetNuGetValues(string section, IList<AddItem> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            EnsureSectionExists(section);
-
-            var valuesListKey = GetSectionValuesListKey(section);
-            UpdateKeyList(values, valuesListKey);
-
-            foreach (var item in values)
-            {
-                SetNuGetValue(section, item.Key, item.Value);
-            }
-        }
-
         private void EnsureSectionExists(string section)
         {
             Argument.IsNotNullOrWhitespace(() => section);
@@ -288,22 +273,6 @@
                 sections.Add(section);
                 sectionsString = string.Join(Separator.ToString(), sections);
                 _configurationService.SetRoamingValue(SectionListKey, sectionsString);
-            }
-        }
-
-
-        private void SetNuGetValues(string section, string subsection, IList<AddItem> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            EnsureSectionExists(section);
-
-            var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            UpdateKeyList(values, valuesListKey);
-            foreach (var keyValuePair in values)
-            {
-                SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
             }
         }
 
@@ -324,11 +293,6 @@
             var sortedKeys = enabledPackageSourcesKeys.OrderBy(key => packageSourceNames.IndexOf(key));
             var sortedKeysStringValue = string.Join(Separator, sortedKeys);
             _configurationService.SetRoamingValue(packageSourcesKeyListKey, sortedKeysStringValue);
-        }
-
-        private string ConvertToFullPath(string result)
-        {
-            return result;
         }
 
         private IList<AddItem> GetNuGetValues(string sectionName, bool isPath = false)
@@ -365,11 +329,6 @@
             var combinedKey = GetSectionValueKey(section, key);
             var value = _configurationService.GetRoamingValue<string>(combinedKey);
 
-            if (isPath)
-            {
-                value = ConvertToFullPath(value);
-            }
-
             if (IsSourceItem(section))
             {
                 return new SourceItem(key, value);
@@ -387,17 +346,42 @@
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
             var value = _configurationService.GetRoamingValue<string>(combinedKey);
 
-            if (isPath)
-            {
-                value = ConvertToFullPath(value);
-            }
-
             if (IsSourceItem(section))
             {
                 return new SourceItem(key, value);
             }
 
             return new AddItem(key, value);
+        }
+
+        private void SetNuGetValues(string section, IList<AddItem> values)
+        {
+            Argument.IsNotNullOrWhitespace(() => section);
+
+            EnsureSectionExists(section);
+
+            var valuesListKey = GetSectionValuesListKey(section);
+            UpdateKeyList(values, valuesListKey);
+
+            foreach (var item in values)
+            {
+                SetNuGetValue(section, item.Key, item.Value);
+            }
+        }
+
+        private void SetNuGetValues(string section, string subsection, IList<AddItem> values)
+        {
+            Argument.IsNotNullOrWhitespace(() => section);
+            Argument.IsNotNullOrWhitespace(() => subsection);
+
+            EnsureSectionExists(section);
+
+            var valuesListKey = GetSubsectionValuesListKey(section, subsection);
+            UpdateKeyList(values, valuesListKey);
+            foreach (var keyValuePair in values)
+            {
+                SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
+            }
         }
 
         private void SetNuGetValue(string section, string key, string value)

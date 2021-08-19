@@ -14,7 +14,6 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        //private readonly IFileDirectoryService _fileDirectoryService;
         private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
@@ -101,7 +100,6 @@
             finally
             {
                 // log all errors
-
                 LogHelper.LogUnclearedPaths(failedDeletes, Log);
             }
 

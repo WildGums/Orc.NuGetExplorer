@@ -5,10 +5,7 @@
     using Catel.Windows;
     using Orc.NuGetExplorer.ViewModels;
 
-    /// <summary>
-    /// Interaction logic for ExplorerWindow.xaml
-    /// </summary>
-    internal partial class ExplorerWindow : DataWindow
+    internal partial class ExplorerWindow
     {
         static ExplorerWindow()
         {

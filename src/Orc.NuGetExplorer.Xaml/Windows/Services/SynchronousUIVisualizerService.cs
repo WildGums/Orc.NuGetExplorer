@@ -22,7 +22,7 @@
 
         public virtual bool? ShowDialog(string name, object data, EventHandler<UICompletedEventArgs> completedProc = null)
         {
-            Argument.IsNotNullOrWhitespace("name", name);
+            Argument.IsNotNullOrWhitespace(nameof(name), name);
 
             EnsureViewIsRegistered(name);
 
@@ -54,7 +54,7 @@
 
         public virtual bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs> completedProc = null)
         {
-            Argument.IsNotNull("viewModel", viewModel);
+            Argument.IsNotNull(nameof(viewModel), viewModel);
 
             var viewModelType = viewModel.GetType();
             var viewModelTypeName = viewModelType.FullName;

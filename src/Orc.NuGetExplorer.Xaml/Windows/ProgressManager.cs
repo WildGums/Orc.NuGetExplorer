@@ -18,9 +18,11 @@
 
         public void ShowBar(IViewModel vm)
         {
-            var window = GetCurrentActiveDataWindow();
+            var window = Application.Current.Windows.GetCurrentActiveDataWindow();
 
-            foreach (var behavior in GetOverlayBehaviors(window))
+            Log.Debug($"Current active window is { window?.Title ?? "null" }");
+
+            foreach (var behavior in Interaction.GetBehaviors(window).OfType<AnimatedOverlayBehavior>())
             {
                 behavior.SetCurrentValue(BehaviorBase<DataWindow>.IsEnabledProperty, true);
 
@@ -34,26 +36,14 @@
 
             if (_storedManagedWindows.TryGetValue(vm, out window))
             {
-                Log.Info($"Current window is { window?.ToString() ?? "null" }");
+                Log.Debug($"Current active window is { window?.Title ?? "null" }");
 
-                foreach (var behavior in GetOverlayBehaviors(window))
+                foreach (var behavior in Interaction.GetBehaviors(window).OfType<AnimatedOverlayBehavior>())
                 {
                     behavior.SetCurrentValue(BehaviorBase<DataWindow>.IsEnabledProperty, false);
                     _storedManagedWindows.Remove(vm);
                 }
             }
-        }
-
-        private DataWindow GetCurrentActiveDataWindow()
-        {
-            return Application.Current.Windows.OfType<DataWindow>().FirstOrDefault(x => x.IsActive);
-        }
-
-        private IEnumerable<AnimatedOverlayBehavior> GetOverlayBehaviors(DataWindow window)
-        {
-            var behaviors = Interaction.GetBehaviors(window);
-
-            return behaviors.OfType<AnimatedOverlayBehavior>();
         }
     }
 }

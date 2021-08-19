@@ -31,9 +31,7 @@
             set { SetValue(SpeedProperty, value); }
         }
 
-        /// <summary>
-        /// Identifies the <see cref="Speed"/> dependency property. Represents basic rotation speed
-        /// </summary>
+        /// <summary>Identifies the <see cref="Speed"/> dependency property.</summary>
         public static readonly DependencyProperty SpeedProperty =
             DependencyProperty.Register(nameof(Speed), typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
 

@@ -8,17 +8,9 @@
     using Models;
     using Orc.NuGetExplorer.Controls;
 
-    /// <summary>
-    /// Interaction logic for ExplorerPageView.xaml
-    /// </summary>
-    internal partial class ExplorerPageView : Catel.Windows.Controls.UserControl
+    internal partial class ExplorerPageView
     {
-        private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
-        private const string ArrowDownResourceKey = "ArrowDownBadgeContent";
         private const int IndicatorOffset = 2;
-
-        private readonly FrameworkElement _arrowUpResource;
-        private readonly FrameworkElement _arrowDownResource;
 
         private ScrollViewer _infinityboxScrollViewer;
         private bool _isViewportWidthListened = false;
@@ -32,8 +24,7 @@
         {
             InitializeComponent();
 
-            _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;
-            _arrowDownResource = FindResource(ArrowDownResourceKey) as FrameworkElement;
+            infinitybox.SizeChanged += InfinityboxSizeChanged;
         }
 
         [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
@@ -49,10 +40,20 @@
         public static readonly DependencyProperty SelectedItemOnPageProperty =
             DependencyProperty.Register(nameof(SelectedItemOnPage), typeof(NuGetPackage), typeof(ExplorerPageView), new PropertyMetadata(null));
 
-        private void Border_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnBorderIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            HandleOverlayBorderSize();
+        }
+
+        private void InfinityboxSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            HandleOverlayBorderSize();
+        }
+
+        private void HandleOverlayBorderSize()
         {
             //fix loading indicator part size
-            _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
+            _infinityboxScrollViewer ??= WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
 
             if (_infinityboxScrollViewer is null)
             {
@@ -103,6 +104,7 @@
         protected override void OnUnloaded(EventArgs e)
         {
             UnsubscribeFromScrollViewerProperyChanged();
+            infinitybox.SizeChanged -= InfinityboxSizeChanged;
         }
     }
 }

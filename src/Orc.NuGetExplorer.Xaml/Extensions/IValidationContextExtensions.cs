@@ -14,16 +14,10 @@
 
             if (stringLines is null)
             {
-                return null;
+                return new string[0];
             }
 
             var valuableLines = stringLines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-            if (!valuableLines.Any())
-            {
-                return null;
-            }
-
             return valuableLines;
         }
     }

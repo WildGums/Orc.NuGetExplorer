@@ -55,12 +55,7 @@ namespace Orc.NuGetExplorer
             return Enum.GetName(typeof(PackageOperationType), operationType);
         }
 
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "ExecuteAsync")]
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
-        {
-            await ExecuteAsync(operationType, packageDetails);
-        }
-
+        // TODO: Add context with parameters - source/prerelease
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);

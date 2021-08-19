@@ -16,8 +16,6 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly IconDownloader IconDownloader = new IconDownloader();
-
         private readonly IconCache _iconCache;
 
         private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
@@ -64,7 +62,7 @@
 
             using (var webClient = new WebClient())
             {
-                var data = await IconDownloader.GetByUrlAsync(uri, webClient);
+                var data = await webClient.LogAndDownloadDataTaskAsync(uri);
                 _iconCache.SaveToCache(uri, data);
             }
         }
@@ -79,7 +77,7 @@
 
             using (var webClient = new WebClient())
             {
-                var data = IconDownloader.GetByUrl(uri, webClient);
+                var data = webClient.LogAndDownloadData(uri);
                 _iconCache.SaveToCache(uri, data);
             }
         }

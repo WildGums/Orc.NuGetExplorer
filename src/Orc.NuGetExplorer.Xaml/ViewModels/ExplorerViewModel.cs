@@ -5,7 +5,6 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Windows.Input;
     using Catel;
     using Catel.Collections;
     using Catel.Configuration;
@@ -26,7 +25,6 @@
 
         private const string DefaultStartPage = ExplorerPageName.Browse;
         private readonly IConfigurationService _configurationService;
-        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly ISettings _nuGetSettings;
         private readonly ITypeFactory _typeFactory;
 
@@ -48,11 +46,10 @@
             Argument.IsNotNull(() => typeFactory);
 
             _configurationService = configurationService;
-            _initializationService = initializationService;
             _nuGetSettings = nuGetSettings;
             _typeFactory = typeFactory;
 
-            CreateApplicationWideCommands(commandManager);
+            CreateCompositeCommands(commandManager);
 
             if (settingsProvider is ExplorerSettingsContainerModelProvider settingsLazyProvider)
             {
@@ -162,12 +159,11 @@
             }
         }
 
-        // TODO: Provide a better way to create command (Don't hold gesture for whole application)
-        private static void CreateApplicationWideCommands(ICommandManager cm)
+        private static void CreateCompositeCommands(ICommandManager cm)
         {
-            if (!cm.IsCommandCreated("RefreshCurrentPage"))
+            if (!cm.IsCommandCreated(Commands.RefreshCurrentPageCommandName))
             {
-                cm.CreateCommand("RefreshCurrentPage", new Catel.Windows.Input.InputGesture(Key.F5));
+                cm.CreateCommand(Commands.RefreshCurrentPageCommandName);
             }
         }
     }

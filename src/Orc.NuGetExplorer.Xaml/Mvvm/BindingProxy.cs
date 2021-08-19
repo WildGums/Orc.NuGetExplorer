@@ -2,7 +2,7 @@
 {
     using System.Windows;
 
-    public class BindingProxy : Freezable
+    internal class BindingProxy : Freezable
     {
         public object Data
         {

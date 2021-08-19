@@ -13,9 +13,7 @@
     internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
         private Grid _topInternalGrid;
-
         private SizeChangedEventHandler _sizeHandler;
-
         private Storyboard _overlayStoryboard;
 
         private IAnimationService AnimationService { get; set; }
@@ -40,8 +38,8 @@
 
             if (behavior.IsAssociatedObjectLoaded)
             {
-                behavior.DetachOverlay(e.OldValue);
-                behavior.AttachOverlay(e.NewValue);
+                behavior.DetachOverlay(e.OldValue as UIElement);
+                behavior.AttachOverlay(e.NewValue as UIElement);
             }
         }
 
@@ -63,8 +61,8 @@
 
             if (behavior.IsAssociatedObjectLoaded)
             {
-                behavior.AttachActiveContainer(e.OldValue);
-                behavior.DetachActiveContainer(e.NewValue);
+                behavior.AttachActiveContainer(e.OldValue as UIElement);
+                behavior.DetachActiveContainer(e.NewValue as UIElement);
             }
         }
 
@@ -97,43 +95,27 @@
             AnimationService = this.GetServiceLocator().ResolveType<IAnimationService>();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void AttachOverlay(object overlay)
+        private void AttachOverlay(UIElement overlay)
         {
-            if (overlay is UIElement elementOverlay)
-            {
-                _topInternalGrid.Children.Add(elementOverlay);
+            _topInternalGrid.Children.Add(overlay);
 
-                //manually hide overlay
-                HideOverlay();
-            }
+            //manually hide overlay
+            HideOverlay();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void DetachOverlay(object overlay)
+        private void DetachOverlay(UIElement overlay)
         {
-            if (overlay is UIElement elementOverlay)
-            {
-                _topInternalGrid.Children.Remove(elementOverlay);
-            }
+            _topInternalGrid.Children.Remove(overlay);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void AttachActiveContainer(object contentContainer)
+        private void AttachActiveContainer(UIElement contentContainer)
         {
-            if (contentContainer is UIElement elementContentContainer)
-            {
-                _topInternalGrid.Children.Add(elementContentContainer);
-            }
+            _topInternalGrid.Children.Add(contentContainer);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void DetachActiveContainer(object contentContainer)
+        private void DetachActiveContainer(UIElement contentContainer)
         {
-            if (contentContainer is UIElement elementContentContainer)
-            {
-                _topInternalGrid.Children.Add(elementContentContainer);
-            }
+            _topInternalGrid.Children.Add(contentContainer);
         }
 
         private void GetInternalGrid()
@@ -285,30 +267,25 @@
             }
         }
 
-        private static bool TryGetOverlayFadingStoryboardAnimation(Storyboard sb, out DoubleAnimation animation)
+        private static bool TryGetOverlayFadingStoryboardAnimation(Storyboard storyBoard, out DoubleAnimation animation)
         {
             animation = null;
 
-            if (sb is null)
+            if (storyBoard is null)
             {
                 return false;
             }
 
-            sb.Dispatcher.VerifyAccess();
+            storyBoard.Dispatcher.VerifyAccess();
 
-            animation = sb.Children.OfType<DoubleAnimation>().FirstOrDefault();
+            animation = storyBoard.Children.OfType<DoubleAnimation>().FirstOrDefault();
             if (animation is null)
             {
                 return false;
             }
 
-            return animation is null == false &&
-                   sb.Duration.HasTimeSpan && sb.Duration.TimeSpan.Ticks > 0
-                   || (sb.AccelerationRatio > 0)
-                   || (sb.DecelerationRatio > 0)
-                   || (animation.Duration.HasTimeSpan && animation.Duration.TimeSpan.Ticks > 0)
-                   || animation.AccelerationRatio > 0
-                   || animation.DecelerationRatio > 0;
+            return storyBoard.IsPreparedToBegin() ||
+                animation.IsPreparedToBegin();
         }
 
         private void HideActiveContainer()

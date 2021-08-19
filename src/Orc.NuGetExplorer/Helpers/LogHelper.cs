@@ -5,7 +5,7 @@
     using System.Linq;
     using Catel.Logging;
 
-    public class LogHelper
+    public static class LogHelper
     {
         public static void LogUnclearedPaths(List<string> unclearedPaths, ILog log)
         {

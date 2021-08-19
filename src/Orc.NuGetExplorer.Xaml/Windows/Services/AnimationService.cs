@@ -33,7 +33,7 @@
             return sb;
         }
 
-        private void ValidateFadeAnimation(Storyboard sb, DependencyObject dependencyObject, string key)
+        private static void ValidateFadeAnimation(Storyboard sb, DependencyObject dependencyObject, string key)
         {
             if (sb is not null && sb.Children.Count > 0)
             {

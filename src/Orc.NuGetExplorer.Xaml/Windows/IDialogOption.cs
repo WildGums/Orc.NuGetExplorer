@@ -24,7 +24,7 @@
         string Caption { get; }
     }
 
-    internal interface IDialogOption<T> : IDialogOption
+    internal interface IDialogOption<out T> : IDialogOption
     {
         /// <summary>
         /// Additional action performed when dialog option was selected

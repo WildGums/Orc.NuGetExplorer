@@ -1,20 +1,15 @@
-﻿namespace Orc.NuGetExplorer.Web
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Net;
     using System.Threading.Tasks;
     using Catel.Logging;
 
-    public class IconDownloader
+    public static class WebClientExtensions
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public IconDownloader()
-        {
-            SetProtocolSecurity();
-        }
-
-        public async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
+        public async static Task<byte[]> LogAndDownloadDataTaskAsync(this WebClient client, Uri uri)
         {
             Log.Debug($"Webclient request on {uri}");
 
@@ -23,18 +18,13 @@
             return array;
         }
 
-        public byte[] GetByUrl(Uri uri, WebClient client)
+        public static byte[] LogAndDownloadData(this WebClient client, Uri uri)
         {
             Log.Debug($"Webclient request on {uri}");
 
             var array = client.DownloadData(uri);
 
             return array;
-        }
-
-        private static void SetProtocolSecurity()
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
         }
     }
 }

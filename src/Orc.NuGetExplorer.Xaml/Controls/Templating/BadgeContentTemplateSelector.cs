@@ -5,7 +5,7 @@ namespace Orc.NuGetExplorer.Controls.Templating
     using System.Windows.Controls;
     using NuGetExplorer.Enums;
 
-    public class BadgeContentTemplateSelector : DataTemplateSelector
+    internal class BadgeContentTemplateSelector : DataTemplateSelector
     {
         public DataTemplate NotAvailable { get; set; }
 
