@@ -46,15 +46,12 @@ public static class ModuleInitializer
         // Services
         serviceLocator.RegisterType<INuGetConfigurationService, NuGetConfigurationService>();
 
-        //serviceLocator.RegisterType<IPackageCacheService, PackageCacheService>();
         serviceLocator.RegisterType<IPackageOperationContextService, PackageOperationContextService>();
 
-        //serviceLocator.RegisterType<IPackageSourceFactory, PackageSourceFactory>();
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
         serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
-        //serviceLocator.RegisterType<IPleaseWaitInterruptService, PleaseWaitInterruptService>();
         serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
         serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();
 

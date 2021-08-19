@@ -6,7 +6,7 @@
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
 
-    public class SourceContext : IDisposable
+    public sealed class SourceContext : IDisposable
     {
         private static readonly Stack<SourceContext> ActiveContext = new Stack<SourceContext>();
 

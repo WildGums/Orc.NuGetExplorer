@@ -82,7 +82,7 @@
 
         public void Register<T>() where T : IExtensibleProject
         {
-            Register<T>(new object[] { });
+            Register<T>(Array.Empty<object>());
         }
 
         public void Register<T>(params object[] parameters) where T : IExtensibleProject

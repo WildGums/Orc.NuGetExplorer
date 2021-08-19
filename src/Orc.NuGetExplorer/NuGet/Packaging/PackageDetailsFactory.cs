@@ -7,7 +7,7 @@
     /// <summary>
     /// Package metadata builder used for creating metadata implementing old IPackageDetails interface
     /// </summary>
-    public class PackageDetailsFactory
+    public static class PackageDetailsFactory
     {
         public static IPackageDetails Create(PackageOperationType operationType, IPackageSearchMetadata versionMetadata, PackageIdentity packageIdentity, bool? isLastVersion)
         {

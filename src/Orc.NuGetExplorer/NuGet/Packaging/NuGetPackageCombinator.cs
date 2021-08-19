@@ -7,7 +7,7 @@
     using NuGetExplorer.Enums;
     using NuGetExplorer.Models;
 
-    public class NuGetPackageCombinator
+    public static class NuGetPackageCombinator
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
