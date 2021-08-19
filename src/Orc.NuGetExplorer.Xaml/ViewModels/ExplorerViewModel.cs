@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
@@ -15,6 +17,7 @@
     using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Configuration;
+    using Orc.NuGetExplorer.Messaging;
     using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
@@ -100,17 +103,37 @@
             }
         }
 
-        protected override Task InitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            InitializePages();
+            // Pages initializaiton
+            BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
+            InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
+            UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
 
-            return base.InitializeAsync();
+            _pageSetup.Values.ForEach(page =>
+                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
+
+            foreach (var page in Pages)
+            {
+                page.PropertyChanged += OnExplorerPagePropertyChanged;
+            }
+
+            StartPage = _startPage;
+        }
+
+        protected override async Task CloseAsync()
+        {
+            foreach (var page in Pages)
+            {
+                page.PropertyChanged -= OnExplorerPagePropertyChanged;
+            }
         }
 
         protected override Task OnClosingAsync()
         {
             _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
             _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
+            _configurationService.SetIsHideInstalled(Settings.IsHideInstalled);
 
             if (_nuGetSettings is IVersionedSettings versionedSettings)
             {
@@ -122,16 +145,21 @@
             return base.OnClosingAsync();
         }
 
-        private void InitializePages()
+        private void OnExplorerPagePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
-            InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
-            UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
+            if (e.HasPropertyChanged(nameof(ExplorerPage.IsActive)))
+            {
+                SendIsActivePageChanged();
+            }
+        }
 
-            _pageSetup.Values.ForEach(page =>
-                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
-
-            StartPage = _startPage;
+        private void SendIsActivePageChanged()
+        {
+            var activeTab = Pages.FirstOrDefault(p => p.IsActive)?.Parameters.Tab;
+            if (activeTab is not null)
+            {
+                ActivatedExplorerTabMessage.SendWith(activeTab);
+            }
         }
 
         // TODO: Provide a better way to create command (Don't hold gesture for whole application)

@@ -112,12 +112,20 @@
             </xamlbehaviors:Interaction.Behaviors>
         </Button>
 
-        <CheckBox Grid.Row="1" Grid.Column="2"
-                  VerticalAlignment="Center"
-                  Margin="3 0 3 0"
-                  IsChecked="{Binding IsPreReleaseIncluded}">
-            <TextBlock Margin="4 0 0 0"> Include prerelease</TextBlock>
-        </CheckBox>
+        <StackPanel Grid.Row="1"
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding IsPreReleaseIncluded}">
+                <TextBlock>Include prerelease</TextBlock>
+            </CheckBox>
+
+            <CheckBox IsChecked="{Binding IsHideInstalled}"
+                      Visibility="{Binding IsHideInstalledOptionEnabled, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
+                <TextBlock>Hide installed</TextBlock>
+            </CheckBox>
+        </StackPanel>
+      
 
         <TextBlock Grid.Row="1" Grid.Column="5"
                    VerticalAlignment="Center"

@@ -9,10 +9,12 @@
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
+    using Catel.Messaging;
     using Catel.MVVM;
     using Catel.Services;
     using NuGetExplorer.Cache;
     using NuGetExplorer.Models;
+    using Orc.NuGetExplorer.Messaging;
 
     internal class ExplorerTopBarViewModel : ViewModelBase
     {
@@ -27,11 +29,11 @@
         private readonly IPleaseWaitService _pleaseWaitService;
 
         private readonly IMessageService _messageService;
-
+        private readonly IMessageMediator _messageMediator;
         private readonly INuGetConfigurationService _configurationService;
 
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
-            INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService)
+            INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService, IMessageMediator messageMediator)
         {
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => uIVisualizerService);
@@ -40,6 +42,7 @@
             Argument.IsNotNull(() => nuGetCacheManager);
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => messageService);
+            Argument.IsNotNull(() => messageMediator);
 
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;
@@ -47,6 +50,7 @@
             _nuGetCacheManager = nuGetCacheManager;
             _pleaseWaitService = pleaseWaitService;
             _messageService = messageService;
+            _messageMediator = messageMediator;
 
             Settings = settings;
 
@@ -59,6 +63,11 @@
 
         [ViewModelToModel]
         public bool IsPreReleaseIncluded { get; set; }
+
+        [ViewModelToModel]
+        public bool IsHideInstalled { get; set; }
+
+        public bool IsHideInstalledOptionEnabled { get; private set; }
 
         [ViewModelToModel]
         public string SearchString { get; set; }
@@ -75,6 +84,9 @@
 
         protected override Task InitializeAsync()
         {
+            _messageMediator.Register<ActivatedExplorerTabMessage>(this, OnActivatedExplorerTabMessageReceived);
+            IsHideInstalledOptionEnabled = CheckIsHideInstalledOptionEnabled();
+
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
             //"all" feed is default
@@ -83,6 +95,12 @@
             ObservedFeed = SetObservedFeed(ActiveFeeds, DefaultFeed);
 
             return base.InitializeAsync();
+        }
+
+        protected override Task CloseAsync()
+        {
+            _messageMediator.Unregister<ActivatedExplorerTabMessage>(this, OnActivatedExplorerTabMessageReceived);
+            return base.CloseAsync();
         }
 
         protected void CommandInitialize()
@@ -167,6 +185,22 @@
             activefeeds.Insert(0, allInOneSource);
 
             return activefeeds;
+        }
+
+        private void OnActivatedExplorerTabMessageReceived(ActivatedExplorerTabMessage message)
+        {
+            IsHideInstalledOptionEnabled = message.Data == ExplorerTab.Browse;
+        }
+
+        protected bool CheckIsHideInstalledOptionEnabled()
+        {
+            if (ParentViewModel is ExplorerViewModel explorerViewModel)
+            {
+                var activePage = explorerViewModel.Pages.FirstOrDefault(p => p.IsActive);
+                return activePage.Parameters.Tab == ExplorerTab.Browse;
+            }
+
+            return false;
         }
 
         private INuGetSource SetObservedFeed(IEnumerable<INuGetSource> feeds, INuGetSource defaultFeed)

@@ -69,6 +69,12 @@ namespace Orc.NuGetExplorer
             configurationService.SetRoamingValue(Settings.NuGet.IncludePrereleasePackages, isPrereleaseIncluded);
         }
 
+        public static void SetIsHideInstalled(this IConfigurationService configurationService, bool isHideInstalled)
+        {
+            Argument.IsNotNull(() => configurationService);
+            configurationService.SetRoamingValue(Settings.NuGet.HideInstalledPackages, isHideInstalled);
+        }
+
         private static string GetLastRepositoryKey(string repositoryCategory)
         {
             return string.Format("{0}.{1}", AppSettings.NuGetExplorer.LastRepository, repositoryCategory);
