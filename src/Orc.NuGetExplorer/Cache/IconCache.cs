@@ -10,7 +10,7 @@
     {
         private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30));
 
-        private readonly CacheStorage<string, byte[]> _cache = new CacheStorage<string, byte[]>();
+        private readonly CacheStorage<string, byte[]> _cache = new();
 
 
         public IconCache(ExpirationPolicy cacheItemPolicy = null)
@@ -27,7 +27,6 @@
             _cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
         }
 
-        // TODO stream should be disposed when item removed from cache
         public BitmapImage GetFromCache(Uri iconUri)
         {
             if (iconUri is null)
