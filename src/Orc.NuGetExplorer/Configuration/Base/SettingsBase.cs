@@ -11,7 +11,7 @@
     public abstract class SettingsBase<T> where T : AddItem
     {
         private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-        
+
         protected const string MinimalVersionKey = "NuGetExplorer.MinimalVersion";
         protected const string VersionKey = "NuGetExplorer.Version";
 
@@ -41,11 +41,11 @@
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public event EventHandler SettingsRead;
+        public event EventHandler<SettingsReadEventArgs> SettingsRead;
 
-        protected void RaiseSettingsRead()
+        protected void RaiseSettingsRead(string key)
         {
-            SettingsRead?.Invoke(this, EventArgs.Empty);
+            SettingsRead?.Invoke(this, new SettingsReadEventArgs(key));
         }
 
         public bool IsLastVersion => AssemblyVersion.Equals(Version);
@@ -62,7 +62,7 @@
             var combinedKey = GetSectionValueKey(section, key);
             var value = _configurationService.GetRoamingValue<string>(combinedKey, string.Empty);
 
-            RaiseSettingsRead();
+            RaiseSettingsRead(combinedKey);
 
             return value;
         }
@@ -76,7 +76,7 @@
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
             var value = _configurationService.GetRoamingValue<string>(combinedKey);
 
-            RaiseSettingsRead();
+            RaiseSettingsRead(combinedKey);
 
             return value;
         }
@@ -106,8 +106,6 @@
 
         public IReadOnlyList<string> GetAllSubsections(string section)
         {
-            RaiseSettingsRead();
-
             return GetValues(section).Select(subsection => subsection.Key).ToList();
         }
 
@@ -115,8 +113,6 @@
         {
             Argument.IsNotNullOrWhitespace(() => section);
             Argument.IsNotNullOrWhitespace(() => subSection);
-
-            RaiseSettingsRead();
 
             //extract key-value pairs from AddItem
             return GetValues(section, subSection)
@@ -131,8 +127,6 @@
 
             var addItems = values.Select(x => InitializeValue(x.Key, x.Value)).ToList();
             SetValues(section, subsection, addItems);
-
-            RaiseSettingsChanged();
         }
 
         public bool DeleteValue(string section, string key)
@@ -155,13 +149,13 @@
 
                 var valueKey = GetSectionValueKey(section, key);
                 _configurationService.SetRoamingValue(valueKey, string.Empty);
+
+                RaiseSettingsChanged();
             }
             catch
             {
                 return false;
             }
-
-            RaiseSettingsChanged();
 
             return true;
         }
@@ -184,7 +178,9 @@
                 sectionsString = string.Join(Separator.ToString(), newSections);
                 _configurationService.SetRoamingValue(SectionListKey, sectionsString);
 
-                var values = GetValues(section, false);
+                RaiseSettingsChanged();
+
+                var values = GetValues(section);
                 if (values is null)
                 {
                     return false;
@@ -199,8 +195,6 @@
             {
                 return false;
             }
-
-            RaiseSettingsChanged();
 
             return result;
         }
@@ -263,6 +257,8 @@
                 Version = configurationVersion;
             }
 
+            RaiseSettingsRead(configurationVersionString);
+
             var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
 
             if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
@@ -270,8 +266,7 @@
                 MinimalVersion = configurationVersion;
             }
 
-            RaiseSettingsRead();
+            RaiseSettingsRead(configurationMinimalVersionString);
         }
-
     }
 }

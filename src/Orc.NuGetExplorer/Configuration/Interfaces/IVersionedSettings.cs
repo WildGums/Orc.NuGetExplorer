@@ -11,7 +11,7 @@
 
         Version MinimalVersion { get; }
 
-        event EventHandler SettingsRead;
+        event EventHandler<SettingsReadEventArgs> SettingsRead;
 
         void UpdateMinimalVersion();
         void UpdateVersion();

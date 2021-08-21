@@ -45,8 +45,6 @@
                 return InitializeValue(sectionName, key, value);
             }).ToList();
 
-            RaiseSettingsRead();
-
             var section = new NuGetSettingsSection(sectionName, subsections);
             return section;
         }
