@@ -30,25 +30,22 @@
 
         private static IPackageMetadataProvider PackageMetadataProvider;
 
-        private readonly IRepositoryContextService _repositoryService;
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IDirectoryService _directoryService;
 
-        public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+        public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService,
             IDirectoryService directoryService)
         {
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => packageCommandService);
             Argument.IsNotNull(() => directoryService);
 
-            _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _apiPackageRegistry = apiPackageRegistry;
@@ -356,11 +353,10 @@
 
         private IPackageMetadataProvider InitMetadataProvider()
         {
-            var currentSourceContext = SourceContext.CurrentContext;
-
-            var repositories = currentSourceContext.Repositories ?? currentSourceContext?.PackageSources.Select(src => _repositoryService.GetRepository(src));
-
-            return new PackageMetadataProvider(_directoryService, repositories, null);
+            using (var sourceContext = SourceContext.AcquireContext())
+            {
+                return new PackageMetadataProvider(_directoryService, sourceContext.ReadAllSourceRepositories(), null);
+            }
         }
 
         private void PopulateVersionCollection()

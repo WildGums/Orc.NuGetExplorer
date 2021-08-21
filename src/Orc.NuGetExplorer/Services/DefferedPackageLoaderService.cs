@@ -159,7 +159,7 @@
 
                 var localRepos = _projectManager.AsLocalRepositories(projects);
 
-                var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
+                var repos = context.ReadAllSourceRepositories();
 
                 return new PackageMetadataProvider(_directoryService, repos, localRepos);
             }

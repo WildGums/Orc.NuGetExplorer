@@ -204,52 +204,56 @@
             {
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
-                var repositories = SourceContext.CurrentContext.Repositories;
-
-                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
-
-                bool dependencyInstallResult = true;
-
-                if (!installerResults.Result.Any())
+                using (var sourceContext = SourceContext.AcquireContext())
                 {
-                    Log.Error($"Failed to install package {package}");
+                    var repositories = sourceContext.Source.Repositories;
 
-                    // todo PackageCommandService or context is better place for messaging
+                    var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
 
-                    if (showErrors)
+                    bool dependencyInstallResult = true;
+
+                    if (!installerResults.Result.Any())
                     {
-                        await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                        Log.Error($"Failed to install package {package}");
+
+                        // todo PackageCommandService or context is better place for messaging
+
+                        if (showErrors)
+                        {
+                            await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                        }
+
+                        return false;
                     }
 
-                    return false;
+                    foreach (var packageDownloadResultPair in installerResults.Result)
+                    {
+                        var dependencyIdentity = packageDownloadResultPair.Key;
+                        var downloadResult = packageDownloadResultPair.Value;
+
+                        try
+                        {
+                            var result = await packageConfigProject.InstallPackageAsync(
+                                dependencyIdentity,
+                                downloadResult,
+                                _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
+                                token);
+
+                            dependencyInstallResult &= true;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                            Log.Error(ex);
+                            dependencyInstallResult &= false;
+                        }
+                    }
+
+                    await OnInstallAsync(project, package, dependencyInstallResult);
+
+                    return true;
                 }
 
-                foreach (var packageDownloadResultPair in installerResults.Result)
-                {
-                    var dependencyIdentity = packageDownloadResultPair.Key;
-                    var downloadResult = packageDownloadResultPair.Value;
-
-                    try
-                    {
-                        var result = await packageConfigProject.InstallPackageAsync(
-                            dependencyIdentity,
-                            downloadResult,
-                            _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
-                            token);
-
-                        dependencyInstallResult &= true;
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
-                        Log.Error(ex);
-                        dependencyInstallResult &= false;
-                    }
-                }
-
-                await OnInstallAsync(project, package, dependencyInstallResult);
-
-                return true;
             }
             catch (ProjectInstallException ex)
             {

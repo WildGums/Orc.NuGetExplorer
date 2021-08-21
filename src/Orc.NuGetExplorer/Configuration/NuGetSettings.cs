@@ -20,7 +20,7 @@
         public NuGetSettings(IConfigurationService configurationService)
             : base(configurationService)
         {
-
+            _configurationService = configurationService;
         }
 
         #region ISettings

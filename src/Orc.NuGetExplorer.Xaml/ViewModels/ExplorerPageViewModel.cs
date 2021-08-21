@@ -45,7 +45,6 @@
         private readonly ICommandManager _commandManager;
         private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
         private readonly IPackageOperationContextService _packageOperationContextService;
-        private readonly IRepositoryContextService _repositoryService;
         private readonly IPackageLoaderService _packagesLoaderService;
 
         private readonly INuGetCacheManager _nuGetCacheManager;
@@ -61,7 +60,7 @@
 
         public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
-            ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
+            ICommandManager commandManager, IDispatcherService dispatcherService, ITypeFactory typeFactory,
             IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
             INuGetConfigurationService nuGetConfigurationService, IDispatcherProviderService dispatcherProviderService)
         {
@@ -71,7 +70,6 @@
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => nuGetFeedVerificationService);
             Argument.IsNotNull(() => dispatcherService);
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => defferedPackageLoaderService);
             Argument.IsNotNull(() => packageOperationContextService);
@@ -83,7 +81,6 @@
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
             _commandManager = commandManager;
-            _repositoryService = repositoryService;
             _defferedPackageLoaderService = defferedPackageLoaderService;
             _packageOperationContextService = packageOperationContextService;
             _typeFactory = typeFactory;
@@ -357,15 +354,15 @@
         {
             try
             {
+                // TODO Is it really required to have a separate context for single source?
                 if (pageinfo.Source.IsMultipleSource)
                 {
-                    Context = _repositoryService.AcquireContext();
+                    Context = SourceContext.AcquireContext();
                 }
                 else
                 {
-                    Context = _repositoryService.AcquireContext((PackageSource)pageinfo.Source);
+                    Context = SourceContext.AcquireContext((PackageSource)pageinfo.Source);
                 }
-
 
                 if (IsActive)
                 {
@@ -565,7 +562,7 @@
                         vm.Status = newState;
                     };
 
-                    if (_repositoryService.AcquireContext() != SourceContext.EmptyContext)
+                    if (SourceContext.AcquireContext() != SourceContext.EmptyContext)
                     {
                         _defferedPackageLoaderService.Add(deferToken);
                     }

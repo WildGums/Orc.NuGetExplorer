@@ -27,24 +27,31 @@
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => settingsProvider);
+
             _settings = settingsProvider.Model;
             _nuGetConfigurationService = nuGetConfigurationService;
         }
 
         public SourceRepository CreateRepository(PackageSource source)
         {
+            Argument.IsNotNull(() => source);
+
             var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined));
             return repo;
         }
 
         public SourceRepository CreateRepository(PackageSource source, FeedType type)
         {
+            Argument.IsNotNull(() => source);
+
             var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, type));
             return repo;
         }
 
         public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
         {
+            Argument.IsNotNull(() => source);
+
             if (forceUpdate)
             {
                 var repo = _repositoryStore.AddOrUpdate(

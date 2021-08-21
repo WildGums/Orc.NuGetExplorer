@@ -62,17 +62,17 @@
             Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => repositoryService);
 
-            var context = repositoryService.AcquireContext();
+            using (var context = repositoryService.AcquireContext())
+            {
+                var projects = projectSource.GetAllExtensibleProjects();
 
-            var projects = projectSource.GetAllExtensibleProjects();
+                var localRepos = projectManager.AsLocalRepositories(projects);
 
-            var localRepos = projectManager.AsLocalRepositories(projects);
+                var repos = context.ReadAllSourceRepositories();
 
-            var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
-
-            return new PackageMetadataProvider(directoryService, repos, localRepos);
+                return new PackageMetadataProvider(directoryService, repos, localRepos);
+            } 
         }
-
 
         public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
