@@ -42,13 +42,15 @@
             return _nuGetFrameworks.FirstOrDefault();
         }
 
-        
+
         private void LoadAvailableFrameworks()
         {
             var version = Environment.Version;
             var revision = version.Revision;
 
             var frameworkStringList = new List<string>();
+
+            GetOlderFrameworkVersionsFromRegistry(frameworkStringList);
 
             if (revision < 42000 && revision > 0)
             {
@@ -112,21 +114,15 @@
                         // Get the service pack (SP) number.
                         var sp = versionKey.GetValue("SP", "").ToString();
 
-                        // Get the installation flag, or an empty string if there is none.
-                        var install = versionKey.GetValue("Install", "").ToString();
-
-                        if (string.IsNullOrEmpty(install))
+                        // If false, there is no install info; it must be in a child subkey then.
+                        if (versionKey.TryGetInstallFlag(out var install))
                         {
-                            // No install info; it must be in a child subkey.
-                            frameworkList.Add($"{versionKeyName} {name}");
-                        }
-                        else
-                        {
-                            if (!(string.IsNullOrEmpty(sp)) && install == "1")
+                            if (!string.IsNullOrEmpty(sp) && install == "1")
                             {
-                                frameworkList.Add($"{versionKeyName} {name} SP{sp}");
+                                frameworkList.Add(CreateFrameworkVersionName(versionKeyName, name, sp));
                             }
                         }
+
                         if (!string.IsNullOrEmpty(name))
                         {
                             continue;
@@ -135,35 +131,36 @@
                         foreach (var subKeyName in versionKey.GetSubKeyNames())
                         {
                             RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
-                            name = (string)subKey.GetValue("Version", "");
-                            if (!string.IsNullOrEmpty(name))
-                                sp = subKey.GetValue("SP", "").ToString();
 
-                            install = subKey.GetValue("Install", "").ToString();
+                            name = subKey.GetValue("Version", "") as string;
+                            sp = string.IsNullOrEmpty(name) ? string.Empty : subKey.GetValue("SP", "").ToString();
 
-                            if (string.IsNullOrEmpty(install))
-                            {
-                                //No install info; it must be later.
-                                frameworkList.Add($"{versionKeyName} {name}");
-                            }
-                            else
+                            if (subKey.TryGetInstallFlag(out install))
                             {
                                 if (install == "1")
                                 {
-                                    if (!(string.IsNullOrEmpty(sp)))
-                                    {
-                                        frameworkList.Add($"{subKeyName} {name} SP{sp}");
-                                    }
-                                    else
-                                    {
-                                        frameworkList.Add($" {subKeyName} {name}");
-                                    }
+                                    frameworkList.Add(CreateFrameworkVersionName(name, subKeyName, sp));
                                 }
+                            }
+                            else
+                            {
+                                //No install info; it must be later.
+                                frameworkList.Add($"{versionKeyName} {name}");
                             }
                         }
                     }
                 }
             }
+        }
+
+        private static string CreateFrameworkVersionName(string versionName, string name, string servicePackNumber)
+        {
+            if (string.IsNullOrEmpty(servicePackNumber))
+            {
+                return $"{versionName} {name}";
+            }
+
+            return $"{versionName} {name} SP{servicePackNumber}";
         }
 
         private static void GetNewerFrameworkVersionsFromRegistry(List<string> frameworkList)
