@@ -28,18 +28,18 @@ namespace Orc.NuGetExplorer
         public PackageOperationType OperationType { get; set; }
         public IPackageOperationContext Parent { get; set; }
         public IList<Exception> Exceptions { get; private set; }
-        public ITemporaryFileSystemContext FileSystemContext { get; set; }
+        public ITemporaryFileHandler FileSystemContext { get; set; }
         #endregion
 
         #region Methods
         public override bool Equals(object obj)
         {
-            if (!(obj is PackageOperationContext context))
+            if(obj is PackageOperationContext context)
             {
-                return false;
+                return UniqueIdentifier.Equals(context.UniqueIdentifier);
             }
 
-            return UniqueIdentifier.Equals(context.UniqueIdentifier);
+            return false;
         }
 
         public override int GetHashCode()

@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System;
 
-    public interface ITemporaryFileSystemContext : IDisposable
+    public interface ITemporaryFileHandler : IDisposable
     {
         #region Properties
         string RootDirectory { get; }

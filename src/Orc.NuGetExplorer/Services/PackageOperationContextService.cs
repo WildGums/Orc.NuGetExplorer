@@ -33,8 +33,14 @@
 
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = context },
+            var context = _typeFactory.CreateInstance<TemporaryFileHandler>();
+            return new DisposableToken<PackageOperationContext>(
+                new PackageOperationContext
+                {
+                    OperationType = operationType,
+                    Packages = packages,
+                    FileSystemContext = context
+                },
                 token => ApplyOperationContext(token.Instance),
                 token => CloseCurrentOperationContext(token.Instance));
         }

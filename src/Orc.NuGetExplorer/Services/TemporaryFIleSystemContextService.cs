@@ -27,14 +27,14 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        public ITemporaryFileSystemContext Context { get; private set; }
+        public ITemporaryFileHandler Context { get; private set; }
         #endregion
 
         #region Methods
         public IDisposable UseTemporaryFIleSystemContext()
         {
-            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
+            var context = _typeFactory.CreateInstance<TemporaryFileHandler>();
+            return new DisposableToken<ITemporaryFileHandler>(context, token => { }, token => { });
         }
         #endregion
     }

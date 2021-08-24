@@ -14,7 +14,7 @@ namespace Orc.NuGetExplorer
     using Catel.Reflection;
     using Orc.FileSystem;
 
-    internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
+    internal class TemporaryFileHandler : Disposable, ITemporaryFileHandler
     {
         #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public TemporaryFileSystemContext(IDirectoryService directoryService)
+        public TemporaryFileHandler(IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => directoryService);
 
@@ -39,20 +39,11 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Properties
-        public string RootDirectory
-        {
-            get { return _rootDirectory; }
-        }
+        public string RootDirectory => _rootDirectory;
         #endregion
 
-        #region Methods
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
+        #region Methods 
+        protected override void DisposeManaged()
         {
             try
             {

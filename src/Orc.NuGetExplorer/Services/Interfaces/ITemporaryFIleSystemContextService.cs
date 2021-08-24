@@ -12,7 +12,7 @@ namespace Orc.NuGetExplorer
     internal interface ITemporaryFIleSystemContextService
     {
         #region Properties
-        ITemporaryFileSystemContext Context { get; }
+        ITemporaryFileHandler Context { get; }
         #endregion
 
         #region Methods
