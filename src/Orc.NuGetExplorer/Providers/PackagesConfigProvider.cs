@@ -8,7 +8,7 @@
 
     internal class PackagesConfigProvider : INuGetProjectConfigurationProvider
     {
-        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new Dictionary<IExtensibleProject, NuGetProjectMetadata>();
+        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new();
         private readonly IFrameworkNameProvider _frameworkNameProvider;
 
         private const string MetadataTargetFramework = "TargetFramework";

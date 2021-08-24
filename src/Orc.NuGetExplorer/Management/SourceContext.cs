@@ -83,8 +83,8 @@
 
         public class Sources
         {
-            private readonly List<PackageSource> _packageSources = new List<PackageSource>();
-            private readonly List<SourceRepository> _sourceRepositories = new List<SourceRepository>();
+            private readonly List<PackageSource> _packageSources = new();
+            private readonly List<SourceRepository> _sourceRepositories = new();
 
             public Sources()
             {

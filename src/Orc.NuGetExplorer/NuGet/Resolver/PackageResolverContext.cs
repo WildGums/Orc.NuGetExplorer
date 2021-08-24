@@ -12,7 +12,7 @@
 
     public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
     {
-        public static readonly PackageResolverContext Empty = new PackageResolverContext(
+        public static readonly PackageResolverContext Empty = new(
             DependencyBehavior.Lowest,
             Enumerable.Empty<string>(),
             Enumerable.Empty<string>(),

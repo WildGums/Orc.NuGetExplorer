@@ -14,7 +14,7 @@
         private const string BaseFrameworkName = ".NETFramework, Version=";
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly FrameworkReducer _frameworkReducer = new FrameworkReducer();
+        private readonly FrameworkReducer _frameworkReducer = new();
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly IList<NuGetFramework> _nuGetFrameworks = new List<NuGetFramework>();
 

@@ -23,9 +23,9 @@
         private readonly INuGetConfigurationService _configurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
-        private readonly Queue<NuGetFeed> _validationQueue = new Queue<NuGetFeed>();
+        private readonly Queue<NuGetFeed> _validationQueue = new();
 
-        private static readonly System.Timers.Timer ValidationTimer = new System.Timers.Timer(ValidationDelay);
+        private static readonly System.Timers.Timer ValidationTimer = new(ValidationDelay);
 
         private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
 

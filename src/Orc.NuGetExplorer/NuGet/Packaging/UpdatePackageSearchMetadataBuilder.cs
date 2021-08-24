@@ -22,7 +22,7 @@
         }
 
         public static UpdatePackageSearchMetadataBuilder FromMetadatas(ClonedPackageSearchMetadata metadata, IPackageSearchMetadata updatedVersionMetadata)
-             => new UpdatePackageSearchMetadataBuilder(metadata, updatedVersionMetadata);
+             => new(metadata, updatedVersionMetadata);
 
         public IPackageSearchMetadata Build()
         {

@@ -15,9 +15,9 @@
 
         private readonly INuGetConfigurationService _managerConfigurationService;
 
-        private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new Dictionary<Type, IExtensibleProject>();
+        private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new();
 
-        private readonly HashSet<IExtensibleProject> _enabledProjects = new HashSet<IExtensibleProject>();
+        private readonly HashSet<IExtensibleProject> _enabledProjects = new();
 
         public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {

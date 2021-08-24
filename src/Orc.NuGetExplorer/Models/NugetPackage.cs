@@ -90,7 +90,7 @@
 
         public PackageIdentity Identity => _packageMetadata?.Identity;
 
-        private List<NuGetVersion> _versions = new List<NuGetVersion>();
+        private List<NuGetVersion> _versions = new();
         public IReadOnlyList<NuGetVersion> Versions
         {
             get

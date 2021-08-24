@@ -12,7 +12,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly CollectionToCollapsingVisibilityConverter CollectionToVisibility = new CollectionToCollapsingVisibilityConverter();
+        private static readonly CollectionToCollapsingVisibilityConverter CollectionToVisibility = new();
 
         protected override object Convert(ICollection value, Type targetType, object parameter)
         {

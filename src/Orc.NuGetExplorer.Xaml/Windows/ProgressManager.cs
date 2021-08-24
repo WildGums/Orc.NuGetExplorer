@@ -14,7 +14,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new Dictionary<IViewModel, DataWindow>();
+        private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new();
 
         public void ShowBar(IViewModel vm)
         {
