@@ -6,7 +6,7 @@
     using NuGet.Packaging;
     using NuGet.Protocol.Core.Types;
 
-    internal class MultiVersionPackageSearchMetadataBuilder
+    public class MultiVersionPackageSearchMetadataBuilder
     {
         private readonly IEnumerable<IPackageSearchMetadata> _searchMetadatas;
 

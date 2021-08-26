@@ -69,23 +69,9 @@
             }
         }
 
-
-        public IRepository GetSourceAggregateRepository()
-        {
-            //todo
-            return null;
-        }
-
         public IEnumerable<IRepository> GetSourceRepositories()
         {
             return GetRepositories(PackageOperationType.None);
-        }
-
-
-        public IRepository GetUpdateAggeregateRepository()
-        {
-            //todo
-            return null;
         }
 
         public IEnumerable<IRepository> GetUpdateRepositories()
@@ -102,13 +88,7 @@
 
         private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository repository)
         {
-            return new Repository()
-            {
-                Id = 0,
-                Name = repository.PackageSource.Name,
-                Source = repository.PackageSource.Source,
-                OperationType = PackageOperationType.None
-            };
+            return new Repository(repository.PackageSource);
         }
     }
 }

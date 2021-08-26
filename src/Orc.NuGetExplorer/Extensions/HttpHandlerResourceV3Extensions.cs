@@ -19,7 +19,6 @@
         public static void ResetCredentials(this HttpHandlerResourceV3 httpResourceHandler)
         {
             var credentialsService = httpResourceHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
-
             if (credentialsService is not null)
             {
                 credentialsService.ClearRetryCache();

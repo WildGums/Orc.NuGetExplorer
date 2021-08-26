@@ -125,33 +125,6 @@
             }
         }
 
-        public void SetIsPrereleaseAllowed(IRepository repository, bool value)
-        {
-            Argument.IsNotNull(() => repository);
-
-            var key = GetIsPrereleaseAllowedKey(repository);
-            _configurationService.SetRoamingValue(key, value);
-        }
-
-        public bool GetIsPrereleaseAllowed(IRepository repository)
-        {
-            var key = GetIsPrereleaseAllowedKey(repository);
-            var stringValue = _configurationService.GetRoamingValue(key, false.ToString());
-
-            bool value;
-            if (bool.TryParse(stringValue, out value))
-            {
-                return value;
-            }
-
-            return false;
-        }
-
-        private string GetIsPrereleaseAllowedKey(IRepository repository)
-        {
-            return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
-        }
-
         public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
         {
             foreach (var project in extensibleProjects)

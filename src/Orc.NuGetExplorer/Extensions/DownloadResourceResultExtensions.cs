@@ -11,7 +11,6 @@
             Argument.IsNotNull(() => downloadResourceResult);
 
             var fileStream = downloadResourceResult.PackageStream as FileStream;
-
             if (fileStream is not null)
             {
                 return fileStream.Name;

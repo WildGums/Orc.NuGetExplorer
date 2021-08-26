@@ -1,19 +1,14 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepository.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using NuGet.Configuration;
+
+    [ObsoleteEx(ReplacementTypeOrMember = "NuGet.Configuration.PackageSource/NuGet.Protocol.Core.Types.SourceRepository", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
     public interface IRepository
     {
         #region Properties
         string Name { get; }
         string Source { get; }
-        PackageOperationType OperationType { get; }
-
+        PackageSource PackageSource { get; set; }
         bool IsLocal { get; }
         #endregion
     }

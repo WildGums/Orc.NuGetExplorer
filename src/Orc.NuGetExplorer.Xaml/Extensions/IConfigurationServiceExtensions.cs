@@ -39,15 +39,6 @@ namespace Orc.NuGetExplorer
             return value;
         }
 
-        public static void SetLastRepository(this IConfigurationService configurationService, string page, IRepository repository)
-        {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repository);
-
-            var key = GetLastRepositoryKey(page);
-            configurationService.SetRoamingValue(key, repository.Name);
-        }
-
         public static void SetLastRepository(this IConfigurationService configurationService, string page, string repositoryName)
         {
             Argument.IsNotNull(() => configurationService);

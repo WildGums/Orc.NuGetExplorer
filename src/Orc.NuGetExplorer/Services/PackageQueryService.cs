@@ -11,6 +11,7 @@
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Providers;
 
+    [ObsoleteEx(ReplacementTypeOrMember = "IPackageCommandService", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
     internal class PackageQueryService : IPackageQueryService
     {
         private readonly ISourceRepositoryProvider _repositoryProvider;
@@ -49,14 +50,14 @@
 
         public async Task<IPackageDetails> GetPackageAsync(IRepository packageRepository, string packageId, string version)
         {
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
+            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.PackageSource);
 
             return await BuildMultiVersionPackageSearchMetadataAsync(packageId, sourceRepository, true);
         }
 
         public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
         {
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
+            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.PackageSource);
 
             var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
 
@@ -79,7 +80,7 @@
                 return Enumerable.Empty<IPackageSearchMetadata>();
             }
 
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
+            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.PackageSource);
 
             var getMetadataResult = await _packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
 

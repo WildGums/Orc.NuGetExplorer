@@ -8,52 +8,49 @@
 namespace Orc.NuGetExplorer
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Services;
+    using NuGet.Common;
+    using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Packaging;
+    using Orc.NuGetExplorer.Providers;
 
     internal class PackageCommandService : IPackageCommandService
     {
         #region Fields
         private readonly IApiPackageRegistry _apiPackageRegistry;
-
-        private readonly IRepository _localRepository;
-
+        private readonly IPackageMetadataProvider _packageMetadataProvider;
         private readonly IPackageOperationContextService _packageOperationContextService;
-
         private readonly IPackageOperationService _packageOperationService;
-
-        private readonly IPackageQueryService _packageQueryService;
-
         private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly ILogger _logger;
         #endregion
 
         #region Constructors
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
-            IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
+        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageOperationService packageOperationService,
+            IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry, IPackageMetadataProvider packageMetadataProvider, ILogger logger)
         {
             Argument.IsNotNull(() => pleaseWaitService);
-            Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => packageOperationService);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => apiPackageRegistry);
+            Argument.IsNotNull(() => packageMetadataProvider);
+            Argument.IsNotNull(() => logger);
 
             _pleaseWaitService = pleaseWaitService;
-            _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
             _apiPackageRegistry = apiPackageRegistry;
-
-            _localRepository = repositoryService.LocalRepository;
+            _packageMetadataProvider = packageMetadataProvider;
+            _logger = logger;
         }
         #endregion
 
         #region Methods
-        public string GetActionName(PackageOperationType operationType)
-        {
-            return Enum.GetName(typeof(PackageOperationType), operationType);
-        }
 
         // TODO: Add context with parameters - source/prerelease
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
@@ -126,7 +123,7 @@ namespace Orc.NuGetExplorer
                 return false;
             }
 
-            var selectedPackage = await GetPackageDetailsFromSelectedVersionAsync(package, _localRepository) ?? package;
+            var selectedPackage = await GetPackageDetailsFromSelectedVersionAsync(package) ?? package;
 
             switch (operationType)
             {
@@ -143,33 +140,11 @@ namespace Orc.NuGetExplorer
             return false;
         }
 
-        public bool IsRefreshRequired(PackageOperationType operationType)
-        {
-            switch (operationType)
-            {
-                case PackageOperationType.Uninstall:
-                    return true;
-
-                case PackageOperationType.Install:
-                    return false;
-
-                case PackageOperationType.Update:
-                    return true;
-            }
-
-            return false;
-        }
-
-        public string GetPluralActionName(PackageOperationType operationType)
-        {
-            return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
-        }
-
-        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
+        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails)
         {
             if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
             {
-                packageDetails = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
+                packageDetails = await GetPackageAsync(packageDetails.Id);
             }
 
             return packageDetails;
@@ -181,7 +156,7 @@ namespace Orc.NuGetExplorer
 
             if (package.IsInstalled is null)
             {
-                package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
+                package.IsInstalled = await PackageExistsLocallyAsync(package.Id);
                 ValidatePackage(package);
             }
 
@@ -192,7 +167,7 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
 
-            package.IsInstalled ??= await _packageQueryService.PackageExistsAsync(_localRepository, package);
+            package.IsInstalled ??= await PackageExistsLocallyAsync(package.Id);
             ValidatePackage(package);
 
             return !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
@@ -202,6 +177,64 @@ namespace Orc.NuGetExplorer
         {
             package.ResetValidationContext();
             _apiPackageRegistry.Validate(package);
+        }
+
+        private async Task<bool> PackageExistsLocallyAsync(string packageId)
+        {
+            var packageVersionedMetadata = await _packageMetadataProvider.GetLowestLocalPackageMetadataAsync(packageId, true, CancellationToken.None);
+            return packageVersionedMetadata is not null;
+        }
+
+        public async Task<IPackageDetails> GetPackageAsync(string packageId)
+        {
+            return await BuildMultiVersionPackageSearchMetadataAsync(packageId, true);
+        }
+
+        // TODO: take should use configured value
+        public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(SourceRepository repository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
+        {
+            var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+
+            var searchFilters = new SearchFilter(allowPrereleaseVersions);
+
+            var packages = await searchResource.SearchAsync(filter ?? string.Empty, searchFilters, skip, take, _logger, CancellationToken.None);
+
+            //provide information about available versions
+            var packageDetails = packages.Select(async package => await BuildMultiVersionPackageSearchMetadataAsync(package, allowPrereleaseVersions))
+                .Select(x => x.Result)
+                .Where(result => result is not null);
+
+            return packageDetails;
+        }
+
+        public async Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackageAsync(IPackageDetails package, bool allowPrereleaseVersions, int skip)
+        {
+            if (skip < 0)
+            {
+                return Enumerable.Empty<IPackageSearchMetadata>();
+            }
+
+            // TODO: use specific source repository here;
+            var getMetadataResult = await _packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
+
+            var versions = getMetadataResult.Skip(skip).ToList();
+
+            return versions;
+        }
+
+        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(IPackageSearchMetadata packageSearchMetadata, bool includePrerelease)
+        {
+            return await BuildMultiVersionPackageSearchMetadataAsync(packageSearchMetadata.Identity.Id, includePrerelease);
+        }
+
+        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(string packageId, bool includePrerelease)
+        {
+            // TODO: use specific source repository here;
+            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
+
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+
+            return details;
         }
 
         #endregion

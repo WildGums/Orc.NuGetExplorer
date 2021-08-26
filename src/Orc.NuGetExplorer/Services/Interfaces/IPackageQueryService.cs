@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer
     using System.Threading.Tasks;
     using NuGet.Protocol.Core.Types;
 
+    [ObsoleteEx(ReplacementTypeOrMember = "IPackageCommandService", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
     public interface IPackageQueryService
     {
         #region Methods

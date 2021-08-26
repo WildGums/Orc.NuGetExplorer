@@ -26,9 +26,6 @@ namespace Orc.NuGetExplorer
         void SetPackageQuerySize(int size);
         int GetPackageQuerySize();
 
-        void SetIsPrereleaseAllowed(IRepository repository, bool value);
-        bool GetIsPrereleaseAllowed(IRepository repository);
-
         void RemovePackageSource(IPackageSource source);
 
         bool IsProjectConfigured(IExtensibleProject project);

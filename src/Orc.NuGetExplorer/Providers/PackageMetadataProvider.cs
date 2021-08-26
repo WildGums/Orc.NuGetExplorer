@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -41,7 +40,10 @@
 
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
-            _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource()) };
+            _optionalLocalRepositories = new[]
+            {
+                repositoryProvider.CreateRepository(repositoryService.LocalRepository.PackageSource)
+            };
         }
 
         public PackageMetadataProvider(IDirectoryService directoryService, IEnumerable<SourceRepository> sourceRepositories,
@@ -71,7 +73,7 @@
                 var repos = context.ReadAllSourceRepositories();
 
                 return new PackageMetadataProvider(directoryService, repos, localRepos);
-            } 
+            }
         }
 
         public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
@@ -280,8 +282,8 @@
 
             var versions = new[]
             {
-                    new VersionInfo(packageIdentity.Version)
-                };
+                new VersionInfo(packageIdentity.Version)
+            };
 
             return packageMetadata?.WithVersions(versions);
 
