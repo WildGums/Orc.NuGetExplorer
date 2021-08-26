@@ -31,7 +31,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageOperationService packageOperationService,
+        public PackageCommandService(IPleaseWaitService pleaseWaitService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry, IPackageMetadataProvider packageMetadataProvider, ILogger logger)
         {
             Argument.IsNotNull(() => pleaseWaitService);
