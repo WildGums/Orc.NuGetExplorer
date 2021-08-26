@@ -10,7 +10,7 @@
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Packaging;
 
-    public interface INuGetPackageManager : IPackageManager
+    public interface INuGetPackageManager
     {
         Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true);
 

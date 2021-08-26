@@ -20,7 +20,8 @@
             _verbose = verbose;
         }
 
-        public NuGetLogger(INuGetLogListeningSevice logListeningService) : this(true, logListeningService)
+        public NuGetLogger(INuGetLogListeningSevice logListeningService)
+            : this(true, logListeningService)
         {
 
         }

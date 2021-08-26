@@ -7,7 +7,6 @@
 
 namespace Orc.NuGetExplorer
 {
-    using System.Threading.Tasks;
     using Catel;
     using Catel.Messaging;
     using Orc.FileSystem;

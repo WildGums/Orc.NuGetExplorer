@@ -5,9 +5,9 @@
     using System.Linq;
     using Catel.Logging;
 
-    public static class LogHelper
+    internal static class LogHelper
     {
-        public static void LogUnclearedPaths(List<string> unclearedPaths, ILog log)
+        internal static void LogUnclearedPaths(List<string> unclearedPaths, ILog log)
         {
             if (unclearedPaths?.Any() ?? false)
             {

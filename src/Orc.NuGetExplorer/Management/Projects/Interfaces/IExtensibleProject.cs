@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using NuGet.Frameworks;
     using NuGet.Packaging.Core;

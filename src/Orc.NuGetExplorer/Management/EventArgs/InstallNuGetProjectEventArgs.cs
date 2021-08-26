@@ -4,7 +4,8 @@
 
     public class InstallNuGetProjectEventArgs : NuGetProjectEventArgs
     {
-        public InstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
+        public InstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result)
+            : base(project, package)
         {
             Result = result;
         }
@@ -14,7 +15,8 @@
 
     public class BatchedInstallNuGetProjectEventArgs : InstallNuGetProjectEventArgs
     {
-        public BatchedInstallNuGetProjectEventArgs(InstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
+        public BatchedInstallNuGetProjectEventArgs(InstallNuGetProjectEventArgs eventArgs) 
+            : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
         {
         }
 

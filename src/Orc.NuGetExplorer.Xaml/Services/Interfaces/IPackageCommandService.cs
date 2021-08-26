@@ -6,10 +6,8 @@
 namespace Orc.NuGetExplorer
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using NuGet.Protocol.Core.Types;
 
     public interface IPackageCommandService
     {

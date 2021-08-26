@@ -4,7 +4,8 @@
 
     public class UninstallNuGetProjectEventArgs : NuGetProjectEventArgs
     {
-        public UninstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
+        public UninstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) 
+            : base(project, package)
         {
             Result = result;
         }
@@ -14,7 +15,8 @@
 
     public class BatchedUninstallNuGetProjectEventArgs : UninstallNuGetProjectEventArgs
     {
-        public BatchedUninstallNuGetProjectEventArgs(UninstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
+        public BatchedUninstallNuGetProjectEventArgs(UninstallNuGetProjectEventArgs eventArgs) 
+            : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
         {
         }
 

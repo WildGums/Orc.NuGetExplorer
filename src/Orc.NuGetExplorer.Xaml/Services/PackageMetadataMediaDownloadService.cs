@@ -10,7 +10,6 @@
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Cache;
     using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Web;
 
     public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownloadService, IImageResolveService
     {

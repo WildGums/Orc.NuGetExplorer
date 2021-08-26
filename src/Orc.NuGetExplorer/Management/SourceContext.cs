@@ -7,7 +7,6 @@
     using Catel.Scoping;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using static Orc.NuGetExplorer.Management.SourceContext;
 
     public sealed class SourceContext : IDisposable
     {

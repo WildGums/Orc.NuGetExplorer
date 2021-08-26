@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
