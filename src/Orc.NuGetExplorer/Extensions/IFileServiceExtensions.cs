@@ -8,7 +8,7 @@
 
     public static class IFileServiceExtensions
     {
-        public static void ForceDeleteFiles(this IFileService fileService, string filePath, List<string> failedEntries)
+        internal static void ForceDeleteFiles(this IFileService fileService, string filePath, List<string> failedEntries)
         {
             Argument.IsNotNull(() => fileService);
             Argument.IsNotNull(() => filePath);

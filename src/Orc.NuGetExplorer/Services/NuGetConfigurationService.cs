@@ -69,7 +69,7 @@
                 packageSources = packageSources.Where(x => x.IsEnabled);
             }
 
-            return packageSources.ToPackageSourceInterfaces();
+            return packageSources.ToNuGetFeedInstances();
         }
 
         public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)

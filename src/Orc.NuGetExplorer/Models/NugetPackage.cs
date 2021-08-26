@@ -143,7 +143,7 @@
 
         public IValidationContext ValidationContext { get; set; }
 
-        IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+        IEnumerable<string> IPackageDetails.Authors => Authors.SplitIfNonEmpty();
 
         public int? DownloadCount { get; private set; }
 

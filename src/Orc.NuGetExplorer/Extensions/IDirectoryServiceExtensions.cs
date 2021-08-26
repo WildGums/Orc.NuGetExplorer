@@ -6,9 +6,9 @@
     using Catel;
     using Orc.FileSystem;
 
-    public static class IDirectoryServiceExtensions
+    internal static class IDirectoryServiceExtensions
     {
-        public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
+        internal static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
         {
             Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => folderPath);
@@ -59,7 +59,7 @@
             }
         }
 
-        private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
+        internal static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
         {
             var directoryStack = new Stack<string>();
 

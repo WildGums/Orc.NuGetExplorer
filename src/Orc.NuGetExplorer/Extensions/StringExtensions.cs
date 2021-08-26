@@ -12,24 +12,14 @@ namespace Orc.NuGetExplorer
 
     public static class StringExtensions
     {
-        public static string GetSafeScopeName(this string value)
+        public static IList<string> SplitIfNonEmpty(this string value, char separator = ',')
         {
-            if (value is null)
+            if (string.IsNullOrWhiteSpace(value))
             {
-                return "null";
+                return new List<string>();
             }
 
-            return value.ToLower();
-        }
-
-        public static IList<string> SplitOrEmpty(this string value, char separator = ',')
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value.Split(separator);
-            }
-
-            return new List<string>();
+            return value.Split(separator);
         }
     }
 }

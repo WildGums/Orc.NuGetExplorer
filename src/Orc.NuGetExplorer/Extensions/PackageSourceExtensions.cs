@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer
             return packageSources.Select(x => new PackageSource(x.Source, x.Name, x.IsEnabled, x.IsOfficial));
         }
 
-        internal static IEnumerable<IPackageSource> ToPackageSourceInterfaces(this IEnumerable<PackageSource> packageSources)
+        internal static IEnumerable<IPackageSource> ToNuGetFeedInstances(this IEnumerable<PackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);
 

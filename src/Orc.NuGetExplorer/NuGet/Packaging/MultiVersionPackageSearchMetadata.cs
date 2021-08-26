@@ -58,7 +58,7 @@
 
         public IValidationContext ValidationContext { get; private set; } = new ValidationContext();
 
-        IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+        IEnumerable<string> IPackageDetails.Authors => Authors.SplitIfNonEmpty();
 
         int? IPackageDetails.DownloadCount => (int?)DownloadCount;
 

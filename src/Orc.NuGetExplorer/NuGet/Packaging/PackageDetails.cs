@@ -64,7 +64,7 @@
 
         public string Title { get; }
 
-        public IEnumerable<string> Authors => _authors.SplitOrEmpty();
+        public IEnumerable<string> Authors => _authors.SplitIfNonEmpty();
 
         public DateTimeOffset? Published { get; }
 
