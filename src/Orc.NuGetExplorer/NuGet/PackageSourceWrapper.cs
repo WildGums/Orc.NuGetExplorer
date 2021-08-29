@@ -32,7 +32,7 @@
 
         public override string ToString()
         {
-            return String.Join<PackageSource>("; ", PackageSources.ToArray());
+            return string.Join<PackageSource>("; ", PackageSources.ToArray());
         }
     }
 }

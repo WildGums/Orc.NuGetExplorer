@@ -24,7 +24,7 @@
         private readonly IRepositoryContextService _repositoryService;
 
         public IPackageMetadataProvider PackageMetadataProvider =>
-            Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _projectManager);
+            Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _repositoryProvider);
 
         public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
@@ -65,7 +65,7 @@
 
                 var pagedPackages = localPackages
                     .GetLatest(VersionComparer.Default)
-                    .Where(package => package.Id.IndexOf(searchTerm ?? String.Empty, StringComparison.OrdinalIgnoreCase) != -1)
+                    .Where(package => package.Id.IndexOf(searchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) != -1)
                     .OrderBy(package => package.Id)
                     .Skip(pageContinuation.GetNext());
 

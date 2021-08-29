@@ -67,7 +67,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageMetadataProvider, PackageMetadataProvider>();
 
         serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
-        serviceLocator.RegisterType<IRepositoryService, RepositoryService>();
 
         //package loaders
         serviceLocator.RegisterType<IPackageLoaderService, PackagesLoaderService>();

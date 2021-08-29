@@ -9,6 +9,7 @@ namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
 
+    [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
     public interface IRepositoryService
     {
         #region Properties

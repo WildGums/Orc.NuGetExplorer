@@ -33,13 +33,12 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, INuGetPackageManager nuGetPackageManager,
-            IRepositoryService repositoryService, IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
+            IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
             ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => logger);
             Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => sourceRepositoryProvider);
             Argument.IsNotNull(() => defaultExtensibleProjectProvider);

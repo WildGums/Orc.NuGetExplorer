@@ -30,7 +30,7 @@
 
         public NuGetVersion NuGetVersion => Identity.Version;
 
-        public string SpecialVersion => String.Empty;
+        public string SpecialVersion => string.Empty;
 
         //todo
         public bool IsAbsoluteLatestVersion { get; }

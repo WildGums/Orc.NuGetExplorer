@@ -31,23 +31,25 @@
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
         private readonly IDirectoryService _directoryService;
-
+        private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private IPackageMetadataProvider _packageMetadataProvider;
 
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager, 
             IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IDirectoryService directoryService)
+            IDirectoryService directoryService, ISourceRepositoryProvider sourceRepositoryProvider)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => sourceRepositoryProvider);
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
             _extensibleProjectLocator = extensibleProjectLocator;
             _settignsProvider = settingsProvider;
             _directoryService = directoryService;
+            _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 
         public async Task StartLoadingAsync()
@@ -156,12 +158,7 @@
                 }
 
                 var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
-
-                var localRepos = _projectManager.AsLocalRepositories(projects);
-
-                var repos = context.ReadAllSourceRepositories();
-
-                return new PackageMetadataProvider(_directoryService, repos, localRepos);
+                return PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, projects.FirstOrDefault(), _sourceRepositoryProvider);
             }
         }
 

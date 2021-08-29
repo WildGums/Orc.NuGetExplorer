@@ -6,6 +6,7 @@
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Management;
 
+    [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
     internal class RepositoryService : IRepositoryService
     {
         private readonly IRepositoryContextService _repositoryContextService;
@@ -39,9 +40,8 @@
 
         public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
         {
-            //todo get repositories based on packageOperationType
-            //currenly returns all available repositories
-            //create package metadata provider from context
+            // TODO: get repositories based on packageOperationType
+            // currenly returns all available repositories
             using (var context = _repositoryContextService.AcquireContext())
             {
                 var projects = _extensibleProjectLocator.GetAllExtensibleProjects();

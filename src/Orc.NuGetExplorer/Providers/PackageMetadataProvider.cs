@@ -33,17 +33,36 @@
             NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
         }
 
-        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
+        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProject project,
+            ISourceRepositoryProvider sourceRepositoryProvider)
         {
             Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryProvider);
+            Argument.IsNotNull(() => repositoryService);
+            Argument.IsNotNull(() => project);
+            Argument.IsNotNull(() => sourceRepositoryProvider);
 
-            _directoryService = directoryService;
-            _sourceRepositories = repositoryProvider.GetRepositories();
-            _optionalLocalRepositories = new[]
+            using (var context = repositoryService.AcquireContext())
             {
-                repositoryProvider.CreateRepository(repositoryService.LocalRepository.PackageSource)
-            };
+                var optionalGlobalRepositories = Array.Empty<SourceRepository>();
+                var localRepository = project.AsSourceRepository(sourceRepositoryProvider);
+                var repositories = context.ReadAllSourceRepositories();
+
+                new PackageMetadataProvider(directoryService, repositories, optionalGlobalRepositories, localRepository);
+            }
+        }
+
+        /// <summary>
+        /// TODO: Deprecate this ctor in the future, need only for service locator
+        /// </summary>
+        /// <param name="directoryService"></param>
+        /// <param name="repositoryService"></param>
+        /// <param name="projectLocator"></param>
+        /// <param name="sourceRepositoryProvider"></param>
+        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectLocator,
+            ISourceRepositoryProvider sourceRepositoryProvider)
+            : this(directoryService, repositoryService, projectLocator.GetDefaultProject(), sourceRepositoryProvider)
+        {
+
         }
 
         public PackageMetadataProvider(IDirectoryService directoryService, IEnumerable<SourceRepository> sourceRepositories,
@@ -56,24 +75,27 @@
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
             _localRepository = localRepository;
+
+
+            var localRepositories = new List<SourceRepository>(optionalGlobalLocalRepositories ?? Array.Empty<SourceRepository>());
+
+            // Hack:
+            localRepositories.Add(_localRepository);
+            _optionalLocalRepositories = localRepositories;
         }
 
 
-        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
+        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
+            ISourceRepositoryProvider sourceRepositoryProvider)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryService);
+            var project = projectSource.GetDefaultProject();
+            return new PackageMetadataProvider(directoryService, repositoryService, project, sourceRepositoryProvider);
+        }
 
-            using (var context = repositoryService.AcquireContext())
-            {
-                var projects = projectSource.GetAllExtensibleProjects();
-
-                var localRepos = projectManager.AsLocalRepositories(projects);
-
-                var repos = context.ReadAllSourceRepositories();
-
-                return new PackageMetadataProvider(directoryService, repos, localRepos);
-            }
+        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProject project,
+            ISourceRepositoryProvider sourceRepositoryProvider)
+        {
+            return new PackageMetadataProvider(directoryService, repositoryService, project, sourceRepositoryProvider);
         }
 
         public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
@@ -123,7 +145,6 @@
 
             return lowest;
         }
-
 
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {

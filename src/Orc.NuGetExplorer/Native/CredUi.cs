@@ -244,15 +244,15 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct NativeCredential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public IntPtr TargetName;
             public IntPtr Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public IntPtr CredentialBlob;
-            public UInt32 Persist;
-            public UInt32 AttributeCount;
+            public uint Persist;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public IntPtr TargetAlias;
             public IntPtr UserName;
@@ -272,7 +272,7 @@ namespace Orc.NuGetExplorer.Native
                 ncred.Comment = IntPtr.Zero;
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
-                ncred.Persist = (UInt32)cred.Persist;
+                ncred.Persist = (uint)cred.Persist;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
 
                 var encryptedPassword = EncryptPassword(cred.CredentialBlob);
@@ -298,15 +298,15 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct Credential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public string TargetName;
             public string Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public string CredentialBlob;
             public CredPersistance Persist;
-            public UInt32 AttributeCount;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public string TargetAlias;
             public string UserName;

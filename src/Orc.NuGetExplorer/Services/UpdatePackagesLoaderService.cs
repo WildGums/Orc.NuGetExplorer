@@ -19,10 +19,9 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly IRepositoryService _repositoryService;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly INuGetPackageManager _nuGetExtensibleProjectManager;
-
+        private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly IServiceLocator _serviceLocator;
 
         //underlying service
@@ -31,17 +30,16 @@
 
         private readonly HashSet<string> _discardedPackagesSet = new();
 
-        public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-           INuGetPackageManager nuGetExtensibleProjectManager)
+        public UpdatePackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, INuGetPackageManager nuGetExtensibleProjectManager,
+            ISourceRepositoryProvider sourceRepositoryProvider)
         {
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
+            Argument.IsNotNull(() => sourceRepositoryProvider);
 
-            _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _nuGetExtensibleProjectManager = nuGetExtensibleProjectManager;
-
+            _sourceRepositoryProvider = sourceRepositoryProvider;
             _serviceLocator = this.GetServiceLocator();
 
             _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>());
@@ -114,7 +112,7 @@
         public async Task<IEnumerable<IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
             var updateList = new List<IPackageSearchMetadata>();
-            var emptySearchTerm = String.Empty;
+            var emptySearchTerm = string.Empty;
 
             try
             {
@@ -122,8 +120,10 @@
 
                 //get local packages
                 var localFilter = new SearchFilter(true);
-                var localRepo = _repositoryService.LocalRepository;
-                var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepo.Source));
+
+                // Note: This code need to be changes in the future if multiple local installation folder (projects) will supported
+                var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
+                var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepository.PackageSource.Source));
 
                 var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
 
