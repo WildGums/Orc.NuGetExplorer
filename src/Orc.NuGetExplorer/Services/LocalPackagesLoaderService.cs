@@ -12,7 +12,6 @@
     using NuGetExplorer.Management;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using Orc.FileSystem;
 
     internal class LocalPackagesLoaderService : IPackageLoaderService
     {
@@ -20,25 +19,18 @@
 
         private readonly INuGetPackageManager _projectManager;
         private readonly ISourceRepositoryProvider _repositoryProvider;
-        private readonly IDirectoryService _directoryService;
-        private readonly IRepositoryContextService _repositoryService;
 
-        public IPackageMetadataProvider PackageMetadataProvider =>
-            Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _repositoryProvider);
+        [ObsoleteEx(ReplacementTypeOrMember = "SourceContext.PackageMetadataProvider", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public IPackageMetadataProvider PackageMetadataProvider => throw new NotSupportedException();
 
-        public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
+        public LocalPackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
-            Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
-            Argument.IsNotNull(() => repositoryService);
 
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;
-            _directoryService = directoryService;
-            _repositoryService = repositoryService;
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
@@ -99,14 +91,18 @@
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             // first we try and load the metadata from a local package
-            var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-
-            if (packageMetadata is null)
+            using (var context = SourceContext.AcquireContext())
             {
-                //fallback network package if local installation exists but package cannot be read
-                packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+                var packageMetadataProvider = context.PackageMetadataProviderValue;
+
+                var packageMetadata = await packageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+                if (packageMetadata is null)
+                {
+                    // fallback network package if local installation exists but package cannot be read
+                    packageMetadata = await packageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+                }
+                return packageMetadata;
             }
-            return packageMetadata;
         }
     }
 }

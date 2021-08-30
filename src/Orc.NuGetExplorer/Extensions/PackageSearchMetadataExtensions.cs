@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using Catel;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
 
@@ -16,6 +18,13 @@
                 {
                     PackageSearchMetadata = m
                 });
+        }
+
+        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, CancellationToken cancellationToken)
+        {
+            Argument.IsNotNull(() => packages);
+            var master = packages.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
+            return master?.WithVersions(() => packages.ToVersionInfo(includePrerelease));
         }
     }
 }

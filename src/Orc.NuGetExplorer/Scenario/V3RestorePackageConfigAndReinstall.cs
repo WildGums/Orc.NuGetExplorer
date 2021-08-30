@@ -26,30 +26,29 @@
 
         private readonly IExtensibleProject _defaultProject;
         private readonly INuGetPackageManager _nuGetPackageManager;
-        private readonly IRepositoryContextService _repositoryContextService;
         private readonly ILogger _logger;
         private readonly IConfigurationService _configurationService;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly IDirectoryService _directoryService;
 
-        public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager, IRepositoryContextService repositoryContextService,
+        public V3RestorePackageConfigAndReinstall(IDefaultExtensibleProjectProvider projectProvider, INuGetPackageManager nuGetPackageManager,
             ILogger logger, IConfigurationService configurationService, IPackageOperationNotificationService packageOperationNotificationService, IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => projectProvider);
             Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => repositoryContextService);
             Argument.IsNotNull(() => configurationService);
             Argument.IsNotNull(() => packageOperationNotificationService);
             Argument.IsNotNull(() => directoryService);
 
             _defaultProject = projectProvider.GetDefaultProject();
             _nuGetPackageManager = nuGetPackageManager;
-            _repositoryContextService = repositoryContextService;
             _logger = logger;
             _configurationService = configurationService;
             _packageOperationNotificationService = packageOperationNotificationService;
             _directoryService = directoryService;
         }
+
+        public Version MaxVersion => new Version(4, 5, 1);
 
         public async Task<bool> RunAsync()
         {
@@ -164,8 +163,7 @@
 
         private SourceContext AcquireSourceContextForActions()
         {
-            var context = _repositoryContextService.AcquireContext(ignoreLocal: true);
-
+            var context = SourceContext.AcquireContext(true);
             if (context == SourceContext.EmptyContext)
             {
                 Log.Info($"Source context is empty, trying to create package source from configured extension's fallback Uri");
@@ -189,9 +187,7 @@
                 Log.Info($"Default Uri for installed extension {defaultPluginUri}");
             }
 
-            var context = _repositoryContextService.AcquireContext(new PackageSource(defaultPluginUri));
-
-            return context;
+            return SourceContext.AcquireContext(new PackageSource(defaultPluginUri));
         }
     }
 }

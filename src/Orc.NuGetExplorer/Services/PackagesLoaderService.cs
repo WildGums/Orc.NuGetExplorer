@@ -29,7 +29,8 @@
             _repositoryProvider = repositoryProvider;
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider { get; }
+        [ObsoleteEx(ReplacementTypeOrMember = "SourceContext.PackageMetadataProvider", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public IPackageMetadataProvider PackageMetadataProvider => throw new NotSupportedException();
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {

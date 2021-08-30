@@ -20,33 +20,27 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
-        private readonly INuGetPackageManager _nuGetExtensibleProjectManager;
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
-        private readonly IServiceLocator _serviceLocator;
 
-        //underlying service
-        private readonly Lazy<IPackageLoaderService> _feedRepositoryLoader;
-        private readonly Lazy<IPackageLoaderService> _projectRepositoryLoader;
+        // underlying service
+        private readonly Lazy<IPackageLoaderService> _projectRepositoryPackageLoader;
 
         private readonly HashSet<string> _discardedPackagesSet = new();
 
-        public UpdatePackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, INuGetPackageManager nuGetExtensibleProjectManager,
-            ISourceRepositoryProvider sourceRepositoryProvider)
+        public UpdatePackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, ISourceRepositoryProvider sourceRepositoryProvider, IServiceLocator serviceLocator)
         {
             Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => sourceRepositoryProvider);
+            Argument.IsNotNull(() => serviceLocator);
 
             _extensibleProjectLocator = extensibleProjectLocator;
-            _nuGetExtensibleProjectManager = nuGetExtensibleProjectManager;
             _sourceRepositoryProvider = sourceRepositoryProvider;
-            _serviceLocator = this.GetServiceLocator();
 
-            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>());
-            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
+            _projectRepositoryPackageLoader = new Lazy<IPackageLoaderService>(() => serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
+        [ObsoleteEx(ReplacementTypeOrMember = "SourceContext.PackageMetadataProvider", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryPackageLoader.Value.PackageMetadataProvider;
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
@@ -60,7 +54,7 @@
 
                 var localContinuation = new PageContinuation(pageContinuation, !pageContinuation.Source.PackageSources.Any());
 
-                var installedPackagesMetadatas = (await _projectRepositoryLoader.Value.LoadAsync(searchTerm, localContinuation, searchFilter, token));
+                var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadAsync(searchTerm, localContinuation, searchFilter, token);
 
                 pageContinuation.GetNext();
 
@@ -68,34 +62,40 @@
 
                 List<IPackageSearchMetadata> updateList = new List<IPackageSearchMetadata>();
 
-                //getting last metadata
-                foreach (var package in installedPackagesMetadatas)
+                using (var sourceContext = SourceContext.AcquireContext())
                 {
-                    if (_discardedPackagesSet.Contains(package.Identity.Id))
+                    var packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
+                    //getting last metadata
+                    foreach (var package in installedPackagesMetadatas)
                     {
-                        continue;
-                    }
+          
+                        if (_discardedPackagesSet.Contains(package.Identity.Id))
+                        {
+                            continue;
+                        }
 
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+                        var clonedMetadata = (await packageMetadataProvider.GetPackageMetadataListAsync(package.Identity.Id, searchFilter.IncludePrerelease, false, token))
+                            .Highest(searchFilter.IncludePrerelease, token);
 
-                    if (clonedMetadata is null)
-                    {
-                        Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
-                        continue;
-                    }
+                        if (clonedMetadata is null)
+                        {
+                            Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
+                            continue;
+                        }
 
-                    if (clonedMetadata.Identity.Version > package.Identity.Version)
-                    {
-                        var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas(clonedMetadata as ClonedPackageSearchMetadata, package).Build();
-                        updateList.Add(combinedMetadata);
-                    }
+                        if (clonedMetadata.Identity.Version > package.Identity.Version)
+                        {
+                            var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas(clonedMetadata as ClonedPackageSearchMetadata, package).Build();
+                            updateList.Add(combinedMetadata);
+                        }
 
-                    _discardedPackagesSet.Add(package.Identity.Id);
+                        _discardedPackagesSet.Add(package.Identity.Id);
 
 
-                    if (updateList.Count >= pageContinuation.Size)
-                    {
-                        break;
+                        if (updateList.Count >= pageContinuation.Size)
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -116,40 +116,46 @@
 
             try
             {
-                Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
-
-                //get local packages
-                var localFilter = new SearchFilter(true);
-
-                // Note: This code need to be changes in the future if multiple local installation folder (projects) will supported
-                var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
-                var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepository.PackageSource.Source));
-
-                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
-
-                //getting updates
-                foreach (var package in installedPackagesMetadatas)
+                using (var sourceContext = SourceContext.AcquireContext())
                 {
-                    //current behavior defined based on installed version
-                    //pre-release versions upgraded to latest stable or pre-release
-                    //stable versions upgraded to latest stable only
-                    var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
+                    Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
 
-                    if (clonedMetadata is null)
+                    var packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
+
+                    // Get local packages
+                    var localFilter = new SearchFilter(true);
+
+                    // Note: This code need to be changes in the future if multiple local installation folder (projects) will supported
+                    var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
+                    var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepository.PackageSource.Source));
+
+                    var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
+
+                    // Getting updatess
+                    foreach (var package in installedPackagesMetadatas)
                     {
-                        Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
-                        continue;
+                        // Current behavior defined based on installed version
+                        // pre-release versions upgraded to latest stable or pre-release
+                        // stable versions upgraded to latest stable only
+                        var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
+
+                        var clonedMetadata = (await packageMetadataProvider.GetPackageMetadataListAsync(package.Identity.Id, isPrereleaseUpdate, false, token))
+                            .Highest(isPrereleaseUpdate, token);
+                        if (clonedMetadata is null)
+                        {
+                            Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
+                            continue;
+                        }
+
+                        if (clonedMetadata.Identity.Version > package.Identity.Version)
+                        {
+                            //construct package details
+                            updateList.Add(clonedMetadata);
+                        }
                     }
 
-                    if (clonedMetadata.Identity.Version > package.Identity.Version)
-                    {
-                        //construct package details
-                        updateList.Add(clonedMetadata);
-                    }
+                    return updateList;
                 }
-
-                return updateList;
             }
             catch (Exception ex) when (token.IsCancellationRequested)
             {
@@ -160,8 +166,7 @@
         public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
 
-            return (await SearchForPackagesUpdatesAsync(allowPrerelease, authenticateIfRequired, token))
-            .Select(
+            return (await SearchForPackagesUpdatesAsync(allowPrerelease, authenticateIfRequired, token)).Select(
                 m => PackageDetailsFactory.Create(PackageOperationType.Update, m, m.Identity, true))
             .ToList();
         }

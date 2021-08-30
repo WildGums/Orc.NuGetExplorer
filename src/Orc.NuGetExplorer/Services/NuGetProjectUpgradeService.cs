@@ -54,7 +54,13 @@
 
                 foreach (var scenario in _runOnCheckList)
                 {
-                    Log.Info($"Run {scenario}..");
+                    if (scenario.MaxVersion.CompareTo(_settings.Version) <= 0)
+                    {
+                        Log.Info($"Skipping upgrade scenario, this scenario compatible only for current version {scenario.MaxVersion} or less");
+                        continue;
+                    }
+
+                    Log.Info($"Run nuget package upgrade {scenario}..");
                     var result = await scenario.RunAsync();
                     Log.Info($"Completed, returned status {result}");
 
@@ -86,6 +92,8 @@
 
         public void AddUpgradeScenario(IUpgradeScenario scenario)
         {
+            Argument.IsNotNull(() => scenario);
+
             _runOnCheckList.Add(scenario);
         }
 

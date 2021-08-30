@@ -21,19 +21,6 @@
         Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity,
             bool includePrerelease, CancellationToken cancellationToken);
 
-        /*
-        /// <summary>
-        /// Retrieves a package metadata of a highest available version along with list of all available versions
-        /// </summary>
-        /// <param name="identity">Desired package identity</param>
-        /// <param name="project">Project reference to determine the latest version</param>
-        /// <param name="includePrerelease">Filters pre-release versions</param>
-        /// <param name="cancellationToken">A cancellation token</param>
-        /// <returns>Package metadata</returns>
-        Task<IPackageSearchMetadata> GetLatestPackageMetadataAsync(PackageIdentity identity,
-            NuGetProject project, bool includePrerelease, CancellationToken cancellationToken);
-        */
-
         /// <summary>
         /// Retrieves a list of metadata objects of all available versions for given package id.
         /// </summary>
@@ -46,7 +33,7 @@
             bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Retrieves a package metadata of a specific version along with list of all available versions
+        /// Retrieves a package metadata of a specific version along with list of all available versions from local (project) directory
         /// </summary>
         /// <param name="identity">Desired package id with version</param>
         /// <param name="includePrerelease">Filters pre-release versions</param>
@@ -54,7 +41,10 @@
         /// <returns>Package metadata</returns>
         Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity,
             bool includePrerelease, CancellationToken cancellationToken);
+
         Task<IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken);
+
+        [ObsoleteEx(ReplacementTypeOrMember = "PackageSearchMetadataExtensions.Highest", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
     }
 }

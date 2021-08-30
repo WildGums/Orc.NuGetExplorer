@@ -19,133 +19,59 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private static readonly ILogger NuGetLogger;
+
         private readonly IDirectoryService _directoryService;
-        private readonly IEnumerable<SourceRepository> _sourceRepositories;
 
-        private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
-
-#pragma warning disable IDE0052 // Remove unread private members
-        private readonly SourceRepository _localRepository;
-#pragma warning restore IDE0052 // Remove unread private members
+        private readonly List<SourceRepository> _sourceRepositories;
+        private readonly List<SourceRepository> _optionalLocalRepositories;
+        private readonly SourceRepository _localDirectory;
 
         static PackageMetadataProvider()
         {
             NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
         }
 
-        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProject project,
+        /// <summary>
+        /// The default ctor used by ITypeFactory to build instance
+        /// </summary>
+        /// <param name="sourceContext"></param>
+        /// <param name="directoryService"></param>
+        /// <param name="projectLocator"></param>
+        /// <param name="sourceRepositoryProvider"></param>
+        public PackageMetadataProvider(SourceContext sourceContext, IDirectoryService directoryService, IExtensibleProjectLocator projectLocator,
             ISourceRepositoryProvider sourceRepositoryProvider)
+            : this(sourceContext, projectLocator.GetDefaultProject(), directoryService, sourceRepositoryProvider)
+        {
+
+        }
+
+        public PackageMetadataProvider(SourceContext sourceContext, IExtensibleProject project, IDirectoryService directoryService, ISourceRepositoryProvider sourceRepositoryProvider)
         {
             Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => project);
             Argument.IsNotNull(() => sourceRepositoryProvider);
 
-            using (var context = repositoryService.AcquireContext())
-            {
-                var optionalGlobalRepositories = Array.Empty<SourceRepository>();
-                var localRepository = project.AsSourceRepository(sourceRepositoryProvider);
-                var repositories = context.ReadAllSourceRepositories();
-
-                new PackageMetadataProvider(directoryService, repositories, optionalGlobalRepositories, localRepository);
-            }
-        }
-
-        /// <summary>
-        /// TODO: Deprecate this ctor in the future, need only for service locator
-        /// </summary>
-        /// <param name="directoryService"></param>
-        /// <param name="repositoryService"></param>
-        /// <param name="projectLocator"></param>
-        /// <param name="sourceRepositoryProvider"></param>
-        public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectLocator,
-            ISourceRepositoryProvider sourceRepositoryProvider)
-            : this(directoryService, repositoryService, projectLocator.GetDefaultProject(), sourceRepositoryProvider)
-        {
-
-        }
-
-        public PackageMetadataProvider(IDirectoryService directoryService, IEnumerable<SourceRepository> sourceRepositories,
-            IEnumerable<SourceRepository> optionalGlobalLocalRepositories, SourceRepository localRepository = null)
-        {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => sourceRepositories);
-
             _directoryService = directoryService;
-            _sourceRepositories = sourceRepositories;
-            _optionalLocalRepositories = optionalGlobalLocalRepositories;
-            _localRepository = localRepository;
 
+            var repositories = sourceContext.ReadAllSourceRepositories();
+            var localRepository = project.AsSourceRepository(sourceRepositoryProvider);
 
-            var localRepositories = new List<SourceRepository>(optionalGlobalLocalRepositories ?? Array.Empty<SourceRepository>());
+            _sourceRepositories = new List<SourceRepository>();
+            _optionalLocalRepositories = new List<SourceRepository>();
 
-            // Hack:
-            localRepositories.Add(_localRepository);
-            _optionalLocalRepositories = localRepositories;
-        }
-
-
-        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
-            ISourceRepositoryProvider sourceRepositoryProvider)
-        {
-            var project = projectSource.GetDefaultProject();
-            return new PackageMetadataProvider(directoryService, repositoryService, project, sourceRepositoryProvider);
-        }
-
-        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProject project,
-            ISourceRepositoryProvider sourceRepositoryProvider)
-        {
-            return new PackageMetadataProvider(directoryService, repositoryService, project, sourceRepositoryProvider);
-        }
-
-        public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
-        {
-            var sources = new List<SourceRepository>();
-
-            if (_optionalLocalRepositories is not null)
+            if (repositories is not null)
             {
-                sources.AddRange(_optionalLocalRepositories);
+                _sourceRepositories.AddRange(repositories);
             }
 
-            // Take the package from the first source it is found in
-            foreach (var source in sources)
-            {
-                var result = await GetPackageMetadataFromLocalSourceAsync(source, identity, cancellationToken);
+            // Note: we don't use any optional repositories by default
+            // _optionalLocalRepositories.AddRange(Array.Empty<SourceRepository>());
 
-                if (result is not null)
-                {
-                    //TODO why additional fetching needed?
-                    //return result.WithVersions(
-                    //    () => FetchAndMergeVersionsAsync(identity, includePrerelease, ))
-                    return result;
-                }
-            }
-
-            return null;
+            _localDirectory = localRepository;
         }
 
-        public async Task<IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken)
-        {
-            var sources = new List<SourceRepository>();
-
-            if (_optionalLocalRepositories is not null)
-            {
-                sources.AddRange(_optionalLocalRepositories);
-            }
-
-            var tasks = sources.Select(r => GetPackageMetadataFromLocalSourceAsync(r, packageid, cancellationToken)).ToArray();
-
-            var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
-                .Select(x => x.UnwrapResult())
-                .Where(metadata => metadata is not null);
-
-            var lowest = completed.SelectMany(p => p)
-                .OrderBy(p => p.Identity.Version)
-                .FirstOrDefault();
-
-            return lowest;
-        }
-
+        #region IPackageMetadataProvider
+        /// <inheritdoc/>
         public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             if (!_sourceRepositories.Any())
@@ -155,7 +81,7 @@
             }
 
             var tasks = _sourceRepositories
-               .Select(r => GetPackageMetadataAsyncFromSourceAsync(r, identity, includePrerelease, cancellationToken)).ToArray();
+               .Select(r => GetSinglePackageMetadataAsyncFromSourceAsync(r, identity, includePrerelease, cancellationToken)).ToArray();
 
             var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
                 .Select(x => x.UnwrapResult())
@@ -172,19 +98,10 @@
             return master;
         }
 
-        public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
-        {
-            //returned type - packageRegistrationMetadata
-            var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
-
-            var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
-
-            return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
-        }
-
+        /// <inheritdoc/>
         public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken)
         {
-            var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
+            var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
 
             var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess).
                 Select(x => x.UnwrapResult())
@@ -200,8 +117,62 @@
             return uniquePackages;
         }
 
+        // <inheritdoc/>
+        public async Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
+        {
+            var sources = _optionalLocalRepositories.Append(_localDirectory);
+
+            // Take the package from the first matched source
+            foreach (var source in sources)
+            {
+                var result = await GetSinglePackageMetadataFromLocalSourceAsync(source, identity, cancellationToken);
+
+                if (result is not null)
+                {
+                    //TODO test why additional fetching need?
+                    //return result.WithVersions(
+                    //    () => FetchAndMergeVersionsAsync(identity, includePrerelease, ))
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        // <inheritdoc/>
+        public async Task<IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken)
+        {
+            var sources = _optionalLocalRepositories.Append(_localDirectory);
+
+            var tasks = sources.Select(r => GetPackageMetadataFromLocalSourceAsync(r, packageid, cancellationToken)).ToArray();
+
+            var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
+                .Select(x => x.UnwrapResult())
+                .Where(metadata => metadata is not null);
+
+            var lowest = completed.SelectMany(p => p)
+                .OrderBy(p => p.Identity.Version)
+                .FirstOrDefault();
+
+            return lowest;
+        }
+
+        #endregion
+
+
+        [ObsoleteEx(ReplacementTypeOrMember = "PackageSearchMetadataExtensions.Highest", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
+        {
+            //returned type - packageRegistrationMetadata
+            var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
+
+            var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
+
+            return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
+        }
+
         /// <summary>
-        /// Returns list of package metadata objects from repository
+        /// Returns complete list of package metadata objects from specific source
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="packageId"></param>
@@ -209,7 +180,7 @@
         /// <param name="includeUnlisted"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(SourceRepository repository,
+        private async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListFromSourceAsync(SourceRepository repository,
             string packageId,
             bool includePrerelease,
             bool includeUnlisted,
@@ -252,7 +223,7 @@
         }
 
         /// <summary>
-        /// Returns list of package metadata objects along with all version metadtas from repository
+        /// Returns list of all version metadata for single package from specific source
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="identity"></param>
@@ -260,7 +231,7 @@
         /// <param name="takeVersions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<IPackageSearchMetadata> GetPackageMetadataAsyncFromSourceAsync(SourceRepository repository,
+        private async Task<IPackageSearchMetadata> GetSinglePackageMetadataAsyncFromSourceAsync(SourceRepository repository,
             PackageIdentity identity,
             bool includePrerelease,
             CancellationToken cancellationToken,
@@ -269,7 +240,7 @@
             if (takeVersions)
             {
                 //query all versions and pack them in a single object
-                var versionsMetadatas = await GetPackageMetadataListAsyncFromSourceAsync(repository, identity.Id, includePrerelease, false, cancellationToken);
+                var versionsMetadatas = await GetPackageMetadataListFromSourceAsync(repository, identity.Id, includePrerelease, false, cancellationToken);
 
                 if (!versionsMetadatas?.Any() ?? false)
                 {
@@ -295,7 +266,9 @@
         }
 
 
-        private async Task<IPackageSearchMetadata> GetPackageMetadataFromLocalSourceAsync(SourceRepository localRepository, PackageIdentity packageIdentity, CancellationToken token)
+        private async Task<IPackageSearchMetadata> GetSinglePackageMetadataFromLocalSourceAsync(SourceRepository localRepository,
+            PackageIdentity packageIdentity,
+            CancellationToken token)
         {
             var localPackages = await GetPackageMetadataFromLocalSourceAsync(localRepository, packageIdentity.Id, token);
 
@@ -307,11 +280,9 @@
             };
 
             return packageMetadata?.WithVersions(versions);
-
         }
 
-        private async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataFromLocalSourceAsync(
-            SourceRepository localRepository,
+        private async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataFromLocalSourceAsync(SourceRepository localRepository,
             string packageId,
             CancellationToken token)
         {

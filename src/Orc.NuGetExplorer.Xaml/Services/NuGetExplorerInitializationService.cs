@@ -36,6 +36,7 @@
             //run upgrade
             //pre-initialization to prepare old data to new NuGetExplorer
             var basicV3Scenario = typeFactory.CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
+
             nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;

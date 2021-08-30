@@ -16,14 +16,13 @@ namespace Orc.NuGetExplorer
     using Catel.Services;
     using NuGet.Common;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Packaging;
-    using Orc.NuGetExplorer.Providers;
 
     internal class PackageCommandService : IPackageCommandService
     {
         #region Fields
         private readonly IApiPackageRegistry _apiPackageRegistry;
-        private readonly IPackageMetadataProvider _packageMetadataProvider;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IPackageOperationService _packageOperationService;
         private readonly IPleaseWaitService _pleaseWaitService;
@@ -32,20 +31,18 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageCommandService(IPleaseWaitService pleaseWaitService, IPackageOperationService packageOperationService,
-            IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry, IPackageMetadataProvider packageMetadataProvider, ILogger logger)
+            IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry, ILogger logger)
         {
             Argument.IsNotNull(() => pleaseWaitService);
             Argument.IsNotNull(() => packageOperationService);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => packageMetadataProvider);
             Argument.IsNotNull(() => logger);
 
             _pleaseWaitService = pleaseWaitService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
             _apiPackageRegistry = apiPackageRegistry;
-            _packageMetadataProvider = packageMetadataProvider;
             _logger = logger;
         }
         #endregion
@@ -181,8 +178,12 @@ namespace Orc.NuGetExplorer
 
         private async Task<bool> PackageExistsLocallyAsync(string packageId)
         {
-            var packageVersionedMetadata = await _packageMetadataProvider.GetLowestLocalPackageMetadataAsync(packageId, true, CancellationToken.None);
-            return packageVersionedMetadata is not null;
+            using (var sourceContext = SourceContext.AcquireContext())
+            {
+                var packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
+                var packageVersionedMetadata = await packageMetadataProvider.GetLowestLocalPackageMetadataAsync(packageId, true, CancellationToken.None);
+                return packageVersionedMetadata is not null;
+            }
         }
 
         public async Task<IPackageDetails> GetPackageAsync(string packageId)
@@ -214,12 +215,15 @@ namespace Orc.NuGetExplorer
                 return Enumerable.Empty<IPackageSearchMetadata>();
             }
 
-            // TODO: use specific source repository here;
-            var getMetadataResult = await _packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
+            using (var sourceContext = SourceContext.AcquireContext())
+            {
+                var packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
+                var getMetadataResult = await packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
 
-            var versions = getMetadataResult.Skip(skip).ToList();
+                var versions = getMetadataResult.Skip(skip).ToList();
 
-            return versions;
+                return versions;
+            }
         }
 
         private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(IPackageSearchMetadata packageSearchMetadata, bool includePrerelease)
@@ -229,12 +233,15 @@ namespace Orc.NuGetExplorer
 
         private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(string packageId, bool includePrerelease)
         {
-            // TODO: use specific source repository here;
-            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
+            using (var sourceContext = SourceContext.AcquireContext())
+            {
+                var packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
+                var versionsMetadata = await packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+                var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
 
-            return details;
+                return details;
+            }
         }
 
         #endregion

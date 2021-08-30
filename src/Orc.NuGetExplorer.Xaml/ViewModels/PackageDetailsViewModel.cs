@@ -27,8 +27,6 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly int Timeout = 500;
 
-        private static IPackageMetadataProvider PackageMetadataProvider;
-
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
@@ -208,15 +206,17 @@
         {
             try
             {
-                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(
-                    identity, isPreReleaseIncluded, CancellationToken.None);
-
-                if (versionMetadata?.Identity?.Version is not null)
+                using (var sourceContext = SourceContext.AcquireContext())
                 {
-                    packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
-                }
+                    var packaeMetadataProvider = sourceContext.PackageMetadataProviderValue;
+                    var versionMetadata = await packaeMetadataProvider.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
+                    if (versionMetadata?.Identity?.Version is not null)
+                    {
+                        packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
+                    }
 
-                return versionMetadata;
+                    return versionMetadata;
+                }
             }
             catch (Exception ex)
             {
@@ -314,8 +314,6 @@
 
                 SelectedVersion = selectedVersion;
 
-                PackageMetadataProvider = InitMetadataProvider();
-
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
                 if (Package is not null)
@@ -347,14 +345,6 @@
             if (!ReferenceEquals(Package, package))
             {
                 ValidationContext = package.ValidationContext;
-            }
-        }
-
-        private IPackageMetadataProvider InitMetadataProvider()
-        {
-            using (var sourceContext = SourceContext.AcquireContext())
-            {
-                return new PackageMetadataProvider(_directoryService, sourceContext.ReadAllSourceRepositories(), null);
             }
         }
 

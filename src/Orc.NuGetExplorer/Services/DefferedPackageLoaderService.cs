@@ -14,7 +14,6 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using Orc.FileSystem;
     using Orc.NuGetExplorer.Models;
 
     internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
@@ -26,30 +25,19 @@
 
         private bool _isLoading = false;
 
-        private readonly IRepositoryContextService _repositoryService;
         private readonly INuGetPackageManager _projectManager;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
-        private readonly IDirectoryService _directoryService;
-        private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager, 
-            IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IDirectoryService directoryService, ISourceRepositoryProvider sourceRepositoryProvider)
+        public DefferedPackageLoaderService(INuGetPackageManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider)
         {
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => sourceRepositoryProvider);
 
-            _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
             _extensibleProjectLocator = extensibleProjectLocator;
             _settignsProvider = settingsProvider;
-            _directoryService = directoryService;
-            _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 
         public async Task StartLoadingAsync()
@@ -69,17 +57,11 @@
                 var processedTask = _taskTokenList.ToList();
                 _taskTokenList.Clear();
 
-                _packageMetadataProvider = InitializeMetadataProvider();
-
-                if (_packageMetadataProvider is null)
-                {
-                    Log.Info("Cannot acquire metadata provider for background loading tasks");
-                    return;
-                }
-
                 using (var cts = new CancellationTokenSource())
+                using (var sourceContext = SourceContext.AcquireContext())
                 {
                     _aliveCancellationToken = cts.Token;
+                    _packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
 
                     var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 
@@ -144,23 +126,6 @@
             return GetMetadataFromRemoteSourcesAsync(token, cancellationToken);
         }
 #pragma warning restore CL0002 // Use async suffix
-
-        public IPackageMetadataProvider InitializeMetadataProvider()
-        {
-
-            //todo provide more automatic way
-            //create package metadata provider from context
-            using (var context = _repositoryService.AcquireContext())
-            {
-                if (context == SourceContext.EmptyContext)
-                {
-                    return null;
-                }
-
-                var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
-                return PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, projects.FirstOrDefault(), _sourceRepositoryProvider);
-            }
-        }
 
         /// <summary>
         /// Get installed local metadata based on package.config
