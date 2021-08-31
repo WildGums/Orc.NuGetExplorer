@@ -15,7 +15,7 @@
         private readonly ScopeManager<Sources> _scopeManager;
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly ITypeFactory _typeFactory;
-        //private readonly Lazy<IPackageMetadataProvider> _packageMetadataProviderLazyInitializer;
+        private readonly Lazy<IPackageMetadataProvider> _packageMetadataProviderLazyInitializer;
 
         private SourceContext()
         {
@@ -32,9 +32,9 @@
             _sourceRepositoryProvider = sourceRepositoryProvider;
             _typeFactory = typeFactory;
 
-            //_packageMetadataProviderLazyInitializer = new Lazy<IPackageMetadataProvider>(
-            //    _typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(this)
-            //    );
+            _packageMetadataProviderLazyInitializer = new Lazy<IPackageMetadataProvider>(
+                _typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(this)
+                );
         }
 
         public static SourceContext EmptyContext { get; set; } = new SourceContext();
@@ -54,7 +54,7 @@
             }
         }
 
-        public IPackageMetadataProvider PackageMetadataProviderValue => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(this);//_packageMetadataProviderLazyInitializer.Value;
+        public IPackageMetadataProvider PackageMetadataProviderValue => _packageMetadataProviderLazyInitializer.Value;
 
         public IEnumerable<SourceRepository> ReadAllSourceRepositories()
         {
