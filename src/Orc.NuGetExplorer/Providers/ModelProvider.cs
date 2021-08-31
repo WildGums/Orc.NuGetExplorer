@@ -5,7 +5,8 @@
     using Catel.Data;
     using Catel.IoC;
 
-    public class ModelProvider<T> : IModelProvider<T> where T : ModelBase
+    public class ModelProvider<T> : IModelProvider<T>
+        where T : ModelBase
     {
         private readonly ITypeFactory _typeFactory;
 

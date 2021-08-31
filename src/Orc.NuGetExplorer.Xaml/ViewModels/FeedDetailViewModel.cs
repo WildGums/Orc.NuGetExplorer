@@ -1,15 +1,24 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System.Threading.Tasks;
+    using System.Windows.Input;
+    using Catel;
     using Catel.MVVM;
-    using Microsoft.WindowsAPICodePack.Dialogs;
+    using Catel.Services;
     using NuGetExplorer.Models;
 
     public class FeedDetailViewModel : ViewModelBase
     {
-        public FeedDetailViewModel(NuGetFeed feed)
+        private readonly ISelectDirectoryService _selectDirectoryService;
+
+        public FeedDetailViewModel(NuGetFeed feed, ISelectDirectoryService selectDirectoryService)
         {
+            Argument.IsNotNull(() => feed);
+            Argument.IsNotNull(() => selectDirectoryService);
+
             Feed = feed;
-            OpenChooseLocalPathToSourceDialog = new Command(OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
+            _selectDirectoryService = selectDirectoryService;
+            OpenChooseLocalPathToSourceDialog = new TaskCommand(OnOpenChooseLocalPathToSourceDialogExecuteAsync, OnOpenChooseLocalPathToSourceDialogCanExecute);
         }
 
         [Model]
@@ -21,17 +30,18 @@
         [ViewModelToModel]
         public string Source { get; set; }
 
-        public Command OpenChooseLocalPathToSourceDialog { get; set; }
+        public ICommand OpenChooseLocalPathToSourceDialog { get; set; }
 
-        private void OnOpenChooseLocalPathToSourceDialogExecute()
+        private async Task OnOpenChooseLocalPathToSourceDialogExecuteAsync()
         {
-            var folderDialog = new CommonOpenFileDialog();
-
-            folderDialog.InitialDirectory = @"C:\Users";
-            folderDialog.IsFolderPicker = true;
-            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            var directorySelectionContext = new DetermineDirectoryContext
             {
-                Source = folderDialog.FileName;
+                ShowNewFolderButton = false,
+            };
+            var result = await _selectDirectoryService.DetermineDirectoryAsync(directorySelectionContext);
+            if (result.Result)
+            {
+                Source = result.DirectoryName;
             }
         }
 
