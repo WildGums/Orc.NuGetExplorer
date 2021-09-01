@@ -3,7 +3,7 @@
     using Catel.Messaging;
     using Orc.NuGetExplorer.Packaging;
 
-    public class PackagingDeletemeMessage : MessageBase<PackagingDeletemeMessage, PackageOperationInfo>, INuGetExplorerServiceMessage
+    public class PackagingDeletemeMessage : MessageBase<PackagingDeletemeMessage, PackageOperationInfo>, INuGetExplorerMessage
     {
         public PackagingDeletemeMessage()
         {

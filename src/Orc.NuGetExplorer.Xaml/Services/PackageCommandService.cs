@@ -50,7 +50,7 @@ namespace Orc.NuGetExplorer
         #region Methods
 
         // TODO: Add context with parameters - source/prerelease
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
+        public virtual async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             Argument.IsNotNull(() => packageDetails);
 
