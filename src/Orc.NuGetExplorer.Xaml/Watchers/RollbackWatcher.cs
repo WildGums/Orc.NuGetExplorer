@@ -10,6 +10,7 @@ namespace Orc.NuGetExplorer
     using System;
     using Catel;
     using Catel.Logging;
+    using NuGet.PackageManagement;
     using Orc.FileSystem;
 
     public class RollbackWatcher : PackageManagerContextWatcherBase
@@ -25,7 +26,7 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService, 
+            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService,
             IDirectoryService directoryService)
             : base(packageOperationNotificationService, packageOperationContextService)
         {
@@ -58,29 +59,39 @@ namespace Orc.NuGetExplorer
 
         protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
-            var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
+            var package = e.Details.PackageIdentity;
+            var project = e.Details.Project;
+            var operationType = e.Details.NuGetProjectActionType;
+            var installPath = project.GetInstallPath(package);
+            var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(installPath), "packages.config");
 
-            if (e.PackageOperationType == PackageOperationType.Uninstall)
+            // TODO: warning - test this part with unit tests/integration to be sure rollback shouldn't do any on update
+            if (e.IsUpdate)
             {
-                _backupFileSystemService.BackupFolder(e.InstallPath);
+                return;
+            }
+
+            if (operationType == NuGetProjectActionType.Uninstall)
+            {
+                _backupFileSystemService.BackupFolder(installPath);
                 _backupFileSystemService.BackupFile(packagesConfig);
 
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
-                    _backupFileSystemService.Restore(e.InstallPath);
+                    _backupFileSystemService.Restore(installPath);
                     _backupFileSystemService.Restore(packagesConfig);
                 }, CurrentContext);
             }
 
-            if (e.PackageOperationType == PackageOperationType.Install)
+            if (operationType == NuGetProjectActionType.Install)
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
                     bool success = true;
                     try
                     {
-                        _directoryService.Delete(e.InstallPath);
-                        success = !_directoryService.Exists(e.InstallPath);
+                        _directoryService.Delete(installPath);
+                        success = !_directoryService.Exists(installPath);
                     }
                     catch (Exception)
                     {
@@ -90,8 +101,8 @@ namespace Orc.NuGetExplorer
                     {
                         if (!success)
                         {
-                            _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
-                            Log.Error($"Failed to delete directory {e.InstallPath} during rollback actions.");
+                            _fileSystemService.CreateDeleteme(package.Id, installPath);
+                            Log.Error($"Failed to delete directory {installPath} during rollback actions.");
                         }
                     }
                 },

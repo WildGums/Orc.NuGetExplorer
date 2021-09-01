@@ -37,6 +37,44 @@ namespace Orc.NuGetExplorer
             _extensibleProjectLocator = extensibleProjectLocator;
         }
 
+        #region Obsolete members
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyOperationStarting(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        {
+            Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationStarting(operation, isAutomatic: false));
+        }
+
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyOperationFinished(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        {
+            Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationFinished(operation, isAutomatic: false));
+        }
+
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyAutomaticOperationStarting(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        {
+            if (MuteAutomaticEvents)
+            {
+                Log.Info($"{operationType} notification was muted by notification service");
+                return;
+            }
+
+            Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationStarting(operation, isAutomatic: true));
+        }
+
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyAutomaticOperationFinished(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
+        public void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        {
+            if (MuteAutomaticEvents)
+            {
+                Log.Info($"{operationType} notification was muted by notification service");
+                return;
+            }
+
+            Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationFinished(operation, isAutomatic: true));
+        }
+        #endregion
+
         public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
         {
             if (IsNotificationsDisabled)
@@ -57,12 +95,12 @@ namespace Orc.NuGetExplorer
             RaiseOperationsBatchFinished(operationType, false, packages);
         }
 
-        public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        public void NotifyOperationStarting(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationStarting(operation, isAutomatic: false));
         }
 
-        public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        public void NotifyOperationFinished(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationFinished(operation, isAutomatic: false));
         }
@@ -99,7 +137,7 @@ namespace Orc.NuGetExplorer
             RaiseOperationsBatchFinished(operationType, true, packages);
         }
 
-        public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        public void NotifyAutomaticOperationStarting(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             if (MuteAutomaticEvents)
             {
@@ -110,7 +148,7 @@ namespace Orc.NuGetExplorer
             Notify(operationType, packageDetails, _extensibleProjectLocator.GetDefaultProject(), (operation) => RaiseOperationStarting(operation, isAutomatic: true));
         }
 
-        public void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        public void NotifyAutomaticOperationFinished(PackageOperationType operationType, IPackageDetails packageDetails)
         {
             if (MuteAutomaticEvents)
             {

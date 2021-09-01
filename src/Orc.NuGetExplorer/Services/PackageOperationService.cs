@@ -17,8 +17,6 @@ namespace Orc.NuGetExplorer
     using NuGet.Protocol.Core.Types;
     using NuGet.Resolver;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Messaging;
-    using Orc.NuGetExplorer.Packaging;
 
     internal sealed class PackageOperationService : IPackageOperationService
     {
@@ -65,13 +63,10 @@ namespace Orc.NuGetExplorer
         {
             Argument.IsNotNull(() => package);
 
-            var uninstalledIdentity = package.GetIdentity();
-            var uninstallPath = _defaultProject.GetInstallPath(uninstalledIdentity);
-
             try
             {
                 //nuPackage should provide identity of installed package, which targeted for uninstall action
-                _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Uninstall, package);
                 await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
             catch (Exception ex)
@@ -81,16 +76,13 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                FinishOperation(PackageOperationType.Uninstall, uninstallPath, package);
+                _packageOperationNotificationService.NotifyOperationFinished(PackageOperationType.Uninstall, package);
             }
         }
 
         public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
-
-            var installedIdentity = package.GetIdentity();
-            var operationPath = _defaultProject.GetInstallPath(installedIdentity);
 
             try
             {
@@ -101,7 +93,7 @@ namespace Orc.NuGetExplorer
 
                 //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
 
-                _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Install, package);
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Install, package);
                 await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
             }
             catch (Exception ex)
@@ -111,7 +103,7 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                FinishOperation(PackageOperationType.Install, operationPath, package);
+                _packageOperationNotificationService.NotifyOperationFinished(PackageOperationType.Install, package);
             }
         }
 
@@ -120,7 +112,6 @@ namespace Orc.NuGetExplorer
             Argument.IsNotNull(() => package);
 
             var updateIdentity = package.GetIdentity();
-            var installPath = _defaultProject.GetInstallPath(updateIdentity);
 
             //create current version identity
             var currentVersion = await _nuGetPackageManager.GetVersionInstalledAsync(_defaultProject, updateIdentity.Id, token);
@@ -135,14 +126,14 @@ namespace Orc.NuGetExplorer
                 //somehow we should get target version from package
                 //package should provide 'update' identity
 
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Update, package); //install path is same as update
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Update, package); //install path is same as update
 
                 //notify about uninstall and install because update in fact is combination of these actions
                 //this also allow us provide different InstallPaths on notifications
 
                 _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
 
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Install, package);
 
                 await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
 
@@ -154,9 +145,9 @@ namespace Orc.NuGetExplorer
             }
             finally
             {
-                FinishOperation(PackageOperationType.Uninstall, uninstallPath, package);
-                FinishOperation(PackageOperationType.Install, installPath, package);
-                FinishOperation(PackageOperationType.Update, installPath, package); // The install path the same for update;
+                _packageOperationNotificationService.NotifyOperationFinished(PackageOperationType.Uninstall, package);
+                _packageOperationNotificationService.NotifyOperationFinished(PackageOperationType.Install, package);
+                _packageOperationNotificationService.NotifyOperationFinished(PackageOperationType.Update, package);
             }
         }
 
@@ -170,12 +161,6 @@ namespace Orc.NuGetExplorer
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
             }
-        }
-
-        private void FinishOperation(PackageOperationType type, string operationPath, IPackageDetails package)
-        {
-            PackagingDeletemeMessage.SendWith(new PackageOperationInfo(operationPath, type, package));
-            _packageOperationNotificationService.NotifyOperationFinished(operationPath, type, package);
         }
 
         #endregion

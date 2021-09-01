@@ -1,15 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageOperationNotificationService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using Catel;
-    using Catel.Logging;
 
     public interface IPackageOperationNotificationService
     {
@@ -20,12 +11,20 @@ namespace Orc.NuGetExplorer
         #region Methods
         void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages);
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyOperationStarting(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        void NotifyOperationStarting(PackageOperationType operationType, IPackageDetails packageDetails);
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyOperationFinished(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        void NotifyOperationFinished(PackageOperationType operationType, IPackageDetails packageDetails);
         void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages);
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyAutomaticOperationStarting(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        void NotifyAutomaticOperationStarting(PackageOperationType operationType, IPackageDetails packageDetails);
+        [ObsoleteEx(ReplacementTypeOrMember = "Use NotifyAutomaticOperationFinished(PackageOperationType, IPackageDetails) overload", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
+        void NotifyAutomaticOperationFinished(PackageOperationType operationType, IPackageDetails packageDetails);
         IDisposable DisableNotifications();
         #endregion
 
