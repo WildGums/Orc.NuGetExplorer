@@ -1,16 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesUIService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
     using Catel.Services;
+    using Catel.Windows;
+    using Orc.NuGetExplorer.Views;
     using ViewModels;
 
     internal class PackagesUIService : IPackagesUIService
@@ -63,6 +60,17 @@ namespace Orc.NuGetExplorer
         {
             return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
         }
+
+        public IEnumerable<DataWindow> GetOpenedPackageSourceWindows()
+        {
+            return System.Windows.Application.Current.Windows.OfType<NuGetSettingsWindow>();
+        }
+
+        public IEnumerable<DataWindow> GetOpenedPackageExplorerWindows()
+        {
+            return System.Windows.Application.Current.Windows.OfType<ExplorerWindow>();
+        }
+
         #endregion
     }
 }
