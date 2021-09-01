@@ -17,7 +17,6 @@
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Messaging;
-    using Orc.NuGetExplorer.Services;
 
     internal class ExplorerViewModel : ViewModelBase
     {
@@ -38,7 +37,7 @@
         private string _startPage = DefaultStartPage;
 
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-                        IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
+        IConfigurationService configurationService, ISettings nuGetSettings)
         {
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);

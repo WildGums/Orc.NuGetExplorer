@@ -19,7 +19,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IEchoService, EchoService>();
         serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
 
-        serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
+        serviceLocator.RegisterTypeAndInstantiate<ExampleNuGetExplorerInitializationService>();
         serviceLocator.RegisterType<INuGetLogListeningSevice, NoVerboseHttpNuGetLogListeningService>();
     }
 }

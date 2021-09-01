@@ -18,17 +18,15 @@
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
-        private readonly INuGetExplorerInitializationService _initializationService;
         private readonly IPackagesUIService _packagesUiService;
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
-        private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
         #endregion
 
         #region Constructors
-        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
+        public MainViewModel(IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
+            IUIVisualizerService uiVisualizerService)
         {
             Argument.IsNotNull(() => packagesUiService);
             Argument.IsNotNull(() => echoService);
@@ -36,16 +34,12 @@
             Argument.IsNotNull(() => feedVerificationService);
             Argument.IsNotNull(() => messageService);
             Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => initializationService);
-            Argument.IsNotNull(() => nuGetProjectUpgradeService);
 
-            _initializationService = initializationService;
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;
             _feedVerificationService = feedVerificationService;
             _messageService = messageService;
             _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
-            _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
             _uiVisualizerService = uiVisualizerService;
 
             Echo = echoService.GetPackageManagementEcho();
@@ -56,7 +50,6 @@
             AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecuteAsync, OnAdddPackageSourceCanExecute);
             VerifyFeed = new TaskCommand(OnVerifyFeedExecuteAsync, OnVerifyFeedCanExecute);
             CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecuteAsync);
-            OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
             Settings = new TaskCommand(OnSettingsExecuteAsync);
 
             Title = "Orc.NuGetExplorer example";
@@ -74,30 +67,12 @@
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
         #endregion
 
-        protected async override Task InitializeAsync()
-        {
-            await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
-        }
-
         #region Commands
         public TaskCommand Settings { get; private set; }
 
         private async Task OnSettingsExecuteAsync()
         {
             await _packagesUiService.ShowPackagesSourceSettingsAsync();
-        }
-
-        public TaskCommand OpenUpdateWindow { get; private set; }
-
-        private async Task OnOpenUpdateWindowExecuteAsync()
-        {
-            //show batch update
-            //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
-        }
-
-        private bool OnOpenUpdateWindowCanExecute()
-        {
-            return AvailableUpdates.Any();
         }
 
         public TaskCommand CheckForUpdates { get; private set; }

@@ -1,4 +1,5 @@
 ﻿using Catel.IoC;
+using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -68,7 +69,7 @@ public static class ModuleInitializer
 
         // serviceLocator.RegisterType<IRepositoryContextService, RepositoryContextService>();
 
-        //package loaders
+        // Package loaders
         serviceLocator.RegisterType<IPackageLoaderService, PackagesLoaderService>();
         serviceLocator.RegisterTypeWithTag<IPackageLoaderService, LocalPackagesLoaderService>("Installed");
         serviceLocator.RegisterTypeWithTag<IPackageLoaderService, UpdatePackagesLoaderService>("Updates");
@@ -82,7 +83,13 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageQueryService, PackageQueryService>();
         serviceLocator.RegisterType<IPackageOperationService, PackageOperationService>();
 
-        serviceLocator.RegisterType<INuGetProjectUpgradeService, NuGetProjectUpgradeService>();
         serviceLocator.RegisterType<IDownloadingProgressTrackerService, DownloadingProgressTrackerService>();
+
+        // Listen package manager messages and send to catel log
+        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+
+        // Setup language resources
+        var languageService = serviceLocator.ResolveType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
     }
 }

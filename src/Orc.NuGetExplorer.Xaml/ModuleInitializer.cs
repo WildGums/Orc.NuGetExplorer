@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Logging;
 using Orc.NuGetExplorer.Models;
@@ -39,13 +40,19 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IModelProvider<NuGetFeed>, ModelProvider<NuGetFeed>>();
         serviceLocator.RegisterType<IModelProvider<ExplorerSettingsContainer>, ExplorerSettingsContainerModelProvider>();
 
-        serviceLocator.RegisterType<INuGetExplorerInitializationService, NuGetExplorerInitializationService>();
+        // Instantiate watchers
+        serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
 
         serviceLocator.RegisterType<NuGetLogListener>();
 
         var vmLocator = serviceLocator.ResolveType<IViewModelLocator>();
 
-        // register some view models
+        // Register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
+
+        // Setup language resources
+        var languageService = serviceLocator.ResolveType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
     }
 }
