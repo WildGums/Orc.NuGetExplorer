@@ -6,7 +6,6 @@ using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Logging;
 using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
-using Orc.NuGetExplorer.Services;
 using Orc.NuGetExplorer.ViewModels;
 using Orc.NuGetExplorer.Views;
 using Orc.NuGetExplorer.Windows;
