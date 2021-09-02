@@ -219,6 +219,16 @@
         protected abstract T InitializeValue(string key, string value);
         protected abstract T InitializeValue(string section, string key, string value);
 
+        protected void UpdateKeyList(IList<AddItem> values, string valuesListKey)
+        {
+            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+            var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
+            var keysToSave = values.Select(x => x.Key);
+
+            var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
+            _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
+        }
+
         /// <summary>
         /// Updates minimal version in the config one time
         /// </summary>

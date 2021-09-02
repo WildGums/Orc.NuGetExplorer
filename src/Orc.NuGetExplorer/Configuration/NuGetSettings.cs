@@ -59,7 +59,9 @@
 
             if (item is AddItem addItem)
             {
-                SetValue(sectionName, addItem.Key, addItem.Value);
+
+                // Hack, because we need to refresh section list of subkeys
+                SetValues(sectionName, new List<AddItem> { addItem });
                 return;
             }
 
@@ -199,16 +201,6 @@
                 sectionsString = string.Join(Separator.ToString(), sections);
                 _configurationService.SetRoamingValue(SectionListKey, sectionsString);
             }
-        }
-
-        private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
-        {
-            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-            var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
-            var keysToSave = values.Select(x => x.Key);
-
-            var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
-            _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
         }
 
         public void UpdatePackageSourcesKeyListSorting(List<string> packageSourceNames)
