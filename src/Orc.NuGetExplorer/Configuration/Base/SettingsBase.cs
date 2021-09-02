@@ -8,9 +8,9 @@
     using Catel.Configuration;
     using NuGet.Configuration;
 
-    public abstract class SettingsBase<T> where T : AddItem
+    public abstract class SettingsBase
     {
-        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        protected static readonly Version _assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         protected const string MinimalVersionKey = "NuGetExplorer.MinimalVersion";
         protected const string VersionKey = "NuGetExplorer.Version";
@@ -18,11 +18,14 @@
         protected const char Separator = '|';
         protected const string SectionListKey = "NuGet_sections";
 
-        private const string MinimalVersionNumber = "4.0.0";
+        protected const string MinimalVersionNumber = "4.0.0";
+    }
 
+    public abstract class SettingsBase<T> : SettingsBase where T : AddItem
+    {
         private readonly IConfigurationService _configurationService;
 
-        public SettingsBase(IConfigurationService configurationService)
+        protected SettingsBase(IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
             _configurationService = configurationService;
@@ -48,7 +51,7 @@
             SettingsRead?.Invoke(this, new SettingsReadEventArgs(key));
         }
 
-        public bool IsLastVersion => AssemblyVersion.Equals(Version);
+        public bool IsLastVersion => _assemblyVersion.Equals(Version);
 
         public Version Version { get; protected set; }
 
@@ -201,7 +204,7 @@
 
         public void UpdateVersion()
         {
-            _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
+            _configurationService.SetRoamingValue(VersionKey, _assemblyVersion);
         }
 
         public void UpdateMinimalVersion()

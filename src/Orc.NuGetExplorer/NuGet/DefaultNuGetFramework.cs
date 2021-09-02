@@ -114,12 +114,9 @@
                         var sp = versionKey.GetValue("SP", "").ToString();
 
                         // If false, there is no install info; it must be in a child subkey then.
-                        if (versionKey.TryGetInstallFlag(out var install))
+                        if (versionKey.TryGetInstallFlag(out var install) && !string.IsNullOrEmpty(sp) && install == "1")
                         {
-                            if (!string.IsNullOrEmpty(sp) && install == "1")
-                            {
-                                frameworkList.Add(CreateFrameworkVersionName(versionKeyName, name, sp));
-                            }
+                            frameworkList.Add(CreateFrameworkVersionName(versionKeyName, name, sp));
                         }
 
                         if (!string.IsNullOrEmpty(name))

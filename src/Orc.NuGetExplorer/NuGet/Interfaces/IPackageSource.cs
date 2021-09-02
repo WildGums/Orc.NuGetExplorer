@@ -9,11 +9,15 @@ namespace Orc.NuGetExplorer
 {
     public interface IPackageSource
     {
-        #region Properties
         bool IsEnabled { get; }
+        [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         bool IsOfficial { get; }
         string Name { get; }
         string Source { get; }
-        #endregion
+        bool IsAccessible { get; }
+        bool IsVerified { get; }
+        bool IsSelected { get; set; }
+
+        PackageSourceWrapper GetPackageSource();
     }
 }

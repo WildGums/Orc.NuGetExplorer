@@ -454,7 +454,7 @@
                     var packageIdentity = packageResource.Key;
 
                     var nupkgPath = pathResolver.GetInstalledPackageFilePath(packageIdentity);
-                    var paths = pathResolver.GetInstalledPackageFilePaths(packageIdentity.Id, new NuGet.Versioning.VersionRange(minVersion: packageIdentity.Version));
+                    // var paths = pathResolver.GetInstalledPackageFilePaths(packageIdentity.Id, new NuGet.Versioning.VersionRange(minVersion: packageIdentity.Version));
                     var alreadyInstalled = string.IsNullOrEmpty(nupkgPath) ? false : _fileService.Exists(nupkgPath);
 
                     try

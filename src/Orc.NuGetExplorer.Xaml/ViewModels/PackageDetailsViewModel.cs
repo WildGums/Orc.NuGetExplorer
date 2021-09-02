@@ -31,23 +31,19 @@
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageCommandService _packageCommandService;
-        private readonly IDirectoryService _directoryService;
 
         public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService,
-            IDirectoryService directoryService)
+            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService)
         {
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => packageCommandService);
-            Argument.IsNotNull(() => directoryService);
 
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _apiPackageRegistry = apiPackageRegistry;
             _packageCommandService = packageCommandService;
-            _directoryService = directoryService;
 
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);

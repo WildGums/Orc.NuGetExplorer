@@ -15,9 +15,9 @@
         /// <summary>
         /// Feed currently used by explorer
         /// </summary>
-        public INuGetSource ObservedFeed { get; set; }
+        public IPackageSource ObservedFeed { get; set; }
 
-        public INuGetSource DefaultFeed { get; set; }
+        public IPackageSource DefaultFeed { get; set; }
 
         public bool IsPreReleaseIncluded { get; set; }
 
@@ -54,12 +54,12 @@
         {
             if (string.Equals(e.PropertyName, nameof(ObservedFeed)))
             {
-                if (e.NewValue is INuGetSource source)
+                if (e.NewValue is IPackageSource source)
                 {
                     source.IsSelected = true;
                 }
 
-                if (e.OldValue is INuGetSource oldSelected)
+                if (e.OldValue is IPackageSource oldSelected)
                 {
                     oldSelected.IsSelected = false;
                 }

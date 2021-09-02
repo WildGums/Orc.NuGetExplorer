@@ -73,21 +73,21 @@
         public string SearchString { get; set; }
 
         [ViewModelToModel]
-        public INuGetSource ObservedFeed { get; set; }
+        public IPackageSource ObservedFeed { get; set; }
 
         [ViewModelToModel]
-        public INuGetSource DefaultFeed { get; set; }
+        public IPackageSource DefaultFeed { get; set; }
 
         public bool SelectFirstPageOnLoad { get; set; } = true;
 
-        public ObservableCollection<INuGetSource> ActiveFeeds { get; set; }
+        public ObservableCollection<IPackageSource> ActiveFeeds { get; set; }
 
         protected override Task InitializeAsync()
         {
             _messageMediator.Register<ActivatedExplorerTabMessage>(this, OnActivatedExplorerTabMessageReceived);
             IsHideInstalledOptionEnabled = CheckIsHideInstalledOptionEnabled();
 
-            ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
+            ActiveFeeds = new ObservableCollection<IPackageSource>(GetActiveFeedsFromSettings());
 
             //"all" feed is default
             DefaultFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, Constants.CombinedSourceName));
@@ -123,7 +123,7 @@
                 if (result ?? false)
                 {
                     //update available feeds
-                    ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
+                    ActiveFeeds = new ObservableCollection<IPackageSource>(GetActiveFeedsFromSettings());
                 }
             }
         }
@@ -176,15 +176,17 @@
             }
         }
 
-        private IEnumerable<INuGetSource> GetActiveFeedsFromSettings()
+        private IEnumerable<IPackageSource> GetActiveFeedsFromSettings()
         {
-            var activefeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList<INuGetSource>();
+            var availablePackageSourceOptions = new List<IPackageSource>();
+            var activefeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList();
 
-            var allInOneSource = new CombinedNuGetSource(activefeeds);
+            var allInOneSource = new NugetFeedCollection(activefeeds, Constants.CombinedSourceName);
 
-            activefeeds.Insert(0, allInOneSource);
+            availablePackageSourceOptions.Add(allInOneSource);
+            availablePackageSourceOptions.AddRange(activefeeds);
 
-            return activefeeds;
+            return availablePackageSourceOptions;
         }
 
         private void OnActivatedExplorerTabMessageReceived(ActivatedExplorerTabMessage message)
@@ -203,7 +205,7 @@
             return false;
         }
 
-        private INuGetSource SetObservedFeed(IEnumerable<INuGetSource> feeds, INuGetSource defaultFeed)
+        private IPackageSource SetObservedFeed(IEnumerable<IPackageSource> feeds, IPackageSource defaultFeed)
         {
             var lastSelectedSourceName = (_configurationService as IConfigurationService)?.GetLastRepository("Browse") ?? string.Empty;
 

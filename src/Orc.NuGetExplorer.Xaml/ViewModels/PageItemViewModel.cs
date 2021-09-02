@@ -28,7 +28,6 @@
             Package = package;
             _nugetSettings = settingsProvider.Model;
 
-            //command
             CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
         }
 

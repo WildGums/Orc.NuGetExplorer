@@ -8,7 +8,7 @@
     using System.Xml.Serialization;
     using Catel.Data;
 
-    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, INotifyDataErrorInfo, IDataErrorInfo, INuGetSource
+    public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, INotifyDataErrorInfo, IDataErrorInfo, IPackageSource
     {
         private readonly IDictionary<string, string> _propertyNameToDataError = new Dictionary<string, string>();
 
@@ -30,6 +30,7 @@
             IsEnabled = isEnabled;
         }
 
+        [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) : this(name, source, isEnabled)
         {
             IsOfficial = isOfficial;
@@ -63,6 +64,7 @@
 
         public bool IsSelected { get; set; }
 
+        [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public bool IsOfficial { get; set; }
 
         #region IDataErrorInfo

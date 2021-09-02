@@ -109,13 +109,13 @@
 
         #region SettingsBase
 
-        protected override IList<AddItem> GetValues(string sectionName)
+        protected override IList<AddItem> GetValues(string section)
         {
-            Argument.IsNotNullOrWhitespace(() => sectionName);
+            Argument.IsNotNullOrWhitespace(() => section);
 
-            var section = GetSection(sectionName);
+            var settingsSection = GetSection(section);
 
-            return section.Items.OfType<AddItem>().ToList();
+            return settingsSection.Items.OfType<AddItem>().ToList();
         }
 
         protected override IList<AddItem> GetValues(string section, string subsection)

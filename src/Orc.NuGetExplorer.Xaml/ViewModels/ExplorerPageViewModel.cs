@@ -350,7 +350,7 @@
             await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
         }
 
-        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters searchParams, int pageSize)
+        private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, IPackageSource currentSource, PackageSearchParameters searchParams, int pageSize)
         {
             try
             {
@@ -607,7 +607,7 @@
             StartLoadingTimerOrInvalidateData();
         }
 
-        private async Task CanFeedBeLoadedAsync(INuGetSource source, CancellationToken cancelToken)
+        private async Task CanFeedBeLoadedAsync(IPackageSource source, CancellationToken cancelToken)
         {
             Log.Info($"'{source}' package source is verified");
 
@@ -619,12 +619,12 @@
                     ? FeedVerificationResult.Valid
                     : await _nuGetFeedVerificationService.VerifyFeedAsync(source.Source, cancellationToken: cancelToken);
             }
-            else if (source is CombinedNuGetSource)
+            else if (source is NugetFeedCollection)
             {
-                var combinedSource = source as CombinedNuGetSource;
+                var combinedSource = source as NugetFeedCollection;
                 var unaccessibleFeeds = new List<NuGetFeed>();
 
-                foreach (var feed in combinedSource.GetAllSources())
+                foreach (var feed in combinedSource.ToList())
                 {
                     feed.VerificationResult = feed.IsLocal()
                         ? FeedVerificationResult.Valid
@@ -637,7 +637,7 @@
                     }
                 }
 
-                unaccessibleFeeds.ForEach(x => combinedSource.RemoveFeed(x));
+                unaccessibleFeeds.ForEach(x => combinedSource.Remove(x));
             }
             else
             {
