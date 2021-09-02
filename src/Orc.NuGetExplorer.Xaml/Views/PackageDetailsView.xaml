@@ -37,14 +37,6 @@
         </Label>
         
 
-        <!-- We can use this view to allow user to select different project when performing install/uninstall actions
-        -->
-        <local:ProjectsView Grid.Row="1" Grid.ColumnSpan="3"
-                            MinHeight="260"
-                            Margin="10 0 3 10"
-                            DataContext="{Binding NuGetActionTarget}"
-                            Visibility="{Binding IsTargetProjectCanBeChanged, Converter={catel:BooleanToCollapsingVisibilityConverter}}"/>
-
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="7*"/>

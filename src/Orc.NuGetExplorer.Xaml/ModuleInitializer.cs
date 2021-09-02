@@ -30,7 +30,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IImageResolveService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();
         serviceLocator.RegisterType<IMessageDialogService, MessageDialogService>();
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();

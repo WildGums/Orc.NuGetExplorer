@@ -30,7 +30,7 @@ namespace Orc.NuGetExplorer.Tests
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public void Orc_NuGetExplorer_Xaml_HasNoBreakingChanges()
         {
-            var assembly = typeof(XamlPleaseWaitInterruptService).Assembly;
+            var assembly = typeof(PackageCommandService).Assembly;
 
             PublicApiApprover.ApprovePublicApi(assembly);
         }

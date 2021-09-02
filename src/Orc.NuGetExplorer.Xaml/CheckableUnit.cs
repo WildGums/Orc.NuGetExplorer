@@ -21,6 +21,8 @@
 
         public bool IsChecked { get; set; }
 
+        public T Value { get; set; }
+
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (Value is null)
@@ -33,7 +35,5 @@
                 _onCheckedChangedCallback((bool)e.NewValue, Value);
             }
         }
-
-        public T Value { get; set; }
     }
 }
