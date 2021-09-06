@@ -66,7 +66,7 @@
             var feeds = _nugetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
             var prerelease = _configurationService.GetIsPrereleaseIncluded();
 
-            feeds.ForEach(feed => feed.Initialize());
+            feeds.ForEach(feed => feed.Validate());
 
             value.NuGetFeeds.AddRange(feeds);
             value.IsPreReleaseIncluded = prerelease;

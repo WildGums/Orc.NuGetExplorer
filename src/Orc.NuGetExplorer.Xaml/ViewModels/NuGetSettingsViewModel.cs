@@ -75,7 +75,7 @@
         private void LoadFeeds()
         {
             var feeds = _nuGetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
-            feeds.ForEach(feed => feed.Initialize());
+            feeds.ForEach(feed => feed.Validate());
             PackageSources = feeds;
         }
 

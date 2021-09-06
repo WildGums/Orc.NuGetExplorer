@@ -37,7 +37,7 @@
 
         public bool IsVerified => IsAllVerified();
 
-        public bool IsEnabled => true;
+        public bool IsEnabled { get; set; }
 
         [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public bool IsOfficial { get; set; }

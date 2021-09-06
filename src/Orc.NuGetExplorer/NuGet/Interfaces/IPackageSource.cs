@@ -9,7 +9,7 @@ namespace Orc.NuGetExplorer
 {
     public interface IPackageSource
     {
-        bool IsEnabled { get; }
+        bool IsEnabled { get; set; }
         [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         bool IsOfficial { get; }
         string Name { get; }

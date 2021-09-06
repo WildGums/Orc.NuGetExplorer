@@ -5,6 +5,8 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Security;
+    using System.Xml;
     using System.Xml.Serialization;
     using Catel.Data;
 
@@ -25,13 +27,15 @@
             Source = source;
         }
 
-        public NuGetFeed(string name, string source, bool isEnabled) : this(name, source)
+        public NuGetFeed(string name, string source, bool isEnabled)
+            : this(name, source)
         {
             IsEnabled = isEnabled;
         }
 
         [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
-        public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) : this(name, source, isEnabled)
+        public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial)
+            : this(name, source, isEnabled)
         {
             IsOfficial = isOfficial;
         }
@@ -80,8 +84,9 @@
 
                         if (!IsNameValid)
                         {
-                            return "Feed name cannot be empty";
+                            return "Feed name cannot be empty or contain invalid characters";
                         }
+
                         break;
 
                     case nameof(Source):
@@ -219,7 +224,7 @@
             }
             if (e.PropertyName == nameof(Name))
             {
-                IsNameValid = !string.IsNullOrEmpty(Name);
+                IsNameValid = CheckIsNameValid(Name);
                 ValidateAndRaiseErrorsChanged(e.PropertyName);
             }
             base.OnPropertyChanged(e);
@@ -228,13 +233,31 @@
         /// <summary>
         /// Called from configuration service
         /// </summary>
-        public void Initialize()
+        public void Validate()
         {
-            IsNameValid = !string.IsNullOrEmpty(Name);
+            IsNameValid = CheckIsNameValid(Name);
             IsAccessible = VerificationResult == FeedVerificationResult.Valid;
             IsVerified = VerificationResult != FeedVerificationResult.Unknown;
             IsRestricted = IsVerified &&
                 (VerificationResult == FeedVerificationResult.AuthenticationRequired || VerificationResult == FeedVerificationResult.AuthorizationRequired);
+        }
+
+        private bool CheckIsNameValid(string name)
+        {
+            return !string.IsNullOrEmpty(name) && !HasInvalidCharacters(name);
+        }
+
+        private bool HasInvalidCharacters(string name)
+        {
+            try
+            {
+                var convertedName = SecurityElement.Escape(name);
+                return !string.Equals(convertedName, name) && SecurityElement.IsValidAttributeName(name);
+            }
+            catch (Exception)
+            {
+                return true;
+            }
         }
     }
 }
