@@ -34,6 +34,8 @@
         private readonly VersionFolderPathResolver _installerPathResolver;
 
         private readonly ILogger _nugetLogger;
+        private readonly IServiceLocator _serviceLocator;
+        private readonly ITypeFactory _typeFactory;
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
@@ -46,7 +48,7 @@
         private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
-        public PackageInstallationService(IFrameworkNameProvider frameworkNameProvider, ISourceRepositoryProvider sourceRepositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
+        public PackageInstallationService(IServiceLocator serviceLocator, ITypeFactory typeFactory, IFrameworkNameProvider frameworkNameProvider, ISourceRepositoryProvider sourceRepositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
             INuGetProjectContextProvider nuGetProjectContextProvider, IDirectoryService directoryService, IFileService fileService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, ILogger logger)
         {
             Argument.IsNotNull(() => frameworkNameProvider);
@@ -59,6 +61,8 @@
             Argument.IsNotNull(() => fileSystemService);
             Argument.IsNotNull(() => logger);
 
+            _serviceLocator = serviceLocator;
+            _typeFactory = typeFactory;
             _frameworkNameProvider = frameworkNameProvider;
             _sourceRepositoryProvider = sourceRepositoryProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -71,7 +75,6 @@
 
             _nuGetCacheManager = new NuGetCacheManager(_directoryService, _fileService);
 
-            var serviceLocator = ServiceLocator.Default;
             if (serviceLocator.IsTypeRegistered<IDownloadingProgressTrackerService>())
             {
                 _downloadingProgressTrackerService = serviceLocator.ResolveType<IDownloadingProgressTrackerService>();
@@ -446,7 +449,7 @@
 
             try
             {
-                var pathResolver = new PackagePathResolver(project.ContentPath);
+                var pathResolver = project.GetPathResolver() ?? new PackagePathResolver(project.ContentPath);
 
                 foreach (var packageResource in packageResources)
                 {

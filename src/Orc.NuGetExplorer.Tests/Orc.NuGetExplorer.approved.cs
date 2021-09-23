@@ -183,6 +183,7 @@ namespace Orc.NuGetExplorer
         string Name { get; }
         System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
+        NuGet.Packaging.PackagePathResolver GetPathResolver();
         void Install();
         void Uninstall();
         void Update();
@@ -695,6 +696,7 @@ namespace Orc.NuGetExplorer.Management
         public string Name { get; }
         public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
+        public NuGet.Packaging.PackagePathResolver GetPathResolver() { }
         public void Install() { }
         public override string ToString() { }
         public void Uninstall() { }
