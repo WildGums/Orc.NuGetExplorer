@@ -8,6 +8,7 @@
     using Catel.Services;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Example.PackageManagement;
+    using Orc.NuGetExplorer.Example.Providers;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Services;
     using Orc.Theming;
@@ -30,6 +31,9 @@
 
             var serviceLocator = ServiceLocator.Default;
 
+            // Example: override default project
+            serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
+
             serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
 
             // initialize theme
@@ -42,9 +46,6 @@
 
             // add upgrade listener
             serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
-
-            // add project extensions
-            projectLocator.Register<ExampleFolderPackageManagement>(DefaultNuGetFolders.GetApplicationRoamingFolder());
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
