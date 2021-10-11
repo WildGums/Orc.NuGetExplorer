@@ -15,7 +15,6 @@
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
-    using Catel.Windows.Threading;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer;

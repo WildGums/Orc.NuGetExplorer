@@ -118,7 +118,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using(_pleaseWaitService.WaitingScope())
+            using (_pleaseWaitService.WaitingScope())
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
             }

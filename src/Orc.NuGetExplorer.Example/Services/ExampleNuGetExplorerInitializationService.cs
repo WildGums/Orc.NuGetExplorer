@@ -8,6 +8,7 @@
     using Catel.Services;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Example.PackageManagement;
+    using Orc.NuGetExplorer.Example.Providers;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Services;
     using Orc.Theming;
@@ -22,13 +23,16 @@
             IViewModelLocator vmLocator,
             ITypeFactory typeFactory,
             IExtensibleProjectLocator projectLocator,
-            IAccentColorService accentColorService) 
+            IAccentColorService accentColorService)
             : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
             Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => accentColorService);
 
             var serviceLocator = ServiceLocator.Default;
+
+            // Example: override default project
+            serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
 
             serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
 
@@ -42,9 +46,6 @@
 
             // add upgrade listener
             serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
-
-            // add project extensions
-            projectLocator.Register<ExampleFolderPackageManagement>(DefaultNuGetFolders.GetApplicationRoamingFolder());
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();

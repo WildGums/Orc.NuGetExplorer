@@ -141,7 +141,7 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error when installing package {Package.Identity}, installation was failed");
+                Log.Error(ex, $"Error when installing package {Package.Identity}, installation failed");
             }
             finally
             {

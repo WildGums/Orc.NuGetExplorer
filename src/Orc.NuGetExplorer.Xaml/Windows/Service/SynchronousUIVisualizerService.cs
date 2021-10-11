@@ -15,7 +15,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService) 
+        public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService)
             : base(viewLocator, dispatcherService)
         {
         }
@@ -26,14 +26,22 @@
 
             EnsureViewIsRegistered(name);
 
-            var windowTask = CreateWindowAsync(name, data, completedProc, true);
+            var context = new UIVisualizerContext
+            {
+                Name = name,
+                Data = data,
+                CompletedCallback = completedProc,
+                IsModal = true
+            };
+
+            var windowTask = CreateWindowAsync(context);
             var window = windowTask.Result;
             if (window is not null)
             {
                 //aware this place
                 //awaiting on this method in async implementation causes hardly avoidable deadlock
                 //if it called from synchronous code
-                var task = ShowWindowAsync(window, data, true);
+                var task = ShowWindowAsync(window, context);
 
                 task.Wait();
 

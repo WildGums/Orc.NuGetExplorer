@@ -60,6 +60,8 @@
             </nugetc:InfiniteScrollListBox.ItemTemplate>
             <nugetc:InfiniteScrollListBox.ItemContainerStyle>
                 <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Visibility"
+                            Value="{Binding IsDelisted, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=true}" />
                 </Style>
             </nugetc:InfiniteScrollListBox.ItemContainerStyle>
         </nugetc:InfiniteScrollListBox>
@@ -105,7 +107,7 @@
                                         <Storyboard >
                                             <DoubleAnimation Storyboard.TargetName="indicatorCanvas"
                                                 Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
-                                                                     To="-360" 
+                                                                     To="360" 
                                                                      Duration="0:0:2" RepeatBehavior="Forever"/>
                                         </Storyboard>
                                     </BeginStoryboard>

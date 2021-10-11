@@ -183,6 +183,7 @@ namespace Orc.NuGetExplorer
         string Name { get; }
         System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
+        NuGet.Packaging.PackagePathResolver GetPathResolver();
         void Install();
         void Uninstall();
         void Update();
@@ -459,6 +460,12 @@ namespace Orc.NuGetExplorer
         protected virtual void OnOperationsBatchFinished(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
         protected virtual void OnOperationsBatchStarting(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
     }
+    public class PackageModelStatusEventArgs : System.EventArgs
+    {
+        public PackageModelStatusEventArgs(Orc.NuGetExplorer.Enums.PackageStatus oldStatus, Orc.NuGetExplorer.Enums.PackageStatus newStatus) { }
+        public Orc.NuGetExplorer.Enums.PackageStatus NewStatus { get; }
+        public Orc.NuGetExplorer.Enums.PackageStatus OldStatus { get; }
+    }
     public class PackageOperationBatchEventArgs : System.ComponentModel.CancelEventArgs
     {
         public bool IsAutomatic { get; set; }
@@ -547,6 +554,7 @@ namespace Orc.NuGetExplorer
             public const string CredentialStorage = "NuGetExplorer.CredentialStoragePolicy";
             public const string DestinationFolder = "DestFolder";
             public const string FallbackUrl = "Plugins.FeedUrl";
+            public const string HideInstalledPackages = "NuGetExplorer.HideInstalled";
             public const string IncludePrereleasePackages = "NuGetExplorer.IncludePrerelease";
             public const int PackageCount = 200;
             public const string PackageSources = "PackageSources";
@@ -688,6 +696,7 @@ namespace Orc.NuGetExplorer.Management
         public string Name { get; }
         public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
+        public NuGet.Packaging.PackagePathResolver GetPathResolver() { }
         public void Install() { }
         public override string ToString() { }
         public void Uninstall() { }
@@ -821,6 +830,7 @@ namespace Orc.NuGetExplorer.Models
     public sealed class ExplorerSettingsContainer : Catel.Data.ModelBase, Orc.NuGetExplorer.Models.INuGetSettings
     {
         public static readonly Catel.Data.PropertyData DefaultFeedProperty;
+        public static readonly Catel.Data.PropertyData IsHideInstalledProperty;
         public static readonly Catel.Data.PropertyData IsPreReleaseIncludedProperty;
         public static readonly Catel.Data.PropertyData IsRecommendedOnlyProperty;
         public static readonly Catel.Data.PropertyData NuGetFeedsProperty;
@@ -828,6 +838,7 @@ namespace Orc.NuGetExplorer.Models
         public static readonly Catel.Data.PropertyData SearchStringProperty;
         public ExplorerSettingsContainer() { }
         public Orc.NuGetExplorer.Models.INuGetSource DefaultFeed { get; set; }
+        public bool IsHideInstalled { get; set; }
         public bool IsPreReleaseIncluded { get; set; }
         public bool IsRecommendedOnly { get; set; }
         public System.Collections.Generic.List<Orc.NuGetExplorer.Models.NuGetFeed> NuGetFeeds { get; set; }
@@ -921,7 +932,7 @@ namespace Orc.NuGetExplorer.Models
         public static readonly Catel.Data.PropertyData DownloadCountProperty;
         public static readonly Catel.Data.PropertyData IconUrlProperty;
         public static readonly Catel.Data.PropertyData InstalledVersionProperty;
-        public static readonly Catel.Data.PropertyData IsCheckedProperty;
+        public static readonly Catel.Data.PropertyData IsDelistedProperty;
         public static readonly Catel.Data.PropertyData IsInstalledProperty;
         public static readonly Catel.Data.PropertyData IsLoadedProperty;
         public static readonly Catel.Data.PropertyData LastVersionProperty;
@@ -946,6 +957,7 @@ namespace Orc.NuGetExplorer.Models
         public NuGet.Versioning.NuGetVersion InstalledVersion { get; set; }
         public bool IsAbsoluteLatestVersion { get; }
         public bool IsChecked { get; set; }
+        public bool IsDelisted { get; set; }
         public bool? IsInstalled { get; set; }
         public bool IsLatestVersion { get; }
         public bool IsLoaded { get; }
@@ -962,6 +974,7 @@ namespace Orc.NuGetExplorer.Models
         public System.Version Version { get; }
         public System.Collections.Generic.IReadOnlyList<NuGet.Versioning.NuGetVersion> Versions { get; }
         public System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo> VersionsInfo { get; }
+        public event System.EventHandler<Orc.NuGetExplorer.PackageModelStatusEventArgs> StatusChanged;
         public  static  event System.EventHandler AnyNuGetPackageCheckedChanged;
         public void AddDependencyInfo(NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> dependencyGroups) { }
         public System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> GetDependencyInfo(NuGet.Versioning.NuGetVersion version) { }
