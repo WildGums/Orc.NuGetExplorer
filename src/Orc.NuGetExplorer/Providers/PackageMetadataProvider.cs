@@ -159,6 +159,15 @@
             return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
         }
 
+        public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken)
+        {
+            var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
+
+            var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault(x => !x.Identity.Version.Release.ContainsAny(ignoredReleases, StringComparison.OrdinalIgnoreCase));
+
+            return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
+        }
+
         public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken)
         {
             var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();

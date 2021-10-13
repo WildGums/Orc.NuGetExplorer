@@ -114,25 +114,22 @@
         public async Task<IEnumerable<IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
         {
             var updateList = new List<IPackageSearchMetadata>();
-            var emptySearchTerm = String.Empty;
 
             try
             {
                 Log.Debug("Searching for updates, allowPrerelease = {0}, authenticateIfRequired = {1}", allowPrerelease, authenticateIfRequired);
 
-                //get local packages
-                var localFilter = new SearchFilter(true);
+                // Get local packages
                 var localRepo = _repositoryService.LocalRepository;
-                var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepo.Source));
 
-                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadAsync(emptySearchTerm, localPagination, localFilter, token);
+                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepo.Source, token);
 
-                //getting updates
+                // Getting updates
                 foreach (var package in installedPackagesMetadatas)
                 {
-                    //current behavior defined based on installed version
-                    //pre-release versions upgraded to latest stable or pre-release
-                    //stable versions upgraded to latest stable only
+                    // Current behavior defined based on installed version
+                    // Pre-release versions upgraded to latest stable or pre-release
+                    // Stable versions upgraded to latest stable only
                     var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
                     var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
@@ -164,6 +161,50 @@
             .Select(
                 m => PackageDetailsFactory.Create(PackageOperationType.Update, m, m.Identity, true))
             .ToList();
+        }
+
+        public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleaseTags, bool? allowPrerelease = null, CancellationToken token = default)
+        {
+            Argument.IsNotNull(() => excludeReleaseTags);
+
+            var foundUpdates = (await SearchForPackagesUpdatesAsync(allowPrerelease, true, token)).ToList();
+
+            // Replace all packages with restricted tag with nearest possible
+            var packagesToExclude = foundUpdates.Where(p => p.Identity.Version.Release.ContainsAny(excludeReleaseTags, StringComparison.OrdinalIgnoreCase)).ToList();
+            var metadataProvider = PackageMetadataProvider;
+
+            if (packagesToExclude.Any())
+            {
+                var localRepositorySource = _repositoryService.LocalRepository?.Source;
+                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepositorySource, token);
+
+                foreach (var package in packagesToExclude)
+                {
+                    foundUpdates.Remove(package);
+                    var metadata = await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
+                    if (metadata is null)
+                    {
+                        Log.Debug($"Couldn't retrieve update metadata for installed package {package.Identity.Id}");
+                        continue;
+                    }
+
+                    var localPackage = installedPackagesMetadatas.FirstOrDefault(p => string.Equals(p.Identity.Id, metadata.Identity.Id));
+                    if (localPackage is null)
+                    {
+                        // Normally shouldn't happen
+                        Log.Debug($"Couldn't match retrieved update metadata with any local package");
+                        continue;
+                    }
+                    if (metadata.Identity.Version > localPackage.Identity.Version)
+                    {
+                        // Add as replacement for alpha
+                        foundUpdates.Add(metadata);
+                    }
+                }
+            }
+
+            var updatePackages = foundUpdates.Select(p => PackageDetailsFactory.Create(PackageOperationType.Update, p, p.Identity, true)).ToList();
+            return updatePackages;
         }
         #endregion
     }

@@ -17,6 +17,7 @@ namespace Orc.NuGetExplorer
         #region Methods
         Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default);
         Task<IEnumerable<IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default);
+        Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = null, CancellationToken token = default);
         #endregion
     }
 }

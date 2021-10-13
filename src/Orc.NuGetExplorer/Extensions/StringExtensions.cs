@@ -8,6 +8,7 @@
 
 namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
 
     public static class StringExtensions
@@ -30,6 +31,19 @@ namespace Orc.NuGetExplorer
             }
 
             return new List<string>();
+        }
+
+        public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
+        {
+            for (int i = 0; i < str.Length; i++)
+            {
+                var s = str[i];
+                if (value.Contains(s, comparisonType))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
