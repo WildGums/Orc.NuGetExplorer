@@ -33,7 +33,7 @@ namespace Orc.NuGetExplorer
             return new List<string>();
         }
 
-        internal static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
+        public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
         {
             for (int i = 0; i < str.Length; i++)
             {

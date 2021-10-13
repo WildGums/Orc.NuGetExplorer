@@ -169,7 +169,7 @@
 
             var foundUpdates = (await SearchForPackagesUpdatesAsync(allowPrerelease, true, token)).ToList();
 
-            // Replace all package with restricted tag with nearest
+            // Replace all packages with restricted tag with nearest possible
             var packagesToExclude = foundUpdates.Where(p => p.Identity.Version.Release.ContainsAny(excludeReleaseTags, StringComparison.OrdinalIgnoreCase)).ToList();
             var metadataProvider = PackageMetadataProvider;
 
