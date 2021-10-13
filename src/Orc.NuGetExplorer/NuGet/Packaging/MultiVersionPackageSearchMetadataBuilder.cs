@@ -20,6 +20,20 @@
         public static MultiVersionPackageSearchMetadataBuilder FromMetadatas(IEnumerable<IPackageSearchMetadata> searchMetadatas)
              => new MultiVersionPackageSearchMetadataBuilder(searchMetadatas);
 
+        public IPackageSearchMetadata Build(string version)
+        {
+            var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
+
+            var main = orderedMetadatas.FirstOrDefault(x => x.Identity.Version.OriginalVersion == version);
+
+            var versions = orderedMetadatas.ToList();
+            versions.Remove(main);
+
+            var clonedMetadata = Create(versions, main);
+
+            return clonedMetadata;
+        }
+
         public IPackageSearchMetadata Build()
         {
             var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
@@ -28,7 +42,14 @@
 
             var versions = orderedMetadatas.Skip(1).ToList();
 
-            var clonedMetadata = new MultiVersionPackageSearchMetadata(versions)
+            var clonedMetadata = Create(versions, main);
+
+            return clonedMetadata;
+        }
+
+        private MultiVersionPackageSearchMetadata Create(IEnumerable<IPackageSearchMetadata> versions, IPackageSearchMetadata main)
+        {
+            var metadata = new MultiVersionPackageSearchMetadata(versions)
             {
                 Authors = main.Authors,
                 DependencySets = main.DependencySets ?? Enumerable.Empty<PackageDependencyGroup>(),
@@ -50,7 +71,7 @@
                 LicenseMetadata = main.LicenseMetadata,
             };
 
-            return clonedMetadata;
+            return metadata;
         }
     }
 }

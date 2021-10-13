@@ -51,7 +51,7 @@
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
-            return await BuildMultiVersionPackageSearchMetadataAsync(packageId, sourceRepository, true);
+            return await BuildMultiVersionPackageSearchMetadataAsync(packageId, version, true);
         }
 
         public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
@@ -97,7 +97,16 @@
         {
             var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+
+            return details;
+        }
+
+        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(string packageId, string version, bool includePrerelease)
+        {
+            var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
+
+            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build(version) as IPackageDetails;
 
             return details;
         }
