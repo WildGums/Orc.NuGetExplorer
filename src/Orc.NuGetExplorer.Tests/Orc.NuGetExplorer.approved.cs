@@ -271,6 +271,10 @@ namespace Orc.NuGetExplorer
         Orc.NuGetExplorer.Providers.IPackageMetadataProvider PackageMetadataProvider { get; }
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> LoadAsync(string searchTerm, Orc.NuGetExplorer.Pagination.PageContinuation pageContinuation, NuGet.Protocol.Core.Types.SearchFilter searchFilter, System.Threading.CancellationToken token);
     }
+    public static class IPackageLoaderServiceExtensions
+    {
+        public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> LoadWithDefaultsAsync(this Orc.NuGetExplorer.IPackageLoaderService packageLoaderService, string repository, System.Threading.CancellationToken token = default) { }
+    }
     public interface IPackageManager { }
     public interface IPackageOperationContext
     {
@@ -332,6 +336,7 @@ namespace Orc.NuGetExplorer
     public interface IPackagesUpdatesSearcherService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
     }
     public static class IPackagesUpdatesSearcherServiceExtensions { }
@@ -562,6 +567,7 @@ namespace Orc.NuGetExplorer
     }
     public static class StringExtensions
     {
+        public static bool ContainsAny(this string value, string[] str, System.StringComparison comparisonType) { }
         public static string GetSafeScopeName(this string value) { }
         public static System.Collections.Generic.IList<string> SplitOrEmpty(this string value, char separator = ,) { }
     }
@@ -1160,6 +1166,7 @@ namespace Orc.NuGetExplorer.Providers
     public interface IPackageMetadataProvider
     {
         System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
@@ -1178,6 +1185,7 @@ namespace Orc.NuGetExplorer.Providers
         public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
         public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
