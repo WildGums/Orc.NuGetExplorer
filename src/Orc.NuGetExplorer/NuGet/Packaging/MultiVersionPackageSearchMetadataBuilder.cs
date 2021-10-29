@@ -3,11 +3,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
+    using Catel.Logging;
     using NuGet.Packaging;
     using NuGet.Protocol.Core.Types;
 
     public class MultiVersionPackageSearchMetadataBuilder
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IEnumerable<IPackageSearchMetadata> _searchMetadatas;
 
         private MultiVersionPackageSearchMetadataBuilder(IEnumerable<IPackageSearchMetadata> searchMetadatas)
@@ -25,30 +28,32 @@
             var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
 
             var main = orderedMetadatas.FirstOrDefault(x => x.Identity.Version.OriginalVersion == version);
+            if (main is null)
+            {
+                main = orderedMetadatas.FirstOrDefault();
+            }
 
             var versions = orderedMetadatas.ToList();
-            versions.Remove(main);
+            if (!versions.Remove(main))
+            {
+                Log.Warning($"Unexpected: package version {main?.Identity} wasn't enlisted");
+            }
 
-            var clonedMetadata = Create(versions, main);
+            var clonedMetadata = Create(versions, main); //-V3146
 
             return clonedMetadata;
         }
 
         public IPackageSearchMetadata Build()
         {
-            var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
-
-            var main = orderedMetadatas.FirstOrDefault();
-
-            var versions = orderedMetadatas.Skip(1).ToList();
-
-            var clonedMetadata = Create(versions, main);
-
-            return clonedMetadata;
+            return Build("");
         }
 
         private MultiVersionPackageSearchMetadata Create(IEnumerable<IPackageSearchMetadata> versions, IPackageSearchMetadata main)
         {
+            Argument.IsNotNull(() => versions);
+            Argument.IsNotNull(() => main);
+
             var metadata = new MultiVersionPackageSearchMetadata(versions)
             {
                 Authors = main.Authors,

@@ -122,7 +122,7 @@
                     }
                     else
                     {
-                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
+                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null); //-V3080
                         await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
                     }
                 }
@@ -165,7 +165,7 @@
                 using (var cts = new CancellationTokenSource())
                 {
                     // InstalledPackage means you cannot directly choose version which should be uninstalled, may be this should be revised
-                    var uninstallPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Uninstall, Package.GetMetadata(), InstalledPackage, null);
+                    var uninstallPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Uninstall, Package.GetMetadata(), InstalledPackage, null); //-V3080
                     await _packageCommandService.ExecuteUninstallAsync(uninstallPackageDetails, cts.Token);
                 }
 
@@ -273,7 +273,7 @@
                 if (Package is not null)
                 {
                     // Note: Workaround, this is a hack way to set specific version of package
-                    var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
+                    var tempPackage = new NuGetPackage(VersionData, Package.FromPage); //-V3080
                     tempPackage.AddDependencyInfo(VersionData.Identity.Version, VersionData.DependencySets);
                     ValidateCurrentPackage(tempPackage);
                 }

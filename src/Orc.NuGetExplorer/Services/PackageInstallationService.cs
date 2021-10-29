@@ -205,21 +205,25 @@
                     resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, project, ignoreMissingPackages, cancellationToken);
                 }
 
-                if (resolverContext is null ||
-                    !(resolverContext?.AvailablePackages?.Any() ?? false))
+                if (resolverContext is null || !(resolverContext.AvailablePackages?.Any() ?? false))
                 {
                     var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
                     _nugetLogger.LogWarning(errorMessage);
+
                     return new InstallerResult(errorMessage);
                 }
 
                 using (var cacheContext = new SourceCacheContext())
                 {
                     // Step 3. Try to check is main package can be downloaded from resource
-                    var mainPackageInfo = resolverContext.AvailablePackages.FirstOrDefault(p => p.Id == package.Id);
+                    var mainPackageInfo = resolverContext.AvailablePackages.FirstOrDefault(p => p.Id == package.Id); //-V3125
+                    if (mainPackageInfo is null)
+                    {
+                        Log.ErrorAndCreateException<InvalidOperationException>($"Package with id {mainPackageInfo} is not available on current source");
+                    }
 
                     _nugetLogger.LogInformation($"Downloading {package}...");
-                    var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
+                    var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken); //-V3146
 
                     _nugetLogger.LogInformation($"{package} download completed");
 

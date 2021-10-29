@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.NuGetExplorer.Crypto
+namespace Orc.NuGetExplorer
 {
     using System;
     using System.Security.Cryptography;
@@ -76,9 +76,10 @@ namespace Orc.NuGetExplorer.Crypto
         private static Aes CreateCryptoServiceProvider(Encoding encoding, string key)
         {
             var aes = Aes.Create() ?? new AesCryptoServiceProvider();
-            var md5 = new MD5CryptoServiceProvider();
-
-            aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+            }
 
             // Important notes on changing implementation: 
             // You need to keep IV value of aes provider the same per encryption/decryption operation

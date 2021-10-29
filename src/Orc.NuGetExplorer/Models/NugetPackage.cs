@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Catel;
     using Catel.Data;
     using Catel.Logging;
     using NuGet.Packaging;
@@ -25,6 +26,8 @@
 
         public NuGetPackage(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage)
         {
+            Argument.IsNotNull(() => packageMetadata);
+
             FromPage = fromPage;
             _packageMetadata = packageMetadata;
 
@@ -39,7 +42,7 @@
 
             ValidationContext = new ValidationContext();
 
-            switch (fromPage)
+            switch (fromPage) //-V3002
             {
                 case MetadataOrigin.Browse:
                     InstalledVersion = null;
@@ -53,6 +56,9 @@
                     InstalledVersion = updatePackageSearchMetadata.FromVersion.Version;
                     Status = PackageStatus.UpdateAvailable;
                     break;
+
+                default:
+                    throw Log.ErrorAndCreateException<NotSupportedException>($"{fromPage} value isn't supported");
             }
         }
 

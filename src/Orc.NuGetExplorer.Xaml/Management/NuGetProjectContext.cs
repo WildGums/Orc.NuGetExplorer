@@ -70,17 +70,11 @@
             switch (message.Level)
             {
                 case LogLevel.Debug:
-                    Log.Debug(FormatStringMessage(message));
-                    break;
-
                 case LogLevel.Verbose:
                     Log.Debug(FormatStringMessage(message));
                     break;
 
                 case LogLevel.Information:
-                    Log.Info(FormatStringMessage(message));
-                    break;
-
                 case LogLevel.Minimal:
                     Log.Info(FormatStringMessage(message));
                     break;

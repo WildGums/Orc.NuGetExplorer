@@ -39,7 +39,7 @@
                     switch (last)
                     {
                         case BatchedInstallNuGetProjectEventArgs b:
-                            b.IsBatchEnd = true;
+                            b.IsBatchEnd = true; //-V3139
                             break;
 
                         case BatchedUninstallNuGetProjectEventArgs b:

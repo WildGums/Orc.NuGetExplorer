@@ -89,13 +89,13 @@
                             taskList.Remove(nextCompletedTask);
                         }
 
-                        if (result is not null)
+                        if (result is null || executedToken is null)
                         {
-                            updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
+                            updateStateValue = PackageStatus.NotInstalled;
                         }
                         else
                         {
-                            updateStateValue = PackageStatus.NotInstalled;
+                            updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
                         }
 
                         executedToken?.UpdateAction(updateStateValue);

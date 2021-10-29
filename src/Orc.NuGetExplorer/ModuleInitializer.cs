@@ -51,7 +51,6 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<IRollbackPackageOperationService, RollbackPackageOperationService>();
         serviceLocator.RegisterType<IBackupFileSystemService, BackupFileSystemService>();
-        serviceLocator.RegisterType<ITemporaryFIleSystemContextService, TemporaryFIleSystemContextService>();
         serviceLocator.RegisterType<IFileSystemService, FileSystemService>();
         serviceLocator.RegisterType<ICredentialProvider, WindowsCredentialProvider>();
         serviceLocator.RegisterType<ICredentialProviderLoaderService, CredentialProviderLoaderService>();

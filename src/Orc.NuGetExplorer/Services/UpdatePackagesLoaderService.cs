@@ -125,7 +125,7 @@
                     var localFilter = new SearchFilter(true);
 
                     // Note: This code need to be changes in the future if multiple local installation folder (projects) will supported
-                    var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
+                    var localRepository = _extensibleProjectLocator.GetDefaultProject()?.AsSourceRepository(_sourceRepositoryProvider);
                     var localRepositorySource = localRepository?.PackageSource?.Source;
                     var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadWithDefaultSearchParametersAsync(localRepositorySource, token);
 
@@ -181,7 +181,7 @@
 
             if (packagesToExclude.Any())
             {
-                var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
+                var localRepository = _extensibleProjectLocator.GetDefaultProject()?.AsSourceRepository(_sourceRepositoryProvider);
                 var localRepositorySource = localRepository?.PackageSource?.Source;
                 var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadWithDefaultSearchParametersAsync(localRepositorySource, token);
 

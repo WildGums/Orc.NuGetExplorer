@@ -199,6 +199,11 @@
             if (ParentViewModel is ExplorerViewModel explorerViewModel)
             {
                 var activePage = explorerViewModel.Pages.FirstOrDefault(p => p.IsActive);
+                if (activePage is null)
+                {
+                    return false;
+                }
+
                 return activePage.Parameters.Tab == ExplorerTab.Browse;
             }
 

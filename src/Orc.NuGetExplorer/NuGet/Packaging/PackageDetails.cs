@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Catel;
     using Catel.Data;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
@@ -15,7 +16,9 @@
 
         public PackageDetails(IPackageSearchMetadata metadata, bool isLatestVersion = false)
         {
-            Id = metadata.Identity.Id;
+            Argument.IsNotNull(() => metadata);
+
+            Id = metadata.Identity.Id; //-V3095
             FullName = metadata.Identity?.ToFullString();
             Description = metadata.Description;
             IconUrl = metadata.IconUrl;
@@ -34,8 +37,12 @@
             ValidationContext = new ValidationContext();
         }
 
-        public PackageDetails(IPackageSearchMetadata metadata, PackageIdentity identity, bool isLatestVersion = false) : this(metadata, isLatestVersion)
+        public PackageDetails(IPackageSearchMetadata metadata, PackageIdentity identity, bool isLatestVersion = false)
+            : this(metadata, isLatestVersion)
         {
+            Argument.IsNotNull(() => metadata);
+            Argument.IsNotNull(() => identity);
+
             Id = identity.Id;
             NuGetVersion = identity.Version;
         }

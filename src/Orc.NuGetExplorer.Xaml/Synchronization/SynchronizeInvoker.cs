@@ -30,6 +30,10 @@
         public object EndInvoke(IAsyncResult result)
         {
             DispatcherAsyncResult dispatcherResult = result as DispatcherAsyncResult;
+            if (dispatcherResult is null)
+            {
+                return null;
+            }
             dispatcherResult.Operation.Wait();
             return dispatcherResult.Operation.Result;
         }

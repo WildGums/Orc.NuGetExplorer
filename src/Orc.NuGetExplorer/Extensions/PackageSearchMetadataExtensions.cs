@@ -21,7 +21,7 @@
                 });
         }
 
-        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, CancellationToken cancellationToken)
+        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, CancellationToken cancellationToken) //-V3167
         {
             Argument.IsNotNull(() => packages);
 
@@ -29,7 +29,7 @@
             return master?.WithVersions(() => packages.ToVersionInfo(includePrerelease));
         }
 
-        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, string[] ignoreReleases, CancellationToken cancellationToken)
+        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, string[] ignoreReleases, CancellationToken cancellationToken) //-V3167
         {
             Argument.IsNotNull(() => packages);
             Argument.IsNotNull(() => ignoreReleases);

@@ -324,6 +324,11 @@ namespace Orc.NuGetExplorer.Resolver
                 return packages;
             }
 
+            if (packages.Any(p => p is null))
+            {
+                throw new ArgumentException("Cannot proceed with null element on collection", nameof(packages));
+            }
+
             var dependencyRangesByPackageId = new Dictionary<string, IList<VersionRange>>(StringComparer.OrdinalIgnoreCase);
 
             //  (1) Adds all package Ids including leaf nodes that have no dependencies
@@ -338,7 +343,7 @@ namespace Orc.NuGetExplorer.Resolver
             //  (2) Create a look-up of every dependency that refers to a particular package Id
             foreach (var package in packages)
             {
-                foreach (var dependency in package?.Dependencies)
+                foreach (var dependency in package?.Dependencies) //-V3153
                 {
                     IList<VersionRange> dependencyVersionRanges;
                     if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out dependencyVersionRanges))

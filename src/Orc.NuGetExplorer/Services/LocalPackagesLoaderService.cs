@@ -40,17 +40,6 @@
             var source = pageContinuation.Source.PackageSources.FirstOrDefault();
             var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
-            SourceRepository repository = null;
-
-            if (source is not null)
-            {
-                repository = _repositoryProvider.CreateRepository(source);
-            }
-            else
-            {
-                repository = observedProjects.FirstOrDefault().AsSourceRepository(_repositoryProvider);
-            }
-
             try
             {
                 var localPackages = await _projectManager.CreatePackagesCollectionFromProjectsAsync(observedProjects, token);

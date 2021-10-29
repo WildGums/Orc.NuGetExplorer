@@ -264,7 +264,7 @@
                     await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{ex.Message}");
                 }
 
-                if (ex?.CurrentBatch is null)
+                if (ex.CurrentBatch is null)
                 {
                     return false;
                 }

@@ -255,7 +255,7 @@
                     return null;
                 }
 
-                var unitedMetadata = versionsMetadatas
+                var unitedMetadata = versionsMetadatas //-V3125
                     .FirstOrDefault(p => p.Identity.Version == identity.Version)
                     ?? PackageSearchMetadataBuilder.FromIdentity(identity).Build();
 

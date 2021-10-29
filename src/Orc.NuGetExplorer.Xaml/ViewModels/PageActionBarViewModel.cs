@@ -147,7 +147,7 @@
             }
         }
 
-        private bool BatchUpdateCanExecute()
+        private bool BatchUpdateCanExecute() //-V3013
         {
             return AnyItemOnPageChecked();
         }

@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
@@ -22,6 +23,10 @@
 
 #if NETCORE
             var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
+            if (targetFramework is null)
+            {
+                throw Log.ErrorAndCreateException<ArgumentException>("Cannot set target framework", nameof(defaultFramework));
+            }
             Framework = targetFramework.DotNetFrameworkName;
             SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 #else

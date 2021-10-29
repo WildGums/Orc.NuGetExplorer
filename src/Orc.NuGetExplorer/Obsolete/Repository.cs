@@ -13,7 +13,7 @@ namespace Orc.NuGetExplorer
     public sealed class Repository : IRepository
     {
         public Repository(string name, string source)
-            : this(new PackageSource(name, source))
+            : this(new PackageSource(source, name))
         {
             Argument.IsNotNull(() => name);
             Argument.IsNotNull(() => source);

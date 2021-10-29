@@ -39,7 +39,7 @@
                 Log.Debug($"Requesting credentials for '{uri}'");
             }
 
-            bool? result = null;
+            bool result;
 
             var uriString = uri.ToString().ToLower();
 
@@ -56,7 +56,7 @@
 
             result = credentialsPrompter.ShowDialog();
 
-            if (result ?? false)
+            if (result)
             {
                 //creating success response
 
