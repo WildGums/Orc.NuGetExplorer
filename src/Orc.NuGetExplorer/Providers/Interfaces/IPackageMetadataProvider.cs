@@ -46,5 +46,6 @@
 
         [ObsoleteEx(ReplacementTypeOrMember = "PackageSearchMetadataExtensions.Highest", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
+        Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken);
     }
 }

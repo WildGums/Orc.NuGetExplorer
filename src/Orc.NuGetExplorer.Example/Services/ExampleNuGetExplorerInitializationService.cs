@@ -5,6 +5,7 @@
     using Catel.Logging;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Example.PackageManagement;
+    using Orc.NuGetExplorer.Example.Providers;
     using Orc.NuGetExplorer.Management;
 
     public class ExampleNuGetExplorerInitializationService
@@ -16,7 +17,9 @@
 
             var serviceLocator = ServiceLocator.Default;
 
-            // Provide a custom configuration reset implementation
+            // Example: override default project
+            serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
+
             serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
 
             // add loggers
@@ -24,8 +27,8 @@
             var catelListener = serviceLocator.RegisterTypeAndInstantiate<CatelLogListener>();
             LogManager.AddListener(catelListener);
 
-            // add project extensions
-            projectLocator.Register<ExampleFolderPackageManagement>(DefaultNuGetFolders.GetApplicationRoamingFolder());
+            // add upgrade listener
+            serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
 
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();

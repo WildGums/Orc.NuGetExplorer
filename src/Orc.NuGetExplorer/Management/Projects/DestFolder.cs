@@ -51,6 +51,11 @@
 
         public string ContentPath { get; private set; }
 
+        public PackagePathResolver GetPathResolver()
+        {
+            return _pathResolver;
+        }
+
         public string GetInstallPath(PackageIdentity packageIdentity)
         {
             return _pathResolver.GetInstallPath(packageIdentity);
