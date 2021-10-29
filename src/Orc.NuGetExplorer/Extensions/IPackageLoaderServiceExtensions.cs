@@ -9,7 +9,7 @@
 
     public static class IPackageLoaderServiceExtensions
     {
-        public static async Task<IEnumerable<IPackageSearchMetadata>> LoadWithDefaultsAsync(this IPackageLoaderService packageLoaderService, string repository, CancellationToken token = default)
+        public static async Task<IEnumerable<IPackageSearchMetadata>> LoadWithDefaultSearchParametersAsync(this IPackageLoaderService packageLoaderService, string repository, CancellationToken token = default)
         {
             Argument.IsNotNull(() => packageLoaderService);
 

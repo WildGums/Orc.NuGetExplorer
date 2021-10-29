@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -23,7 +24,17 @@
         public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, CancellationToken cancellationToken)
         {
             Argument.IsNotNull(() => packages);
+
             var master = packages.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
+            return master?.WithVersions(() => packages.ToVersionInfo(includePrerelease));
+        }
+
+        public static IPackageSearchMetadata Highest(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease, string[] ignoreReleases, CancellationToken cancellationToken)
+        {
+            Argument.IsNotNull(() => packages);
+            Argument.IsNotNull(() => ignoreReleases);
+
+            var master = packages.OrderByDescending(x => x.Identity.Version).FirstOrDefault(x => !x.Identity.Version.Release.ContainsAny(ignoreReleases, StringComparison.OrdinalIgnoreCase));
             return master?.WithVersions(() => packages.ToVersionInfo(includePrerelease));
         }
     }

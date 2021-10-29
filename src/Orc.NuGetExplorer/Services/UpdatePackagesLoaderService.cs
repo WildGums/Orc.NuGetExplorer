@@ -126,9 +126,8 @@
 
                     // Note: This code need to be changes in the future if multiple local installation folder (projects) will supported
                     var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
-                    var localPagination = new PageContinuation(0, new PackageSourceWrapper(localRepository.PackageSource.Source));
-
-                    var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadWithDefaultsAsync(emptySearchTerm, localPagination, localFilter, token);
+                    var localRepositorySource = localRepository?.PackageSource?.Source;
+                    var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadWithDefaultSearchParametersAsync(localRepositorySource, token);
 
                     // Getting updatess
                     foreach (var package in installedPackagesMetadatas)
@@ -182,8 +181,9 @@
 
             if (packagesToExclude.Any())
             {
-                var localRepositorySource = _repositoryService.LocalRepository?.Source;
-                var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepositorySource, token);
+                var localRepository = _extensibleProjectLocator.GetDefaultProject().AsSourceRepository(_sourceRepositoryProvider);
+                var localRepositorySource = localRepository?.PackageSource?.Source;
+                var installedPackagesMetadatas = await _projectRepositoryPackageLoader.Value.LoadWithDefaultSearchParametersAsync(localRepositorySource, token);
 
                 foreach (var package in packagesToExclude)
                 {

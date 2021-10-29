@@ -27,9 +27,6 @@
             var catelListener = serviceLocator.RegisterTypeAndInstantiate<CatelLogListener>();
             LogManager.AddListener(catelListener);
 
-            // add upgrade listener
-            serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
-
             // IApiPackageRegistry testing
             var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
             //apiRegistry.Register("PackageName.Api", "1.0.0-version");

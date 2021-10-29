@@ -98,16 +98,7 @@
             return master;
         }
 
-        public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
-        {
-            //returned type - packageRegistrationMetadata
-            var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
-
-            var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
-
-            return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
-        }
-
+        [ObsoleteEx(ReplacementTypeOrMember = "PackageSearchMetadataExtensions.Highest", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken)
         {
             var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
@@ -176,7 +167,6 @@
         }
 
         #endregion
-
 
         [ObsoleteEx(ReplacementTypeOrMember = "PackageSearchMetadataExtensions.Highest", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public async Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
