@@ -48,10 +48,11 @@ namespace Orc.NuGetExplorer
             var encoding = GetEncoding();
             var buffer = encoding.GetBytes(s);
 
-            var crypto = CreateCryptoServiceProvider(encoding, key);
-
-            var result = Convert.ToBase64String(crypto.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-            return result;
+            using (var crypto = CreateCryptoServiceProvider(encoding, key))
+            {
+                var result = Convert.ToBase64String(crypto.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
+                return result;
+            }
         }
 
         public static string Decrypt(string s, string key)
@@ -63,19 +64,24 @@ namespace Orc.NuGetExplorer
 
             var encoding = GetEncoding();
 
-            var crypto = CreateCryptoServiceProvider(encoding, key);
-            var buffer = Convert.FromBase64String(s);
+            using (var crypto = CreateCryptoServiceProvider(encoding, key))
+            {
+                var buffer = Convert.FromBase64String(s);
 
-            var result = encoding.GetString(crypto.CreateDecryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-            return result;
+                var result = encoding.GetString(crypto.CreateDecryptor().TransformFinalBlock(buffer, 0, buffer.Length));
+                return result;
+            }
         }
 
         private static Aes CreateCryptoServiceProvider(Encoding encoding, string key)
         {
-            var aes = Aes.Create() ?? new AesCryptoServiceProvider();
-            var md5 = new MD5CryptoServiceProvider();
+            var aes = Aes.Create();
 
-            aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+            using (var md5 = MD5.Create())
+            {
+                aes.Key = md5.ComputeHash(encoding.GetBytes(key));
+            }
+
             aes.IV = IV;
             aes.Padding = PaddingMode.PKCS7;
             aes.Mode = CipherMode.CBC;

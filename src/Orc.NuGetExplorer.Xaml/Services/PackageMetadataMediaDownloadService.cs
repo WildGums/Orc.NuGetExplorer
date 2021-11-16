@@ -2,6 +2,7 @@
 {
     using System;
     using System.Net;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
@@ -62,11 +63,13 @@
                 return;
             }
 
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
             using (var webClient = new WebClient())
             {
                 var data = await IconDownloader.GetByUrlAsync(uri, webClient);
                 _iconCache.SaveToCache(uri, data);
             }
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
         }
 
         private void DownloadFrom(Uri uri)
@@ -77,11 +80,13 @@
                 return;
             }
 
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
             using (var webClient = new WebClient())
             {
                 var data = IconDownloader.GetByUrl(uri, webClient);
                 _iconCache.SaveToCache(uri, data);
             }
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
         }
 
         #region IImageResolveService
