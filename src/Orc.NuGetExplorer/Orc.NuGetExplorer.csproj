@@ -27,7 +27,7 @@
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="NuGet.PackageManagement" Version="5.11.0" />
     <PackageReference Include="Obsolete.Fody" Version="5.2.1" PrivateAssets="all" />
-    <PackageReference Include="Orc.FileSystem" Version="4.1.4" />
+    <PackageReference Include="Orc.FileSystem" Version="4.2.0-alpha0396" />
   </ItemGroup>
 
   <ItemGroup>
