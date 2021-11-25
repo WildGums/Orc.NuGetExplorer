@@ -25,13 +25,15 @@
 
         private void OnOpenChooseLocalPathToSourceDialogExecute()
         {
-            var folderDialog = new CommonOpenFileDialog();
-
-            folderDialog.InitialDirectory = @"C:\Users";
-            folderDialog.IsFolderPicker = true;
-            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            using (var folderDialog = new CommonOpenFileDialog())
             {
-                Source = folderDialog.FileName;
+                folderDialog.InitialDirectory = @"C:\Users";
+                folderDialog.IsFolderPicker = true;
+
+                if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    Source = folderDialog.FileName;
+                }
             }
         }
 

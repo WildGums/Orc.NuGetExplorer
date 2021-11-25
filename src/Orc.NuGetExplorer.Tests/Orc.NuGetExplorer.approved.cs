@@ -99,11 +99,13 @@ namespace Orc.NuGetExplorer
         public string DefaultSource { get; set; }
         public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageSource> GetDefaultPackages() { }
     }
-    public class ExplorerCredentialService : NuGet.Configuration.ICredentialService
+    public class ExplorerCredentialService : NuGet.Configuration.ICredentialService, System.IDisposable
     {
         public ExplorerCredentialService(NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials) { }
         public bool HandlesDefaultCredentials { get; }
         public void ClearRetryCache() { }
+        public void Dispose() { }
+        protected virtual void Dispose(bool disposing) { }
         public System.Threading.Tasks.Task<System.Net.ICredentials> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
         public bool IsValidResponse(NuGet.Credentials.CredentialResponse response) { }
         public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) { }
@@ -617,11 +619,13 @@ namespace Orc.NuGetExplorer.Cache
         public bool IsCached(System.Uri iconUri) { }
         public void SaveToCache(System.Uri iconUri, byte[] streamContent) { }
     }
-    public class NuGetCacheManager : Orc.NuGetExplorer.Cache.INuGetCacheManager
+    public class NuGetCacheManager : Orc.NuGetExplorer.Cache.INuGetCacheManager, System.IDisposable
     {
         public NuGetCacheManager(Orc.FileSystem.IDirectoryService directoryService, Orc.FileSystem.IFileService fileService) { }
         public bool ClearAll() { }
         public bool ClearHttpCache() { }
+        public void Dispose() { }
+        protected virtual void Dispose(bool disposing) { }
         public NuGet.Protocol.Core.Types.SourceCacheContext GetCacheContext() { }
         public NuGet.Protocol.Core.Types.HttpSourceCacheContext GetHttpCacheContext() { }
         public NuGet.Protocol.Core.Types.HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false) { }

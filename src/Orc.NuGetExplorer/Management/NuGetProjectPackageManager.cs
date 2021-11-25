@@ -18,7 +18,7 @@
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Services;
 
-    internal partial class NuGetProjectPackageManager : INuGetPackageManager
+    internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(1, 1);
@@ -31,6 +31,7 @@
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
+        private bool _disposedValue;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
@@ -407,6 +408,27 @@
 
 
             return repos;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _batchToken?.Dispose();
+                    _updateToken?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

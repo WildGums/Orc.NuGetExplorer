@@ -79,7 +79,9 @@
                 {
                     _aliveCancellationToken = cts.Token;
 
+#pragma warning disable IDISP013 // Await in using.
                     var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
+#pragma warning restore IDISP013 // Await in using.
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
 

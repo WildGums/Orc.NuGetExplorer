@@ -102,7 +102,9 @@
 
             if (Title != "Browse")
             {
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
                 _packagesLoaderService = this.GetServiceLocator().ResolveType<IPackageLoaderService>(Title);
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
             }
 
             if (!Enum.TryParse(Title, out _pageType))

@@ -23,19 +23,21 @@ namespace Orc.NuGetExplorer
             }
 
             var encoding = GetEncoding();
-            var md5 = MD5.Create();
 
-            var inputBytes = encoding.GetBytes(s);
-            var hash = md5.ComputeHash(inputBytes);
-
-            var sb = new StringBuilder();
-
-            for (var i = 0; i < hash.Length; i++)
+            using (var md5 = MD5.Create())
             {
-                sb.Append(hash[i].ToString("X2"));
-            }
+                var inputBytes = encoding.GetBytes(s);
+                var hash = md5.ComputeHash(inputBytes);
 
-            return sb.ToString();
+                var sb = new StringBuilder();
+
+                for (var i = 0; i < hash.Length; i++)
+                {
+                    sb.Append(hash[i].ToString("X2"));
+                }
+
+                return sb.ToString();
+            }
         }
 
         public static string Encrypt(string s, string key)
@@ -50,8 +52,11 @@ namespace Orc.NuGetExplorer
 
             using (var crypto = CreateCryptoServiceProvider(encoding, key))
             {
-                var result = Convert.ToBase64String(crypto.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-                return result;
+                using (var encryptor = crypto.CreateEncryptor())
+                {
+                    var result = Convert.ToBase64String(encryptor.TransformFinalBlock(buffer, 0, buffer.Length));
+                    return result;
+                }
             }
         }
 
@@ -68,8 +73,11 @@ namespace Orc.NuGetExplorer
             {
                 var buffer = Convert.FromBase64String(s);
 
-                var result = encoding.GetString(crypto.CreateDecryptor().TransformFinalBlock(buffer, 0, buffer.Length));
-                return result;
+                using (var decryptor = crypto.CreateDecryptor())
+                {
+                    var result = encoding.GetString(decryptor.TransformFinalBlock(buffer, 0, buffer.Length));
+                    return result;
+                }
             }
         }
 

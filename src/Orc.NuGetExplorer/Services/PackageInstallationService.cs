@@ -44,7 +44,9 @@
         private readonly IFileService _fileService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IFileSystemService _fileSystemService;
+#pragma warning disable IDISP006 // Implement IDisposable.
         private readonly INuGetCacheManager _nuGetCacheManager;
+#pragma warning restore IDISP006 // Implement IDisposable.
         private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
@@ -195,7 +197,9 @@
 
                 using (var cacheContext = new SourceCacheContext())
                 {
+#pragma warning disable IDISP013 // Await in using.
                     var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
+#pragma warning restore IDISP013 // Await in using.
 
                     var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess && x.Result is not null)
                         .Select(x => x.Result).ToArray();
@@ -285,24 +289,27 @@
                 return null;
             }
 
-            var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, new SourceCacheContext(), _nugetLogger, default);
-            if (rawPackageMetadata is null)
+            using (var sourceCacheContext = new SourceCacheContext())
             {
-                return null;
+                var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, sourceCacheContext, _nugetLogger, default);
+                if (rawPackageMetadata is null)
+                {
+                    return null;
+                }
+
+                var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
+                var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
+
+                return rawCatalogItem?.GetValue<long>("packageSize");
             }
-
-            var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
-            var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
-
-            return rawCatalogItem?.GetValue<long>("packageSize");
         }
 
         private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
             DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
         {
-            HashSet<SourcePackageDependencyInfo> packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
-            HashSet<PackageIdentity> ignoredPackages = new HashSet<PackageIdentity>();
-            Stack<SourcePackageDependencyInfo> downloadStack = new Stack<SourcePackageDependencyInfo>();
+            var packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
+            var ignoredPackages = new HashSet<PackageIdentity>();
+            var downloadStack = new Stack<SourcePackageDependencyInfo>();
             var resolvingBehavior = DependencyBehavior.Lowest;
 
             // get top dependency
@@ -644,18 +651,19 @@
         {
             var satelliteFiles = new List<string>();
 
-            var nuspec = await packageReader.GetNuspecAsync(cancellationToken);
-            var nuspecReader = new NuspecReader(nuspec);
+            using (var nuspec = await packageReader.GetNuspecAsync(cancellationToken))
+            {
+                var nuspecReader = new NuspecReader(nuspec);
 
-            var satelliteFilesInGroup = libraryFrameworkSpecificGroup.Items
-            .Where(item =>
-                Path.GetDirectoryName(item)
-                    .Split(Path.DirectorySeparatorChar)
-                    .Contains(nuspecReader.GetLanguage(), StringComparer.OrdinalIgnoreCase)).ToList();
+                var satelliteFilesInGroup = libraryFrameworkSpecificGroup.Items
+                    .Where(item => Path.GetDirectoryName(item)
+                        .Split(Path.DirectorySeparatorChar)
+                        .Contains(nuspecReader.GetLanguage(), StringComparer.OrdinalIgnoreCase)).ToList();
 
-            satelliteFiles.AddRange(satelliteFilesInGroup);
+                satelliteFiles.AddRange(satelliteFilesInGroup);
 
-            return satelliteFiles;
+                return satelliteFiles;
+            }
         }
     }
 }

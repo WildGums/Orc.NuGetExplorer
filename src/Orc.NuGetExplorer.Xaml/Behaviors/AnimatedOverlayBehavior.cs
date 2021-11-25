@@ -94,7 +94,10 @@
         protected override void OnAttached()
         {
             base.OnAttached();
+
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
             AnimationService = this.GetServiceLocator().ResolveType<IAnimationService>();
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]

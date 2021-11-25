@@ -23,7 +23,9 @@
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly INuGetPackageManager _nuGetExtensibleProjectManager;
 
+#pragma warning disable IDISP006 // Implement IDisposable.
         private readonly IServiceLocator _serviceLocator;
+#pragma warning restore IDISP006 // Implement IDisposable.
 
         //underlying service
         private readonly Lazy<IPackageLoaderService> _feedRepositoryLoader;

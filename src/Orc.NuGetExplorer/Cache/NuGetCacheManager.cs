@@ -10,7 +10,7 @@
     using NuGet.Protocol.Core.Types;
     using Orc.FileSystem;
 
-    public class NuGetCacheManager : INuGetCacheManager
+    public class NuGetCacheManager : INuGetCacheManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -18,6 +18,7 @@
         private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
+        private bool _disposedValue;
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
@@ -106,6 +107,26 @@
             }
 
             return !failedDeletes.Any();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _sourceContext?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
