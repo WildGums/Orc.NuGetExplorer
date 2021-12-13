@@ -578,7 +578,7 @@
             }
             );
 
-            MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
+            static MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
             {
                 switch (page)
                 {

@@ -67,9 +67,9 @@
             }
             else
             {
-                if (version.Major == 5)
+                if (version.Major >= 5)
                 {
-                    // Support .NET 5 
+                    // Support .NET 5+
                     frameworkStringList.Add($".NETCoreApp,Version=v{version.Major}.0");
                 }
             }
