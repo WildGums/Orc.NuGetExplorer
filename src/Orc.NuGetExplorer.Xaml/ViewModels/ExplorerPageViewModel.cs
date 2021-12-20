@@ -129,7 +129,9 @@
             {
                 if (_context != value)
                 {
+#pragma warning disable IDISP007 // Don't dispose injected
                     _context?.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected
                     _context = value;
                 }
             }
