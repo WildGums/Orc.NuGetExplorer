@@ -268,12 +268,6 @@
                     return;
                 }
 
-                if (!IsPackageApplied)
-                {
-                    // Skip until model is applied
-                    return;
-                }
-
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);

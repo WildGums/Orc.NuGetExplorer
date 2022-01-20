@@ -181,7 +181,7 @@
 
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
                 var reducer = new FrameworkReducer();
-#if NETCORE5
+#if NET6 || NET5
 
                 var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
                 targetFramework = mostSpecific;
