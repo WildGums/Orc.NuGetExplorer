@@ -413,6 +413,10 @@ namespace Orc.NuGetExplorer
         public void SendInfo(string message) { }
         public void SendWarning(string message) { }
     }
+    public static class NuGetFrameworkExtensions
+    {
+        public static bool IsNet5Era(this NuGet.Frameworks.NuGetFramework nuGetFramework) { }
+    }
     public class NuGetLogRecordEventArgs : System.EventArgs
     {
         public NuGetLogRecordEventArgs(string message) { }
