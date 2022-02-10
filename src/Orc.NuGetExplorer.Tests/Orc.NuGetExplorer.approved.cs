@@ -579,7 +579,7 @@ namespace Orc.NuGetExplorer
     }
     public static class TaskExtensions
     {
-        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<>[]> WhenAllOrExceptionAsync<T>(this System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<T>> tasks) { }
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<T>[]> WhenAllOrExceptionAsync<T>(this System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<T>> tasks) { }
         public static System.Threading.Tasks.Task<Orc.NuGetExplorer.TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this System.Threading.Tasks.Task<T> task) { }
     }
     public class TaskResultOrException<T>
