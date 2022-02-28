@@ -203,14 +203,13 @@
         {
             try
             {
+                bool dependencyInstallResult = true;
+
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
                 var repositories = SourceContext.CurrentContext.Repositories;
 
-                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
-
-                bool dependencyInstallResult = true;
-
+                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.CanIgnoreDependencies, token);
                 if (!installerResults.Result.Any())
                 {
                     Log.Error($"Failed to install package {package}");
@@ -238,7 +237,7 @@
                             _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
                             token);
 
-                        dependencyInstallResult &= true;
+                        dependencyInstallResult &= result;
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -248,7 +247,7 @@
                     }
                 }
 
-                await OnInstallAsync(project, package, dependencyInstallResult);
+                await OnInstallAsync(project, package, dependencyInstallResult || project.CanIgnoreDependencies);
 
                 return true;
             }

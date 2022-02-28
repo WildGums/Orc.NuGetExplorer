@@ -19,8 +19,6 @@
 
         public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
         {
-            ContentPath = destinationFolder;
-
 #if NETCORE
             var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
             Framework = targetFramework.DotNetFrameworkName;
@@ -41,7 +39,8 @@
                 SupportedPlatforms = ImmutableList.Create<NuGetFramework>();
             }
 
-            _pathResolver = new PackagePathResolver(ContentPath);
+            ContentPath = destinationFolder;
+            _pathResolver = new PackagePathResolver(destinationFolder);
         }
 
         public string Name => "Plugins";
@@ -50,7 +49,11 @@
 
         public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
-        public string ContentPath { get; private set; }
+        public string ContentPath { get; }
+
+        public bool CanIgnoreDependencies { get; } = true;
+
+        public bool CanSupportSideBySide { get; } = false;
 
         public PackagePathResolver GetPathResolver()
         {
@@ -60,21 +63,6 @@
         public string GetInstallPath(PackageIdentity packageIdentity)
         {
             return _pathResolver.GetInstallPath(packageIdentity);
-        }
-
-        public void Install()
-        {
-            Log.Debug("Use NuGetProjectPackageManager to perform operation");
-        }
-
-        public void Uninstall()
-        {
-            Log.Debug("Use NuGetProjectPackageManager to perform operation");
-        }
-
-        public void Update()
-        {
-            Log.Debug("Use NuGetProjectPackageManager to perform operation");
         }
 
         public override string ToString()

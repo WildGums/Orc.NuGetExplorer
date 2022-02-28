@@ -8,7 +8,7 @@
     {
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
-        private IExtensibleProject _defaultProject;
+        private readonly IExtensibleProject _defaultProject;
 
         public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
         {

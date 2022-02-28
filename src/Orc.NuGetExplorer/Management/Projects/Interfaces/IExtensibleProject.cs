@@ -17,12 +17,10 @@
 
         PackagePathResolver GetPathResolver();
 
+        bool CanIgnoreDependencies { get; }
+
+        bool CanSupportSideBySide { get; }
+
         string GetInstallPath(PackageIdentity packageIdentity);
-
-        void Install();
-
-        void Update();
-
-        void Uninstall();
     }
 }

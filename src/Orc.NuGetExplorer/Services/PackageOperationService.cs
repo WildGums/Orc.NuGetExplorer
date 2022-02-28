@@ -126,27 +126,32 @@ namespace Orc.NuGetExplorer
             //create current version identity
             var currentVersion = await _nuGetPackageManager.GetVersionInstalledAsync(_defaultProject, updateIdentity.Id, token);
             var currentIdentity = new PackageIdentity(updateIdentity.Id, currentVersion);
+            if (currentIdentity.Version is null)
+            {
+                // Can be because of mismatch between packages.config and package files
+                ValidatePackage(package);
+                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
+
+                await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
+
+                return;
+            }
             var uninstallPath = _defaultProject.GetInstallPath(currentIdentity);
 
             try
             {
                 ValidatePackage(package);
 
-                //where to get target version?
-                //somehow we should get target version from package
-                //package should provide 'update' identity
-
                 _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Update, package); //install path is same as update
 
-                //notify about uninstall and install because update in fact is combination of these actions
-                //this also allow us provide different InstallPaths on notifications
+                // notify about uninstall and install because update in fact is combination of these actions
+                // this also allow us provide different InstallPaths on notifications
 
                 _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
 
                 _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
 
                 await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
-
             }
             catch (Exception ex)
             {

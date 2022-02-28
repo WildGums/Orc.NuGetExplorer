@@ -9,6 +9,7 @@
     using Catel;
     using Catel.IoC;
     using Catel.Logging;
+    using MethodTimer;
     using NuGet.Common;
     using NuGet.Configuration;
     using NuGet.Frameworks;
@@ -111,7 +112,11 @@
                 _nugetLogger.LogWarning($"Project {project.Name} doesn't implement any configuration for own packages");
             }
 
-            using (var cacheContext = new SourceCacheContext())  // _nuGetCacheManager.GetCacheContext())
+            using (var cacheContext = new SourceCacheContext()
+            {
+                NoCache = false,
+                DirectDownload = false,
+            })
             {
                 var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                     .GetResourceAsync<DependencyInfoResource>(cancellationToken);
@@ -136,6 +141,12 @@
             {
                 foreach (var removedPackage in uninstalledPackages)
                 {
+                    if (removedPackage.Version is null)
+                    {
+                        _nugetLogger.LogWarning($"Skip package {removedPackage.Id} uninstall. Check your package.config for references on this packages");
+                        continue;
+                    }
+
                     var folderProject = new FolderNuGetProject(project.ContentPath);
 
                     if (folderProject.PackageExists(removedPackage))
@@ -149,11 +160,11 @@
                     }
 
                     var result = await projectConfig.UninstallPackageAsync(removedPackage, _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser), cancellationToken);
-
                     if (!result)
                     {
                         _nugetLogger.LogError($"Saving package configuration failed in project {project} when installing package {package}");
                     }
+
                 }
             }
             catch (IOException ex)
@@ -167,6 +178,7 @@
             }
         }
 
+        [Time]
         public async Task<InstallerResult> InstallAsync(
             PackageIdentity package,
             IExtensibleProject project,

@@ -345,9 +345,11 @@
 
         private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Log.Info("Timer elapsed");
             var currentFeed = Settings.ObservedFeed;
-            //reset page
+
+            Log.Info($"Updating page from feed {currentFeed.Name}");
+
+            // Reset page package data
             PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
 
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
