@@ -219,18 +219,15 @@
                     var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
                     resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, project, ignoreMissingPackages, cancellationToken);
-                }
 
-                if (resolverContext is null ||
-                    !(resolverContext?.AvailablePackages?.Any() ?? false))
-                {
-                    var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
-                    _nugetLogger.LogWarning(errorMessage);
-                    return new InstallerResult(errorMessage);
-                }
+                    if (resolverContext is null ||
+                        !(resolverContext?.AvailablePackages?.Any() ?? false))
+                    {
+                        var errorMessage = $"Package {package} cannot be resolved with current settings (TFM: {targetFramework}) for chosen destination";
+                        _nugetLogger.LogWarning(errorMessage);
+                        return new InstallerResult(errorMessage);
+                    }
 
-                using (var cacheContext = new SourceCacheContext())
-                {
                     // Step 3. Try to check is main package can be downloaded from resource
                     var mainPackageInfo = resolverContext.AvailablePackages.FirstOrDefault(p => p.Id == package.Id);
 
@@ -319,6 +316,7 @@
         private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
             DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
         {
+            // The collection of already processed packages
             var packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
             var ignoredPackages = new HashSet<PackageIdentity>();
             var downloadStack = new Stack<SourcePackageDependencyInfo>();
@@ -358,6 +356,12 @@
                     var isPackageRequiresOwnDependencies = !_apiPackageRegistry.IsRegistered(dependencyIdentity.Id);
                     if (isPackageRequiresOwnDependencies)
                     {
+                        // We can't determine the unknown version yet from range, but can exclude min required if it was already processed
+                        if (packageStore.Contains(dependencyIdentity))
+                        {
+                            continue;
+                        }
+
                         var relatedDepInfos = await dependencyInfoResource.ResolvePackagesWithVersionSatisfyRangeAsync(dependencyIdentity, dependency.VersionRange, targetFramework, cacheContext, _nugetLogger, cancellationToken);
                         foreach (var relatedDepedencyInfoResource in relatedDepInfos)
                         {
