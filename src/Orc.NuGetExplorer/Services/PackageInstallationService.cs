@@ -201,8 +201,15 @@
 
                 _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
-                // Check is this context needed
-                //var resContext = new NuGet.PackageManagement.ResolutionContext();
+                // Prepare to step 2. Add globals if cache enabled as available repository with highest priority.
+                // Note: This part falls under responsibility of RepositoryContextService but the same logic used to determine what packages are found by IPackageLoaderService
+                // To not break behavior for now add here
+                if (!project.NoCache)
+                {
+                    var repositoryList = repositories.ToList();
+                    repositoryList.Insert(0, new SourceRepository(new PackageSource(DefaultNuGetFolders.GetGlobalPackagesFolder(), ".nuget"), Repository.Provider.GetCoreV3()));
+                    repositories = repositoryList;
+                }
 
                 // Step 2. Build list of dependencies and determine DependencyBehavior if some packages are misssed in current feed
                 Resolver.PackageResolverContext resolverContext = null;

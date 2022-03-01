@@ -21,6 +21,8 @@
 
         bool SupportSideBySide { get; }
 
+        bool NoCache { get; }
+
         string GetInstallPath(PackageIdentity packageIdentity);
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
@@ -54,6 +53,8 @@
         public bool IgnoreDependencies { get; } = true;
 
         public bool SupportSideBySide { get; } = false;
+
+        public bool NoCache { get; } = false;
 
         public PackagePathResolver GetPathResolver()
         {
