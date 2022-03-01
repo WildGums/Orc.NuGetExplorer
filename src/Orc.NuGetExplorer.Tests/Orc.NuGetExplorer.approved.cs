@@ -182,13 +182,13 @@ namespace Orc.NuGetExplorer
     {
         string ContentPath { get; }
         string Framework { get; }
+        bool IgnoreDependencies { get; }
         string Name { get; }
+        bool NoCache { get; }
+        bool SupportSideBySide { get; }
         System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
         NuGet.Packaging.PackagePathResolver GetPathResolver();
-        void Install();
-        void Uninstall();
-        void Update();
     }
     public static class IExtensibleProjectExtensions
     {
@@ -707,14 +707,14 @@ namespace Orc.NuGetExplorer.Management
         public DestFolder(string destinationFolder, Orc.NuGetExplorer.IDefaultNuGetFramework defaultFramework) { }
         public string ContentPath { get; }
         public string Framework { get; }
+        public bool IgnoreDependencies { get; }
         public string Name { get; }
+        public bool NoCache { get; }
+        public bool SupportSideBySide { get; }
         public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public NuGet.Packaging.PackagePathResolver GetPathResolver() { }
-        public void Install() { }
         public override string ToString() { }
-        public void Uninstall() { }
-        public void Update() { }
     }
     public interface IDefaultExtensibleProjectProvider
     {
@@ -1190,8 +1190,9 @@ namespace Orc.NuGetExplorer.Providers
     }
     public class PackageMetadataProvider : Orc.NuGetExplorer.Providers.IPackageMetadataProvider
     {
+        public PackageMetadataProvider(NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
         public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
-        public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.SourceRepository localRepository = null) { }
+        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider, Orc.FileSystem.IDirectoryService directoryService) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
@@ -1199,6 +1200,7 @@ namespace Orc.NuGetExplorer.Providers
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
+        public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Catel.IoC.IServiceLocator serviceLocator) { }
         public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryContextService repositoryService, Orc.NuGetExplorer.Management.IExtensibleProjectLocator projectSource, Orc.NuGetExplorer.Management.INuGetPackageManager projectManager) { }
     }
     public class WindowsCredentialProvider : NuGet.Credentials.ICredentialProvider
