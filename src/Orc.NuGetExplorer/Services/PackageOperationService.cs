@@ -130,7 +130,7 @@ namespace Orc.NuGetExplorer
             {
                 // Can be because of mismatch between packages.config and package files
 
-                _logger.LogWarning($"Cannot found existing local files for installed '{package.Id}'. Continue update to version '{updateIdentity.Version}'");
+                _logger.LogWarning($"Could not find existing local files for installed '{package.Id}'. Continue update to version '{updateIdentity.Version}'");
 
                 ValidatePackage(package);
                 _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
