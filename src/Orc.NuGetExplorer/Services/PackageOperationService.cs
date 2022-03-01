@@ -123,12 +123,15 @@ namespace Orc.NuGetExplorer
             var updateIdentity = package.GetIdentity();
             var installPath = _defaultProject.GetInstallPath(updateIdentity);
 
-            //create current version identity
+            // create current version identity
             var currentVersion = await _nuGetPackageManager.GetVersionInstalledAsync(_defaultProject, updateIdentity.Id, token);
             var currentIdentity = new PackageIdentity(updateIdentity.Id, currentVersion);
             if (currentIdentity.Version is null)
             {
                 // Can be because of mismatch between packages.config and package files
+
+                _logger.LogWarning($"Cannot found existing local files for installed '{package.Id}'. Continue update to version '{updateIdentity.Version}'");
+
                 ValidatePackage(package);
                 _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
 
@@ -142,7 +145,7 @@ namespace Orc.NuGetExplorer
             {
                 ValidatePackage(package);
 
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Update, package); //install path is same as update
+                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Update, package); // install path is same as update
 
                 // notify about uninstall and install because update in fact is combination of these actions
                 // this also allow us provide different InstallPaths on notifications

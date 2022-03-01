@@ -209,7 +209,7 @@
 
                 var repositories = SourceContext.CurrentContext.Repositories;
 
-                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.CanIgnoreDependencies, token);
+                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token);
                 if (!installerResults.Result.Any())
                 {
                     Log.Error($"Failed to install package {package}");
@@ -247,7 +247,7 @@
                     }
                 }
 
-                await OnInstallAsync(project, package, dependencyInstallResult || project.CanIgnoreDependencies);
+                await OnInstallAsync(project, package, dependencyInstallResult || project.IgnoreDependencies);
 
                 return true;
             }

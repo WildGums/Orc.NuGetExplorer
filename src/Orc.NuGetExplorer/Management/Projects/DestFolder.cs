@@ -51,9 +51,9 @@
 
         public string ContentPath { get; }
 
-        public bool CanIgnoreDependencies { get; } = true;
+        public bool IgnoreDependencies { get; } = true;
 
-        public bool CanSupportSideBySide { get; } = false;
+        public bool SupportSideBySide { get; } = false;
 
         public PackagePathResolver GetPathResolver()
         {

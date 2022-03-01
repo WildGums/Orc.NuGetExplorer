@@ -29,9 +29,9 @@
 
         public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
-        public bool CanIgnoreDependencies { get; } = true;
+        public bool IgnoreDependencies { get; } = true;
 
-        public bool CanSupportSideBySide { get; } = true;
+        public bool SupportSideBySide { get; } = true;
 
         public string GetInstallPath(PackageIdentity packageIdentity)
         {

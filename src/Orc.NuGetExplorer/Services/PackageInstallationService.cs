@@ -143,7 +143,7 @@
                 {
                     if (removedPackage.Version is null)
                     {
-                        _nugetLogger.LogWarning($"Skip package {removedPackage.Id} uninstall. Check your package.config for references on this packages");
+                        _nugetLogger.LogWarning($"Skip package {removedPackage.Id} uninstall. Check your package.config for references of this packages");
                         continue;
                     }
 

@@ -17,9 +17,9 @@
 
         PackagePathResolver GetPathResolver();
 
-        bool CanIgnoreDependencies { get; }
+        bool IgnoreDependencies { get; }
 
-        bool CanSupportSideBySide { get; }
+        bool SupportSideBySide { get; }
 
         string GetInstallPath(PackageIdentity packageIdentity);
     }
