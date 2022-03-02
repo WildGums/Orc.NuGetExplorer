@@ -34,8 +34,6 @@
 
             if (_storedManagedWindows.TryGetValue(vm, out window))
             {
-                Log.Info($"Current window is { window?.ToString() ?? "null" }");
-
                 foreach (var behavior in GetOverlayBehaviors(window))
                 {
                     behavior.SetCurrentValue(BehaviorBase<DataWindow>.IsEnabledProperty, false);

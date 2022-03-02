@@ -9,6 +9,9 @@
     {
         public Func<IPackageSearchMetadata> PackageSelector { get; set; }
 
+        /// <summary>
+        /// Determines type of source which should be sought for state acquiring
+        /// </summary>
         public MetadataOrigin LoadType { get; set; }
 
         public NuGetPackage Package { get; set; }

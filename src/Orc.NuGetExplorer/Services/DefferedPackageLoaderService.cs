@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -28,26 +29,23 @@
 
         private readonly IRepositoryContextService _repositoryService;
         private readonly INuGetPackageManager _projectManager;
-        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
-        private readonly IDirectoryService _directoryService;
+        private readonly IDefaultExtensibleProjectProvider _projectProvider;
 
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager, 
-            IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IDirectoryService directoryService)
+        public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
+            IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
         {
             Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => directoryService);
+            Argument.IsNotNull(() => projectProvider);
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
-            _extensibleProjectLocator = extensibleProjectLocator;
             _settignsProvider = settingsProvider;
-            _directoryService = directoryService;
+            _projectProvider = projectProvider;
         }
 
         public async Task StartLoadingAsync()
@@ -148,6 +146,7 @@
         public IPackageMetadataProvider InitializeMetadataProvider()
         {
 
+            var typeFactory = TypeFactory.Default;
             //todo provide more automatic way
             //create package metadata provider from context
             using (var context = _repositoryService.AcquireContext())
@@ -157,13 +156,14 @@
                     return null;
                 }
 
-                var projects = _extensibleProjectLocator.GetAllExtensibleProjects();
-
-                var localRepos = _projectManager.AsLocalRepositories(projects);
+                var localRepos = _projectManager.AsLocalRepositories(new[]
+                {
+                    _projectProvider.GetDefaultProject()
+                });
 
                 var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
 
-                return new PackageMetadataProvider(_directoryService, repos, localRepos);
+                return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
             }
         }
 
@@ -175,7 +175,7 @@
         /// <returns></returns>
         private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            var project = _extensibleProjectLocator.GetAllExtensibleProjects().FirstOrDefault();
+            var project = _projectProvider.GetDefaultProject();
             string packageId = token.Package.Identity.Id;
 
             if (project is null)

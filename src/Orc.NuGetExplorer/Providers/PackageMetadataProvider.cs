@@ -10,6 +10,7 @@
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
+    using NuGet.Configuration;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using Orc.FileSystem;
@@ -21,46 +22,72 @@
 
         private static readonly ILogger NuGetLogger;
         private readonly IDirectoryService _directoryService;
+        private readonly ISourceRepositoryProvider _repositoryProvider;
         private readonly IEnumerable<SourceRepository> _sourceRepositories;
 
         private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
 
-#pragma warning disable IDE0052 // Remove unread private members
-        private readonly SourceRepository _localRepository;
-#pragma warning restore IDE0052 // Remove unread private members
+        private readonly Lazy<IExtensibleProject> _project = new(() => ServiceLocator.Default.ResolveType<IDefaultExtensibleProjectProvider>()?.GetDefaultProject());
+
+        private SourceRepository _localRepository;
 
         static PackageMetadataProvider()
         {
             NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
         }
 
+        public PackageMetadataProvider(ISourceRepositoryProvider repositoryProvider)
+        {
+            Argument.IsNotNull(() => repositoryProvider);
+
+            _repositoryProvider = repositoryProvider;
+        }
+
         public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
+            : this(repositoryProvider)
         {
             Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryProvider);
+            Argument.IsNotNull(() => repositoryService);
 
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
             _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource()) };
         }
 
-        public PackageMetadataProvider(IDirectoryService directoryService, IEnumerable<SourceRepository> sourceRepositories,
-            IEnumerable<SourceRepository> optionalGlobalLocalRepositories, SourceRepository localRepository = null)
+        public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories, ISourceRepositoryProvider repositoryProvider,
+            IDirectoryService directoryService)
+            : this(repositoryProvider)
         {
-            Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => sourceRepositories);
+            Argument.IsNotNull(() => repositoryProvider);
+            Argument.IsNotNull(() => directoryService);
 
-            _directoryService = directoryService;
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
-            _localRepository = localRepository;
+            _directoryService = directoryService;
         }
 
+        public static PackageMetadataProvider CreateFromSourceContext(IServiceLocator serviceLocator)
+        {
+            Argument.IsNotNull(() => serviceLocator);
 
-        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource, INuGetPackageManager projectManager)
+            var directoryService = serviceLocator.ResolveType<IDirectoryService>();
+            var repositoryService = serviceLocator.ResolveType<IRepositoryContextService>();
+            var projectSource = serviceLocator.ResolveType<IExtensibleProjectLocator>();
+            var packageManager = serviceLocator.ResolveType<INuGetPackageManager>();
+
+            return PackageMetadataProvider.CreateFromSourceContext(directoryService, repositoryService, projectSource, packageManager);
+        }
+
+        public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
+            INuGetPackageManager projectManager)
         {
             Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => repositoryService);
+            Argument.IsNotNull(() => projectSource);
+            Argument.IsNotNull(() => projectManager);
+
+            var typeFactory = TypeFactory.Default;
 
             var context = repositoryService.AcquireContext();
 
@@ -70,7 +97,7 @@
 
             var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
 
-            return new PackageMetadataProvider(directoryService, repos, localRepos);
+            return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
         }
 
 
@@ -81,6 +108,22 @@
             if (_optionalLocalRepositories is not null)
             {
                 sources.AddRange(_optionalLocalRepositories);
+            }
+
+            // Support multiple destinations
+            if (_localRepository is null)
+            {
+                var project = _project.Value;
+                if (project is not null && project.SupportSideBySide)
+                {
+                    var localRepository = _repositoryProvider.CreateRepository(new PackageSource(Directory.GetParent(Path.Combine(project.GetInstallPath(identity))).FullName), NuGet.Protocol.FeedType.FileSystemV2);
+                    _localRepository = localRepository;
+                }
+            }
+
+            if (_localRepository is not null)
+            {
+                sources.Add(_localRepository);
             }
 
             // Take the package from the first source it is found in
@@ -230,7 +273,7 @@
                     NuGetLogger,
                     cancellationToken);
 
-                Log.Debug($"Returned package metadata count: {packages.Count()}");
+                Log.Debug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
 
                 return packages;
 
