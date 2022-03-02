@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="5.3.0" PrivateAssets="all" />
-    <PackageReference Include="Orc.Controls" Version="4.7.0-alpha0224" />
+    <PackageReference Include="Orc.Controls" Version="4.7.0-alpha0225" />
   </ItemGroup>
   
   <ItemGroup>
