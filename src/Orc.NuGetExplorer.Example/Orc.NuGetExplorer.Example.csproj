@@ -28,7 +28,7 @@
     <PackageReference Include="LoadAssembliesOnStartup.Fody" Version="4.6.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
-    <PackageReference Include="Orc.Notifications" Version="4.3.0-alpha0238" />
+    <PackageReference Include="Orc.Notifications" Version="4.3.1" />
     <PackageReference Include="Orchestra.Core" Version="6.7.0-alpha0164" />
   </ItemGroup>
 
