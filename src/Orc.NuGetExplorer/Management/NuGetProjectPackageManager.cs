@@ -18,7 +18,7 @@
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Services;
 
-    internal partial class NuGetProjectPackageManager : INuGetPackageManager
+    internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(1, 1);
@@ -31,6 +31,7 @@
 
         private BatchOperationToken _batchToken;
         private BatchUpdateToken _updateToken;
+        private bool _disposedValue;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
@@ -202,14 +203,13 @@
         {
             try
             {
+                bool dependencyInstallResult = true;
+
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
                 var repositories = SourceContext.CurrentContext.Repositories;
 
-                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
-
-                bool dependencyInstallResult = true;
-
+                var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token);
                 if (!installerResults.Result.Any())
                 {
                     Log.Error($"Failed to install package {package}");
@@ -237,7 +237,7 @@
                             _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
                             token);
 
-                        dependencyInstallResult &= true;
+                        dependencyInstallResult &= result;
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -247,7 +247,7 @@
                     }
                 }
 
-                await OnInstallAsync(project, package, dependencyInstallResult);
+                await OnInstallAsync(project, package, dependencyInstallResult || project.IgnoreDependencies);
 
                 return true;
             }
@@ -407,6 +407,27 @@
 
 
             return repos;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _batchToken?.Dispose();
+                    _updateToken?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

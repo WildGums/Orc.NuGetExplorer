@@ -102,7 +102,9 @@
 
             if (Title != "Browse")
             {
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
                 _packagesLoaderService = this.GetServiceLocator().ResolveType<IPackageLoaderService>(Title);
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
             }
 
             if (!Enum.TryParse(Title, out _pageType))
@@ -127,7 +129,9 @@
             {
                 if (_context != value)
                 {
+#pragma warning disable IDISP007 // Don't dispose injected
                     _context?.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected
                     _context = value;
                 }
             }
@@ -341,9 +345,11 @@
 
         private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Log.Info("Timer elapsed");
             var currentFeed = Settings.ObservedFeed;
-            //reset page
+
+            Log.Info($"Updating page from feed {currentFeed.Name}");
+
+            // Reset page package data
             PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
 
             var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
@@ -576,7 +582,7 @@
             }
             );
 
-            MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
+            static MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
             {
                 switch (page)
                 {

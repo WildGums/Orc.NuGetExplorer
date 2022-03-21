@@ -2,24 +2,22 @@
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
     using Catel.Data;
     using Catel.Fody;
+    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Management;
     using NuGetExplorer.Models;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
-    using Orc.FileSystem;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Packaging;
 
@@ -29,31 +27,23 @@
         private static readonly int Timeout = 500;
 
         private static IPackageMetadataProvider PackageMetadataProvider;
-
-        private readonly IRepositoryContextService _repositoryService;
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageCommandService _packageCommandService;
-        private readonly IDirectoryService _directoryService;
 
-        public PackageDetailsViewModel(IRepositoryContextService repositoryService, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-            IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry, IPackageCommandService packageCommandService,
-            IDirectoryService directoryService)
+        public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
+            IPackageCommandService packageCommandService)
         {
-            Argument.IsNotNull(() => repositoryService);
             Argument.IsNotNull(() => settingsProvider);
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => apiPackageRegistry);
             Argument.IsNotNull(() => packageCommandService);
-            Argument.IsNotNull(() => directoryService);
 
-            _repositoryService = repositoryService;
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _apiPackageRegistry = apiPackageRegistry;
             _packageCommandService = packageCommandService;
-            _directoryService = directoryService;
 
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
@@ -212,9 +202,7 @@
         {
             try
             {
-                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(
-                    identity, isPreReleaseIncluded, CancellationToken.None);
-
+                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
                 if (versionMetadata?.Identity?.Version is not null)
                 {
                     packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
@@ -268,12 +256,6 @@
                     return;
                 }
 
-                if (!IsPackageApplied)
-                {
-                    // Skip until model is applied
-                    return;
-                }
-
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
@@ -318,7 +300,7 @@
 
                 SelectedVersion = selectedVersion;
 
-                PackageMetadataProvider = InitMetadataProvider();
+                PackageMetadataProvider = Providers.PackageMetadataProvider.CreateFromSourceContext(ServiceLocator.Default);
 
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
@@ -352,15 +334,6 @@
             {
                 ValidationContext = package.ValidationContext;
             }
-        }
-
-        private IPackageMetadataProvider InitMetadataProvider()
-        {
-            var currentSourceContext = SourceContext.CurrentContext;
-
-            var repositories = currentSourceContext.Repositories ?? currentSourceContext?.PackageSources.Select(src => _repositoryService.GetRepository(src));
-
-            return new PackageMetadataProvider(_directoryService, repositories, null);
         }
 
         private void PopulateVersionCollection()

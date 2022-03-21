@@ -70,7 +70,9 @@
                 if (CurrentContext.Parent is null)
                 {
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
+#pragma warning disable IDISP007 // Don't dispose injected.
                     context.FileSystemContext.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected.
 
                     _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages ?? new IPackageDetails[0]);
                     _rootContext = null;

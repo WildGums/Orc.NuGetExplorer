@@ -7,7 +7,7 @@
 
     internal partial class NuGetProjectPackageManager
     {
-        private class BatchUpdateToken : IDisposable
+        private sealed class BatchUpdateToken : IDisposable
         {
             private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
 

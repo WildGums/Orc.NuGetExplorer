@@ -6,7 +6,9 @@
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
 
+#pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
     public class SourceContext : IDisposable
+#pragma warning restore IDISP025 // Class with no virtual dispose method should be sealed.
     {
         private static readonly Stack<SourceContext> ActiveContext = new Stack<SourceContext>();
 

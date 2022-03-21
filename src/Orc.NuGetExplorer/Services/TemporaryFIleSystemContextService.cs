@@ -33,8 +33,10 @@ namespace Orc.NuGetExplorer
         #region Methods
         public IDisposable UseTemporaryFIleSystemContext()
         {
-            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
+            using (var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>())
+            {
+                return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
+            }
         }
         #endregion
     }

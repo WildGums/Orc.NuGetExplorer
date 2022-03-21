@@ -26,11 +26,13 @@
             //this provider add yourself as default V3 credential
 
             //set own provider 
+#pragma warning disable IDISP005 // Return type should indicate that the value should be disposed.
             HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => new ExplorerCredentialService(
                     new AsyncLazy<IEnumerable<ICredentialProvider>>(() => GetCredentialProvidersAsync()),
                     false,
                     true)
                 );
+#pragma warning restore IDISP005 // Return type should indicate that the value should be disposed.
         }
 
         public void SetCredentialPolicy(CredentialStoragePolicy storagePolicy)

@@ -36,7 +36,9 @@
 
             try
             {
+#pragma warning disable IDISP001 // Dispose created.
                 var watcher = new FileSystemWatcher();
+#pragma warning restore IDISP001 // Dispose created.
                 var downloadPath = packageInstallationService.InstallerPathResolver.GetPackageFilePath(packageDependencyInfo.Id, packageDependencyInfo.Version);
                 var downloadDirectoryPath = Path.GetDirectoryName(downloadPath);
 
@@ -44,6 +46,7 @@
                 _directoryService.Create(downloadDirectoryPath);
 
                 watcher.Path = Path.GetDirectoryName(downloadPath);
+
                 // determine package size
                 var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, packageDependencyInfo.Source);
                 var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
@@ -73,7 +76,9 @@
         private readonly long _downloadSize;
         private readonly IFileService _fileService;
         private readonly FileSystemWatcher _fileSystemWatcher;
+#pragma warning disable IDISP006 // Implement IDisposable.
         private readonly Timer _trackerTimer;
+#pragma warning restore IDISP006 // Implement IDisposable.
 
         private string _nupkgFilePath;
 
@@ -114,14 +119,18 @@
         protected override void DisposeManaged()
         {
             base.DisposeManaged();
+
             if (_fileSystemWatcher is not null)
             {
+#pragma warning disable IDISP007 // Don't dispose injected.
                 _fileSystemWatcher.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected.
             }
 
             if (_trackerTimer.Enabled)
             {
                 _trackerTimer.Stop();
+                _trackerTimer.Dispose();
             }
         }
 

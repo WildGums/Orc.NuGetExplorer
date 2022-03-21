@@ -44,7 +44,9 @@
             Title = DefaultTitle;
             Settings = settings;
 
+#pragma warning disable IDISP001 // Dispose created.
             var serviceLocator = this.GetServiceLocator();
+#pragma warning restore IDISP001 // Dispose created.
 
             if (serviceLocator.IsTypeRegistered<INuGetConfigurationResetService>())
             {
