@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer;
@@ -47,5 +48,9 @@ public static class ModuleInitializer
 
         // register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
+
+        // register commands
+        var commandManager = serviceLocator.ResolveType<ICommandManager>();
+        commandManager.CreateCommandWithGesture(typeof(Commands.Page), nameof(Commands.Page.BatchUpdatePackages));
     }
 }

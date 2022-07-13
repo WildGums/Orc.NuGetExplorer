@@ -43,4 +43,13 @@ namespace Orc.NuGetExplorer
             public const string LastRepositoryDefaultValue = RepositoryName.All;
         }
     }
+
+    internal static class Commands
+    {
+        internal static class Page
+        {
+            public const string BatchUpdatePackages = $"{nameof(Page)}.{nameof(BatchUpdatePackages)}";
+            public static readonly Catel.Windows.Input.InputGesture BatchUpdatePackagesInputGesture = null;
+        }
+    }
 }
