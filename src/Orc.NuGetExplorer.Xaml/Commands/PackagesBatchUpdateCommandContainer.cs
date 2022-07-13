@@ -13,7 +13,7 @@
     using Orc.NuGetExplorer.Packaging;
     using Orc.NuGetExplorer.Windows;
 
-    internal class PageBatchUpdatePackagesCommandContainer : CommandContainerBase<IManagerPage>
+    internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManagerPage>
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -24,9 +24,9 @@
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageOperationContextService _packageOperationContextService;
 
-        public PageBatchUpdatePackagesCommandContainer(ICommandManager commandManager, IProgressManager progressManager, IMessageService messageService,
-            INuGetPackageManager projectManager, IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
-            : base(Commands.Page.BatchUpdatePackages, commandManager)
+        public PackagesBatchUpdateCommandContainer(ICommandManager commandManager, IProgressManager progressManager, IMessageService messageService, INuGetPackageManager projectManager, 
+            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
+            : base(Commands.Packages.BatchUpdate, commandManager)
         {
             Argument.IsNotNull(() => progressManager);
             Argument.IsNotNull(() => messageService);
@@ -68,7 +68,7 @@
 
                 if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
                 {
-                    await _messageService.ShowErrorAsync("Can't perform update. One or multiple package cannot be updated due to validation errors", "Can't update packages");
+                    await _messageService.ShowErrorAsync("One or more package(s) cannot be updated due to validation errors", "Can't update packages");
                     return;
                 }
 

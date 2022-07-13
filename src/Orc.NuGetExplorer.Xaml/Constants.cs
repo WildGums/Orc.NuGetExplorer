@@ -46,10 +46,10 @@ namespace Orc.NuGetExplorer
 
     internal static class Commands
     {
-        internal static class Page
+        internal static class Packages
         {
-            public const string BatchUpdatePackages = $"{nameof(Page)}.{nameof(BatchUpdatePackages)}";
-            public static readonly Catel.Windows.Input.InputGesture BatchUpdatePackagesInputGesture = null;
+            public const string BatchUpdate = $"{nameof(Packages)}.{nameof(BatchUpdate)}";
+            public static readonly Catel.Windows.Input.InputGesture BatchUpdateInputGesture = null;
         }
     }
 }

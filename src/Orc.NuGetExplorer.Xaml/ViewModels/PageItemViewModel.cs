@@ -31,7 +31,7 @@
             Package = package;
             _nugetSettings = settingsProvider.Model;
 
-            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Page.BatchUpdatePackages);
+            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
             //command

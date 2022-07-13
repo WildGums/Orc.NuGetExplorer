@@ -51,6 +51,6 @@ public static class ModuleInitializer
 
         // register commands
         var commandManager = serviceLocator.ResolveType<ICommandManager>();
-        commandManager.CreateCommandWithGesture(typeof(Commands.Page), nameof(Commands.Page.BatchUpdatePackages));
+        commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
     }
 }

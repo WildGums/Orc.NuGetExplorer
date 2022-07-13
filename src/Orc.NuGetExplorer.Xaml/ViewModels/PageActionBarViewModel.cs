@@ -50,7 +50,7 @@
             CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
             CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
 
-            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Page.BatchUpdatePackages);
+            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
             Parent = _parentManagerPage;
@@ -93,7 +93,7 @@
 
                 if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
                 {
-                    await _messageService.ShowErrorAsync("Can't perform install. One or multiple package cannot be installed due to validation errors", "Can't install packages");
+                    await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
                     return;
                 }
 

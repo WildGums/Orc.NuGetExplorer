@@ -39,7 +39,7 @@
             HorizontalAlignment="Right" Margin="4 4 0 4"
             Width="100" Height="28"
             Visibility="{Binding CanBatchUpdate, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-            Command="{catel:CommandManagerBinding CommandName=Page.BatchUpdatePackages}"
+            Command="{catel:CommandManagerBinding CommandName=Packages.BatchUpdate}"
             CommandParameter="{Binding Parent}">
             Update
         </Button>
