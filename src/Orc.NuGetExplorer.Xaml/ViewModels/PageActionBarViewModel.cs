@@ -5,13 +5,11 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Input;
     using Catel;
     using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
-    using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Models;
@@ -28,7 +26,7 @@
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IMessageService _messageService;
 
-        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService, 
+        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
             IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
         {
             Argument.IsNotNull(() => managerPage);
