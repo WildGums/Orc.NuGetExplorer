@@ -21,7 +21,9 @@
             [TestCase]
             public async Task InvalidatesPackagesBatchUpdateCommandAsync()
             {
-                var serviceLocator = ServiceLocator.Default;
+#pragma warning disable IDISP001 // Dispose created
+                var serviceLocator = new ServiceLocator(ServiceLocator.Default);
+#pragma warning restore IDISP001 // Dispose created
 
                 // Resolve Catel services
                 var commandManager = serviceLocator.ResolveType<ICommandManager>();

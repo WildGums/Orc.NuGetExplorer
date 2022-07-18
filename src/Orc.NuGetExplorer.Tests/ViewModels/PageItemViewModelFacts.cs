@@ -18,7 +18,11 @@
             [TestCase]
             public async Task InvalidatesPackagesBatchUpdateCommandAsync()
             {
-                var commandManager = ServiceLocator.Default.ResolveType<ICommandManager>();
+#pragma warning disable IDISP001 // Dispose created
+                var serviceLocator = new ServiceLocator(ServiceLocator.Default);
+#pragma warning restore IDISP001 // Dispose created
+
+                var commandManager = serviceLocator.ResolveType<ICommandManager>();
 
                 commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
