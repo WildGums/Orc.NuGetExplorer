@@ -19,9 +19,9 @@
                       Name="CheckAllBox"
                       Command="{Binding CheckAll}"
                       IsChecked="{Binding IsCheckAll}">
-                <CheckBox.LayoutTransform>
-                    <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
-                </CheckBox.LayoutTransform>
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+            </CheckBox.LayoutTransform>
             <CheckBox.Content>
                 <TextBlock Text="Select all packages" 
                            Grid.Column="1"
@@ -35,16 +35,12 @@
                 </TextBlock>
             </CheckBox.Content>
         </CheckBox>
-        <!--<TextBlock Text="Select all packages"
-                   Grid.Column="1"
-                   VerticalAlignment="Center"
-                   MouseLeftButtonDown="OnSelectAllPackagesTextBlockMouseLeftButtonDown"
-                   Margin="8 0 0 0"/>-->
         <Button Grid.Column="2"
             HorizontalAlignment="Right" Margin="4 4 0 4"
             Width="100" Height="28"
             Visibility="{Binding CanBatchUpdate, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-            Command="{Binding BatchUpdate}">
+            Command="{catel:CommandManagerBinding CommandName=Packages.BatchUpdate}"
+            CommandParameter="{Binding Parent}">
             Update
         </Button>
 

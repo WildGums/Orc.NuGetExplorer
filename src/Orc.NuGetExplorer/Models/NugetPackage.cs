@@ -71,7 +71,14 @@
 
                 return _isChecked;
             }
-            set => _isChecked = value;
+            set
+            {
+                if (value != _isChecked)
+                {
+                    _isChecked = value;
+                    RaisePropertyChanged(this, new AdvancedPropertyChangedEventArgs(this, nameof(IsChecked), _isChecked));
+                }
+            }
         }
 
         public MetadataOrigin FromPage { get; }
