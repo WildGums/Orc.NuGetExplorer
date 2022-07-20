@@ -10,7 +10,6 @@
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
-    using NuGetExplorer.Management;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Models;
@@ -22,37 +21,37 @@
 
         private readonly IManagerPage _parentManagerPage;
 
-        private readonly INuGetPackageManager _projectManager;
-        private readonly IExtensibleProjectLocator _projectLocator;
         private readonly IProgressManager _progressManager;
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IMessageService _messageService;
 
-        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, INuGetPackageManager projectManager,
-            IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, IMessageService messageService)
+        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
+            IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
         {
             Argument.IsNotNull(() => managerPage);
-            Argument.IsNotNull(() => projectManager);
             Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => projectLocator);
             Argument.IsNotNull(() => packageCommandService);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => messageService);
+            Argument.IsNotNull(() => commandManager);
 
             _parentManagerPage = managerPage;
-            _projectManager = projectManager;
-            _projectLocator = projectLocator;
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;
             _packageOperationContextService = packageOperationContextService;
             _messageService = messageService;
-            BatchUpdate = new TaskCommand(BatchUpdateExecuteAsync, BatchUpdateCanExecute);
+
             BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
             CheckAll = new TaskCommand(CheckAllExecuteAsync);
 
             CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
             CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
+
+            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
+
+            Parent = _parentManagerPage;
         }
 
         public bool IsCheckAll { get; set; }
@@ -60,6 +59,10 @@
         public bool CanBatchUpdate { get; set; }
 
         public bool CanBatchInstall { get; set; }
+
+        public IManagerPage Parent { get; private set; }
+
+        public Action InvalidateCanBatchUpdateExecute { get; set; }
 
         protected override Task InitializeAsync()
         {
@@ -76,82 +79,6 @@
 
         #region Commands
 
-        public TaskCommand BatchUpdate { get; set; }
-
-        private async Task BatchUpdateExecuteAsync()
-        {
-            try
-            {
-                _progressManager.ShowBar(this);
-
-                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
-
-                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
-                {
-                    await _messageService.ShowErrorAsync("Can't perform update. One or multiple package cannot be updated due to validation errors", "Can't update packages");
-                    return;
-                }
-
-                var projects = _projectLocator.GetAllExtensibleProjects()
-                            .Where(x => _projectLocator.IsEnabled(x)).ToList();
-
-                using (var cts = new CancellationTokenSource())
-                {
-                    var updatePackageList = new List<IPackageDetails>();
-
-                    foreach (var package in batchedPackages)
-                    {
-                        var targetProjects = new List<IExtensibleProject>();
-
-                        foreach (var project in projects)
-                        {
-                            if (!await _projectManager.IsPackageInstalledAsync(project, package.Identity, cts.Token))
-                            {
-                                targetProjects.Add(project);
-                            }
-                        }
-
-                        var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.FirstOrDefault();
-
-                        if (targetVersion is null)
-                        {
-                            Log.Warning("Cannot perform upgrade because of 'Target version' is null");
-                            return;
-                        }
-
-
-                        var updatePackageDetails = PackageDetailsFactory.Create(PackageOperationType.Update, package.GetMetadata(), targetVersion, null);
-                        updatePackageList.Add(updatePackageDetails);
-                    }
-
-                    using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Update, updatePackageList.ToArray()))
-                    {
-                        foreach (var updatePackageDetails in updatePackageList)
-                        {
-                            await _packageCommandService.ExecuteUpdateAsync(updatePackageDetails, operationContext, cts.Token);
-                        }
-                    }
-                }
-
-                await Task.Delay(200);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Error when updating package");
-            }
-            finally
-            {
-                _progressManager.HideBar(this);
-
-                _parentManagerPage.StartLoadingTimerOrInvalidateData();
-            }
-        }
-
-        private bool BatchUpdateCanExecute()
-        {
-            return AnyItemOnPageChecked();
-        }
-
         public TaskCommand BatchInstall { get; set; }
 
         private async Task BatchInstallExecuteAsync()
@@ -164,7 +91,7 @@
 
                 if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
                 {
-                    await _messageService.ShowErrorAsync("Can't perform install. One or multiple package cannot be installed due to validation errors", "Can't install packages");
+                    await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
                     return;
                 }
 
@@ -214,6 +141,9 @@
         {
             var packages = _parentManagerPage.PackageItems;
             packages.ForEach(package => package.IsChecked = IsCheckAll);
+
+            BatchInstall.RaiseCanExecuteChanged();
+            InvalidateCanBatchUpdateExecute();
         }
 
         #endregion
