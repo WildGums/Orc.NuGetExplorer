@@ -38,7 +38,7 @@
 
                 var modelProvider = new Mock<IModelProvider<ExplorerSettingsContainer>>().Object;
 
-                var model = FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "Wildgums");
+                var model = FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "WildGums");
 
                 var vm = new PageItemViewModel(model, modelProvider, commandManager);
                 await vm.InitializeViewModelAsync();
