@@ -5,6 +5,9 @@
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
 
+    /// <summary>
+    /// Exposes package management conditions for current runner of Orc.NuGetExplorer.
+    /// </summary>
     public interface IExtensibleProject
     {
         string Name { get; }

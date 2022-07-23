@@ -203,8 +203,6 @@
         {
             try
             {
-                bool dependencyInstallResult = true;
-
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
                 using (var sourceContext = SourceContext.AcquireContext())

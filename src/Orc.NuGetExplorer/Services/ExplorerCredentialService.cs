@@ -12,15 +12,13 @@
     using NuGet.Configuration;
     using NuGet.Credentials;
 
-    public class ExplorerCredentialService : ICredentialService, IDisposable
+    public class ExplorerCredentialService : Disposable, ICredentialService
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly ConcurrentDictionary<string, bool> _retryCache
-             = new();
+        private readonly ConcurrentDictionary<string, bool> _retryCache = new();
 
-        private readonly ConcurrentDictionary<string, CredentialResponse> _providerCredentialCache
-            = new();
+        private readonly ConcurrentDictionary<string, CredentialResponse> _providerCredentialCache = new();
 
         private readonly bool _nonInteractive;
 
@@ -252,24 +250,9 @@
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeManaged()
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _providerSemaphore.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            _providerSemaphore.Dispose();
         }
     }
 }

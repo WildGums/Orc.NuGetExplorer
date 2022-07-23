@@ -28,15 +28,17 @@
 
         private readonly INuGetPackageManager _projectManager;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
+        private readonly IDefaultAppPackagesProjectProvider _projectProvider;
         private IPackageMetadataProvider _packageMetadataProvider;
 
-        public DefferedPackageLoaderService(INuGetPackageManager nuGetExtensibleProjectManager, IExtensibleProjectLocator extensibleProjectLocator, IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public DefferedPackageLoaderService(INuGetPackageManager nuGetExtensibleProjectManager, IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultAppPackagesProjectProvider projectProvider)
         {
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
             Argument.IsNotNull(() => settingsProvider);
 
             _projectManager = nuGetExtensibleProjectManager;
             _settignsProvider = settingsProvider;
+            _projectProvider = projectProvider;
         }
 
         public async Task StartLoadingAsync()

@@ -22,7 +22,7 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
-            IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
+            IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultAppPackagesProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => fileSystemService);

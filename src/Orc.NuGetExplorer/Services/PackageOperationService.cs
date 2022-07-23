@@ -31,7 +31,7 @@ namespace Orc.NuGetExplorer
 
         #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, INuGetPackageManager nuGetPackageManager,
-            IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
+            IApiPackageRegistry apiPackageRegistry, IDefaultAppPackagesProjectProvider defaultExtensibleProjectProvider,
             ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
@@ -123,7 +123,7 @@ namespace Orc.NuGetExplorer
                 _logger.LogWarning($"Could not find existing local files for installed '{package.Id}'. Continue update to version '{updateIdentity.Version}'");
 
                 ValidatePackage(package);
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Install, package);
 
                 await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
 
@@ -135,7 +135,7 @@ namespace Orc.NuGetExplorer
             {
                 ValidatePackage(package);
 
-                _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Update, package); // install path is same as update
+                _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Update, package); // install path is same as update
 
                 _packageOperationNotificationService.NotifyOperationStarting(PackageOperationType.Update, package); //install path is same as update
 

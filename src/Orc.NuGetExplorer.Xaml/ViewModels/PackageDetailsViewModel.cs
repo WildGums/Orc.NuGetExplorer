@@ -19,6 +19,7 @@
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
+    using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PackageDetailsViewModel : ViewModelBase

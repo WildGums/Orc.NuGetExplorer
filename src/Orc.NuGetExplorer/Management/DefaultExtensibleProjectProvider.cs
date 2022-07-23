@@ -3,7 +3,7 @@
     using Catel;
     using Catel.IoC;
 
-    internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider
+    internal class DefaultExtensibleProjectProvider : IDefaultAppPackagesProjectProvider
     {
         private readonly INuGetConfigurationService _configurationService;
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;

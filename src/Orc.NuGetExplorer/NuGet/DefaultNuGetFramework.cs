@@ -138,39 +138,22 @@
                             {
                                 using (var subKey = versionKey.OpenSubKey(subKeyName))
                                 {
-                                    name = (string)subKey.GetValue("Version", string.Empty);
-                                    if (!string.IsNullOrEmpty(name))
+                                    name = subKey.GetValue("Version", "") as string;
+                                    sp = string.IsNullOrEmpty(name) ? string.Empty : subKey.GetValue("SP", "").ToString();
+
+                                    if (subKey.TryGetInstallFlag(out install))
                                     {
-                                        sp = subKey.GetValue("SP", string.Empty).ToString();
+                                        if (install == "1")
+                                        {
+                                            frameworkList.Add(CreateFrameworkVersionName(name, subKeyName, sp));
+                                        }
                                     }
-
-                                    install = subKey.GetValue("Install", string.Empty).ToString();
-
-                                    if (string.IsNullOrEmpty(install))
+                                    else
                                     {
                                         //No install info; it must be later.
                                         frameworkList.Add($"{versionKeyName} {name}");
                                     }
-                                    else
-                                    {
-                                        if (install == "1")
-                                        {
-                                            if (!(string.IsNullOrEmpty(sp)))
-                                            {
-                                                frameworkList.Add($"{subKeyName} {name} SP{sp}");
-                                            }
-                                            else
-                                            {
-                                                frameworkList.Add($" {subKeyName} {name}");
-                                            }
-                                        }
-                                    }
                                 }
-                            }
-                            else
-                            {
-                                //No install info; it must be later.
-                                frameworkList.Add($"{versionKeyName} {name}");
                             }
                         }
                     }
