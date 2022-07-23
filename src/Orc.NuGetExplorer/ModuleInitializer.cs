@@ -88,7 +88,5 @@ public static class ModuleInitializer
         // Setup language resources
         var languageService = serviceLocator.ResolveType<ILanguageService>();
         languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-
-        serviceLocator.RegisterType<PackageOperationsEventSourcingStorage>(RegistrationType.Singleton);
     }
 }
