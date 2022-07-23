@@ -163,12 +163,12 @@ namespace Orc.NuGetExplorer.Resolver
             // keep track of the best partial solution
             var bestSolution = Enumerable.Empty<ResolverPackage>();
 
-            Action<IEnumerable<ResolverPackage>> diagnosticOutput = (partialSolution) =>
+            void diagnosticOutput(IEnumerable<ResolverPackage> partialSolution)
             {
                 // store each solution as they pass through.
                 // the combination solver verifies that the last one returned is the best
                 bestSolution = partialSolution;
-            };
+            }
 
             // Run solver
             var comparer = new ResolverComparer(context.DependencyBehavior, context.PreferredVersions, context.TargetIds);

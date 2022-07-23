@@ -1,18 +1,11 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageManagerLogListenerBase.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using Catel;
 
     public abstract class PackageManagerLogListenerBase
     {
         #region Constructors
-        protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
+        protected PackageManagerLogListenerBase(INuGetLogMediator nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => nuGetLogListeningSevice);
 

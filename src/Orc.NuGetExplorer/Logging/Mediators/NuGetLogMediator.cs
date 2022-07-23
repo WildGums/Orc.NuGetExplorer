@@ -1,16 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetLogListeningSevice.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
 
-    internal class NuGetLogListeningSevice : INuGetLogListeningSevice
+    /// <summary>
+    /// Mediates messages between NuGet logger and Catel log
+    /// </summary>
+    internal class NuGetLogMediator : INuGetLogMediator
     {
         #region Methods
         public void SendInfo(string message)

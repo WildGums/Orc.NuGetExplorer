@@ -16,7 +16,7 @@ namespace Orc.NuGetExplorer
         #endregion
 
         #region Constructors
-        public NuGetToCatelLogTranslator(INuGetLogListeningSevice nuGetLogListeningSevice)
+        public NuGetToCatelLogTranslator(INuGetLogMediator nuGetLogListeningSevice)
             : base(nuGetLogListeningSevice)
         {
         }

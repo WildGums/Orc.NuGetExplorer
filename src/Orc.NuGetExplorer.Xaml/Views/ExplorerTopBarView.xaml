@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto" MinHeight="27"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="210"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
@@ -54,7 +54,6 @@
         </StackPanel>
 
 
-        <!-- Hide title for manager, until it uneditable -->
         <TextBlock Text="{Binding Title}"
                    Grid.Column="5" Grid.ColumnSpan="5"
                    HorizontalAlignment="Right"

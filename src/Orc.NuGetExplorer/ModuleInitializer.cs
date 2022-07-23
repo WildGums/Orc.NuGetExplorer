@@ -27,7 +27,7 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NuGetLogListeningSevice>();
+        serviceLocator.RegisterType<INuGetLogMediator, NuGetLogMediator>();
         serviceLocator.RegisterType<ILogger, NuGetLogger>();
 
         serviceLocator.RegisterType<IFrameworkNameProvider, DefaultFrameworkNameProvider>();

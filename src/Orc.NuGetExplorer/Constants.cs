@@ -83,6 +83,11 @@ namespace Orc.NuGetExplorer
             public const string OkHttpRequestInfoPattern = "  OK https";
             public const string NotFoundHttpRequestInfoPattern = "  NotFound https";
             public const string CacheHttpRequestInfoPattern = "  CACHE https";
+#if DEBUG
+            public const bool VerboseLog = true;
+#else
+            public const bool VerboseLog = false;
+#endif
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Orc.NuGetExplorer.Example
         #endregion
 
         #region Constructors
-        public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
+        public SimpleLogListener(INuGetLogMediator nuGetLogListeningSevice,
             IEchoService echoService, IDispatcherService dispatcherService)
             : base(nuGetLogListeningSevice)
         {

@@ -10,9 +10,9 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly bool _verbose;
-        private readonly INuGetLogListeningSevice _logListeningService;
+        private readonly INuGetLogMediator _logListeningService;
 
-        public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
+        public NuGetLogger(bool verbose, INuGetLogMediator logListeningService)
         {
             Argument.IsNotNull(() => logListeningService);
 
@@ -20,8 +20,8 @@
             _verbose = verbose;
         }
 
-        public NuGetLogger(INuGetLogListeningSevice logListeningService)
-            : this(true, logListeningService)
+        public NuGetLogger(INuGetLogMediator logListeningService)
+            : this(Constants.Log.VerboseLog, logListeningService)
         {
 
         }

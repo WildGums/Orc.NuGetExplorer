@@ -20,6 +20,8 @@
 
         private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
 
+        private static readonly HttpClient HttpClient = new();
+
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
             Argument.IsNotNull(() => appCacheProvider);
@@ -56,59 +58,19 @@
         {
             if (uri is null)
             {
-                //default picture
                 return;
             }
 
-            using (var webClient = new WebClient())
-            {
-                var data = await webClient.LogAndDownloadDataTaskAsync(uri);
-                _iconCache.SaveToCache(uri, data);
-            }
-        }
+            Log.Debug($"Request media content from uri {uri}");
 
-        private void DownloadFrom(Uri uri)
-        {
-            if (uri is null)
+            using (var response = await HttpClient.GetAsync(uri))
             {
-                //default picture
-                return;
-            }
-
-            using (var webClient = new WebClient())
-            {
-                var data = webClient.LogAndDownloadData(uri);
+                var data = await response.Content.ReadAsByteArrayAsync();
                 _iconCache.SaveToCache(uri, data);
             }
         }
 
         #region IImageResolveService
-
-        public ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null)
-        {
-            try
-            {
-                if (uri is not null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
-                {
-                    return GetFromCacheOrFetch(uri);
-                }
-            }
-            catch (WebException ex)
-            {
-                Log.Error(ex);
-            }
-            return new BitmapImage(new Uri(_defaultIconUri));
-        }
-
-        private ImageSource GetFromCacheOrFetch(Uri uri)
-        {
-            if (!_iconCache.IsCached(uri))
-            {
-                DownloadFrom(uri);
-            }
-
-            return _iconCache.GetFromCache(uri);
-        }
 
         public async Task<ImageSource> ResolveImageFromUriAsync(Uri uri, string defaultUrl = null)
         {
