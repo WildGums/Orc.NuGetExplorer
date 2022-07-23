@@ -18,7 +18,7 @@
             var serviceLocator = ServiceLocator.Default;
 
             // Example: override default project
-            serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
+            serviceLocator.RegisterType<IDefaultAppPackagesProjectProvider, NuGetProjectProvider>();
 
             serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
 
