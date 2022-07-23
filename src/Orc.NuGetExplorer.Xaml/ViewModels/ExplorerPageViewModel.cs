@@ -126,9 +126,7 @@
             {
                 if (_context != value)
                 {
-#pragma warning disable IDISP007 // Don't dispose injected
                     _context?.Dispose();
-#pragma warning restore IDISP007 // Don't dispose injected
                     _context = value;
                 }
             }
@@ -558,14 +556,15 @@
             {
                 foreach (var vm in vms)
                 {
-                    var deferToken = new DeferToken();
-
-                    deferToken.LoadType = DetermineLoadBehavior(_pageType);
-                    deferToken.Package = vm;
-
-                    deferToken.UpdateAction = newState =>
+                    var deferToken = new DeferToken
                     {
-                        vm.Status = newState;
+                        LoadType = DetermineLoadBehavior(_pageType),
+                        Package = vm,
+
+                        UpdateAction = newState =>
+                        {
+                            vm.Status = newState;
+                        }
                     };
 
                     if (SourceContext.AcquireContext() != SourceContext.EmptyContext)

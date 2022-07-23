@@ -87,7 +87,7 @@ namespace Orc.NuGetExplorer
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
-                    bool success = true;
+                    var success = true;
                     try
                     {
                         _directoryService.Delete(installPath);

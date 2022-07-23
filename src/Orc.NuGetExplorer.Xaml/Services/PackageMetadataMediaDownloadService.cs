@@ -60,13 +60,11 @@
                 return;
             }
 
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
             using (var webClient = new WebClient())
             {
                 var data = await webClient.LogAndDownloadDataTaskAsync(uri);
                 _iconCache.SaveToCache(uri, data);
             }
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
         }
 
         private void DownloadFrom(Uri uri)
@@ -77,13 +75,11 @@
                 return;
             }
 
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
             using (var webClient = new WebClient())
             {
                 var data = webClient.LogAndDownloadData(uri);
                 _iconCache.SaveToCache(uri, data);
             }
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
         }
 
         #region IImageResolveService

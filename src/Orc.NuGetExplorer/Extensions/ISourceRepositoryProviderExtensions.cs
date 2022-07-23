@@ -12,7 +12,7 @@
                 return null;
             }
 
-            SourceRepository sourceRepo = sourceRepositoryProvider.CreateRepository(source);
+            var sourceRepo = sourceRepositoryProvider.CreateRepository(source);
             return sourceRepo;
         }
     }

@@ -36,7 +36,7 @@
 
             if (iconUri.IsLoopback)
             {
-                return CreateImage(iconUri);
+                return IconCache.CreateImage(iconUri);
             }
 
             var cachedItem = _cache.Get(iconUri.ToString());
@@ -48,7 +48,7 @@
 
             using (var stream = new MemoryStream(cachedItem))
             {
-                return CreateImage(stream);
+                return IconCache.CreateImage(stream);
             }
         }
 
@@ -64,7 +64,7 @@
             return cachedItem is not null;
         }
 
-        private BitmapImage CreateImage(Stream stream)
+        private static BitmapImage CreateImage(Stream stream)
         {
             var image = new BitmapImage();
 
@@ -81,7 +81,7 @@
             return image;
         }
 
-        private BitmapImage CreateImage(Uri uri)
+        private static BitmapImage CreateImage(Uri uri)
         {
             var image = new BitmapImage();
 
@@ -90,7 +90,7 @@
 
             if (!string.IsNullOrEmpty(uri.Fragment))
             {
-                var fileName = uri.Fragment.Substring(1, uri.Fragment.Length - 1);
+                var fileName = uri.Fragment[1..];
                 var folderPath = Path.GetDirectoryName(uri.AbsolutePath);
 
                 // Decode spaces

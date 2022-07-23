@@ -36,7 +36,7 @@
 
             var versionString = packageString.Replace(identity, "");
 
-            if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out NuGetVersion version))
+            if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out var version))
             {
                 Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
                 return null;

@@ -37,7 +37,7 @@ namespace Orc.NuGetExplorer
 
             var result = FeedVerificationResult.Valid;
 
-            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+            var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 

@@ -18,19 +18,17 @@
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
         private readonly INuGetPackageManager _projectManager;
-        private readonly ISourceRepositoryProvider _repositoryProvider;
 
         [ObsoleteEx(ReplacementTypeOrMember = "SourceContext.PackageMetadataProvider", TreatAsErrorFromVersion = "5.0", RemoveInVersion = "5.1")]
         public IPackageMetadataProvider PackageMetadataProvider => throw new NotSupportedException();
 
-        public LocalPackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
+        public LocalPackagesLoaderService(IExtensibleProjectLocator extensibleProjectLocator, INuGetPackageManager nuGetExtensibleProjectManager)
         {
             Argument.IsNotNull(() => extensibleProjectLocator);
             Argument.IsNotNull(() => nuGetExtensibleProjectManager);
 
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
-            _repositoryProvider = repositoryProvider;
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
@@ -56,7 +54,7 @@
                     pagedPackages = pagedPackages.Take(pageContinuation.Size).ToList();
                 }
 
-                List<IPackageSearchMetadata> combinedFindedMetadata = new List<IPackageSearchMetadata>();
+                var combinedFindedMetadata = new List<IPackageSearchMetadata>();
 
                 foreach (var package in pagedPackages)
                 {

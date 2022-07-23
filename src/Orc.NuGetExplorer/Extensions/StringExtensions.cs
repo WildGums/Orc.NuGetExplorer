@@ -25,7 +25,7 @@ namespace Orc.NuGetExplorer
 
         public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
         {
-            for (int i = 0; i < str.Length; i++)
+            for (var i = 0; i < str.Length; i++)
             {
                 var s = str[i];
                 if (value.Contains(s, comparisonType))

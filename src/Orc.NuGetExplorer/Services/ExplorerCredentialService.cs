@@ -202,8 +202,7 @@
 
             if (isRetry)
             {
-                CredentialResponse removed;
-                _providerCredentialCache.TryRemove(key, out removed);
+                _providerCredentialCache.TryRemove(key, out var removed);
                 return false;
             }
 
@@ -238,7 +237,7 @@
                 var rootUrl = uri.ToString();
                 if (rootUrl.EndsWithIgnoreCase(IndexName))
                 {
-                    rootUrl = rootUrl.Substring(0, rootUrl.Length - IndexName.Length);
+                    rootUrl = rootUrl[..^IndexName.Length];
                 }
 
                 return GetUriKey(new Uri(rootUrl, UriKind.RelativeOrAbsolute), type, provider);

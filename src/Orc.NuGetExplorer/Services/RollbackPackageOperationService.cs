@@ -22,7 +22,6 @@ namespace Orc.NuGetExplorer
         #region Methods
         public void PushRollbackAction(Action rollbackAction, IPackageOperationContext context)
         {
-            Stack<Action> stack;
 
             if (context is null)
             {
@@ -30,7 +29,7 @@ namespace Orc.NuGetExplorer
                 return;
             }
 
-            if (!_rollbackActions.TryGetValue(context, out stack))
+            if (!_rollbackActions.TryGetValue(context, out var stack))
             {
                 stack = new Stack<Action>();
                 _rollbackActions.Add(context, stack);
@@ -41,8 +40,7 @@ namespace Orc.NuGetExplorer
 
         public void Rollback(IPackageOperationContext context)
         {
-            Stack<Action> stack;
-            if (_rollbackActions.TryGetValue(context, out stack))
+            if (_rollbackActions.TryGetValue(context, out var stack))
             {
                 while (stack.Any())
                 {
@@ -54,7 +52,6 @@ namespace Orc.NuGetExplorer
 
         public void ClearRollbackActions(IPackageOperationContext context)
         {
-            Stack<Action> stack;
 
             if (context is null)
             {
@@ -62,7 +59,7 @@ namespace Orc.NuGetExplorer
                 return;
             }
 
-            if (_rollbackActions.TryGetValue(context, out stack))
+            if (_rollbackActions.TryGetValue(context, out var stack))
             {
                 stack.Clear();
                 _rollbackActions.Remove(context);

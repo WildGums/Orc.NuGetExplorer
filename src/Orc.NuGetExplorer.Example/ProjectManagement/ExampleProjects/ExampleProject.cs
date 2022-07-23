@@ -45,21 +45,6 @@
             return _pathResolver;
         }
 
-        public void Install()
-        {
-            Log.Info("Installation started");
-        }
-
-        public void Uninstall()
-        {
-            Log.Info("Uninstall started");
-        }
-
-        public void Update()
-        {
-            Log.Info("Update started");
-        }
-
         public override string ToString()
         {
             return Name;

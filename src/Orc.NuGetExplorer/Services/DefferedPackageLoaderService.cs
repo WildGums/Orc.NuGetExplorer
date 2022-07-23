@@ -65,7 +65,7 @@
                     _packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
 
 #pragma warning disable IDISP013 // Await in using.
-                    var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
+                    var taskList = processedTask.ToDictionary(x => CreateTaskFromTokenAsync(x, _aliveCancellationToken));
 #pragma warning restore IDISP013 // Await in using.
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
@@ -115,11 +115,9 @@
                 _isLoading = false;
             }
         }
-#pragma warning disable CL0002 // Use async suffix
-        private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
-        {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
+        private Task<DeferToken> CreateTaskFromTokenAsync(DeferToken token, CancellationToken cancellationToken)
+        {
             if (token.LoadType == MetadataOrigin.Installed)
             {
                 //from local
@@ -128,7 +126,6 @@
 
             return GetMetadataFromRemoteSourcesAsync(token, cancellationToken);
         }
-#pragma warning restore CL0002 // Use async suffix
 
         /// <summary>
         /// Get installed local metadata based on package.config
@@ -139,7 +136,7 @@
         private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
             var project = _projectProvider.GetDefaultProject();
-            string packageId = token.Package.Identity.Id;
+            var packageId = token.Package.Identity.Id;
 
             if (project is null)
             {
@@ -162,7 +159,7 @@
 
         private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
             var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);
 

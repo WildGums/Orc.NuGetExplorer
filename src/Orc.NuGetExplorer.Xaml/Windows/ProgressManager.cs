@@ -32,9 +32,7 @@
 
         public void HideBar(IViewModel vm)
         {
-            DataWindow window = null;
-
-            if (_storedManagedWindows.TryGetValue(vm, out window))
+            if (_storedManagedWindows.TryGetValue(vm, out var window))
             {
                 Log.Debug($"Current active window is { window?.Title ?? "null" }");
 

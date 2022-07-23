@@ -148,7 +148,7 @@ namespace Orc.NuGetExplorer.Native
                 cred.Flags = ncred.Flags;
                 cred.Persist = (CredPersistance)ncred.Persist;
 
-                byte[] encryptedPassword = new byte[ncred.CredentialBlobSize];
+                var encryptedPassword = new byte[ncred.CredentialBlobSize];
                 Marshal.Copy(ncred.CredentialBlob, encryptedPassword, 0, encryptedPassword.Length);
                 cred.CredentialBlob = DecryptPassword(encryptedPassword);
 

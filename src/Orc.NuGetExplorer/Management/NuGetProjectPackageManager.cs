@@ -211,7 +211,7 @@
 
                     var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, true, token);
 
-                    bool dependencyInstallResult = true;
+                    var dependencyInstallResult = true;
 
                     if (!installerResults.Result.Any())
                     {

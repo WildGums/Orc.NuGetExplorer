@@ -10,15 +10,13 @@
     using NuGet.Protocol.Core.Types;
     using Orc.FileSystem;
 
-    public class NuGetCacheManager : INuGetCacheManager, IDisposable
+    public class NuGetCacheManager : Disposable, INuGetCacheManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        //private readonly IFileDirectoryService _fileDirectoryService;
-        private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
+        private readonly SourceCacheContext _sourceContext = new();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
-        private bool _disposedValue;
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
@@ -30,7 +28,7 @@
 
         public bool ClearAll()
         {
-            bool noErrors = true;
+            var noErrors = true;
             noErrors &= ClearHttpCache();
             noErrors &= ClearNuGetFolder(DefaultNuGetFolders.GetGlobalPackagesFolder(), "Global-packages");
             noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");
@@ -101,32 +99,15 @@
             }
             finally
             {
-                // log all errors
-
                 LogHelper.LogUnclearedPaths(failedDeletes, Log);
             }
 
             return !failedDeletes.Any();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeManaged()
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _sourceContext?.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            _sourceContext?.Dispose();
         }
     }
 }

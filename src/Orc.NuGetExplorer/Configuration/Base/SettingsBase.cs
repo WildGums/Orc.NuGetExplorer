@@ -264,8 +264,7 @@
         {
             var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
 
-            Version configurationVersion;
-            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
+            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
             {
                 Version = configurationVersion;
             }

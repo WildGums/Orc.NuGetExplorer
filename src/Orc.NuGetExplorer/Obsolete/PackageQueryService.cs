@@ -98,7 +98,7 @@
         {
             var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
 
             return details;
         }
@@ -107,7 +107,7 @@
         {
             var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build(version) as IPackageDetails;
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build(version) as IPackageDetails;
 
             return details;
         }
