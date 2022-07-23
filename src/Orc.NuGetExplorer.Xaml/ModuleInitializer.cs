@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
@@ -52,5 +53,9 @@ public static class ModuleInitializer
         // Setup language resources
         var languageService = serviceLocator.ResolveType<ILanguageService>();
         languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
+        
+        // register commands
+        var commandManager = serviceLocator.ResolveType<ICommandManager>();
+        commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
     }
 }

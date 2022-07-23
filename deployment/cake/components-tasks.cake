@@ -123,19 +123,10 @@ public class ComponentsProcessor : ProcessorBase
                 PlatformTarget = PlatformTarget.MSIL
             };
 
-            ConfigureMsBuild(BuildContext, msBuildSettings, component);
-            
-            // Note: we need to set OverridableOutputPath because we need to be able to respect
-            // AppendTargetFrameworkToOutputPath which isn't possible for global properties (which
-            // are properties passed in using the command line)
-            var outputDirectory = GetProjectOutputDirectory(BuildContext, component);
-            CakeContext.Information("Output directory: '{0}'", outputDirectory);
-            msBuildSettings.WithProperty("OverridableOutputRootPath", BuildContext.General.OutputRootDirectory);
-            msBuildSettings.WithProperty("OverridableOutputPath", outputDirectory);
-            msBuildSettings.WithProperty("PackageOutputPath", BuildContext.General.OutputRootDirectory);
+            ConfigureMsBuild(BuildContext, msBuildSettings, component, "build");
 
             // SourceLink specific stuff
-            if (IsSourceLinkSupported(BuildContext, projectFileName))
+            if (IsSourceLinkSupported(BuildContext, component, projectFileName))
             {
                 var repositoryUrl = BuildContext.General.Repository.Url;
                 var repositoryCommitId = BuildContext.General.Repository.CommitId;
@@ -152,10 +143,10 @@ public class ComponentsProcessor : ProcessorBase
                 msBuildSettings.WithProperty("RepositoryUrl", repositoryUrl);
                 msBuildSettings.WithProperty("RevisionId", repositoryCommitId);
 
-                InjectSourceLinkInProjectFile(BuildContext, projectFileName);
+                InjectSourceLinkInProjectFile(BuildContext, component, projectFileName);
             }
 
-            RunMsBuild(BuildContext, component, projectFileName, msBuildSettings);
+            RunMsBuild(BuildContext, component, projectFileName, msBuildSettings, "build");
         }        
     }
 
@@ -179,6 +170,10 @@ public class ComponentsProcessor : ProcessorBase
                 continue;
             }
 
+
+            // Special exception for Blazor projects
+            var isBlazorProject = IsBlazorProject(BuildContext, component);
+
             BuildContext.CakeContext.LogSeparator("Packaging component '{0}'", component);
 
             var projectDirectory = GetProjectDirectory(component);
@@ -199,19 +194,23 @@ public class ComponentsProcessor : ProcessorBase
             var binFiles = CakeContext.GetFiles(binFolderPattern);
             CakeContext.DeleteFiles(binFiles);
 
-            var objFolderPattern = string.Format("{0}/obj/{1}/**.dll", projectDirectory, configurationName);
+            if (!isBlazorProject)
+            {
+                var objFolderPattern = string.Format("{0}/obj/{1}/**.dll", projectDirectory, configurationName);
 
-            CakeContext.Information("Deleting 'bin' directory contents using '{0}'", objFolderPattern);
+                CakeContext.Information("Deleting 'bin' directory contents using '{0}'", objFolderPattern);
 
-            var objFiles = CakeContext.GetFiles(objFolderPattern);
-            CakeContext.DeleteFiles(objFiles);
+                var objFiles = CakeContext.GetFiles(objFolderPattern);
+                CakeContext.DeleteFiles(objFiles);
+            }
 
             CakeContext.Information(string.Empty);
 
             // Step 2: Go packaging!
             CakeContext.Information("Using 'msbuild' to package '{0}'", component);
 
-            var msBuildSettings = new MSBuildSettings {
+            var msBuildSettings = new MSBuildSettings 
+            {
                 Verbosity = Verbosity.Quiet,
                 //Verbosity = Verbosity.Diagnostic,
                 ToolVersion = MSBuildToolVersion.Default,
@@ -222,12 +221,6 @@ public class ComponentsProcessor : ProcessorBase
 
             ConfigureMsBuild(BuildContext, msBuildSettings, component, "pack");
 
-            // Note: we need to set OverridableOutputPath because we need to be able to respect
-            // AppendTargetFrameworkToOutputPath which isn't possible for global properties (which
-            // are properties passed in using the command line)
-            msBuildSettings.WithProperty("OverridableOutputRootPath", BuildContext.General.OutputRootDirectory);
-            msBuildSettings.WithProperty("OverridableOutputPath", outputDirectory);
-            msBuildSettings.WithProperty("PackageOutputPath", BuildContext.General.OutputRootDirectory);
             msBuildSettings.WithProperty("ConfigurationName", configurationName);
             msBuildSettings.WithProperty("PackageVersion", BuildContext.General.Version.NuGet);
 
@@ -254,11 +247,22 @@ public class ComponentsProcessor : ProcessorBase
             // Fix for .NET Core 3.0, see https://github.com/dotnet/core-sdk/issues/192, it
             // uses obj/release instead of [outputdirectory]
             msBuildSettings.WithProperty("DotNetPackIntermediateOutputPath", outputDirectory);
-            
-            msBuildSettings.WithProperty("NoBuild", "true");
+
+            var noBuild = true;
+
+            if (isBlazorProject)
+            {
+                CakeContext.Information("Allowing build and package restore during package phase since this is a Blazor project which requires the 'obj' directory");
+
+                msBuildSettings.WithProperty("ResolveNuGetPackages", "true");
+                msBuildSettings.Restore = true;
+                noBuild = false;
+            }
+
+            msBuildSettings.WithProperty("NoBuild", noBuild.ToString());
             msBuildSettings.Targets.Add("Pack");
 
-            RunMsBuild(BuildContext, component, projectFileName, msBuildSettings);
+            RunMsBuild(BuildContext, component, projectFileName, msBuildSettings, "pack");
 
             BuildContext.CakeContext.LogSeparator();
         }

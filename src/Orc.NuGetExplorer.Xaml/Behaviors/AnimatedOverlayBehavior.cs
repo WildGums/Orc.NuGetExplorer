@@ -92,7 +92,10 @@
         protected override void OnAttached()
         {
             base.OnAttached();
+
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
             AnimationService = this.GetServiceLocator().ResolveType<IAnimationService>();
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
         }
 
         private void AttachOverlay(UIElement overlay)

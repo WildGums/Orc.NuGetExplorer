@@ -5,7 +5,7 @@
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
 
-    internal class CredentialsToken : IDisposable
+    internal sealed class CredentialsToken : IDisposable
     {
         private readonly HttpHandlerResourceV3 _repositoryHttpHandler;
 

@@ -7,18 +7,17 @@
     using Catel;
     using Catel.Data;
     using Catel.Fody;
+    using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Management;
     using NuGetExplorer.Models;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
-    using Orc.FileSystem;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Packaging;
 
@@ -257,12 +256,6 @@
                 if ((e.OldValue is null && SelectedVersion == Package.Identity.Version) || e.NewValue is null)
                 {
                     // Skip loading on version list first load
-                    return;
-                }
-
-                if (!IsPackageApplied)
-                {
-                    // Skip until model is applied
                     return;
                 }
 

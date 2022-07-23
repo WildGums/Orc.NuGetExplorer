@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.IoC;
     using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -26,7 +27,6 @@
         private bool _isLoading = false;
 
         private readonly INuGetPackageManager _projectManager;
-        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
         private IPackageMetadataProvider _packageMetadataProvider;
 
@@ -36,7 +36,6 @@
             Argument.IsNotNull(() => settingsProvider);
 
             _projectManager = nuGetExtensibleProjectManager;
-            _extensibleProjectLocator = extensibleProjectLocator;
             _settignsProvider = settingsProvider;
         }
 
@@ -63,7 +62,9 @@
                     _aliveCancellationToken = cts.Token;
                     _packageMetadataProvider = sourceContext.PackageMetadataProviderValue;
 
+#pragma warning disable IDISP013 // Await in using.
                     var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
+#pragma warning restore IDISP013 // Await in using.
 
                     Log.Info($"Start updating {_taskTokenList.Count} items in background");
 
@@ -135,7 +136,7 @@
         /// <returns></returns>
         private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            var project = _extensibleProjectLocator.GetAllExtensibleProjects().FirstOrDefault();
+            var project = _projectProvider.GetDefaultProject();
             string packageId = token.Package.Identity.Id;
 
             if (project is null)

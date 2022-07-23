@@ -1,9 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
+    using Catel.Data;
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
@@ -20,14 +22,17 @@
         private static readonly string UpdateVersionText = "Update version";
         private readonly ExplorerSettingsContainer _nugetSettings;
 
-        public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider)
+        public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
         {
             Argument.IsNotNull(() => package);
             Argument.IsNotNull(() => settingsProvider);
+            Argument.IsNotNull(() => commandManager);
 
             Package = package;
             _nugetSettings = settingsProvider.Model;
 
+            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
             CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
         }
 
@@ -59,6 +64,8 @@
         public string PrimaryVersionDescription { get; set; }
 
         public string SecondaryVersionDescription { get; set; }
+
+        public Action InvalidateCanBatchUpdateExecute { get; }
 
         public Command<MouseButtonEventArgs> CheckItem { get; set; }
 
@@ -133,14 +140,19 @@
 
         protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (string.Equals(e.PropertyName, nameof(Package.LastVersion)))
+            if (e.HasPropertyChanged(nameof(Package.LastVersion)))
             {
                 GetSecondaryVersionInfo(Package.FromPage, Package);
             }
 
-            if (string.Equals(e.PropertyName, nameof(Package.InstalledVersion)))
+            if (e.HasPropertyChanged(nameof(Package.InstalledVersion)))
             {
                 GetPrimaryVersionInfo(Package);
+            }
+
+            if (e.HasPropertyChanged(nameof(Package.IsChecked)))
+            {
+                InvalidateCanBatchUpdateExecute();
             }
 
             base.OnModelPropertyChanged(sender, e);

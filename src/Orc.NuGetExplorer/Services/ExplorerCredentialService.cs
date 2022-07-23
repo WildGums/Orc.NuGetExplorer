@@ -12,7 +12,7 @@
     using NuGet.Configuration;
     using NuGet.Credentials;
 
-    public class ExplorerCredentialService : ICredentialService
+    public class ExplorerCredentialService : ICredentialService, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -250,6 +250,26 @@
             {
                 return $"{provider.Id}_{type == CredentialRequestType.Proxy}_{uri}";
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _providerSemaphore.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

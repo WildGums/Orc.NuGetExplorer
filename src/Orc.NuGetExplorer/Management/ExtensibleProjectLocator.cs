@@ -80,16 +80,23 @@
             _registredProjects[project.GetType()] = project;
         }
 
-        public void Register<T>() where T : IExtensibleProject
+        public void Register<T>() 
+            where T : IExtensibleProject
         {
             Register<T>(Array.Empty<object>());
         }
 
-        public void Register<T>(params object[] parameters) where T : IExtensibleProject
+        public void Register<T>(params object[] parameters) 
+            where T : IExtensibleProject
         {
-            var instance = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<T>(parameters);
-
-            Register(instance);
+            if (parameters is null)
+            {
+                Register<T>();
+            }
+            else
+            {
+                Register(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<T>(parameters));
+            }
         }
 
         public void PersistChanges()

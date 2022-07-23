@@ -47,5 +47,10 @@ namespace Orc.NuGetExplorer
     internal static class Commands
     {
         public const string RefreshCurrentPageCommandName = "RefreshCurrentPage";
+        internal static class Packages
+        {
+            public const string BatchUpdate = $"{nameof(Packages)}.{nameof(BatchUpdate)}";
+            public static readonly Catel.Windows.Input.InputGesture BatchUpdateInputGesture = null;
+        }
     }
 }

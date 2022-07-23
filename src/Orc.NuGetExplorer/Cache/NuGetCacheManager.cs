@@ -7,15 +7,18 @@
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
+    using NuGet.Protocol.Core.Types;
     using Orc.FileSystem;
 
-    // TODO: check NuGet.Protocol.Core.Types caches capabilities how-to-use
-    public class NuGetCacheManager : INuGetCacheManager
+    public class NuGetCacheManager : INuGetCacheManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
+        //private readonly IFileDirectoryService _fileDirectoryService;
+        private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
+        private bool _disposedValue;
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
@@ -40,6 +43,30 @@
         public bool ClearHttpCache()
         {
             return ClearNuGetFolder(SettingsUtility.GetHttpCacheFolder(), "Http-cache");
+        }
+
+        public HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false)
+        {
+            // create http cache context from source cache instance
+            var baseCache = _sourceContext;
+
+            if (directDownload)
+            {
+                baseCache = _sourceContext.Clone();
+                baseCache.DirectDownload = directDownload;
+            }
+
+            return HttpSourceCacheContext.Create(baseCache, retryCount);
+        }
+
+        public HttpSourceCacheContext GetHttpCacheContext()
+        {
+            return GetHttpCacheContext(0);
+        }
+
+        public SourceCacheContext GetCacheContext()
+        {
+            return _sourceContext;
         }
 
         private bool ClearNuGetFolder(string folderPath, string folderDescription)
@@ -75,10 +102,31 @@
             finally
             {
                 // log all errors
+
                 LogHelper.LogUnclearedPaths(failedDeletes, Log);
             }
 
             return !failedDeletes.Any();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _sourceContext?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

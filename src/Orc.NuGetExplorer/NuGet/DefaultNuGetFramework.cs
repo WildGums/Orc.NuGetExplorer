@@ -68,9 +68,9 @@
             }
             else
             {
-                if (version.Major == 5)
+                if (version.Major >= 5)
                 {
-                    // Support .NET 5 
+                    // Support .NET 5+
                     frameworkStringList.Add($".NETCoreApp,Version=v{version.Major}.0");
                 }
             }
@@ -105,37 +105,66 @@
 
                     if (versionKeyName.StartsWith("v"))
                     {
-
-                        RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
-
-                        // Get the .NET Framework version value.
-                        var name = (string)versionKey.GetValue("Version", "");
-                        // Get the service pack (SP) number.
-                        var sp = versionKey.GetValue("SP", "").ToString();
-
-                        // If false, there is no install info; it must be in a child subkey then.
-                        if (versionKey.TryGetInstallFlag(out var install) && !string.IsNullOrEmpty(sp) && install == "1")
+                        using (var versionKey = ndpKey.OpenSubKey(versionKeyName))
                         {
-                            frameworkList.Add(CreateFrameworkVersionName(versionKeyName, name, sp));
-                        }
 
-                        if (!string.IsNullOrEmpty(name))
-                        {
-                            continue;
-                        }
+                            // Get the .NET Framework version value.
+                            var name = (string)versionKey.GetValue("Version", string.Empty);
+                            // Get the service pack (SP) number.
+                            var sp = versionKey.GetValue("SP", string.Empty).ToString();
 
-                        foreach (var subKeyName in versionKey.GetSubKeyNames())
-                        {
-                            RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
+                            // Get the installation flag, or an empty string if there is none.
+                            var install = versionKey.GetValue("Install", string.Empty).ToString();
 
-                            name = subKey.GetValue("Version", "") as string;
-                            sp = string.IsNullOrEmpty(name) ? string.Empty : subKey.GetValue("SP", "").ToString();
-
-                            if (subKey.TryGetInstallFlag(out install))
+                            if (string.IsNullOrEmpty(install))
                             {
-                                if (install == "1")
+                                // No install info; it must be in a child subkey.
+                                frameworkList.Add($"{versionKeyName} {name}");
+                            }
+                            else
+                            {
+                                if (!(string.IsNullOrEmpty(sp)) && install == "1")
                                 {
-                                    frameworkList.Add(CreateFrameworkVersionName(name, subKeyName, sp));
+                                    frameworkList.Add($"{versionKeyName} {name} SP{sp}");
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                continue;
+                            }
+
+                            foreach (var subKeyName in versionKey.GetSubKeyNames())
+                            {
+                                using (var subKey = versionKey.OpenSubKey(subKeyName))
+                                {
+                                    name = (string)subKey.GetValue("Version", string.Empty);
+                                    if (!string.IsNullOrEmpty(name))
+                                    {
+                                        sp = subKey.GetValue("SP", string.Empty).ToString();
+                                    }
+
+                                    install = subKey.GetValue("Install", string.Empty).ToString();
+
+                                    if (string.IsNullOrEmpty(install))
+                                    {
+                                        //No install info; it must be later.
+                                        frameworkList.Add($"{versionKeyName} {name}");
+                                    }
+                                    else
+                                    {
+                                        if (install == "1")
+                                        {
+                                            if (!(string.IsNullOrEmpty(sp)))
+                                            {
+                                                frameworkList.Add($"{subKeyName} {name} SP{sp}");
+                                            }
+                                            else
+                                            {
+                                                frameworkList.Add($" {subKeyName} {name}");
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else

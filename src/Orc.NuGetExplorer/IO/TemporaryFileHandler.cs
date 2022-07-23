@@ -45,6 +45,7 @@ namespace Orc.NuGetExplorer
         #region Methods 
         protected override void DisposeManaged()
         {
+#pragma warning disable IDISP023 // Don't use reference types in finalizer context.
             try
             {
                 Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
@@ -57,6 +58,7 @@ namespace Orc.NuGetExplorer
             {
                 Log.Warning("Unable to cleanup temporary files");
             }
+#pragma warning restore IDISP023 // Don't use reference types in finalizer context.
         }
 
         public string GetDirectory(string relativeDirectoryName)

@@ -9,6 +9,7 @@
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
+    using NuGet.Configuration;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
     using Orc.FileSystem;
@@ -223,7 +224,7 @@
                     NuGetLogger,
                     cancellationToken);
 
-                Log.Debug($"Returned package metadata count: {packages.Count()}");
+                Log.Debug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
 
                 return packages;
 

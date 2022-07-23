@@ -70,12 +70,21 @@
         {
             foreach (var resource in _resources)
             {
-                var packageDependencyInfo = await resource.ResolvePackage(package, projectFramework, cacheContext, log, token);
-
-                //just returns first existed package 
-                if (packageDependencyInfo is not null)
+                try
                 {
-                    return packageDependencyInfo;
+                    var packageDependencyInfo = await resource.ResolvePackage(package, projectFramework, cacheContext, log, token);
+
+                    //just returns first existed package 
+                    if (packageDependencyInfo is not null)
+                    {
+                        return packageDependencyInfo;
+                    }
+                }
+                catch (FatalProtocolException ex)
+                {
+                    // The resource cannot be unnaccessible of package metadata missed from feed
+                    // Just log exception here and proceed, it contains enough info
+                    Log.Warning(ex);
                 }
             }
 
