@@ -4,7 +4,7 @@
     using Catel.IoC;
     using Orc.NuGetExplorer.Management;
 
-    public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
+    public class NuGetProjectProvider : IDefaultAppPackagesProjectProvider
     {
         private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
