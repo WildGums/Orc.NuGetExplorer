@@ -48,9 +48,5 @@ public static class ModuleInitializer
 
         // register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();
-
-        // register commands
-        var commandManager = serviceLocator.ResolveType<ICommandManager>();
-        commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
     }
 }
