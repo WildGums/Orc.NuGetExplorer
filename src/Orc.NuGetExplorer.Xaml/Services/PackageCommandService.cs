@@ -178,18 +178,18 @@ namespace Orc.NuGetExplorer
             return packageDetails;
         }
 
-        private async Task<bool> CanInstallAsync(IPackageDetails package)
+        private Task<bool> CanInstallAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            return await VerifyLocalPackageExistsAsync(package);
+            return VerifyLocalPackageExistsAsync(package);
         }
 
-        private async Task<bool> CanUpdateAsync(IPackageDetails package)
+        private Task<bool> CanUpdateAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            return await VerifyLocalPackageExistsAsync(package);
+            return VerifyLocalPackageExistsAsync(package);
         }
 
         private async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
