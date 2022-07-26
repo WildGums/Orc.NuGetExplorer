@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Catel;
     using Catel.Collections;
     using Catel.IoC;
     using Catel.MVVM;
@@ -28,6 +29,8 @@
                 // Resolve Catel services
                 var commandManager = serviceLocator.ResolveType<ICommandManager>();
                 var messageService = serviceLocator.ResolveType<IMessageService>();
+
+                commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
                 commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);

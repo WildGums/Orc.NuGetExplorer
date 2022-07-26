@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Tests.ViewModels
 {
     using System.Threading.Tasks;
+    using Catel;
     using Catel.IoC;
     using Catel.MVVM;
     using Moq;
@@ -23,6 +24,7 @@
 #pragma warning restore IDISP001 // Dispose created
 
                 var commandManager = serviceLocator.ResolveType<ICommandManager>();
+                commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
                 commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
