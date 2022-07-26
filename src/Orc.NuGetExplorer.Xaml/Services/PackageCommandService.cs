@@ -11,11 +11,13 @@ namespace Orc.NuGetExplorer
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Logging;
     using Catel.Services;
 
     internal class PackageCommandService : IPackageCommandService
     {
-        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IApiPackageRegistry _apiPackageRegistry;
 
         private readonly IRepository _localRepository;
@@ -27,9 +29,7 @@ namespace Orc.NuGetExplorer
         private readonly IPackageQueryService _packageQueryService;
 
         private readonly IPleaseWaitService _pleaseWaitService;
-        #endregion
 
-        #region Constructors
         public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
@@ -47,9 +47,7 @@ namespace Orc.NuGetExplorer
 
             _localRepository = repositoryService.LocalRepository;
         }
-        #endregion
 
-        #region Methods
         public string GetActionName(PackageOperationType operationType)
         {
             return Enum.GetName(typeof(PackageOperationType), operationType);
@@ -180,27 +178,49 @@ namespace Orc.NuGetExplorer
             return packageDetails;
         }
 
-        private async Task<bool> CanInstallAsync(IPackageDetails package)
+        private Task<bool> CanInstallAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
+            return VerifyLocalPackageExistsAsync(package);
+        }
+
+        private Task<bool> CanUpdateAsync(IPackageDetails package)
+        {
+            Argument.IsNotNull(() => package);
+
+            return VerifyLocalPackageExistsAsync(package);
+        }
+
+        private async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
+        {
             if (package.IsInstalled is null)
             {
                 package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
                 ValidatePackage(package);
             }
 
-            return package.IsInstalled is not null && !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
+            if (package.ValidationContext.HasErrors)
+            {
+                LogValidationErrors(package);
+
+                return false;
+            }
+
+            if (!package.IsInstalled.HasValue)
+            {
+                return false;
+            }
+
+            return !package.IsInstalled.Value;
         }
 
-        private async Task<bool> CanUpdateAsync(IPackageDetails package)
+        private void LogValidationErrors(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
-
-            package.IsInstalled ??= await _packageQueryService.PackageExistsAsync(_localRepository, package);
-            ValidatePackage(package);
-
-            return !package.IsInstalled.Value && package.ValidationContext.GetErrorCount(ValidationTags.Api) == 0;
+            foreach (var error in package.ValidationContext.GetErrors())
+            {
+                Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
+            }
         }
 
         private void ValidatePackage(IPackageDetails package)
@@ -208,7 +228,5 @@ namespace Orc.NuGetExplorer
             package.ResetValidationContext();
             _apiPackageRegistry.Validate(package);
         }
-
-        #endregion
     }
 }

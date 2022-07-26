@@ -93,6 +93,11 @@
             ValidationContext = new ValidationContext();
         }
 
+        public override string ToString()
+        {
+            return $"{Id} {NuGetVersion}";
+        }
+
         #endregion
     }
 }
