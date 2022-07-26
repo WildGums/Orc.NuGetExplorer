@@ -20,14 +20,7 @@
             Argument.IsNotNull(() => nuGetProjectUpgradeService);
             Argument.IsNotNull(() => nuGetConfigurationService);
 
-            var serviceLocator = ServiceLocator.Default;
-
-            //instantiate watchers
-            serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-            serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-
-            //instantiate package manager listener
-            serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+            InitializeTypes(ServiceLocator.Default);
 
             //set language resources
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
@@ -40,6 +33,20 @@
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
             _nuGetConfigurationService = nuGetConfigurationService;
+        }
+
+        private void InitializeTypes(IServiceLocator serviceLocator)
+        {
+            //instantiate watchers
+            serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+            serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
+
+            //instantiate package manager listener
+            serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+
+            // register commands
+            var commandManager = serviceLocator.ResolveType<ICommandManager>();
+            commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
         }
 
         public string DefaultSourceKey => Settings.NuGet.FallbackUrl;
