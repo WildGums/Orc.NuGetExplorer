@@ -29,9 +29,7 @@
         /// <returns></returns>
         public NuGetProject GetProjectConfig(IExtensibleProject project)
         {
-            NuGetProjectMetadata metadata = null;
-
-            if (!_storedProjectMetadata.TryGetValue(project, out metadata))
+            if (!_storedProjectMetadata.TryGetValue(project, out var metadata))
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
