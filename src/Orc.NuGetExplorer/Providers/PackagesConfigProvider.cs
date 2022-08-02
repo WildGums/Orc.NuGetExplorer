@@ -33,12 +33,9 @@
 
             if (!_storedProjectMetadata.TryGetValue(project, out metadata))
             {
-                metadata = new NuGetProjectMetadata();
-
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-                metadata.Data.Add(MetadataTargetFramework, targetFramework);
-                metadata.Data.Add(MetadataName, project.Name);
+                metadata = BuildMetadataForConfig(targetFramework, project.Name);
 
                 _storedProjectMetadata.Add(project, metadata);
             }
@@ -46,6 +43,24 @@
             var packagesConfigProject = new PackagesConfigNuGetProject(project.ContentPath, metadata.Data);
 
             return packagesConfigProject;
+        }
+
+        public NuGetProject GetPackagesConfig(string packagesConfigPath, NuGetFramework targetFramework, string projectName)
+        {
+            var metadata = BuildMetadataForConfig(targetFramework, projectName);
+            var packagesConfigProject = new PackagesConfigNuGetProject(packagesConfigPath, metadata.Data);
+
+            return packagesConfigProject;
+        }
+
+        private static NuGetProjectMetadata BuildMetadataForConfig(NuGetFramework targetFramework, string projectName)
+        {
+            var metadata = new NuGetProjectMetadata();
+
+            metadata.Data.Add(MetadataTargetFramework, targetFramework);
+            metadata.Data.Add(MetadataName, projectName);
+
+            return metadata;
         }
     }
 }
