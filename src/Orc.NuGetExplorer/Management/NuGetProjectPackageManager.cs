@@ -225,28 +225,31 @@
                     return false;
                 }
 
-                foreach (var packageDownloadResultPair in installerResults.Result)
+                await Task.Run(async () =>
                 {
-                    var dependencyIdentity = packageDownloadResultPair.Key;
-                    var downloadResult = packageDownloadResultPair.Value;
-
-                    try
+                    foreach (var packageDownloadResultPair in installerResults.Result)
                     {
-                        var result = await packageConfigProject.InstallPackageAsync(
-                            dependencyIdentity,
-                            downloadResult,
-                            _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
-                            token);
+                        var dependencyIdentity = packageDownloadResultPair.Key;
+                        var downloadResult = packageDownloadResultPair.Value;
 
-                        dependencyInstallResult &= result;
+                        try
+                        {
+                            var result = await packageConfigProject.InstallPackageAsync(
+                                dependencyIdentity,
+                                downloadResult,
+                                _nuGetProjectContextProvider.GetProjectContext(FileConflictAction.PromptUser),
+                                token);
+
+                            dependencyInstallResult &= result;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
+                            Log.Error(ex);
+                            dependencyInstallResult &= false;
+                        }
                     }
-                    catch (InvalidOperationException ex)
-                    {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
-                        Log.Error(ex);
-                        dependencyInstallResult &= false;
-                    }
-                }
+                }, token);
 
                 await OnInstallAsync(project, package, dependencyInstallResult || project.IgnoreDependencies);
 
