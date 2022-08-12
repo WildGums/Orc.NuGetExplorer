@@ -209,10 +209,7 @@
 
                 var repositories = SourceContext.CurrentContext.Repositories;
 
-                var installerResults = await Task<InstallerResult>.Run(async () =>
-                {
-                    return await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token);
-                });
+                var installerResults = await Task.Run(async () => await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token), token);
 
                 if (!installerResults.Result.Any())
                 {
