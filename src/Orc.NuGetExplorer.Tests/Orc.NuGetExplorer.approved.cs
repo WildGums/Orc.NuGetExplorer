@@ -238,6 +238,7 @@ namespace Orc.NuGetExplorer
     }
     public interface INuGetProjectConfigurationProvider
     {
+        NuGet.ProjectManagement.NuGetProject GetPackagesConfig(string packagesConfigPath, NuGet.Frameworks.NuGetFramework targetFramework, string projectName);
         NuGet.ProjectManagement.NuGetProject GetProjectConfig(Orc.NuGetExplorer.IExtensibleProject project);
     }
     public interface INuGetProjectContextProvider
