@@ -1085,6 +1085,7 @@ namespace Orc.NuGetExplorer.Packaging
         public System.Version Version { get; }
         public virtual NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
         public virtual void ResetValidationContext() { }
+        public override string ToString() { }
     }
     public class PackageDetailsFactory
     {
