@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1" xml:space="preserve">
-    <value>The package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</value>
+    <value>Package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</value>
   </data>
   <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2" xml:space="preserve">
-    <value>The package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</value>
+    <value>Package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</value>
   </data>
   <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3" xml:space="preserve">
-    <value>The package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</value>
+    <value>Package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</value>
   </data>
   <data name="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4" xml:space="preserve">
-    <value>The package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</value>
+    <value>Package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</value>
   </data>
   <data name="NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease" xml:space="preserve">
     <value>Include prerelease</value>
@@ -172,7 +172,7 @@
     <value>Prerelease</value>
   </data>
   <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources" xml:space="preserve">
-    <value>Available packageDetails sources</value>
+    <value>Available package details sources</value>
   </data>
   <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Name" xml:space="preserve">
     <value>Name:</value>
