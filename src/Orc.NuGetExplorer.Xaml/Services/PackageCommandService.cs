@@ -126,6 +126,7 @@ namespace Orc.NuGetExplorer
         {
             if (package is null)
             {
+                Log.Debug("Cannot execute command for null package");
                 return false;
             }
 
@@ -178,30 +179,43 @@ namespace Orc.NuGetExplorer
             return packageDetails;
         }
 
-        private Task<bool> CanInstallAsync(IPackageDetails package)
+        private async Task<bool> CanInstallAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            return VerifyLocalPackageExistsAsync(package);
+            var packageExists = await VerifyLocalPackageExistsAsync(package);
+
+            Log.Debug($"Can install for '{package}': {packageExists}");
+
+            return packageExists;
         }
 
-        private Task<bool> CanUpdateAsync(IPackageDetails package)
+        private async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
-            return VerifyLocalPackageExistsAsync(package);
+            var packageExists = await VerifyLocalPackageExistsAsync(package);
+
+            Log.Debug($"Can update for '{package}': {packageExists}");
+
+            return packageExists;
         }
 
-        private async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
+        internal async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
         {
             if (package.IsInstalled is null)
             {
+                Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
+
                 package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
+
                 ValidatePackage(package);
             }
 
             if (package.ValidationContext.HasErrors)
             {
+                Log.Debug($"Package '{package}' has validation errors, package is not available locally");
+
                 LogValidationErrors(package);
 
                 return false;
@@ -209,10 +223,14 @@ namespace Orc.NuGetExplorer
 
             if (!package.IsInstalled.HasValue)
             {
+                Log.Debug($"Package '{package}' IsInstalled value is null, package is not available locally");
+
                 return false;
             }
 
-            return !package.IsInstalled.Value;
+            Log.Debug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
+
+            return package.IsInstalled.Value;
         }
 
         private void LogValidationErrors(IPackageDetails package)
@@ -226,6 +244,7 @@ namespace Orc.NuGetExplorer
         private void ValidatePackage(IPackageDetails package)
         {
             package.ResetValidationContext();
+
             _apiPackageRegistry.Validate(package);
         }
     }

@@ -399,7 +399,7 @@
                                 // Show only for top package, not much effort to see this message multiple times
                                 if (nextPackage == dependencyInfo)
                                 {
-                                    await _nugetLogger.LogAsync(LogLevel.Information, $"The package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                                    await _nugetLogger.LogAsync(LogLevel.Information, $"Package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
                                 }
                             }
                         }
