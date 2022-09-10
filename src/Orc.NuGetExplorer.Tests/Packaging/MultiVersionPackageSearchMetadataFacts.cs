@@ -8,25 +8,17 @@
 
     public class MultiVersionPackageSearchMetadataFacts
     {
-        private static IPackageSearchMetadata CreatePackageMetadata(string id, string version)
-        {
-            var builder = PackageSearchMetadataBuilder.FromIdentity(new NuGet.Packaging.Core.PackageIdentity(id, new NuGet.Versioning.NuGetVersion(version)));
-            var package = builder.Build();
-
-            return package;
-        }
-
         [TestFixture]
-        public class TheToStringMethod
+        public class TheToStringMethod : TestFixtureBase
         {
             [TestCase]
             public void Returns_Correct_Information_Without_Identity()
             {
                 var availableVersions = new List<IPackageSearchMetadata>
                 {
-                    CreatePackageMetadata("MyPackage", "1.0.0-alpha0023"),
-                    CreatePackageMetadata("MyPackage", "1.0.0-beta0002"),
-                    CreatePackageMetadata("MyPackage", "1.0.0")
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0-alpha0023"),
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0-beta0002"),
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0")
                 };
 
                 var multiVersionPackageSearchMetadata = new MultiVersionPackageSearchMetadata(availableVersions);
@@ -42,9 +34,9 @@
             {
                 var availableVersions = new List<IPackageSearchMetadata>
                 {
-                    CreatePackageMetadata("MyPackage", "1.0.0-alpha0023"),
-                    CreatePackageMetadata("MyPackage", "1.0.0-beta0002"),
-                    CreatePackageMetadata("MyPackage", "1.0.0")
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0-alpha0023"),
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0-beta0002"),
+                    CreatePackageSearchMetadata("MyPackage", "1.0.0")
                 };
 
                 var multiVersionPackageSearchMetadata = new MultiVersionPackageSearchMetadata(availableVersions);
