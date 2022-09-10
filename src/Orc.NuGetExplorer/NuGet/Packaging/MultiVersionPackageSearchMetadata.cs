@@ -22,15 +22,15 @@
             _availableVersions.AddRange(availableVersions.Select(x => x.Identity.Version.ToFullString()));
         }
 
-        public string Id => Identity.Id;
+        public string Id => Identity?.Id;
 
         public string FullName => Identity?.ToFullString();
 
-        public Version Version => Identity.Version.Version;
+        public Version Version => Identity?.Version.Version;
 
-        public NuGetVersion NuGetVersion => Identity.Version;
+        public NuGetVersion NuGetVersion => Identity?.Version;
 
-        public string SpecialVersion => String.Empty;
+        public string SpecialVersion => string.Empty;
 
         //todo
         public bool IsAbsoluteLatestVersion { get; }
@@ -38,7 +38,7 @@
         //todo
         public bool IsLatestVersion { get; }
 
-        public bool IsPrerelease => Identity.Version.IsPrerelease;
+        public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
 
         //todo
         public string Dependencies { get; }
@@ -70,6 +70,16 @@
         public void ResetValidationContext()
         {
             ValidationContext = new ValidationContext();
+        }
+
+        public override string ToString()
+        {
+            if (Identity is null)
+            {
+                return "(no identity)";
+            }
+
+            return $"{Id} ({SelectedVersion})";
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Orc.NuGetExplorer.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,7 +61,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; depends on API &apos;{1}&apos; min version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1 {
             get {
@@ -70,7 +70,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; min version greater than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; depends on API &apos;{1}&apos; min version greater than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2 {
             get {
@@ -79,7 +79,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; depends on API &apos;{1}&apos; max version &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3 {
             get {
@@ -88,7 +88,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package &apos;{0}&apos; depends on API &apos;{1}&apos; max version lower than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; depends on API &apos;{1}&apos; max version lower than &apos;{2}&apos; but the installed version is &apos;{3}&apos;.
         /// </summary>
         internal static string NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4 {
             get {
@@ -230,7 +230,7 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Available packageDetails sources.
+        ///   Looks up a localized string similar to Available package details sources.
         /// </summary>
         internal static string NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources {
             get {
