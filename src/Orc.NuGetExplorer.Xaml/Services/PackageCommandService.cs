@@ -179,7 +179,7 @@ namespace Orc.NuGetExplorer
             return packageDetails;
         }
 
-        private async Task<bool> CanInstallAsync(IPackageDetails package)
+        internal async Task<bool> CanInstallAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 
@@ -187,10 +187,10 @@ namespace Orc.NuGetExplorer
 
             Log.Debug($"Can install for '{package}': {packageExists}");
 
-            return packageExists;
+            return !packageExists;
         }
 
-        private async Task<bool> CanUpdateAsync(IPackageDetails package)
+        internal async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
             Argument.IsNotNull(() => package);
 

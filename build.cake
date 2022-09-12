@@ -27,7 +27,7 @@ Parameters["UseVisualStudioPrerelease"] = "false";
 Components.Add("Orc.NuGetExplorer");
 Components.Add("Orc.NuGetExplorer.Xaml");
 
-TestProjects.Add(string.Format("{0}.Tests", GetBuildServerVariable("SolutionName")));
+TestProjects.Add("Orc.NuGetExplorer.Tests");
 
 //=======================================================
 // REQUIRED INITIALIZATION, DO NOT CHANGE
