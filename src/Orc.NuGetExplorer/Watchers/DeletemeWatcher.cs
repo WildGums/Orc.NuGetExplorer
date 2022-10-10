@@ -13,8 +13,6 @@
         private readonly IDirectoryService _directoryService;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IExtensibleProject _defaultProject;
-
-        #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
             IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
@@ -33,9 +31,6 @@
 
             _defaultProject = projectProvider.GetDefaultProject();
         }
-        #endregion
-
-        #region Methods
         private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
         {
             if (message.Data.OperationType == PackageOperationType.Uninstall)
@@ -62,6 +57,5 @@
                 _fileSystemService.CreateDeleteme(message.Data.Package.Id, message.Data.OperationPath);
             }
         }
-        #endregion
     }
 }

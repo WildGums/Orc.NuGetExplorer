@@ -6,11 +6,8 @@
 
     public interface IPackageOperationNotificationService
     {
-        #region Properties
         bool MuteAutomaticEvents { get; set; }
-        #endregion
 
-        #region Methods
         void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages);
         void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
@@ -20,14 +17,11 @@
         void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
         void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails);
         IDisposable DisableNotifications();
-        #endregion
 
-        #region Events
         event EventHandler<PackageOperationBatchEventArgs> OperationsBatchStarting;
         event EventHandler<PackageOperationBatchEventArgs> OperationsBatchFinished;
         event EventHandler<PackageOperationEventArgs> OperationStarting;
         event EventHandler<PackageOperationEventArgs> OperationFinished;
-        #endregion
     }
 
     public class PackageOperationNotificationService : IPackageOperationNotificationService

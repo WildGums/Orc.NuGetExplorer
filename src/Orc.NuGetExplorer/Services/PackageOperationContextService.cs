@@ -6,14 +6,11 @@
 
     internal class PackageOperationContextService : IPackageOperationContextService
     {
-        #region Fields
         private readonly object _lockObject = new object();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly ITypeFactory _typeFactory;
         private PackageOperationContext _rootContext;
-        #endregion
 
-        #region Constructors
         public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
@@ -22,13 +19,9 @@
             _packageOperationNotificationService = packageOperationNotificationService;
             _typeFactory = typeFactory;
         }
-        #endregion
 
-        #region Properties
         public IPackageOperationContext CurrentContext { get; private set; }
-        #endregion
 
-        #region Methods
         public event EventHandler<OperationContextEventArgs> OperationContextDisposing;
 
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
@@ -81,6 +74,5 @@
                 CurrentContext = CurrentContext.Parent;
             }
         }
-        #endregion
     }
 }

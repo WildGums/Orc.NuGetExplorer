@@ -4,10 +4,8 @@
 
     public interface IRollbackPackageOperationService
     {
-        #region Methods
         void PushRollbackAction(Action rollbackAction, IPackageOperationContext context);
         void Rollback(IPackageOperationContext context);
         void ClearRollbackActions(IPackageOperationContext context);
-        #endregion
     }
 }

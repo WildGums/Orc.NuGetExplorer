@@ -7,12 +7,9 @@
 
     internal class RollbackPackageOperationService : IRollbackPackageOperationService
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IDictionary<IPackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<IPackageOperationContext, Stack<Action>>();
-        #endregion
 
-        #region Methods
         public void PushRollbackAction(Action rollbackAction, IPackageOperationContext context)
         {
             Stack<Action> stack;
@@ -61,6 +58,5 @@
                 _rollbackActions.Remove(context);
             }
         }
-        #endregion
     }
 }

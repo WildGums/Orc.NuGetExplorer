@@ -5,10 +5,8 @@
 
     public interface IPackageOperationService
     {
-        #region Methods
         Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default);
         Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default);
         Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default);
-        #endregion
     }
 }

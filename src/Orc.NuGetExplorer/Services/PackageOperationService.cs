@@ -15,16 +15,13 @@
 
     internal sealed class PackageOperationService : IPackageOperationService
     {
-        #region Fields
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly IExtensibleProject _defaultProject;
-        #endregion
 
-        #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, INuGetPackageManager nuGetPackageManager,
             IRepositoryService repositoryService, IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
             ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
@@ -48,13 +45,9 @@
             // Note: this setting should be global, probably set by Resolver (which replaced the old one InstallWalker);
             DependencyVersion = DependencyBehavior.Lowest;
         }
-        #endregion
 
-        #region Properties
         internal DependencyBehavior DependencyVersion { get; set; }
-        #endregion
 
-        #region Methods
         public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
         {
             Argument.IsNotNull(() => package);
@@ -179,7 +172,5 @@
             PackagingDeletemeMessage.SendWith(new PackageOperationInfo(operationPath, type, package));
             _packageOperationNotificationService.NotifyOperationFinished(operationPath, type, package);
         }
-
-        #endregion
     }
 }

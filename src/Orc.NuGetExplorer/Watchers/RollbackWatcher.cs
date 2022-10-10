@@ -7,16 +7,13 @@
 
     public class RollbackWatcher : PackageManagerContextWatcherBase
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly IBackupFileSystemService _backupFileSystemService;
         private readonly IFileSystemService _fileSystemService;
         private readonly IDirectoryService _directoryService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
-        #endregion
 
-        #region Constructors
         public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
             IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService, 
             IDirectoryService directoryService)
@@ -32,9 +29,7 @@
             _fileSystemService = fileSystemService;
             _directoryService = directoryService;
         }
-        #endregion
 
-        #region Methods
         protected override void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
@@ -92,6 +87,5 @@
                 );
             }
         }
-        #endregion
     }
 }

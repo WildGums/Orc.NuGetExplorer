@@ -4,7 +4,6 @@
 
     public interface INuGetConfigurationService
     {
-        #region Methods
         string GetDestinationFolder();
         void SetDestinationFolder(string value);
         IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
@@ -25,6 +24,5 @@
         void RemovePackageSource(IPackageSource source);
 
         bool IsProjectConfigured(IExtensibleProject project);
-        #endregion
     }
 }

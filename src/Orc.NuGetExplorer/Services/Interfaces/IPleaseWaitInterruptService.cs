@@ -4,8 +4,6 @@
 
     public interface IPleaseWaitInterruptService
     {
-        #region Methods
         IDisposable InterruptTemporarily();
-        #endregion
     }
 }

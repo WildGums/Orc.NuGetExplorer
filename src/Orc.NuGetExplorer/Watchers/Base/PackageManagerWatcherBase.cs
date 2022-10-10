@@ -4,7 +4,6 @@
 
     public abstract class PackageManagerWatcherBase
     {
-        #region Constructors
         protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationNotificationService);
@@ -14,9 +13,7 @@
             packageOperationNotificationService.OperationsBatchStarting += OnOperationsBatchStarting;
             packageOperationNotificationService.OperationsBatchFinished += OnOperationsBatchFinished;
         }
-        #endregion
 
-        #region Methods
         protected virtual void OnOperationsBatchFinished(object sender, PackageOperationBatchEventArgs e)
         {
         }
@@ -32,6 +29,5 @@
         protected virtual void OnOperationStarting(object sender, PackageOperationEventArgs e)
         {
         }
-        #endregion
     }
 }

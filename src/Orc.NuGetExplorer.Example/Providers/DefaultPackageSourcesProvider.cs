@@ -7,7 +7,6 @@
     {
         public string DefaultSource { get; set; } = Constants.DefaultNuGetOrgUri;
 
-        #region Methods
         public IEnumerable<IPackageSource> GetDefaultPackages()
         {
             return new List<IPackageSource>
@@ -16,6 +15,5 @@
                 new NuGetFeed("Microsoft Visual Studio Offline Packages", @"C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\")
             };
         }
-        #endregion
     }
 }
