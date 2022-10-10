@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NullableBooleanTrueConverter.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters
 {
     using System;
     using Catel.MVVM.Converters;

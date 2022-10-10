@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredUi.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-#if DEBUG
+﻿#if DEBUG
 // Double protection, only allowed in debug mode
 //#define LOG_SENSITIVE_INFO
 #endif

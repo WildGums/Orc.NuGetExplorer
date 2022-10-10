@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DefaultPackageSourcesProvider.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System.Collections.Generic;
     using Orc.NuGetExplorer.Models;

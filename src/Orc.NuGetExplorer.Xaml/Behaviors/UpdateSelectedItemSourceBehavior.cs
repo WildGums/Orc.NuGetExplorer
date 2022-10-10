@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdateSelectedItemSourceBehavior.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Behaviors
+﻿namespace Orc.NuGetExplorer.Behaviors
 {
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
