@@ -4,16 +4,13 @@
 
     public sealed class Repository : IRepository
     {
-        #region Properties
         public int Id { get; set; }
         public string Name { get; set; }
         public string Source { get; set; }
         public PackageOperationType OperationType { get; set; }
 
         public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
-        #endregion
 
-        #region Methods
         private bool Equals(Repository other)
         {
             return Id == other.Id && string.Equals(Name, other.Name)
@@ -43,6 +40,5 @@
 
             return Equals(repository);
         }
-        #endregion
     }
 }

@@ -4,7 +4,6 @@
 
     public abstract class PackageManagerLogListenerBase
     {
-        #region Constructors
         protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
         {
             Argument.IsNotNull(() => nuGetLogListeningSevice);
@@ -14,9 +13,7 @@
             nuGetLogListeningSevice.Debug += OnDebug;
             nuGetLogListeningSevice.Warning += OnWarning;
         }
-        #endregion
 
-        #region Methods
         protected virtual void OnWarning(object sender, NuGetLogRecordEventArgs e)
         {
         }
@@ -32,6 +29,5 @@
         protected virtual void OnError(object sender, NuGetLogRecordEventArgs e)
         {
         }
-        #endregion
     }
 }

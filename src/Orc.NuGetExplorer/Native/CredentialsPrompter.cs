@@ -14,10 +14,7 @@
 
         private readonly IConfigurationService _configurationService;
         private readonly CredentialStoragePolicy _credentialStoragePolicy;
-
-        #region Fields
         private bool _isSaveChecked;
-        #endregion
 
         public CredentialsPrompter(IConfigurationService configurationService)
         {
@@ -27,7 +24,6 @@
             _credentialStoragePolicy = _configurationService.GetCredentialStoragePolicy();
         }
 
-        #region Properties
         public string Target { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
@@ -41,9 +37,7 @@
         public string Content { get; set; }
         public DownlevelTextMode DownlevelTextMode { get; set; }
         public bool IsAuthenticationRequired { get; set; }
-        #endregion
 
-        #region Methods
         public bool ShowDialog()
         {
             var windowHandle = User32.GetActiveWindow();
@@ -445,6 +439,5 @@
 
             return info;
         }
-        #endregion
     }
 }

@@ -2,14 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-
     using Catel.Data;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
 
     public interface IPackageDetails
     {
-        #region Properties
         string Id { get; }
 
         string FullName { get; }
@@ -48,13 +46,8 @@
 
         IValidationContext ValidationContext { get; }
 
-        #endregion
-
-        #region Methods
         void ResetValidationContext();
 
         PackageIdentity GetIdentity();
-
-        #endregion
     }
 }

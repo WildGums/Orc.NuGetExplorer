@@ -12,7 +12,6 @@
 
     internal class NuGetSettings : IVersionedSettings
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -24,9 +23,7 @@
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
-        #endregion
 
-        #region Constructors
         public NuGetSettings(IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
@@ -39,7 +36,6 @@
 
             SettingsChanged += OnSettingsChanged;
         }
-        #endregion
 
         public bool IsLastVersion => AssemblyVersion.Equals(Version);
 
@@ -260,8 +256,6 @@
 
         #endregion
 
-        #region Methods
-
         private void SetNuGetValues(string section, IList<AddItem> values)
         {
             Argument.IsNotNullOrWhitespace(() => section);
@@ -481,7 +475,5 @@
         {
             _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
         }
-
-        #endregion
     }
 }

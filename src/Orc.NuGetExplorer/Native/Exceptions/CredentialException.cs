@@ -9,11 +9,8 @@
     [Serializable()]
     public class CredentialException : System.ComponentModel.Win32Exception
     {
-        #region Fields
         private const string CredentialError = "An error occurred acquiring credentials.";
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CredentialException" /> class.
         /// </summary>
@@ -69,6 +66,5 @@
             : base(info, context)
         {
         }
-        #endregion
     }
 }

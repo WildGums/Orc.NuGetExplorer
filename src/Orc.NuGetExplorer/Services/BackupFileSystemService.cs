@@ -8,14 +8,11 @@
 
     internal class BackupFileSystemService : IBackupFileSystemService
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IPackageOperationContextService _operationContextService;
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
-        #endregion
 
-        #region Constructors
         public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
         {
             Argument.IsNotNull(() => operationContextService);
@@ -26,9 +23,7 @@
             _directoryService = directoryService;
             _fileService = fileService;
         }
-        #endregion
 
-        #region Methods
         public void BackupFolder(string fullPath)
         {
             Log.Info("Creating backup for {0}", fullPath);
@@ -96,7 +91,5 @@
 
             return backupDirectory;
         }
-
-        #endregion
     }
 }

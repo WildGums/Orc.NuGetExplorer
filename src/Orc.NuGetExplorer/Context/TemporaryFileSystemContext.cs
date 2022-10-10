@@ -9,13 +9,10 @@
 
     internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IDirectoryService _directoryService;
         private readonly string _rootDirectory;
-        #endregion
 
-        #region Constructors
         public TemporaryFileSystemContext(IDirectoryService directoryService)
         {
             Argument.IsNotNull(() => directoryService);
@@ -29,16 +26,12 @@
 
             _directoryService.Create(_rootDirectory);
         }
-        #endregion
 
-        #region Properties
         public string RootDirectory
         {
             get { return _rootDirectory; }
         }
-        #endregion
 
-        #region Methods
         public void Dispose()
         {
             Dispose(true);
@@ -87,6 +80,5 @@
 
             return fullPath;
         }
-        #endregion
     }
 }

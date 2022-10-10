@@ -8,7 +8,6 @@
 
     internal static class PackageSourceExtensions
     {
-        #region Methods
         internal static IEnumerable<PackageSource> ToPackageSourceInstances(this IEnumerable<IPackageSource> packageSources)
         {
             Argument.IsNotNull(() => packageSources);
@@ -22,6 +21,5 @@
 
             return packageSources.Select(x => new NuGetFeed(x.Name, x.Source, x.IsEnabled, x.IsOfficial));
         }
-        #endregion
     }
 }

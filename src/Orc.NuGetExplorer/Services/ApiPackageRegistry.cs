@@ -14,17 +14,13 @@
 
     internal sealed class ApiPackageRegistry : IApiPackageRegistry
     {
-
-        #region Constructors
         public ApiPackageRegistry(ILanguageService languageService)
         {
             Argument.IsNotNull(() => languageService);
 
             _languageService = languageService;
         }
-        #endregion
 
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly Dictionary<string, SemanticVersion> _apiPackages = new Dictionary<string, SemanticVersion>();
@@ -32,9 +28,7 @@
         private readonly ILanguageService _languageService;
 
         private readonly object _syncObj = new object();
-        #endregion
 
-        #region Methods
         public void Register(string packageName, string version)
         {
             Argument.IsNotNullOrWhitespace(() => packageName);
@@ -141,7 +135,5 @@
                 package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
             }
         }
-
-        #endregion
     }
 }

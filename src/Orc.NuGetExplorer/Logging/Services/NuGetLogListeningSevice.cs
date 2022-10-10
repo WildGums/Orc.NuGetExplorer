@@ -5,7 +5,6 @@
 
     internal class NuGetLogListeningSevice : INuGetLogListeningSevice
     {
-        #region Methods
         public void SendInfo(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
@@ -38,6 +37,5 @@
         public event EventHandler<NuGetLogRecordEventArgs> Warning;
         public event EventHandler<NuGetLogRecordEventArgs> Debug;
         public event EventHandler<NuGetLogRecordEventArgs> Error;
-        #endregion
     }
 }

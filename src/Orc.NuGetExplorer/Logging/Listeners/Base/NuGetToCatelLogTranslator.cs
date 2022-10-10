@@ -4,18 +4,13 @@
 
     public class NuGetToCatelLogTranslator : PackageManagerLogListenerBase
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
 
-        #region Constructors
         public NuGetToCatelLogTranslator(INuGetLogListeningSevice nuGetLogListeningSevice)
             : base(nuGetLogListeningSevice)
         {
         }
-        #endregion
 
-        #region Methods
         protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
         {
             Log.Info(e.Message);
@@ -35,6 +30,5 @@
         {
             Log.Error(e.Message);
         }
-        #endregion
     }
 }
