@@ -20,8 +20,6 @@
 
         private IAnimationService AnimationService { get; set; }
 
-        #region Properties
-
         public Grid OverlayGrid
         {
             get { return (Grid)GetValue(OverlayGridProperty); }
@@ -79,8 +77,6 @@
         /// </summary>
         public static readonly DependencyProperty OverlayContentProperty =
             DependencyProperty.Register(nameof(OverlayContent), typeof(UIElement), typeof(AnimatedOverlayBehavior), new PropertyMetadata(null));
-
-        #endregion
 
         protected override void OnAssociatedObjectLoaded()
         {

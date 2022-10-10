@@ -6,7 +6,6 @@
 
     public interface IPackageCommandService
     {
-        #region Methods
         string GetActionName(PackageOperationType operationType);
 
         [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "ExecuteAsync")]
@@ -24,6 +23,5 @@
         Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token);
         Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token);
-        #endregion
     }
 }

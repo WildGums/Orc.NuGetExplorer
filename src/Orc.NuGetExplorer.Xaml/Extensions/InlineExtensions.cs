@@ -5,7 +5,6 @@
 
     public static class InlineExtensions
     {
-        #region Methods
         public static Bold Bold(this Inline inline)
         {
             return new Bold(inline);
@@ -46,6 +45,5 @@
 
             return span;
         }
-        #endregion
     }
 }

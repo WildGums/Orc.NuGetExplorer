@@ -7,7 +7,6 @@
 
     public sealed partial class PackageSourceSettingControl
     {
-        #region Constructors
         static PackageSourceSettingControl()
         {
             typeof(PackageSourceSettingControl).AutoDetectViewPropertiesToSubscribe();
@@ -20,7 +19,6 @@
 
             InitializeComponent();
         }
-        #endregion
 
         #region DependencyProperty
         /// <summary>

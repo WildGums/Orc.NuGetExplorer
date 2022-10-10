@@ -6,9 +6,7 @@
 
     public interface IImageResolveService
     {
-        #region Methods
         ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null);
         Task<ImageSource> ResolveImageFromUriAsync(Uri uri, string defaultUrl = null);
-        #endregion
     }
 }

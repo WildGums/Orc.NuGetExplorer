@@ -14,7 +14,6 @@
 
     public class MainViewModel : ViewModelBase
     {
-        #region Fields
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
@@ -23,9 +22,7 @@
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
-        #endregion
 
-        #region Constructors
         public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
@@ -61,9 +58,7 @@
 
             Title = "Orc.NuGetExplorer example";
         }
-        #endregion
 
-        #region Properties
         [Model]
         [Expose("Lines")]
         public PackageManagementEcho Echo { get; private set; }
@@ -72,7 +67,6 @@
         public string PackageSourceName { get; set; }
         public string PackageSourceUrl { get; set; }
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
-        #endregion
 
         protected async override Task InitializeAsync()
         {

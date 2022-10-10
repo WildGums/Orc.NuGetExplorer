@@ -6,7 +6,6 @@
 
     internal class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
     {
-        #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
             base.OnAssociatedObjectLoaded();
@@ -29,6 +28,5 @@
                 binding.UpdateSource();
             }
         }
-        #endregion
     }
 }

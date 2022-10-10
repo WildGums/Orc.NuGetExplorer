@@ -5,7 +5,6 @@
 
     public static class StringExtensions
     {
-        #region Methods
         public static Inline ToInline(this string text)
         {
             return text.ToInline(Brushes.Black);
@@ -20,6 +19,5 @@
 
             return inline;
         }
-        #endregion
     }
 }

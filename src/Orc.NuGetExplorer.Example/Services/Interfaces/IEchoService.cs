@@ -4,8 +4,6 @@
 
     public interface IEchoService
     {
-        #region Methods
         PackageManagementEcho GetPackageManagementEcho();
-        #endregion
     }
 }

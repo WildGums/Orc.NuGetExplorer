@@ -4,8 +4,6 @@
 
     internal static class AccentColorHelper
     {
-        #region Methods
-
         public static Color ConvertToNonAlphaColor(Color backgroundColor, Color accentColor)
         {
             var alphaNormalized = accentColor.A / (double)255;
@@ -17,7 +15,5 @@
 
             return Color.FromRgb(newColorR, newColorG, newColorB);
         }
-
-        #endregion
     }
 }

@@ -8,12 +8,9 @@
 
     internal class PackagesUIService : IPackagesUIService
     {
-        #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly ITypeFactory _typeFactory;
-        #endregion
 
-        #region Constructors
         public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => uiVisualizerService);
@@ -24,18 +21,12 @@
 
             SettingsTitle = null;
         }
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Overriden title for settings window
         /// </summary>
         public string SettingsTitle { get; set; }
 
-        #endregion
-
-        #region Methods
         public async Task ShowPackagesExplorerAsync()
         {
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
@@ -51,11 +42,9 @@
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 
-
         public async Task<bool?> ShowPackagesSourceSettingsAsync()
         {
             return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
         }
-        #endregion
     }
 }

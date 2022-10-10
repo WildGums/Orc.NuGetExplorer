@@ -5,7 +5,6 @@
 
     internal class UpdateSourceOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
-        #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
             base.OnAssociatedObjectLoaded();
@@ -29,6 +28,5 @@
 
             AssociatedObject.UpdateItemSource();
         }
-        #endregion
     }
 }

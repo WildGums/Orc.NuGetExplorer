@@ -8,7 +8,6 @@
     /// </summary>
     public partial class MainWindow : DataWindow
     {
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
@@ -29,6 +28,5 @@
         {
             InitializeComponent();
         }
-        #endregion
     }
 }

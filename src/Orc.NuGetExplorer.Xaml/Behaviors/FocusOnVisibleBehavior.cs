@@ -5,7 +5,6 @@
 
     internal class FocusOnVisibleBehavior : BehaviorBase<FrameworkElement>
     {
-        #region Methods
         protected override void OnAssociatedObjectLoaded()
         {
             base.OnAssociatedObjectLoaded();
@@ -29,6 +28,5 @@
 
             AssociatedObject.Focus();
         }
-        #endregion
     }
 }
