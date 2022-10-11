@@ -13,7 +13,7 @@
 
         private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30))!;
 
-        private readonly CacheStorage<string, byte[]> _cache = new CacheStorage<string, byte[]>();
+        private readonly CacheStorage<string, byte[]> _cache = new();
 
 
         public IconCache(ExpirationPolicy? cacheItemPolicy = null)

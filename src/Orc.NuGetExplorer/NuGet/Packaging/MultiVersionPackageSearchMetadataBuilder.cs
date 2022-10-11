@@ -18,7 +18,7 @@
         }
 
         public static MultiVersionPackageSearchMetadataBuilder FromMetadatas(IEnumerable<IPackageSearchMetadata> searchMetadatas)
-             => new MultiVersionPackageSearchMetadataBuilder(searchMetadatas);
+             => new(searchMetadatas);
 
         public IPackageSearchMetadata Build(string version)
         {

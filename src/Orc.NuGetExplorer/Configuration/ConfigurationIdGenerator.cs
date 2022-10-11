@@ -8,11 +8,11 @@
         /// <summary>
         /// The dictionary containing the unique identifiers per type.
         /// </summary>
-        private static readonly HashSet<Guid> OccupiedIdentifiers = new HashSet<Guid>();
+        private static readonly HashSet<Guid> OccupiedIdentifiers = new();
 
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject = new();
 
-        private static readonly Dictionary<Guid, Guid> RemappedValues = new Dictionary<Guid, Guid>();
+        private static readonly Dictionary<Guid, Guid> RemappedValues = new();
 
         /// <summary>
         /// Gets a unique identifier for the specified type.

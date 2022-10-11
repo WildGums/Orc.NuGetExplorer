@@ -17,10 +17,10 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ConcurrentDictionary<string, bool> _retryCache
-             = new ConcurrentDictionary<string, bool>();
+             = new();
 
         private readonly ConcurrentDictionary<string, CredentialResponse> _providerCredentialCache
-            = new ConcurrentDictionary<string, CredentialResponse>();
+            = new();
 
         private readonly bool _nonInteractive;
 
@@ -29,7 +29,7 @@
         /// </summary>
         private AsyncLazy<IEnumerable<ICredentialProvider>> _providers { get; }
 
-        private readonly Semaphore _providerSemaphore = new Semaphore(1, 1);
+        private readonly Semaphore _providerSemaphore = new(1, 1);
         private bool _disposedValue;
 
         public bool HandlesDefaultCredentials { get; }

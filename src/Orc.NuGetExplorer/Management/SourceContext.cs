@@ -6,15 +6,13 @@
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
 
-#pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
-    public class SourceContext : IDisposable
-#pragma warning restore IDISP025 // Class with no virtual dispose method should be sealed.
+    public sealed class SourceContext : IDisposable
     {
-        private static readonly Stack<SourceContext> ActiveContext = new Stack<SourceContext>();
+        private static readonly Stack<SourceContext> ActiveContext = new();
 
         private SourceContext()
         {
-            //empty context
+            // empty context
         }
 
         public SourceContext(IReadOnlyList<PackageSource> packageSources)
@@ -31,7 +29,7 @@
 
         public static SourceContext EmptyContext { get; set; } = new SourceContext();
 
-        public static SourceContext CurrentContext
+        public static SourceContext? CurrentContext
         {
             get
             {
@@ -45,8 +43,8 @@
         }
 
 
-        public IReadOnlyList<PackageSource> PackageSources { get; private set; }
-        public IReadOnlyList<SourceRepository> Repositories { get; private set; }
+        public IReadOnlyList<PackageSource>? PackageSources { get; private set; }
+        public IReadOnlyList<SourceRepository>? Repositories { get; private set; }
 
         public void Dispose()
         {

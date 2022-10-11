@@ -6,7 +6,7 @@
 
     public class NuGetActionTarget : ModelBase
     {
-        private readonly List<IExtensibleProject> _extensibleProjects = new List<IExtensibleProject>();
+        private readonly List<IExtensibleProject> _extensibleProjects = new();
 
         public IReadOnlyList<IExtensibleProject> TargetProjects => _extensibleProjects;
 

@@ -33,9 +33,9 @@
             Error?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
-        public event EventHandler<NuGetLogRecordEventArgs> Info;
-        public event EventHandler<NuGetLogRecordEventArgs> Warning;
-        public event EventHandler<NuGetLogRecordEventArgs> Debug;
-        public event EventHandler<NuGetLogRecordEventArgs> Error;
+        public event EventHandler<NuGetLogRecordEventArgs>? Info;
+        public event EventHandler<NuGetLogRecordEventArgs>? Warning;
+        public event EventHandler<NuGetLogRecordEventArgs>? Debug;
+        public event EventHandler<NuGetLogRecordEventArgs>? Error;
     }
 }

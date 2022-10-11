@@ -6,7 +6,7 @@
 
     internal class PackageOperationContextService : IPackageOperationContextService
     {
-        private readonly object _lockObject = new object();
+        private readonly object _lockObject = new();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly ITypeFactory _typeFactory;
         private PackageOperationContext? _rootContext;

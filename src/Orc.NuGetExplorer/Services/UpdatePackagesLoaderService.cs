@@ -31,7 +31,7 @@
         private readonly Lazy<IPackageLoaderService> _feedRepositoryLoader;
         private readonly Lazy<IPackageLoaderService> _projectRepositoryLoader;
 
-        private readonly HashSet<string> _discardedPackagesSet = new HashSet<string>();
+        private readonly HashSet<string> _discardedPackagesSet = new();
 
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
            INuGetPackageManager nuGetExtensibleProjectManager)

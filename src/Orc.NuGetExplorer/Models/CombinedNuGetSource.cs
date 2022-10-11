@@ -6,7 +6,7 @@
 
     public sealed class CombinedNuGetSource : INuGetSource
     {
-        private readonly List<INuGetSource> _sourceList = new List<INuGetSource>();
+        private readonly List<INuGetSource> _sourceList = new();
 
         public CombinedNuGetSource(IReadOnlyList<INuGetSource> feedList)
         {

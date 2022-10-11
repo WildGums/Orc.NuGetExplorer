@@ -14,7 +14,7 @@
         /// </summary>
         private static readonly string IdentityPattern = @"(@?[a-z_A-Z]\w+(?:\.@?[a-z_A-Z]\w+)*)";
 
-        public static PackageIdentity Parse(string packageString)
+        public static PackageIdentity? Parse(string packageString)
         {
             var rgx = new Regex(IdentityPattern);
 

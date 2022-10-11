@@ -22,14 +22,14 @@
         private int _packageQuerySize = 40;
 
         // Note: Lazy allows to avoid circular types resolving if construct from TypeFactory
-        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
+        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new(
                 () =>
                 {
                     return ServiceLocator.Default.ResolveType<IPackageSourceProvider>();
                 }
             );
 
-        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new Dictionary<ConfigurationSection, string>()
+        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new()
         {
             { ConfigurationSection.Feeds, $"NuGet_{ConfigurationSection.Feeds}" },
             { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }

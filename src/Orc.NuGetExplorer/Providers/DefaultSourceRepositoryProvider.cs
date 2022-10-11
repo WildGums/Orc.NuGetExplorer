@@ -17,7 +17,7 @@
         private readonly INuGetSettings _settings;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
 
-        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new ConcurrentDictionary<PackageSource, SourceRepository>(DefaultNuGetComparers.PackageSource);
+        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new(DefaultNuGetComparers.PackageSource);
 
         /// <summary>
         /// Unused provider from NuGet library

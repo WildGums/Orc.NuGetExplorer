@@ -14,7 +14,7 @@
     /// </summary>
     internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, IPackageDetails
     {
-        private readonly List<string> _availableVersions = new List<string>();
+        private readonly List<string> _availableVersions = new();
         private string _overridenVersion = null;
 
         public MultiVersionPackageSearchMetadata(IEnumerable<IPackageSearchMetadata> availableVersions)

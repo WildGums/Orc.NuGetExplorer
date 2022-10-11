@@ -21,7 +21,7 @@
     internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim UpdateLocker = new(1, 1);
 
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;

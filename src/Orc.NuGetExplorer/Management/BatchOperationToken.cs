@@ -9,7 +9,7 @@
     {
         private sealed class BatchOperationToken : IDisposable
         {
-            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
+            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new();
 
             public void Add(NuGetProjectEventArgs eventArgs)
             {

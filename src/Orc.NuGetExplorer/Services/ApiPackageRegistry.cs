@@ -23,11 +23,11 @@
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly Dictionary<string, SemanticVersion> _apiPackages = new Dictionary<string, SemanticVersion>();
+        private readonly Dictionary<string, SemanticVersion> _apiPackages = new();
 
         private readonly ILanguageService _languageService;
 
-        private readonly object _syncObj = new object();
+        private readonly object _syncObj = new();
 
         public void Register(string packageName, string version)
         {

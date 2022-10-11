@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using Catel;
     using Catel.Logging;
     using Microsoft.Win32;
@@ -14,7 +13,7 @@
         private const string BaseFrameworkName = ".NETFramework, Version=";
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly FrameworkReducer _frameworkReducer = new FrameworkReducer();
+        private readonly FrameworkReducer _frameworkReducer = new();
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly IList<NuGetFramework> _nuGetFrameworks = new List<NuGetFramework>();
 
@@ -37,12 +36,11 @@
             return _frameworkReducer.ReduceUpwards(_nuGetFrameworks);
         }
 
-        public NuGetFramework GetFirst()
+        public NuGetFramework? GetFirst()
         {
             return _nuGetFrameworks.FirstOrDefault();
         }
 
-        
         private void LoadAvailableFrameworks()
         {
             var version = Environment.Version;
@@ -90,10 +88,15 @@
         private static void GetOlderFrameworkVersionsFromRegistry(List<string> frameworkList)
         {
             // Opens the registry key for the .NET Framework entry.
-            using (var ndpKey =
-                    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).
+            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).
                     OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
             {
+                if (ndpKey is null)
+                {
+                    Log.Info("Old versions of .NET Framework Version (under 4.5) wasn't detected.");
+                    return;
+                }
+
                 foreach (var versionKeyName in ndpKey.GetSubKeyNames())
                 {
                     // Skip .NET Framework 4.5 version information.
@@ -106,14 +109,18 @@
                     {
                         using (var versionKey = ndpKey.OpenSubKey(versionKeyName))
                         {
+                            if (versionKey is null)
+                            {
+                                continue;
+                            }
 
                             // Get the .NET Framework version value.
-                            var name = (string)versionKey.GetValue("Version", string.Empty);
+                            var name = (string?)versionKey.GetValue("Version", string.Empty);
                             // Get the service pack (SP) number.
-                            var sp = versionKey.GetValue("SP", string.Empty).ToString();
+                            var sp = versionKey.GetValue("SP", string.Empty)?.ToString();
 
                             // Get the installation flag, or an empty string if there is none.
-                            var install = versionKey.GetValue("Install", string.Empty).ToString();
+                            var install = versionKey.GetValue("Install", string.Empty)?.ToString();
 
                             if (string.IsNullOrEmpty(install))
                             {
@@ -137,13 +144,18 @@
                             {
                                 using (var subKey = versionKey.OpenSubKey(subKeyName))
                                 {
-                                    name = (string)subKey.GetValue("Version", string.Empty);
-                                    if (!string.IsNullOrEmpty(name))
+                                    if (subKey is null)
                                     {
-                                        sp = subKey.GetValue("SP", string.Empty).ToString();
+                                        continue;
                                     }
 
-                                    install = subKey.GetValue("Install", string.Empty).ToString();
+                                    name = (string?)subKey.GetValue("Version", string.Empty);
+                                    if (!string.IsNullOrEmpty(name))
+                                    {
+                                        sp = subKey.GetValue("SP", string.Empty)?.ToString();
+                                    }
+
+                                    install = subKey.GetValue("Install", string.Empty)?.ToString();
 
                                     if (string.IsNullOrEmpty(install))
                                     {
@@ -178,8 +190,14 @@
 
             using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
             {
+                if (ndpKey is null)
+                {
+                    Log.Info(".NET Framework Version 4.5 or later wasn't detected.");
+                    return;
+                }
+
                 var ndpKeyRelease = ndpKey.GetValue("Release");
-                if (ndpKey is not null && ndpKeyRelease is not null)
+                if (ndpKeyRelease is not null)
                 {
                     var version = CheckFor45PlusVersion((int)ndpKeyRelease);
 
@@ -187,7 +205,7 @@
                 }
                 else
                 {
-                    Log.Info(".NET Framework Version 4.5 or later is not detected.");
+                    Log.Info(".NET Framework Version 4.5 or later wasn't detected.");
                 }
             }
 

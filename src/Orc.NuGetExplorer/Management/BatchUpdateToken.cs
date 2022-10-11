@@ -9,7 +9,7 @@
     {
         private sealed class BatchUpdateToken : IDisposable
         {
-            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new List<NuGetProjectEventArgs>();
+            private readonly List<NuGetProjectEventArgs> _supressedInvokationEventArgs = new();
 
             private readonly PackageIdentity _identity;
 

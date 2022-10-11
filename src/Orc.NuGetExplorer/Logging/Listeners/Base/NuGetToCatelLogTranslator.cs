@@ -11,22 +11,22 @@
         {
         }
 
-        protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
+        protected override void OnInfo(object? sender, NuGetLogRecordEventArgs e)
         {
             Log.Info(e.Message);
         }
 
-        protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
+        protected override void OnDebug(object? sender, NuGetLogRecordEventArgs e)
         {
             Log.Debug(e.Message);
         }
 
-        protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
+        protected override void OnWarning(object? sender, NuGetLogRecordEventArgs e)
         {
             Log.Warning(e.Message);
         }
 
-        protected override void OnError(object sender, NuGetLogRecordEventArgs e)
+        protected override void OnError(object? sender, NuGetLogRecordEventArgs e)
         {
             Log.Error(e.Message);
         }
