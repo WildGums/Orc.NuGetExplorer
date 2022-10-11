@@ -4,9 +4,9 @@
 
     public interface IPackageOperationContextService
     {
-        IPackageOperationContext CurrentContext { get; }
+        IPackageOperationContext? CurrentContext { get; }
 
-        event EventHandler<OperationContextEventArgs> OperationContextDisposing;
+        event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
         IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages);
     }
 }

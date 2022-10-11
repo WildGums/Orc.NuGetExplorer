@@ -94,7 +94,7 @@
         [Time]
         public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
-            HashSet<SourcePackageDependencyInfo> packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
+            var packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
 
             foreach (var resource in _resources)
             {

@@ -5,20 +5,23 @@
     using System.Windows.Media.Imaging;
     using Catel.Caching;
     using Catel.Caching.Policies;
+    using Catel.Logging;
 
     public class IconCache
     {
-        private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30));
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30))!;
 
         private readonly CacheStorage<string, byte[]> _cache = new CacheStorage<string, byte[]>();
 
 
-        public IconCache(ExpirationPolicy cacheItemPolicy = null)
+        public IconCache(ExpirationPolicy? cacheItemPolicy = null)
         {
             StoringPolicy = cacheItemPolicy ?? DefaultStoringPolicy;
         }
 
-        public BitmapImage FallbackValue { get; set; }
+        public BitmapImage? FallbackValue { get; set; }
 
         public ExpirationPolicy StoringPolicy { get; private set; }
 
@@ -28,7 +31,7 @@
         }
 
         // TODO stream should be disposed when item removed from cache
-        public BitmapImage GetFromCache(Uri iconUri)
+        public BitmapImage? GetFromCache(Uri iconUri)
         {
             if (iconUri is null)
             {
@@ -91,12 +94,18 @@
 
             if (!string.IsNullOrEmpty(uri.Fragment))
             {
-                var fileName = uri.Fragment.Substring(1, uri.Fragment.Length - 1);
+                var fileName = uri.Fragment[1..];
                 var folderPath = Path.GetDirectoryName(uri.AbsolutePath);
-
-                // Decode spaces
-                folderPath = folderPath.Replace("%20", " ");
-                iconUri = new Uri(Path.Combine(folderPath, fileName));
+                if (string.IsNullOrEmpty(folderPath))
+                {
+                    Log.Debug("Cannot parse source uri for local icon");
+                }
+                else
+                {
+                    // Decode spaces
+                    folderPath = folderPath.Replace("%20", " ");
+                    iconUri = new Uri(Path.Combine(folderPath, fileName));
+                }
             }
 
             image.BeginInit();

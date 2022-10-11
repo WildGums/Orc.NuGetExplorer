@@ -30,10 +30,9 @@
             }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            var repository = obj as Repository;
-            if (repository is null)
+            if (obj is not Repository repository)
             {
                 return false;
             }

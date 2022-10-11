@@ -131,7 +131,7 @@
 #pragma warning disable CL0002 // Use async suffix
         private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
             if (token.LoadType == MetadataOrigin.Installed)
             {
@@ -176,7 +176,7 @@
         private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
             var project = _projectProvider.GetDefaultProject();
-            string packageId = token.Package.Identity.Id;
+            var packageId = token.Package.Identity.Id;
 
             if (project is null)
             {
@@ -199,7 +199,7 @@
 
         private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
 
             var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);
 

@@ -20,10 +20,6 @@
 
         NuGetVersion NuGetVersion { get; }
 
-        string SpecialVersion { get; }
-
-        bool IsAbsoluteLatestVersion { get; }
-
         bool IsLatestVersion { get; }
 
         bool IsPrerelease { get; }
@@ -39,8 +35,6 @@
         string Dependencies { get; }
 
         bool? IsInstalled { get; set; }
-
-        IList<string> AvailableVersions { get; }
 
         string SelectedVersion { get; set; }
 

@@ -90,7 +90,7 @@
         private static void GetOlderFrameworkVersionsFromRegistry(List<string> frameworkList)
         {
             // Opens the registry key for the .NET Framework entry.
-            using (RegistryKey ndpKey =
+            using (var ndpKey =
                     RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).
                     OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
             {

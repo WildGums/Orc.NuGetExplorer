@@ -12,15 +12,13 @@
 
         public void PushRollbackAction(Action rollbackAction, IPackageOperationContext context)
         {
-            Stack<Action> stack;
-
             if (context is null)
             {
                 Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
                 return;
             }
 
-            if (!_rollbackActions.TryGetValue(context, out stack))
+            if (!_rollbackActions.TryGetValue(context, out var stack))
             {
                 stack = new Stack<Action>();
                 _rollbackActions.Add(context, stack);
@@ -31,8 +29,7 @@
 
         public void Rollback(IPackageOperationContext context)
         {
-            Stack<Action> stack;
-            if (_rollbackActions.TryGetValue(context, out stack))
+            if (_rollbackActions.TryGetValue(context, out var stack))
             {
                 while (stack.Any())
                 {
@@ -44,7 +41,6 @@
 
         public void ClearRollbackActions(IPackageOperationContext context)
         {
-            Stack<Action> stack;
 
             if (context is null)
             {
@@ -52,7 +48,7 @@
                 return;
             }
 
-            if (_rollbackActions.TryGetValue(context, out stack))
+            if (_rollbackActions.TryGetValue(context, out var stack))
             {
                 stack.Clear();
                 _rollbackActions.Remove(context);

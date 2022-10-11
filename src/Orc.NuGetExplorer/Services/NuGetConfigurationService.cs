@@ -138,8 +138,7 @@
             var key = GetIsPrereleaseAllowedKey(repository);
             var stringValue = _configurationService.GetRoamingValue(key, false.ToString());
 
-            bool value;
-            if (bool.TryParse(stringValue, out value))
+            if (bool.TryParse(stringValue, out var value))
             {
                 return value;
             }

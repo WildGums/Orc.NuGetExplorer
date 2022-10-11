@@ -12,17 +12,11 @@
     {
         private readonly IDictionary<string, string> _propertyNameToDataError = new Dictionary<string, string>();
 
-        public NuGetFeed()
-        {
-            VerificationResult = FeedVerificationResult.Unknown;
-            Error = string.Empty;
-            IsEnabled = true;
-        }
-
         public NuGetFeed(string name, string source)
         {
             Name = name;
             Source = source;
+            Error = string.Empty;
         }
 
         public NuGetFeed(string name, string source, bool isEnabled) : this(name, source)
@@ -99,8 +93,8 @@
         #region INotifyDataErrorInfo
         public bool HasErrors => _propertyNameToDataError.Any();
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-        public IEnumerable GetErrors(string propertyName)
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public IEnumerable GetErrors(string? propertyName)
         {
             if (propertyName is null)
             {
@@ -172,11 +166,11 @@
             return GetUriSource()?.IsLoopback ?? false;
         }
 
-        public Uri GetUriSource()
+        public Uri? GetUriSource()
         {
             try
             {
-                return string.IsNullOrEmpty(Source) ? null : new Uri(Source);
+                return new Uri(Source);
             }
             catch (UriFormatException)
             {
@@ -200,7 +194,7 @@
             };
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Source))
             {

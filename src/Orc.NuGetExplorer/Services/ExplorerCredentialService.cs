@@ -205,8 +205,7 @@
 
             if (isRetry)
             {
-                CredentialResponse removed;
-                _providerCredentialCache.TryRemove(key, out removed);
+                _providerCredentialCache.TryRemove(key, out var removed);
                 return false;
             }
 

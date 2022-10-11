@@ -37,7 +37,7 @@
         {
             lock (LockObject)
             {
-                bool isFree = true;
+                var isFree = true;
 
                 var actualGuid = guid;
 
@@ -61,7 +61,7 @@
         {
             lock (LockObject)
             {
-                if (RemappedValues.TryGetValue(gui, out Guid collidedGuid))
+                if (RemappedValues.TryGetValue(gui, out var collidedGuid))
                 {
                     return collidedGuid;
                 }

@@ -44,9 +44,9 @@
             }
         }
 
-        protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
+        protected override void OnOperationStarting(object? sender, PackageOperationEventArgs e)
         {
-            var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
+            var packagesConfig = System.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
 
             if (e.PackageOperationType == PackageOperationType.Uninstall)
             {
@@ -64,7 +64,7 @@
             {
                 _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
-                    bool success = true;
+                    var success = true;
                     try
                     {
                         _directoryService.Delete(e.InstallPath);

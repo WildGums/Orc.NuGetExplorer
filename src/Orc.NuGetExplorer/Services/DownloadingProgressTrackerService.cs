@@ -105,7 +105,7 @@
             _trackerTimer.Elapsed += OnTrackerTimerElapsed;
         }
 
-        public DownloadProgressTrackToken(IProgress<float> instance, Action<IDisposableToken<IProgress<float>>> initialize, Action<IDisposableToken<IProgress<float>>> dispose, object tag = null)
+        public DownloadProgressTrackToken(IProgress<float> instance, Action<IDisposableToken<IProgress<float>>> initialize, Action<IDisposableToken<IProgress<float>>> dispose, object? tag = null)
             : base(instance, initialize, dispose, tag)
         {
         }

@@ -40,7 +40,7 @@ namespace Orc.NuGetExplorer
 
             var result = FeedVerificationResult.Valid;
 
-            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+            var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 
@@ -96,13 +96,13 @@ namespace Orc.NuGetExplorer
         [ObsoleteEx]
         public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
-            int timeOut = 3000;
+            var timeOut = 3000;
 
             Argument.IsNotNull(() => source);
 
             var result = FeedVerificationResult.Valid;
 
-            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+            var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 

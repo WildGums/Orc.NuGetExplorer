@@ -102,8 +102,11 @@
 
         private class PackageIdentityEqualityComparer : IEqualityComparer<IPackageSearchMetadata>
         {
-            public bool Equals(IPackageSearchMetadata x, IPackageSearchMetadata y)
+            public bool Equals(IPackageSearchMetadata? x, IPackageSearchMetadata? y)
             {
+                ArgumentNullException.ThrowIfNull(x);
+                ArgumentNullException.ThrowIfNull(y);
+
                 return x.Identity.Equals(y.Identity);
             }
 

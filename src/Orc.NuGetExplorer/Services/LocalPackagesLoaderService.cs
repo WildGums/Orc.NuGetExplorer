@@ -75,7 +75,7 @@
                     pagedPackages = pagedPackages.Take(pageContinuation.Size).ToList();
                 }
 
-                List<IPackageSearchMetadata> combinedFindedMetadata = new List<IPackageSearchMetadata>();
+                var combinedFindedMetadata = new List<IPackageSearchMetadata>();
 
                 foreach (var package in pagedPackages)
                 {

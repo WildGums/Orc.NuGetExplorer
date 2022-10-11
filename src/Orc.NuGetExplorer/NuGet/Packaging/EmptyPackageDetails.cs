@@ -30,11 +30,6 @@
 
         public NuGetVersion NuGetVersion => _package?.Version;
 
-        public string SpecialVersion { get; }
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "IsLatestVersion")]
-        public bool IsAbsoluteLatestVersion => false;
-
         public bool IsLatestVersion => false;
 
         public bool IsPrerelease => NuGetVersion?.IsPrerelease ?? false;
@@ -50,8 +45,6 @@
         public string Dependencies { get; }
 
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions { get; }
 
         public string SelectedVersion { get; set; }
 

@@ -147,7 +147,7 @@ namespace Orc.NuGetExplorer.Resolver
 
             //var ignoredDependencyIds = dependencyIds.
 
-            foreach (string depId in dependencyIds)
+            foreach (var depId in dependencyIds)
             {
                 // packages which are unavailable need to be added as absent packages
                 // ex: if A -> B  and B is not found anywhere in the source repositories we add B as absent
@@ -241,7 +241,7 @@ namespace Orc.NuGetExplorer.Resolver
 
                 foreach (var conflict in packageConflicts)
                 {
-                    bool needToFix = false;
+                    var needToFix = false;
                     var conflictedVersion = conflict.PackageIdentity.Version;
 
                     switch (dependencyBehavior)
@@ -305,7 +305,7 @@ namespace Orc.NuGetExplorer.Resolver
         private static IEnumerable<SourcePackageDependencyInfo> RemoveImpossiblePackages(IEnumerable<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
         {
             List<SourcePackageDependencyInfo> before;
-            List<SourcePackageDependencyInfo> after = new List<SourcePackageDependencyInfo>(packages);
+            var after = new List<SourcePackageDependencyInfo>(packages);
 
             do
             {
@@ -340,8 +340,7 @@ namespace Orc.NuGetExplorer.Resolver
             {
                 foreach (var dependency in package?.Dependencies)
                 {
-                    IList<VersionRange> dependencyVersionRanges;
-                    if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out dependencyVersionRanges))
+                    if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out var dependencyVersionRanges))
                     {
                         dependencyVersionRanges.Add(dependency.VersionRange);
                     }

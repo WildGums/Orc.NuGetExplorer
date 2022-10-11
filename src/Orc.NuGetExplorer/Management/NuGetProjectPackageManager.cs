@@ -203,7 +203,7 @@
         {
             try
             {
-                bool dependencyInstallResult = true;
+                var dependencyInstallResult = true;
 
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 

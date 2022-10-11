@@ -430,7 +430,7 @@
         {
             var downloaded = new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
 
-            string globalFolderPath = DefaultNuGetFolders.GetGlobalPackagesFolder();
+            var globalFolderPath = DefaultNuGetFolders.GetGlobalPackagesFolder();
 
             foreach (var package in packageIdentities)
             {
@@ -475,7 +475,7 @@
             PackageExtractionContext extractionContext,
             CancellationToken cancellationToken)
         {
-            List<PackageIdentity> extractedPackages = new List<PackageIdentity>();
+            var extractedPackages = new List<PackageIdentity>();
 
             try
             {
@@ -610,19 +610,17 @@
             IEnumerable<SourcePackageDependencyInfo> markedForUninstall,
             IEnumerable<PackageIdentity> installedPackages)
         {
-            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDictionary;
-            var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out dependenciesDictionary);
+            var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out var dependenciesDictionary);
 
             //exclude packages which should not be removed, because of dependent packages
-            HashSet<PackageIdentity> shouldBeExcludedSet = new HashSet<PackageIdentity>();
+            var shouldBeExcludedSet = new HashSet<PackageIdentity>();
 
             foreach (var identity in dependenciesDictionary)
             {
                 var markedOnUninstallDependency = identity.Key;
 
-                HashSet<PackageIdentity> dependents;
 
-                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out dependents) && dependents is not null)
+                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out var dependents) && dependents is not null)
                 {
                     var externalDependants = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
 

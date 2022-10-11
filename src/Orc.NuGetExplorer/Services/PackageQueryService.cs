@@ -28,7 +28,7 @@
             _logger = logger;
         }
 
-        public async Task<bool> PackageExistsAsync(IRepository packageRepository, string filter, bool allowPrereleaseVersions)
+        public async Task<bool> PackageExistsAsync(IRepository packageRepository, string? filter, bool allowPrereleaseVersions)
         {
             var packages = await GetPackagesAsync(packageRepository, allowPrereleaseVersions, filter, 0, 1);
 
@@ -47,14 +47,12 @@
             return versionsMetadata is not null;
         }
 
-        public async Task<IPackageDetails> GetPackageAsync(IRepository packageRepository, string packageId, string version)
+        public async Task<IPackageDetails?> GetPackageAsync(IRepository packageRepository, string packageId, string version)
         {
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
-
             return await BuildMultiVersionPackageSearchMetadataAsync(packageId, version, true);
         }
 
-        public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10)
+        public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string? filter = null, int skip = 0, int take = 10)
         {
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
@@ -69,7 +67,7 @@
                 .Select(x => x.Result)
                 .Where(result => result is not null);
 
-            return packageDetails;
+            return packageDetails!;
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackageAsync(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, int skip)
@@ -88,25 +86,25 @@
             return versions;
         }
 
-        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(IPackageSearchMetadata packageSearchMetadata, SourceRepository sourceRepository, bool includePrerelease)
+        private async Task<IPackageDetails?> BuildMultiVersionPackageSearchMetadataAsync(IPackageSearchMetadata packageSearchMetadata, SourceRepository sourceRepository, bool includePrerelease)
         {
             return await BuildMultiVersionPackageSearchMetadataAsync(packageSearchMetadata.Identity.Id, sourceRepository, includePrerelease);
         }
 
-        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(string packageId, SourceRepository sourceRepository, bool includePrerelease)
+        private async Task<IPackageDetails?> BuildMultiVersionPackageSearchMetadataAsync(string packageId, SourceRepository sourceRepository, bool includePrerelease)
         {
             var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build() as IPackageDetails;
 
             return details;
         }
 
-        private async Task<IPackageDetails> BuildMultiVersionPackageSearchMetadataAsync(string packageId, string version, bool includePrerelease)
+        private async Task<IPackageDetails?> BuildMultiVersionPackageSearchMetadataAsync(string packageId, string version, bool includePrerelease)
         {
             var versionsMetadata = await _packageMetadataProvider.GetPackageMetadataListAsync(packageId, includePrerelease, false, CancellationToken.None);
 
-            IPackageDetails details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build(version) as IPackageDetails;
+            var details = MultiVersionPackageSearchMetadataBuilder.FromMetadatas(versionsMetadata).Build(version) as IPackageDetails;
 
             return details;
         }

@@ -30,11 +30,11 @@
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public virtual T Create()
         {
-            return _typeFactory.CreateInstance<T>();
+            return _typeFactory.CreateRequiredInstance<T>();
         }
 
         private void RaisePropertyChanged()

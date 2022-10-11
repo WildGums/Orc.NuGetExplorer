@@ -12,7 +12,7 @@
         {
             try
             {
-                var httpWebResponse = (HttpWebResponse)exception.Response;
+                var httpWebResponse = (HttpWebResponse?)exception.Response;
                 if (ReferenceEquals(httpWebResponse, null))
                 {
                     return FeedVerificationResult.Invalid;

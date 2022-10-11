@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.Data;
@@ -56,8 +57,8 @@
             }
         }
 
-        public static event EventHandler AnyNuGetPackageCheckedChanged;
-        public event EventHandler<PackageModelStatusEventArgs> StatusChanged;
+        public static event EventHandler? AnyNuGetPackageCheckedChanged;
+        public event EventHandler<PackageModelStatusEventArgs>? StatusChanged;
 
         private bool _isChecked;
         public bool IsChecked
@@ -76,7 +77,7 @@
                 if (value != _isChecked)
                 {
                     _isChecked = value;
-                    RaisePropertyChanged(this, new AdvancedPropertyChangedEventArgs(this, nameof(IsChecked), _isChecked));
+                    RaisePropertyChanged(this, new PropertyChangedEventArgs(nameof(IsChecked)));
                 }
             }
         }
@@ -95,7 +96,7 @@
 
         public PackageStatus Status { get; set; } = PackageStatus.NotInstalled;
 
-        public PackageIdentity Identity => _packageMetadata?.Identity;
+        public PackageIdentity Identity => _packageMetadata.Identity;
 
         private List<NuGetVersion> _versions = new List<NuGetVersion>();
         public IReadOnlyList<NuGetVersion> Versions
@@ -118,7 +119,10 @@
 
         public NuGetVersion LastVersion { get; private set; }
 
-        public NuGetVersion InstalledVersion { get; set; }
+        /// <summary>
+        /// Installed version or null if it's Browse'' model
+        /// </summary>
+        public NuGetVersion? InstalledVersion { get; set; }
 
         #region IPackageDetails
 
@@ -130,12 +134,6 @@
 
         public NuGetVersion NuGetVersion => Identity.Version;
 
-        //todo
-        public string SpecialVersion { get; set; }
-
-        //todo obsolete
-        public bool IsAbsoluteLatestVersion => IsLatestVersion;
-
         public bool IsLatestVersion => Identity?.Version.Equals(LastVersion) ?? false;
 
         public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
@@ -143,8 +141,6 @@
         public string Dependencies { get; set; }
 
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions { get; set; }
 
         public string SelectedVersion { get; set; }
 
@@ -208,10 +204,11 @@
             }
         }
 
-        public async Task<IEnumerable<NuGetVersion>> LoadVersionsAsync()
+        public async Task<IEnumerable<NuGetVersion>?> LoadVersionsAsync()
         {
             if (IsLoaded)
             {
+                // TODO: checkout is it should be cached value returned?
                 return null;
             }
 
@@ -261,7 +258,7 @@
             return Identity;
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 

@@ -30,11 +30,6 @@
 
         public NuGetVersion NuGetVersion => Identity?.Version;
 
-        public string SpecialVersion => string.Empty;
-
-        //todo
-        public bool IsAbsoluteLatestVersion { get; }
-
         //todo
         public bool IsLatestVersion { get; }
 
@@ -44,8 +39,6 @@
         public string Dependencies { get; }
 
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions => _availableVersions;
 
         public string SelectedVersion
         {

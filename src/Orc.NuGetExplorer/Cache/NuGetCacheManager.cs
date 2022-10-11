@@ -30,7 +30,7 @@
 
         public bool ClearAll()
         {
-            bool noErrors = true;
+            var noErrors = true;
             noErrors &= ClearHttpCache();
             noErrors &= ClearNuGetFolder(DefaultNuGetFolders.GetGlobalPackagesFolder(), "Global-packages");
             noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");

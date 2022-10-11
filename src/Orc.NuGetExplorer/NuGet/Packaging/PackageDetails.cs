@@ -56,11 +56,6 @@
 
         public NuGetVersion NuGetVersion { get; }
 
-        public string SpecialVersion => NuGetVersion?.Release; //todo check semver 2.0
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "IsLatestVersion")]
-        public bool IsAbsoluteLatestVersion { get; }
-
         public bool IsLatestVersion { get; }
 
         public bool IsPrerelease => NuGetVersion?.IsPrerelease ?? false;
@@ -76,8 +71,6 @@
         public virtual string Dependencies { get; protected set; }
 
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions { get; }
 
         public string SelectedVersion { get; set; }
 

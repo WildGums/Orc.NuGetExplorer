@@ -50,7 +50,7 @@
 
             if (currentVersion.CompareTo(_settings.Version) > 0)
             {
-                bool anyCompleted = false;
+                var anyCompleted = false;
 
                 foreach (var scenario in _runOnCheckList)
                 {

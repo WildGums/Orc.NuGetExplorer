@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Catel.Data;
 
     public class NuGetActionTarget : ModelBase
@@ -30,7 +31,7 @@
             RaisePropertyChanged(nameof(TargetProjects));
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, nameof(TargetProjects)))
             {

@@ -70,7 +70,7 @@
 
                 Log.Info("Local packages queryed for further available update searching");
 
-                List<IPackageSearchMetadata> updateList = new List<IPackageSearchMetadata>();
+                var updateList = new List<IPackageSearchMetadata>();
 
                 //getting last metadata
                 foreach (var package in installedPackagesMetadatas)

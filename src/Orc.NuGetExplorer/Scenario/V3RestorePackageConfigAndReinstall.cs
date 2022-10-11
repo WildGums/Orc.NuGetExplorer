@@ -66,7 +66,7 @@
             var failedIdentities = new List<PackageIdentity>();
             var parsedPackages = new List<IPackageDetails>();
 
-            bool anyUpgraded = false;
+            var anyUpgraded = false;
 
             using (var context = AcquireSourceContextForActions())
             {

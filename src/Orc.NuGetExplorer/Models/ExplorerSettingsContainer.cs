@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using Catel.Data;
     using NuGet.Configuration;
@@ -15,9 +16,9 @@
         /// <summary>
         /// Feed currently used by explorer
         /// </summary>
-        public INuGetSource ObservedFeed { get; set; }
+        public INuGetSource? ObservedFeed { get; set; }
 
-        public INuGetSource DefaultFeed { get; set; }
+        public INuGetSource? DefaultFeed { get; set; }
 
         public bool IsPreReleaseIncluded { get; set; }
 
@@ -50,7 +51,7 @@
             return feeds.Select(x => new PackageSource(x.Source, x.Name, x.IsEnabled)).ToList();
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, nameof(ObservedFeed)))
             {

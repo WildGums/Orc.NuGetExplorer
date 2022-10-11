@@ -13,7 +13,8 @@
     internal class NuGetSettings : IVersionedSettings
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version
+            ?? throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(Assembly.GetExecutingAssembly)}' was 'null' therefore there is no '{nameof(AssemblyVersion)}' defined");
 
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
@@ -243,8 +244,8 @@
 
         public IList<string> GetConfigFilePaths()
         {
-            var localFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
-            var roamingFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
+            var localFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
+            var roamingFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
 
             return new string[] { localFolderConfig, roamingFolderConfig };
         }
@@ -417,9 +418,7 @@
         {
             var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
 
-            Version configurationVersion = null;
-
-            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
+            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
             {
                 Version = configurationVersion;
             }
@@ -434,7 +433,7 @@
             RaiseSettingsRead();
         }
 
-        private void OnSettingsChanged(object sender, EventArgs e)
+        private void OnSettingsChanged(object? sender, EventArgs e)
         {
             SettingsChanged -= OnSettingsChanged;
             //write version one time

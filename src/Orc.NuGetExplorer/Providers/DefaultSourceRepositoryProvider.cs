@@ -61,7 +61,7 @@
 
         public IEnumerable<SourceRepository> GetRepositories()
         {
-            List<SourceRepository> repos = new List<SourceRepository>();
+            var repos = new List<SourceRepository>();
 
             //from config
             var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)

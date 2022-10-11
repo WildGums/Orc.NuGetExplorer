@@ -9,7 +9,7 @@
         private readonly object _lockObject = new object();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly ITypeFactory _typeFactory;
-        private PackageOperationContext _rootContext;
+        private PackageOperationContext? _rootContext;
 
         public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
         {
@@ -20,16 +20,21 @@
             _typeFactory = typeFactory;
         }
 
-        public IPackageOperationContext CurrentContext { get; private set; }
+        public IPackageOperationContext? CurrentContext { get; private set; }
 
-        public event EventHandler<OperationContextEventArgs> OperationContextDisposing;
+        public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
 
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = context },
-                token => ApplyOperationContext(token.Instance),
-                token => CloseCurrentOperationContext(token.Instance));
+#pragma warning disable IDISP001 // Dispose created
+            var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
+#pragma warning restore IDISP001 // Dispose created
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
+            { 
+                OperationType = operationType, 
+            },
+            token => ApplyOperationContext(token.Instance),
+            token => CloseCurrentOperationContext(token.Instance));
         }
 
         private void ApplyOperationContext(PackageOperationContext context)
@@ -40,7 +45,7 @@
             {
                 if (_rootContext is null)
                 {
-                    context.Exceptions.Clear();
+                    context.Exceptions?.Clear();
 
                     _rootContext = context;
                     CurrentContext = context;
@@ -60,7 +65,7 @@
 
             lock (_lockObject)
             {
-                if (CurrentContext.Parent is null)
+                if (CurrentContext?.Parent is null)
                 {
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
 #pragma warning disable IDISP007 // Don't dispose injected.
@@ -71,7 +76,7 @@
                     _rootContext = null;
                 }
 
-                CurrentContext = CurrentContext.Parent;
+                CurrentContext = CurrentContext?.Parent;
             }
         }
     }

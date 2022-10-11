@@ -118,19 +118,21 @@ namespace Orc.NuGetExplorer.Native
                 }
 
                 // Get the Credential from the mem location
-                var ncred = (NativeCredential)Marshal.PtrToStructure(handle, typeof(NativeCredential));
+                var ncred = Marshal.PtrToStructure<NativeCredential>(handle);
 
                 // Create a managed Credential type and fill it with data from the native counterpart.
-                var cred = new Credential();
-                cred.CredentialBlobSize = ncred.CredentialBlobSize;
-                cred.UserName = Marshal.PtrToStringUni(ncred.UserName);
-                cred.TargetName = Marshal.PtrToStringUni(ncred.TargetName);
-                cred.TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias);
-                cred.Type = ncred.Type;
-                cred.Flags = ncred.Flags;
-                cred.Persist = (CredPersistance)ncred.Persist;
+                var cred = new Credential
+                {
+                    CredentialBlobSize = ncred.CredentialBlobSize,
+                    UserName = Marshal.PtrToStringUni(ncred.UserName) ?? string.Empty,
+                    TargetName = Marshal.PtrToStringUni(ncred.TargetName) ?? string.Empty,
+                    TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias) ?? string.Empty,
+                    Type = ncred.Type,
+                    Flags = ncred.Flags,
+                    Persist = (CredPersistance)ncred.Persist
+                };
 
-                byte[] encryptedPassword = new byte[ncred.CredentialBlobSize];
+                var encryptedPassword = new byte[ncred.CredentialBlobSize];
                 Marshal.Copy(ncred.CredentialBlob, encryptedPassword, 0, encryptedPassword.Length);
                 cred.CredentialBlob = DecryptPassword(encryptedPassword);
 
@@ -162,6 +164,12 @@ namespace Orc.NuGetExplorer.Native
 
         internal class SimpleCredentials
         {
+            public SimpleCredentials(string userName, string password)
+            {
+                UserName = userName;
+                Password = password;
+            }
+
             public string UserName { get; set; }
             public string Password { get; set; }
 
@@ -221,15 +229,15 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct NativeCredential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public IntPtr TargetName;
             public IntPtr Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public IntPtr CredentialBlob;
-            public UInt32 Persist;
-            public UInt32 AttributeCount;
+            public uint Persist;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public IntPtr TargetAlias;
             public IntPtr UserName;
@@ -249,7 +257,7 @@ namespace Orc.NuGetExplorer.Native
                 ncred.Comment = IntPtr.Zero;
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
-                ncred.Persist = (UInt32)cred.Persist;
+                ncred.Persist = (uint)cred.Persist;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
 
                 var encryptedPassword = EncryptPassword(cred.CredentialBlob);
@@ -275,15 +283,15 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct Credential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public string TargetName;
             public string Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public string CredentialBlob;
             public CredPersistance Persist;
-            public UInt32 AttributeCount;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public string TargetAlias;
             public string UserName;
