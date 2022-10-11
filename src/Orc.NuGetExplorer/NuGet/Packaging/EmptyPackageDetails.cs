@@ -12,6 +12,8 @@
 
         public EmptyPackageDetails(PackageIdentity package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             _package = package;
             ResetValidationContext();
             FullName = package?.ToFullString();

@@ -10,6 +10,7 @@
     internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IDirectoryService _directoryService;
         private readonly string _rootDirectory;
 
@@ -19,7 +20,7 @@
 
             _directoryService = directoryService;
 
-            var assembly = AssemblyHelper.GetEntryAssembly();
+            var assembly = AssemblyHelper.GetRequiredEntryAssembly();
 
             _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
                 "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
@@ -71,7 +72,7 @@
         public string GetFile(string relativeFilePath)
         {
             var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
-            var directory = Path.GetDirectoryName(fullPath);
+            var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
 
             if (!_directoryService.Exists(directory))
             {

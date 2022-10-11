@@ -5,7 +5,6 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
-    using Orc.NuGetExplorer.Scenario;
 
     public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
     {
@@ -26,10 +25,8 @@
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
 
-            //run upgrade
-            //pre-initialization to prepare old data to new NuGetExplorer
-            var basicV3Scenario = typeFactory.CreateInstanceWithParametersAndAutoCompletion<V3RestorePackageConfigAndReinstall>();
-            nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
+            // Node: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
+            // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
             _nuGetConfigurationService = nuGetConfigurationService;
@@ -37,15 +34,15 @@
 
         private void InitializeTypes(IServiceLocator serviceLocator)
         {
-            //instantiate watchers
+            // instantiate watchers
             serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
             serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
 
-            //instantiate package manager listener
+            // instantiate package manager listener
             serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
 
             // register commands
-            var commandManager = serviceLocator.ResolveType<ICommandManager>();
+            var commandManager = serviceLocator.ResolveRequiredType<ICommandManager>();
             commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
         }
 

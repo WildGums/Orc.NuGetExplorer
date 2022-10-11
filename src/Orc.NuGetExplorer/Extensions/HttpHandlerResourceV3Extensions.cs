@@ -6,11 +6,12 @@
 
     public static class HttpHandlerResourceV3Extensions
     {
-        public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler) where T : class, ICredentialService
+        public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler) 
+            where T : class, ICredentialService
         {
             if (HttpHandlerResourceV3.CredentialService is not null)
             {
-                return HttpHandlerResourceV3.CredentialService.Value as T;
+                return (T)HttpHandlerResourceV3.CredentialService.Value;
             }
 
             throw new InvalidOperationException();

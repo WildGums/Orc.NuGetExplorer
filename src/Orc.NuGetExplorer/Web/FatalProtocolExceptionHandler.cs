@@ -31,9 +31,9 @@
                 }
                 else
                 {
-                    if (innerException is WebException)
+                    if (innerException is WebException webException)
                     {
-                        WebExceptionHandler.HandleException(innerException as WebException, source);
+                        WebExceptionHandler.HandleException(webException, source);
                     }
                 }
 
