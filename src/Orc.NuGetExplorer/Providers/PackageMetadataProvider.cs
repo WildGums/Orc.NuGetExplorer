@@ -27,36 +27,31 @@
 
         private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
 
-        private readonly Lazy<IExtensibleProject> _project = new(() => ServiceLocator.Default.ResolveType<IDefaultExtensibleProjectProvider>()?.GetDefaultProject());
+        private readonly Lazy<IExtensibleProject> _project = new(() => ServiceLocator.Default.ResolveRequiredType<IDefaultExtensibleProjectProvider>().GetDefaultProject());
 
-        private SourceRepository _localRepository;
+        private SourceRepository? _localRepository;
 
         static PackageMetadataProvider()
         {
-            NuGetLogger = ServiceLocator.Default.ResolveType<ILogger>();
-        }
-
-        public PackageMetadataProvider(ISourceRepositoryProvider repositoryProvider)
-        {
-            Argument.IsNotNull(() => repositoryProvider);
-
-            _repositoryProvider = repositoryProvider;
+            NuGetLogger = ServiceLocator.Default.ResolveRequiredType<ILogger>();
         }
 
         public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
-            : this(repositoryProvider)
         {
             Argument.IsNotNull(() => directoryService);
             Argument.IsNotNull(() => repositoryService);
 
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
-            _optionalLocalRepositories = new[] { repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource()) };
+            _optionalLocalRepositories = new[]
+            {
+                repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource())
+            };
+            _repositoryProvider = repositoryProvider;
         }
 
-        public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories, ISourceRepositoryProvider repositoryProvider,
-            IDirectoryService directoryService)
-            : this(repositoryProvider)
+        public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
+            IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider)
         {
             Argument.IsNotNull(() => sourceRepositories);
             Argument.IsNotNull(() => repositoryProvider);
@@ -65,16 +60,17 @@
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
             _directoryService = directoryService;
+            _repositoryProvider = repositoryProvider;
         }
 
         public static PackageMetadataProvider CreateFromSourceContext(IServiceLocator serviceLocator)
         {
             Argument.IsNotNull(() => serviceLocator);
 
-            var directoryService = serviceLocator.ResolveType<IDirectoryService>();
-            var repositoryService = serviceLocator.ResolveType<IRepositoryContextService>();
-            var projectSource = serviceLocator.ResolveType<IExtensibleProjectLocator>();
-            var packageManager = serviceLocator.ResolveType<INuGetPackageManager>();
+            var directoryService = serviceLocator.ResolveRequiredType<IDirectoryService>();
+            var repositoryService = serviceLocator.ResolveRequiredType<IRepositoryContextService>();
+            var projectSource = serviceLocator.ResolveRequiredType<IExtensibleProjectLocator>();
+            var packageManager = serviceLocator.ResolveRequiredType<INuGetPackageManager>();
 
             return PackageMetadataProvider.CreateFromSourceContext(directoryService, repositoryService, projectSource, packageManager);
         }
@@ -97,7 +93,7 @@
 
             var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
 
-            return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
+            return typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
         }
 
 
@@ -116,8 +112,16 @@
                 var project = _project.Value;
                 if (project is not null && project.SupportSideBySide)
                 {
-                    var localRepository = _repositoryProvider.CreateRepository(new PackageSource(Directory.GetParent(Path.Combine(project.GetInstallPath(identity))).FullName), NuGet.Protocol.FeedType.FileSystemV2);
-                    _localRepository = localRepository;
+                    // Note: ADD UNIT TEST HERE, Important
+                    var localProjectDirectory = Directory.GetParent(project.GetInstallPath(identity));
+                    if (localProjectDirectory is null)
+                    {
+                        Log.Warning("Cannot find destination folder in Side-but-side installation. Check project installation path.");
+                    }
+                    else
+                    {
+                        _localRepository = _repositoryProvider.CreateRepository(new PackageSource(localProjectDirectory.FullName), NuGet.Protocol.FeedType.FileSystemV2);
+                    }
                 }
             }
 

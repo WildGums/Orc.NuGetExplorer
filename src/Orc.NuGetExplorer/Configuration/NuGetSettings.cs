@@ -31,22 +31,36 @@
 
             _configurationService = configurationService;
 
-            //version of configuration is a version of assembly
-            //get version from configuration
-            GetVersionFromConfiguration();
+            // version of configuration is a version of assembly
+            // get version from configuration
+            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
+
+            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
+            {
+                Version = configurationVersion;
+            }
+
+            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
+
+            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
+            {
+                MinimalVersion = configurationVersion;
+            }
+
+            RaiseSettingsRead();
 
             SettingsChanged += OnSettingsChanged;
         }
 
         public bool IsLastVersion => AssemblyVersion.Equals(Version);
 
-        public Version Version { get; private set; }
+        public Version? Version { get; private set; }
 
-        public Version MinimalVersion { get; private set; }
+        public Version? MinimalVersion { get; private set; }
 
-        public event EventHandler SettingsChanged;
+        public event EventHandler? SettingsChanged;
 
-        public event EventHandler SettingsRead;
+        public event EventHandler? SettingsRead;
 
         private void RaiseSettingsChanged()
         {
@@ -412,25 +426,6 @@
 
             var combinedKey = GetSubsectionValueKey(section, subsection, key);
             _configurationService.SetRoamingValue(combinedKey, value);
-        }
-
-        private void GetVersionFromConfiguration()
-        {
-            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
-
-            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
-            {
-                Version = configurationVersion;
-            }
-
-            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
-
-            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
-            {
-                MinimalVersion = configurationVersion;
-            }
-
-            RaiseSettingsRead();
         }
 
         private void OnSettingsChanged(object? sender, EventArgs e)

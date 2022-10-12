@@ -61,7 +61,7 @@
                     anyCompleted = anyCompleted || result;
                 }
 
-                //update config version even if operation wasn't successful
+                // update config version even if operation wasn't successful
                 _settings.UpdateVersion();
                 _settings.UpdateMinimalVersion();
 

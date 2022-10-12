@@ -12,12 +12,13 @@
         public ModelProvider(ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => typeFactory);
+
             _typeFactory = typeFactory;
         }
 
-        private T _model;
+        private T? _model;
 
-        public virtual T Model
+        public virtual T? Model
         {
             get => _model;
             set
