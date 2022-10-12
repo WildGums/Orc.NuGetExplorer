@@ -3,6 +3,7 @@ namespace Orc.NuGetExplorer.Configuration
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Reflection;
     using NuGet.Configuration;
 
     internal class NuGetSettingsSection : SettingSection
@@ -28,13 +29,14 @@ namespace Orc.NuGetExplorer.Configuration
 
         }
 
-        public NuGetSettingsSection(string name, IReadOnlyDictionary<string, string> attributes, IEnumerable<SettingItem> children) : base(name, attributes, children)
+        public NuGetSettingsSection(string name, IReadOnlyDictionary<string, string> attributes, IEnumerable<SettingItem> children) 
+            : base(name, attributes, children)
         {
         }
 
         public override SettingBase Clone()
         {
-            return new NuGetSettingsSection(ElementName, Items.Select(child => child.Clone() as SettingItem));
+            return new NuGetSettingsSection(ElementName, Items.Select(child => child.Clone().CastTo<SettingItem>()));
         }
     }
 }

@@ -37,6 +37,7 @@
             Summary = packageMetadata.Summary;
 
             LastVersion = packageMetadata.Identity.Version;
+            SelectedVersion = LastVersion.ToFullString();
 
             ValidationContext = new ValidationContext();
 
@@ -138,13 +139,11 @@
 
         public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
 
-        public string Dependencies { get; set; }
-
         public bool? IsInstalled { get; set; }
 
         public string SelectedVersion { get; set; }
 
-        public IValidationContext ValidationContext { get; set; }
+        public IValidationContext? ValidationContext { get; set; }
 
         IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 

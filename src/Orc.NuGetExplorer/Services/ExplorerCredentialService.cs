@@ -70,7 +70,7 @@
         /// </param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A credential object, or null if no credentials could be acquired.</returns>
-        public async Task<ICredentials> GetCredentialsAsync(
+        public async Task<ICredentials?> GetCredentialsAsync(
             Uri uri,
             IWebProxy proxy,
             CredentialRequestType type,
@@ -82,7 +82,7 @@
                 throw new ArgumentNullException(nameof(uri));
             }
 
-            ICredentials creds = null;
+            ICredentials? creds = null;
 
             foreach (var provider in await _providers)
             {
@@ -93,10 +93,6 @@
 
                 try
                 {
-                    //original implementation contains semaphore
-                    //in fact unecessary, because service called
-                    //only when no one provider cached
-
                     _providerSemaphore.WaitOne();
 
                     Log.Debug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
@@ -129,7 +125,7 @@
                         }
                     }
 
-                    if (response.Status == CredentialStatus.Success)
+                    if (response?.Status == CredentialStatus.Success)
                     {
                         _retryCache[retryKey] = true;
                         Log.Debug($"_retryCache count now is {_retryCache.Count}");
@@ -171,7 +167,7 @@
         public bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,
-            out ICredentials credentials)
+            out ICredentials? credentials)
         {
             if (uri is null)
             {
@@ -197,7 +193,7 @@
         }
 
         private bool TryFromCredentialCache(Uri uri, CredentialRequestType type, bool isRetry, ICredentialProvider provider,
-            out CredentialResponse credentials)
+            out CredentialResponse? credentials)
         {
             credentials = null;
 
@@ -205,7 +201,7 @@
 
             if (isRetry)
             {
-                _providerCredentialCache.TryRemove(key, out var removed);
+                _providerCredentialCache.TryRemove(key, out _);
                 return false;
             }
 

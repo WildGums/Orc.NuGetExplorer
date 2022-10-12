@@ -16,7 +16,7 @@
         public PackageDetails(IPackageSearchMetadata metadata, bool isLatestVersion = false)
         {
             Id = metadata.Identity.Id;
-            FullName = metadata.Identity?.ToFullString();
+            FullName = metadata.Identity.ToFullString();
             Description = metadata.Description;
             IconUrl = metadata.IconUrl;
             NuGetVersion = metadata.Identity.Version;
@@ -52,7 +52,7 @@
 
         public Uri IconUrl { get; }
 
-        public Version Version => NuGetVersion?.Version;
+        public Version Version => NuGetVersion.Version;
 
         public NuGetVersion NuGetVersion { get; }
 
@@ -68,13 +68,11 @@
 
         public int? DownloadCount { get; }
 
-        public virtual string Dependencies { get; protected set; }
-
         public bool? IsInstalled { get; set; }
 
         public string SelectedVersion { get; set; }
 
-        public IValidationContext ValidationContext { get; protected set; }
+        public IValidationContext? ValidationContext { get; set; }
 
         public virtual PackageIdentity GetIdentity()
         {

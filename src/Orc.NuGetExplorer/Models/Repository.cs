@@ -4,6 +4,12 @@
 
     public sealed class Repository : IRepository
     {
+        public Repository(string source)
+        {
+            Name = "";
+            Source = source;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Source { get; set; }

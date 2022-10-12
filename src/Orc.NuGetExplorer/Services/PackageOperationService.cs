@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
+    using Catel.Data;
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -64,7 +65,7 @@
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -94,7 +95,7 @@
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -145,7 +146,7 @@
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -161,6 +162,7 @@
 
             _apiPackageRegistry.Validate(package);
 
+            package.ValidationContext ??= new ValidationContext();
             if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);

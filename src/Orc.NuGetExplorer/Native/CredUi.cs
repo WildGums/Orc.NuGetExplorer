@@ -100,7 +100,7 @@ namespace Orc.NuGetExplorer.Native
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CredUnPackAuthenticationBuffer(uint dwFlags, IntPtr pAuthBuffer, uint cbAuthBuffer, StringBuilder pszUserName, ref uint pcchMaxUserName, StringBuilder pszDomainName, ref uint pcchMaxDomainName, StringBuilder pszPassword, ref uint pcchMaxPassword);
+        public static extern bool CredUnPackAuthenticationBuffer(uint dwFlags, IntPtr pAuthBuffer, uint cbAuthBuffer, StringBuilder pszUserName, ref uint pcchMaxUserName, StringBuilder? pszDomainName, ref uint pcchMaxDomainName, StringBuilder pszPassword, ref uint pcchMaxPassword);
 #pragma warning restore IDE1006 // Naming Styles
 
         internal sealed class CriticalCredentialHandle : CriticalHandleZeroOrMinusOneIsInvalid
@@ -286,14 +286,14 @@ namespace Orc.NuGetExplorer.Native
             public uint Flags;
             public CredTypes Type;
             public string TargetName;
-            public string Comment;
+            public string? Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
             public uint CredentialBlobSize;
             public string CredentialBlob;
             public CredPersistance Persist;
             public uint AttributeCount;
             public IntPtr Attributes;
-            public string TargetAlias;
+            public string? TargetAlias;
             public string UserName;
 
             public override string ToString()

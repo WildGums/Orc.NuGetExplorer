@@ -22,7 +22,7 @@
 
             var assembly = AssemblyHelper.GetRequiredEntryAssembly();
 
-            _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
+            _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company() ?? string.Empty, assembly.Title() ?? string.Empty,
                 "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
             _directoryService.Create(_rootDirectory);

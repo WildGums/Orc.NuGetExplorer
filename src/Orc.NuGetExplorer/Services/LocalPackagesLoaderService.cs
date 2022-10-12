@@ -101,11 +101,7 @@
             // first we try and load the metadata from a local package
             var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
 
-            if (packageMetadata is null)
-            {
-                //fallback network package if local installation exists but package cannot be read
-                packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-            }
+            packageMetadata ??= await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
             return packageMetadata;
         }
     }

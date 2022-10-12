@@ -30,7 +30,7 @@
             _directoryService = directoryService;
         }
 
-        protected override void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
+        protected override void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
         {
             var context = e.PackageOperationContext;
 

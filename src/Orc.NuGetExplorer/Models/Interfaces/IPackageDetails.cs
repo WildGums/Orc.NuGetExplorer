@@ -14,7 +14,7 @@
 
         string Description { get; }
 
-        Uri IconUrl { get; }
+        Uri? IconUrl { get; }
 
         Version Version { get; }
 
@@ -32,13 +32,11 @@
 
         int? DownloadCount { get; }
 
-        string Dependencies { get; }
-
         bool? IsInstalled { get; set; }
 
         string SelectedVersion { get; set; }
 
-        IValidationContext ValidationContext { get; }
+        IValidationContext? ValidationContext { get; set; }
 
         void ResetValidationContext();
 

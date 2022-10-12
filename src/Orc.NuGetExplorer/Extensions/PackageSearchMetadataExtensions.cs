@@ -9,7 +9,7 @@
     {
         public static IEnumerable<VersionInfo> ToVersionInfo(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease)
         {
-            return packages?
+            return packages
                 .Where(v => includePrerelease || !v.Identity.Version.IsPrerelease)
                 .OrderByDescending(m => m.Identity.Version, VersionComparer.VersionRelease)
                 .Select(m => new VersionInfo(m.Identity.Version, m.DownloadCount)

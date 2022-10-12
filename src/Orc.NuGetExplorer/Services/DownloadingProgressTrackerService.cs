@@ -83,11 +83,11 @@
         private readonly Timer _trackerTimer;
 #pragma warning restore IDISP006 // Implement IDisposable.
 
-        private string _nupkgFilePath;
+        private string _nupkgFilePath = string.Empty;
 
         public DownloadProgressTrackToken(IFileService fileService, IDownloadingProgressTrackerService downloadingProgressTrackerService, PackageIdentity packageIdentity, SourceRepository source, FileSystemWatcher fileSystemWatcher,
             EventHandler<float> progressCallback, long downloadSize)
-            : this(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
+            : base(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
         {
             Argument.IsNotNull(() => downloadingProgressTrackerService);
             Argument.IsNotNull(() => packageIdentity);
@@ -96,9 +96,13 @@
 
             _downloadSize = downloadSize;
             _fileService = fileService;
+
+
+
             DownloadingProgressTrackerInstance = downloadingProgressTrackerService;
             PackageIdentity = packageIdentity;
             SourceRepository = source;
+
             _fileSystemWatcher = fileSystemWatcher;
             _fileSystemWatcher.EnableRaisingEvents = true;
             _fileSystemWatcher.Created += OnFileSystemCreated;
@@ -106,11 +110,6 @@
 
             _trackerTimer = new Timer(2500);
             _trackerTimer.Elapsed += OnTrackerTimerElapsed;
-        }
-
-        public DownloadProgressTrackToken(IProgress<float> instance, Action<IDisposableToken<IProgress<float>>> initialize, Action<IDisposableToken<IProgress<float>>> dispose, object? tag = null)
-            : base(instance, initialize, dispose, tag)
-        {
         }
 
         public IDownloadingProgressTrackerService DownloadingProgressTrackerInstance { get; }

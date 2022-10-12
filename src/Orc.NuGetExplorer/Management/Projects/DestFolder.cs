@@ -19,7 +19,7 @@
         public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
         {
 #if NETCORE
-            var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
+            var targetFramework = defaultFramework.GetHighest().First();
             Framework = targetFramework.DotNetFrameworkName;
             SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 #else
@@ -33,10 +33,7 @@
             // SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(tfm472));
 
             // Default initialization
-            if (SupportedPlatforms is null)
-            {
-                SupportedPlatforms = ImmutableList.Create<NuGetFramework>();
-            }
+            SupportedPlatforms ??= ImmutableList.Create<NuGetFramework>();
 
             ContentPath = destinationFolder;
             _pathResolver = new PackagePathResolver(destinationFolder);

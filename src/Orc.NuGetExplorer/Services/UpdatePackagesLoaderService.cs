@@ -46,8 +46,8 @@
 
             _serviceLocator = this.GetServiceLocator();
 
-            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>());
-            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
+            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveRequiredType<IPackageLoaderService>());
+            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveRequiredType<IPackageLoaderService>("Installed"));
         }
 
         public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
@@ -90,7 +90,7 @@
 
                     if (clonedMetadata.Identity.Version > package.Identity.Version)
                     {
-                        var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas(clonedMetadata as ClonedPackageSearchMetadata, package).Build();
+                        var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas((ClonedPackageSearchMetadata)clonedMetadata, package).Build();
                         updateList.Add(combinedMetadata);
                     }
 
@@ -177,7 +177,7 @@
 
             if (packagesToExclude.Any())
             {
-                var localRepositorySource = _repositoryService.LocalRepository?.Source;
+                var localRepositorySource = _repositoryService.LocalRepository.Source;
                 var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepositorySource, token);
 
                 foreach (var package in packagesToExclude)

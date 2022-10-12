@@ -14,7 +14,7 @@
             packageSourceProvider.PackageSourcesChanged += OnPackageSourcesChanged;
         }
 
-        private void OnPackageSourcesChanged(object sender, EventArgs e)
+        private void OnPackageSourcesChanged(object? sender, EventArgs e)
         {
             if (sender is IPackageSourceProvider provider)
             {
@@ -24,7 +24,7 @@
             }
         }
 
-        protected virtual void OnPackageSourcesChanged(string packageSource)
+        protected virtual void OnPackageSourcesChanged(string? packageSource)
         {
 
         }

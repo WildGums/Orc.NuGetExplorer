@@ -550,23 +550,21 @@
 
         private async Task CreatePackageListItemsAsync(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
         {
-            var vms = packageSearchMetadataCollection.Select(x => _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
+            var models = packageSearchMetadataCollection.Select(x => _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
 
             //create tokens, used for deffer execution of tasks
             //obtained states/updates of packages
 
             if (_pageType != MetadataOrigin.Updates)
             {
-                foreach (var vm in vms)
+                foreach (var package in models)
                 {
-                    var deferToken = new DeferToken();
-
-                    deferToken.LoadType = DetermineLoadBehavior(_pageType);
-                    deferToken.Package = vm;
-
-                    deferToken.UpdateAction = newState =>
+                    var deferToken = new DeferToken(_pageType, package)
                     {
-                        vm.Status = newState;
+                        UpdateAction = newState =>
+                        {
+                            package.Status = newState;
+                        }
                     };
 
                     if (_repositoryService.AcquireContext() != SourceContext.EmptyContext)
@@ -578,21 +576,8 @@
 
             _dispatcherService.Invoke(() =>
             {
-                PackageItems.AddRange(vms);
-            }
-            );
-
-            static MetadataOrigin DetermineLoadBehavior(MetadataOrigin page)
-            {
-                switch (page)
-                {
-                    case MetadataOrigin.Browse: return MetadataOrigin.Installed;
-
-                    case MetadataOrigin.Installed: return MetadataOrigin.Browse;
-                }
-
-                return MetadataOrigin.Browse;
-            }
+                PackageItems.AddRange(models);
+            });
         }
 
         private async Task DownloadAllPicturesForMetadataAsync(IEnumerable<IPackageSearchMetadata> metadatas, CancellationToken token)

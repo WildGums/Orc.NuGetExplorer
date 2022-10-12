@@ -3,18 +3,26 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Logging;
 
     public sealed class CombinedNuGetSource : INuGetSource
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly List<INuGetSource> _sourceList = new();
 
         public CombinedNuGetSource(IReadOnlyList<INuGetSource> feedList)
         {
+            if(!feedList.Any())
+            {
+                Log.ErrorAndCreateException<InvalidOperationException>("Cannot create NuGet source from empty feed list");
+            }
+
             foreach (var feed in feedList)
             {
                 if (feed is CombinedNuGetSource)
                 {
-                    throw new InvalidOperationException("Nested multiple source feeds are not allowed");
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Nested multiple source feeds are not allowed");
                 }
                 _sourceList.Add(feed);
             }
@@ -22,7 +30,7 @@
 
         public string Name => Constants.CombinedSourceName;
 
-        public string Source => _sourceList.FirstOrDefault()?.Source;//returns top source
+        public string Source => _sourceList.First().Source;
 
         public bool IsAccessible => IsAllFeedsAccessible();
 
@@ -46,7 +54,7 @@
 
         public IEnumerable<NuGetFeed> GetAllSources()
         {
-            return _sourceList.Select(x => x as NuGetFeed).ToList();
+            return _sourceList.Select(x => x as NuGetFeed).Where(x => x is not null).ToList()!;
         }
 
         public override string ToString()

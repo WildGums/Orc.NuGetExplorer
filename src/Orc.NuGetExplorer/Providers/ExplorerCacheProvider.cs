@@ -8,10 +8,7 @@
 
         public IconCache EnsureIconCache()
         {
-            if (_iconCache is null)
-            {
-                _iconCache = new IconCache();
-            }
+            _iconCache ??= new IconCache();
 
             return _iconCache;
         }

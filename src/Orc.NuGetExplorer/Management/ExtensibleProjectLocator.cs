@@ -83,7 +83,7 @@
         public void Register<T>() 
             where T : IExtensibleProject
         {
-            Register(_typeFactory.CreateInstance<T>());
+            Register(_typeFactory.CreateRequiredInstance<T>());
         }
 
         public void Register<T>(params object[] parameters) 
@@ -95,7 +95,7 @@
             }
             else
             {
-                Register(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<T>(parameters));
+                Register(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<T>(parameters));
             }
         }
 

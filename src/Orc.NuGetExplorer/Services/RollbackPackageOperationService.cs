@@ -10,7 +10,7 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IDictionary<IPackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<IPackageOperationContext, Stack<Action>>();
 
-        public void PushRollbackAction(Action rollbackAction, IPackageOperationContext context)
+        public void PushRollbackAction(Action rollbackAction, IPackageOperationContext? context)
         {
             if (context is null)
             {

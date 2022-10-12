@@ -7,6 +7,7 @@
     using Catel.Configuration;
     using Catel.Logging;
     using NuGetExplorer.Crypto;
+    using static Orc.NuGetExplorer.Native.CredUi;
 
     internal class CredentialsPrompter
     {
@@ -16,18 +17,22 @@
         private readonly CredentialStoragePolicy _credentialStoragePolicy;
         private bool _isSaveChecked;
 
-        public CredentialsPrompter(IConfigurationService configurationService)
+        public CredentialsPrompter(IConfigurationService configurationService, string target)
         {
-            Argument.IsNotNull(() => configurationService);
-
             _configurationService = configurationService;
+
             _credentialStoragePolicy = _configurationService.GetCredentialStoragePolicy();
+
+            WindowTitle = string.Empty;
+            MainInstruction = string.Empty;
+            Content = string.Empty;
+            Target = target;
         }
 
         public string Target { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public bool AllowStoredCredentials { get; set; } // Should we try stored credentials or skip
+        public bool AllowStoredCredentials { get; set; } // Determine should we try stored credentials or skip
         public bool ShowSaveCheckBox { get; set; }
 
         public bool IsSaveChecked => _isSaveChecked;
@@ -213,7 +218,7 @@
             return configurationKey;
         }
 
-        private CredUi.SimpleCredentials ReadCredential(string key, bool allowConfigurationFallback)
+        private CredUi.SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
         {
             Log.Debug("Trying to read credentials for key '{0}'", key);
 
@@ -223,12 +228,9 @@
                 return null;
             }
 
-            var credential = new CredUi.SimpleCredentials();
-
             if (_credentialStoragePolicy == CredentialStoragePolicy.Configuration)
             {
-                ReadCredentialFromConfiguration(key, credential);
-                return credential;
+                return ReadCredentialFromConfiguration(key);
             }
 
             var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out var nCredPtr);
@@ -251,8 +253,7 @@
 
                 Log.Debug("Retrieved credentials: {0}", cred);
 
-                credential.UserName = cred.UserName;
-                credential.Password = cred.CredentialBlob;
+                var credential = new CredUi.SimpleCredentials(cred.UserName, cred.CredentialBlob);
 
                 // Some company policies don't allow us reading the credentials, so
                 // that results in an empty password being returned
@@ -262,7 +263,7 @@
                     {
                         try
                         {
-                            ReadCredentialFromConfiguration(key, credential);
+                            return ReadCredentialFromConfiguration(key);
                         }
                         catch (Exception ex)
                         {
@@ -276,32 +277,29 @@
                         return null;
                     }
                 }
-            }
 
-            return credential;
+                return credential;
+            }
         }
 
-        private void ReadCredentialFromConfiguration(string key, CredUi.SimpleCredentials credential)
+        private SimpleCredentials ReadCredentialFromConfiguration(string key)
         {
             var configurationUserNameKey = GetUserNameConfigurationKey(key);
-            var userName = credential.UserName ?? _configurationService.GetRoamingValue(configurationUserNameKey, string.Empty);
+            var userName = _configurationService.GetRoamingValue(configurationUserNameKey, string.Empty);
             var configurationKey = GetPasswordConfigurationKey(key, userName);
             var encryptionKey = GetEncryptionKey(key, userName);
 
             Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
 
             var encryptedPassword = _configurationService.GetRoamingValue(configurationKey, string.Empty);
-
-            if (!string.IsNullOrEmpty(userName))
-            {
-                credential.UserName = userName;
-            }
-
+            var password = encryptedPassword;
             if (!string.IsNullOrWhiteSpace(encryptedPassword))
             {
-                var decryptedPassword = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
-                credential.Password = decryptedPassword;
+                password = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
             }
+
+            var credentials = new CredUi.SimpleCredentials(userName, password);
+            return credentials;
         }
 
         private void WriteCredential(string key, string userName, string secret)

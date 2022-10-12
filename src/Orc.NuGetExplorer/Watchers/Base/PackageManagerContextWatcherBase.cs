@@ -11,6 +11,7 @@
             : base(packageOperationNotificationService)
         {
             Argument.IsNotNull(() => packageOperationContextService);
+
             _packageOperationContextService = packageOperationContextService;
 
             _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
@@ -18,9 +19,9 @@
 
         public bool HasContextErrors => CurrentContext?.Exceptions?.Any() ?? false;
 
-        public IPackageOperationContext CurrentContext => _packageOperationContextService.CurrentContext;
+        public IPackageOperationContext? CurrentContext => _packageOperationContextService.CurrentContext;
 
-        protected virtual void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
+        protected virtual void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
         {
 
         }

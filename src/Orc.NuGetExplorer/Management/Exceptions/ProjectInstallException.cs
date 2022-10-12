@@ -7,15 +7,17 @@
     public class ProjectInstallException : ProjectManageException
     {
 
-        public ProjectInstallException(string message) : base(message)
+        public ProjectInstallException(string message) 
+            : base(message)
         {
 
         }
 
-        public ProjectInstallException(string message, Exception innerException) : base(message, innerException)
+        public ProjectInstallException(string message, Exception innerException) 
+            : base(message, innerException)
         {
         }
 
-        public IEnumerable<PackageIdentity> CurrentBatch { get; set; }
+        public IEnumerable<PackageIdentity>? CurrentBatch { get; set; }
     }
 }
