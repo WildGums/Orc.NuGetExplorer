@@ -14,12 +14,12 @@
             upgradeRunner.UpgradeStart += OnUpgrading;
         }
 
-        protected virtual void OnUpgrading(object sender, EventArgs e)
+        protected virtual void OnUpgrading(object? sender, EventArgs e)
         {
 
         }
 
-        protected virtual void OnUpgraded(object sender, EventArgs e)
+        protected virtual void OnUpgraded(object? sender, EventArgs e)
         {
 
         }

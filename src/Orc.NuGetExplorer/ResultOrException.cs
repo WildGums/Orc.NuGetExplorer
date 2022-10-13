@@ -18,11 +18,11 @@
 
         public bool IsSuccess { get; }
 
-        public T Result { get; }
+        public T? Result { get; }
 
-        public Exception Exception { get; }
+        public Exception? Exception { get; }
 
-        public T UnwrapResult()
+        public T? UnwrapResult()
         {
             return Result;
         }

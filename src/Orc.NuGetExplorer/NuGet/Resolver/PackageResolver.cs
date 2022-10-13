@@ -102,17 +102,9 @@ namespace Orc.NuGetExplorer.Resolver
 
             foreach (var package in availablePackages)
             {
-                IEnumerable<PackageDependency> dependencies = null;
-
-                // clear out the dependencies if the behavior is set to ignore
-                if (context.DependencyBehavior == DependencyBehavior.Ignore)
-                {
-                    dependencies = Enumerable.Empty<PackageDependency>();
-                }
-                else
-                {
-                    dependencies = package.Dependencies ?? Enumerable.Empty<PackageDependency>();
-                }
+                var dependencies = context.DependencyBehavior == DependencyBehavior.Ignore ?
+                    Enumerable.Empty<PackageDependency>() :
+                    package.Dependencies ?? Enumerable.Empty<PackageDependency>();
 
                 resolverPackages.Add(new ResolverPackage(package.Id, package.Version, dependencies, package.Listed, false));
             }
@@ -338,7 +330,7 @@ namespace Orc.NuGetExplorer.Resolver
             //  (2) Create a look-up of every dependency that refers to a particular package Id
             foreach (var package in packages)
             {
-                foreach (var dependency in package?.Dependencies)
+                foreach (var dependency in package.Dependencies)
                 {
                     if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out var dependencyVersionRanges))
                     {
