@@ -18,6 +18,7 @@
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly int ValidationDelay = 800;
         private static readonly int VerificationBatch = 5;
 
@@ -90,6 +91,11 @@
 
         private void OnRemoveFeedExecute()
         {
+            if (SelectedFeed is null)
+            {
+                return;
+            }
+
             RemovedFeeds.Add(SelectedFeed);
             Feeds.Remove(SelectedFeed);
         }
@@ -98,6 +104,11 @@
 
         private void OnMoveUpFeedExecute()
         {
+            if (SelectedFeed is null)
+            {
+                return;
+            }
+
             Feeds.MoveUp(SelectedFeed);
         }
 
@@ -105,6 +116,11 @@
 
         private void OnMoveDownFeedExecute()
         {
+            if (SelectedFeed is null)
+            {
+                return;
+            }
+
             Feeds.MoveDown(SelectedFeed);
         }
 
@@ -321,7 +337,7 @@
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
                 var removedFeeds = e.OldItems?.OfType<NuGetFeed>().ToList();
-                removedFeeds.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
+                removedFeeds?.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
             }
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)

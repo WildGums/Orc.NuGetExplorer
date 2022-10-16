@@ -20,7 +20,7 @@
         }
 
         [ViewToViewModel("Collection", MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
-        public object Collection
+        public object? Collection
         {
             get { return GetValue(CollectionProperty); }
             set { SetValue(CollectionProperty, value); }

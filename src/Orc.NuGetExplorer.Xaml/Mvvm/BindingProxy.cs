@@ -4,7 +4,7 @@
 
     public class BindingProxy : Freezable
     {
-        public object Data
+        public object? Data
         {
             get { return GetValue(DataProperty); }
             set { SetValue(DataProperty, value); }

@@ -27,7 +27,7 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly int Timeout = 500;
 
-        private static IPackageMetadataProvider PackageMetadataProvider;
+        private static IPackageMetadataProvider? PackageMetadataProvider;
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
@@ -65,7 +65,7 @@
 
         public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
 
-        public object DependencyInfo { get; set; }
+        public object? DependencyInfo { get; set; }
 
         public DeferToken DefferedLoadingToken { get; set; }
 
@@ -77,13 +77,13 @@
 
         public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
 
-        public IPackageSearchMetadata VersionData { get; set; }
+        public IPackageSearchMetadata? VersionData { get; set; }
 
         public NuGetVersion SelectedVersion { get; set; }
 
-        public PackageIdentity SelectedPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, SelectedVersion);
+        public PackageIdentity SelectedPackage => new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
-        public PackageIdentity InstalledPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, InstalledVersion);
+        public PackageIdentity InstalledPackage => new PackageIdentity(Package.Identity.Id, InstalledVersion);
 
         [ViewModelToModel]
         public NuGetVersion InstalledVersion { get; set; }
@@ -287,7 +287,7 @@
 
         private void OnVersionDataChanged()
         {
-            DependencyInfo = VersionData.DependencySets;
+            DependencyInfo = VersionData?.DependencySets;
         }
 
         private async Task ApplyPackageAsync()
@@ -295,9 +295,12 @@
             try
             {
                 //select identity version
-                var selectedVersion = Package?.Identity?.Version;
+                var selectedVersion = Package.Identity.Version;
 
-                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
+                VersionsCollection = new ObservableCollection<NuGetVersion>()
+                {
+                    selectedVersion
+                };
 
                 SelectedVersion = selectedVersion;
 

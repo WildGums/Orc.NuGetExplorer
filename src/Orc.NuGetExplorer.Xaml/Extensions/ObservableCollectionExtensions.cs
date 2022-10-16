@@ -5,7 +5,8 @@
 
     public static class ObservableCollectionExtensions
     {
-        public static void MoveUp<T>(this ObservableCollection<T> collection, T item)
+        public static void MoveUp<T>(this ObservableCollection<T> collection, T item) 
+            where T: notnull
         {
             Argument.IsNotNull(() => collection);
             Argument.IsNotNull(nameof(item), item);
@@ -20,6 +21,7 @@
         }
 
         public static void MoveDown<T>(this ObservableCollection<T> collection, T item)
+            where T : notnull
         {
             Argument.IsNotNull(() => collection);
             Argument.IsNotNull(nameof(item), item);

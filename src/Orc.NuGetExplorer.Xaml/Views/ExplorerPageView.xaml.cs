@@ -20,7 +20,7 @@
         private readonly FrameworkElement _arrowUpResource;
         private readonly FrameworkElement _arrowDownResource;
 
-        private ScrollViewer _infinityboxScrollViewer;
+        private ScrollViewer? _infinityboxScrollViewer;
         private bool _isViewportWidthListened = false;
 
         static ExplorerPageView()
@@ -32,14 +32,14 @@
         {
             InitializeComponent();
 
-            _arrowUpResource = FindResource(ArrowUpResourceKey) as FrameworkElement;
-            _arrowDownResource = FindResource(ArrowDownResourceKey) as FrameworkElement;
+            _arrowUpResource = (FrameworkElement)FindResource(ArrowUpResourceKey);
+            _arrowDownResource = (FrameworkElement)FindResource(ArrowDownResourceKey);
         }
 
         [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public NuGetPackage SelectedItemOnPage
+        public NuGetPackage? SelectedItemOnPage
         {
-            get { return (NuGetPackage)GetValue(SelectedItemOnPageProperty); }
+            get { return (NuGetPackage?)GetValue(SelectedItemOnPageProperty); }
             set { SetValue(SelectedItemOnPageProperty, value); }
         }
 
@@ -67,7 +67,7 @@
 
         private void SubscribeToScrollViewerPropertyChanges()
         {
-            //listen ViewportWidth
+            // listen ViewportWidth
             if (_isViewportWidthListened)
             {
                 return;
@@ -77,15 +77,19 @@
                 .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
                 .AddValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
 
-            //manual recount
+            // manual recount
             OnInfinityScrollViewPortChanged(this, EventArgs.Empty);
 
             _isViewportWidthListened = true;
         }
 
 
-        private void OnInfinityScrollViewPortChanged(object sender, EventArgs e)
+        private void OnInfinityScrollViewPortChanged(object? sender, EventArgs e)
         {
+            if (_infinityboxScrollViewer is null)
+            {
+                return;
+            }
             indicatorScreen.SetCurrentValue(WidthProperty, _infinityboxScrollViewer.ViewportWidth + IndicatorOffset);
         }
 

@@ -19,7 +19,7 @@
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
 
-            SettingsTitle = null;
+            SettingsTitle = string.Empty;
         }
 
         /// <summary>
@@ -36,13 +36,13 @@
         {
             Argument.IsNotNull(() => initialState);
 
-            var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
+            var explorerVM = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(initialState.Tab.Name);
             explorerVM.SetInitialPageParameters(initialState);
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 
-        public async Task<bool?> ShowPackagesSourceSettingsAsync()
+        public async Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync()
         {
             return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
         }

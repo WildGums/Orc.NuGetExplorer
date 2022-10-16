@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Threading.Tasks;
+    using Catel.Services;
 
     public interface IPackagesUIService
     {
@@ -8,6 +9,6 @@
 
         Task ShowPackagesExplorerAsync();
         Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState);
-        Task<bool?> ShowPackagesSourceSettingsAsync();
+        Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync();
     }
 }

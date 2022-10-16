@@ -19,7 +19,7 @@
 
         public INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction)
         {
-            var projectContext = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetProjectContext>(fileConflictAction);
+            var projectContext = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetProjectContext>(fileConflictAction);
 
             return projectContext;
         }

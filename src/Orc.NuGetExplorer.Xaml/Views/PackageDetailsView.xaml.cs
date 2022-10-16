@@ -18,9 +18,9 @@
         }
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewToViewModel)]
-        public NuGetPackage Package
+        public NuGetPackage? Package
         {
-            get { return (NuGetPackage)GetValue(PackageProperty); }
+            get { return (NuGetPackage?)GetValue(PackageProperty); }
             set { SetValue(PackageProperty, value); }
         }
 
