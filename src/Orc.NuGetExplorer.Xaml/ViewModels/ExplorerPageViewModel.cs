@@ -34,7 +34,7 @@
         private static readonly int SingleTasksDelayMs = 800;
         private static readonly IHttpExceptionHandler<FatalProtocolException> PackageLoadingExceptionHandler = new FatalProtocolExceptionHandler();
 
-        private static readonly Timer SingleDelayTimer = new Timer(SingleTasksDelayMs);
+        private static readonly Timer SingleDelayTimer = new(SingleTasksDelayMs);
 
 #pragma warning disable IDE1006 // Naming Styles
         private static IDisposable? _context;
@@ -53,7 +53,7 @@
         private readonly ITypeFactory _typeFactory;
         private readonly MetadataOrigin _pageType;
 
-        private readonly PackageSearchParameters _initialSearchParams;
+        private readonly PackageSearchParameters? _initialSearchParams;
         private readonly HashSet<CancellationTokenSource> _tokenSource = new();
 
         private ExplorerSettingsContainer _settings;

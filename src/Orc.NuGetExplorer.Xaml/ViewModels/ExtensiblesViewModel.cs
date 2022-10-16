@@ -17,6 +17,8 @@
 
             _extensiblesManager = extensiblesManager;
 
+            ExtensiblesCollection = new();
+
             Title = "Project extensions";
         }
 

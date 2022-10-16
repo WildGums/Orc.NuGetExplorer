@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -40,7 +41,7 @@
         private string _startPage = DefaultStartPage;
 
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-                        IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
+            IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
             Argument.IsNotNull(() => commandManager);
             Argument.IsNotNull(() => settingsProvider);
@@ -60,25 +61,30 @@
                 settingsLazyProvider.IsInitialized = false;
             }
 
+            if (settingsProvider.Model is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+            }
+
             Settings = settingsProvider.Model;
 
             Title = "Package management";
         }
 
-        //View to viewmodel
-        public string StartPage { get; set; } = null;
+        // View to viewmodel
+        public string? StartPage { get; set; } = null;
 
         public ExplorerSettingsContainer Settings { get; set; }
 
-        public IPackageSearchMetadata SelectedPackageMetadata { get; set; }
+        public IPackageSearchMetadata? SelectedPackageMetadata { get; set; }
 
-        public NuGetPackage SelectedPackageItem { get; set; }
+        public NuGetPackage? SelectedPackageItem { get; set; }
 
-        public INuGetExplorerInitialState BrowsePageParameters { get; set; }
+        public INuGetExplorerInitialState? BrowsePageParameters { get; set; }
 
-        public INuGetExplorerInitialState InstalledPageParameters { get; set; }
+        public INuGetExplorerInitialState? InstalledPageParameters { get; set; }
 
-        public INuGetExplorerInitialState UpdatesPageParameters { get; set; }
+        public INuGetExplorerInitialState? UpdatesPageParameters { get; set; }
 
         public ObservableCollection<ExplorerPage> Pages { get; set; } = new ObservableCollection<ExplorerPage>();
 
@@ -111,7 +117,7 @@
             UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
 
             _pageSetup.Values.ForEach(page =>
-                Pages.Add(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
+                Pages.Add(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
 
             foreach (var page in Pages)
             {
@@ -131,7 +137,7 @@
 
         protected override Task OnClosingAsync()
         {
-            _configurationService.SetLastRepository("Browse", Settings.ObservedFeed.Name);
+            _configurationService.SetLastRepository("Browse", Settings.ObservedFeed?.Name ?? string.Empty);
             _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
             _configurationService.SetIsHideInstalled(Settings.IsHideInstalled);
 
@@ -145,7 +151,7 @@
             return base.OnClosingAsync();
         }
 
-        private void OnExplorerPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnExplorerPagePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.HasPropertyChanged(nameof(ExplorerPage.IsActive)))
             {

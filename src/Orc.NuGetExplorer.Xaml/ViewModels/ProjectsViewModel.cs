@@ -26,7 +26,7 @@
         [Model(SupportIEditableObject = false)]
         public NuGetActionTarget ProjectsModel { get; set; }
 
-        public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; }
+        public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
 
         protected override Task InitializeAsync()
         {

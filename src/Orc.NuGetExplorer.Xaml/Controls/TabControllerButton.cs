@@ -14,7 +14,7 @@
     /// </summary>
     public class TabControllerButton : RadioButton
     {
-        private LinkedList<TabControllerButton> _group = new LinkedList<TabControllerButton>();
+        private LinkedList<TabControllerButton> _group = new();
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

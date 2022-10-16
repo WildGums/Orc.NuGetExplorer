@@ -25,11 +25,11 @@
         private readonly INuGetConfigurationService _configurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
 
-        private readonly Queue<NuGetFeed> _validationQueue = new Queue<NuGetFeed>();
+        private readonly Queue<NuGetFeed> _validationQueue = new();
 
-        private static readonly System.Timers.Timer ValidationTimer = new System.Timers.Timer(ValidationDelay);
+        private static readonly System.Timers.Timer ValidationTimer = new(ValidationDelay);
 
-        private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
+        private readonly INuGetConfigurationResetService? _nuGetConfigurationResetService;
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
         {
@@ -48,16 +48,22 @@
 
             SettingsFeeds = new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>();
+            PackageSources = new List<IPackageSource>();
 
             Title = "Settings";
 
-            InitializeCommands();
+            RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
+            MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
+            MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
+            AddFeed = new Command(OnAddFeedExecute);
+            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
             : this(configurationService, feedVerificationService)
         {
             Argument.IsNotNull(() => nuGetConfigurationResetService);
+
             _nuGetConfigurationResetService = nuGetConfigurationResetService;
         }
 
@@ -148,15 +154,6 @@
         }
 
         #endregion
-
-        protected void InitializeCommands()
-        {
-            RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
-            MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
-            MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
-            AddFeed = new Command(OnAddFeedExecute);
-            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
-        }
 
         protected override async Task InitializeAsync()
         {

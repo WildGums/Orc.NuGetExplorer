@@ -12,6 +12,7 @@
     using Catel.Logging;
     using Catel.MVVM;
     using NuGet.Packaging.Core;
+    using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using NuGetExplorer.Enums;
@@ -28,6 +29,7 @@
         private static readonly int Timeout = 500;
 
         private static IPackageMetadataProvider? PackageMetadataProvider;
+
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
@@ -49,6 +51,12 @@
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
+
+            // Add dummy package, the real value must be set by binding after ctor
+            Package = new NuGetPackage(new PackageSearchMetadata(), MetadataOrigin.Browse);
+
+            VersionsCollection = new();
+            ValidationContext = new ValidationContext();
         }
 
         private bool IsPackageApplied { get; set; }
@@ -67,7 +75,7 @@
 
         public object? DependencyInfo { get; set; }
 
-        public DeferToken DefferedLoadingToken { get; set; }
+        public DeferToken? DefferedLoadingToken { get; set; }
 
         [ViewModelToModel]
         public PackageStatus Status { get; set; }
@@ -79,16 +87,31 @@
 
         public IPackageSearchMetadata? VersionData { get; set; }
 
-        public NuGetVersion SelectedVersion { get; set; }
+        private NuGetVersion? _selectedVersion;
 
-        public PackageIdentity SelectedPackage => new PackageIdentity(Package.Identity.Id, SelectedVersion);
+        public NuGetVersion? SelectedVersion
+        {
+            get => _selectedVersion;
+            set
+            {
+                if (_selectedVersion != value)
+                {
+                    var oldValue = _selectedVersion;
+                    _selectedVersion = value;
 
-        public PackageIdentity InstalledPackage => new PackageIdentity(Package.Identity.Id, InstalledVersion);
+                    RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<NuGetVersion>(oldValue, value));
+                }
+            }
+        }
+
+        public PackageIdentity SelectedPackage => new(Package.Identity.Id, SelectedVersion);
+
+        public PackageIdentity InstalledPackage => new(Package.Identity.Id, InstalledVersion);
 
         [ViewModelToModel]
-        public NuGetVersion InstalledVersion { get; set; }
+        public NuGetVersion? InstalledVersion { get; set; }
 
-        public string[] ApiValidationMessages { get; private set; }
+        public string[]? ApiValidationMessages { get; private set; }
 
         #region Commands
 
@@ -152,7 +175,7 @@
                 return false;
             }
 
-            return !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
+            return !(Package?.ValidationContext?.HasErrors ?? false) && !IsVersionInstalled();
         }
 
         public TaskCommand UninstallPackage { get; set; }
@@ -203,7 +226,11 @@
         {
             try
             {
-                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
+                if (PackageMetadataProvider is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(PackageMetadataProvider)}' value incorrect");
+                }
+                var versionMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
                 if (versionMetadata?.Identity?.Version is not null)
                 {
                     packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
@@ -249,19 +276,27 @@
         {
             base.OnPropertyChanged(e);
 
-            if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
+            if (e.HasPropertyChanged(nameof(SelectedVersion)))
             {
-                if ((e.OldValue is null && SelectedVersion == Package.Identity.Version) || e.NewValue is null)
+                if (e is PropertyChangedExtendedEventArgs<NuGetVersion> args)
                 {
-                    // Skip loading on version list first load
-                    return;
+                    if ((args.OldValue is null && SelectedVersion == Package.Identity.Version) || args.NewValue is null)
+                    {
+                        // Skip loading on version list first load
+                        return;
+                    }
+                }
+
+                if (_settingsProvider.Model is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
                 }
 
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
-                if (Package is not null)
+                if (Package is not null && VersionData is not null)
                 {
                     // Note: Workaround, this is a hack way to set specific version of package
                     var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
@@ -305,6 +340,10 @@
                 SelectedVersion = selectedVersion;
 
                 PackageMetadataProvider = Providers.PackageMetadataProvider.CreateFromSourceContext(ServiceLocator.Default);
+                if (_settingsProvider.Model is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                }
 
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 

@@ -16,7 +16,7 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly IconDownloader IconDownloader = new IconDownloader();
+        private static readonly IconDownloader IconDownloader = new();
 
         private readonly IconCache _iconCache;
 

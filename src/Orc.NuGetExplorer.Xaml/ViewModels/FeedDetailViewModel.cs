@@ -16,10 +16,10 @@
         public NuGetFeed Feed { get; set; }
 
         [ViewModelToModel]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [ViewModelToModel]
-        public string Source { get; set; }
+        public string? Source { get; set; }
 
         public Command OpenChooseLocalPathToSourceDialog { get; set; }
 

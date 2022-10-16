@@ -16,9 +16,11 @@
     internal class PageItemViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly string InstalledVersionText = "Installed version";
         private static readonly string LastVersionText = "Latest version";
         private static readonly string UpdateVersionText = "Update version";
+
         private readonly ExplorerSettingsContainer _nugetSettings;
 
         public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
@@ -28,7 +30,7 @@
             Argument.IsNotNull(() => commandManager);
 
             Package = package;
-            _nugetSettings = settingsProvider.Model;
+            _nugetSettings = settingsProvider.Model ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
 
             var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
             if (batchUpdateCommand is null)
@@ -37,8 +39,7 @@
             }
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
-            //command
-            CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
+            CheckItem = new Command<MouseButtonEventArgs?>(CheckItemExecute);
         }
 
         [Model(SupportIEditableObject = false)]
@@ -62,21 +63,21 @@
 
         public bool CanBeAddedInBatchOperation { get; set; }
 
-        public NuGetVersion PrimaryVersion { get; set; }
+        public NuGetVersion? PrimaryVersion { get; set; }
 
-        public NuGetVersion SecondaryVersion { get; set; }
+        public NuGetVersion? SecondaryVersion { get; set; }
 
-        public string PrimaryVersionDescription { get; set; }
+        public string? PrimaryVersionDescription { get; set; }
 
-        public string SecondaryVersionDescription { get; set; }
+        public string? SecondaryVersionDescription { get; set; }
 
         public Action InvalidateCanBatchUpdateExecute { get; }
 
-        public Command<MouseButtonEventArgs> CheckItem { get; set; }
+        public Command<MouseButtonEventArgs?> CheckItem { get; set; }
 
-        private void CheckItemExecute(MouseButtonEventArgs parameter)
+        private void CheckItemExecute(MouseButtonEventArgs? parameter)
         {
-            if (parameter.ClickCount < 2)
+            if (parameter?.ClickCount < 2)
             {
                 return;
             }
@@ -178,7 +179,7 @@
 
         private void GetPrimaryVersionInfo(NuGetPackage package)
         {
-            PrimaryVersion = package.InstalledVersion;
+            PrimaryVersion = package.InstalledVersion ?? throw new InvalidOperationException($"Package '{package}' must be installed");
             PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";
         }
     }

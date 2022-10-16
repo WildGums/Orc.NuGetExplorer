@@ -15,10 +15,6 @@
             typeof(ExplorerWindow).AutoDetectViewPropertiesToSubscribe();
         }
 
-        public ExplorerWindow() : this(null)
-        {
-        }
-
         public ExplorerWindow(ExplorerViewModel viewModel)
             : base(viewModel, DataWindowMode.Custom)
         {
