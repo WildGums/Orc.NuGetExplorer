@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -22,8 +21,8 @@
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
             _directoryService = directoryService;
             _fileService = fileService;
         }

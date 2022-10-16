@@ -5,7 +5,6 @@
     using System.ComponentModel;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Data;
     using Catel.Fody;
     using Catel.IoC;
@@ -38,10 +37,10 @@
         public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
             IPackageCommandService packageCommandService)
         {
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => packageCommandService);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
 
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
@@ -364,7 +363,7 @@
 
         private void ValidateCurrentPackage(NuGetPackage package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             //validate loaded dependencies
             package.ResetValidationContext();
@@ -416,7 +415,7 @@
 
         private void GetPackageValidationErrors(NuGetPackage package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             // title: NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors
             ApiValidationMessages = package.ValidationContext?.GetAlertMessages(ValidationTags.Api) ?? Array.Empty<string>();

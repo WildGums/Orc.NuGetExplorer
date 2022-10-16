@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Packaging.Core;
@@ -15,7 +14,6 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using Orc.FileSystem;
     using Orc.NuGetExplorer.Models;
 
     internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
@@ -37,10 +35,10 @@
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
         {
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => projectProvider);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(projectProvider);
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;

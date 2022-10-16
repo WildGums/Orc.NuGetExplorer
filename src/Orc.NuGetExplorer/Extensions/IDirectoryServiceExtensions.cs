@@ -3,15 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Catel;
     using Orc.FileSystem;
 
     public static class IDirectoryServiceExtensions
     {
         public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => folderPath);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(folderPath);
 
             failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
             var fallbackFlag = false;

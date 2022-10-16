@@ -3,7 +3,6 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using Catel.Services;
 
@@ -26,11 +25,11 @@
         public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
-            Argument.IsNotNull(() => busyIndicatorService);
-            Argument.IsNotNull(() => packageQueryService);
-            Argument.IsNotNull(() => packageOperationService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(packageQueryService);
+            ArgumentNullException.ThrowIfNull(packageOperationService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
 
             _busyIndicatorService = busyIndicatorService;
             _packageQueryService = packageQueryService;
@@ -48,7 +47,7 @@
 
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            Argument.IsNotNull(() => packageDetails);
+            ArgumentNullException.ThrowIfNull(packageDetails);
 
             switch (operationType)
             {
@@ -147,7 +146,7 @@
 
         internal async Task<bool> CanInstallAsync(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 
@@ -158,7 +157,7 @@
 
         internal async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 

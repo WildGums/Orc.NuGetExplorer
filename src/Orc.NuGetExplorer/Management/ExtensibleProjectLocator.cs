@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
 
@@ -21,8 +20,8 @@
 
         public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _typeFactory = typeFactory;
             _managerConfigurationService = configurationService;

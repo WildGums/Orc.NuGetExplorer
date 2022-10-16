@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using Catel;
     using Catel.Logging;
     using Orc.FileSystem;
 
@@ -19,10 +18,10 @@
             IDirectoryService directoryService)
             : base(packageOperationNotificationService, packageOperationContextService)
         {
-            Argument.IsNotNull(() => rollbackPackageOperationService);
-            Argument.IsNotNull(() => backupFileSystemService);
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
+            ArgumentNullException.ThrowIfNull(backupFileSystemService);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(directoryService);
 
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;

@@ -4,7 +4,6 @@
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Catel;
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
@@ -25,9 +24,9 @@
 
         public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
         {
-            Argument.IsNotNull(() => package);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => commandManager);
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(commandManager);
 
             Package = package;
             _nugetSettings = settingsProvider.Model ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");

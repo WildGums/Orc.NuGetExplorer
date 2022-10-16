@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
@@ -28,12 +27,12 @@
             IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
             : base(Commands.Packages.BatchUpdate, commandManager)
         {
-            Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => projectManager);
-            Argument.IsNotNull(() => projectLocator);
-            Argument.IsNotNull(() => packageCommandService);
-            Argument.IsNotNull(() => packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(projectManager);
+            ArgumentNullException.ThrowIfNull(projectLocator);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
 
             _progressManager = progressManager;
             _messageService = messageService;

@@ -4,7 +4,6 @@
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Configuration;
     using Catel.Logging;
     using NuGet.Configuration;
@@ -20,7 +19,7 @@
 
         public WindowsCredentialProvider(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
             _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;

@@ -16,7 +16,7 @@
     {
         public ApiPackageRegistry(ILanguageService languageService)
         {
-            Argument.IsNotNull(() => languageService);
+            ArgumentNullException.ThrowIfNull(languageService);
 
             _languageService = languageService;
         }
@@ -56,7 +56,7 @@
 
         public void Validate(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             IEnumerable<PackageDependencyGroup>? dependencyGroups = null;
 

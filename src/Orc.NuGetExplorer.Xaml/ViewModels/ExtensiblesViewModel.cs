@@ -3,7 +3,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.MVVM;
     using NuGetExplorer.Management;
 
@@ -13,7 +12,7 @@
 
         public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
         {
-            Argument.IsNotNull(() => extensiblesManager);
+            ArgumentNullException.ThrowIfNull(extensiblesManager);
 
             _extensiblesManager = extensiblesManager;
 
@@ -42,7 +41,7 @@
 
         public void ExtensibleProjectStatusChange(bool isShouldBeEnabled, IExtensibleProject project)
         {
-            Argument.IsNotNull(() => project);
+            ArgumentNullException.ThrowIfNull(project);
 
             if (isShouldBeEnabled)
             {

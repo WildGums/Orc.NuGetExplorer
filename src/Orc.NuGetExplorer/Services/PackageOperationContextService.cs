@@ -13,8 +13,8 @@
 
         public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => packageOperationNotificationService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _packageOperationNotificationService = packageOperationNotificationService;
             _typeFactory = typeFactory;
@@ -39,7 +39,7 @@
 
         private void ApplyOperationContext(PackageOperationContext context)
         {
-            Argument.IsNotNull(() => context);
+            ArgumentNullException.ThrowIfNull(context);
 
             lock (_lockObject)
             {
@@ -61,7 +61,7 @@
 
         private void CloseCurrentOperationContext(PackageOperationContext context)
         {
-            Argument.IsNotNull(() => context);
+            ArgumentNullException.ThrowIfNull(context);
 
             lock (_lockObject)
             {

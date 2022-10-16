@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -19,9 +18,9 @@
 
         public PackageQueryService(ISourceRepositoryProvider repositoryProvider, IPackageMetadataProvider packageMetadataProvider, ILogger logger)
         {
-            Argument.IsNotNull(() => repositoryProvider);
-            Argument.IsNotNull(() => packageMetadataProvider);
-            Argument.IsNotNull(() => logger);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(packageMetadataProvider);
+            ArgumentNullException.ThrowIfNull(logger);
 
             _repositoryProvider = repositoryProvider;
             _packageMetadataProvider = packageMetadataProvider;

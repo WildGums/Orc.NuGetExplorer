@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Management;
@@ -14,7 +13,7 @@
 
         public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
         {
-            Argument.IsNotNull(() => sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
 
             _sourceRepositoryProvider = sourceRepositoryProvider;
         }

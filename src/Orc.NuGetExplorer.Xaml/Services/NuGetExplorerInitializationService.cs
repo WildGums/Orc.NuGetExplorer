@@ -14,10 +14,10 @@
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => languageService);
-            Argument.IsNotNull(() => credentialProviderLoaderService);
-            Argument.IsNotNull(() => nuGetProjectUpgradeService);
-            Argument.IsNotNull(() => nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(languageService);
+            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
 
             InitializeTypes(ServiceLocator.Default);
 

@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
     using System.Linq;
-    using Catel;
     using NuGet.Packaging;
     using NuGet.Protocol.Core.Types;
     using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
@@ -14,8 +13,8 @@
 
         private UpdatePackageSearchMetadataBuilder(ClonedPackageSearchMetadata metadata, IPackageSearchMetadata updatedVersionMetadata)
         {
-            Argument.IsNotNull(() => metadata);
-            Argument.IsNotNull(() => updatedVersionMetadata);
+            ArgumentNullException.ThrowIfNull(metadata);
+            ArgumentNullException.ThrowIfNull(updatedVersionMetadata);
 
             _metadata = metadata;
             _updatedVersionMetadata = updatedVersionMetadata;

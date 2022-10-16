@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
@@ -29,12 +28,12 @@
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
             IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
         {
-            Argument.IsNotNull(() => managerPage);
-            Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => packageCommandService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => commandManager);
+            ArgumentNullException.ThrowIfNull(managerPage);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(commandManager);
 
             _parentManagerPage = managerPage;
             _progressManager = progressManager;

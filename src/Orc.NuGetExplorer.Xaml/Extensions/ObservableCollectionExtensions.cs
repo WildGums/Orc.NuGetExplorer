@@ -8,7 +8,7 @@
         public static void MoveUp<T>(this ObservableCollection<T> collection, T item) 
             where T: notnull
         {
-            Argument.IsNotNull(() => collection);
+            ArgumentNullException.ThrowIfNull(collection);
             Argument.IsNotNull(nameof(item), item);
 
             var oldindex = collection.IndexOf(item);
@@ -23,7 +23,7 @@
         public static void MoveDown<T>(this ObservableCollection<T> collection, T item)
             where T : notnull
         {
-            Argument.IsNotNull(() => collection);
+            ArgumentNullException.ThrowIfNull(collection);
             Argument.IsNotNull(nameof(item), item);
 
             var oldindex = collection.IndexOf(item);

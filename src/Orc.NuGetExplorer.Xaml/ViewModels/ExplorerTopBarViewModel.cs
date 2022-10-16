@@ -5,7 +5,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
@@ -32,14 +31,14 @@
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
             INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService, IMessageService messageService, IMessageMediator messageMediator)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => uIVisualizerService);
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => settings);
-            Argument.IsNotNull(() => nuGetCacheManager);
-            Argument.IsNotNull(() => busyIndicatorService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => messageMediator);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(uIVisualizerService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(settings);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(messageMediator);
 
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;

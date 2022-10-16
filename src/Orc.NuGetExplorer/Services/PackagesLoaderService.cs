@@ -19,8 +19,8 @@
 
         public PackagesLoaderService(ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
-            Argument.IsNotNull(() => logger);
-            Argument.IsNotNull(() => repositoryProvider);
+            ArgumentNullException.ThrowIfNull(logger);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
 
             _nugetLogger = logger;
             _repositoryProvider = repositoryProvider;

@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Common;
@@ -38,8 +37,8 @@
 
         public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
 
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
@@ -53,9 +52,9 @@
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
             IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider)
         {
-            Argument.IsNotNull(() => sourceRepositories);
-            Argument.IsNotNull(() => repositoryProvider);
-            Argument.IsNotNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(directoryService);
 
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
@@ -65,7 +64,7 @@
 
         public static PackageMetadataProvider CreateFromSourceContext(IServiceLocator serviceLocator)
         {
-            Argument.IsNotNull(() => serviceLocator);
+            ArgumentNullException.ThrowIfNull(serviceLocator);
 
             var directoryService = serviceLocator.ResolveRequiredType<IDirectoryService>();
             var repositoryService = serviceLocator.ResolveRequiredType<IRepositoryContextService>();
@@ -78,10 +77,10 @@
         public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
             INuGetPackageManager projectManager)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => projectSource);
-            Argument.IsNotNull(() => projectManager);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(projectSource);
+            ArgumentNullException.ThrowIfNull(projectManager);
 
             var typeFactory = TypeFactory.Default;
 

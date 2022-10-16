@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Linq;
-    using Catel;
     using Catel.Data;
 
     public static class IValidationContextExtensions

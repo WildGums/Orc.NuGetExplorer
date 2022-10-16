@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Management;
 
@@ -20,12 +19,12 @@
             INuGetPackageManager projectManager, INuGetConfigurationService nuGetConfigurationService,
             IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
         {
-            Argument.IsNotNull(() => repositoryContextService);
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => projectManager);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => defaultExtensibleProjectProvider);
-            Argument.IsNotNull(() => repositoryProvider);
+            ArgumentNullException.ThrowIfNull(repositoryContextService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(projectManager);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
 
             _repositoryContextService = repositoryContextService;
             _extensibleProjectLocator = extensibleProjectLocator;

@@ -2,7 +2,6 @@
 {
     using System;
     using System.IO;
-    using Catel;
     using Catel.Logging;
     using Catel.Reflection;
     using Orc.FileSystem;
@@ -16,7 +15,7 @@
 
         public TemporaryFileSystemContext(IDirectoryService directoryService)
         {
-            Argument.IsNotNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(directoryService);
 
             _directoryService = directoryService;
 

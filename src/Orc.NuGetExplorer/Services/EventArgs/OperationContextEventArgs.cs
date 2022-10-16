@@ -1,13 +1,12 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using Catel;
 
     public class OperationContextEventArgs : EventArgs
     {
         public OperationContextEventArgs(IPackageOperationContext packageOperationContext)
         {
-            Argument.IsNotNull(() => packageOperationContext);
+            ArgumentNullException.ThrowIfNull(packageOperationContext);
 
             PackageOperationContext = packageOperationContext;
         }

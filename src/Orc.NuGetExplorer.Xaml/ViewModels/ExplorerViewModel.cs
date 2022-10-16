@@ -7,7 +7,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Catel;
     using Catel.Collections;
     using Catel.Configuration;
     using Catel.IoC;
@@ -43,10 +42,10 @@
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
-            Argument.IsNotNull(() => commandManager);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(commandManager);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _configurationService = configurationService;
             _initializationService = initializationService;

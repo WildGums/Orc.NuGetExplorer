@@ -5,7 +5,6 @@
     using System.Threading.Tasks;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using Catel;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Cache;
@@ -24,7 +23,7 @@
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
-            Argument.IsNotNull(() => appCacheProvider);
+            ArgumentNullException.ThrowIfNull(appCacheProvider);
 
             _iconCache = appCacheProvider.EnsureIconCache();
             _iconCache.FallbackValue = new BitmapImage(new Uri(_defaultIconUri));

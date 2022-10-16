@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using MethodTimer;
@@ -53,16 +52,16 @@
             INuGetProjectContextProvider nuGetProjectContextProvider, IDirectoryService directoryService, IFileService fileService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, 
             IDownloadingProgressTrackerService downloadingProgressTrackerService, ILogger logger)
         {
-            Argument.IsNotNull(() => frameworkNameProvider);
-            Argument.IsNotNull(() => sourceRepositoryProvider);
-            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
-            Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => downloadingProgressTrackerService);
-            Argument.IsNotNull(() => logger);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
+            ArgumentNullException.ThrowIfNull(logger);
 
             _frameworkNameProvider = frameworkNameProvider;
             _sourceRepositoryProvider = sourceRepositoryProvider;
@@ -571,8 +570,8 @@
 
         private async Task<bool> CheckCanBeInstalledAsync(IExtensibleProject project, PackageReaderBase packageReader, NuGetFramework targetFramework, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
-            Argument.IsNotNull(() => packageReader);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(packageReader);
 
             var frameworkReducer = new FrameworkReducer();
 

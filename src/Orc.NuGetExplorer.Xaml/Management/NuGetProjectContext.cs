@@ -2,12 +2,10 @@
 {
     using System;
     using System.Xml.Linq;
-    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging;
     using NuGet.ProjectManagement;
-    using Orc.NuGetExplorer.Windows;
 
     internal class NuGetProjectContext : INuGetProjectContext
     {
@@ -15,7 +13,7 @@
 
         public NuGetProjectContext(FileConflictAction fileConflictAction, ILogger logger)
         {
-            Argument.IsNotNull(() => logger);
+            ArgumentNullException.ThrowIfNull(logger);
 
             FileConflictAction = fileConflictAction;
         }

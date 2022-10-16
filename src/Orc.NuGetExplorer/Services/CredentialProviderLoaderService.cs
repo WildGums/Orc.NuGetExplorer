@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Configuration;
     using Catel.Logging;
     using NuGet.Common;
@@ -19,7 +18,7 @@
 
         public CredentialProviderLoaderService(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 

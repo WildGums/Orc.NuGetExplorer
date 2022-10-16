@@ -2,14 +2,13 @@
 {
     using System;
     using System.Linq;
-    using Catel;
     using NuGet.Configuration;
 
     public abstract class PackageSourcesWatcherBase
     {
         protected PackageSourcesWatcherBase(IPackageSourceProvider packageSourceProvider)
         {
-            Argument.IsNotNull(() => packageSourceProvider);
+            ArgumentNullException.ThrowIfNull(packageSourceProvider);
 
             packageSourceProvider.PackageSourcesChanged += OnPackageSourcesChanged;
         }

@@ -20,9 +20,9 @@
 
         public DownloadingProgressTrackerService(ILogger nugetLogger, IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => nugetLogger);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(nugetLogger);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _nugetLogger = nugetLogger;
             _directoryService = directoryService;
@@ -31,8 +31,8 @@
 
         public async Task<IDisposableToken<IProgress<float>>> TrackDownloadOperationAsync(IPackageInstallationService packageInstallationService, SourcePackageDependencyInfo packageDependencyInfo)
         {
-            Argument.IsNotNull(() => packageInstallationService);
-            Argument.IsNotNull(() => packageDependencyInfo);
+            ArgumentNullException.ThrowIfNull(packageInstallationService);
+            ArgumentNullException.ThrowIfNull(packageDependencyInfo);
 
 #pragma warning disable IDISP001 // Dispose created.
             var watcher = new FileSystemWatcher();
@@ -89,10 +89,10 @@
             EventHandler<float> progressCallback, long downloadSize)
             : base(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
         {
-            Argument.IsNotNull(() => downloadingProgressTrackerService);
-            Argument.IsNotNull(() => packageIdentity);
-            Argument.IsNotNull(() => source);
-            Argument.IsNotNull(() => fileSystemWatcher);
+            ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
+            ArgumentNullException.ThrowIfNull(packageIdentity);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(fileSystemWatcher);
 
             _downloadSize = downloadSize;
             _fileService = fileService;

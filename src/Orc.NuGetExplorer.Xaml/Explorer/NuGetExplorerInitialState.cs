@@ -1,12 +1,10 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
-
     public class NuGetExplorerInitialState : INuGetExplorerInitialState
     {
         public NuGetExplorerInitialState(ExplorerTab tab, PackageSearchParameters? packageSearchParameters = null)
         {
-            Argument.IsNotNull(() => tab);
+            ArgumentNullException.ThrowIfNull(tab);
 
             Tab = tab;
             InitialSearchParameters = packageSearchParameters;

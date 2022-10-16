@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
-    using Catel;
     using Catel.Logging;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Configuration;
@@ -14,8 +13,8 @@
         public NuGetPackageSourceProvider(ISettings settingsManager, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToPackageSourceInstances())
         {
-            Argument.IsNotNull(() => settingsManager);
-            Argument.IsNotNull(() => defaultPackageSourcesProvider);
+            ArgumentNullException.ThrowIfNull(settingsManager);
+            ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
 
             _settingsManager = settingsManager;
         }

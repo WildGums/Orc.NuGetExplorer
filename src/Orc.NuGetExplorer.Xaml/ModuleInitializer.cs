@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer;

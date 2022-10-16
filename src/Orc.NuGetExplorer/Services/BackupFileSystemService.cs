@@ -2,7 +2,6 @@
 {
     using System;
     using System.IO;
-    using Catel;
     using Catel.Logging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Services;
@@ -16,9 +15,9 @@
 
         public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => operationContextService);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(operationContextService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _operationContextService = operationContextService;
             _directoryService = directoryService;

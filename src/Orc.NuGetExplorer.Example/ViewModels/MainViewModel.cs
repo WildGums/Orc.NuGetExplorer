@@ -4,11 +4,9 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
-    using Catel.Threading;
     using Models;
     using Orc.NuGetExplorer.Services;
 
@@ -27,14 +25,14 @@
             INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
         {
-            Argument.IsNotNull(() => packagesUiService);
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => initializationService);
-            Argument.IsNotNull(() => nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(packagesUiService);
+            ArgumentNullException.ThrowIfNull(echoService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(initializationService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
 
             _initializationService = initializationService;
             _packagesUiService = packagesUiService;

@@ -1,7 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System.Threading.Tasks;
-    using Catel;
     using Catel.Messaging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
@@ -17,11 +15,11 @@
             IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => projectProvider);
-            Argument.IsNotNull(() => messageMediator);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(nuGetPackageManager);
+            ArgumentNullException.ThrowIfNull(projectProvider);
+            ArgumentNullException.ThrowIfNull(messageMediator);
 
             _fileSystemService = fileSystemService;
             _directoryService = directoryService;

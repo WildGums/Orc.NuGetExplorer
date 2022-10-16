@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Example.Services
 {
     using System.Windows.Media;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
@@ -26,8 +25,8 @@
             IAccentColorService accentColorService)
             : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
-            Argument.IsNotNull(() => projectLocator);
-            Argument.IsNotNull(() => accentColorService);
+            ArgumentNullException.ThrowIfNull(projectLocator);
+            ArgumentNullException.ThrowIfNull(accentColorService);
 
             var serviceLocator = ServiceLocator.Default;
 

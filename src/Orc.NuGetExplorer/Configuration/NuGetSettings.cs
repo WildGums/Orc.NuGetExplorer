@@ -6,7 +6,6 @@
     using System.Reflection;
     using Catel;
     using Catel.Configuration;
-    using Catel.IO;
     using Catel.Logging;
     using NuGet.Configuration;
 
@@ -27,7 +26,7 @@
 
         public NuGetSettings(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 

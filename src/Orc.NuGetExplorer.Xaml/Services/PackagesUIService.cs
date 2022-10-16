@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Services;
     using ViewModels;
@@ -13,8 +12,8 @@
 
         public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
@@ -34,7 +33,7 @@
 
         public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
         {
-            Argument.IsNotNull(() => initialState);
+            ArgumentNullException.ThrowIfNull(initialState);
 
             var explorerVM = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(initialState.Tab.Name);

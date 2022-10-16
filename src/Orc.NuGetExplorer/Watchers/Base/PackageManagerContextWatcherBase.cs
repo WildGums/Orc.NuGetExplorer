@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Linq;
-    using Catel;
 
     public abstract class PackageManagerContextWatcherBase : PackageManagerWatcherBase
     {
@@ -10,7 +9,7 @@
         protected PackageManagerContextWatcherBase(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService)
             : base(packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
 
             _packageOperationContextService = packageOperationContextService;
 

@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
@@ -36,9 +35,9 @@
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
            INuGetPackageManager nuGetExtensibleProjectManager)
         {
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
 
             _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
@@ -167,7 +166,7 @@
 
         public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleaseTags, bool? allowPrerelease = null, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => excludeReleaseTags);
+            ArgumentNullException.ThrowIfNull(excludeReleaseTags);
 
             var foundUpdates = (await SearchForPackagesUpdatesAsync(allowPrerelease, true, token)).ToList();
 

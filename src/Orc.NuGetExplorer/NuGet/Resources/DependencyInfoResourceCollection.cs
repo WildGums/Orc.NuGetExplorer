@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using global::NuGet.Protocol.Core.Types;
     using MethodTimer;
@@ -35,14 +34,14 @@
 
         public DependencyInfoResourceCollection(IReadOnlyList<DependencyInfoResource> resources)
         {
-            Argument.IsNotNull(() => resources);
+            ArgumentNullException.ThrowIfNull(resources);
 
             _resources = resources.ToList();
         }
 
         public DependencyInfoResourceCollection(DependencyInfoResource resource)
         {
-            Argument.IsNotNull(() => resource);
+            ArgumentNullException.ThrowIfNull(resource);
 
             _resources = new List<DependencyInfoResource>
             {

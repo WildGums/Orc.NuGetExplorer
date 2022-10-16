@@ -44,7 +44,7 @@
         /// NonInteractive requests must not promt the user for credentials.</param>
         public ExplorerCredentialService(AsyncLazy<IEnumerable<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials)
         {
-            Argument.IsNotNull(() => providers);
+            ArgumentNullException.ThrowIfNull(providers);
 
             _providers = providers;
             _nonInteractive = nonInteractive;

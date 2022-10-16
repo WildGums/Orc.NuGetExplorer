@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
-    using Catel.Reflection;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
@@ -22,7 +21,7 @@
 
         public NuGetProjectUpgradeService(ISettings settings)
         {
-            Argument.IsNotNull(() => settings);
+            ArgumentNullException.ThrowIfNull(settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
             if (settings is not IVersionedSettings versionedSettings)

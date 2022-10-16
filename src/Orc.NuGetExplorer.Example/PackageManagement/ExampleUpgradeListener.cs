@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Example.PackageManagement
 {
     using System;
-    using Catel;
     using Catel.Services;
     using Orc.NuGetExplorer.Scenario;
     using Orc.NuGetExplorer.Services;
@@ -12,7 +11,7 @@
 
         public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService) : base(upgradeService)
         {
-            Argument.IsNotNull(() => messageService);
+            ArgumentNullException.ThrowIfNull(messageService);
             _messageService = messageService;
         }
 

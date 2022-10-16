@@ -4,7 +4,6 @@
     using System.ComponentModel;
     using System.Threading;
     using System.Windows.Threading;
-    using Catel;
 
     public class SynchronizeInvoker : ISynchronizeInvoke
     {
@@ -12,7 +11,7 @@
 
         public SynchronizeInvoker(Dispatcher dispatcher)
         {
-            Argument.IsNotNull(() => dispatcher);
+            ArgumentNullException.ThrowIfNull(dispatcher);
             _dispatcher = dispatcher;
         }
 

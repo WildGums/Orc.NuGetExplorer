@@ -4,7 +4,6 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using NuGet.Configuration;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
@@ -26,7 +25,7 @@
 
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
-            Argument.IsNotNull(() => settingsProvider);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
 
             _settings = settingsProvider.Model ?? throw new InvalidOperationException("Settings must be initialized first");
             _nuGetConfigurationService = nuGetConfigurationService;

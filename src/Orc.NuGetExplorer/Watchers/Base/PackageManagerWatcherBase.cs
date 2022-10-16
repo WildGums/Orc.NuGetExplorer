@@ -1,12 +1,10 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
-
     public abstract class PackageManagerWatcherBase
     {
         protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => packageOperationNotificationService);
+            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
 
             packageOperationNotificationService.OperationStarting += OnOperationStarting;
             packageOperationNotificationService.OperationFinished += OnOperationFinished;

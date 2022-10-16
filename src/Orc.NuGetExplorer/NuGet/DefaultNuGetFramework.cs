@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using Catel.Logging;
     using Microsoft.Win32;
     using NuGet.Frameworks;
@@ -19,7 +18,7 @@
 
         public DefaultNuGetFramework(IFrameworkNameProvider frameworkNameProvider)
         {
-            Argument.IsNotNull(() => frameworkNameProvider);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
 
             _frameworkNameProvider = frameworkNameProvider;
 

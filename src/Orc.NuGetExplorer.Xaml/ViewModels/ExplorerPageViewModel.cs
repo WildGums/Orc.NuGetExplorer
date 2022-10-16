@@ -8,9 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using System.Timers;
-    using Catel;
     using Catel.Collections;
-    using Catel.Data;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
@@ -64,19 +62,19 @@
             IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
             INuGetConfigurationService nuGetConfigurationService, IDispatcherProviderService dispatcherProviderService)
         {
-            Argument.IsNotNull(() => packagesLoaderService);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => packageMetadataMediaDownloadService);
-            Argument.IsNotNull(() => commandManager);
-            Argument.IsNotNull(() => nuGetFeedVerificationService);
-            Argument.IsNotNull(() => dispatcherService);
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => defferedPackageLoaderService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => nuGetCacheManager);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => dispatcherProviderService);
+            ArgumentNullException.ThrowIfNull(packagesLoaderService);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(packageMetadataMediaDownloadService);
+            ArgumentNullException.ThrowIfNull(commandManager);
+            ArgumentNullException.ThrowIfNull(nuGetFeedVerificationService);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(defferedPackageLoaderService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(dispatcherProviderService);
 
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;

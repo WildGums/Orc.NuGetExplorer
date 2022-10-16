@@ -1,12 +1,10 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
-
     public abstract class PackageManagerLogListenerBase
     {
         protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
         {
-            Argument.IsNotNull(() => nuGetLogListeningSevice);
+            ArgumentNullException.ThrowIfNull(nuGetLogListeningSevice);
 
             nuGetLogListeningSevice.Error += OnError;
             nuGetLogListeningSevice.Info += OnInfo;

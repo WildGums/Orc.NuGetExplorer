@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using Catel;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
@@ -19,9 +18,9 @@
         public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
             : base(typeFactory)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => nugetConfigurationService);
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(nugetConfigurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _nugetConfigurationService = nugetConfigurationService;
             _configurationService = configurationService;

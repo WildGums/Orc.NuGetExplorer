@@ -2,7 +2,6 @@
 {
     using System;
     using System.Runtime.InteropServices;
-    using Catel;
     using NuGet.Frameworks;
 
     public static class FrameworkParser
@@ -25,7 +24,7 @@
         /// <returns></returns>
         public static NuGetFramework ToSpecificPlatform(NuGetFramework framework)
         {
-            Argument.IsNotNull(() => framework);
+            ArgumentNullException.ThrowIfNull(framework);
 
             if (framework.Version.Major < 5)
             {

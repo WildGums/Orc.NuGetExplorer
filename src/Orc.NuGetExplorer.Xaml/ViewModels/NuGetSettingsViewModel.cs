@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Fody;
     using Catel.IoC;
     using Catel.MVVM;
@@ -28,16 +27,16 @@
             INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider)
         {
-            Argument.IsNotNull(() => settingsProvider);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
 
             Title = title ?? DefaultTitle;
         }
 
         public NuGetSettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
-            Argument.IsNotNull(() => defaultPackageSourcesProvider);
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => settings);
+            ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(settings);
 
             _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
             _nuGetConfigurationService = configurationService;

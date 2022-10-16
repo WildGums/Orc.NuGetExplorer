@@ -37,10 +37,10 @@
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
             IMessageService messageService, IFileSystemService fileSystemService)
         {
-            Argument.IsNotNull(() => packageInstallationService);
-            Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
-            Argument.IsNotNull(() => messageService);
+            ArgumentNullException.ThrowIfNull(packageInstallationService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
+            ArgumentNullException.ThrowIfNull(messageService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
@@ -147,8 +147,8 @@
         /// <returns></returns>
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
 
             try
             {
@@ -167,7 +167,7 @@
 
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
+            ArgumentNullException.ThrowIfNull(project);
 
             if (string.IsNullOrEmpty(packageId))
             {

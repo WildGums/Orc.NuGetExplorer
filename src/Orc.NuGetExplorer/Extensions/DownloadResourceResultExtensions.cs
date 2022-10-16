@@ -1,14 +1,13 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.IO;
-    using Catel;
     using NuGet.Protocol.Core.Types;
 
     public static class DownloadResourceResultExtensions
     {
         public static string GetResourceRoot(this DownloadResourceResult downloadResourceResult)
         {
-            Argument.IsNotNull(() => downloadResourceResult);
+            ArgumentNullException.ThrowIfNull(downloadResourceResult);
 
             var fileStream = downloadResourceResult.PackageStream as FileStream;
 

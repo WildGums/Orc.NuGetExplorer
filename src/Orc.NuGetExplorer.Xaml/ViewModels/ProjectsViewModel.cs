@@ -3,7 +3,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Collections;
     using Catel.MVVM;
     using NuGetExplorer.Management;
@@ -16,8 +15,8 @@
 
         public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
         {
-            Argument.IsNotNull(() => extensiblesManager);
-            Argument.IsNotNull(() => projectsModel);
+            ArgumentNullException.ThrowIfNull(extensiblesManager);
+            ArgumentNullException.ThrowIfNull(projectsModel);
 
             _extensiblesManager = extensiblesManager;
             ProjectsModel = projectsModel;

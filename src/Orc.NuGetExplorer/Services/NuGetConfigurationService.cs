@@ -37,7 +37,7 @@
 
         public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 
@@ -116,7 +116,7 @@
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
-            Argument.IsNotNull(() => packageSources);
+            ArgumentNullException.ThrowIfNull(packageSources);
             _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
 
             if (_packageSourceProvider.Value is NuGetPackageSourceProvider nugetPackageSourceProvider)
@@ -127,7 +127,7 @@
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
         {
-            Argument.IsNotNull(() => repository);
+            ArgumentNullException.ThrowIfNull(repository);
 
             var key = GetIsPrereleaseAllowedKey(repository);
             _configurationService.SetRoamingValue(key, value);

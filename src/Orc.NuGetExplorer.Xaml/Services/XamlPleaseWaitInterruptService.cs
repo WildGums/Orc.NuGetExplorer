@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System;
-    using Catel;
     using Catel.Services;
 
     public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
@@ -10,7 +9,7 @@
 
         public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
         {
-            Argument.IsNotNull(() => busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
 
             _busyIndicatorService = busyIndicatorService;
         }

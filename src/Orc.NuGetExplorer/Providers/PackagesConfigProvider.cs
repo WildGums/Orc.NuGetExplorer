@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
     using System.Collections.Generic;
-    using Catel;
     using NuGet.Frameworks;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
@@ -16,7 +15,7 @@
 
         public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
         {
-            Argument.IsNotNull(() => frameworkNameProvider);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
 
             _frameworkNameProvider = frameworkNameProvider;
         }

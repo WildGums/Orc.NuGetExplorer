@@ -5,7 +5,6 @@
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Media;
-    using Catel;
 
     internal static class FrameworkElementExtensions
     {

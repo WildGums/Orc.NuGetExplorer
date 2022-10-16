@@ -8,7 +8,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using System.Timers;
-    using Catel;
     using Catel.Collections;
     using Catel.Data;
     using Catel.Logging;
@@ -33,8 +32,8 @@
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
         {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => feedVerificationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
 
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
@@ -62,7 +61,7 @@
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
             : this(configurationService, feedVerificationService)
         {
-            Argument.IsNotNull(() => nuGetConfigurationResetService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationResetService);
 
             _nuGetConfigurationResetService = nuGetConfigurationResetService;
         }

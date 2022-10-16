@@ -11,7 +11,7 @@
 
         protected ConfigurationListenerBase(ISettings settings)
         {
-            Argument.IsNotNull(() => settings);
+            ArgumentNullException.ThrowIfNull(settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
             _settings = settings as IVersionedSettings ?? throw new InvalidOperationException($"'{nameof(settings)}' must have defined Version");

@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Example
 {
-    using Catel;
     using Catel.Services;
     using Models;
 
@@ -13,8 +12,8 @@
             IEchoService echoService, IDispatcherService dispatcherService)
             : base(nuGetLogListeningSevice)
         {
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => dispatcherService);
+            ArgumentNullException.ThrowIfNull(echoService);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
 
             _dispatcherService = dispatcherService;
 

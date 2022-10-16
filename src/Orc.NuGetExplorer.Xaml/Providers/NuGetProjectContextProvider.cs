@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
-    using Catel;
     using Catel.IoC;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
@@ -12,7 +11,7 @@
 
         public NuGetProjectContextProvider(ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _typeFactory = typeFactory;
         }

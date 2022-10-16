@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Data;
     using NuGet.Common;
     using NuGet.Packaging.Core;
@@ -27,14 +26,14 @@
             IRepositoryService repositoryService, IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
             ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => logger);
-            Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => sourceRepositoryProvider);
-            Argument.IsNotNull(() => defaultExtensibleProjectProvider);
-            Argument.IsNotNull(() => packageOperationNotificationService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(logger);
+            ArgumentNullException.ThrowIfNull(nuGetPackageManager);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
+            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
 
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
@@ -51,7 +50,7 @@
 
         public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var uninstalledIdentity = package.GetIdentity();
             var uninstallPath = _defaultProject.GetInstallPath(uninstalledIdentity);
@@ -75,7 +74,7 @@
 
         public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var installedIdentity = package.GetIdentity();
             var operationPath = _defaultProject.GetInstallPath(installedIdentity);
@@ -105,7 +104,7 @@
 
         public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var updateIdentity = package.GetIdentity();
             var installPath = _defaultProject.GetInstallPath(updateIdentity);
