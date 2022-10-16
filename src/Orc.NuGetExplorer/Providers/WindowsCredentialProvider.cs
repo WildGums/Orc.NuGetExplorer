@@ -39,13 +39,10 @@
                 Log.Debug($"Requesting credentials for '{uri}'");
             }
 
-            bool? result = null;
-
             var uriString = uri.ToString().ToLower();
 
-            var credentialsPrompter = new CredentialsPrompter(_configurationService)
+            var credentialsPrompter = new CredentialsPrompter(_configurationService, uriString)
             {
-                Target = uriString,
                 AllowStoredCredentials = !isRetry && _canAccessStoredCredentials,
                 ShowSaveCheckBox = true,
                 WindowTitle = "Credentials required",
@@ -54,8 +51,7 @@
                 IsAuthenticationRequired = true
             };
 
-            result = credentialsPrompter.ShowDialog();
-
+            bool? result = credentialsPrompter.ShowDialog();
             if (result ?? false)
             {
                 //creating success response

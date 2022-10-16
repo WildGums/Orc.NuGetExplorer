@@ -32,7 +32,7 @@
         private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
         private readonly IDefaultExtensibleProjectProvider _projectProvider;
 
-        private IPackageMetadataProvider _packageMetadataProvider;
+        private IPackageMetadataProvider? _packageMetadataProvider;
 
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
@@ -88,8 +88,8 @@
                         var nextCompletedTask = await Task.WhenAny(taskList.Keys);
 
                         PackageStatus updateStateValue;
-                        IPackageSearchMetadata result = null;
-                        DeferToken executedToken = null;
+                        IPackageSearchMetadata? result = null;
+                        DeferToken? executedToken = null;
 
                         try
                         {
@@ -107,6 +107,7 @@
 
                         if (result is not null)
                         {
+                            executedToken = executedToken ?? throw new InvalidOperationException();
                             updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
                         }
                         else
@@ -114,7 +115,8 @@
                             updateStateValue = PackageStatus.NotInstalled;
                         }
 
-                        executedToken?.UpdateAction(updateStateValue);
+                        var updateAction = executedToken?.UpdateAction;
+                        updateAction?.Invoke(updateStateValue);
                     }
                 }
             }
@@ -131,8 +133,6 @@
 #pragma warning disable CL0002 // Use async suffix
         private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
-            var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
-
             if (token.LoadType == MetadataOrigin.Installed)
             {
                 //from local
@@ -143,7 +143,7 @@
         }
 #pragma warning restore CL0002 // Use async suffix
 
-        public IPackageMetadataProvider InitializeMetadataProvider()
+        public IPackageMetadataProvider? InitializeMetadataProvider()
         {
 
             var typeFactory = TypeFactory.Default;
@@ -161,7 +161,7 @@
                     _projectProvider.GetDefaultProject()
                 });
 
-                var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
+                var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? Enumerable.Empty<SourceRepository>();
 
                 return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
             }
@@ -190,6 +190,11 @@
                 return token;
             }
 
+            if (_packageMetadataProvider is null)
+            {
+                throw new InvalidOperationException("Initialization must be called first");
+            }
+
             var metadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageId, installedVersion), true, cancellationToken);
 
             token.Result = metadata;
@@ -199,7 +204,16 @@
 
         private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
+            if (_settignsProvider is null || _settignsProvider.Model is null)
+            {
+                throw new InvalidOperationException("Settings must be initialized first");
+            }
+
             var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            if (_packageMetadataProvider is null)
+            {
+                throw new InvalidOperationException("Initialization must be called first");
+            }
 
             var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);
 

@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
@@ -15,8 +14,6 @@
 
     internal class PackagesLoaderService : IPackageLoaderService
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         private readonly ILogger _nugetLogger;
         private readonly ISourceRepositoryProvider _repositoryProvider;
 
@@ -29,7 +26,7 @@
             _repositoryProvider = repositoryProvider;
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider { get; }
+        public IPackageMetadataProvider? PackageMetadataProvider { get; }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
@@ -66,7 +63,7 @@
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
             SearchFilter searchFilter, CancellationToken token)
         {
-            SourceRepository tempRepoLocal = null;
+            SourceRepository? tempRepoLocal = null;
 
             var repositoryCollection = pageContinuation.Source.PackageSources.Select(source =>
             {

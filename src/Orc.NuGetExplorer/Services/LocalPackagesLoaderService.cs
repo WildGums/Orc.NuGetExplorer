@@ -48,7 +48,7 @@
             var source = pageContinuation.Source.PackageSources.FirstOrDefault();
             var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
-            SourceRepository repository = null;
+            SourceRepository? repository = null;
 
             if (source is not null)
             {
@@ -56,7 +56,7 @@
             }
             else
             {
-                repository = observedProjects.FirstOrDefault().AsSourceRepository(_repositoryProvider);
+                repository = observedProjects.FirstOrDefault()?.AsSourceRepository(_repositoryProvider);
             }
 
             try
@@ -80,7 +80,6 @@
                 foreach (var package in pagedPackages)
                 {
                     var metadata = await GetPackageMetadataAsync(package, searchFilter.IncludePrerelease, token);
-
                     if (metadata is not null)
                     {
                         combinedFindedMetadata.Add(metadata);
@@ -96,7 +95,7 @@
             }
         }
 
-        public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
+        public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             // first we try and load the metadata from a local package
             var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);

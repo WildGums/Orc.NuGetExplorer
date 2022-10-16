@@ -66,7 +66,7 @@
             return packagesInRange;
         }
 
-        public async Task<SourcePackageDependencyInfo> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+        public async Task<SourcePackageDependencyInfo?> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
             foreach (var resource in _resources)
             {

@@ -1,13 +1,17 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
+    using Catel.Logging;
     using NuGet.Packaging;
     using NuGet.Protocol.Core.Types;
 
     internal class MultiVersionPackageSearchMetadataBuilder
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IEnumerable<IPackageSearchMetadata> _searchMetadatas;
 
         private MultiVersionPackageSearchMetadataBuilder(IEnumerable<IPackageSearchMetadata> searchMetadatas)
@@ -25,6 +29,10 @@
             var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
 
             var main = orderedMetadatas.FirstOrDefault(x => x.Identity.Version.OriginalVersion == version);
+            if (main is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
+            }
 
             var versions = orderedMetadatas.ToList();
             versions.Remove(main);
@@ -39,6 +47,10 @@
             var orderedMetadatas = _searchMetadatas.OrderByDescending(x => x.Identity.Version);
 
             var main = orderedMetadatas.FirstOrDefault();
+            if (main is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
+            }
 
             var versions = orderedMetadatas.Skip(1).ToList();
 

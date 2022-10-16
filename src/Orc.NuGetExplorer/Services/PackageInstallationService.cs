@@ -213,7 +213,7 @@
 #pragma warning restore IDISP013 // Await in using.
 
                     var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess && x.Result is not null)
-                        .Select(x => x.Result).ToArray();
+                        .Select(x => x.Result!).ToArray();
 
                     var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 

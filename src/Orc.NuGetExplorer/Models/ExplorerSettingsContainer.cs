@@ -8,6 +8,8 @@
 
     public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
     {
+        private INuGetSource? _observedFeed;
+
         /// <summary>
         /// All feeds configured in application
         /// </summary>
@@ -16,7 +18,19 @@
         /// <summary>
         /// Feed currently used by explorer
         /// </summary>
-        public INuGetSource? ObservedFeed { get; set; }
+        public INuGetSource? ObservedFeed
+        {
+            get => _observedFeed;
+            set
+            {
+                if (_observedFeed != value)
+                {
+                    var oldValue = _observedFeed;
+                    _observedFeed = value;
+                    RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<INuGetSource?>(oldValue, value));
+                }
+            }
+        }
 
         public INuGetSource? DefaultFeed { get; set; }
 
@@ -55,14 +69,17 @@
         {
             if (string.Equals(e.PropertyName, nameof(ObservedFeed)))
             {
-                if (e.NewValue is INuGetSource source)
+                if (e is PropertyChangedExtendedEventArgs<INuGetSource?> args)
                 {
-                    source.IsSelected = true;
-                }
+                    if (args.NewValue is not null)
+                    {
+                        args.NewValue.IsSelected = true;
+                    }
 
-                if (e.OldValue is INuGetSource oldSelected)
-                {
-                    oldSelected.IsSelected = false;
+                    if (args.OldValue is not null)
+                    {
+                        args.OldValue.IsSelected = false;
+                    }
                 }
             }
 

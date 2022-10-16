@@ -105,6 +105,8 @@
 
             var versionSpec = dependency.VersionRange;
 
+            package.ValidationContext ??= new ValidationContext();
+
             var minVersion = versionSpec.MinVersion;
             if (minVersion is not null)
             {

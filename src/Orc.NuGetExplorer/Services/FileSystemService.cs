@@ -22,8 +22,15 @@
 
         public void CreateDeleteme(string name, string path)
         {
+            Log.Debug($"Createing delete.me file on path '{path}'");
+
             var fullPath = GetDeletemePath(name, path);
             var directoryPath = Path.GetDirectoryName(fullPath);
+            if (string.IsNullOrEmpty(directoryPath))
+            {
+                Log.Debug("Cannot obtain directory path for creating file.");
+                return;
+            }
 
             if (_fileService.Exists(fullPath))
             {
@@ -34,6 +41,7 @@
 
             using (_fileService.Create(fullPath))
             {
+                Log.Debug($"Created delete.me file on path {fullPath}");
             }
         }
 

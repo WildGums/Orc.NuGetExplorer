@@ -162,7 +162,7 @@
                 .Select(x => x.UnwrapResult())
                 .Where(metadata => metadata is not null);
 
-            var lowest = completed.SelectMany(p => p)
+            var lowest = completed.SelectMany(p => p!)
                 .OrderBy(p => p.Identity.Version)
                 .FirstOrDefault();
 
@@ -223,7 +223,7 @@
                 Select(x => x.UnwrapResult())
                 .Where(metadata => metadata is not null);
 
-            var packages = completed.SelectMany(p => p);
+            var packages = completed.SelectMany(p => p!);
 
             var uniquePackages = packages
                 .GroupBy(

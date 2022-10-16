@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Catel;
     using Catel.Logging;
+    using Catel.Reflection;
     using NuGet.Configuration;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Scenario;
@@ -24,11 +25,16 @@
             Argument.IsNotNull(() => settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
-            _settings = settings as IVersionedSettings;
+            if (settings is not IVersionedSettings versionedSettings)
+            {
+                throw new InvalidOperationException($"Current configuration should have defined versions for controlling {nameof(NuGetProjectUpgradeService)}");
+            }
+
+            _settings = versionedSettings;
         }
 
-        public event EventHandler UpgradeStart;
-        public event EventHandler UpgradeEnd;
+        public event EventHandler? UpgradeStart;
+        public event EventHandler? UpgradeEnd;
 
         public async Task<bool> CheckCurrentConfigurationAndRunAsync()
         {
@@ -48,7 +54,7 @@
 
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-            if (currentVersion.CompareTo(_settings.Version) > 0)
+            if (currentVersion is not null && currentVersion.CompareTo(_settings.Version) > 0)
             {
                 var anyCompleted = false;
 

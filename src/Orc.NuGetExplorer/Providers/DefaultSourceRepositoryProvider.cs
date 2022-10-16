@@ -22,12 +22,13 @@
         /// <summary>
         /// Unused provider from NuGet library
         /// </summary>
-        public IPackageSourceProvider PackageSourceProvider => null;
+        public IPackageSourceProvider? PackageSourceProvider => null;
 
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
             Argument.IsNotNull(() => settingsProvider);
-            _settings = settingsProvider.Model;
+
+            _settings = settingsProvider.Model ?? throw new InvalidOperationException("Settings must be initialized first");
             _nuGetConfigurationService = nuGetConfigurationService;
         }
 
@@ -90,8 +91,7 @@
         public SourceRepository CreateLocalRepository(string source)
         {
             return new SourceRepository(
-                        new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
-                );
+                        new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2);
         }
     }
 }

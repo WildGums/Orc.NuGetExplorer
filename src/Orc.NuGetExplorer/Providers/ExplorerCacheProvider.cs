@@ -4,7 +4,7 @@
 
     public class ExplorerCacheProvider : IApplicationCacheProvider
     {
-        private IconCache _iconCache;
+        private IconCache? _iconCache;
 
         public IconCache EnsureIconCache()
         {

@@ -29,8 +29,8 @@
         private readonly IFileSystemService _fileSystemService;
         private readonly IMessageService _messageService;
 
-        private BatchOperationToken _batchToken;
-        private BatchUpdateToken _updateToken;
+        private BatchOperationToken? _batchToken;
+        private BatchUpdateToken? _updateToken;
         private bool _disposedValue;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
@@ -49,7 +49,7 @@
             _fileSystemService = fileSystemService;
         }
 
-        public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
+        public event AsyncEventHandler<InstallNuGetProjectEventArgs>? Install;
 
         private async Task OnInstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
@@ -70,7 +70,7 @@
             await Install.SafeInvokeAsync(this, args);
         }
 
-        public event AsyncEventHandler<UninstallNuGetProjectEventArgs> Uninstall;
+        public event AsyncEventHandler<UninstallNuGetProjectEventArgs>? Uninstall;
 
         private async Task OnUninstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
@@ -91,7 +91,7 @@
             await Uninstall.SafeInvokeAsync(this, args);
         }
 
-        public event AsyncEventHandler<UpdateNuGetProjectEventArgs> Update;
+        public event AsyncEventHandler<UpdateNuGetProjectEventArgs>? Update;
 
         private async Task OnUpdateAsync(UpdateNuGetProjectEventArgs args)
         {
@@ -189,7 +189,7 @@
             }
         }
 
-        public async Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
+        public async Task<NuGetVersion?> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
             var installedReferences = await GetInstalledPackagesAsync(project, token);
 
@@ -207,7 +207,18 @@
 
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
-                var repositories = SourceContext.CurrentContext.Repositories;
+                var repositories = SourceContext.CurrentContext?.Repositories;
+                if (repositories is null || !repositories.Any())
+                {
+                    Log.Error($"Failed to install package {package}");
+
+                    if (showErrors)
+                    {
+                        await _messageService.ShowErrorAsync($"No package sources provided for installing package '{package}'");
+                    }
+
+                    return false;
+                }
 
                 var installerResults = await Task.Run(async () => await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token), token);
 
@@ -219,7 +230,7 @@
 
                     if (showErrors)
                     {
-                        await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                        await _messageService.ShowErrorAsync($"Failed to install package '{package}'.\n{installerResults.ErrorMessage}");
                     }
 
                     return false;

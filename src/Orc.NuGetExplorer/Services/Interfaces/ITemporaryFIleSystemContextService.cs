@@ -4,7 +4,7 @@
 
     internal interface ITemporaryFIleSystemContextService
     {
-        ITemporaryFileSystemContext Context { get; }
+        ITemporaryFileSystemContext? Context { get; }
 
         IDisposable UseTemporaryFIleSystemContext();
     }

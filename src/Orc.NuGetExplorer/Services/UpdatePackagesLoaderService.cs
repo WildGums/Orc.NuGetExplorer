@@ -50,7 +50,7 @@
             _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveRequiredType<IPackageLoaderService>("Installed"));
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
+        public IPackageMetadataProvider? PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
@@ -80,7 +80,7 @@
                         continue;
                     }
 
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+                    var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
 
                     if (clonedMetadata is null)
                     {
@@ -133,7 +133,7 @@
                     // Pre-release versions upgraded to latest stable or pre-release
                     // Stable versions upgraded to latest stable only
                     var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
+                    var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
                     if (clonedMetadata is null)
                     {
@@ -183,7 +183,7 @@
                 foreach (var package in packagesToExclude)
                 {
                     foundUpdates.Remove(package);
-                    var metadata = await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
+                    var metadata = metadataProvider is null ? null : await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
                     if (metadata is null)
                     {
                         Log.Debug($"Couldn't retrieve update metadata for installed package {package.Identity.Id}");

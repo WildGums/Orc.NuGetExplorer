@@ -7,7 +7,7 @@
 
     public class PackageSourceWrapper
     {
-        public static explicit operator PackageSource(PackageSourceWrapper wrapper)
+        public static explicit operator PackageSource?(PackageSourceWrapper wrapper)
         {
             if (wrapper.IsMultipleSource)
             {

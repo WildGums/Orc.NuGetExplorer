@@ -5,16 +5,13 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources;
+        private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources = new();
         private bool _v2Used;
 
         private MultiplySourceSearchResource()

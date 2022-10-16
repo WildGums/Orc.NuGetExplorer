@@ -25,7 +25,7 @@
         private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new(
                 () =>
                 {
-                    return ServiceLocator.Default.ResolveType<IPackageSourceProvider>();
+                    return ServiceLocator.Default.ResolveRequiredType<IPackageSourceProvider>();
                 }
             );
 

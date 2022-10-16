@@ -4,6 +4,6 @@
 
     public interface INuGetProjectContextProvider
     {
-        INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction);
+        INuGetProjectContext? GetProjectContext(FileConflictAction fileConflictAction);
     }
 }

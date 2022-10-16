@@ -95,11 +95,25 @@
 
         public Uri IconUrl { get; private set; }
 
-        public PackageStatus Status { get; set; } = PackageStatus.NotInstalled;
+        private PackageStatus _status = PackageStatus.NotInstalled;
+        public PackageStatus Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    var oldValue = _status;
+                    _status = value;
+                    RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<PackageStatus>(oldValue, _status));
+                }
+            }
+        }
 
         public PackageIdentity Identity => _packageMetadata.Identity;
 
         private List<NuGetVersion> _versions = new();
+
         public IReadOnlyList<NuGetVersion> Versions
         {
             get
@@ -268,8 +282,14 @@
 
             if (string.Equals(e.PropertyName, nameof(Status)))
             {
-                RaiseStatusChanged((PackageStatus)e.OldValue, (PackageStatus)e.NewValue);
-                Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
+                if (e.HasPropertyChanged(nameof(Status)))
+                {
+                    if (e is PropertyChangedExtendedEventArgs<PackageStatus> statusChangedArgs)
+                    {
+                        RaiseStatusChanged(statusChangedArgs.OldValue, statusChangedArgs.NewValue);
+                        Log.Info($"{Identity} status was changed from {statusChangedArgs.OldValue} to {statusChangedArgs.NewValue}");
+                    }
+                }
             }
         }
 

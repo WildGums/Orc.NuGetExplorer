@@ -15,11 +15,11 @@
             _typeFactory = typeFactory;
         }
 
-        public ITemporaryFileSystemContext Context { get; private set; }
+        public ITemporaryFileSystemContext? Context { get; private set; }
 
         public IDisposable UseTemporaryFIleSystemContext()
         {
-            using (var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>())
+            using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
             {
                 return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
             }

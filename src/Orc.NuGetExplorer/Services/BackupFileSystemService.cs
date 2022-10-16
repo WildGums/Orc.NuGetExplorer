@@ -5,6 +5,7 @@
     using Catel;
     using Catel.Logging;
     using Orc.FileSystem;
+    using Orc.NuGetExplorer.Services;
 
     internal class BackupFileSystemService : IBackupFileSystemService
     {
@@ -49,7 +50,7 @@
                 var fileName = Path.GetFileName(filePath);
                 var fileDestinationPath = GetBackupFolder(Catel.IO.Path.GetDirectoryName(filePath));
 
-                File.Copy(filePath, Catel.IO.Path.Combine(fileDestinationPath, fileName), true);
+                File.Copy(filePath, Path.Combine(fileDestinationPath, fileName), true);
             }
             catch (Exception ex)
             {
@@ -75,6 +76,7 @@
                 }
 
                 var sourceDirectory = GetBackupFolder(fullPath);
+    
                 _directoryService.Copy(sourceDirectory, fullPath);
             }
             catch (Exception ex)
@@ -87,7 +89,12 @@
         {
             var parentDirectory = Catel.IO.Path.GetParentDirectory(fullPath);
             var directoryName = Catel.IO.Path.GetRelativePath(fullPath, parentDirectory);
-            var backupDirectory = _operationContextService.CurrentContext.FileSystemContext.GetDirectory(directoryName);
+            var backupDirectory = _operationContextService.CurrentContext?.FileSystemContext.GetDirectory(directoryName);
+
+            if (string.IsNullOrEmpty(backupDirectory))
+            {
+                throw Log.ErrorAndCreateException<InvalidPathException>($"Invalid path found for backup folder on '{fullPath}'");
+            }
 
             return backupDirectory;
         }

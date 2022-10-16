@@ -45,7 +45,7 @@
                 }
             }
 
-            if (tokenPage == MetadataOrigin.Updates)
+            if (tokenPage == MetadataOrigin.Updates || package.InstalledVersion is null)
             {
                 return PackageStatus.NotInstalled;
             }

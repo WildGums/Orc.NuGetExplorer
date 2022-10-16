@@ -19,16 +19,14 @@
             _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 
-        public SourceRepository GetRepository(PackageSource source)
+        public SourceRepository? GetRepository(PackageSource source)
         {
             if (source is null)
             {
                 return null;
             }
 
-            SourceRepository sourceRepo = null;
-
-            sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
+            var sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
 
             return sourceRepo;
         }

@@ -6,8 +6,8 @@
 
     public interface INuGetProjectUpgradeService
     {
-        event EventHandler UpgradeStart;
-        event EventHandler UpgradeEnd;
+        event EventHandler? UpgradeStart;
+        event EventHandler? UpgradeEnd;
 
         void AddUpgradeScenario(IUpgradeScenario scenario);
         Task<bool> CheckCurrentConfigurationAndRunAsync();

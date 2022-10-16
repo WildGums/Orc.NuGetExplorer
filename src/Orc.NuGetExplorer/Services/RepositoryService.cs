@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Catel;
@@ -88,8 +89,10 @@
             return CreateModelRepositoryFromSourceRepository(repository);
         }
 
-        private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository repository)
+        private IRepository CreateModelRepositoryFromSourceRepository(SourceRepository? repository)
         {
+            ArgumentNullException.ThrowIfNull(repository);
+
             return new Repository(repository.PackageSource.Source)
             {
                 Id = 0,

@@ -28,7 +28,14 @@
         {
             var firstClone = FromMetadata(_metadata);
 
-            var clonedMetadata = new UpdatePackageSearchMetadata
+            var fromVersion = new VersionInfo(_updatedVersionMetadata.Identity.Version, _updatedVersionMetadata.DownloadCount)
+            {
+                PackageSearchMetadata = _updatedVersionMetadata
+            };
+
+            var lazyVersionFactory = new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<VersionInfo>>(async () => await _metadata.GetVersionsAsync());
+
+            var clonedMetadata = new UpdatePackageSearchMetadata(fromVersion, lazyVersionFactory)
             {
                 Authors = _metadata.Authors,
                 DependencySets = _metadata.DependencySets ?? Enumerable.Empty<PackageDependencyGroup>(),
@@ -48,11 +55,6 @@
                 IsListed = _metadata.IsListed,
                 PrefixReserved = _metadata.PrefixReserved,
                 LicenseMetadata = _metadata.LicenseMetadata,
-                LazyVersionsFactory = new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<VersionInfo>>(async () => await _metadata.GetVersionsAsync()),
-                FromVersion = new VersionInfo(_updatedVersionMetadata.Identity.Version, _updatedVersionMetadata.DownloadCount)
-                {
-                    PackageSearchMetadata = _updatedVersionMetadata
-                }
             };
 
             return clonedMetadata;
