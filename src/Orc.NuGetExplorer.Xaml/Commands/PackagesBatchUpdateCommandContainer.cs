@@ -43,7 +43,7 @@
             _packageOperationContextService = packageOperationContextService;
         }
 
-        protected override bool CanExecute(IManagerPage parameter)
+        protected override bool CanExecute(IManagerPage? parameter)
         {
             if (parameter is null)
             {
@@ -53,12 +53,12 @@
             return parameter.PackageItems.Any(x => x.IsChecked);
         }
 
-        protected async override Task ExecuteAsync(IManagerPage parameter)
+        protected async override Task ExecuteAsync(IManagerPage? parameter)
         {
-            Argument.IsNotNull(() => parameter);
+            ArgumentNullException.ThrowIfNull(parameter);
 
             var sourcePage = parameter;
-            var parentVM = parameter as IViewModel;
+            var parentVM = (IViewModel)parameter;
 
             try
             {
@@ -66,7 +66,7 @@
 
                 var batchedPackages = sourcePage.PackageItems.Where(x => x.IsChecked).ToList();
 
-                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                if (batchedPackages.Any(x => x.ValidationContext?.HasErrors ?? false))
                 {
                     await _messageService.ShowErrorAsync("One or more package(s) cannot be updated due to validation errors", "Can't update packages");
                     return;

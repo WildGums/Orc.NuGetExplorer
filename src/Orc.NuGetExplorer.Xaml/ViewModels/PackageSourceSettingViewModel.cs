@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -61,7 +62,7 @@
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
 
-        public NuGetFeed SelectedFeed { get; set; }
+        public NuGetFeed? SelectedFeed { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
 
@@ -242,7 +243,7 @@
             feed.IsVerifiedNow = false;
         }
 
-        private async void OnValidationTimerElapsed(object sender, ElapsedEventArgs e)
+        private async void OnValidationTimerElapsed(object? sender, ElapsedEventArgs e)
         {
             if (IsVerifying)
             {
@@ -276,12 +277,14 @@
             _validationQueue.Enqueue(feed);
         }
 
-        protected void OnFeedPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected void OnFeedPropertyPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            ArgumentNullException.ThrowIfNull(sender);
+
             //run verification if source changed
             if (string.Equals(nameof(NuGetFeed.Source), e.PropertyName))
             {
-                AddToValidationQueue(sender as NuGetFeed);
+                AddToValidationQueue((NuGetFeed)sender);
                 StartValidationTimer();
             }
 
@@ -292,7 +295,7 @@
             }
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (IsSaving)
             {
@@ -313,11 +316,11 @@
             base.OnPropertyChanged(e);
         }
 
-        private void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnFeedsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
-                var removedFeeds = e.OldItems.OfType<NuGetFeed>().ToList();
+                var removedFeeds = e.OldItems?.OfType<NuGetFeed>().ToList();
                 removedFeeds.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
             }
 

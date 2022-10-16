@@ -4,6 +4,6 @@
     {
         ExplorerTab Tab { get; }
 
-        PackageSearchParameters InitialSearchParameters { get; }
+        PackageSearchParameters? InitialSearchParameters { get; }
     }
 }

@@ -53,7 +53,7 @@
         public static bool GetIsPrereleaseIncluded(this IConfigurationService configurationService)
         {
             Argument.IsNotNull(() => configurationService);
-            return configurationService.GetRoamingValue<bool>(Settings.NuGet.IncludePrereleasePackages, false);
+            return configurationService.GetRoamingValue(Settings.NuGet.IncludePrereleasePackages, false);
         }
 
         public static void SetIsPrereleaseIncluded(this IConfigurationService configurationService, bool isPrereleaseIncluded)

@@ -9,7 +9,7 @@
     using Catel.MVVM;
     using Catel.Windows;
 
-    public partial class DialogHost : Catel.Windows.DataWindow
+    public partial class DialogHost : DataWindow
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 

@@ -5,7 +5,6 @@
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Catel;
-    using Catel.Data;
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
@@ -31,7 +30,11 @@
             Package = package;
             _nugetSettings = settingsProvider.Model;
 
-            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            if (batchUpdateCommand is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to get required command '{Commands.Packages.BatchUpdate}'");
+            }
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
             //command
@@ -104,7 +107,7 @@
             return base.InitializeAsync();
         }
 
-        private void OnNuGetSettingsChanged(object sender, PropertyChangedEventArgs e)
+        private void OnNuGetSettingsChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (!e.HasPropertyChanged(nameof(ExplorerSettingsContainer.IsHideInstalled)))
             {
@@ -132,7 +135,7 @@
             return base.CloseAsync();
         }
 
-        private void OnPackageStatusChanged(object sender, PackageModelStatusEventArgs e)
+        private void OnPackageStatusChanged(object? sender, PackageModelStatusEventArgs e)
         {
             if (e.NewStatus == PackageStatus.LastVersionInstalled || e.NewStatus == PackageStatus.UpdateAvailable)
             {
@@ -140,7 +143,7 @@
             }
         }
 
-        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.HasPropertyChanged(nameof(Package.LastVersion)))
             {

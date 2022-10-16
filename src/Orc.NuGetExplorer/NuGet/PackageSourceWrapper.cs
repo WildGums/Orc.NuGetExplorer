@@ -3,17 +3,20 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Logging;
     using NuGet.Configuration;
 
     public class PackageSourceWrapper
     {
-        public static explicit operator PackageSource?(PackageSourceWrapper wrapper)
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        public static explicit operator PackageSource(PackageSourceWrapper wrapper)
         {
-            if (wrapper.IsMultipleSource)
+            if (wrapper.IsMultipleSource || !wrapper.PackageSources.Any())
             {
-                throw new InvalidCastException("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
+                throw Log.ErrorAndCreateException<InvalidCastException>("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
             }
-            return wrapper.PackageSources.FirstOrDefault();
+            return wrapper.PackageSources.First();
         }
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
@@ -28,7 +27,7 @@
             Argument.IsNotNull(() => appCacheProvider);
 
             _iconCache = appCacheProvider.EnsureIconCache();
-            _iconCache.FallbackValue = new System.Windows.Media.Imaging.BitmapImage(new Uri(_defaultIconUri));
+            _iconCache.FallbackValue = new BitmapImage(new Uri(_defaultIconUri));
         }
 
         public async Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata)
@@ -91,13 +90,17 @@
 
         #region IImageResolveService
 
-        public ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null)
+        public ImageSource ResolveImageFromUri(Uri uri)
         {
             try
             {
                 if (uri is not null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
                 {
-                    return GetFromCacheOrFetch(uri);
+                    var bitmapImage = GetFromCacheOrFetch(uri);
+                    if (bitmapImage is not null)
+                    {
+                        return bitmapImage;
+                    }
                 }
             }
             catch (WebException ex)
@@ -107,7 +110,7 @@
             return new BitmapImage(new Uri(_defaultIconUri));
         }
 
-        private ImageSource GetFromCacheOrFetch(Uri uri)
+        private ImageSource? GetFromCacheOrFetch(Uri uri)
         {
             if (!_iconCache.IsCached(uri))
             {
@@ -117,7 +120,7 @@
             return _iconCache.GetFromCache(uri);
         }
 
-        public async Task<ImageSource> ResolveImageFromUriAsync(Uri uri, string defaultUrl = null)
+        public async Task<ImageSource?> ResolveImageFromUriAsync(Uri uri)
         {
             try
             {
@@ -131,10 +134,10 @@
                 Log.Error(ex);
             }
 
-            return new BitmapImage(new Uri(defaultUrl));
+            return new BitmapImage(new Uri(_defaultIconUri));
         }
 
-        private async Task<ImageSource> GetFromCacheOrFetchAsync(Uri uri)
+        private async Task<ImageSource?> GetFromCacheOrFetchAsync(Uri uri)
         {
             if (!_iconCache.IsCached(uri))
             {

@@ -6,18 +6,18 @@
 
     public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
     {
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IBusyIndicatorService _busyIndicatorService;
 
-        public XamlPleaseWaitInterruptService(IPleaseWaitService pleaseWaitService)
+        public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
         {
-            Argument.IsNotNull(() => pleaseWaitService);
+            Argument.IsNotNull(() => busyIndicatorService);
 
-            _pleaseWaitService = pleaseWaitService;
+            _busyIndicatorService = busyIndicatorService;
         }
 
         public IDisposable InterruptTemporarily()
         {
-            return _pleaseWaitService.HideTemporarily();
+            return _busyIndicatorService.HideTemporarily();
         }
     }
 }

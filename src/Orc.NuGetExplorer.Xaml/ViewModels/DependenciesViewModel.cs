@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
     using System.Collections.Generic;
-    using Catel.Data;
+    using System.ComponentModel;
     using Catel.MVVM;
     using NuGet.Packaging;
 
@@ -10,11 +10,11 @@
         /// <summary>
         /// This is property mapped via attribute
         /// </summary>
-        public object Collection { get; set; }
+        public object? Collection { get; set; }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (string.Equals(e.PropertyName, nameof(Collection)))
+            if (e.HasPropertyChanged(nameof(Collection)))
             {
                 HasDependency = ((Collection as List<PackageDependencyGroup>)?.Count ?? 0) > 0;
             }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
@@ -198,7 +199,7 @@
 
         #endregion
 
-        protected static async Task<IPackageSearchMetadata> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
+        protected static async Task<IPackageSearchMetadata?> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
         {
             try
             {
@@ -238,13 +239,13 @@
             return base.CloseAsync();
         }
 
-        private void OnNuGetActionTargetPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnNuGetActionTargetPropertyPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             var commandManager = this.GetViewModelCommandManager();
             commandManager.InvalidateCommands();
         }
 
-        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected async override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
@@ -286,7 +287,7 @@
 
         private void OnVersionDataChanged()
         {
-            DependencyInfo = VersionData?.DependencySets;
+            DependencyInfo = VersionData.DependencySets;
         }
 
         private async Task ApplyPackageAsync()
@@ -332,6 +333,7 @@
             // Note: this is a workaround to pass validation context from specific version package to main model
             if (!ReferenceEquals(Package, package))
             {
+                package.ValidationContext ??= new ValidationContext();
                 ValidationContext = package.ValidationContext;
             }
         }
@@ -375,7 +377,7 @@
             Argument.IsNotNull(() => package);
 
             // title: NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors
-            ApiValidationMessages = package.ValidationContext.GetAlertMessages(ValidationTags.Api);
+            ApiValidationMessages = package.ValidationContext?.GetAlertMessages(ValidationTags.Api) ?? Array.Empty<string>();
         }
     }
 }

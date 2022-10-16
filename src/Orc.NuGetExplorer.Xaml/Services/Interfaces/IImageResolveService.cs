@@ -6,7 +6,7 @@
 
     public interface IImageResolveService
     {
-        ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null);
-        Task<ImageSource> ResolveImageFromUriAsync(Uri uri, string defaultUrl = null);
+        ImageSource ResolveImageFromUri(Uri uri);
+        Task<ImageSource?> ResolveImageFromUriAsync(Uri uri);
     }
 }

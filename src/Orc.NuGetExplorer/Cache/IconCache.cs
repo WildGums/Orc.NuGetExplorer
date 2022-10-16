@@ -31,7 +31,7 @@
         }
 
         // TODO stream should be disposed when item removed from cache
-        public BitmapImage? GetFromCache(Uri iconUri)
+        public BitmapImage? GetFromCache(Uri? iconUri)
         {
             if (iconUri is null)
             {

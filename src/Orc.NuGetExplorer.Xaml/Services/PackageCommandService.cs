@@ -21,18 +21,18 @@
 
         private readonly IPackageQueryService _packageQueryService;
 
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IBusyIndicatorService _busyIndicatorService;
 
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
+        public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
-            Argument.IsNotNull(() => pleaseWaitService);
+            Argument.IsNotNull(() => busyIndicatorService);
             Argument.IsNotNull(() => packageQueryService);
             Argument.IsNotNull(() => packageOperationService);
             Argument.IsNotNull(() => packageOperationContextService);
             Argument.IsNotNull(() => apiPackageRegistry);
 
-            _pleaseWaitService = pleaseWaitService;
+            _busyIndicatorService = busyIndicatorService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
@@ -43,13 +43,7 @@
 
         public string GetActionName(PackageOperationType operationType)
         {
-            return Enum.GetName(typeof(PackageOperationType), operationType);
-        }
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "ExecuteAsync")]
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
-        {
-            await ExecuteAsync(operationType, packageDetails);
+            return Enum.GetName(typeof(PackageOperationType), operationType) ?? string.Empty;
         }
 
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
@@ -74,7 +68,7 @@
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.WaitingScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
@@ -83,7 +77,7 @@
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.WaitingScope())
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
             }
@@ -91,7 +85,7 @@
 
         public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.WaitingScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
             {
                 await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
@@ -100,7 +94,7 @@
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.WaitingScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
@@ -109,7 +103,7 @@
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.WaitingScope())
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
             }
@@ -138,28 +132,6 @@
             }
 
             return false;
-        }
-
-        public bool IsRefreshRequired(PackageOperationType operationType)
-        {
-            switch (operationType)
-            {
-                case PackageOperationType.Uninstall:
-                    return true;
-
-                case PackageOperationType.Install:
-                    return false;
-
-                case PackageOperationType.Update:
-                    return true;
-            }
-
-            return false;
-        }
-
-        public string GetPluralActionName(PackageOperationType operationType)
-        {
-            return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
         }
 
         private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
@@ -205,7 +177,7 @@
                 ValidatePackage(package);
             }
 
-            if (package.ValidationContext.HasErrors)
+            if (package.ValidationContext?.HasErrors ?? false)
             {
                 Log.Debug($"Package '{package}' has validation errors, package is not available locally");
 
@@ -228,6 +200,11 @@
 
         private void LogValidationErrors(IPackageDetails package)
         {
+            if (package.ValidationContext is null)
+            {
+                return;
+            }
+
             foreach (var error in package.ValidationContext.GetErrors())
             {
                 Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
