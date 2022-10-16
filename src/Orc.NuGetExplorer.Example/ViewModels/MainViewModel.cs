@@ -113,7 +113,7 @@
 
         private async Task OnAdddPackageSourceExecuteAsync()
         {
-            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
+            var packageSourceSaved = await Task.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true));
             if (!packageSourceSaved)
             {
                 await _messageService.ShowWarningAsync("Feed is invalid or unknown");
