@@ -5,10 +5,13 @@
     using Catel;
     using Catel.Configuration;
     using Catel.IoC;
+    using Catel.Logging;
     using Orc.NuGetExplorer.Models;
 
     public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly INuGetConfigurationService _nugetConfigurationService;
         private readonly IConfigurationService _configurationService;
         private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
@@ -26,7 +29,7 @@
             _explorerSettings = new Lazy<ExplorerSettingsContainer>(() => Create());
         }
 
-        public override ExplorerSettingsContainer Model
+        public override ExplorerSettingsContainer? Model
         {
             get
             {
@@ -36,15 +39,17 @@
                     IsInitialized = true;
                 }
 
-
                 if (!IsInitialized)
                 {
                     var currentValue = base.Model;
+                    if (currentValue is null)
+                    {
+                        throw Log.ErrorAndCreateException<InvalidOperationException>("'Model' must be non-null value");
+                    }
                     currentValue.Clear();
-                    base.Model = InitializeModel(base.Model);
+                    base.Model = InitializeModel(currentValue);
                     IsInitialized = true;
                 }
-
 
                 return base.Model;
             }

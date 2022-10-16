@@ -19,6 +19,11 @@
         public void ShowBar(IViewModel vm)
         {
             var window = GetCurrentActiveDataWindow();
+            if (window is null)
+            {
+                Log.Warning("No active window found for progress manager");
+                return;
+            }
 
             foreach (var behavior in GetOverlayBehaviors(window))
             {
@@ -30,7 +35,7 @@
 
         public void HideBar(IViewModel vm)
         {
-            DataWindow window = null;
+            DataWindow? window = null;
 
             if (_storedManagedWindows.TryGetValue(vm, out window))
             {
@@ -42,7 +47,7 @@
             }
         }
 
-        private DataWindow GetCurrentActiveDataWindow()
+        private DataWindow? GetCurrentActiveDataWindow()
         {
             return Application.Current.Windows.OfType<DataWindow>().FirstOrDefault(x => x.IsActive);
         }

@@ -12,14 +12,14 @@
             AssociatedObject.DropDownOpened += OnAssociatedObjectDropDownOpened;
         }
 
-        private void OnAssociatedObjectDropDownOpened(object sender, EventArgs e)
+        private void OnAssociatedObjectDropDownOpened(object? sender, EventArgs e)
         {
             ExecuteItemSourceInitializationCommand();
         }
 
-        public Command Command
+        public Command? Command
         {
-            get { return (Command)GetValue(CommandProperty); }
+            get { return (Command?)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
 

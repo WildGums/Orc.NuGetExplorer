@@ -6,23 +6,25 @@
     using System.Windows.Controls;
     using System.Windows.Media.Animation;
     using Catel.IoC;
+    using Catel.Logging;
     using Catel.Windows;
     using Catel.Windows.Interactivity;
     using Orc.NuGetExplorer.Windows;
 
     internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
-        private Grid _topInternalGrid;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private SizeChangedEventHandler _sizeHandler;
+        private Grid? _topInternalGrid;
+        private Storyboard? _overlayStoryboard;
 
-        private Storyboard _overlayStoryboard;
+        private SizeChangedEventHandler? _sizeHandler;
 
-        private IAnimationService AnimationService { get; set; }
+        private IAnimationService? AnimationService { get; set; }
 
-        public Grid OverlayGrid
+        public Grid? OverlayGrid
         {
-            get { return (Grid)GetValue(OverlayGridProperty); }
+            get { return (Grid?)GetValue(OverlayGridProperty); }
             set { SetValue(OverlayGridProperty, value); }
         }
 
@@ -34,7 +36,7 @@
 
         private static void OnOverlayGridChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
-            var behavior = s as AnimatedOverlayBehavior;
+            var behavior = (AnimatedOverlayBehavior)s;
 
             if (behavior.IsAssociatedObjectLoaded)
             {
@@ -43,9 +45,9 @@
             }
         }
 
-        public Grid ActiveContentContainer
+        public Grid? ActiveContentContainer
         {
-            get { return (Grid)GetValue(ActiveContentContainerProperty); }
+            get { return (Grid?)GetValue(ActiveContentContainerProperty); }
             set { SetValue(ActiveContentContainerProperty, value); }
         }
 
@@ -57,7 +59,7 @@
 
         private static void OnActiveContentContainerChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
-            var behavior = s as AnimatedOverlayBehavior;
+            var behavior = (AnimatedOverlayBehavior)s;
 
             if (behavior.IsAssociatedObjectLoaded)
             {
@@ -66,9 +68,9 @@
             }
         }
 
-        public UIElement OverlayContent
+        public UIElement? OverlayContent
         {
-            get { return (UIElement)GetValue(OverlayContentProperty); }
+            get { return (UIElement?)GetValue(OverlayContentProperty); }
             set { SetValue(OverlayContentProperty, value); }
         }
 
@@ -92,52 +94,53 @@
             base.OnAttached();
 
 #pragma warning disable IDISP004 // Don't ignore created IDisposable.
-            AnimationService = this.GetServiceLocator().ResolveType<IAnimationService>();
+            AnimationService = this.GetServiceLocator().ResolveRequiredType<IAnimationService>();
 #pragma warning restore IDISP004 // Don't ignore created IDisposable.
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void AttachOverlay(object overlay)
+        private void AttachOverlay(object? overlay)
         {
             if (overlay is UIElement elementOverlay)
             {
-                _topInternalGrid.Children.Add(elementOverlay);
+                _topInternalGrid?.Children.Add(elementOverlay);
 
                 //manually hide overlay
                 HideOverlay();
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void DetachOverlay(object overlay)
+        private void DetachOverlay(object? overlay)
         {
             if (overlay is UIElement elementOverlay)
             {
-                _topInternalGrid.Children.Remove(elementOverlay);
+                _topInternalGrid?.Children.Remove(elementOverlay);
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void AttachActiveContainer(object contentContainer)
+        private void AttachActiveContainer(object? contentContainer)
         {
             if (contentContainer is UIElement elementContentContainer)
             {
-                _topInternalGrid.Children.Add(elementContentContainer);
+                _topInternalGrid?.Children.Add(elementContentContainer);
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("WpfAnalyzers.DependencyProperty", "WPF0005:Name of PropertyChangedCallback should match registered name.", Justification = "")]
-        private void DetachActiveContainer(object contentContainer)
+        private void DetachActiveContainer(object? contentContainer)
         {
             if (contentContainer is UIElement elementContentContainer)
             {
-                _topInternalGrid.Children.Add(elementContentContainer);
+                _topInternalGrid?.Children.Add(elementContentContainer);
             }
         }
 
         private void GetInternalGrid()
         {
-            _topInternalGrid = AssociatedObject.FindVisualDescendantByName("_InternalGridName") as Grid;
+            if (AssociatedObject.FindVisualDescendantByName("_InternalGridName") is not Grid internalGrid)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Couldn't find object with name '_InternalGridName'");
+            }
+
+            _topInternalGrid = internalGrid;
         }
 
         protected override void OnIsEnabledChanged()
@@ -160,9 +163,11 @@
             }
         }
 
-        private SizeChangedEventHandler SetupAndShowOverlay(UIElement overlayContent)
+        private SizeChangedEventHandler SetupAndShowOverlay(UIElement? overlayContent)
         {
-            overlayContent.SetCurrentValue(Panel.ZIndexProperty, (int)OverlayGrid.GetValue(Panel.ZIndexProperty) + 1);
+            ArgumentNullException.ThrowIfNull(overlayContent);
+
+            overlayContent.SetCurrentValue(Panel.ZIndexProperty, (int)(OverlayGrid?.GetValue(Panel.ZIndexProperty) ?? 0) + 1);
 
             overlayContent.SetCurrentValue(FrameworkElement.MinHeightProperty, AssociatedObject.ActualHeight / 4.0);
             overlayContent.SetCurrentValue(FrameworkElement.MaxHeightProperty, AssociatedObject.ActualHeight);
@@ -183,14 +188,14 @@
 
         private void AddContentToOverlay(UIElement overlayContent)
         {
-            var activeContent = ActiveContentContainer.Children.Cast<UIElement>().SingleOrDefault();
+            var activeContent = ActiveContentContainer?.Children.Cast<UIElement>().SingleOrDefault();
 
             if (activeContent is not null)
             {
-                ActiveContentContainer.Children.Remove(activeContent);
+                ActiveContentContainer?.Children.Remove(activeContent);
             }
 
-            ActiveContentContainer.Children.Add(overlayContent);
+            ActiveContentContainer?.Children.Add(overlayContent);
         }
 
         private void ShowAnimatedOverlay()
@@ -205,14 +210,18 @@
                 return;
             }
 
-            if (ActiveContentContainer.Visibility == Visibility.Hidden)
+            if (ActiveContentContainer?.Visibility == Visibility.Hidden)
             {
                 ActiveContentContainer.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
             }
 
             Dispatcher.VerifyAccess();
 
-            var storyboard = AnimationService.GetFadeInAnimation(OverlayGrid);
+            var storyboard = AnimationService?.GetFadeInAnimation(OverlayGrid);
+            if (storyboard is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Must intiialize animation storyboard to proceed");
+            }
 
             _overlayStoryboard = storyboard;
 
@@ -220,17 +229,16 @@
             {
                 OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
 
-                animation.SetCurrentValue(DoubleAnimation.ToProperty, (double?)0.7);
+                animation?.SetCurrentValue(DoubleAnimation.ToProperty, (double?)0.7);
 
-                EventHandler completionHandler = null;
-                completionHandler = (sender, args) =>
+                void completionHandler(object? sender, EventArgs args)
                 {
                     storyboard.Completed -= completionHandler;
                     if (_overlayStoryboard == storyboard)
                     {
                         _overlayStoryboard = null;
                     }
-                };
+                }
 
                 storyboard.Completed += completionHandler;
                 OverlayGrid.BeginStoryboard(storyboard);
@@ -256,15 +264,19 @@
 
             Dispatcher.VerifyAccess();
 
-            var storyboard = AnimationService.GetFadeOutAnimation(OverlayGrid);
+            var storyboard = AnimationService?.GetFadeOutAnimation(OverlayGrid);
+            if (storyboard is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Must intiialize animation storyboard to proceed");
+            }
 
             _overlayStoryboard = storyboard;
 
             if (TryGetOverlayFadingStoryboardAnimation(storyboard, out var animation))
             {
-                animation.SetCurrentValue(DoubleAnimation.ToProperty, 0d);
+                animation?.SetCurrentValue(DoubleAnimation.ToProperty, 0d);
 
-                EventHandler completionHandler = null;
+                EventHandler? completionHandler = null;
                 completionHandler = (sender, args) =>
                 {
                     storyboard.Completed -= completionHandler;
@@ -284,7 +296,7 @@
             }
         }
 
-        private static bool TryGetOverlayFadingStoryboardAnimation(Storyboard sb, out DoubleAnimation animation)
+        private static bool TryGetOverlayFadingStoryboardAnimation(Storyboard sb, out DoubleAnimation? animation)
         {
             animation = null;
 
@@ -301,30 +313,30 @@
                 return false;
             }
 
-            return animation is null == false &&
-                   sb.Duration.HasTimeSpan && sb.Duration.TimeSpan.Ticks > 0
+            return animation is not null &&
+                   (sb.Duration.HasTimeSpan && sb.Duration.TimeSpan.Ticks > 0
                    || (sb.AccelerationRatio > 0)
                    || (sb.DecelerationRatio > 0)
                    || (animation.Duration.HasTimeSpan && animation.Duration.TimeSpan.Ticks > 0)
                    || animation.AccelerationRatio > 0
-                   || animation.DecelerationRatio > 0;
+                   || animation.DecelerationRatio > 0);
         }
 
         private void HideActiveContainer()
         {
-            ActiveContentContainer.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
+            ActiveContentContainer?.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
         }
 
         private void ShowOverlay()
         {
-            OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
-            OverlayGrid.SetCurrentValue(Grid.OpacityProperty, 0.7);
+            OverlayGrid?.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
+            OverlayGrid?.SetCurrentValue(Grid.OpacityProperty, 0.7);
         }
 
         private void HideOverlay()
         {
-            OverlayGrid.SetCurrentValue(Grid.OpacityProperty, 0d);
-            OverlayGrid.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
+            OverlayGrid?.SetCurrentValue(Grid.OpacityProperty, 0d);
+            OverlayGrid?.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Hidden);
         }
     }
 }

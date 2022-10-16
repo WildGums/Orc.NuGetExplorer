@@ -11,13 +11,11 @@
     {
         public static void UpdateItemSource(this FrameworkElement frameworkElement)
         {
-            Argument.IsNotNull(() => frameworkElement);
-
             var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
 
             foreach (var field in infos.Where(x => x.FieldType == typeof(DependencyProperty)))
             {
-                var dp = (DependencyProperty)field.GetValue(null);
+                var dp = (DependencyProperty?)field.GetValue(null);
                 var bindingExpression = frameworkElement.GetBindingExpression(dp);
                 if (bindingExpression is null)
                 {

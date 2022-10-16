@@ -3,13 +3,11 @@
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
-    using Catel.Logging;
 
     [TemplatePart(Name = BadgeContentPartName, Type = typeof(FrameworkElement))]
     [TemplatePart(Name = BadgePartName, Type = typeof(FrameworkElement))]
     public class Badged : ContentControl
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private const string BadgeContentPartName = "PART_BadgeContent";
         private const string BadgePartName = "PART_Badge";
 
@@ -19,7 +17,7 @@
             SetTemplatePartVisibility(IsShowed);
         }
 
-        public object Badge
+        public object? Badge
         {
             get { return GetValue(BadgeProperty); }
             set { SetValue(BadgeProperty, value); }
@@ -31,9 +29,9 @@
         public static readonly DependencyProperty BadgeProperty =
             DependencyProperty.Register(nameof(Badge), typeof(object), typeof(Badged), new FrameworkPropertyMetadata(null));
 
-        public Brush BadgeForeground
+        public Brush? BadgeForeground
         {
-            get { return (Brush)GetValue(BadgeForegroundProperty); }
+            get { return (Brush?)GetValue(BadgeForegroundProperty); }
             set { SetValue(BadgeForegroundProperty, value); }
         }
 
@@ -55,7 +53,7 @@
         public static readonly DependencyProperty IsShowedProperty =
             DependencyProperty.Register(nameof(IsShowed), typeof(bool), typeof(Badged), new PropertyMetadata(true, (s, e) => OnIsShowedChanged(s, e)));
 
-        public event DependencyPropertyChangedEventHandler IsShowedChanged;
+        public event DependencyPropertyChangedEventHandler? IsShowedChanged;
 
         private void RaiseIsShowedChanged(DependencyPropertyChangedEventArgs e)
         {

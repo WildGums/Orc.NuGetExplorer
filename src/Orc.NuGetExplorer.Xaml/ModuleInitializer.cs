@@ -32,7 +32,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
         serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();
-        serviceLocator.RegisterType<IMessageDialogService, MessageDialogService>();
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();
@@ -44,7 +43,7 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<NuGetLogListener>();
 
-        var vmLocator = serviceLocator.ResolveType<IViewModelLocator>();
+        var vmLocator = serviceLocator.ResolveRequiredType<IViewModelLocator>();
 
         // register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();

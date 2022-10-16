@@ -42,7 +42,7 @@
         internal static class Packages
         {
             public const string BatchUpdate = $"{nameof(Packages)}.{nameof(BatchUpdate)}";
-            public static readonly Catel.Windows.Input.InputGesture BatchUpdateInputGesture = null;
+            public static readonly Catel.Windows.Input.InputGesture? BatchUpdateInputGesture = null;
         }
     }
 }

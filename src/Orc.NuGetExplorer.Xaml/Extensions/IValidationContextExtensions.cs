@@ -6,10 +6,8 @@
 
     public static class IValidationContextExtensions
     {
-        public static string[] GetAlertMessages(this IValidationContext validationContext, string validationTag)
+        public static string[]? GetAlertMessages(this IValidationContext validationContext, string validationTag)
         {
-            Argument.IsNotNull(() => validationContext);
-
             var stringLines = validationContext.GetErrors(validationTag).Select(s => " - " + s.Message).ToArray();
 
             if (stringLines is null)

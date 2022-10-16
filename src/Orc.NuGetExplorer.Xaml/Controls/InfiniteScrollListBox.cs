@@ -1,25 +1,29 @@
 ﻿namespace Orc.NuGetExplorer.Controls
 {
+    using System;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using Catel.Logging;
     using Catel.MVVM;
 
     public class InfiniteScrollListBox : ListBox
     {
-        private ScrollViewer _scrollViewer;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private ScrollViewer? _scrollViewer;
 
         public InfiniteScrollListBox()
         {
             Loaded += ListBoxLoaded;
         }
 
-        private void ListBoxLoaded(object sender, RoutedEventArgs e)
+        private void ListBoxLoaded(object? sender, RoutedEventArgs e)
         {
             SetScrollViewer(WpfHelper.FindVisualChild<ScrollViewer>(this));
         }
 
-        private void SetScrollViewer(ScrollViewer value)
+        private void SetScrollViewer(ScrollViewer? value)
         {
             if (value != _scrollViewer)
             {
@@ -39,6 +43,11 @@
 
         private async void OnScrollViewerScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            if (_scrollViewer is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("ScrollViewer not set");
+            }
+
             var scrolled = _scrollViewer.VerticalOffset;
 
             var last = _scrollViewer.ViewportHeight + scrolled;
@@ -59,9 +68,9 @@
             Command?.Execute(CommandParameter);
         }
 
-        public TaskCommand Command
+        public TaskCommand? Command
         {
-            get { return (TaskCommand)GetValue(CommandProperty); }
+            get { return (TaskCommand?)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
 

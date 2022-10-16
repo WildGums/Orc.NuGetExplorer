@@ -13,7 +13,11 @@
 
         protected override object ConvertBack(object? value, Type targetType, object? parameter)
         {
-            return (bool?)value;
+            if (value is null)
+            {
+                return false;
+            }
+            return (bool)value;
         }
     }
 }
