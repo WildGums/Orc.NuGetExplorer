@@ -10,8 +10,6 @@
     {
         public static async Task<IEnumerable<IPackageSearchMetadata>> LoadWithDefaultsAsync(this IPackageLoaderService packageLoaderService, string repository, CancellationToken token = default)
         {
-            ArgumentNullException.ThrowIfNull(packageLoaderService);
-
             var defaultFilter = new SearchFilter(true);
             var localPagination = new PageContinuation(0, new PackageSourceWrapper(repository));
 

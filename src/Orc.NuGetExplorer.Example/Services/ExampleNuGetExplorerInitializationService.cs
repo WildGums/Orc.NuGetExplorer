@@ -25,9 +25,6 @@
             IAccentColorService accentColorService)
             : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(projectLocator);
-            ArgumentNullException.ThrowIfNull(accentColorService);
-
             var serviceLocator = ServiceLocator.Default;
 
             // Example: override default project

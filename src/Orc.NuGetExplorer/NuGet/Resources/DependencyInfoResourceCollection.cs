@@ -34,15 +34,11 @@
 
         public DependencyInfoResourceCollection(IReadOnlyList<DependencyInfoResource> resources)
         {
-            ArgumentNullException.ThrowIfNull(resources);
-
             _resources = resources.ToList();
         }
 
         public DependencyInfoResourceCollection(DependencyInfoResource resource)
         {
-            ArgumentNullException.ThrowIfNull(resource);
-
             _resources = new List<DependencyInfoResource>
             {
                 resource

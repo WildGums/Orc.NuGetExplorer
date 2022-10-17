@@ -15,8 +15,6 @@
 
         public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
         {
-            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
-
             _frameworkNameProvider = frameworkNameProvider;
         }
 

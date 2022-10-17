@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.IO;
     using Catel.Logging;
     using Orc.FileSystem;
@@ -12,9 +13,6 @@
 
         public FileSystemService(IFileService fileService, IDirectoryService directoryService)
         {
-            ArgumentNullException.ThrowIfNull(fileService);
-            ArgumentNullException.ThrowIfNull(directoryService);
-
             _fileService = fileService;
             _directoryService = directoryService;
         }

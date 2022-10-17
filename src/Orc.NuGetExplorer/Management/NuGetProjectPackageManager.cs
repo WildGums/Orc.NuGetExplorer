@@ -37,11 +37,6 @@
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
             IMessageService messageService, IFileSystemService fileSystemService)
         {
-            ArgumentNullException.ThrowIfNull(packageInstallationService);
-            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
-            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
-            ArgumentNullException.ThrowIfNull(messageService);
-
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -147,9 +142,6 @@
         /// <returns></returns>
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
-            ArgumentNullException.ThrowIfNull(project);
-            ArgumentNullException.ThrowIfNull(package);
-
             try
             {
                 var installedReferences = await GetInstalledPackagesAsync(project, token);
@@ -167,8 +159,6 @@
 
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
-            ArgumentNullException.ThrowIfNull(project);
-
             if (string.IsNullOrEmpty(packageId))
             {
                 throw Log.ErrorAndCreateException((string message) => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");

@@ -31,11 +31,6 @@ namespace Orc.NuGetExplorer.Resolver
             var stopWatch = new Stopwatch();
             token.ThrowIfCancellationRequested();
 
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             // validation 
             foreach (var requiredId in context.RequiredPackageIds)
             {

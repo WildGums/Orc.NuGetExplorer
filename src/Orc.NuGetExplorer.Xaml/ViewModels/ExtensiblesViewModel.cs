@@ -12,8 +12,6 @@
 
         public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
         {
-            ArgumentNullException.ThrowIfNull(extensiblesManager);
-
             _extensiblesManager = extensiblesManager;
 
             ExtensiblesCollection = new();
@@ -41,8 +39,6 @@
 
         public void ExtensibleProjectStatusChange(bool isShouldBeEnabled, IExtensibleProject project)
         {
-            ArgumentNullException.ThrowIfNull(project);
-
             if (isShouldBeEnabled)
             {
                 _extensiblesManager.Enable(project);

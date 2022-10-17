@@ -13,8 +13,6 @@
 
         public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
         {
-            ArgumentNullException.ThrowIfNull(logListeningService);
-
             _logListeningService = logListeningService;
             _verbose = verbose;
         }

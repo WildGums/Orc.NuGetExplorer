@@ -18,10 +18,6 @@
         public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
             : base(typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-            ArgumentNullException.ThrowIfNull(nugetConfigurationService);
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _nugetConfigurationService = nugetConfigurationService;
             _configurationService = configurationService;
 

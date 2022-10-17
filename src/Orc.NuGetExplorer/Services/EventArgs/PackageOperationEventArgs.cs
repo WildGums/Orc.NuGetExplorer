@@ -1,13 +1,12 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.ComponentModel;
 
     public class PackageOperationEventArgs : CancelEventArgs
     {
         internal PackageOperationEventArgs(IPackageDetails packageDetails, string installPath, PackageOperationType packageOperationType, bool isAutomatic = false)
         {
-            ArgumentNullException.ThrowIfNull(packageDetails);
-
             PackageDetails = packageDetails;
             InstallPath = installPath;
             PackageOperationType = packageOperationType;

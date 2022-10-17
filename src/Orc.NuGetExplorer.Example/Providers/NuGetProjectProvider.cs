@@ -11,9 +11,6 @@
 
         public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
             _extensibleProjectLocator = extensibleProjectLocator;
 
             _defaultProject = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExampleProject>();

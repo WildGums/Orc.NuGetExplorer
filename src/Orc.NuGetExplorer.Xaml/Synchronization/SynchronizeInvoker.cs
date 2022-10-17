@@ -11,7 +11,6 @@
 
         public SynchronizeInvoker(Dispatcher dispatcher)
         {
-            ArgumentNullException.ThrowIfNull(dispatcher);
             _dispatcher = dispatcher;
         }
 

@@ -19,8 +19,6 @@
 
         public WindowsCredentialProvider(IConfigurationService configurationService)
         {
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _configurationService = configurationService;
             _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;
         }

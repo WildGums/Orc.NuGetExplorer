@@ -9,10 +9,6 @@
     {
         public static void ForceDeleteFiles(this IFileService fileService, string filePath, List<string> failedEntries)
         {
-            ArgumentNullException.ThrowIfNull(fileService);
-            ArgumentNullException.ThrowIfNull(filePath);
-            ArgumentNullException.ThrowIfNull(failedEntries);
-
             try
             {
                 // When files or folders are readonly, the File.Delete method may not be able to delete it.
@@ -36,8 +32,6 @@
 
         public static void SetAttributes(this IFileService fileService, string filePath, FileAttributes attribute)
         {
-            ArgumentNullException.ThrowIfNull(fileService);
-
             var attributes = File.GetAttributes(filePath);
             if (attributes.HasFlag(attribute))
             {

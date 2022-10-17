@@ -12,9 +12,6 @@
 
         public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(uiVisualizerService);
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
 
@@ -33,8 +30,6 @@
 
         public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
         {
-            ArgumentNullException.ThrowIfNull(initialState);
-
             var explorerVM = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(initialState.Tab.Name);
             explorerVM.SetInitialPageParameters(initialState);

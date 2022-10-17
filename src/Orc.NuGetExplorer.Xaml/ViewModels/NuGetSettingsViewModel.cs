@@ -27,17 +27,11 @@
             INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider)
         {
-            ArgumentNullException.ThrowIfNull(settingsProvider);
-
             Title = title ?? DefaultTitle;
         }
 
         public NuGetSettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
-            ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
-            ArgumentNullException.ThrowIfNull(configurationService);
-            ArgumentNullException.ThrowIfNull(settings);
-
             _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
             _nuGetConfigurationService = configurationService;
 

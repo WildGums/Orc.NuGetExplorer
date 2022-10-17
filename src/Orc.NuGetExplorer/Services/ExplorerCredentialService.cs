@@ -44,8 +44,6 @@
         /// NonInteractive requests must not promt the user for credentials.</param>
         public ExplorerCredentialService(AsyncLazy<IEnumerable<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials)
         {
-            ArgumentNullException.ThrowIfNull(providers);
-
             _providers = providers;
             _nonInteractive = nonInteractive;
             HandlesDefaultCredentials = handlesDefaultCredentials;
@@ -77,11 +75,6 @@
             string message,
             CancellationToken cancellationToken)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
             ICredentials? creds = null;
 
             foreach (var provider in await _providers)
@@ -163,17 +156,11 @@
         /// <param name="isProxy"><c>true</c> for proxy credentials; otherwise, <c>false</c>.</param>
         /// <param name="credentials">Cached credentials or <c>null</c>.</param>
         /// <returns><c>true</c> if a result is returned from the cache; otherwise, false.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="uri" /> is <c>null</c>.</exception>
         public bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,
             out ICredentials? credentials)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
             credentials = null;
 
             var rootUri = uri.GetRootUri();

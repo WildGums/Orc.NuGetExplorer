@@ -13,9 +13,6 @@
 
         private UpdatePackageSearchMetadataBuilder(ClonedPackageSearchMetadata metadata, IPackageSearchMetadata updatedVersionMetadata)
         {
-            ArgumentNullException.ThrowIfNull(metadata);
-            ArgumentNullException.ThrowIfNull(updatedVersionMetadata);
-
             _metadata = metadata;
             _updatedVersionMetadata = updatedVersionMetadata;
         }

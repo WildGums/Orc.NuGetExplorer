@@ -9,8 +9,6 @@
     {
         public DeferToken(MetadataOrigin loadType, NuGetPackage nuGetPackage)
         {
-            ArgumentNullException.ThrowIfNull(nuGetPackage);
-
             LoadType = DetermineLoadBehavior(loadType);
             Package = nuGetPackage;
         }

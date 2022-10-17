@@ -21,7 +21,6 @@
 
         public NuGetProjectUpgradeService(ISettings settings)
         {
-            ArgumentNullException.ThrowIfNull(settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
             if (settings is not IVersionedSettings versionedSettings)

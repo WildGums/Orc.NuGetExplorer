@@ -14,11 +14,6 @@
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(languageService);
-            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
-            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
-            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
-
             InitializeTypes(ServiceLocator.Default);
 
             //set language resources

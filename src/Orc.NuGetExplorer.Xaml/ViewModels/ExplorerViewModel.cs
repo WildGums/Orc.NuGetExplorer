@@ -42,11 +42,6 @@
         public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
             IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
         {
-            ArgumentNullException.ThrowIfNull(commandManager);
-            ArgumentNullException.ThrowIfNull(settingsProvider);
-            ArgumentNullException.ThrowIfNull(configurationService);
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
             _configurationService = configurationService;
             _initializationService = initializationService;
             _nuGetSettings = nuGetSettings;

@@ -15,9 +15,6 @@
 
         public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
         {
-            ArgumentNullException.ThrowIfNull(extensiblesManager);
-            ArgumentNullException.ThrowIfNull(projectsModel);
-
             _extensiblesManager = extensiblesManager;
             ProjectsModel = projectsModel;
         }

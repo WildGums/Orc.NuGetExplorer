@@ -9,9 +9,6 @@
     {
         public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(folderPath);
-
             failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
             var fallbackFlag = false;
 

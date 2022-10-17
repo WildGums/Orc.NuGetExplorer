@@ -13,9 +13,6 @@
         public NuGetPackageSourceProvider(ISettings settingsManager, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
             : base(settingsManager, defaultPackageSourcesProvider.GetDefaultPackages().ToPackageSourceInstances())
         {
-            ArgumentNullException.ThrowIfNull(settingsManager);
-            ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
-
             _settingsManager = settingsManager;
         }
 

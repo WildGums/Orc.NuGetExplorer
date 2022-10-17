@@ -35,10 +35,6 @@
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
            INuGetPackageManager nuGetExtensibleProjectManager)
         {
-            ArgumentNullException.ThrowIfNull(repositoryService);
-            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
-
             _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _nuGetExtensibleProjectManager = nuGetExtensibleProjectManager;
@@ -166,8 +162,6 @@
 
         public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleaseTags, bool? allowPrerelease = null, CancellationToken token = default)
         {
-            ArgumentNullException.ThrowIfNull(excludeReleaseTags);
-
             var foundUpdates = (await SearchForPackagesUpdatesAsync(allowPrerelease, true, token)).ToList();
 
             // Replace all packages with restricted tag with nearest possible

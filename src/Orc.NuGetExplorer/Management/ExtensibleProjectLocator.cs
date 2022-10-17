@@ -20,9 +20,6 @@
 
         public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _typeFactory = typeFactory;
             _managerConfigurationService = configurationService;
         }

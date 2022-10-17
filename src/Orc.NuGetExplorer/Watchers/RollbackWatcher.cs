@@ -18,11 +18,6 @@
             IDirectoryService directoryService)
             : base(packageOperationNotificationService, packageOperationContextService)
         {
-            ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
-            ArgumentNullException.ThrowIfNull(backupFileSystemService);
-            ArgumentNullException.ThrowIfNull(fileSystemService);
-            ArgumentNullException.ThrowIfNull(directoryService);
-
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
             _fileSystemService = fileSystemService;

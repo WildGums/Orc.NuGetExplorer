@@ -4,8 +4,6 @@
     {
         protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
         {
-            ArgumentNullException.ThrowIfNull(nuGetLogListeningSevice);
-
             nuGetLogListeningSevice.Error += OnError;
             nuGetLogListeningSevice.Info += OnInfo;
             nuGetLogListeningSevice.Debug += OnDebug;

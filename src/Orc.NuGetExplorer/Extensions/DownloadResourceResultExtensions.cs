@@ -7,10 +7,7 @@
     {
         public static string GetResourceRoot(this DownloadResourceResult downloadResourceResult)
         {
-            ArgumentNullException.ThrowIfNull(downloadResourceResult);
-
             var fileStream = downloadResourceResult.PackageStream as FileStream;
-
             if (fileStream is not null)
             {
                 return fileStream.Name;

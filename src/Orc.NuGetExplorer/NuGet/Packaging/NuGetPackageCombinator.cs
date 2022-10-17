@@ -16,9 +16,6 @@
         /// </summary>
         public static async Task<PackageStatus> CombineAsync(NuGetPackage package, MetadataOrigin tokenPage, IPackageSearchMetadata metadata)
         {
-            ArgumentNullException.ThrowIfNull(metadata);
-            ArgumentNullException.ThrowIfNull(package);
-
             if (tokenPage == MetadataOrigin.Browse)
             {
                 await package.MergeMetadataAsync(metadata, tokenPage);

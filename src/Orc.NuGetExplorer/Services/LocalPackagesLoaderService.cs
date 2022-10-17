@@ -29,11 +29,6 @@
         public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
-            ArgumentNullException.ThrowIfNull(repositoryService);
-
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;

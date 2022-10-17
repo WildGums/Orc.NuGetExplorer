@@ -25,8 +25,6 @@
 
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
-            ArgumentNullException.ThrowIfNull(settingsProvider);
-
             _settings = settingsProvider.Model ?? throw new InvalidOperationException("Settings must be initialized first");
             _nuGetConfigurationService = nuGetConfigurationService;
         }

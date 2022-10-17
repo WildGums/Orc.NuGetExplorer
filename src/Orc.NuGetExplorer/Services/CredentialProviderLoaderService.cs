@@ -18,8 +18,6 @@
 
         public CredentialProviderLoaderService(IConfigurationService configurationService)
         {
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _configurationService = configurationService;
 
             //this provider add yourself as default V3 credential

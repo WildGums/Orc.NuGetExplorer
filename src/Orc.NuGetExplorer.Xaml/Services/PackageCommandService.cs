@@ -25,12 +25,6 @@
         public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
-            ArgumentNullException.ThrowIfNull(busyIndicatorService);
-            ArgumentNullException.ThrowIfNull(packageQueryService);
-            ArgumentNullException.ThrowIfNull(packageOperationService);
-            ArgumentNullException.ThrowIfNull(packageOperationContextService);
-            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
-
             _busyIndicatorService = busyIndicatorService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
@@ -47,8 +41,6 @@
 
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            ArgumentNullException.ThrowIfNull(packageDetails);
-
             switch (operationType)
             {
                 case PackageOperationType.Uninstall:
@@ -146,8 +138,6 @@
 
         internal async Task<bool> CanInstallAsync(IPackageDetails package)
         {
-            ArgumentNullException.ThrowIfNull(package);
-
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 
             Log.Debug($"Can install for '{package}': {packageExists}");
@@ -157,8 +147,6 @@
 
         internal async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
-            ArgumentNullException.ThrowIfNull(package);
-
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 
             Log.Debug($"Can update for '{package}': {packageExists}");

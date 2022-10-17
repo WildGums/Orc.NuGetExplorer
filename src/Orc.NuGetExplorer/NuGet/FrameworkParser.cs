@@ -24,8 +24,6 @@
         /// <returns></returns>
         public static NuGetFramework ToSpecificPlatform(NuGetFramework framework)
         {
-            ArgumentNullException.ThrowIfNull(framework);
-
             if (framework.Version.Major < 5)
             {
                 return framework;

@@ -13,8 +13,6 @@
 
         public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
         {
-            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
-
             _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 

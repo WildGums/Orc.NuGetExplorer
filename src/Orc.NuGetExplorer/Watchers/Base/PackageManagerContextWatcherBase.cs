@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
 
     public abstract class PackageManagerContextWatcherBase : PackageManagerWatcherBase
@@ -9,8 +10,6 @@
         protected PackageManagerContextWatcherBase(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService)
             : base(packageOperationNotificationService)
         {
-            ArgumentNullException.ThrowIfNull(packageOperationContextService);
-
             _packageOperationContextService = packageOperationContextService;
 
             _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;

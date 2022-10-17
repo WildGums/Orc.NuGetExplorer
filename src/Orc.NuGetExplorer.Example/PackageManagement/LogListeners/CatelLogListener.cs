@@ -13,9 +13,6 @@
 
         public CatelLogListener(IDispatcherService dispatcherService, IEchoService echoService)
         {
-            ArgumentNullException.ThrowIfNull(dispatcherService);
-            ArgumentNullException.ThrowIfNull(echoService);
-
             _dispatcherService = dispatcherService;
 
             _echo = echoService.GetPackageManagementEcho();

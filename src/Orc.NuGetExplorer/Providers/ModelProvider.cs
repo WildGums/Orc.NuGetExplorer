@@ -10,8 +10,6 @@
 
         public ModelProvider(ITypeFactory typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
             _typeFactory = typeFactory;
         }
 

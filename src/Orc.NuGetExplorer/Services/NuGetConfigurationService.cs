@@ -37,8 +37,6 @@
 
         public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _configurationService = configurationService;
 
             _defaultDestinationFolder = Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "plugins");
@@ -116,7 +114,6 @@
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
-            ArgumentNullException.ThrowIfNull(packageSources);
             _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
 
             if (_packageSourceProvider.Value is NuGetPackageSourceProvider nugetPackageSourceProvider)
@@ -127,8 +124,6 @@
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
         {
-            ArgumentNullException.ThrowIfNull(repository);
-
             var key = GetIsPrereleaseAllowedKey(repository);
             _configurationService.SetRoamingValue(key, value);
         }

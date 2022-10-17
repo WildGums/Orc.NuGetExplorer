@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
+
     public abstract class PackageManagerWatcherBase
     {
         protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
         {
-            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
-
             packageOperationNotificationService.OperationStarting += OnOperationStarting;
             packageOperationNotificationService.OperationFinished += OnOperationFinished;
             packageOperationNotificationService.OperationsBatchStarting += OnOperationsBatchStarting;

@@ -13,8 +13,6 @@
 
         public NuGetProjectContext(FileConflictAction fileConflictAction, ILogger logger)
         {
-            ArgumentNullException.ThrowIfNull(logger);
-
             FileConflictAction = fileConflictAction;
         }
 

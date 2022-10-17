@@ -23,8 +23,6 @@
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
-            ArgumentNullException.ThrowIfNull(appCacheProvider);
-
             _iconCache = appCacheProvider.EnsureIconCache();
             _iconCache.FallbackValue = new BitmapImage(new Uri(_defaultIconUri));
         }

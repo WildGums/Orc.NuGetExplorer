@@ -10,8 +10,6 @@
 
         public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
             _typeFactory = typeFactory;
         }
 

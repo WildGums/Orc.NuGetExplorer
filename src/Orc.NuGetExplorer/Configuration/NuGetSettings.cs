@@ -26,8 +26,6 @@
 
         public NuGetSettings(IConfigurationService configurationService)
         {
-            ArgumentNullException.ThrowIfNull(configurationService);
-
             _configurationService = configurationService;
 
             // version of configuration is a version of assembly

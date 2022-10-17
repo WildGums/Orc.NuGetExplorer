@@ -37,9 +37,6 @@
 
         public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(repositoryService);
-
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
             _optionalLocalRepositories = new[]
@@ -51,11 +48,7 @@
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
             IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider)
-        {
-            ArgumentNullException.ThrowIfNull(sourceRepositories);
-            ArgumentNullException.ThrowIfNull(repositoryProvider);
-            ArgumentNullException.ThrowIfNull(directoryService);
-
+        { 
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
             _directoryService = directoryService;
@@ -64,8 +57,6 @@
 
         public static PackageMetadataProvider CreateFromSourceContext(IServiceLocator serviceLocator)
         {
-            ArgumentNullException.ThrowIfNull(serviceLocator);
-
             var directoryService = serviceLocator.ResolveRequiredType<IDirectoryService>();
             var repositoryService = serviceLocator.ResolveRequiredType<IRepositoryContextService>();
             var projectSource = serviceLocator.ResolveRequiredType<IExtensibleProjectLocator>();
@@ -77,11 +68,6 @@
         public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
             INuGetPackageManager projectManager)
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(repositoryService);
-            ArgumentNullException.ThrowIfNull(projectSource);
-            ArgumentNullException.ThrowIfNull(projectManager);
-
             var typeFactory = TypeFactory.Default;
 
             var context = repositoryService.AcquireContext();

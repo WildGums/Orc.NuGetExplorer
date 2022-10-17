@@ -24,10 +24,6 @@
 
         public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
         {
-            ArgumentNullException.ThrowIfNull(package);
-            ArgumentNullException.ThrowIfNull(settingsProvider);
-            ArgumentNullException.ThrowIfNull(commandManager);
-
             Package = package;
             _nugetSettings = settingsProvider.Model ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
 

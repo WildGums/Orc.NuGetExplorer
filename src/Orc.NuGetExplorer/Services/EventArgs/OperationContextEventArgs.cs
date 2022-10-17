@@ -6,8 +6,6 @@
     {
         public OperationContextEventArgs(IPackageOperationContext packageOperationContext)
         {
-            ArgumentNullException.ThrowIfNull(packageOperationContext);
-
             PackageOperationContext = packageOperationContext;
         }
 

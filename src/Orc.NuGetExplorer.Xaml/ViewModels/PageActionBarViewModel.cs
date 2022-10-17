@@ -28,13 +28,6 @@
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
             IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
         {
-            ArgumentNullException.ThrowIfNull(managerPage);
-            ArgumentNullException.ThrowIfNull(progressManager);
-            ArgumentNullException.ThrowIfNull(packageCommandService);
-            ArgumentNullException.ThrowIfNull(packageOperationContextService);
-            ArgumentNullException.ThrowIfNull(messageService);
-            ArgumentNullException.ThrowIfNull(commandManager);
-
             _parentManagerPage = managerPage;
             _progressManager = progressManager;
             _packageCommandService = packageCommandService;

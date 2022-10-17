@@ -8,8 +8,6 @@
     {
         protected PackageSourcesWatcherBase(IPackageSourceProvider packageSourceProvider)
         {
-            ArgumentNullException.ThrowIfNull(packageSourceProvider);
-
             packageSourceProvider.PackageSourcesChanged += OnPackageSourcesChanged;
         }
 

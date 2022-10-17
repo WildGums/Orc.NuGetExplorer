@@ -11,7 +11,6 @@
 
         public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService) : base(upgradeService)
         {
-            ArgumentNullException.ThrowIfNull(messageService);
             _messageService = messageService;
         }
 

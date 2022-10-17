@@ -7,8 +7,6 @@
     {
         protected UpgradeListenerBase(INuGetProjectUpgradeService upgradeRunner)
         {
-            ArgumentNullException.ThrowIfNull(upgradeRunner);
-
             upgradeRunner.UpgradeEnd += OnUpgraded;
             upgradeRunner.UpgradeStart += OnUpgrading;
         }
