@@ -32,7 +32,7 @@
 
                 commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
-                commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
+                // commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
 
                 var canExecuteRaised = false;
