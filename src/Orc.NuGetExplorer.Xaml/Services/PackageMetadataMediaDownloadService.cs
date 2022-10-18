@@ -19,12 +19,12 @@
 
         private readonly IconCache _iconCache;
 
-        private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
+        public const string DefaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
             _iconCache = appCacheProvider.EnsureIconCache();
-            _iconCache.FallbackValue = new BitmapImage(new Uri(_defaultIconUri));
+            _iconCache.FallbackValue = new BitmapImage(new Uri(DefaultIconUri));
         }
 
         public async Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata)
@@ -104,7 +104,7 @@
             {
                 Log.Error(ex);
             }
-            return new BitmapImage(new Uri(_defaultIconUri));
+            return new BitmapImage(new Uri(DefaultIconUri));
         }
 
         private ImageSource? GetFromCacheOrFetch(Uri uri)
@@ -131,7 +131,7 @@
                 Log.Error(ex);
             }
 
-            return new BitmapImage(new Uri(_defaultIconUri));
+            return new BitmapImage(new Uri(DefaultIconUri));
         }
 
         private async Task<ImageSource?> GetFromCacheOrFetchAsync(Uri uri)

@@ -174,7 +174,7 @@
 
         private void GetPrimaryVersionInfo(NuGetPackage package)
         {
-            PrimaryVersion = package.InstalledVersion ?? throw new InvalidOperationException($"Package '{package}' must be installed");
+            PrimaryVersion = package.InstalledVersion ?? package.NuGetVersion;
             PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";
         }
     }

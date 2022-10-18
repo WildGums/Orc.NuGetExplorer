@@ -46,9 +46,6 @@
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
 
-            // Add dummy package, the real value must be set by binding after ctor
-            Package = new NuGetPackage(new PackageSearchMetadata(), MetadataOrigin.Browse);
-
             VersionsCollection = new();
             ValidationContext = new ValidationContext();
         }
@@ -63,7 +60,7 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
-        public NuGetPackage Package { get; set; }
+        public NuGetPackage? Package { get; set; }
 
         public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
 
@@ -98,9 +95,9 @@
             }
         }
 
-        public PackageIdentity SelectedPackage => new(Package.Identity.Id, SelectedVersion);
+        public PackageIdentity? SelectedPackage => Package is null ? null : new(Package.Identity.Id, SelectedVersion);
 
-        public PackageIdentity InstalledPackage => new(Package.Identity.Id, InstalledVersion);
+        public PackageIdentity? InstalledPackage => Package is null ? null : new(Package.Identity.Id, InstalledVersion);
 
         [ViewModelToModel]
         public NuGetVersion? InstalledVersion { get; set; }
@@ -140,8 +137,11 @@
                     }
                     else
                     {
-                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
-                        await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
+                        if (SelectedPackage is not null)
+                        {
+                            var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
+                            await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
+                        }
                     }
                 }
 
@@ -149,7 +149,7 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error when installing package {Package.Identity}, installation failed");
+                Log.Error(ex, $"Error when installing package {Package?.Identity}, installation failed");
             }
             finally
             {
@@ -176,6 +176,11 @@
 
         private async Task OnUninstallPackageExecuteAsync()
         {
+            if (Package is null || InstalledPackage is null)
+            {
+                return;
+            }
+
             try
             {
                 _progressManager.ShowBar(this);
@@ -274,7 +279,7 @@
             {
                 if (e is PropertyChangedExtendedEventArgs<NuGetVersion> args)
                 {
-                    if ((args.OldValue is null && SelectedVersion == Package.Identity.Version) || args.NewValue is null)
+                    if ((args.OldValue is null && SelectedVersion == Package?.Identity.Version) || args.NewValue is null)
                     {
                         // Skip loading on version list first load
                         return;
@@ -284,6 +289,12 @@
                 if (_settingsProvider.Model is null)
                 {
                     throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                }
+
+                if (Package is null)
+                {
+                    Log.Debug("No package selected");
+                    return;
                 }
 
                 var identity = new PackageIdentity(Package.Identity.Id, SelectedVersion);
@@ -323,6 +334,11 @@
         {
             try
             {
+                if (Package is null)
+                {
+                    return;
+                }
+
                 //select identity version
                 var selectedVersion = Package.Identity.Version;
 
@@ -374,6 +390,11 @@
 
         private void PopulateVersionCollection()
         {
+            if (Package is null)
+            {
+                return;
+            }
+
             try
             {
                 if (Package.LoadVersionsAsync().Wait(Timeout))

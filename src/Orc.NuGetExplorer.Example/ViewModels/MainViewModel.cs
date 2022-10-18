@@ -74,8 +74,6 @@
 
         private async Task OnOpenUpdateWindowExecuteAsync()
         {
-            //show batch update
-            //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         private bool OnOpenUpdateWindowCanExecute()

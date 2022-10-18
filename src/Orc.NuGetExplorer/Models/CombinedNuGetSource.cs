@@ -13,11 +13,6 @@
 
         public CombinedNuGetSource(IReadOnlyList<INuGetSource> feedList)
         {
-            if(!feedList.Any())
-            {
-                Log.ErrorAndCreateException<InvalidOperationException>("Cannot create NuGet source from empty feed list");
-            }
-
             foreach (var feed in feedList)
             {
                 if (feed is CombinedNuGetSource)
@@ -30,7 +25,7 @@
 
         public string Name => Constants.CombinedSourceName;
 
-        public string Source => _sourceList.First().Source;
+        public string Source => _sourceList.FirstOrDefault()?.Source ?? string.Empty;
 
         public bool IsAccessible => IsAllFeedsAccessible();
 

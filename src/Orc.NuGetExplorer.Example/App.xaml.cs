@@ -1,10 +1,15 @@
 ﻿namespace Orc.NuGetExplorer.Example
 {
     using System.Globalization;
+    using System.Runtime.CompilerServices;
     using System.Windows;
+    using System.Xml.Linq;
+    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
+    using Orc.NuGetExplorer.Example.Services;
+    using Orc.NuGetExplorer.Services;
     using Orchestra;
 
     /// <summary>
@@ -32,6 +37,21 @@
             this.ApplyTheme();
 
             base.OnStartup(e);
+        }
+
+        [ModuleInitializer]
+        public static async void InitializeAsync()
+        {
+            var serviceLocator = ServiceLocator.Default;
+
+            serviceLocator.RegisterType<IEchoService, EchoService>();
+            serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
+
+            serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
+            serviceLocator.RegisterType<INuGetLogListeningSevice, NoVerboseHttpNuGetLogListeningService>();
+
+            var configurationService = serviceLocator.ResolveType<IConfigurationService>();
+            await configurationService.LoadAsync();
         }
     }
 }

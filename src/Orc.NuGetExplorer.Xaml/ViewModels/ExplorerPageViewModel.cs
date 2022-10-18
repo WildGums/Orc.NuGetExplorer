@@ -108,8 +108,8 @@
 
             CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
-            Page = page;
             PackageItems = new FastObservableCollection<NuGetPackage>();
+            Page = page;
         }
 
         /// <summary>
