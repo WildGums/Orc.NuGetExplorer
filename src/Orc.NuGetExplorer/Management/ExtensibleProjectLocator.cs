@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
 

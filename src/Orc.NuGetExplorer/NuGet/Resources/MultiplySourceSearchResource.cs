@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO.Packaging;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -20,6 +21,8 @@
 
         public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             var searchRes = new MultiplySourceSearchResource();
             await searchRes.LoadResourcesAsync(sourceRepositories);
 
@@ -28,6 +31,8 @@
 
         private async Task LoadResourcesAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             await ResolveResourcesAsync(sourceRepositories);
 
             _v2Used = _resolvedResources.Values.Any(resource => resource is PackageSearchResourceV2Feed);
@@ -38,6 +43,8 @@
         /// </summary>
         private async Task ResolveResourcesAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             //get one source for repositories with same uri
             //nonetheless repository provider is already aware of source duplicates, so check is unnecessary
             var combinedResourcesTasks = sourceRepositories.Distinct(DefaultNuGetComparers.SourceRepository)

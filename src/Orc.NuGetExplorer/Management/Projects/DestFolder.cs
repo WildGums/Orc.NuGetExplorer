@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using Catel;
     using Catel.Logging;
     using NuGet.Frameworks;
     using NuGet.Packaging;

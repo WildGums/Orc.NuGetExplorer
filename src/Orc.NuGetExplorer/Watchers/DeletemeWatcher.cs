@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using Catel.Messaging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
@@ -15,6 +16,12 @@
             IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
         {
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(nuGetPackageManager);
+            ArgumentNullException.ThrowIfNull(projectProvider);
+            ArgumentNullException.ThrowIfNull(messageMediator);
+
             _fileSystemService = fileSystemService;
             _directoryService = directoryService;
             _nuGetPackageManager = nuGetPackageManager;
@@ -25,6 +32,8 @@
         }
         private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
         {
+            ArgumentNullException.ThrowIfNull(message);
+
             if (message.Data.OperationType == PackageOperationType.Uninstall)
             {
                 if (!_directoryService.Exists(message.Data.OperationPath))

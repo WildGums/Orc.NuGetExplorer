@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
     using System.Collections.Generic;
     using NuGet.Frameworks;
     using NuGet.ProjectManagement;
@@ -15,6 +16,8 @@
 
         public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
         {
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+
             _frameworkNameProvider = frameworkNameProvider;
         }
 
@@ -26,6 +29,8 @@
         /// <returns></returns>
         public NuGetProject GetProjectConfig(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             if (!_storedProjectMetadata.TryGetValue(project, out var metadata))
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);

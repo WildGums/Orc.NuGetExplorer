@@ -13,6 +13,8 @@
 
         public FeedVerificationResult HandleException(FatalProtocolException exception, string source)
         {
+            ArgumentNullException.ThrowIfNull(exception);
+
             try
             {
                 var innerException = exception.InnerException;

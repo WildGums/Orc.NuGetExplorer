@@ -11,10 +11,7 @@
             _canPromptForAuthentication = canPromptForAuthentication ?? true;
         }
 
-        public bool CanPromptForAuthentication
-        {
-            get { return !HasPromptedForAuthentication && _canPromptForAuthentication; }
-        }
+        public bool CanPromptForAuthentication => !HasPromptedForAuthentication && _canPromptForAuthentication;
 
         public bool HasPromptedForAuthentication { get; set; }
     }

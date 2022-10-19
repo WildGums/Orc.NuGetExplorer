@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Text.RegularExpressions;
+    using Catel;
     using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
@@ -16,6 +17,8 @@
 
         public static PackageIdentity? Parse(string packageString)
         {
+            Argument.IsNotNullOrEmpty(() => packageString);
+
             var rgx = new Regex(IdentityPattern);
 
             var match = rgx.Match(packageString);

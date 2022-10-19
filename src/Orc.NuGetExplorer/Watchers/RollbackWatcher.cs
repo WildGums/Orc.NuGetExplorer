@@ -13,11 +13,19 @@
         private readonly IDirectoryService _directoryService;
         private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
 
-        public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService, 
-            IDirectoryService directoryService)
+        public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService,
+                               IPackageOperationContextService packageOperationContextService,
+                               IRollbackPackageOperationService rollbackPackageOperationService,
+                               IBackupFileSystemService backupFileSystemService,
+                               IFileSystemService fileSystemService,
+                               IDirectoryService directoryService)
             : base(packageOperationNotificationService, packageOperationContextService)
         {
+            ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
+            ArgumentNullException.ThrowIfNull(backupFileSystemService);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+
             _rollbackPackageOperationService = rollbackPackageOperationService;
             _backupFileSystemService = backupFileSystemService;
             _fileSystemService = fileSystemService;

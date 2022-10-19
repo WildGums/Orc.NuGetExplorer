@@ -37,6 +37,10 @@
 
         public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
         {
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+
             _directoryService = directoryService;
             _sourceRepositories = repositoryProvider.GetRepositories();
             _optionalLocalRepositories = new[]
@@ -48,7 +52,11 @@
 
         public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
             IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider)
-        { 
+        {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+
             _sourceRepositories = sourceRepositories;
             _optionalLocalRepositories = optionalGlobalLocalRepositories;
             _directoryService = directoryService;
@@ -68,6 +76,11 @@
         public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
             INuGetPackageManager projectManager)
         {
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(projectSource);
+            ArgumentNullException.ThrowIfNull(projectManager);
+
             var typeFactory = TypeFactory.Default;
 
             var context = repositoryService.AcquireContext();
@@ -84,6 +97,8 @@
 
         public async Task<IPackageSearchMetadata?> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(identity);
+
             var sources = new List<SourceRepository>();
 
             if (_optionalLocalRepositories is not null)
@@ -157,6 +172,8 @@
 
         public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(identity);
+
             if (!_sourceRepositories.Any())
             {
                 Log.Warning("No repositories available");
@@ -233,6 +250,7 @@
             bool includeUnlisted,
             CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(repository);
 
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
@@ -284,6 +302,9 @@
             CancellationToken cancellationToken,
             bool takeVersions = true)
         {
+            ArgumentNullException.ThrowIfNull(repository);
+            ArgumentNullException.ThrowIfNull(identity);
+
             if (takeVersions)
             {
                 //query all versions and pack them in a single object
@@ -319,6 +340,9 @@
 
         private async Task<IPackageSearchMetadata?> GetPackageMetadataFromLocalSourceAsync(SourceRepository localRepository, PackageIdentity packageIdentity, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(localRepository);
+            ArgumentNullException.ThrowIfNull(packageIdentity);
+
             var localPackages = await GetPackageMetadataFromLocalSourceAsync(localRepository, packageIdentity.Id, token);
 
             var packageMetadata = localPackages?.FirstOrDefault(p => p.Identity.Version == packageIdentity.Version);
@@ -337,6 +361,8 @@
             string packageId,
             CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(localRepository);
+
             var localResource = await localRepository.GetResourceAsync<PackageMetadataResource>(token);
 
             using (var sourceCacheContext = new SourceCacheContext())

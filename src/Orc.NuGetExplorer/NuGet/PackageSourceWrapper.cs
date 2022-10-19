@@ -12,11 +12,13 @@
 
         public static explicit operator PackageSource(PackageSourceWrapper wrapper)
         {
+            ArgumentNullException.ThrowIfNull(wrapper);
+
             if (wrapper.IsMultipleSource || !wrapper.PackageSources.Any())
             {
                 throw Log.ErrorAndCreateException<InvalidCastException>("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
             }
-            return wrapper.PackageSources.First();
+            return wrapper.PackageSources[0];
         }
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }
@@ -25,7 +27,10 @@
 
         public PackageSourceWrapper(string source)
         {
-            PackageSources = new List<PackageSource>() { new PackageSource(source) };
+            PackageSources = new List<PackageSource>() 
+            { 
+                new PackageSource(source) 
+            };
         }
 
         public PackageSourceWrapper(IReadOnlyList<string> sources)
@@ -35,7 +40,7 @@
 
         public override string ToString()
         {
-            return String.Join<PackageSource>("; ", PackageSources.ToArray());
+            return string.Join<PackageSource>("; ", PackageSources.ToArray());
         }
     }
 }

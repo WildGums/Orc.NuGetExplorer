@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
     using System;
-    using Catel;
     using Catel.IoC;
 
     internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider

@@ -19,6 +19,8 @@
 
         public WindowsCredentialProvider(IConfigurationService configurationService)
         {
+            ArgumentNullException.ThrowIfNull(configurationService);
+
             _configurationService = configurationService;
             _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;
         }
@@ -27,6 +29,8 @@
 
         public async Task<CredentialResponse> GetAsync(Uri uri, IWebProxy proxy, CredentialRequestType type, string message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             if (isRetry)
             {
                 Log.Debug($"Retrying to request credentials for '{uri}'");

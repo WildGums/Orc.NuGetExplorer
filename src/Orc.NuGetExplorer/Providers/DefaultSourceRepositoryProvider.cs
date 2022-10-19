@@ -25,24 +25,33 @@
 
         public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
         {
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+
             _settings = settingsProvider.Model ?? throw new InvalidOperationException("Settings must be initialized first");
             _nuGetConfigurationService = nuGetConfigurationService;
         }
 
         public SourceRepository CreateRepository(PackageSource source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined));
             return repo;
         }
 
         public SourceRepository CreateRepository(PackageSource source, FeedType type)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, type));
             return repo;
         }
 
         public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (forceUpdate)
             {
                 var repo = _repositoryStore.AddOrUpdate(
@@ -61,11 +70,11 @@
         {
             var repos = new List<SourceRepository>();
 
-            //from config
+            // from config
             var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)
                 .ToPackageSourceInstances().ToList();
 
-            //from settings model
+            // from settings model
             foreach (var source in _settings.GetAllPackageSources())
             {
                 repos.Add(CreateRepository(source));
@@ -79,7 +88,7 @@
                 }
             }
 
-            //this provider aware of same-source repositories
+            // this provider aware of same-source repositories
             repos = repos.Distinct(DefaultNuGetComparers.SourceRepository).ToList();
 
             return repos;
@@ -87,8 +96,7 @@
 
         public SourceRepository CreateLocalRepository(string source)
         {
-            return new SourceRepository(
-                        new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2);
+            return new SourceRepository(new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2);
         }
     }
 }

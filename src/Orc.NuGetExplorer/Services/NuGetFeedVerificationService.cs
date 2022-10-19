@@ -110,7 +110,7 @@ namespace Orc.NuGetExplorer
                     var cancellationToken = cts.Token;
 
                     //try to perform search
-                    var searchTask = searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
+                    var searchTask = searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
 
                     var searchCompletion = Task.WhenAny(searchTask, Task.Delay(timeOut, cancellationToken)).Result;
 

@@ -60,7 +60,7 @@
 
                 var pagedPackages = localPackages
                     .GetLatest(VersionComparer.Default)
-                    .Where(package => package.Id.IndexOf(searchTerm ?? String.Empty, StringComparison.OrdinalIgnoreCase) != -1)
+                    .Where(package => package.Id.IndexOf(searchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) != -1)
                     .OrderBy(package => package.Id)
                     .Skip(pageContinuation.GetNext());
 

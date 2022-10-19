@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
     using System.ComponentModel;
     using Catel.Data;
     using Catel.IoC;
@@ -10,6 +11,8 @@
 
         public ModelProvider(ITypeFactory typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(typeFactory);
+
             _typeFactory = typeFactory;
         }
 

@@ -11,6 +11,7 @@ namespace Orc.NuGetExplorer.Resolver
     using System.Threading;
     using System.Threading.Tasks;
     using NuGet.Common;
+    using NuGet.Frameworks;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -28,6 +29,8 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         public IEnumerable<SourcePackageDependencyInfo> Resolve(PackageResolverContext context, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(context);
+
             var stopWatch = new Stopwatch();
             token.ThrowIfCancellationRequested();
 
@@ -209,6 +212,9 @@ namespace Orc.NuGetExplorer.Resolver
             Action<IExtensibleProject, PackageReference> conflictResolveAction,
             CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(context);
+            ArgumentNullException.ThrowIfNull(project);
+
             var availablePackages = Resolve(context, cancellationToken);
             // note: probably this is not required
             var installablePackages = availablePackages
@@ -264,6 +270,9 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static IEnumerable<PackageDependency> GetBrokenDependencies(SourcePackageDependencyInfo package, IEnumerable<PackageIdentity> packages)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(packages);
+
             foreach (var dependency in package.Dependencies)
             {
                 var target = packages.FirstOrDefault(targetPackage => StringComparer.OrdinalIgnoreCase.Equals(targetPackage.Id, dependency.Id));
@@ -279,6 +288,9 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static string FormatDependencyConstraint(SourcePackageDependencyInfo package, PackageDependency dependency)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(dependency);
+
             var range = dependency.VersionRange;
             var dependencyString = $"{dependency.Id} {range?.ToNonSnapshotRange().PrettyPrint() ?? string.Empty}";
 
@@ -291,6 +303,8 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         private static IEnumerable<SourcePackageDependencyInfo> RemoveImpossiblePackages(IEnumerable<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+
             List<SourcePackageDependencyInfo> before;
             var after = new List<SourcePackageDependencyInfo>(packages);
 
@@ -306,6 +320,8 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static List<SourcePackageDependencyInfo> InnerPruneImpossiblePackages(List<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+
             if (packages.Count == 0)
             {
                 return packages;
@@ -356,6 +372,9 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         private static bool ShouldRejectPackagePair(ResolverPackage p1, ResolverPackage p2)
         {
+            ArgumentNullException.ThrowIfNull(p1);
+            ArgumentNullException.ThrowIfNull(p2);
+
             var p1ToP2Dependency = p1.FindDependencyRange(p2.Id);
             if (p1ToP2Dependency is not null)
             {
