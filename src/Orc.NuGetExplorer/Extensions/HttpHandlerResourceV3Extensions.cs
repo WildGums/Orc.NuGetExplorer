@@ -6,7 +6,7 @@
 
     public static class HttpHandlerResourceV3Extensions
     {
-        public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler) 
+        public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler)
             where T : class, ICredentialService
         {
             ArgumentNullException.ThrowIfNull(httpResourceHandler);

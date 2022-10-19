@@ -23,7 +23,7 @@
         private readonly IPackageCommandService _packageCommandService;
         private readonly IPackageOperationContextService _packageOperationContextService;
 
-        public PackagesBatchUpdateCommandContainer(ICommandManager commandManager, IProgressManager progressManager, IMessageService messageService, INuGetPackageManager projectManager, 
+        public PackagesBatchUpdateCommandContainer(ICommandManager commandManager, IProgressManager progressManager, IMessageService messageService, INuGetPackageManager projectManager,
             IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
             : base(Commands.Packages.BatchUpdate, commandManager)
         {

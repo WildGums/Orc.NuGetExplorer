@@ -6,7 +6,6 @@
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
-    using NuGet.Frameworks;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Example.PackageManagement;
     using Orc.NuGetExplorer.Example.Providers;

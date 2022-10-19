@@ -2,7 +2,6 @@
 {
     using System;
     using Catel.IoC;
-    using NuGet.Frameworks;
     using Orc.NuGetExplorer.Management;
 
     public class NuGetProjectProvider : IDefaultExtensibleProjectProvider

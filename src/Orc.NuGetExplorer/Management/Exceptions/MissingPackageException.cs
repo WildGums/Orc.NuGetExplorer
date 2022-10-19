@@ -8,7 +8,7 @@
         {
         }
 
-        public MissingPackageException(string message, Exception innerException) 
+        public MissingPackageException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

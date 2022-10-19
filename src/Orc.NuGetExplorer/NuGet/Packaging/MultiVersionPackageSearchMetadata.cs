@@ -39,8 +39,8 @@
 
         public string SelectedVersion
         {
-            get 
-            { 
+            get
+            {
                 return _overridenVersion ?? Identity.Version.ToString(); //selected version by default is version from identity
             }
             set

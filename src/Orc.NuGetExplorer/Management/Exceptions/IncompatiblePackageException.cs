@@ -4,7 +4,7 @@
 
     public class IncompatiblePackageException : ProjectInstallException
     {
-        public IncompatiblePackageException(string message, Exception innerException) 
+        public IncompatiblePackageException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

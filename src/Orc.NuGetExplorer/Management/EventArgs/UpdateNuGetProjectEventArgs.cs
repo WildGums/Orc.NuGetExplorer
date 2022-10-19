@@ -6,13 +6,13 @@
 
     public class UpdateNuGetProjectEventArgs : NuGetProjectEventArgs
     {
-        public UpdateNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package) 
+        public UpdateNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package)
             : base(project, package)
         {
             RemovedVersions = new List<NuGetVersion>();
         }
 
-        public UpdateNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity beforeUpdate, IEnumerable<NuGetProjectEventArgs> updateEventArgs) 
+        public UpdateNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity beforeUpdate, IEnumerable<NuGetProjectEventArgs> updateEventArgs)
             : this(project, beforeUpdate)
         {
             foreach (var arg in updateEventArgs)

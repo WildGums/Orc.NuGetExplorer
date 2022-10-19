@@ -15,7 +15,7 @@
 
         private MultiVersionPackageSearchMetadataBuilder(IEnumerable<IPackageSearchMetadata> searchMetadatas)
         {
-             _searchMetadatas = searchMetadatas;
+            _searchMetadatas = searchMetadatas;
         }
 
         public static MultiVersionPackageSearchMetadataBuilder FromMetadatas(IEnumerable<IPackageSearchMetadata> searchMetadatas)

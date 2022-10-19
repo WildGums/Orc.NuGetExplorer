@@ -87,13 +87,13 @@
             _registredProjects[project.GetType()] = project;
         }
 
-        public void Register<T>() 
+        public void Register<T>()
             where T : IExtensibleProject
         {
             Register(_typeFactory.CreateRequiredInstance<T>());
         }
 
-        public void Register<T>(params object[] parameters) 
+        public void Register<T>(params object[] parameters)
             where T : IExtensibleProject
         {
             if (parameters is null)

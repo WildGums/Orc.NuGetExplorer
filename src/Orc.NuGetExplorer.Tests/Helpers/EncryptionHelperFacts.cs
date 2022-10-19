@@ -8,8 +8,8 @@
 
 namespace Orc.NuGetExplorer.Tests
 {
-    using NUnit.Framework;
     using NuGetExplorer;
+    using NUnit.Framework;
 
     [TestFixture]
     public class EncryptionHelperFacts
@@ -23,7 +23,7 @@ namespace Orc.NuGetExplorer.Tests
             Assert.AreNotEqual(input, encrypted);
 
             var decrypted = EncryptionHelper.Decrypt(encrypted, password);
-            
+
             Assert.AreEqual(input, decrypted);
         }
     }

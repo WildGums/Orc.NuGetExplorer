@@ -27,9 +27,9 @@
 
         public PackageSourceWrapper(string source)
         {
-            PackageSources = new List<PackageSource>() 
-            { 
-                new PackageSource(source) 
+            PackageSources = new List<PackageSource>()
+            {
+                new PackageSource(source)
             };
         }
 

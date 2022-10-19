@@ -6,7 +6,7 @@
 
     public static class WpfHelper
     {
-        public static TChild? FindVisualChild<TChild>(DependencyObject obj) 
+        public static TChild? FindVisualChild<TChild>(DependencyObject obj)
             where TChild : DependencyObject
         {
             ArgumentNullException.ThrowIfNull(obj);

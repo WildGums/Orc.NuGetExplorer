@@ -30,8 +30,8 @@
             var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
 #pragma warning restore IDISP001 // Dispose created
             return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
-            { 
-                OperationType = operationType, 
+            {
+                OperationType = operationType,
             },
             token => ApplyOperationContext(token.Instance),
             token => CloseCurrentOperationContext(token.Instance));

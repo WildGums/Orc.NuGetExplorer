@@ -26,7 +26,7 @@
                 var stringVersion = multiVersionPackageSearchMetadata.ToString();
 
                 Assert.IsFalse(stringVersion.Contains(nameof(MultiVersionPackageSearchMetadata)));
-                Assert.AreEqual("(no identity)", stringVersion); 
+                Assert.AreEqual("(no identity)", stringVersion);
             }
 
             [TestCase]

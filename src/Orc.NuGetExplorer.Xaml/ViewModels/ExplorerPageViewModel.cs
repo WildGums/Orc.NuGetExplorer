@@ -471,7 +471,7 @@
                     var awaitedSeachParams = AwaitedSearchParameters;
                     AwaitedPageInfo = null;
                     AwaitedSearchParameters = null;
-                    
+
                     await VerifySourceAndLoadPackagesAsync(awaitedPageinfo, Settings?.ObservedFeed ?? throw new InvalidOperationException("Must be non-empty field"), awaitedSeachParams, pageSize);
                 }
                 else

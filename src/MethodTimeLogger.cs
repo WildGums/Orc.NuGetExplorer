@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using Catel.Logging;
-using System;
+﻿using System;
 using System.Globalization;
+using System.Reflection;
+using Catel.Logging;
 
 /// <summary>
 /// Note: do not rename this class or put it inside a namespace.

@@ -13,7 +13,7 @@
         public static IPackageDetails Create(PackageOperationType operationType, IPackageSearchMetadata? versionMetadata, PackageIdentity packageIdentity, bool? isLastVersion)
         {
             ArgumentNullException.ThrowIfNull(versionMetadata);
-            
+
             var packageDetails = new PackageDetails(versionMetadata, packageIdentity, isLastVersion ?? false);
             if (operationType != PackageOperationType.Install)
             {

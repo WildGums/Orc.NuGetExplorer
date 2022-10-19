@@ -22,7 +22,7 @@
             _typeFactory = typeFactory;
 
             _defaultProject = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DestFolder>(_configurationService.GetDestinationFolder());
-            
+
             _extensibleProjectLocator.Register(_defaultProject);
             _extensibleProjectLocator.Enable(_defaultProject);
         }

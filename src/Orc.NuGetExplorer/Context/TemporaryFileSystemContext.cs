@@ -14,7 +14,7 @@
         private readonly string _rootDirectory;
 
         public TemporaryFileSystemContext(IDirectoryService directoryService)
-        { 
+        {
             ArgumentNullException.ThrowIfNull(directoryService);
 
             _directoryService = directoryService;

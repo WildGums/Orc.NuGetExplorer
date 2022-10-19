@@ -62,7 +62,7 @@
 
         private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
         {
-            Log.Debug($"Progress status changed: { ((bool)e.NewValue ? "activated" : "ended") }");
+            Log.Debug($"Progress status changed: {((bool)e.NewValue ? "activated" : "ended")}");
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
