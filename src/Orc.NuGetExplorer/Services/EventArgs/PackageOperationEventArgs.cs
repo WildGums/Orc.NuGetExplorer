@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.ComponentModel;
 
     public class PackageOperationEventArgs : CancelEventArgs

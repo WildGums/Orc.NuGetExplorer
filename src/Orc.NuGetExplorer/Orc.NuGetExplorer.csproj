@@ -28,7 +28,6 @@
     <PackageReference Include="NuGet.PackageManagement" Version="6.3.1" />
     <PackageReference Include="Obsolete.Fody" Version="5.3.0" PrivateAssets="all" />
     <PackageReference Include="Orc.FileSystem" Version="5.0.0-alpha0061" />
-    <PackageReference Include="RemoveRegionCodeRefactoring" Version="1.0.6043.26826" />
   </ItemGroup>
 
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />

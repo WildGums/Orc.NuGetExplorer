@@ -14,6 +14,9 @@
 
         public NuGetFeed(string name, string source)
         {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+
             Name = name;
             Source = source;
             Error = string.Empty;

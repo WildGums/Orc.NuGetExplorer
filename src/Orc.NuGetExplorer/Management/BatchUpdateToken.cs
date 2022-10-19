@@ -15,6 +15,8 @@
 
             public BatchUpdateToken(PackageIdentity identity)
             {
+                ArgumentNullException.ThrowIfNull(identity);
+
                 _identity = identity;
             }
 

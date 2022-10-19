@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using NuGet.Protocol.Core.Types;
@@ -9,6 +10,8 @@
     {
         public static IEnumerable<VersionInfo> ToVersionInfo(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+
             return packages
                 .Where(v => includePrerelease || !v.Identity.Version.IsPrerelease)
                 .OrderByDescending(m => m.Identity.Version, VersionComparer.VersionRelease)

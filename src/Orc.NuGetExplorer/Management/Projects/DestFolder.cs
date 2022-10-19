@@ -1,7 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using Catel;
     using Catel.Logging;
     using NuGet.Frameworks;
     using NuGet.Packaging;
@@ -18,6 +20,9 @@
 
         public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
         {
+            ArgumentNullException.ThrowIfNull(destinationFolder);
+            ArgumentNullException.ThrowIfNull(defaultFramework);
+
 #if NETCORE
             var targetFramework = defaultFramework.GetHighest().First();
             Framework = targetFramework.DotNetFrameworkName;

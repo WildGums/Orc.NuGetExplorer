@@ -3,12 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using Catel;
     using Orc.FileSystem;
 
     public static class IDirectoryServiceExtensions
     {
         public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
         {
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+
             failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
             var fallbackFlag = false;
 
@@ -62,6 +66,10 @@
 
         private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
         {
+            Argument.IsNotNull(() => folderPath);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+
             var directoryStack = new Stack<string>();
 
             directoryStack.Push(folderPath);

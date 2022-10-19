@@ -9,7 +9,8 @@
     {
         private readonly IMessageService _messageService;
 
-        public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService) : base(upgradeService)
+        public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService) 
+            : base(upgradeService)
         {
             _messageService = messageService;
         }

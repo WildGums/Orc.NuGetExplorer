@@ -11,6 +11,8 @@
 
         public static async Task DispatchIfNecessaryAsync(Action action)
         {
+            ArgumentNullException.ThrowIfNull(action);
+
             if (!Dispatcher.CheckAccess())
             {
                 await Dispatcher.InvokeAsync(action);

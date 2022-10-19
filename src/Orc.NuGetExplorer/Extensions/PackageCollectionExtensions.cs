@@ -10,6 +10,9 @@
     {
         public static PackageIdentity[] GetLatest(this PackageCollection packages, IVersionComparer versionComparer)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+            ArgumentNullException.ThrowIfNull(versionComparer);
+
             return packages
                 .GroupBy(p => p.Id, p => p.Version, StringComparer.OrdinalIgnoreCase)
                 //max or default

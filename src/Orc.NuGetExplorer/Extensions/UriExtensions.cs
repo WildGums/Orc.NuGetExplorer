@@ -6,6 +6,8 @@
     {
         public static Uri GetRootUri(this Uri uri)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             return new Uri(uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
         }
     }

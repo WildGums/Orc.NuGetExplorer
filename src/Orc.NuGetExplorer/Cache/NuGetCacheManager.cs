@@ -13,7 +13,6 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        //private readonly IFileDirectoryService _fileDirectoryService;
         private readonly SourceCacheContext _sourceContext = new();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
@@ -21,6 +20,9 @@
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
+            ArgumentNullException.ThrowIfNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(() => fileService);
+
             _directoryService = directoryService;
             _fileService = fileService;
         }

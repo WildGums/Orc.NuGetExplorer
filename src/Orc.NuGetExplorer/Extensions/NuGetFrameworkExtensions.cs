@@ -7,6 +7,8 @@
     {
         public static bool IsNet5Era(this NuGetFramework nuGetFramework)
         {
+            ArgumentNullException.ThrowIfNull(nuGetFramework);
+
             return (nuGetFramework.Version.Major >= 5 && StringComparer.OrdinalIgnoreCase.Equals(FrameworkConstants.FrameworkIdentifiers.NetCoreApp, nuGetFramework.Framework));
         }
     }

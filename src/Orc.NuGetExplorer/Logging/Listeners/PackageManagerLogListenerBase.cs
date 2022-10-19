@@ -1,9 +1,13 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
+
     public abstract class PackageManagerLogListenerBase
     {
         protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
         {
+            ArgumentNullException.ThrowIfNull(nuGetLogListeningSevice);
+
             nuGetLogListeningSevice.Error += OnError;
             nuGetLogListeningSevice.Info += OnInfo;
             nuGetLogListeningSevice.Debug += OnDebug;

@@ -1,5 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
+    using Catel;
     using Catel.IoC;
 
     internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider
@@ -12,6 +14,10 @@
 
         public DefaultExtensibleProjectProvider(ITypeFactory typeFactory, INuGetConfigurationService configurationService, IExtensibleProjectLocator extensibleProjectLocator)
         {
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+
             _configurationService = configurationService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _typeFactory = typeFactory;

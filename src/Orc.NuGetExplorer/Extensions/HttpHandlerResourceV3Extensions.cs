@@ -9,6 +9,8 @@
         public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler) 
             where T : class, ICredentialService
         {
+            ArgumentNullException.ThrowIfNull(httpResourceHandler);
+
             if (HttpHandlerResourceV3.CredentialService is not null)
             {
                 return (T)HttpHandlerResourceV3.CredentialService.Value;
@@ -19,6 +21,8 @@
 
         public static void ResetCredentials(this HttpHandlerResourceV3 httpResourceHandler)
         {
+            ArgumentNullException.ThrowIfNull(httpResourceHandler);
+
             var credentialsService = httpResourceHandler.GetCredentialServiceImplementation<ExplorerCredentialService>();
 
             if (credentialsService is not null)

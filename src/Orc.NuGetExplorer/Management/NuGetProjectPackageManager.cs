@@ -37,6 +37,12 @@
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
             IMessageService messageService, IFileSystemService fileSystemService)
         {
+            ArgumentNullException.ThrowIfNull(packageInstallationService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -48,6 +54,9 @@
 
         private async Task OnInstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             var args = new InstallNuGetProjectEventArgs(project, package, result);
 
             if (_batchToken is not null && !_batchToken.IsDisposed)
@@ -69,6 +78,9 @@
 
         private async Task OnUninstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             var args = new UninstallNuGetProjectEventArgs(project, package, result);
 
             if (_batchToken is not null && !_batchToken.IsDisposed)
@@ -101,6 +113,8 @@
 
         public async Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             // TODO should local metadata is also be checked?
 
             var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
@@ -119,6 +133,8 @@
         /// <returns></returns>
         public async Task<PackageCollection> CreatePackagesCollectionFromProjectsAsync(IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+
             // Read package references from all projects.
             var tasks = projects
                 .Select(project => GetInstalledPackagesAsync(project, cancellationToken));
@@ -142,6 +158,9 @@
         /// <returns></returns>
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
                 var installedReferences = await GetInstalledPackagesAsync(project, token);
@@ -159,6 +178,8 @@
 
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             if (string.IsNullOrEmpty(packageId))
             {
                 throw Log.ErrorAndCreateException((string message) => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");
@@ -181,6 +202,8 @@
 
         public async Task<NuGetVersion?> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             var installedReferences = await GetInstalledPackagesAsync(project, token);
 
             var installedVersion = installedReferences.Where(x => string.Equals(x.PackageIdentity.Id, packageId) && x.PackageIdentity.HasVersion)
@@ -191,6 +214,9 @@
 
         public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
                 var dependencyInstallResult = true;
@@ -288,6 +314,9 @@
 
         public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(package);
+
             using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
@@ -305,6 +334,9 @@
 
         public async Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
                 var installedPackages = await GetInstalledPackagesAsync(project, token);
@@ -321,6 +353,9 @@
 
         public async Task UninstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(package);
+
             using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
@@ -338,6 +373,9 @@
 
         public async Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 var version = await GetVersionInstalledAsync(project, packageid, token);
@@ -363,6 +401,9 @@
 
         public async Task UpdatePackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, targetVersion)))
@@ -390,6 +431,10 @@
 
         private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(installedVersion);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 await UpdateLocker.WaitAsync(token);
@@ -405,6 +450,8 @@
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+
             var repos = projects.Select(x =>
                  new SourceRepository(
                         new PackageSource(x.ContentPath), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2

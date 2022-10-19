@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using Catel.Data;
@@ -19,6 +20,8 @@
 
         public void Add(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             _extensibleProjects.Add(project);
 
             RaisePropertyChanged(nameof(TargetProjects));
@@ -26,6 +29,8 @@
 
         public void Remove(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             _extensibleProjects.Remove(project);
 
             RaisePropertyChanged(nameof(TargetProjects));

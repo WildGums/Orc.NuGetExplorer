@@ -15,6 +15,8 @@
 
         public TemporaryFileSystemContext(IDirectoryService directoryService)
         { 
+            ArgumentNullException.ThrowIfNull(directoryService);
+
             _directoryService = directoryService;
 
             var assembly = AssemblyHelper.GetRequiredEntryAssembly();

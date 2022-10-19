@@ -9,11 +9,15 @@
     {
         public static async Task<TaskResultOrException<T>[]> WhenAllOrExceptionAsync<T>(this IEnumerable<Task<T>> tasks)
         {
+            ArgumentNullException.ThrowIfNull(tasks);
+
             return await Task.WhenAll(tasks.Select(task => WrapResultOrExceptionAsync(task)));
         }
 
         public static async Task<TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this Task<T> task)
         {
+            ArgumentNullException.ThrowIfNull(task);
+
             try
             {
                 var result = await task;

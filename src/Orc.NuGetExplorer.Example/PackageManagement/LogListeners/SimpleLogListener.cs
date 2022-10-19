@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Example
 {
-    using System;
     using Catel.Services;
     using Models;
 

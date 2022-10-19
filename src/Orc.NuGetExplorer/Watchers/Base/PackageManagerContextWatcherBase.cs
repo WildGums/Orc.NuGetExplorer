@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Linq;
 
     public abstract class PackageManagerContextWatcherBase : PackageManagerWatcherBase

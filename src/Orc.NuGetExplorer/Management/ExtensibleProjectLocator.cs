@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
 
@@ -20,6 +21,9 @@
 
         public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(configurationService);
+
             _typeFactory = typeFactory;
             _managerConfigurationService = configurationService;
         }
@@ -28,11 +32,15 @@
 
         public bool IsEnabled(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             return _enabledProjects.Contains(extensibleProject);
         }
 
         public void Enable(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             var registeredProject = _registredProjects[extensibleProject.GetType()];
 
             if (registeredProject != extensibleProject)
@@ -48,6 +56,8 @@
 
         public void Disable(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             var registeredProject = _registredProjects[extensibleProject.GetType()];
 
             if (registeredProject != extensibleProject)
@@ -73,6 +83,8 @@
 
         public void Register(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             _registredProjects[project.GetType()] = project;
         }
 

@@ -27,6 +27,9 @@
 
         public void SaveToCache(Uri iconUri, byte[] streamContent)
         {
+            ArgumentNullException.ThrowIfNull(iconUri);
+            ArgumentNullException.ThrowIfNull(streamContent);
+
             _cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
         }
 
@@ -58,6 +61,8 @@
 
         public bool IsCached(Uri iconUri)
         {
+            ArgumentNullException.ThrowIfNull(iconUri);
+
             if (iconUri is null)
             {
                 return false;
@@ -70,6 +75,8 @@
 
         private BitmapImage CreateImage(Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             var image = new BitmapImage();
 
             image.BeginInit();
@@ -87,6 +94,8 @@
 
         private BitmapImage CreateImage(Uri uri)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             var image = new BitmapImage();
 
             // Find extracted resource in folder from uri

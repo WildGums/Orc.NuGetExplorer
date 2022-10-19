@@ -13,6 +13,8 @@
 
         public CombinedNuGetSource(IReadOnlyList<INuGetSource> feedList)
         {
+            ArgumentNullException.ThrowIfNull(feedList);
+
             foreach (var feed in feedList)
             {
                 if (feed is CombinedNuGetSource)

@@ -9,6 +9,8 @@
     {
         public static void LogUnclearedPaths(List<string> unclearedPaths, ILog log)
         {
+            ArgumentNullException.ThrowIfNull(log);
+
             if (unclearedPaths?.Any() ?? false)
             {
                 log.Info("Some directories cannot be deleted, directory tree was partially cleared:");

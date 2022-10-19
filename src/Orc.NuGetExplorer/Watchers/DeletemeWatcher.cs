@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using Catel.Messaging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;

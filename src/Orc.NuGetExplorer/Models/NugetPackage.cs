@@ -26,6 +26,8 @@
 
         public NuGetPackage(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage)
         {
+            ArgumentNullException.ThrowIfNull(packageMetadata);
+
             FromPage = fromPage;
             _packageMetadata = packageMetadata;
 

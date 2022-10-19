@@ -26,6 +26,8 @@
 
         public NuGetSettings(IConfigurationService configurationService)
         {
+            ArgumentNullException.ThrowIfNull(() => configurationService);
+
             _configurationService = configurationService;
 
             // version of configuration is a version of assembly
@@ -87,6 +89,8 @@
 
         public IReadOnlyList<string> GetAllSubsections(string section)
         {
+            Argument.IsNotNullOrEmpty(() => section);
+
             RaiseSettingsRead();
 
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
@@ -315,6 +319,8 @@
 
         private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
         {
+            ArgumentNullException.ThrowIfNull(() => values);
+
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
             var keysToSave = values.Select(x => x.Key);

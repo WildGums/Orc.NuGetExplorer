@@ -1,7 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
-
     public abstract class PackageManagerWatcherBase
     {
         protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)

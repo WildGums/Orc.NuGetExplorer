@@ -27,6 +27,9 @@
 
         public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
         {
+            ArgumentNullException.ThrowIfNull(value);
+            ArgumentNullException.ThrowIfNull(str);
+
             for (var i = 0; i < str.Length; i++)
             {
                 var s = str[i];
