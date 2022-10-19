@@ -37,6 +37,9 @@
 
         public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(appDataService);
+
             _configurationService = configurationService;
 
             _defaultDestinationFolder = Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "plugins");

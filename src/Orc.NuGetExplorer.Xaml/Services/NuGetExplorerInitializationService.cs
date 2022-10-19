@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Threading.Tasks;
     using Catel;
     using Catel.IoC;
@@ -14,6 +15,13 @@
         public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
             INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(languageService);
+            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(vmLocator);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+
             InitializeTypes(ServiceLocator.Default);
 
             //set language resources
@@ -29,6 +37,8 @@
 
         private void InitializeTypes(IServiceLocator serviceLocator)
         {
+            ArgumentNullException.ThrowIfNull(serviceLocator);
+
             // instantiate watchers
             serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
             serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();

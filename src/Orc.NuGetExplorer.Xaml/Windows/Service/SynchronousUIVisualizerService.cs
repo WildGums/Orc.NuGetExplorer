@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
-    using Catel;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
@@ -24,7 +23,7 @@
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw Log.ErrorAndCreateException<ArgumentException>($"'{nameof(name)}' parameter is incorrect");  
+                throw Log.ErrorAndCreateException<ArgumentException>($"'{nameof(name)}' parameter is incorrect");
             }
 
             EnsureViewIsRegistered(name);
@@ -41,9 +40,9 @@
             var window = windowTask.Result;
             if (window is not null)
             {
-                //aware this place
-                //awaiting on this method in async implementation causes hardly avoidable deadlock
-                //if it called from synchronous code
+                // aware this place
+                // awaiting on this method in async implementation causes hardly avoidable deadlock
+                // if it called from synchronous code
                 var task = ShowWindowAsync(window, context);
 
                 task.Wait();
@@ -57,7 +56,7 @@
 
         public virtual bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs>? completedProc = null)
         {
-            Argument.IsNotNull("viewModel", viewModel);
+            ArgumentNullException.ThrowIfNull(viewModel);
 
             var viewModelType = viewModel.GetType();
             var viewModelTypeName = viewModelType.FullName;

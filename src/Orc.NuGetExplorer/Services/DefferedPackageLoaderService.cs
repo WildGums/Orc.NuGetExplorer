@@ -35,6 +35,11 @@
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
         {
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(projectProvider);
+
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
             _settignsProvider = settingsProvider;

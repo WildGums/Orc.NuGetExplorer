@@ -18,6 +18,9 @@
         public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
             : base(typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(nugetConfigurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+
             _nugetConfigurationService = nugetConfigurationService;
             _configurationService = configurationService;
 
@@ -63,6 +66,8 @@
 
         private ExplorerSettingsContainer InitializeModel(ExplorerSettingsContainer value)
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             var feeds = _nugetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
             var prerelease = _configurationService.GetIsPrereleaseIncluded();
 

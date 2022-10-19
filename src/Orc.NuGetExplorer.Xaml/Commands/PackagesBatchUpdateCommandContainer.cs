@@ -27,6 +27,13 @@
             IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
             : base(Commands.Packages.BatchUpdate, commandManager)
         {
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(projectManager);
+            ArgumentNullException.ThrowIfNull(projectLocator);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+
             _progressManager = progressManager;
             _messageService = messageService;
             _projectManager = projectManager;

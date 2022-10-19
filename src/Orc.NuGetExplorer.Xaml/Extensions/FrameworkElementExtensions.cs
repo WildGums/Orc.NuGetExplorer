@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
     using System.Reflection;
     using System.Windows;
@@ -10,6 +11,8 @@
     {
         public static void UpdateItemSource(this FrameworkElement frameworkElement)
         {
+            ArgumentNullException.ThrowIfNull(frameworkElement);
+
             var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
 
             foreach (var field in infos.Where(x => x.FieldType == typeof(DependencyProperty)))
@@ -40,11 +43,15 @@
 
         public static Visibility ToVisibleOrHidden(this FrameworkElement element, bool value)
         {
+            ArgumentNullException.ThrowIfNull(element);
+
             return value ? Visibility.Visible : Visibility.Hidden;
         }
 
         public static Visibility ToVisibleOrCollapsed(this FrameworkElement element, bool value)
         {
+            ArgumentNullException.ThrowIfNull(element);
+
             return value ? Visibility.Visible : Visibility.Collapsed;
         }
     }

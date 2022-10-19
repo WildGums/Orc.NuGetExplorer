@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
     using Catel.Data;
 
@@ -7,6 +8,8 @@
     {
         public static string[]? GetAlertMessages(this IValidationContext validationContext, string validationTag)
         {
+            ArgumentNullException.ThrowIfNull(validationContext);
+
             var stringLines = validationContext.GetErrors(validationTag).Select(s => " - " + s.Message).ToArray();
 
             if (stringLines is null)

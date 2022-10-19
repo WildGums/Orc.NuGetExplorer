@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using NuGetExplorer.Models;
@@ -8,6 +9,8 @@
     {
         public FeedDetailViewModel(NuGetFeed feed)
         {
+            ArgumentNullException.ThrowIfNull(feed);
+
             Feed = feed;
             OpenChooseLocalPathToSourceDialog = new Command(OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
         }

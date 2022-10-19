@@ -56,12 +56,36 @@
 
         private ExplorerSettingsContainer _settings;
 
-        public ExplorerPageViewModel(ExplorerPage page, IPackageLoaderService packagesLoaderService,
-            IModelProvider<ExplorerSettingsContainer> settingsProvider, IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService, INuGetFeedVerificationService nuGetFeedVerificationService,
-            ICommandManager commandManager, IDispatcherService dispatcherService, IRepositoryContextService repositoryService, ITypeFactory typeFactory,
-            IDefferedPackageLoaderService defferedPackageLoaderService, IPackageOperationContextService packageOperationContextService, INuGetCacheManager nuGetCacheManager,
-            INuGetConfigurationService nuGetConfigurationService, IDispatcherProviderService dispatcherProviderService)
+        public ExplorerPageViewModel(ExplorerPage page,
+                                     IPackageLoaderService packagesLoaderService,
+                                     IModelProvider<ExplorerSettingsContainer> settingsProvider,
+                                     IPackageMetadataMediaDownloadService packageMetadataMediaDownloadService,
+                                     INuGetFeedVerificationService nuGetFeedVerificationService,
+                                     ICommandManager commandManager,
+                                     IDispatcherService dispatcherService,
+                                     IRepositoryContextService repositoryService,
+                                     ITypeFactory typeFactory,
+                                     IDefferedPackageLoaderService defferedPackageLoaderService,
+                                     IPackageOperationContextService packageOperationContextService,
+                                     INuGetCacheManager nuGetCacheManager,
+                                     INuGetConfigurationService nuGetConfigurationService,
+                                     IDispatcherProviderService dispatcherProviderService)
         {
+            ArgumentNullException.ThrowIfNull(page);
+            ArgumentNullException.ThrowIfNull(packagesLoaderService);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(packageMetadataMediaDownloadService);
+            ArgumentNullException.ThrowIfNull(nuGetFeedVerificationService);
+            ArgumentNullException.ThrowIfNull(commandManager);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(defferedPackageLoaderService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(dispatcherProviderService);
+
             _dispatcherService = dispatcherService;
             _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
             _nuGetFeedVerificationService = nuGetFeedVerificationService;
@@ -355,6 +379,9 @@
 
         private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters? searchParams, int pageSize)
         {
+            ArgumentNullException.ThrowIfNull(pageinfo);
+            ArgumentNullException.ThrowIfNull(currentSource);
+
             try
             {
                 if (pageinfo.Source.IsMultipleSource)
@@ -502,6 +529,9 @@
 
         private async Task LoadPackagesAsync(PageContinuation pageInfo, PackageSearchParameters searchParameters, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(pageInfo);
+            ArgumentNullException.ThrowIfNull(searchParameters);
+
             try
             {
                 IsLoadingInProcess = true;
@@ -547,6 +577,8 @@
 
         private async Task CreatePackageListItemsAsync(IEnumerable<IPackageSearchMetadata> packageSearchMetadataCollection)
         {
+            ArgumentNullException.ThrowIfNull(packageSearchMetadataCollection);
+
             var models = packageSearchMetadataCollection.Select(x => _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
 
             //create tokens, used for deffer execution of tasks
@@ -579,6 +611,8 @@
 
         private async Task DownloadAllPicturesForMetadataAsync(IEnumerable<IPackageSearchMetadata> metadatas, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(metadatas);
+
             foreach (var metadata in metadatas)
             {
                 if (metadata.IconUrl is not null)

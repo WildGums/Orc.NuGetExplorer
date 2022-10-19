@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -18,6 +19,10 @@
 
         public PackageQueryService(ISourceRepositoryProvider repositoryProvider, IPackageMetadataProvider packageMetadataProvider, ILogger logger)
         {
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(packageMetadataProvider);
+            ArgumentNullException.ThrowIfNull(logger);
+
             _repositoryProvider = repositoryProvider;
             _packageMetadataProvider = packageMetadataProvider;
             _logger = logger;
@@ -38,6 +43,8 @@
 
         public async Task<bool> PackageExistsAsync(IRepository packageRepository, IPackageDetails packageDetails)
         {
+            ArgumentNullException.ThrowIfNull(packageDetails);
+
             var versionsMetadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageDetails.Id, packageDetails.NuGetVersion), true, CancellationToken.None);
             return versionsMetadata is not null;
         }
@@ -49,6 +56,8 @@
 
         public async Task<IEnumerable<IPackageDetails>> GetPackagesAsync(IRepository packageRepository, bool allowPrereleaseVersions, string? filter = null, int skip = 0, int take = 10)
         {
+            ArgumentNullException.ThrowIfNull(packageRepository);
+
             var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
             var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
@@ -67,12 +76,15 @@
 
         public async Task<IEnumerable<IPackageSearchMetadata>> GetVersionsOfPackageAsync(IRepository packageRepository, IPackageDetails package, bool allowPrereleaseVersions, int skip)
         {
+            ArgumentNullException.ThrowIfNull(packageRepository);
+            ArgumentNullException.ThrowIfNull(package);
+
             if (skip < 0)
             {
                 return Enumerable.Empty<IPackageSearchMetadata>();
             }
 
-            var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
+            _ = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
             var getMetadataResult = await _packageMetadataProvider.GetPackageMetadataListAsync(package.Id, allowPrereleaseVersions, false, CancellationToken.None);
 
@@ -83,6 +95,8 @@
 
         private async Task<IPackageDetails?> BuildMultiVersionPackageSearchMetadataAsync(IPackageSearchMetadata packageSearchMetadata, SourceRepository sourceRepository, bool includePrerelease)
         {
+            ArgumentNullException.ThrowIfNull(packageSearchMetadata);
+
             return await BuildMultiVersionPackageSearchMetadataAsync(packageSearchMetadata.Identity.Id, sourceRepository, includePrerelease);
         }
 

@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Example.Packaging
 {
+    using System;
     using System.IO;
     using Catel.Services;
     using NuGet.Packaging;
@@ -16,6 +17,8 @@
         public ExamplePackagePathResolver(IAppDataService appDataService)
             : this(Path.Combine(appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "libs"), true)
         {
+            ArgumentNullException.ThrowIfNull(appDataService);
+
             _appDataService = appDataService;
             _appRootDirectory = Path.Combine(_appDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming), "apps");
         }
@@ -29,6 +32,8 @@
 
         public override string GetInstallPath(PackageIdentity packageIdentity)
         {
+            ArgumentNullException.ThrowIfNull(packageIdentity);
+
             if (packageIdentity.Id.Equals(PackageScope.Id))
             {
                 return Path.Combine(_appRootDirectory, GetPackageDirectoryName(packageIdentity));

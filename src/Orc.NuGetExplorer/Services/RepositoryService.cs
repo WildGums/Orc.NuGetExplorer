@@ -19,12 +19,20 @@
             INuGetPackageManager projectManager, INuGetConfigurationService nuGetConfigurationService,
             IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
         {
+            ArgumentNullException.ThrowIfNull(repositoryContextService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(projectManager);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+
             _repositoryContextService = repositoryContextService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = projectManager;
             _nuGetConfigurationService = nuGetConfigurationService;
             _defaultExtensibleProjectProvider = defaultExtensibleProjectProvider;
             _repositoryProvider = repositoryProvider;
+
             LocalRepository = GetMainProjectRepository();
         }
 

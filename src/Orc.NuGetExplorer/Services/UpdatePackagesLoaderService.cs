@@ -35,6 +35,10 @@
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
            INuGetPackageManager nuGetExtensibleProjectManager)
         {
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+
             _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _nuGetExtensibleProjectManager = nuGetExtensibleProjectManager;
@@ -49,6 +53,8 @@
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(pageContinuation);
+
             try
             {
                 if (pageContinuation.Current <= 0)

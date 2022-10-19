@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Threading.Tasks;
     using Catel.IoC;
     using Catel.Services;
@@ -12,6 +13,9 @@
 
         public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
 

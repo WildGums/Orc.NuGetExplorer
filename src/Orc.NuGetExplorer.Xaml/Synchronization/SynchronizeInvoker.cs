@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.Threading;
     using System.Windows.Threading;
+    using Catel.IoC;
 
     public class SynchronizeInvoker : ISynchronizeInvoke
     {
@@ -11,6 +12,8 @@
 
         public SynchronizeInvoker(Dispatcher dispatcher)
         {
+            ArgumentNullException.ThrowIfNull(dispatcher);
+
             _dispatcher = dispatcher;
         }
 

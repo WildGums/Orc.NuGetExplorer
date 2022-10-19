@@ -15,6 +15,10 @@
 
         public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
         {
+            ArgumentNullException.ThrowIfNull(operationContextService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+
             _operationContextService = operationContextService;
             _directoryService = directoryService;
             _fileService = fileService;
@@ -71,7 +75,7 @@
                 }
 
                 var sourceDirectory = GetBackupFolder(fullPath);
-    
+
                 _directoryService.Copy(sourceDirectory, fullPath);
             }
             catch (Exception ex)

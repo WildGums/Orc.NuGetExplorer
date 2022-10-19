@@ -29,11 +29,17 @@
         public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+
+            _directoryService = directoryService;
+            _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;
-            _directoryService = directoryService;
-            _repositoryService = repositoryService;
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)

@@ -1,9 +1,11 @@
 ﻿namespace Orc.NuGetExplorer.Example.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel;
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
@@ -21,10 +23,26 @@
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
 
-        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
-            INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
+        public MainViewModel(INuGetExplorerInitializationService initializationService,
+                             IPackagesUIService packagesUiService,
+                             IEchoService echoService,
+                             INuGetConfigurationService nuGetConfigurationService,
+                             INuGetFeedVerificationService feedVerificationService,
+                             IMessageService messageService,
+                             IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
+                             INuGetProjectUpgradeService nuGetProjectUpgradeService,
+                             IUIVisualizerService uiVisualizerService)
         {
+            ArgumentNullException.ThrowIfNull(initializationService);
+            ArgumentNullException.ThrowIfNull(packagesUiService);
+            ArgumentNullException.ThrowIfNull(echoService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(packagesUpdatesSearcherService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+
             _initializationService = initializationService;
             _packagesUiService = packagesUiService;
             _nuGetConfigurationService = nuGetConfigurationService;

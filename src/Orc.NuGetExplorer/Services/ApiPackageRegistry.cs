@@ -16,6 +16,8 @@
     {
         public ApiPackageRegistry(ILanguageService languageService)
         {
+            ArgumentNullException.ThrowIfNull(languageService);
+
             _languageService = languageService;
         }
 
@@ -54,8 +56,9 @@
 
         public void Validate(IPackageDetails package)
         {
-            IEnumerable<PackageDependencyGroup>? dependencyGroups = null;
+            ArgumentNullException.ThrowIfNull(package);
 
+            IEnumerable<PackageDependencyGroup>? dependencyGroups;
             switch (package)
             {
                 case NuGetPackage modelPackage:
@@ -89,6 +92,9 @@
 
         private void ValidateDependency(IPackageDetails package, PackageDependency dependency)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(dependency);
+
             SemanticVersion? currentVersion;
 
             lock (_syncObj)

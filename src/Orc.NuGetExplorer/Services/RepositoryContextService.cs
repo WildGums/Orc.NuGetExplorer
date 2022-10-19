@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using NuGet.Configuration;
@@ -10,9 +11,10 @@
     {
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
 
-
         public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
+
             _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 

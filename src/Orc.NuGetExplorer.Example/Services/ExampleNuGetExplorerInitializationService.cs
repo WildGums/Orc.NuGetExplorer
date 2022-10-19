@@ -1,10 +1,12 @@
 ﻿namespace Orc.NuGetExplorer.Example.Services
 {
+    using System;
     using System.Windows.Media;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
+    using NuGet.Frameworks;
     using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Example.PackageManagement;
     using Orc.NuGetExplorer.Example.Providers;
@@ -25,6 +27,9 @@
             IAccentColorService accentColorService)
             : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(projectLocator);
+            ArgumentNullException.ThrowIfNull(accentColorService);
+
             var serviceLocator = ServiceLocator.Default;
 
             // Example: override default project

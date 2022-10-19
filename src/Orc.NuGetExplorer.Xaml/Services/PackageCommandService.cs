@@ -25,6 +25,13 @@
         public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(packageQueryService);
+            ArgumentNullException.ThrowIfNull(packageOperationService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+
             _busyIndicatorService = busyIndicatorService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
@@ -127,6 +134,8 @@
 
         private async Task<IPackageDetails?> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
         {
+            ArgumentNullException.ThrowIfNull(packageDetails);
+
             if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
             {
                 var details = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
@@ -156,6 +165,8 @@
 
         internal async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             if (package.IsInstalled is null)
             {
                 Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
@@ -188,6 +199,8 @@
 
         private void LogValidationErrors(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             if (package.ValidationContext is null)
             {
                 return;
@@ -201,6 +214,8 @@
 
         private void ValidatePackage(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             package.ResetValidationContext();
 
             _apiPackageRegistry.Validate(package);

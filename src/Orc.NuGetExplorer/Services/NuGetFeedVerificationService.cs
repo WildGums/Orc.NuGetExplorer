@@ -6,6 +6,7 @@ namespace Orc.NuGetExplorer
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -24,6 +25,10 @@ namespace Orc.NuGetExplorer
 
         public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
+            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(logger);
+
             _credentialProviderLoaderService = credentialProviderLoaderService;
             _repositoryProvider = repositoryProvider;
             _nugetLogger = logger;
@@ -31,6 +36,8 @@ namespace Orc.NuGetExplorer
 
         public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken cancellationToken = default)
         {
+            Argument.IsNotNullOrEmpty(() => source);
+
             var result = FeedVerificationResult.Valid;
 
             var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
@@ -89,6 +96,8 @@ namespace Orc.NuGetExplorer
         [ObsoleteEx]
         public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
+            Argument.IsNotNullOrEmpty(() => source);
+
             var timeOut = 3000;
 
             var result = FeedVerificationResult.Valid;

@@ -1,14 +1,15 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.ObjectModel;
-    using Catel;
 
     public static class ObservableCollectionExtensions
     {
-        public static void MoveUp<T>(this ObservableCollection<T> collection, T item) 
-            where T: notnull
+        public static void MoveUp<T>(this ObservableCollection<T> collection, T item)
+            where T : notnull
         {
-            Argument.IsNotNull(nameof(item), item);
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(item);
 
             var oldindex = collection.IndexOf(item);
             if (oldindex == 0)
@@ -22,7 +23,8 @@
         public static void MoveDown<T>(this ObservableCollection<T> collection, T item)
             where T : notnull
         {
-            Argument.IsNotNull(nameof(item), item);
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(item);
 
             var oldindex = collection.IndexOf(item);
 

@@ -114,9 +114,7 @@
         public static readonly DependencyProperty ShowErrorProperty =
             DependencyProperty.Register(nameof(ShowError), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => ((RotationProgressBar)s).OnShowErrorChanged(e)));
 
-#pragma warning disable S4144 // Methods should not have identical implementations
         private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
-#pragma warning restore S4144 // Methods should not have identical implementations
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
             Log.Debug($"Set RotationProgressBar status to {Success}");

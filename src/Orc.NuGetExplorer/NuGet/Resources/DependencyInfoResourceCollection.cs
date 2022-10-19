@@ -12,7 +12,6 @@
     using NuGet.Common;
     using NuGet.Frameworks;
     using NuGet.Packaging.Core;
-    using NuGet.ProjectModel;
     using NuGet.Versioning;
 
     /// <summary>

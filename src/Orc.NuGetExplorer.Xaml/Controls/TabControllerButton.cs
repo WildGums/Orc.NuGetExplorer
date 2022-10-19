@@ -21,7 +21,7 @@
         static TabControllerButton()
         {
             //custom metadata for checked property
-            FrameworkPropertyMetadata pmeta = new FrameworkPropertyMetadata(false, (s, e) => ((TabControllerButton)s).OnIsCheckedChanged(e));
+            var pmeta = new FrameworkPropertyMetadata(false, (s, e) => ((TabControllerButton)s).OnIsCheckedChanged(e));
 
             IsCheckedProperty.OverrideMetadata(typeof(TabControllerButton), pmeta);
         }
@@ -139,7 +139,7 @@
             {
                 var index = MyIndex();
 
-                int i = 0;
+                var i = 0;
 
                 if (TabSource.ItemsSource is null)
                 {

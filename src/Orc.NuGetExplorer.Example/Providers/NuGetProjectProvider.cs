@@ -1,6 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Example.Providers
 {
+    using System;
     using Catel.IoC;
+    using NuGet.Frameworks;
     using Orc.NuGetExplorer.Management;
 
     public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
@@ -11,6 +13,9 @@
 
         public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+
             _extensibleProjectLocator = extensibleProjectLocator;
 
             _defaultProject = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExampleProject>();

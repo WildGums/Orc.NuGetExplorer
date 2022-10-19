@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -15,6 +16,9 @@
 
         public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
         {
+            ArgumentNullException.ThrowIfNull(projectsModel);
+            ArgumentNullException.ThrowIfNull(extensiblesManager);
+
             _extensiblesManager = extensiblesManager;
             ProjectsModel = projectsModel;
         }

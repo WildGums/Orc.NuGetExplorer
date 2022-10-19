@@ -32,6 +32,10 @@
 
         public NuGetSettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
         {
+            ArgumentNullException.ThrowIfNull(settings);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
+
             _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
             _nuGetConfigurationService = configurationService;
 

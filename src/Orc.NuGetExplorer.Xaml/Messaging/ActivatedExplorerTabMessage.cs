@@ -8,7 +8,8 @@
         {
         }
 
-        public ActivatedExplorerTabMessage(ExplorerTab data) : base(data)
+        public ActivatedExplorerTabMessage(ExplorerTab data)
+            : base(data)
         {
 
         }

@@ -123,8 +123,8 @@
 
         private class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
         {
-            public DisableNotificationToken(PackageOperationNotificationService instance) : this(instance, token => token.Instance.IsNotificationsDisabled = true,
-                token => token.Instance.IsNotificationsDisabled = false, null)
+            public DisableNotificationToken(PackageOperationNotificationService instance) 
+                : this(instance, token => token.Instance.IsNotificationsDisabled = true, token => token.Instance.IsNotificationsDisabled = false, null)
             {
 
             }

@@ -21,6 +21,7 @@
 
         public NuGetProjectUpgradeService(ISettings settings)
         {
+            ArgumentNullException.ThrowIfNull(settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
             if (settings is not IVersionedSettings versionedSettings)
@@ -90,6 +91,8 @@
 
         public void AddUpgradeScenario(IUpgradeScenario scenario)
         {
+            ArgumentNullException.ThrowIfNull(scenario);
+
             _runOnCheckList.Add(scenario);
         }
 

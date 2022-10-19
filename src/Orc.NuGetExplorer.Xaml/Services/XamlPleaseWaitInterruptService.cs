@@ -9,6 +9,8 @@
 
         public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
         {
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+
             _busyIndicatorService = busyIndicatorService;
         }
 

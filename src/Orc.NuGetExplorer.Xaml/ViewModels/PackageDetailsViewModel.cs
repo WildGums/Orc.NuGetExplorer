@@ -36,6 +36,11 @@
         public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
             IPackageCommandService packageCommandService)
         {
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
+
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
             _apiPackageRegistry = apiPackageRegistry;
@@ -222,6 +227,8 @@
 
         protected static async Task<IPackageSearchMetadata?> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
         {
+            ArgumentNullException.ThrowIfNull(identity);
+
             try
             {
                 if (PackageMetadataProvider is null)
@@ -373,6 +380,8 @@
 
         private void ValidateCurrentPackage(NuGetPackage package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             // validate loaded dependencies
             package.ResetValidationContext();
             _apiPackageRegistry.Validate(package);
@@ -428,6 +437,8 @@
 
         private void GetPackageValidationErrors(NuGetPackage package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             // title: NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors
             ApiValidationMessages = package.ValidationContext?.GetAlertMessages(ValidationTags.Api) ?? Array.Empty<string>();
         }

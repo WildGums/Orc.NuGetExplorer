@@ -188,6 +188,8 @@
 
         private void AddContentToOverlay(UIElement overlayContent)
         {
+            ArgumentNullException.ThrowIfNull(overlayContent);
+
             var activeContent = ActiveContentContainer?.Children.Cast<UIElement>().SingleOrDefault();
 
             if (activeContent is not null)

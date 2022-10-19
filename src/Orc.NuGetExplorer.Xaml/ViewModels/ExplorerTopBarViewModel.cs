@@ -31,6 +31,15 @@
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
             INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService, IMessageService messageService, IMessageMediator messageMediator)
         {
+            ArgumentNullException.ThrowIfNull(settings);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(uIVisualizerService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(messageMediator);
+
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;
             _configurationService = configurationService;

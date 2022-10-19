@@ -19,6 +19,9 @@
 
         public PackagesLoaderService(ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(logger);
+
             _nugetLogger = logger;
             _repositoryProvider = repositoryProvider;
         }
@@ -27,6 +30,7 @@
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(pageContinuation);
             Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
 
             if (pageContinuation.Source.PackageSources.Count < 2)
@@ -60,6 +64,8 @@
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
             SearchFilter searchFilter, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(pageContinuation);
+
             SourceRepository? tempRepoLocal = null;
 
             var repositoryCollection = pageContinuation.Source.PackageSources.Select(source =>

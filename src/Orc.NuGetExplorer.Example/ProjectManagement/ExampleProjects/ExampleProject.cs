@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
     using System.Collections.Immutable;
     using Catel.IoC;
     using Catel.Logging;
@@ -15,6 +16,8 @@
 
         public ExampleProject(IFrameworkNameProvider frameworkNameProvider)
         {
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+
             _pathResolver = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<ExamplePackagePathResolver>();
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(Framework, frameworkNameProvider);

@@ -23,12 +23,16 @@
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
+            ArgumentNullException.ThrowIfNull(appCacheProvider);
+
             _iconCache = appCacheProvider.EnsureIconCache();
             _iconCache.FallbackValue = new BitmapImage(new Uri(DefaultIconUri));
         }
 
         public async Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata)
         {
+            ArgumentNullException.ThrowIfNull(packageMetadata);
+
             try
             {
                 //skip if already in cache

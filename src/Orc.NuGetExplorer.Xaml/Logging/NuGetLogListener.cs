@@ -9,7 +9,8 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly LogData EmptyAdditionalData = new();
 
-        public NuGetLogListener(INuGetLogListeningSevice nuGetLogListeningSevice) : base(nuGetLogListeningSevice)
+        public NuGetLogListener(INuGetLogListeningSevice nuGetLogListeningSevice) 
+            : base(nuGetLogListeningSevice)
         {
         }
 
@@ -35,6 +36,8 @@
 
         private void WriteInternal(ILog log, string message, LogEvent logEvent, LogData logData, DateTime time)
         {
+            ArgumentNullException.ThrowIfNull(log);
+
             var eventArgs = new LogMessageEventArgs(log, message, null, logData, logEvent, time);
             RaiseLogMessage(eventArgs);
         }
@@ -64,7 +67,6 @@
             WriteInternal(log, message, LogEvent.Status, logData, time);
         }
 
-        //on messages from NuGet logger
         protected override void OnDebug(object? sender, NuGetLogRecordEventArgs e)
         {
             Debug(Log, e.Message, EmptyAdditionalData, DateTime.Now);

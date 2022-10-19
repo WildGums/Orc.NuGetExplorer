@@ -75,6 +75,8 @@
             string message,
             CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             ICredentials? creds = null;
 
             foreach (var provider in await _providers)
@@ -161,6 +163,8 @@
             bool isProxy,
             out ICredentials? credentials)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             credentials = null;
 
             var rootUri = uri.GetRootUri();
@@ -182,6 +186,8 @@
         private bool TryFromCredentialCache(Uri uri, CredentialRequestType type, bool isRetry, ICredentialProvider provider,
             out CredentialResponse? credentials)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             credentials = null;
 
             var key = CredentialsKeyHelper.GetCacheKey(uri, type, provider);
@@ -198,6 +204,8 @@
         private void AddToCredentialCache(Uri uri, CredentialRequestType type, ICredentialProvider provider,
             CredentialResponse credentials)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             _providerCredentialCache[CredentialsKeyHelper.GetCacheKey(uri, type, provider)] = credentials;
         }
 

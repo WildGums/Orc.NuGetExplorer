@@ -32,6 +32,9 @@
 
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
         {
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
+
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
 
@@ -58,6 +61,8 @@
         public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
             : this(configurationService, feedVerificationService)
         {
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationResetService);
+
             _nuGetConfigurationResetService = nuGetConfigurationResetService;
         }
 
