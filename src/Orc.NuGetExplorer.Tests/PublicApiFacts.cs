@@ -7,56 +7,38 @@
 
 namespace Orc.NuGetExplorer.Tests
 {
-    using System.IO;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using ApprovalTests;
-    using ApprovalTests.Namers;
+    using System.Threading.Tasks;
     using NUnit.Framework;
     using Orc.NuGetExplorer.Services;
     using PublicApiGenerator;
+    using VerifyNUnit;
 
     [TestFixture]
     public class PublicApiFacts
     {
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
-        public void Orc_NuGetExplorer_HasNoBreakingChanges()
+        public async Task Orc_NuGetExplorer_HasNoBreakingChanges_Async()
         {
             var assembly = typeof(DefferedPackageLoaderService).Assembly;
 
-            PublicApiApprover.ApprovePublicApi(assembly);
+            await PublicApiApprover.ApprovePublicApiAsync(assembly);
         }
 
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
-        public void Orc_NuGetExplorer_Xaml_HasNoBreakingChanges()
+        public async Task Orc_NuGetExplorer_Xaml_HasNoBreakingChanges_Async()
         {
             var assembly = typeof(XamlPleaseWaitInterruptService).Assembly;
 
-            PublicApiApprover.ApprovePublicApi(assembly);
+            await PublicApiApprover.ApprovePublicApiAsync(assembly);
         }
         internal static class PublicApiApprover
         {
-            public static void ApprovePublicApi(Assembly assembly)
+            public static async Task ApprovePublicApiAsync(Assembly assembly)
             {
                 var publicApi = ApiGenerator.GeneratePublicApi(assembly, new ApiGeneratorOptions());
-                var writer = new ApprovalTextWriter(publicApi, "cs");
-                var approvalNamer = new AssemblyPathNamer(assembly.Location);
-                Approvals.Verify(writer, approvalNamer, Approvals.GetReporter());
-            }
-        }
-
-        internal class AssemblyPathNamer : UnitTestFrameworkNamer
-        {
-            private readonly string _name;
-
-            public AssemblyPathNamer(string assemblyPath)
-            {
-                _name = Path.GetFileNameWithoutExtension(assemblyPath);
-
-            }
-            public override string Name
-            {
-                get { return _name; }
+                await Verifier.Verify(publicApi);
             }
         }
     }
