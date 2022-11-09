@@ -8,6 +8,8 @@
     using Catel.Logging;
     using Catel.Services;
     using Orc.NuGetExplorer.Services;
+    using Orc.Theming;
+    using Orchestra;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -19,7 +21,10 @@
 #if DEBUG
             LogManager.AddDebugListener(true);
 #endif
+        }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
             var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();
 
             // Note: it's best to use .CurrentUICulture in actual apps since it will use the preferred language
@@ -27,6 +32,10 @@
             // we use .CurrentCulture for the sake of the demo
             languageService.PreferredCulture = CultureInfo.CurrentCulture;
             languageService.FallbackCulture = new CultureInfo("en-US");
+
+            this.ApplyTheme();
+
+            base.OnStartup(e);
         }
 
         [ModuleInitializer]
