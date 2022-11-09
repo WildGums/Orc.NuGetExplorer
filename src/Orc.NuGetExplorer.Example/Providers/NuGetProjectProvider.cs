@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Example.Providers
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
     using Catel.IoC;

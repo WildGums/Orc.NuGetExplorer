@@ -1,12 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Md5HelperFacts.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-#if !NET40
-
-namespace Orc.NuGetExplorer.Tests
+﻿namespace Orc.NuGetExplorer.Tests
 {
     using NuGetExplorer;
     using NUnit.Framework;
@@ -28,5 +20,3 @@ namespace Orc.NuGetExplorer.Tests
         }
     }
 }
-
-#endif

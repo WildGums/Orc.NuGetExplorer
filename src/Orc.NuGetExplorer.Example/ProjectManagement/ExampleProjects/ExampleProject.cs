@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
     using System.Collections.Immutable;

@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Example.Services
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
     using System.Windows.Media;
@@ -7,8 +7,6 @@
     using Catel.MVVM;
     using Catel.Services;
     using Orc.NuGetExplorer;
-    using Orc.NuGetExplorer.Example.PackageManagement;
-    using Orc.NuGetExplorer.Example.Providers;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Services;
     using Orc.Theming;

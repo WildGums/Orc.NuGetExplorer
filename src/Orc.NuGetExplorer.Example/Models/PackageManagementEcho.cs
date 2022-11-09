@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Example.Models
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
     using System.Collections.Generic;

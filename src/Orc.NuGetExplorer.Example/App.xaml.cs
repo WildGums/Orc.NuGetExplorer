@@ -7,7 +7,6 @@
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
-    using Orc.NuGetExplorer.Example.Services;
     using Orc.NuGetExplorer.Services;
 
     /// <summary>

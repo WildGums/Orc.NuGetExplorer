@@ -222,7 +222,7 @@
             var storyboard = AnimationService?.GetFadeInAnimation(OverlayGrid);
             if (storyboard is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Must intiialize animation storyboard to proceed");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Must intitialize animation storyboard to proceed");
             }
 
             _overlayStoryboard = storyboard;

@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Example.PackageManagement
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
     using Catel.Services;
