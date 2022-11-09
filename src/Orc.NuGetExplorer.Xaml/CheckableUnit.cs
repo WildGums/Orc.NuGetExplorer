@@ -6,9 +6,9 @@
 
     internal class CheckableUnit<T> : ObservableObject
     {
-        private readonly Action<bool, T> _onCheckedChangedCallback;
+        private readonly Action<T, bool> _onCheckedChangedCallback;
 
-        public CheckableUnit(bool isChecked, T value, Action<bool, T> onCheckedChangedCallback)
+        public CheckableUnit(bool isChecked, T value, Action<T, bool> onCheckedChangedCallback)
         {
             IsChecked = isChecked;
             Value = value;
@@ -27,7 +27,7 @@
 
             if (e.HasPropertyChanged(nameof(IsChecked)))
             {
-                _onCheckedChangedCallback(IsChecked, Value);
+                _onCheckedChangedCallback(Value, IsChecked);
             }
         }
 

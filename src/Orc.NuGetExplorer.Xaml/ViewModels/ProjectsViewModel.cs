@@ -46,8 +46,10 @@
             return base.InitializeAsync();
         }
 
-        private void NotifyOnProjectSelectionChanged(bool isSelected, IExtensibleProject project)
+        private void NotifyOnProjectSelectionChanged(IExtensibleProject project, bool isSelected)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             if (isSelected)
             {
                 ProjectsModel.Add(project);

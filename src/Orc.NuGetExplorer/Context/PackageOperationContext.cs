@@ -8,8 +8,8 @@
     {
         public PackageOperationContext(IPackageDetails[] packages, ITemporaryFileSystemContext fileSystemContext)
         {
-            ArgumentNullException.ThrowIfNull(() => packages);
-            ArgumentNullException.ThrowIfNull(() => fileSystemContext);
+            ArgumentNullException.ThrowIfNull(packages);
+            ArgumentNullException.ThrowIfNull(fileSystemContext);
 
             UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
             Exceptions = new List<Exception>();

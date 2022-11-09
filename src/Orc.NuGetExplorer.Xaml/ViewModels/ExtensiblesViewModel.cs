@@ -40,8 +40,10 @@
             return base.InitializeAsync();
         }
 
-        public void ExtensibleProjectStatusChange(bool isShouldBeEnabled, IExtensibleProject project)
+        public void ExtensibleProjectStatusChange(IExtensibleProject project, bool isShouldBeEnabled)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             if (isShouldBeEnabled)
             {
                 _extensiblesManager.Enable(project);

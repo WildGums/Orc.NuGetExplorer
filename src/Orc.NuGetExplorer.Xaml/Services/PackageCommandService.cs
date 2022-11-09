@@ -66,7 +66,7 @@
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_busyIndicatorService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
@@ -75,7 +75,7 @@
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_busyIndicatorService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
             }
@@ -83,7 +83,7 @@
 
         public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_busyIndicatorService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
             {
                 await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
@@ -92,7 +92,7 @@
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_busyIndicatorService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
@@ -101,7 +101,7 @@
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_busyIndicatorService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
             }

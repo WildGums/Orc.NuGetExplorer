@@ -26,7 +26,7 @@
 
         public NuGetSettings(IConfigurationService configurationService)
         {
-            ArgumentNullException.ThrowIfNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 
@@ -319,7 +319,7 @@
 
         private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
         {
-            ArgumentNullException.ThrowIfNull(() => values);
+            ArgumentNullException.ThrowIfNull(values);
 
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);

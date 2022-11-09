@@ -96,37 +96,40 @@
 
         private void OnRemoveFeedExecute()
         {
-            if (SelectedFeed is null)
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
             {
                 return;
             }
 
-            RemovedFeeds.Add(SelectedFeed);
-            Feeds.Remove(SelectedFeed);
+            RemovedFeeds.Add(selectedFeed);
+            Feeds.Remove(selectedFeed);
         }
 
         public Command MoveUpFeed { get; set; }
 
         private void OnMoveUpFeedExecute()
         {
-            if (SelectedFeed is null)
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
             {
                 return;
             }
 
-            Feeds.MoveUp(SelectedFeed);
+            Feeds.MoveUp(selectedFeed);
         }
 
         public Command MoveDownFeed { get; set; }
 
         private void OnMoveDownFeedExecute()
         {
-            if (SelectedFeed is null)
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
             {
                 return;
             }
 
-            Feeds.MoveDown(SelectedFeed);
+            Feeds.MoveDown(selectedFeed);
         }
 
         public Command AddFeed { get; set; }
@@ -144,6 +147,7 @@
             {
                 return;
             }
+            
             await _nuGetConfigurationResetService.ResetAsync();
         }
 

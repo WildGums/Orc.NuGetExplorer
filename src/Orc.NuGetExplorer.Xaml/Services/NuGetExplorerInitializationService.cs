@@ -24,11 +24,11 @@
 
             InitializeTypes(ServiceLocator.Default);
 
-            //set language resources
+            // set language resources
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
             languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
 
-            // Node: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
+            // Note: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
             // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
 
             _nuGetProjectUpgradeService = nuGetProjectUpgradeService;

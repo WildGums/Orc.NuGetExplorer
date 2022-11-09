@@ -20,8 +20,8 @@
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
-            ArgumentNullException.ThrowIfNull(() => directoryService);
-            ArgumentNullException.ThrowIfNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _directoryService = directoryService;
             _fileService = fileService;
