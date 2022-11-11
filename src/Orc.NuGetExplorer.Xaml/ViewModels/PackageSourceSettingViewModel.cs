@@ -12,6 +12,7 @@
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
+    using Catel.Services;
     using Orc.NuGetExplorer.Models;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
@@ -23,21 +24,23 @@
 
         private readonly INuGetConfigurationService _configurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
-
+        private readonly ILanguageService _languageService;
         private readonly Queue<NuGetFeed> _validationQueue = new();
 
         private static readonly System.Timers.Timer ValidationTimer = new(ValidationDelay);
 
         private readonly INuGetConfigurationResetService? _nuGetConfigurationResetService;
 
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            ILanguageService languageService)
         {
             ArgumentNullException.ThrowIfNull(configurationService);
             ArgumentNullException.ThrowIfNull(feedVerificationService);
+            ArgumentNullException.ThrowIfNull(languageService);
 
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
-
+            _languageService = languageService;
             RemovedFeeds = new List<NuGetFeed>();
 
             DeferValidationUntilFirstSaveCall = true;
@@ -49,7 +52,7 @@
             Feeds = new ObservableCollection<NuGetFeed>();
             PackageSources = new List<IPackageSource>();
 
-            Title = "Settings";
+            Title = _languageService.GetRequiredString("NuGetExplorer_PackageSourceSettingViewModel_Title");
 
             RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
             MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
@@ -58,8 +61,9 @@
             Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
-            : this(configurationService, feedVerificationService)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, 
+            INuGetConfigurationResetService nuGetConfigurationResetService, ILanguageService languageService)
+            : this(configurationService, feedVerificationService, languageService)
         {
             ArgumentNullException.ThrowIfNull(nuGetConfigurationResetService);
 

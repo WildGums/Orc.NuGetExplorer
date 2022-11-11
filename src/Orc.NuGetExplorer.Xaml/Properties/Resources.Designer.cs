@@ -115,6 +115,15 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No package sources provided for installing package &apos;{0}&apos;.
+        /// </summary>
+        internal static string NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Available Updates.
         /// </summary>
         internal static string NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates {
@@ -253,6 +262,15 @@ namespace Orc.NuGetExplorer.Properties {
         internal static string NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source {
             get {
                 return ResourceManager.GetString("NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string NuGetExplorer_PackageSourceSettingViewModel_Title {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageSourceSettingViewModel_Title", resourceCulture);
             }
         }
         

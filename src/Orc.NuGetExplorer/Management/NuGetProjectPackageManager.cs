@@ -27,6 +27,7 @@
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
         private readonly IFileSystemService _fileSystemService;
+        private readonly ILanguageService _languageService;
         private readonly IMessageService _messageService;
 
         private BatchOperationToken? _batchToken;
@@ -35,19 +36,21 @@
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            IMessageService messageService, IFileSystemService fileSystemService)
+            IMessageService messageService, IFileSystemService fileSystemService, ILanguageService languageService)
         {
             ArgumentNullException.ThrowIfNull(packageInstallationService);
             ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
             ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
             ArgumentNullException.ThrowIfNull(messageService);
             ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(languageService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _messageService = messageService;
             _fileSystemService = fileSystemService;
+            _languageService = languageService;
         }
 
         public event AsyncEventHandler<InstallNuGetProjectEventArgs>? Install;
@@ -230,7 +233,8 @@
 
                     if (showErrors)
                     {
-                        await _messageService.ShowErrorAsync($"No package sources provided for installing package '{package}'");
+                        var errorMessage = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template"), package);
+                        await _messageService.ShowErrorAsync(errorMessage);
                     }
 
                     return false;

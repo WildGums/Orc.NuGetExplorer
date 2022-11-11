@@ -36,26 +36,33 @@
         // TODO stream should be disposed when item removed from cache
         public BitmapImage? GetFromCache(Uri? iconUri)
         {
-            if (iconUri is null)
+            try
+            {
+                if (iconUri is null)
+                {
+                    return FallbackValue;
+                }
+
+                if (iconUri.IsLoopback)
+                {
+                    return CreateImage(iconUri);
+                }
+
+                var cachedItem = _cache.Get(iconUri.ToString());
+
+                if (cachedItem is null)
+                {
+                    return FallbackValue;
+                }
+
+                using (var stream = new MemoryStream(cachedItem))
+                {
+                    return CreateImage(stream);
+                }
+            }
+            catch (Exception)
             {
                 return FallbackValue;
-            }
-
-            if (iconUri.IsLoopback)
-            {
-                return CreateImage(iconUri);
-            }
-
-            var cachedItem = _cache.Get(iconUri.ToString());
-
-            if (cachedItem is null)
-            {
-                return FallbackValue;
-            }
-
-            using (var stream = new MemoryStream(cachedItem))
-            {
-                return CreateImage(stream);
             }
         }
 
@@ -99,23 +106,7 @@
             var image = new BitmapImage();
 
             // Find extracted resource in folder from uri
-            var iconUri = uri;
-
-            if (!string.IsNullOrEmpty(uri.Fragment))
-            {
-                var fileName = uri.Fragment[1..];
-                var folderPath = Path.GetDirectoryName(uri.AbsolutePath);
-                if (string.IsNullOrEmpty(folderPath))
-                {
-                    Log.Debug("Cannot parse source uri for local icon");
-                }
-                else
-                {
-                    // Decode spaces
-                    folderPath = folderPath.Replace("%20", " ");
-                    iconUri = new Uri(Path.Combine(folderPath, fileName));
-                }
-            }
+            var iconUri = uri.GetLocalUriForFragment();
 
             image.BeginInit();
             image.CacheOption = BitmapCacheOption.OnLoad;

@@ -135,6 +135,9 @@
   <data name="NuGetExplorer_ExplorerWindow_TextBlock_Text_RecommendedUpdates" xml:space="preserve">
     <value>Recommended updates</value>
   </data>
+  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" xml:space="preserve">
+    <value>No package sources provided for installing package '{0}'</value>
+  </data>
   <data name="NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates" xml:space="preserve">
     <value>Available Updates</value>
   </data>
@@ -179,6 +182,9 @@
   </data>
   <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source" xml:space="preserve">
     <value>Source:</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingViewModel_Title" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="NuGetExplorer_PagingView_Button_Content_Back" xml:space="preserve">
     <value>Back</value>
