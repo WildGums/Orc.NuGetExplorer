@@ -137,7 +137,7 @@
         public NuGetVersion LastVersion { get; private set; }
 
         /// <summary>
-        /// Installed version or null if it's Browse'' model
+        /// Installed version or null if it's Browse model
         /// </summary>
         public NuGetVersion? InstalledVersion { get; set; }
 

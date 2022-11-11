@@ -22,13 +22,10 @@
             ArgumentNullException.ThrowIfNull(destinationFolder);
             ArgumentNullException.ThrowIfNull(defaultFramework);
 
-#if NETCORE
             var targetFramework = defaultFramework.GetHighest().First();
             Framework = targetFramework.DotNetFrameworkName;
             SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
-#else
-            Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();
-#endif
+
             Log.Info($"Current target framework for plugins set as '{Framework}'");
 
             // Note: commented part for testing correct package resolving to 4.X versions

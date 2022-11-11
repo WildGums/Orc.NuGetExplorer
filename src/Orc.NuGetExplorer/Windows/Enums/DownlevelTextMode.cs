@@ -1,4 +1,4 @@
-namespace Orc.NuGetExplorer.Native
+﻿namespace Orc.NuGetExplorer.Windows
 {
     internal enum DownlevelTextMode
     {

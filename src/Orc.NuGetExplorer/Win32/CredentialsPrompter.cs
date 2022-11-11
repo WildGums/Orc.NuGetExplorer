@@ -7,7 +7,9 @@
     using Catel.Configuration;
     using Catel.Logging;
     using NuGetExplorer.Crypto;
-    using static Orc.NuGetExplorer.Native.CredUi;
+    using Orc.NuGetExplorer.Win32;
+    using Orc.NuGetExplorer.Windows;
+    using static Orc.NuGetExplorer.Windows.CredUi;
 
     internal class CredentialsPrompter
     {

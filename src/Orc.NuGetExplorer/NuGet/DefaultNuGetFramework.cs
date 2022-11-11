@@ -92,7 +92,7 @@
             {
                 if (ndpKey is null)
                 {
-                    Log.Info("Old versions of .NET Framework Version (under 4.5) wasn't detected.");
+                    Log.Info("Could not detect old versions of .NET Framework (< 4.5)");
                     return;
                 }
 

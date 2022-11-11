@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer
 {
-    using System;
     using System.Collections.Generic;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
@@ -25,10 +24,7 @@
         {
             public bool Equals(PackageSource? x, PackageSource? y)
             {
-                ArgumentNullException.ThrowIfNull(x);
-                ArgumentNullException.ThrowIfNull(y);
-
-                return string.Equals(x.Source, y.Source);
+                return string.Equals(x?.Source, y?.Source);
             }
 
             public int GetHashCode(PackageSource obj)
@@ -44,10 +40,7 @@
         {
             public bool Equals(SourceRepository? x, SourceRepository? y)
             {
-                ArgumentNullException.ThrowIfNull(x);
-                ArgumentNullException.ThrowIfNull(y);
-
-                return PackageSource.Equals(x.PackageSource, y.PackageSource);
+                return PackageSource.Equals(x?.PackageSource, y?.PackageSource);
             }
 
             public int GetHashCode(SourceRepository obj)

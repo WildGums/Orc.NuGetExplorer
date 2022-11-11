@@ -14,10 +14,16 @@
         {
             ArgumentNullException.ThrowIfNull(wrapper);
 
-            if (wrapper.IsMultipleSource || !wrapper.PackageSources.Any())
+            if (wrapper.IsMultipleSource)
             {
-                throw Log.ErrorAndCreateException<InvalidCastException>("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
+                throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper reprensents multiple PackageSource(s)");
             }
+
+            if (!wrapper.PackageSources.Any())
+            {
+                throw Log.ErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
+            }
+
             return wrapper.PackageSources[0];
         }
 

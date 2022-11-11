@@ -37,7 +37,7 @@
 
             var identity = match.Captures[0].Value;
 
-            var versionString = packageString.Replace(identity, "");
+            var versionString = packageString.Replace(identity, string.Empty);
 
             if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out var version))
             {

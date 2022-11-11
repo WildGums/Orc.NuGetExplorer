@@ -6,7 +6,7 @@
     {
         public Repository(string source)
         {
-            Name = "";
+            Name = string.Empty;
             Source = source;
         }
 

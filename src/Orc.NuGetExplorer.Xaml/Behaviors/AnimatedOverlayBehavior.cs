@@ -63,8 +63,8 @@
 
             if (behavior.IsAssociatedObjectLoaded)
             {
-                behavior.AttachActiveContainer(e.OldValue);
-                behavior.DetachActiveContainer(e.NewValue);
+                behavior.DetachActiveContainer((Grid?)e.OldValue);
+                behavior.AttachActiveContainer((Grid?)e.NewValue);
             }
         }
 
@@ -117,20 +117,24 @@
             }
         }
 
-        private void AttachActiveContainer(object? contentContainer)
+        private void AttachActiveContainer(UIElement? contentContainer)
         {
-            if (contentContainer is UIElement elementContentContainer)
+            if (contentContainer is null)
             {
-                _topInternalGrid?.Children.Add(elementContentContainer);
+                return;
             }
+
+            _topInternalGrid?.Children.Add(contentContainer);
         }
 
-        private void DetachActiveContainer(object? contentContainer)
+        private void DetachActiveContainer(UIElement? contentContainer)
         {
-            if (contentContainer is UIElement elementContentContainer)
+            if (contentContainer is null)
             {
-                _topInternalGrid?.Children.Add(elementContentContainer);
+                return;
             }
+
+            _topInternalGrid?.Children.Remove(contentContainer);
         }
 
         private void GetInternalGrid()
@@ -152,6 +156,12 @@
                 return;
             }
 
+            if (OverlayContent is null)
+            {
+                Log.Debug("Overlay content control is not set");
+                return;
+            }
+
             if (IsEnabled)
             {
                 _sizeHandler = SetupAndShowOverlay(OverlayContent);
@@ -163,10 +173,8 @@
             }
         }
 
-        private SizeChangedEventHandler SetupAndShowOverlay(UIElement? overlayContent)
+        private SizeChangedEventHandler SetupAndShowOverlay(UIElement overlayContent)
         {
-            ArgumentNullException.ThrowIfNull(overlayContent);
-
             overlayContent.SetCurrentValue(Panel.ZIndexProperty, (int)(OverlayGrid?.GetValue(Panel.ZIndexProperty) ?? 0) + 1);
 
             overlayContent.SetCurrentValue(FrameworkElement.MinHeightProperty, AssociatedObject.ActualHeight / 4.0);

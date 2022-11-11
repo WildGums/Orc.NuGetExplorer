@@ -66,7 +66,7 @@
 
         private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
         {
-            Argument.IsNotNull(() => folderPath);
+            Argument.IsNotNullOrEmpty(() => folderPath);
             ArgumentNullException.ThrowIfNull(directoryService);
             ArgumentNullException.ThrowIfNull(fileService);
 
