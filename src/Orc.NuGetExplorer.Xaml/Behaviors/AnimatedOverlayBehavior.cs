@@ -287,7 +287,7 @@
             var storyboard = AnimationService?.GetFadeOutAnimation(OverlayGrid);
             if (storyboard is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Must intiialize animation storyboard to proceed");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
             }
 
             _overlayStoryboard = storyboard;
