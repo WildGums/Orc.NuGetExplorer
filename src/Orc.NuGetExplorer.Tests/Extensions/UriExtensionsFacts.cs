@@ -10,8 +10,8 @@
         public class The_DecodeLocalUri_Method
         {
             [TestCase(
-                "file:///C:/Users/test/AppData/Roaming/WildGums/Orc.NuGetExplorer example/plugins/Newtonsoft.Json.13.0.2-beta2/Newtonsoft.Json.13.0.2-beta2.nupkg#packageIcon.png",
-                "C:\\Users\\test\\AppData\\Roaming\\WildGums\\Orc.NuGetExplorer example\\plugins\\Newtonsoft.Json.13.0.2-beta2\\packageIcon.png")]
+                "file:///C:/Users/test/AppData/Roaming/Orc.NuGetExplorer example/plugins/Test.1.0.0-alpha0/Test.1.0.0-alpha0.nupkg#packageIcon.png",
+                "C:\\Users\\test\\AppData\\Roaming\\Orc.NuGetExplorer example\\plugins\\Test.1.0.0-alpha0\\packageIcon.png")]
             public void CanHandleAbsoluteUriWithWhitespaces(string absoluteUri, string expectedPath)
             {
                 var uri = new Uri(absoluteUri);

@@ -8,7 +8,6 @@
     using NuGet.Versioning;
     using NUnit.Framework;
     using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;
 
     [TestFixture]
@@ -41,7 +40,7 @@
                 settingsProviderMock.Setup(x => x.Model).Returns(new ExplorerSettingsContainer());
                 var settingsProvider = settingsProviderMock.Object;
 
-                var model = FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "WildGums");
+                var model = GlobalMocks.CreateMockPackage("1.0.0", "WildGums");
                 model.InstalledVersion = new NuGetVersion(model.Version);
 
                 var vm = new PageItemViewModel(model, settingsProvider, commandManager);

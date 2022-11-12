@@ -9,7 +9,6 @@
     using Catel.Services;
     using Moq;
     using NUnit.Framework;
-    using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;
     using Orc.NuGetExplorer.Windows;
 
@@ -65,7 +64,7 @@
             {
                 PackageItems = new FastObservableCollection<NuGetPackage>()
                 {
-                    FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "WildGums"),
+                    GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
                 };
                 CanBatchUpdateOperations = true;
                 CanBatchInstallOperations = true;

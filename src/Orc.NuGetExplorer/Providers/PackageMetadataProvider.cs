@@ -112,11 +112,10 @@
                 var project = _project.Value;
                 if (project is not null && project.SupportSideBySide)
                 {
-                    // Note: ADD UNIT TEST HERE, Important
                     var localProjectDirectory = Directory.GetParent(project.GetInstallPath(identity));
                     if (localProjectDirectory is null)
                     {
-                        Log.Warning("Cannot find destination folder in Side-but-side installation. Check project installation path.");
+                        Log.Warning("Cannot find destination folder in Side-by-side installation. Check project installation path.");
                     }
                     else
                     {
