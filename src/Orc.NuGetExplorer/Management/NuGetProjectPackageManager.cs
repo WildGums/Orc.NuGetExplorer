@@ -244,13 +244,10 @@
 
                 if (!installerResults.Result.Any())
                 {
-                    Log.Error($"Failed to install package {package}");
-
-                    // todo PackageCommandService or context is better place for messaging
-
                     if (showErrors)
                     {
-                        await _messageService.ShowErrorAsync($"Failed to install package '{package}'.\n{installerResults.ErrorMessage}");
+                        var error = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template"), package, installerResults.ErrorMessage);
+                        await _messageService.ShowErrorAsync(error);
                     }
 
                     return false;
@@ -292,7 +289,8 @@
 
                 if (showErrors)
                 {
-                    await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{ex.Message}");
+                    var error = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template"), package, ex.Message);
+                    await _messageService.ShowErrorAsync(error);
                 }
 
                 if (ex?.CurrentBatch is null)
