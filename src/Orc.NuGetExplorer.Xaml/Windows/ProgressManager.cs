@@ -47,12 +47,12 @@
             }
         }
 
-        private DataWindow? GetCurrentActiveDataWindow()
+        private static DataWindow? GetCurrentActiveDataWindow()
         {
             return Application.Current.Windows.OfType<DataWindow>().FirstOrDefault(x => x.IsActive);
         }
 
-        private IEnumerable<AnimatedOverlayBehavior> GetOverlayBehaviors(DataWindow window)
+        private static IEnumerable<AnimatedOverlayBehavior> GetOverlayBehaviors(DataWindow window)
         {
             var behaviors = Interaction.GetBehaviors(window);
 

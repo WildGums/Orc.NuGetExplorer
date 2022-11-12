@@ -121,7 +121,7 @@
             return new DisableNotificationToken(this);
         }
 
-        private class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
+        private sealed class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
         {
             public DisableNotificationToken(PackageOperationNotificationService instance)
                 : this(instance, token => token.Instance.IsNotificationsDisabled = true, token => token.Instance.IsNotificationsDisabled = false, null)

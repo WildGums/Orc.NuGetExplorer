@@ -14,7 +14,7 @@
             SetProtocolSecurity();
         }
 
-        public async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
+        public static async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
         {
             Log.Debug($"Webclient request on {uri}");
 
@@ -23,7 +23,7 @@
             return array;
         }
 
-        public byte[] GetByUrl(Uri uri, WebClient client)
+        public static byte[] GetByUrl(Uri uri, WebClient client)
         {
             Log.Debug($"Webclient request on {uri}");
 

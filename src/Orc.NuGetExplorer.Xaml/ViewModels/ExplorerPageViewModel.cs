@@ -346,7 +346,7 @@
             _packageOperationContextService.OperationContextDisposing -= OnOperationContextDisposing;
         }
 
-        private void StartLoadingTimer()
+        private static void StartLoadingTimer()
         {
             if (SingleDelayTimer.Enabled)
             {

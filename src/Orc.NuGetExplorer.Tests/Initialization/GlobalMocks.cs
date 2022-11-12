@@ -37,27 +37,6 @@
             return new MockProject();
         }
 
-        public static INuGetResourceProvider CreateMockNuGetResourceProvider()
-        {
-            return new MockNugetResourceProvider();
-        }
-
-        private class MockNugetResourceProvider : INuGetResourceProvider
-        {
-            public Type ResourceType => typeof(LocalPackageMetadataResource);
-            public string Name => "MockLocal";
-            public IEnumerable<string> Before { get; }
-            public IEnumerable<string> After { get; }
-
-#pragma warning disable CL0002 // Use "Async" suffix for async methods
-            public async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
-#pragma warning restore CL0002 // Use "Async" suffix for async methods
-            {
-                INuGetResource resource = new LocalPackageMetadataResource(new FindLocalPackagesResourceV3(source.PackageSource.Source));
-                return Tuple.Create(true, resource);
-            }
-        }
-
         private class MockProject : IExtensibleProject
         {
             private static readonly string ContentFolder = Path.Combine(Environment.CurrentDirectory, "packages");

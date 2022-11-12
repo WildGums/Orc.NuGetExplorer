@@ -96,7 +96,7 @@
 
             Log.Debug("Stored credentials are allowed");
 
-            var credentials = ReadCredential(Target, true && _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback);
+            var credentials = ReadCredential(Target, _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback);
             if (credentials is null)
             {
                 return false;

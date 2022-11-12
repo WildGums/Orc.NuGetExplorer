@@ -30,6 +30,7 @@
                 var nugetConfigurationServiceMock = new Mock<INuGetConfigurationService>();
                 nugetConfigurationServiceMock.Setup(x => x.GetDestinationFolder())
                     .Returns(() => Environment.CurrentDirectory);
+
                 ServiceLocator.Default.RegisterInstance<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
 
                 var mockProject = GlobalMocks.CreateMockProject();
@@ -42,6 +43,7 @@
                 var fileService = new FileService();
                 var directoryService = new DirectoryService(fileService);
 
+                // IRepositoryService setup
                 var projectRepository = GlobalMocks.CreateMockRepository("Mock", "packages");
 
                 var repositoryServiceMock = new Mock<IRepositoryService>();
@@ -50,6 +52,7 @@
 
                 var repositoryService = repositoryServiceMock.Object;
 
+                // ISourceRepositoryProvider setup
                 var providers = Repository.Provider.GetCoreV3().Select(x => x.Value).ToList();
 
                 var repositoryProviderMock = new Mock<ISourceRepositoryProvider>();
@@ -60,6 +63,7 @@
 
                 var repositoryProvider = repositoryProviderMock.Object;
 
+                // Create tested instance
                 var packageMetadataProvider = new PackageMetadataProvider(directoryService, repositoryService, repositoryProvider);
 
                 var package = new PackageIdentity("Orc.NuGetExplorer", new NuGet.Versioning.NuGetVersion("1.0.0"));

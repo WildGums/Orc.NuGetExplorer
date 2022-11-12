@@ -89,6 +89,16 @@
             AttachActiveContainer(ActiveContentContainer);
         }
 
+        protected override void OnAssociatedObjectUnloaded()
+        {
+            base.OnAssociatedObjectUnloaded();
+
+            if (_sizeHandler is not null)
+            {
+                AssociatedObject.SizeChanged -= _sizeHandler;
+            }
+        }
+
         protected override void OnAttached()
         {
             base.OnAttached();

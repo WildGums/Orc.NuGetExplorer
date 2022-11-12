@@ -98,7 +98,7 @@
         private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-            Log.Debug($"Set RotationProgressBar status to {Success}");
+            Log.Debug($"Warning changed: set RotationProgressBar status to {Success}");
         }
 
 
@@ -117,7 +117,7 @@
         private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-            Log.Debug($"Set RotationProgressBar status to {Success}");
+            Log.Debug($"Error changed: Set RotationProgressBar status to {Success}");
         }
     }
 }
