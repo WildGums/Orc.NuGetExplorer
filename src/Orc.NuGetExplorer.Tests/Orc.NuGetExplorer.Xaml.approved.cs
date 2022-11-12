@@ -423,4 +423,5 @@ namespace XamlGeneratedNamespace
         protected override object CreateInstance(System.Type type, System.Globalization.CultureInfo culture) { }
         protected override object GetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, System.Globalization.CultureInfo culture) { }
         protected override void SetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, object value, System.Globalization.CultureInfo culture) { }
+    }
 }
