@@ -1318,4 +1318,5 @@ namespace Orc.NuGetExplorer.Windows
         public CredentialException(int error, string message) { }
         protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public CredentialException(string message, System.Exception innerException) { }
+    }
 }
