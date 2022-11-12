@@ -383,8 +383,8 @@ namespace Orc.NuGetExplorer.Web
     public class IconDownloader
     {
         public IconDownloader() { }
-        public byte[] GetByUrl(System.Uri uri, System.Net.WebClient client) { }
-        public System.Threading.Tasks.Task<byte[]> GetByUrlAsync(System.Uri uri, System.Net.WebClient client) { }
+        public static byte[] GetByUrl(System.Uri uri, System.Net.WebClient client) { }
+        public static System.Threading.Tasks.Task<byte[]> GetByUrlAsync(System.Uri uri, System.Net.WebClient client) { }
     }
 }
 namespace Orc.NuGetExplorer.Windows
@@ -411,17 +411,5 @@ namespace Themes
     {
         public Compiled() { }
         public void InitializeComponent() { }
-    }
-}
-namespace XamlGeneratedNamespace
-{
-    public sealed class GeneratedInternalTypeHelper : System.Windows.Markup.InternalTypeHelper
-    {
-        public GeneratedInternalTypeHelper() { }
-        protected override void AddEventHandler(System.Reflection.EventInfo eventInfo, object target, System.Delegate handler) { }
-        protected override System.Delegate CreateDelegate(System.Type delegateType, object target, string handler) { }
-        protected override object CreateInstance(System.Type type, System.Globalization.CultureInfo culture) { }
-        protected override object GetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, System.Globalization.CultureInfo culture) { }
-        protected override void SetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, object value, System.Globalization.CultureInfo culture) { }
     }
 }
