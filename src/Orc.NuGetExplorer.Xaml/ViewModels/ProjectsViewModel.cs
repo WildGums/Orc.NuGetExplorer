@@ -7,7 +7,6 @@
     using Catel.Collections;
     using Catel.MVVM;
     using NuGetExplorer.Management;
-    using NuGetExplorer.Models;
     using Orc.NuGetExplorer;
 
     internal class ProjectsViewModel : ViewModelBase

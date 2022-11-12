@@ -13,7 +13,6 @@
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
-    using Orc.NuGetExplorer.Models;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
@@ -61,7 +60,7 @@
             Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, 
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
             INuGetConfigurationResetService nuGetConfigurationResetService, ILanguageService languageService)
             : this(configurationService, feedVerificationService, languageService)
         {
@@ -151,7 +150,7 @@
             {
                 return;
             }
-            
+
             await _nuGetConfigurationResetService.ResetAsync();
         }
 

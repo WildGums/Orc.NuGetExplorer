@@ -26,7 +26,7 @@
 
             if (settings is not IVersionedSettings versionedSettings)
             {
-                throw new InvalidOperationException($"Current configuration should have defined versions for controlling {nameof(NuGetProjectUpgradeService)}");
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Current configuration should have defined versions for controlling {nameof(NuGetProjectUpgradeService)}");
             }
 
             _settings = versionedSettings;

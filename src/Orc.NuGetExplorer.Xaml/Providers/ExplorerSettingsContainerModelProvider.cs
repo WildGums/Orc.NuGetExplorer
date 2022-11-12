@@ -5,7 +5,6 @@
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
-    using Orc.NuGetExplorer.Models;
 
     public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
     {

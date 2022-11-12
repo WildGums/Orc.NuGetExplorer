@@ -3,7 +3,6 @@
     using System;
     using Catel.MVVM;
     using Microsoft.WindowsAPICodePack.Dialogs;
-    using NuGetExplorer.Models;
 
     public class FeedDetailViewModel : ViewModelBase
     {

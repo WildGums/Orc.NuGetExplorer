@@ -1,7 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Example
 {
-    using Models;
-
     public class EchoService : IEchoService
     {
         private PackageManagementEcho _echo;

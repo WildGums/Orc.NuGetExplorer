@@ -49,7 +49,7 @@
                 var fileName = Path.GetFileName(filePath);
                 var fileDestinationPath = GetBackupFolder(Catel.IO.Path.GetDirectoryName(filePath));
 
-                File.Copy(filePath, Path.Combine(fileDestinationPath, fileName), true);
+                _fileService.Copy(filePath, Path.Combine(fileDestinationPath, fileName), true);
             }
             catch (Exception ex)
             {

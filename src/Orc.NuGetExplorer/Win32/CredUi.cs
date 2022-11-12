@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Win32
 {
     using System;
     using System.Runtime.InteropServices;

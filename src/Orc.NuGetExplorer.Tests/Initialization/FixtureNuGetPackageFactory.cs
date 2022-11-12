@@ -2,7 +2,6 @@
 {
     using Moq;
     using NuGet.Protocol.Core.Types;
-    using Orc.NuGetExplorer.Models;
 
     internal static class FixtureNuGetPackageFactory
     {

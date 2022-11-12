@@ -9,7 +9,6 @@
     using Catel.MVVM;
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Enums;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
 
     internal class PageItemViewModel : ViewModelBase

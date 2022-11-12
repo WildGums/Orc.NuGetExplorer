@@ -22,7 +22,7 @@
 
         public void CreateDeleteme(string name, string path)
         {
-            Log.Debug($"Createing delete.me file on path '{path}'");
+            Log.Debug($"Creating delete.me file on path '{path}'");
 
             var fullPath = GetDeletemePath(name, path);
             var directoryPath = Path.GetDirectoryName(fullPath);

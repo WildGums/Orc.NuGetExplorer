@@ -14,7 +14,6 @@
     using Catel.MVVM;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Models;
     using NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Messaging;

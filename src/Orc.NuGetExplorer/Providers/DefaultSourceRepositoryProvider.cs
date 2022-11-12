@@ -7,7 +7,6 @@
     using NuGet.Configuration;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Models;
 
     public class DefaultSourceRepositoryProvider : IExtendedSourceRepositoryProvider
     {

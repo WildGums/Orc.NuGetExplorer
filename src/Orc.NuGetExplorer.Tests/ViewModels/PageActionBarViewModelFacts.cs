@@ -9,7 +9,6 @@
     using Catel.Services;
     using Moq;
     using NUnit.Framework;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;
     using Orc.NuGetExplorer.Windows;

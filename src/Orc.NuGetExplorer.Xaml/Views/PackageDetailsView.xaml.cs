@@ -2,7 +2,6 @@
 {
     using System.Windows;
     using Catel.MVVM.Views;
-    using Models;
 
     internal partial class PackageDetailsView
     {

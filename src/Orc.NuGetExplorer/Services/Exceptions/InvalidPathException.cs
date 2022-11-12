@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Runtime.Serialization;
@@ -9,15 +9,18 @@
         {
         }
 
-        public InvalidPathException(string? message) : base(message)
+        public InvalidPathException(string? message) 
+            : base(message)
         {
         }
 
-        public InvalidPathException(string? message, Exception? innerException) : base(message, innerException)
+        public InvalidPathException(string? message, Exception? innerException) 
+            : base(message, innerException)
         {
         }
 
-        protected InvalidPathException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected InvalidPathException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
         {
         }
     }

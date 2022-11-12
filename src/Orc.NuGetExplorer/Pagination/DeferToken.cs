@@ -3,7 +3,6 @@
     using System;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Enums;
-    using Orc.NuGetExplorer.Models;
 
     public class DeferToken
     {
@@ -30,9 +29,11 @@
         {
             switch (page)
             {
-                case MetadataOrigin.Browse: return MetadataOrigin.Installed;
+                case MetadataOrigin.Browse:
+                    return MetadataOrigin.Installed;
 
-                case MetadataOrigin.Installed: return MetadataOrigin.Browse;
+                case MetadataOrigin.Installed:
+                    return MetadataOrigin.Browse;
             }
 
             return MetadataOrigin.Browse;

@@ -19,7 +19,6 @@
     using Orc.NuGetExplorer.Cache;
     using Orc.NuGetExplorer.Enums;
     using Orc.NuGetExplorer.Management;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Pagination;
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;

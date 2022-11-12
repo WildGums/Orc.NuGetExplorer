@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
     using NuGet.Configuration;

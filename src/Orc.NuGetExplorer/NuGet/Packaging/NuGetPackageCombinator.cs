@@ -4,7 +4,6 @@
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Models;
 
     public class NuGetPackageCombinator
     {

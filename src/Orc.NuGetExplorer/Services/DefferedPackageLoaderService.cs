@@ -14,7 +14,6 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Models;
 
     internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
     {
@@ -27,7 +26,7 @@
 
         private readonly IRepositoryContextService _repositoryService;
         private readonly INuGetPackageManager _projectManager;
-        private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
+        private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IDefaultExtensibleProjectProvider _projectProvider;
 
         private IPackageMetadataProvider? _packageMetadataProvider;
@@ -42,7 +41,7 @@
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
-            _settignsProvider = settingsProvider;
+            _settingsProvider = settingsProvider;
             _projectProvider = projectProvider;
         }
 
@@ -105,7 +104,11 @@
 
                         if (result is not null)
                         {
-                            executedToken = executedToken ?? throw new InvalidOperationException();
+                            if (executedToken is null)
+                            {
+                                throw Log.ErrorAndCreateException<InvalidOperationException>($"Unexpected null value: \"{nameof(executedToken)}\"");
+                            }
+
                             updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
                         }
                         else
@@ -190,7 +193,7 @@
 
             if (_packageMetadataProvider is null)
             {
-                throw new InvalidOperationException("Initialization must be called first");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
             }
 
             var metadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageId, installedVersion), true, cancellationToken);
@@ -202,15 +205,15 @@
 
         private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            if (_settignsProvider is null || _settignsProvider.Model is null)
+            if (_settingsProvider is null || _settingsProvider.Model is null)
             {
-                throw new InvalidOperationException("Settings must be initialized first");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
             }
 
-            var prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            var prerelease = _settingsProvider.Model.IsPreReleaseIncluded;
             if (_packageMetadataProvider is null)
             {
-                throw new InvalidOperationException("Initialization must be called first");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
             }
 
             var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);

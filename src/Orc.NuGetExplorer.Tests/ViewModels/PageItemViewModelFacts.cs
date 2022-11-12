@@ -7,7 +7,6 @@
     using Moq;
     using NuGet.Versioning;
     using NUnit.Framework;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;

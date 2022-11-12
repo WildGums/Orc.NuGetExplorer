@@ -8,7 +8,6 @@
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
-    using Models;
     using Orc.NuGetExplorer.Services;
 
     public class MainViewModel : ViewModelBase

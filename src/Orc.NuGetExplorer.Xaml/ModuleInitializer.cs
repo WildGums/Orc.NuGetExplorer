@@ -3,7 +3,6 @@ using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Logging;
-using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
 using Orc.NuGetExplorer.ViewModels;

@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Native
+﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
     using System.Runtime.InteropServices;
@@ -8,8 +8,7 @@
     using Catel.Logging;
     using NuGetExplorer.Crypto;
     using Orc.NuGetExplorer.Win32;
-    using Orc.NuGetExplorer.Windows;
-    using static Orc.NuGetExplorer.Windows.CredUi;
+    using static Orc.NuGetExplorer.Win32.CredUi;
 
     internal class CredentialsPrompter
     {
@@ -114,21 +113,21 @@
         private bool PromptForCredentials(IntPtr owner, bool storedCredentials, ref IntPtr inBuffer, ref IntPtr outBuffer)
         {
             var info = CreateCredUIInfo(owner, false);
-            var flags = CredUi.PromptForWindowsCredentials.Generic;
+            var flags = PromptForWindowsCredentials.Generic;
             if (ShowSaveCheckBox)
             {
-                flags |= CredUi.PromptForWindowsCredentials.Checkbox;
+                flags |= PromptForWindowsCredentials.Checkbox;
             }
 
             uint inBufferSize = 0;
             if (UserName.Length > 0)
             {
                 // First call is only to get the required buffer size
-                CredUi.CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
+                CredPackAuthenticationBuffer(0, UserName, Password, IntPtr.Zero, ref inBufferSize);
                 if (inBufferSize > 0)
                 {
                     inBuffer = Marshal.AllocCoTaskMem((int)inBufferSize);
-                    if (!CredUi.CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
+                    if (!CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                     {
                         throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
                             "Failed to create the authentication buffer before prompting");
@@ -140,16 +139,16 @@
 
             Log.Debug("Prompting user for credentials");
 
-            var result = CredUi.CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
+            var result = CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
                 out outBuffer, out var outBufferSize, ref _isSaveChecked, flags);
 
             switch (result)
             {
-                case CredUi.CredUiReturnCodes.NO_ERROR:
+                case CredUiReturnCodes.NO_ERROR:
                     ManageCredentialsStorage(outBuffer, outBufferSize, storedCredentials);
                     return true;
 
-                case CredUi.CredUiReturnCodes.ERROR_CANCELLED:
+                case CredUiReturnCodes.ERROR_CANCELLED:
                     Log.Debug("User canceled the credentials prompt");
                     return false;
 
@@ -161,12 +160,12 @@
 
         private void ManageCredentialsStorage(IntPtr outBuffer, uint outBufferSize, bool storedCredentials)
         {
-            var userName = new StringBuilder(CredUi.CREDUI_MAX_USERNAME_LENGTH);
-            var password = new StringBuilder(CredUi.CREDUI_MAX_PASSWORD_LENGTH);
+            var userName = new StringBuilder(CREDUI_MAX_USERNAME_LENGTH);
+            var password = new StringBuilder(CREDUI_MAX_PASSWORD_LENGTH);
             var userNameSize = (uint)userName.Capacity;
             var passwordSize = (uint)password.Capacity;
             uint domainSize = 0;
-            if (!CredUi.CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
+            if (!CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
             {
                 throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
                     "Failed to create the authentication buffer after prompting");
@@ -222,7 +221,7 @@
             return configurationKey;
         }
 
-        private CredUi.SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
+        private SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
         {
             Log.Debug("Trying to read credentials for key '{0}'", key);
 
@@ -237,12 +236,12 @@
                 return ReadCredentialFromConfiguration(key);
             }
 
-            var read = CredUi.CredRead(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0, out var nCredPtr);
+            var read = CredRead(key, CredTypes.CRED_TYPE_GENERIC, 0, out var nCredPtr);
             var lastError = Marshal.GetLastWin32Error();
 
             if (!read)
             {
-                if (lastError == (int)CredUi.CredUIReturnCodes.ERROR_NOT_FOUND)
+                if (lastError == (int)CredUIReturnCodes.ERROR_NOT_FOUND)
                 {
                     Log.Debug("Failed to read credentials, credentials are not found");
                     return null;
@@ -251,13 +250,13 @@
                 throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
             }
 
-            using (var criticalCredentialHandle = new CredUi.CriticalCredentialHandle(nCredPtr))
+            using (var criticalCredentialHandle = new CriticalCredentialHandle(nCredPtr))
             {
                 var cred = criticalCredentialHandle.GetCredential();
 
                 Log.Debug("Retrieved credentials: {0}", cred);
 
-                var credential = new CredUi.SimpleCredentials(cred.UserName, cred.CredentialBlob);
+                var credential = new SimpleCredentials(cred.UserName, cred.CredentialBlob);
 
                 // Some company policies don't allow us reading the credentials, so
                 // that results in an empty password being returned
@@ -302,7 +301,7 @@
                 password = EncryptionHelper.Decrypt(encryptedPassword, encryptionKey);
             }
 
-            var credentials = new CredUi.SimpleCredentials(userName, password);
+            var credentials = new SimpleCredentials(userName, password);
             return credentials;
         }
 
@@ -329,7 +328,7 @@
 
             Log.Debug("Writing credentials with username '{0}' for key '{1}'", userName, key);
 
-            var cred = new CredUi.Credential
+            var cred = new Credential
             {
                 TargetName = key,
                 UserName = userName,
@@ -339,14 +338,14 @@
                 Attributes = IntPtr.Zero,
                 Comment = null,
                 TargetAlias = null,
-                Type = CredUi.CredTypes.CRED_TYPE_GENERIC,
-                Persist = CredUi.IsWindowsVistaOrEarlier ? CredUi.CredPersistance.Session : CredUi.CredPersistance.LocalMachine
+                Type = CredTypes.CRED_TYPE_GENERIC,
+                Persist = IsWindowsVistaOrEarlier ? CredPersistance.Session : CredPersistance.LocalMachine
             };
 
             Log.Debug("Persisting credentials as '{0}'", cred.Persist);
 
-            var ncred = CredUi.NativeCredential.GetNativeCredential(cred);
-            var written = CredUi.CredWrite(ref ncred, 0);
+            var ncred = NativeCredential.GetNativeCredential(cred);
+            var written = CredWrite(ref ncred, 0);
             var lastError = Marshal.GetLastWin32Error();
             if (!written)
             {
@@ -382,14 +381,14 @@
 
             Log.Debug("Deleting credentials with key '{0}'", key);
 
-            if (CredUi.CredDelete(key, CredUi.CredTypes.CRED_TYPE_GENERIC, 0))
+            if (CredDelete(key, CredTypes.CRED_TYPE_GENERIC, 0))
             {
                 Log.Debug("Successfully deleted credentials");
             }
             else
             {
                 var error = Marshal.GetLastWin32Error();
-                if (error != (int)CredUi.CredUiReturnCodes.ERROR_NOT_FOUND)
+                if (error != (int)CredUiReturnCodes.ERROR_NOT_FOUND)
                 {
                     throw Log.ErrorAndCreateException(x => new CredentialException(error),
                         "Failed to delete credentials, error code '{0}'", error);
@@ -397,9 +396,9 @@
             }
         }
 
-        private CredUi.CredUiInfo CreateCredUIInfo(IntPtr owner, bool downlevelText)
+        private CredUiInfo CreateCredUIInfo(IntPtr owner, bool downlevelText)
         {
-            var info = new CredUi.CredUiInfo();
+            var info = new CredUiInfo();
             info.cbSize = Marshal.SizeOf(info);
             info.hwndParent = owner;
 

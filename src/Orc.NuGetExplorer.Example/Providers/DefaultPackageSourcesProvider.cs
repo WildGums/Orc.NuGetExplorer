@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Example
 {
     using System.Collections.Generic;
-    using Orc.NuGetExplorer.Models;
 
     public class DefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
     {

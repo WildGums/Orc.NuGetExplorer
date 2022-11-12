@@ -2,7 +2,6 @@
 {
     using System;
     using Catel.Services;
-    using Models;
 
     public class SimpleLogListener : PackageManagerLogListenerBase
     {

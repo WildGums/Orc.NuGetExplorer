@@ -14,7 +14,6 @@
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Models;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;

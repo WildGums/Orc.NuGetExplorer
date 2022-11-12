@@ -7,7 +7,6 @@
     using Catel.Fody;
     using Catel.IoC;
     using Catel.MVVM;
-    using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
 
     internal class NuGetSettingsViewModel : ViewModelBase

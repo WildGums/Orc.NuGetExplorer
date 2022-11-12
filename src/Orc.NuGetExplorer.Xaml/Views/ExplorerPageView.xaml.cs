@@ -5,7 +5,6 @@
     using System.Windows;
     using System.Windows.Controls;
     using Catel.MVVM.Views;
-    using Models;
     using Orc.NuGetExplorer.Controls;
 
     /// <summary>

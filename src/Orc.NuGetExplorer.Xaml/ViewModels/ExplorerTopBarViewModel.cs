@@ -12,7 +12,6 @@
     using Catel.MVVM;
     using Catel.Services;
     using NuGetExplorer.Cache;
-    using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Messaging;
 
     internal class ExplorerTopBarViewModel : ViewModelBase

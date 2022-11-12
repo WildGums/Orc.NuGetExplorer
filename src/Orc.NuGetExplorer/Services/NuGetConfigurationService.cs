@@ -117,6 +117,8 @@
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
+            ArgumentNullException.ThrowIfNull(packageSources);
+
             _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
 
             if (_packageSourceProvider.Value is NuGetPackageSourceProvider nugetPackageSourceProvider)

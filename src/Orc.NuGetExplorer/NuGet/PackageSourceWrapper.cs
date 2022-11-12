@@ -16,7 +16,7 @@
 
             if (wrapper.IsMultipleSource)
             {
-                throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper reprensents multiple PackageSource(s)");
+                throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
             }
 
             if (!wrapper.PackageSources.Any())

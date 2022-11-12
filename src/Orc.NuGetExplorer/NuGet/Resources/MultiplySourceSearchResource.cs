@@ -107,8 +107,15 @@
         {
             public bool Equals(IPackageSearchMetadata? x, IPackageSearchMetadata? y)
             {
-                ArgumentNullException.ThrowIfNull(x);
-                ArgumentNullException.ThrowIfNull(y);
+                if (x is null && y is null)
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
 
                 return x.Identity.Equals(y.Identity);
             }

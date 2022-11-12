@@ -2,8 +2,8 @@
 {
     internal enum DownlevelTextMode
     {
-        MainInstructionAndContent,
-        MainInstructionOnly,
-        ContentOnly
+        MainInstructionAndContent = 0,
+        MainInstructionOnly = 1,
+        ContentOnly = 2,
     }
 }

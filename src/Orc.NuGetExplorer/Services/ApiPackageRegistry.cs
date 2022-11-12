@@ -9,7 +9,6 @@
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
 
     internal sealed class ApiPackageRegistry : IApiPackageRegistry

@@ -11,7 +11,6 @@
     using Catel.Services;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PageActionBarViewModel : ViewModelBase

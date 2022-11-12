@@ -8,7 +8,7 @@
     using Catel.Logging;
     using NuGet.Configuration;
     using NuGet.Credentials;
-    using NuGetExplorer.Native;
+    using Orc.NuGetExplorer.Windows;
 
     public class WindowsCredentialProvider : ICredentialProvider
     {
