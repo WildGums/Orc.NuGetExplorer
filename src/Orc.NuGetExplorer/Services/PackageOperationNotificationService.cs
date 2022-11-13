@@ -36,6 +36,7 @@
 
             OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
         }
+
         public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
         {
             if (IsNotificationsDisabled)
@@ -68,6 +69,7 @@
                 Log.Info($"{operationType} notification was muted by notification service");
                 return;
             }
+
             OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
         }
 
@@ -83,6 +85,7 @@
                 Log.Info($"{operationType} notification was muted by notification service");
                 return;
             }
+
             OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
         }
 
@@ -98,6 +101,7 @@
                 Log.Info($"{operationType} notification was muted by notification service");
                 return;
             }
+
             OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
         }
 
@@ -113,6 +117,7 @@
                 Log.Info($"{operationType} notification was muted by notification service");
                 return;
             }
+
             OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
         }
 
@@ -126,7 +131,6 @@
             public DisableNotificationToken(PackageOperationNotificationService instance)
                 : this(instance, token => token.Instance.IsNotificationsDisabled = true, token => token.Instance.IsNotificationsDisabled = false, null)
             {
-
             }
 
             public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object? tag = null)
