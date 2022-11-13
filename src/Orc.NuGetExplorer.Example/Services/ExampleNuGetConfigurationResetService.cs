@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.Example.Services
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System.Threading.Tasks;
 

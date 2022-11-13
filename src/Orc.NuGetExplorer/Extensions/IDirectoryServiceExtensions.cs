@@ -10,8 +10,8 @@
     {
         public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => folderPath);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
             var fallbackFlag = false;
@@ -66,6 +66,10 @@
 
         private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
         {
+            Argument.IsNotNullOrEmpty(() => folderPath);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+
             var directoryStack = new Stack<string>();
 
             directoryStack.Push(folderPath);

@@ -1,37 +1,24 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageDetails.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
-
     using Catel.Data;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
 
     public interface IPackageDetails
     {
-        #region Properties
         string Id { get; }
 
         string FullName { get; }
 
         string Description { get; }
 
-        Uri IconUrl { get; }
+        Uri? IconUrl { get; }
 
         Version Version { get; }
 
         NuGetVersion NuGetVersion { get; }
-
-        string SpecialVersion { get; }
-
-        bool IsAbsoluteLatestVersion { get; }
 
         bool IsLatestVersion { get; }
 
@@ -45,23 +32,14 @@ namespace Orc.NuGetExplorer
 
         int? DownloadCount { get; }
 
-        string Dependencies { get; }
-
         bool? IsInstalled { get; set; }
-
-        IList<string> AvailableVersions { get; }
 
         string SelectedVersion { get; set; }
 
-        IValidationContext ValidationContext { get; }
+        IValidationContext? ValidationContext { get; set; }
 
-        #endregion
-
-        #region Methods
         void ResetValidationContext();
 
         PackageIdentity GetIdentity();
-
-        #endregion
     }
 }

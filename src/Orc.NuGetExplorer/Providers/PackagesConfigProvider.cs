@@ -1,14 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
     using System.Collections.Generic;
-    using Catel;
     using NuGet.Frameworks;
     using NuGet.ProjectManagement;
     using Orc.NuGetExplorer.Management;
 
     internal class PackagesConfigProvider : INuGetProjectConfigurationProvider
     {
-        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new Dictionary<IExtensibleProject, NuGetProjectMetadata>();
+        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new();
         private readonly IFrameworkNameProvider _frameworkNameProvider;
 
         private const string MetadataTargetFramework = "TargetFramework";
@@ -16,7 +16,7 @@
 
         public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
         {
-            Argument.IsNotNull(() => frameworkNameProvider);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
 
             _frameworkNameProvider = frameworkNameProvider;
         }
@@ -29,6 +29,8 @@
         /// <returns></returns>
         public NuGetProject GetProjectConfig(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             if (!_storedProjectMetadata.TryGetValue(project, out var metadata))
             {
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);

@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Configuration;
@@ -14,23 +13,23 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        //private readonly IFileDirectoryService _fileDirectoryService;
-        private readonly SourceCacheContext _sourceContext = new SourceCacheContext();
+        private readonly SourceCacheContext _sourceContext = new();
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
         private bool _disposedValue;
 
         public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+
             _directoryService = directoryService;
             _fileService = fileService;
         }
 
         public bool ClearAll()
         {
-            bool noErrors = true;
+            var noErrors = true;
             noErrors &= ClearHttpCache();
             noErrors &= ClearNuGetFolder(DefaultNuGetFolders.GetGlobalPackagesFolder(), "Global-packages");
             noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");

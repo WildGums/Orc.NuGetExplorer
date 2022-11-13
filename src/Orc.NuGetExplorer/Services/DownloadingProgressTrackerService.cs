@@ -20,9 +20,9 @@
 
         public DownloadingProgressTrackerService(ILogger nugetLogger, IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => nugetLogger);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(nugetLogger);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _nugetLogger = nugetLogger;
             _directoryService = directoryService;
@@ -31,36 +31,39 @@
 
         public async Task<IDisposableToken<IProgress<float>>> TrackDownloadOperationAsync(IPackageInstallationService packageInstallationService, SourcePackageDependencyInfo packageDependencyInfo)
         {
-            Argument.IsNotNull(() => packageInstallationService);
-            Argument.IsNotNull(() => packageDependencyInfo);
+            ArgumentNullException.ThrowIfNull(packageInstallationService);
+            ArgumentNullException.ThrowIfNull(packageDependencyInfo);
 
-            try
-            {
 #pragma warning disable IDISP001 // Dispose created.
-                var watcher = new FileSystemWatcher();
+            var watcher = new FileSystemWatcher();
 #pragma warning restore IDISP001 // Dispose created.
-                var downloadPath = packageInstallationService.InstallerPathResolver.GetPackageFilePath(packageDependencyInfo.Id, packageDependencyInfo.Version);
-                var downloadDirectoryPath = Path.GetDirectoryName(downloadPath);
+            var downloadPath = packageInstallationService.InstallerPathResolver.GetPackageFilePath(packageDependencyInfo.Id, packageDependencyInfo.Version);
+            var downloadDirectoryPath = Path.GetDirectoryName(downloadPath);
 
-                // the download method creates directory itself, but we need to create it eager to start watching
-                _directoryService.Create(downloadDirectoryPath);
-
-                watcher.Path = Path.GetDirectoryName(downloadPath);
-
-                // determine package size
-                var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, packageDependencyInfo.Source);
-                var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
-
-                return trackToken;
-            }
-            catch (Exception ex)
+            if (string.IsNullOrEmpty(downloadDirectoryPath))
             {
-                Log.Error(ex);
-                return null;
+                throw Log.ErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
             }
+
+            // the download method creates directory itself, but we need to create it eager to start watching
+            _directoryService.Create(downloadDirectoryPath);
+
+            var directoryName = Path.GetDirectoryName(downloadPath);
+            if (string.IsNullOrEmpty(directoryName))
+            {
+                throw Log.ErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
+            }
+
+            watcher.Path = directoryName;
+
+            // determine package size
+            var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, packageDependencyInfo.Source);
+            var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
+
+            return trackToken;
         }
 
-        private void OnProgressReportedCallback(object sender, float progress)
+        private void OnProgressReportedCallback(object? sender, float progress)
         {
             if (double.IsNaN(progress))
             {
@@ -80,22 +83,23 @@
         private readonly Timer _trackerTimer;
 #pragma warning restore IDISP006 // Implement IDisposable.
 
-        private string _nupkgFilePath;
+        private string _nupkgFilePath = string.Empty;
 
         public DownloadProgressTrackToken(IFileService fileService, IDownloadingProgressTrackerService downloadingProgressTrackerService, PackageIdentity packageIdentity, SourceRepository source, FileSystemWatcher fileSystemWatcher,
-            EventHandler<float> progressCallback, long downloadSize) 
-            : this(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
+            EventHandler<float> progressCallback, long downloadSize)
+            : base(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
         {
-            Argument.IsNotNull(() => downloadingProgressTrackerService);
-            Argument.IsNotNull(() => packageIdentity);
-            Argument.IsNotNull(() => source);
-            Argument.IsNotNull(() => fileSystemWatcher);
+            ArgumentNullException.ThrowIfNull(fileService);
+            ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
+            ArgumentNullException.ThrowIfNull(fileSystemWatcher);
 
             _downloadSize = downloadSize;
             _fileService = fileService;
+
             DownloadingProgressTrackerInstance = downloadingProgressTrackerService;
             PackageIdentity = packageIdentity;
             SourceRepository = source;
+
             _fileSystemWatcher = fileSystemWatcher;
             _fileSystemWatcher.EnableRaisingEvents = true;
             _fileSystemWatcher.Created += OnFileSystemCreated;
@@ -103,11 +107,6 @@
 
             _trackerTimer = new Timer(2500);
             _trackerTimer.Elapsed += OnTrackerTimerElapsed;
-        }
-
-        public DownloadProgressTrackToken(IProgress<float> instance, Action<IDisposableToken<IProgress<float>>> initialize, Action<IDisposableToken<IProgress<float>>> dispose, object tag = null)
-            : base(instance, initialize, dispose, tag)
-        {
         }
 
         public IDownloadingProgressTrackerService DownloadingProgressTrackerInstance { get; }
@@ -151,7 +150,7 @@
             }
         }
 
-        private void OnTrackerTimerElapsed(object sender, ElapsedEventArgs e)
+        private void OnTrackerTimerElapsed(object? sender, ElapsedEventArgs e)
         {
             if (_fileService.Exists(_nupkgFilePath))
             {

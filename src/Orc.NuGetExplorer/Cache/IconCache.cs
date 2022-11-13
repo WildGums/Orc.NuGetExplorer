@@ -5,56 +5,71 @@
     using System.Windows.Media.Imaging;
     using Catel.Caching;
     using Catel.Caching.Policies;
+    using Catel.Logging;
 
     public class IconCache
     {
-        private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30));
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly CacheStorage<string, byte[]> _cache = new CacheStorage<string, byte[]>();
+        private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30))!;
+
+        private readonly CacheStorage<string, byte[]> _cache = new();
 
 
-        public IconCache(ExpirationPolicy cacheItemPolicy = null)
+        public IconCache(ExpirationPolicy? cacheItemPolicy = null)
         {
             StoringPolicy = cacheItemPolicy ?? DefaultStoringPolicy;
         }
 
-        public BitmapImage FallbackValue { get; set; }
+        public BitmapImage? FallbackValue { get; set; }
 
         public ExpirationPolicy StoringPolicy { get; private set; }
 
         public void SaveToCache(Uri iconUri, byte[] streamContent)
         {
+            ArgumentNullException.ThrowIfNull(iconUri);
+            ArgumentNullException.ThrowIfNull(streamContent);
+
             _cache.Add(iconUri.ToString(), streamContent, StoringPolicy);
         }
 
         // TODO stream should be disposed when item removed from cache
-        public BitmapImage GetFromCache(Uri iconUri)
+        public BitmapImage? GetFromCache(Uri? iconUri)
         {
-            if (iconUri is null)
+            try
+            {
+                if (iconUri is null)
+                {
+                    return FallbackValue;
+                }
+
+                if (iconUri.IsLoopback)
+                {
+                    return CreateImage(iconUri);
+                }
+
+                var cachedItem = _cache.Get(iconUri.ToString());
+
+                if (cachedItem is null)
+                {
+                    return FallbackValue;
+                }
+
+                using (var stream = new MemoryStream(cachedItem))
+                {
+                    return CreateImage(stream);
+                }
+            }
+            catch (Exception)
             {
                 return FallbackValue;
-            }
-
-            if (iconUri.IsLoopback)
-            {
-                return CreateImage(iconUri);
-            }
-
-            var cachedItem = _cache.Get(iconUri.ToString());
-
-            if (cachedItem is null)
-            {
-                return FallbackValue;
-            }
-
-            using (var stream = new MemoryStream(cachedItem))
-            {
-                return CreateImage(stream);
             }
         }
 
         public bool IsCached(Uri iconUri)
         {
+            ArgumentNullException.ThrowIfNull(iconUri);
+
             if (iconUri is null)
             {
                 return false;
@@ -67,6 +82,8 @@
 
         private BitmapImage CreateImage(Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             var image = new BitmapImage();
 
             image.BeginInit();
@@ -84,20 +101,12 @@
 
         private BitmapImage CreateImage(Uri uri)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             var image = new BitmapImage();
 
             // Find extracted resource in folder from uri
-            var iconUri = uri;
-
-            if (!string.IsNullOrEmpty(uri.Fragment))
-            {
-                var fileName = uri.Fragment.Substring(1, uri.Fragment.Length - 1);
-                var folderPath = Path.GetDirectoryName(uri.AbsolutePath);
-
-                // Decode spaces
-                folderPath = folderPath.Replace("%20", " ");
-                iconUri = new Uri(Path.Combine(folderPath, fileName));
-            }
+            var iconUri = uri.GetLocalUriForFragment();
 
             image.BeginInit();
             image.CacheOption = BitmapCacheOption.OnLoad;

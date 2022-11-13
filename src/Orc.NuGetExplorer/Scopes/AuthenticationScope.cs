@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AuthenticationScope.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Scopes
+﻿namespace Orc.NuGetExplorer.Scopes
 {
     using Catel;
 
@@ -18,10 +11,7 @@ namespace Orc.NuGetExplorer.Scopes
             _canPromptForAuthentication = canPromptForAuthentication ?? true;
         }
 
-        public bool CanPromptForAuthentication
-        {
-            get { return !HasPromptedForAuthentication && _canPromptForAuthentication; }
-        }
+        public bool CanPromptForAuthentication => !HasPromptedForAuthentication && _canPromptForAuthentication;
 
         public bool HasPromptedForAuthentication { get; set; }
     }

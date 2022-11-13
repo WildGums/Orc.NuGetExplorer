@@ -1,20 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IConfigurationServiceExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
-    using Catel;
+    using System;
     using Catel.Configuration;
 
     internal static class IConfigurationServiceExtensions
     {
         public static string GetLastRepositoryCategory(this IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             var value = configurationService.GetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, AppSettings.NuGetExplorer.LastRepositoryCaregoryDefaultValue);
 
@@ -23,15 +16,14 @@ namespace Orc.NuGetExplorer
 
         public static void SetLastRepositoryCategory(this IConfigurationService configurationService, string value)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
         }
 
         public static string GetLastRepository(this IConfigurationService configurationService, string repositoryCategory)
         {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repositoryCategory);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             var key = GetLastRepositoryKey(repositoryCategory);
             var value = configurationService.GetRoamingValue(key, AppSettings.NuGetExplorer.LastRepositoryDefaultValue);
@@ -41,8 +33,7 @@ namespace Orc.NuGetExplorer
 
         public static void SetLastRepository(this IConfigurationService configurationService, string page, IRepository repository)
         {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repository);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             var key = GetLastRepositoryKey(page);
             configurationService.SetRoamingValue(key, repository.Name);
@@ -50,8 +41,7 @@ namespace Orc.NuGetExplorer
 
         public static void SetLastRepository(this IConfigurationService configurationService, string page, string repositoryName)
         {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => repositoryName);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             var key = GetLastRepositoryKey(page);
             configurationService.SetRoamingValue(key, repositoryName);
@@ -59,19 +49,22 @@ namespace Orc.NuGetExplorer
 
         public static bool GetIsPrereleaseIncluded(this IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
-            return configurationService.GetRoamingValue<bool>(Settings.NuGet.IncludePrereleasePackages, false);
+            ArgumentNullException.ThrowIfNull(configurationService);
+
+            return configurationService.GetRoamingValue(Settings.NuGet.IncludePrereleasePackages, false);
         }
 
         public static void SetIsPrereleaseIncluded(this IConfigurationService configurationService, bool isPrereleaseIncluded)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+
             configurationService.SetRoamingValue(Settings.NuGet.IncludePrereleasePackages, isPrereleaseIncluded);
         }
 
         public static void SetIsHideInstalled(this IConfigurationService configurationService, bool isHideInstalled)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+
             configurationService.SetRoamingValue(Settings.NuGet.HideInstalledPackages, isHideInstalled);
         }
 

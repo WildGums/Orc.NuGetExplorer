@@ -5,14 +5,12 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Collections;
     using Catel.Logging;
     using Catel.MVVM;
     using Catel.Services;
     using NuGetExplorer.Windows;
     using Orc.NuGetExplorer;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Packaging;
 
     internal class PageActionBarViewModel : ViewModelBase
@@ -29,12 +27,12 @@
         public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
             IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
         {
-            Argument.IsNotNull(() => managerPage);
-            Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => packageCommandService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => commandManager);
+            ArgumentNullException.ThrowIfNull(managerPage);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(commandManager);
 
             _parentManagerPage = managerPage;
             _progressManager = progressManager;
@@ -48,7 +46,11 @@
             CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
             CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
 
-            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            if (batchUpdateCommand is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
+            }
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
             Parent = _parentManagerPage;
@@ -89,7 +91,7 @@
 
                 var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
 
-                if (batchedPackages.Any(x => x.ValidationContext.HasErrors))
+                if (batchedPackages.Any(x => x.ValidationContext?.HasErrors ?? false))
                 {
                     await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
                     return;
@@ -102,9 +104,15 @@
                     foreach (var package in batchedPackages)
                     {
                         var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
-
-                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
-                        installPackageList.Add(installPackageDetails);
+                        if (targetVersion is null)
+                        {
+                            Log.Debug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
+                        }
+                        else
+                        {
+                            var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
+                            installPackageList.Add(installPackageDetails);
+                        }
                     }
 
                     using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Install, installPackageList.ToArray()))
@@ -148,12 +156,12 @@
 
         #endregion
 
-        private void OnParentPagePackageItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnParentPagePackageItemsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             InvalidateCommands();
         }
 
-        private void OnAnyNuGetPackageCheckedChanged(object sender, EventArgs e)
+        private void OnAnyNuGetPackageCheckedChanged(object? sender, EventArgs e)
         {
             InvalidateCommands();
         }

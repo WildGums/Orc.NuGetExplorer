@@ -6,6 +6,6 @@
 
     internal interface ISynchronousUiVisualizer
     {
-        bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs> completedProc = null);
+        bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs>? completedProc = null);
     }
 }

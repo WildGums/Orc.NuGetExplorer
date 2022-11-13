@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.MVVM;
     using NuGetExplorer.Management;
 
@@ -13,9 +13,11 @@
 
         public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
         {
-            Argument.IsNotNull(() => extensiblesManager);
+            ArgumentNullException.ThrowIfNull(extensiblesManager);
 
             _extensiblesManager = extensiblesManager;
+
+            ExtensiblesCollection = new();
 
             Title = "Project extensions";
         }
@@ -38,9 +40,9 @@
             return base.InitializeAsync();
         }
 
-        public void ExtensibleProjectStatusChange(bool isShouldBeEnabled, IExtensibleProject project)
+        public void ExtensibleProjectStatusChange(IExtensibleProject project, bool isShouldBeEnabled)
         {
-            Argument.IsNotNull(() => project);
+            ArgumentNullException.ThrowIfNull(project);
 
             if (isShouldBeEnabled)
             {

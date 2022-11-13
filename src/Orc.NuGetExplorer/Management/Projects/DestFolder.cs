@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Catel.Logging;
@@ -18,13 +19,13 @@
 
         public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
         {
-#if NETCORE
-            var targetFramework = defaultFramework.GetHighest().FirstOrDefault();
+            ArgumentNullException.ThrowIfNull(destinationFolder);
+            ArgumentNullException.ThrowIfNull(defaultFramework);
+
+            var targetFramework = defaultFramework.GetHighest().First();
             Framework = targetFramework.DotNetFrameworkName;
             SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
-#else
-            Framework = defaultFramework.GetLowest().FirstOrDefault()?.ToString();
-#endif
+
             Log.Info($"Current target framework for plugins set as '{Framework}'");
 
             // Note: commented part for testing correct package resolving to 4.X versions
@@ -33,10 +34,7 @@
             // SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(tfm472));
 
             // Default initialization
-            if (SupportedPlatforms is null)
-            {
-                SupportedPlatforms = ImmutableList.Create<NuGetFramework>();
-            }
+            SupportedPlatforms ??= ImmutableList.Create<NuGetFramework>();
 
             ContentPath = destinationFolder;
             _pathResolver = new PackagePathResolver(destinationFolder);

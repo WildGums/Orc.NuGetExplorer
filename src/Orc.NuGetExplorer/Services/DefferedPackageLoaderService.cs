@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Packaging.Core;
@@ -15,8 +14,6 @@
     using NuGetExplorer.Packaging;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
-    using Orc.FileSystem;
-    using Orc.NuGetExplorer.Models;
 
     internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
     {
@@ -29,22 +26,22 @@
 
         private readonly IRepositoryContextService _repositoryService;
         private readonly INuGetPackageManager _projectManager;
-        private readonly IModelProvider<ExplorerSettingsContainer> _settignsProvider;
+        private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IDefaultExtensibleProjectProvider _projectProvider;
 
-        private IPackageMetadataProvider _packageMetadataProvider;
+        private IPackageMetadataProvider? _packageMetadataProvider;
 
         public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
             IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
         {
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => projectProvider);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(projectProvider);
 
             _repositoryService = repositoryService;
             _projectManager = nuGetExtensibleProjectManager;
-            _settignsProvider = settingsProvider;
+            _settingsProvider = settingsProvider;
             _projectProvider = projectProvider;
         }
 
@@ -88,8 +85,8 @@
                         var nextCompletedTask = await Task.WhenAny(taskList.Keys);
 
                         PackageStatus updateStateValue;
-                        IPackageSearchMetadata result = null;
-                        DeferToken executedToken = null;
+                        IPackageSearchMetadata? result = null;
+                        DeferToken? executedToken = null;
 
                         try
                         {
@@ -107,6 +104,11 @@
 
                         if (result is not null)
                         {
+                            if (executedToken is null)
+                            {
+                                throw Log.ErrorAndCreateException<InvalidOperationException>($"Unexpected null value: \"{nameof(executedToken)}\"");
+                            }
+
                             updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
                         }
                         else
@@ -114,7 +116,8 @@
                             updateStateValue = PackageStatus.NotInstalled;
                         }
 
-                        executedToken?.UpdateAction(updateStateValue);
+                        var updateAction = executedToken?.UpdateAction;
+                        updateAction?.Invoke(updateStateValue);
                     }
                 }
             }
@@ -131,8 +134,6 @@
 #pragma warning disable CL0002 // Use async suffix
         private Task<DeferToken> CreateTaskFromToken(DeferToken token, CancellationToken cancellationToken)
         {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
-
             if (token.LoadType == MetadataOrigin.Installed)
             {
                 //from local
@@ -143,7 +144,7 @@
         }
 #pragma warning restore CL0002 // Use async suffix
 
-        public IPackageMetadataProvider InitializeMetadataProvider()
+        public IPackageMetadataProvider? InitializeMetadataProvider()
         {
 
             var typeFactory = TypeFactory.Default;
@@ -161,7 +162,7 @@
                     _projectProvider.GetDefaultProject()
                 });
 
-                var repos = context.Repositories ?? context.PackageSources.Select(src => _repositoryService.GetRepository(src));
+                var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? Enumerable.Empty<SourceRepository>();
 
                 return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
             }
@@ -176,7 +177,7 @@
         private async Task<DeferToken> GetMetadataFromLocalSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
             var project = _projectProvider.GetDefaultProject();
-            string packageId = token.Package.Identity.Id;
+            var packageId = token.Package.Identity.Id;
 
             if (project is null)
             {
@@ -190,6 +191,11 @@
                 return token;
             }
 
+            if (_packageMetadataProvider is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
+            }
+
             var metadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageId, installedVersion), true, cancellationToken);
 
             token.Result = metadata;
@@ -199,7 +205,16 @@
 
         private async Task<DeferToken> GetMetadataFromRemoteSourcesAsync(DeferToken token, CancellationToken cancellationToken)
         {
-            bool prerelease = _settignsProvider.Model.IsPreReleaseIncluded;
+            if (_settingsProvider is null || _settingsProvider.Model is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+            }
+
+            var prerelease = _settingsProvider.Model.IsPreReleaseIncluded;
+            if (_packageMetadataProvider is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
+            }
 
             var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);
 

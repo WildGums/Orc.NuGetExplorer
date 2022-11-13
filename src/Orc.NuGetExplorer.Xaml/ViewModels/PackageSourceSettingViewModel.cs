@@ -3,40 +3,43 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Timers;
-    using Catel;
     using Catel.Collections;
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
-    using Orc.NuGetExplorer.Models;
+    using Catel.Services;
 
     internal class PackageSourceSettingViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly int ValidationDelay = 800;
         private static readonly int VerificationBatch = 5;
 
         private readonly INuGetConfigurationService _configurationService;
         private readonly INuGetFeedVerificationService _feedVerificationService;
+        private readonly ILanguageService _languageService;
+        private readonly Queue<NuGetFeed> _validationQueue = new();
 
-        private readonly Queue<NuGetFeed> _validationQueue = new Queue<NuGetFeed>();
+        private static readonly System.Timers.Timer ValidationTimer = new(ValidationDelay);
 
-        private static readonly System.Timers.Timer ValidationTimer = new System.Timers.Timer(ValidationDelay);
+        private readonly INuGetConfigurationResetService? _nuGetConfigurationResetService;
 
-        private readonly INuGetConfigurationResetService _nuGetConfigurationResetService;
-
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            ILanguageService languageService)
         {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => feedVerificationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
+            ArgumentNullException.ThrowIfNull(languageService);
 
             _configurationService = configurationService;
             _feedVerificationService = feedVerificationService;
-
+            _languageService = languageService;
             RemovedFeeds = new List<NuGetFeed>();
 
             DeferValidationUntilFirstSaveCall = true;
@@ -46,22 +49,29 @@
 
             SettingsFeeds = new List<NuGetFeed>();
             Feeds = new ObservableCollection<NuGetFeed>();
+            PackageSources = new List<IPackageSource>();
 
-            Title = "Settings";
+            Title = _languageService.GetRequiredString("NuGetExplorer_PackageSourceSettingViewModel_Title");
 
-            InitializeCommands();
+            RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
+            MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
+            MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
+            AddFeed = new Command(OnAddFeedExecute);
+            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
         }
 
-        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService, INuGetConfigurationResetService nuGetConfigurationResetService)
-            : this(configurationService, feedVerificationService)
+        public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
+            INuGetConfigurationResetService nuGetConfigurationResetService, ILanguageService languageService)
+            : this(configurationService, feedVerificationService, languageService)
         {
-            Argument.IsNotNull(() => nuGetConfigurationResetService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationResetService);
+
             _nuGetConfigurationResetService = nuGetConfigurationResetService;
         }
 
         public ObservableCollection<NuGetFeed> Feeds { get; set; }
 
-        public NuGetFeed SelectedFeed { get; set; }
+        public NuGetFeed? SelectedFeed { get; set; }
 
         public List<NuGetFeed> RemovedFeeds { get; set; }
 
@@ -89,22 +99,40 @@
 
         private void OnRemoveFeedExecute()
         {
-            RemovedFeeds.Add(SelectedFeed);
-            Feeds.Remove(SelectedFeed);
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
+            {
+                return;
+            }
+
+            RemovedFeeds.Add(selectedFeed);
+            Feeds.Remove(selectedFeed);
         }
 
         public Command MoveUpFeed { get; set; }
 
         private void OnMoveUpFeedExecute()
         {
-            Feeds.MoveUp(SelectedFeed);
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
+            {
+                return;
+            }
+
+            Feeds.MoveUp(selectedFeed);
         }
 
         public Command MoveDownFeed { get; set; }
 
         private void OnMoveDownFeedExecute()
         {
-            Feeds.MoveDown(SelectedFeed);
+            var selectedFeed = SelectedFeed;
+            if (selectedFeed is null)
+            {
+                return;
+            }
+
+            Feeds.MoveDown(selectedFeed);
         }
 
         public Command AddFeed { get; set; }
@@ -122,6 +150,7 @@
             {
                 return;
             }
+
             await _nuGetConfigurationResetService.ResetAsync();
         }
 
@@ -131,15 +160,6 @@
         }
 
         #endregion
-
-        protected void InitializeCommands()
-        {
-            RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
-            MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
-            MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
-            AddFeed = new Command(OnAddFeedExecute);
-            Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
-        }
 
         protected override async Task InitializeAsync()
         {
@@ -242,7 +262,7 @@
             feed.IsVerifiedNow = false;
         }
 
-        private async void OnValidationTimerElapsed(object sender, ElapsedEventArgs e)
+        private async void OnValidationTimerElapsed(object? sender, ElapsedEventArgs e)
         {
             if (IsVerifying)
             {
@@ -276,12 +296,14 @@
             _validationQueue.Enqueue(feed);
         }
 
-        protected void OnFeedPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected void OnFeedPropertyPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            ArgumentNullException.ThrowIfNull(sender);
+
             //run verification if source changed
             if (string.Equals(nameof(NuGetFeed.Source), e.PropertyName))
             {
-                AddToValidationQueue(sender as NuGetFeed);
+                AddToValidationQueue((NuGetFeed)sender);
                 StartValidationTimer();
             }
 
@@ -292,7 +314,7 @@
             }
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (IsSaving)
             {
@@ -313,12 +335,12 @@
             base.OnPropertyChanged(e);
         }
 
-        private void OnFeedsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnFeedsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
-                var removedFeeds = e.OldItems.OfType<NuGetFeed>().ToList();
-                removedFeeds.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
+                var removedFeeds = e.OldItems?.OfType<NuGetFeed>().ToList();
+                removedFeeds?.ForEach(feed => UnsubscribeFromFeedPropertyChanged(feed));
             }
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)

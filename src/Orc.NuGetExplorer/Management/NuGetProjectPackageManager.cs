@@ -21,38 +21,45 @@
     internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDisposable
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly SemaphoreSlim UpdateLocker = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim UpdateLocker = new(1, 1);
 
         private readonly IPackageInstallationService _packageInstallationService;
         private readonly INuGetProjectContextProvider _nuGetProjectContextProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
         private readonly IFileSystemService _fileSystemService;
+        private readonly ILanguageService _languageService;
         private readonly IMessageService _messageService;
 
-        private BatchOperationToken _batchToken;
-        private BatchUpdateToken _updateToken;
+        private BatchOperationToken? _batchToken;
+        private BatchUpdateToken? _updateToken;
         private bool _disposedValue;
 
         public NuGetProjectPackageManager(IPackageInstallationService packageInstallationService,
             INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            IMessageService messageService, IFileSystemService fileSystemService)
+            IMessageService messageService, IFileSystemService fileSystemService, ILanguageService languageService)
         {
-            Argument.IsNotNull(() => packageInstallationService);
-            Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
-            Argument.IsNotNull(() => messageService);
+            ArgumentNullException.ThrowIfNull(packageInstallationService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(languageService);
 
             _packageInstallationService = packageInstallationService;
             _nuGetProjectContextProvider = nuGetProjectContextProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
             _messageService = messageService;
             _fileSystemService = fileSystemService;
+            _languageService = languageService;
         }
 
-        public event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
+        public event AsyncEventHandler<InstallNuGetProjectEventArgs>? Install;
 
         private async Task OnInstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             var args = new InstallNuGetProjectEventArgs(project, package, result);
 
             if (_batchToken is not null && !_batchToken.IsDisposed)
@@ -70,10 +77,13 @@
             await Install.SafeInvokeAsync(this, args);
         }
 
-        public event AsyncEventHandler<UninstallNuGetProjectEventArgs> Uninstall;
+        public event AsyncEventHandler<UninstallNuGetProjectEventArgs>? Uninstall;
 
         private async Task OnUninstallAsync(IExtensibleProject project, PackageIdentity package, bool result)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             var args = new UninstallNuGetProjectEventArgs(project, package, result);
 
             if (_batchToken is not null && !_batchToken.IsDisposed)
@@ -91,7 +101,7 @@
             await Uninstall.SafeInvokeAsync(this, args);
         }
 
-        public event AsyncEventHandler<UpdateNuGetProjectEventArgs> Update;
+        public event AsyncEventHandler<UpdateNuGetProjectEventArgs>? Update;
 
         private async Task OnUpdateAsync(UpdateNuGetProjectEventArgs args)
         {
@@ -106,6 +116,8 @@
 
         public async Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             // TODO should local metadata is also be checked?
 
             var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
@@ -124,6 +136,8 @@
         /// <returns></returns>
         public async Task<PackageCollection> CreatePackagesCollectionFromProjectsAsync(IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+
             // Read package references from all projects.
             var tasks = projects
                 .Select(project => GetInstalledPackagesAsync(project, cancellationToken));
@@ -147,8 +161,8 @@
         /// <returns></returns>
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
 
             try
             {
@@ -167,7 +181,7 @@
 
         public async Task<bool> IsPackageInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
+            ArgumentNullException.ThrowIfNull(project);
 
             if (string.IsNullOrEmpty(packageId))
             {
@@ -189,8 +203,10 @@
             }
         }
 
-        public async Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
+        public async Task<NuGetVersion?> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             var installedReferences = await GetInstalledPackagesAsync(project, token);
 
             var installedVersion = installedReferences.Where(x => string.Equals(x.PackageIdentity.Id, packageId) && x.PackageIdentity.HasVersion)
@@ -201,25 +217,37 @@
 
         public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
-                bool dependencyInstallResult = true;
+                var dependencyInstallResult = true;
 
                 var packageConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
 
-                var repositories = SourceContext.CurrentContext.Repositories;
+                var repositories = SourceContext.CurrentContext?.Repositories;
+                if (repositories is null || !repositories.Any())
+                {
+                    Log.Error($"Failed to install package {package}");
+
+                    if (showErrors)
+                    {
+                        var errorMessage = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template"), package);
+                        await _messageService.ShowErrorAsync(errorMessage);
+                    }
+
+                    return false;
+                }
 
                 var installerResults = await Task.Run(async () => await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token), token);
 
                 if (!installerResults.Result.Any())
                 {
-                    Log.Error($"Failed to install package {package}");
-
-                    // todo PackageCommandService or context is better place for messaging
-
                     if (showErrors)
                     {
-                        await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{installerResults.ErrorMessage}");
+                        var error = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template"), package, installerResults.ErrorMessage);
+                        await _messageService.ShowErrorAsync(error);
                     }
 
                     return false;
@@ -261,7 +289,8 @@
 
                 if (showErrors)
                 {
-                    await _messageService.ShowErrorAsync($"Failed to install package {package}.\n{ex.Message}");
+                    var error = string.Format(_languageService.GetRequiredString("NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template"), package, ex.Message);
+                    await _messageService.ShowErrorAsync(error);
                 }
 
                 if (ex?.CurrentBatch is null)
@@ -287,6 +316,9 @@
 
         public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(package);
+
             using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
@@ -304,6 +336,9 @@
 
         public async Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
                 var installedPackages = await GetInstalledPackagesAsync(project, token);
@@ -320,6 +355,9 @@
 
         public async Task UninstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(package);
+
             using (_batchToken = new BatchOperationToken())
             {
                 foreach (var project in projects)
@@ -337,6 +375,9 @@
 
         public async Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 var version = await GetVersionInstalledAsync(project, packageid, token);
@@ -362,6 +403,9 @@
 
         public async Task UpdatePackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, targetVersion)))
@@ -389,6 +433,10 @@
 
         private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(installedVersion);
+            ArgumentNullException.ThrowIfNull(targetVersion);
+
             try
             {
                 await UpdateLocker.WaitAsync(token);
@@ -404,6 +452,8 @@
 
         public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
         {
+            ArgumentNullException.ThrowIfNull(projects);
+
             var repos = projects.Select(x =>
                  new SourceRepository(
                         new PackageSource(x.ContentPath), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2

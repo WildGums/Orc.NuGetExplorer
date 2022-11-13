@@ -13,6 +13,8 @@
 
         public static async Task GetVersionsMetadataAsync(IPackageSearchMetadata package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             try
             {
                 await package.GetVersionsAsync();

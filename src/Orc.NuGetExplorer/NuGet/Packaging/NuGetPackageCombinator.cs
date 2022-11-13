@@ -1,11 +1,9 @@
 ﻿namespace Orc.NuGetExplorer.Packaging
 {
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Models;
 
     public class NuGetPackageCombinator
     {
@@ -17,9 +15,6 @@
         /// </summary>
         public static async Task<PackageStatus> CombineAsync(NuGetPackage package, MetadataOrigin tokenPage, IPackageSearchMetadata metadata)
         {
-            Argument.IsNotNull(() => metadata);
-            Argument.IsNotNull(() => package);
-
             if (tokenPage == MetadataOrigin.Browse)
             {
                 await package.MergeMetadataAsync(metadata, tokenPage);
@@ -45,7 +40,7 @@
                 }
             }
 
-            if (tokenPage == MetadataOrigin.Updates)
+            if (tokenPage == MetadataOrigin.Updates || package.InstalledVersion is null)
             {
                 return PackageStatus.NotInstalled;
             }

@@ -1,18 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetLogListeningSevice.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
 
     internal class NuGetLogListeningSevice : INuGetLogListeningSevice
     {
-        #region Methods
         public void SendInfo(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
@@ -41,10 +33,9 @@ namespace Orc.NuGetExplorer
             Error?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
-        public event EventHandler<NuGetLogRecordEventArgs> Info;
-        public event EventHandler<NuGetLogRecordEventArgs> Warning;
-        public event EventHandler<NuGetLogRecordEventArgs> Debug;
-        public event EventHandler<NuGetLogRecordEventArgs> Error;
-        #endregion
+        public event EventHandler<NuGetLogRecordEventArgs>? Info;
+        public event EventHandler<NuGetLogRecordEventArgs>? Warning;
+        public event EventHandler<NuGetLogRecordEventArgs>? Debug;
+        public event EventHandler<NuGetLogRecordEventArgs>? Error;
     }
 }

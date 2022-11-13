@@ -1,7 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.Data;
@@ -25,6 +26,8 @@
 
         public NuGetPackage(IPackageSearchMetadata packageMetadata, MetadataOrigin fromPage)
         {
+            ArgumentNullException.ThrowIfNull(packageMetadata);
+
             FromPage = fromPage;
             _packageMetadata = packageMetadata;
 
@@ -36,6 +39,7 @@
             Summary = packageMetadata.Summary;
 
             LastVersion = packageMetadata.Identity.Version;
+            SelectedVersion = LastVersion.ToFullString();
 
             ValidationContext = new ValidationContext();
 
@@ -56,8 +60,8 @@
             }
         }
 
-        public static event EventHandler AnyNuGetPackageCheckedChanged;
-        public event EventHandler<PackageModelStatusEventArgs> StatusChanged;
+        public static event EventHandler? AnyNuGetPackageCheckedChanged;
+        public event EventHandler<PackageModelStatusEventArgs>? StatusChanged;
 
         private bool _isChecked;
         public bool IsChecked
@@ -76,7 +80,7 @@
                 if (value != _isChecked)
                 {
                     _isChecked = value;
-                    RaisePropertyChanged(this, new AdvancedPropertyChangedEventArgs(this, nameof(IsChecked), _isChecked));
+                    RaisePropertyChanged(this, new PropertyChangedEventArgs(nameof(IsChecked)));
                 }
             }
         }
@@ -93,11 +97,25 @@
 
         public Uri IconUrl { get; private set; }
 
-        public PackageStatus Status { get; set; } = PackageStatus.NotInstalled;
+        private PackageStatus _status = PackageStatus.NotInstalled;
+        public PackageStatus Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    var oldValue = _status;
+                    _status = value;
+                    RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<PackageStatus>(oldValue, _status));
+                }
+            }
+        }
 
-        public PackageIdentity Identity => _packageMetadata?.Identity;
+        public PackageIdentity Identity => _packageMetadata.Identity;
 
-        private List<NuGetVersion> _versions = new List<NuGetVersion>();
+        private List<NuGetVersion> _versions = new();
+
         public IReadOnlyList<NuGetVersion> Versions
         {
             get
@@ -118,7 +136,10 @@
 
         public NuGetVersion LastVersion { get; private set; }
 
-        public NuGetVersion InstalledVersion { get; set; }
+        /// <summary>
+        /// Installed version or null if it's Browse model
+        /// </summary>
+        public NuGetVersion? InstalledVersion { get; set; }
 
         #region IPackageDetails
 
@@ -130,25 +151,15 @@
 
         public NuGetVersion NuGetVersion => Identity.Version;
 
-        //todo
-        public string SpecialVersion { get; set; }
-
-        //todo obsolete
-        public bool IsAbsoluteLatestVersion => IsLatestVersion;
-
         public bool IsLatestVersion => Identity?.Version.Equals(LastVersion) ?? false;
 
         public bool IsPrerelease => Identity?.Version.IsPrerelease ?? false;
 
-        public string Dependencies { get; set; }
-
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions { get; set; }
 
         public string SelectedVersion { get; set; }
 
-        public IValidationContext ValidationContext { get; set; }
+        public IValidationContext? ValidationContext { get; set; }
 
         IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
@@ -208,10 +219,11 @@
             }
         }
 
-        public async Task<IEnumerable<NuGetVersion>> LoadVersionsAsync()
+        public async Task<IEnumerable<NuGetVersion>?> LoadVersionsAsync()
         {
             if (IsLoaded)
             {
+                // TODO: checkout is it should be cached value returned?
                 return null;
             }
 
@@ -261,7 +273,7 @@
             return Identity;
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
@@ -272,8 +284,14 @@
 
             if (string.Equals(e.PropertyName, nameof(Status)))
             {
-                RaiseStatusChanged((PackageStatus)e.OldValue, (PackageStatus)e.NewValue);
-                Log.Info($"{Identity} status was changed from {e.OldValue} to {e.NewValue}");
+                if (e.HasPropertyChanged(nameof(Status)))
+                {
+                    if (e is PropertyChangedExtendedEventArgs<PackageStatus> statusChangedArgs)
+                    {
+                        RaiseStatusChanged(statusChangedArgs.OldValue, statusChangedArgs.NewValue);
+                        Log.Info($"{Identity} status was changed from {statusChangedArgs.OldValue} to {statusChangedArgs.NewValue}");
+                    }
+                }
             }
         }
 

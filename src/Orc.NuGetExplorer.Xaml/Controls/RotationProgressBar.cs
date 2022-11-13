@@ -38,9 +38,9 @@
             DependencyProperty.Register(nameof(Speed), typeof(double), typeof(RotationProgressBar), new PropertyMetadata(1d));
 
 
-        public Path IconData
+        public Path? IconData
         {
-            get { return (Path)GetValue(IconDataProperty); }
+            get { return (Path?)GetValue(IconDataProperty); }
             set { SetValue(IconDataProperty, value); }
         }
 
@@ -58,11 +58,11 @@
         }
 
         private static readonly DependencyPropertyKey IsInProgressPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnIsInProgressChanged(e)));
+            DependencyProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => ((RotationProgressBar)s).OnIsInProgressChanged(e)));
 
         private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
         {
-            Log.Debug($"Progress status changed: { ((bool)e.NewValue ? "activated" : "ended") }");
+            Log.Debug($"Progress status changed: {((bool)e.NewValue ? "activated" : "ended")}");
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
         }
 
@@ -93,12 +93,12 @@
         /// Identifies the <see cref="ShowWarning"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowWarningProperty =
-            DependencyProperty.Register(nameof(ShowWarning), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnShowWarningChanged(e)));
+            DependencyProperty.Register(nameof(ShowWarning), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => ((RotationProgressBar)s).OnShowWarningChanged(e)));
 
         private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-            Log.Debug($"Set RotationProgressBar status to {Success}");
+            Log.Debug($"Warning changed: set RotationProgressBar status to {Success}");
         }
 
 
@@ -112,14 +112,12 @@
         /// Identifies the <see cref="ShowError"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowErrorProperty =
-            DependencyProperty.Register(nameof(ShowError), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => (s as RotationProgressBar).OnShowErrorChanged(e)));
+            DependencyProperty.Register(nameof(ShowError), typeof(bool), typeof(RotationProgressBar), new PropertyMetadata(false, (s, e) => ((RotationProgressBar)s).OnShowErrorChanged(e)));
 
-#pragma warning disable S4144 // Methods should not have identical implementations
         private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
-#pragma warning restore S4144 // Methods should not have identical implementations
         {
             SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-            Log.Debug($"Set RotationProgressBar status to {Success}");
+            Log.Debug($"Error changed: Set RotationProgressBar status to {Success}");
         }
     }
 }

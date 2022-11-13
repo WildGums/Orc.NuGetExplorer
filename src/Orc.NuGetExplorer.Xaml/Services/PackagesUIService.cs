@@ -1,48 +1,32 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesUIService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Services;
     using ViewModels;
 
     internal class PackagesUIService : IPackagesUIService
     {
-        #region Fields
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly ITypeFactory _typeFactory;
-        #endregion
 
-        #region Constructors
         public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
 
-            SettingsTitle = null;
+            SettingsTitle = string.Empty;
         }
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Overriden title for settings window
         /// </summary>
         public string SettingsTitle { get; set; }
 
-        #endregion
-
-        #region Methods
         public async Task ShowPackagesExplorerAsync()
         {
             await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
@@ -50,19 +34,15 @@ namespace Orc.NuGetExplorer
 
         public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
         {
-            Argument.IsNotNull(() => initialState);
-
-            var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
+            var explorerVM = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
             explorerVM.ChangeStartPage(initialState.Tab.Name);
             explorerVM.SetInitialPageParameters(initialState);
             await _uiVisualizerService.ShowDialogAsync(explorerVM);
         }
 
-
-        public async Task<bool?> ShowPackagesSourceSettingsAsync()
+        public async Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync()
         {
             return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
         }
-        #endregion
     }
 }

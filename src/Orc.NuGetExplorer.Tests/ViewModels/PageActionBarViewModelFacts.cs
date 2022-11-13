@@ -9,8 +9,6 @@
     using Catel.Services;
     using Moq;
     using NUnit.Framework;
-    using Orc.NuGetExplorer.Models;
-    using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;
     using Orc.NuGetExplorer.Windows;
 
@@ -32,7 +30,7 @@
 
                 commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
-                commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
+                // commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
 
                 var canExecuteRaised = false;
@@ -66,7 +64,7 @@
             {
                 PackageItems = new FastObservableCollection<NuGetPackage>()
                 {
-                    FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "WildGums"),
+                    GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
                 };
                 CanBatchUpdateOperations = true;
                 CanBatchInstallOperations = true;

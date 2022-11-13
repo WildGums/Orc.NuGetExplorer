@@ -1,16 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageCommandService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using Catel.Services;
 
@@ -28,18 +20,19 @@ namespace Orc.NuGetExplorer
 
         private readonly IPackageQueryService _packageQueryService;
 
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IBusyIndicatorService _busyIndicatorService;
 
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
+        public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
             IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
         {
-            Argument.IsNotNull(() => pleaseWaitService);
-            Argument.IsNotNull(() => packageQueryService);
-            Argument.IsNotNull(() => packageOperationService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(packageQueryService);
+            ArgumentNullException.ThrowIfNull(packageOperationService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
 
-            _pleaseWaitService = pleaseWaitService;
+            _busyIndicatorService = busyIndicatorService;
             _packageQueryService = packageQueryService;
             _packageOperationService = packageOperationService;
             _packageOperationContextService = packageOperationContextService;
@@ -50,19 +43,11 @@ namespace Orc.NuGetExplorer
 
         public string GetActionName(PackageOperationType operationType)
         {
-            return Enum.GetName(typeof(PackageOperationType), operationType);
-        }
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "ExecuteAsync")]
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
-        {
-            await ExecuteAsync(operationType, packageDetails);
+            return Enum.GetName(typeof(PackageOperationType), operationType) ?? string.Empty;
         }
 
         public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
         {
-            Argument.IsNotNull(() => packageDetails);
-
             switch (operationType)
             {
                 case PackageOperationType.Uninstall:
@@ -81,7 +66,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
@@ -90,7 +75,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             {
                 await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
             }
@@ -98,7 +83,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
             {
                 await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
@@ -107,7 +92,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
@@ -116,7 +101,7 @@ namespace Orc.NuGetExplorer
 
         public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
         {
-            using (_pleaseWaitService.WaitingScope())
+            using (_busyIndicatorService.PushInScope())
             {
                 await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
             }
@@ -147,33 +132,14 @@ namespace Orc.NuGetExplorer
             return false;
         }
 
-        public bool IsRefreshRequired(PackageOperationType operationType)
+        private async Task<IPackageDetails?> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
         {
-            switch (operationType)
-            {
-                case PackageOperationType.Uninstall:
-                    return true;
+            ArgumentNullException.ThrowIfNull(packageDetails);
 
-                case PackageOperationType.Install:
-                    return false;
-
-                case PackageOperationType.Update:
-                    return true;
-            }
-
-            return false;
-        }
-
-        public string GetPluralActionName(PackageOperationType operationType)
-        {
-            return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
-        }
-
-        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
-        {
             if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
             {
-                packageDetails = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
+                var details = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
+                return details;
             }
 
             return packageDetails;
@@ -181,8 +147,6 @@ namespace Orc.NuGetExplorer
 
         internal async Task<bool> CanInstallAsync(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
-
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 
             Log.Debug($"Can install for '{package}': {packageExists}");
@@ -192,8 +156,6 @@ namespace Orc.NuGetExplorer
 
         internal async Task<bool> CanUpdateAsync(IPackageDetails package)
         {
-            Argument.IsNotNull(() => package);
-
             var packageExists = await VerifyLocalPackageExistsAsync(package);
 
             Log.Debug($"Can update for '{package}': {packageExists}");
@@ -203,6 +165,8 @@ namespace Orc.NuGetExplorer
 
         internal async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             if (package.IsInstalled is null)
             {
                 Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
@@ -212,7 +176,7 @@ namespace Orc.NuGetExplorer
                 ValidatePackage(package);
             }
 
-            if (package.ValidationContext.HasErrors)
+            if (package.ValidationContext?.HasErrors ?? false)
             {
                 Log.Debug($"Package '{package}' has validation errors, package is not available locally");
 
@@ -235,6 +199,13 @@ namespace Orc.NuGetExplorer
 
         private void LogValidationErrors(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
+            if (package.ValidationContext is null)
+            {
+                return;
+            }
+
             foreach (var error in package.ValidationContext.GetErrors())
             {
                 Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
@@ -243,6 +214,8 @@ namespace Orc.NuGetExplorer
 
         private void ValidatePackage(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             package.ResetValidationContext();
 
             _apiPackageRegistry.Validate(package);

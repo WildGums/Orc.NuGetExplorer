@@ -11,10 +11,9 @@
 
         protected ConfigurationListenerBase(ISettings settings)
         {
-            Argument.IsNotNull(() => settings);
-            Argument.IsOfType(() => settings, typeof(IVersionedSettings));
+            ArgumentNullException.ThrowIfNull(settings);
 
-            _settings = settings as IVersionedSettings;
+            _settings = settings as IVersionedSettings ?? throw new InvalidOperationException($"'{nameof(settings)}' must have defined Version");
 
             _settings.SettingsRead += OnConfigurationSettingsRead;
         }
@@ -24,7 +23,7 @@
 
         }
 
-        private async void OnConfigurationSettingsRead(object sender, EventArgs e)
+        private async void OnConfigurationSettingsRead(object? sender, EventArgs e)
         {
             await OnSettingsReadAsync();
         }

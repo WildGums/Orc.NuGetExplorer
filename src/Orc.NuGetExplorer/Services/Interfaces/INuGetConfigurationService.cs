@@ -1,17 +1,9 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INuGetConfigurationService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System.Collections.Generic;
 
     public interface INuGetConfigurationService
     {
-        #region Methods
         string GetDestinationFolder();
         void SetDestinationFolder(string value);
         IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
@@ -32,6 +24,5 @@ namespace Orc.NuGetExplorer
         void RemovePackageSource(IPackageSource source);
 
         bool IsProjectConfigured(IExtensibleProject project);
-        #endregion
     }
 }

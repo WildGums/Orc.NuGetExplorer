@@ -1,10 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Example.PackageManagement
+﻿namespace Orc.NuGetExplorer.Example
 {
     using System;
-    using Catel;
     using Catel.Logging;
     using Catel.Services;
-    using Orc.NuGetExplorer.Example.Models;
 
     public class CatelLogListener : ILogListener
     {
@@ -14,8 +12,8 @@
 
         public CatelLogListener(IDispatcherService dispatcherService, IEchoService echoService)
         {
-            Argument.IsNotNull(() => dispatcherService);
-            Argument.IsNotNull(() => echoService);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
+            ArgumentNullException.ThrowIfNull(echoService);
 
             _dispatcherService = dispatcherService;
 

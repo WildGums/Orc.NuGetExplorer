@@ -22,9 +22,9 @@
         /// </summary>
         private class PackageSourceEqualityComparer : IEqualityComparer<PackageSource>
         {
-            public bool Equals(PackageSource x, PackageSource y)
+            public bool Equals(PackageSource? x, PackageSource? y)
             {
-                return string.Equals(x.Source, y.Source);
+                return string.Equals(x?.Source, y?.Source);
             }
 
             public int GetHashCode(PackageSource obj)
@@ -38,9 +38,9 @@
         /// </summary>
         private class UniqueSourceSourceRepositoryComparer : IEqualityComparer<SourceRepository>
         {
-            public bool Equals(SourceRepository x, SourceRepository y)
+            public bool Equals(SourceRepository? x, SourceRepository? y)
             {
-                return PackageSource.Equals(x.PackageSource, y.PackageSource);
+                return PackageSource.Equals(x?.PackageSource, y?.PackageSource);
             }
 
             public int GetHashCode(SourceRepository obj)

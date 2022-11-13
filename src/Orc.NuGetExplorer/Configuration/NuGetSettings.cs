@@ -6,15 +6,14 @@
     using System.Reflection;
     using Catel;
     using Catel.Configuration;
-    using Catel.IO;
     using Catel.Logging;
     using NuGet.Configuration;
 
     internal class NuGetSettings : IVersionedSettings
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version
+            ?? throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(Assembly.GetExecutingAssembly)}' was 'null' therefore there is no '{nameof(AssemblyVersion)}' defined");
 
         private const char Separator = '|';
         private const string SectionListKey = "NuGet_sections";
@@ -24,32 +23,43 @@
         private const string ConfigurationFileName = "configuration.xml";
 
         private readonly IConfigurationService _configurationService;
-        #endregion
 
-        #region Constructors
         public NuGetSettings(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 
-            //version of configuration is a version of assembly
-            //get version from configuration
-            GetVersionFromConfiguration();
+            // version of configuration is a version of assembly
+            // get version from configuration
+            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
+
+            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
+            {
+                Version = configurationVersion;
+            }
+
+            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
+
+            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
+            {
+                MinimalVersion = configurationVersion;
+            }
+
+            RaiseSettingsRead();
 
             SettingsChanged += OnSettingsChanged;
         }
-        #endregion
 
         public bool IsLastVersion => AssemblyVersion.Equals(Version);
 
-        public Version Version { get; private set; }
+        public Version? Version { get; private set; }
 
-        public Version MinimalVersion { get; private set; }
+        public Version? MinimalVersion { get; private set; }
 
-        public event EventHandler SettingsChanged;
+        public event EventHandler? SettingsChanged;
 
-        public event EventHandler SettingsRead;
+        public event EventHandler? SettingsRead;
 
         private void RaiseSettingsChanged()
         {
@@ -79,6 +89,8 @@
 
         public IReadOnlyList<string> GetAllSubsections(string section)
         {
+            Argument.IsNotNullOrEmpty(() => section);
+
             RaiseSettingsRead();
 
             return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
@@ -247,8 +259,8 @@
 
         public IList<string> GetConfigFilePaths()
         {
-            var localFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
-            var roamingFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
+            var localFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
+            var roamingFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
 
             return new string[] { localFolderConfig, roamingFolderConfig };
         }
@@ -259,8 +271,6 @@
         }
 
         #endregion
-
-        #region Methods
 
         private void SetNuGetValues(string section, IList<AddItem> values)
         {
@@ -309,6 +319,8 @@
 
         private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
             var keysToSave = values.Select(x => x.Key);
@@ -419,28 +431,7 @@
             _configurationService.SetRoamingValue(combinedKey, value);
         }
 
-        private void GetVersionFromConfiguration()
-        {
-            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
-
-            Version configurationVersion = null;
-
-            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
-            {
-                Version = configurationVersion;
-            }
-
-            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
-
-            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
-            {
-                MinimalVersion = configurationVersion;
-            }
-
-            RaiseSettingsRead();
-        }
-
-        private void OnSettingsChanged(object sender, EventArgs e)
+        private void OnSettingsChanged(object? sender, EventArgs e)
         {
             SettingsChanged -= OnSettingsChanged;
             //write version one time
@@ -481,7 +472,5 @@
         {
             _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
         }
-
-        #endregion
     }
 }

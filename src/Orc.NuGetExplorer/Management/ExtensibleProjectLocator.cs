@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
 
@@ -15,14 +14,14 @@
 
         private readonly INuGetConfigurationService _managerConfigurationService;
 
-        private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new Dictionary<Type, IExtensibleProject>();
+        private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new();
 
-        private readonly HashSet<IExtensibleProject> _enabledProjects = new HashSet<IExtensibleProject>();
+        private readonly HashSet<IExtensibleProject> _enabledProjects = new();
 
         public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _typeFactory = typeFactory;
             _managerConfigurationService = configurationService;
@@ -32,11 +31,15 @@
 
         public bool IsEnabled(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             return _enabledProjects.Contains(extensibleProject);
         }
 
         public void Enable(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             var registeredProject = _registredProjects[extensibleProject.GetType()];
 
             if (registeredProject != extensibleProject)
@@ -52,6 +55,8 @@
 
         public void Disable(IExtensibleProject extensibleProject)
         {
+            ArgumentNullException.ThrowIfNull(extensibleProject);
+
             var registeredProject = _registredProjects[extensibleProject.GetType()];
 
             if (registeredProject != extensibleProject)
@@ -77,16 +82,18 @@
 
         public void Register(IExtensibleProject project)
         {
+            ArgumentNullException.ThrowIfNull(project);
+
             _registredProjects[project.GetType()] = project;
         }
 
-        public void Register<T>() 
+        public void Register<T>()
             where T : IExtensibleProject
         {
-            Register(_typeFactory.CreateInstance<T>());
+            Register(_typeFactory.CreateRequiredInstance<T>());
         }
 
-        public void Register<T>(params object[] parameters) 
+        public void Register<T>(params object[] parameters)
             where T : IExtensibleProject
         {
             if (parameters is null)
@@ -95,7 +102,7 @@
             }
             else
             {
-                Register(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<T>(parameters));
+                Register(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<T>(parameters));
             }
         }
 

@@ -18,7 +18,7 @@
         /// <param name="includePrerelease">Filters pre-release versions</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Package metadata</returns>
-        Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity,
+        Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity,
             bool includePrerelease, CancellationToken cancellationToken);
 
         /*
@@ -52,10 +52,10 @@
         /// <param name="includePrerelease">Filters pre-release versions</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Package metadata</returns>
-        Task<IPackageSearchMetadata> GetLocalPackageMetadataAsync(PackageIdentity identity,
+        Task<IPackageSearchMetadata?> GetLocalPackageMetadataAsync(PackageIdentity identity,
             bool includePrerelease, CancellationToken cancellationToken);
-        Task<IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken);
-        Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
-        Task<IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken);
+        Task<IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken);
+        Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
+        Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken);
     }
 }

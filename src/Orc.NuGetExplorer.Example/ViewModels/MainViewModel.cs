@@ -1,20 +1,17 @@
 ﻿namespace Orc.NuGetExplorer.Example.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Fody;
     using Catel.MVVM;
     using Catel.Services;
-    using Catel.Threading;
-    using Models;
     using Orc.NuGetExplorer.Services;
 
     public class MainViewModel : ViewModelBase
     {
-        #region Fields
         private readonly INuGetFeedVerificationService _feedVerificationService;
         private readonly IMessageService _messageService;
         private readonly INuGetConfigurationService _nuGetConfigurationService;
@@ -23,21 +20,26 @@
         private readonly IPackagesUpdatesSearcherService _packagesUpdatesSearcherService;
         private readonly IUIVisualizerService _uiVisualizerService;
         private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
-        #endregion
 
-        #region Constructors
-        public MainViewModel(INuGetExplorerInitializationService initializationService, IPackagesUIService packagesUiService, IEchoService echoService, INuGetConfigurationService nuGetConfigurationService,
-            INuGetFeedVerificationService feedVerificationService, IMessageService messageService, IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService, IUIVisualizerService uiVisualizerService)
+        public MainViewModel(INuGetExplorerInitializationService initializationService,
+                             IPackagesUIService packagesUiService,
+                             IEchoService echoService,
+                             INuGetConfigurationService nuGetConfigurationService,
+                             INuGetFeedVerificationService feedVerificationService,
+                             IMessageService messageService,
+                             IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
+                             INuGetProjectUpgradeService nuGetProjectUpgradeService,
+                             IUIVisualizerService uiVisualizerService)
         {
-            Argument.IsNotNull(() => packagesUiService);
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => nuGetConfigurationService);
-            Argument.IsNotNull(() => feedVerificationService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => initializationService);
-            Argument.IsNotNull(() => nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(initializationService);
+            ArgumentNullException.ThrowIfNull(packagesUiService);
+            ArgumentNullException.ThrowIfNull(echoService);
+            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+            ArgumentNullException.ThrowIfNull(feedVerificationService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(packagesUpdatesSearcherService);
+            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
 
             _initializationService = initializationService;
             _packagesUiService = packagesUiService;
@@ -61,9 +63,7 @@
 
             Title = "Orc.NuGetExplorer example";
         }
-        #endregion
 
-        #region Properties
         [Model]
         [Expose("Lines")]
         public PackageManagementEcho Echo { get; private set; }
@@ -72,7 +72,6 @@
         public string PackageSourceName { get; set; }
         public string PackageSourceUrl { get; set; }
         public ObservableCollection<IPackageDetails> AvailableUpdates { get; private set; }
-        #endregion
 
         protected async override Task InitializeAsync()
         {
@@ -91,8 +90,6 @@
 
         private async Task OnOpenUpdateWindowExecuteAsync()
         {
-            //show batch update
-            //await TaskHelper.Run(() => _packageBatchService.ShowPackagesBatch(AvailableUpdates, PackageOperationType.Update), true);
         }
 
         private bool OnOpenUpdateWindowCanExecute()
@@ -119,7 +116,7 @@
 
         private async Task OnAdddPackageSourceExecuteAsync()
         {
-            var packageSourceSaved = await TaskHelper.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true), true);
+            var packageSourceSaved = await Task.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true));
             if (!packageSourceSaved)
             {
                 await _messageService.ShowWarningAsync("Feed is invalid or unknown");

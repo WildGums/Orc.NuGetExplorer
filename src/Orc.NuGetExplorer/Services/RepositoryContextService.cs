@@ -1,8 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Catel;
     using NuGet.Configuration;
     using NuGet.Protocol.Core.Types;
     using NuGetExplorer.Management;
@@ -11,24 +11,21 @@
     {
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
 
-
         public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
         {
-            Argument.IsNotNull(() => sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
 
             _sourceRepositoryProvider = sourceRepositoryProvider;
         }
 
-        public SourceRepository GetRepository(PackageSource source)
+        public SourceRepository? GetRepository(PackageSource source)
         {
             if (source is null)
             {
                 return null;
             }
 
-            SourceRepository sourceRepo = null;
-
-            sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
+            var sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
 
             return sourceRepo;
         }

@@ -6,7 +6,7 @@
 
     public interface IRepositoryContextService
     {
-        SourceRepository GetRepository(PackageSource source);
+        SourceRepository? GetRepository(PackageSource source);
         SourceContext AcquireContext(PackageSource source);
         SourceContext AcquireContext(bool ignoreLocal = false);
 

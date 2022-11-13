@@ -2,42 +2,29 @@
 {
     using System;
     using System.Xml.Linq;
-    using Catel;
     using Catel.Logging;
     using NuGet.Common;
     using NuGet.Packaging;
     using NuGet.ProjectManagement;
-    using NuGetExplorer.Windows.Dialogs;
-    using Orc.NuGetExplorer.Windows;
 
     internal class NuGetProjectContext : INuGetProjectContext
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly ILogger _nugetLogger;
-
-        private readonly IMessageDialogService _messageDialogService;
-
-        public NuGetProjectContext(FileConflictAction fileConflictAction, IMessageDialogService messageDialogService, ILogger logger)
+        public NuGetProjectContext(FileConflictAction fileConflictAction, ILogger logger)
         {
-            Argument.IsNotNull(() => messageDialogService);
-            Argument.IsNotNull(() => logger);
-
             FileConflictAction = fileConflictAction;
-
-            _messageDialogService = messageDialogService;
-            _nugetLogger = logger;
         }
 
-        public PackageExtractionContext PackageExtractionContext { get; set; }
+        public PackageExtractionContext? PackageExtractionContext { get; set; }
 
-        public ISourceControlManagerProvider SourceControlManagerProvider { get; }
+        public ISourceControlManagerProvider SourceControlManagerProvider => throw new NotSupportedException();
 
-        public ExecutionContext ExecutionContext { get; }
+        public ExecutionContext ExecutionContext => throw new NotSupportedException();
 
         public FileConflictAction FileConflictAction { get; private set; }
 
-        public XDocument OriginalPackagesConfig { get; set; }
+        public XDocument? OriginalPackagesConfig { get; set; }
 
         public NuGetActionType ActionType { get; set; }
 
@@ -99,27 +86,10 @@
         {
             if (FileConflictAction == FileConflictAction.PromptUser)
             {
-                var resolution = ShowConflictPrompt(message);
-
-                FileConflictAction = resolution;
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Manual resoltuion for packages conflict is not supported in Orc.NuGetExplorer");
             }
 
             return FileConflictAction;
-        }
-
-        private FileConflictAction ShowConflictPrompt(string message)
-        {
-
-            var result = _messageDialogService.ShowDialog<FileConflictAction>(NuGetExplorer.Constants.PackageInstallationConflictMessage,
-                 message,
-                 false,
-                 FileConflictDialogOption.OverWrite,
-                 FileConflictDialogOption.OverWriteAll,
-                 FileConflictDialogOption.Ignore,
-                 FileConflictDialogOption.IgnoreAll
-             );
-
-            return result;
         }
 
         public void ReportError(string message)

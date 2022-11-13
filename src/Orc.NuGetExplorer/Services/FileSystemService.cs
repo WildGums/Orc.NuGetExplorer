@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.IO;
-    using Catel;
     using Catel.Logging;
     using Orc.FileSystem;
 
@@ -13,8 +13,8 @@
 
         public FileSystemService(IFileService fileService, IDirectoryService directoryService)
         {
-            Argument.IsNotNull(() => fileService);
-            Argument.IsNotNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+            ArgumentNullException.ThrowIfNull(directoryService);
 
             _fileService = fileService;
             _directoryService = directoryService;
@@ -22,8 +22,15 @@
 
         public void CreateDeleteme(string name, string path)
         {
+            Log.Debug($"Creating delete.me file on path '{path}'");
+
             var fullPath = GetDeletemePath(name, path);
             var directoryPath = Path.GetDirectoryName(fullPath);
+            if (string.IsNullOrEmpty(directoryPath))
+            {
+                Log.Debug("Cannot obtain directory path for creating file.");
+                return;
+            }
 
             if (_fileService.Exists(fullPath))
             {
@@ -34,6 +41,7 @@
 
             using (_fileService.Create(fullPath))
             {
+                Log.Debug($"Created delete.me file on path {fullPath}");
             }
         }
 

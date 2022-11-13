@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredUi.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-#if DEBUG
-// Double protection, only allowed in debug mode
-//#define LOG_SENSITIVE_INFO
-#endif
-
-namespace Orc.NuGetExplorer.Native
+﻿namespace Orc.NuGetExplorer.Win32
 {
     using System;
     using System.Runtime.InteropServices;
@@ -18,8 +7,6 @@ namespace Orc.NuGetExplorer.Native
 
     internal static class CredUi
     {
-        #region Delegates
-
         public enum CredUIReturnCodes
         {
             NO_ERROR = 0,
@@ -44,21 +31,15 @@ namespace Orc.NuGetExplorer.Native
             SecurePrompt = 0x1000,
             Pack32Wow = 0x10000000
         }
-        #endregion
 
-        #region Fields
         internal const int CREDUI_MAX_USERNAME_LENGTH = 256 + 1 + 256;
         internal const int CREDUI_MAX_PASSWORD_LENGTH = 256;
-        #endregion
 
-        #region Properties
         public static bool IsWindowsVistaOrEarlier
         {
             get { return Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version <= new Version(6, 0, 6000); }
         }
-        #endregion
 
-        #region Methods
 #pragma warning disable IDE1006 // Naming Styles
         public static string DecryptPassword(byte[] encrypted)
         {
@@ -114,20 +95,16 @@ namespace Orc.NuGetExplorer.Native
 
         [DllImport("credui.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CredUnPackAuthenticationBuffer(uint dwFlags, IntPtr pAuthBuffer, uint cbAuthBuffer, StringBuilder pszUserName, ref uint pcchMaxUserName, StringBuilder pszDomainName, ref uint pcchMaxDomainName, StringBuilder pszPassword, ref uint pcchMaxPassword);
+        public static extern bool CredUnPackAuthenticationBuffer(uint dwFlags, IntPtr pAuthBuffer, uint cbAuthBuffer, StringBuilder pszUserName, ref uint pcchMaxUserName, StringBuilder? pszDomainName, ref uint pcchMaxDomainName, StringBuilder pszPassword, ref uint pcchMaxPassword);
 #pragma warning restore IDE1006 // Naming Styles
-        #endregion
 
         internal sealed class CriticalCredentialHandle : CriticalHandleZeroOrMinusOneIsInvalid
         {
-            #region Constructors
             internal CriticalCredentialHandle(IntPtr preExistingHandle)
             {
                 SetHandle(preExistingHandle);
             }
-            #endregion
 
-            #region Methods
             internal Credential GetCredential()
             {
                 if (IsInvalid)
@@ -136,19 +113,21 @@ namespace Orc.NuGetExplorer.Native
                 }
 
                 // Get the Credential from the mem location
-                var ncred = (NativeCredential)Marshal.PtrToStructure(handle, typeof(NativeCredential));
+                var ncred = Marshal.PtrToStructure<NativeCredential>(handle);
 
                 // Create a managed Credential type and fill it with data from the native counterpart.
-                var cred = new Credential();
-                cred.CredentialBlobSize = ncred.CredentialBlobSize;
-                cred.UserName = Marshal.PtrToStringUni(ncred.UserName);
-                cred.TargetName = Marshal.PtrToStringUni(ncred.TargetName);
-                cred.TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias);
-                cred.Type = ncred.Type;
-                cred.Flags = ncred.Flags;
-                cred.Persist = (CredPersistance)ncred.Persist;
+                var cred = new Credential
+                {
+                    CredentialBlobSize = ncred.CredentialBlobSize,
+                    UserName = Marshal.PtrToStringUni(ncred.UserName) ?? string.Empty,
+                    TargetName = Marshal.PtrToStringUni(ncred.TargetName) ?? string.Empty,
+                    TargetAlias = Marshal.PtrToStringUni(ncred.TargetAlias) ?? string.Empty,
+                    Type = ncred.Type,
+                    Flags = ncred.Flags,
+                    Persist = (CredPersistance)ncred.Persist
+                };
 
-                byte[] encryptedPassword = new byte[ncred.CredentialBlobSize];
+                var encryptedPassword = new byte[ncred.CredentialBlobSize];
                 Marshal.Copy(ncred.CredentialBlob, encryptedPassword, 0, encryptedPassword.Length);
                 cred.CredentialBlob = DecryptPassword(encryptedPassword);
 
@@ -176,15 +155,18 @@ namespace Orc.NuGetExplorer.Native
 
                 return false;
             }
-            #endregion
         }
 
         internal class SimpleCredentials
         {
-            #region Properties
+            public SimpleCredentials(string userName, string password)
+            {
+                UserName = userName;
+                Password = password;
+            }
+
             public string UserName { get; set; }
             public string Password { get; set; }
-            #endregion
 
             public override string ToString()
             {
@@ -229,7 +211,6 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct CredUiInfo
         {
-            #region Fields
             public int cbSize;
             public IntPtr hwndParent;
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -237,22 +218,21 @@ namespace Orc.NuGetExplorer.Native
             [MarshalAs(UnmanagedType.LPWStr)]
             public string pszCaptionText;
             public IntPtr hbmBanner;
-            #endregion
         }
 #pragma warning restore IDE1006 // Naming Styles
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct NativeCredential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public IntPtr TargetName;
             public IntPtr Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public IntPtr CredentialBlob;
-            public UInt32 Persist;
-            public UInt32 AttributeCount;
+            public uint Persist;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public IntPtr TargetAlias;
             public IntPtr UserName;
@@ -272,7 +252,7 @@ namespace Orc.NuGetExplorer.Native
                 ncred.Comment = IntPtr.Zero;
                 ncred.TargetAlias = IntPtr.Zero;
                 ncred.Type = CredTypes.CRED_TYPE_GENERIC;
-                ncred.Persist = (UInt32)cred.Persist;
+                ncred.Persist = (uint)cred.Persist;
                 ncred.TargetName = Marshal.StringToCoTaskMemUni(cred.TargetName);
 
                 var encryptedPassword = EncryptPassword(cred.CredentialBlob);
@@ -298,17 +278,17 @@ namespace Orc.NuGetExplorer.Native
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct Credential
         {
-            public UInt32 Flags;
+            public uint Flags;
             public CredTypes Type;
             public string TargetName;
-            public string Comment;
+            public string? Comment;
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public string CredentialBlob;
             public CredPersistance Persist;
-            public UInt32 AttributeCount;
+            public uint AttributeCount;
             public IntPtr Attributes;
-            public string TargetAlias;
+            public string? TargetAlias;
             public string UserName;
 
             public override string ToString()

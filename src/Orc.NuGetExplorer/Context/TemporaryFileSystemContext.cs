@@ -1,51 +1,37 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TemporaryFileSystemContext.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.IO;
-    using Catel;
     using Catel.Logging;
     using Catel.Reflection;
     using Orc.FileSystem;
 
     internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private readonly IDirectoryService _directoryService;
         private readonly string _rootDirectory;
-        #endregion
 
-        #region Constructors
         public TemporaryFileSystemContext(IDirectoryService directoryService)
         {
-            Argument.IsNotNull(() => directoryService);
+            ArgumentNullException.ThrowIfNull(directoryService);
 
             _directoryService = directoryService;
 
-            var assembly = AssemblyHelper.GetEntryAssembly();
+            var assembly = AssemblyHelper.GetRequiredEntryAssembly();
 
-            _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
+            _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company() ?? string.Empty, assembly.Title() ?? string.Empty,
                 "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
             _directoryService.Create(_rootDirectory);
         }
-        #endregion
 
-        #region Properties
         public string RootDirectory
         {
             get { return _rootDirectory; }
         }
-        #endregion
 
-        #region Methods
         public void Dispose()
         {
             Dispose(true);
@@ -85,7 +71,7 @@ namespace Orc.NuGetExplorer
         public string GetFile(string relativeFilePath)
         {
             var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
-            var directory = Path.GetDirectoryName(fullPath);
+            var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
 
             if (!_directoryService.Exists(directory))
             {
@@ -94,6 +80,5 @@ namespace Orc.NuGetExplorer
 
             return fullPath;
         }
-        #endregion
     }
 }

@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CredentialException.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Native
+﻿namespace Orc.NuGetExplorer.Windows
 {
     using System;
 
@@ -16,11 +9,8 @@ namespace Orc.NuGetExplorer.Native
     [Serializable()]
     public class CredentialException : System.ComponentModel.Win32Exception
     {
-        #region Fields
         private const string CredentialError = "An error occurred acquiring credentials.";
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CredentialException" /> class.
         /// </summary>
@@ -76,6 +66,5 @@ namespace Orc.NuGetExplorer.Native
             : base(info, context)
         {
         }
-        #endregion
     }
 }

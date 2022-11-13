@@ -5,7 +5,7 @@
 
     public interface IModelProvider<T> : INotifyPropertyChanged where T : ModelBase
     {
-        T Model { get; set; }
+        T? Model { get; set; }
 
         T Create();
     }

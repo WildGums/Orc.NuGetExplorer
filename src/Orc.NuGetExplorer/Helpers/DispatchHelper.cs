@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DispatchHelper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Threading.Tasks;
@@ -16,6 +11,8 @@ namespace Orc.NuGetExplorer
 
         public static async Task DispatchIfNecessaryAsync(Action action)
         {
+            ArgumentNullException.ThrowIfNull(action);
+
             if (!Dispatcher.CheckAccess())
             {
                 await Dispatcher.InvokeAsync(action);

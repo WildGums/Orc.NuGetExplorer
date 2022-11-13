@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TemporaryFIleSystemContextService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using Catel;
@@ -13,31 +6,23 @@ namespace Orc.NuGetExplorer
 
     internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
     {
-        #region Fields
         private readonly ITypeFactory _typeFactory;
-        #endregion
 
-        #region Constructors
         public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _typeFactory = typeFactory;
         }
-        #endregion
 
-        #region Properties
-        public ITemporaryFileSystemContext Context { get; private set; }
-        #endregion
+        public ITemporaryFileSystemContext? Context { get; private set; }
 
-        #region Methods
         public IDisposable UseTemporaryFIleSystemContext()
         {
-            using (var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>())
+            using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
             {
                 return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
             }
         }
-        #endregion
     }
 }

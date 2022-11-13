@@ -18,16 +18,14 @@
             _resourceDictionary.InitializeComponent();
         }
 
-        protected override object Convert(PackageStatus value, Type targetType, object parameter)
+        protected override object Convert(PackageStatus value, Type targetType, object? parameter)
         {
-            var resourceKeys = parameter as string[];
-
-            if (resourceKeys is null)
+            if (parameter is not string[] resourceKeys)
             {
                 return new SolidColorBrush(Colors.Transparent);
             }
 
-            int keyIndex = (int)value - Offset;
+            var keyIndex = (int)value - Offset;
 
             if (keyIndex >= 0 && keyIndex < resourceKeys.Length)
             {

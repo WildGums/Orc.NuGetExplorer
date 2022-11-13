@@ -1,6 +1,6 @@
-﻿namespace Orc.NuGetExplorer.Example.Providers
+﻿namespace Orc.NuGetExplorer.Example
 {
-    using Catel;
+    using System;
     using Catel.IoC;
     using Orc.NuGetExplorer.Management;
 
@@ -12,8 +12,8 @@
 
         public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _extensibleProjectLocator = extensibleProjectLocator;
 

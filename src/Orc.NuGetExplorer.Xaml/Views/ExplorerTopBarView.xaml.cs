@@ -22,9 +22,9 @@
 
         #region DependencyProperty
 
-        public TabControl UsedOn
+        public TabControl? UsedOn
         {
-            get { return (TabControl)GetValue(UsedOnProperty); }
+            get { return (TabControl?)GetValue(UsedOnProperty); }
             set { SetValue(UsedOnProperty, value); }
         }
 

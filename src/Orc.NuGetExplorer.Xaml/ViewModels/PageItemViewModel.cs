@@ -4,38 +4,40 @@
     using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Catel;
-    using Catel.Data;
     using Catel.Fody;
     using Catel.Logging;
     using Catel.MVVM;
     using NuGet.Versioning;
     using Orc.NuGetExplorer.Enums;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
 
     internal class PageItemViewModel : ViewModelBase
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly string InstalledVersionText = "Installed version";
         private static readonly string LastVersionText = "Latest version";
         private static readonly string UpdateVersionText = "Update version";
+
         private readonly ExplorerSettingsContainer _nugetSettings;
 
         public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
         {
-            Argument.IsNotNull(() => package);
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => commandManager);
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(commandManager);
 
             Package = package;
-            _nugetSettings = settingsProvider.Model;
+            _nugetSettings = settingsProvider.Model ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
 
-            var batchUpdateCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            if (batchUpdateCommand is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to get required command '{Commands.Packages.BatchUpdate}'");
+            }
             InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
-            //command
-            CheckItem = new Command<MouseButtonEventArgs>(CheckItemExecute);
+            CheckItem = new Command<MouseButtonEventArgs?>(CheckItemExecute);
         }
 
         [Model(SupportIEditableObject = false)]
@@ -59,21 +61,21 @@
 
         public bool CanBeAddedInBatchOperation { get; set; }
 
-        public NuGetVersion PrimaryVersion { get; set; }
+        public NuGetVersion? PrimaryVersion { get; set; }
 
-        public NuGetVersion SecondaryVersion { get; set; }
+        public NuGetVersion? SecondaryVersion { get; set; }
 
-        public string PrimaryVersionDescription { get; set; }
+        public string? PrimaryVersionDescription { get; set; }
 
-        public string SecondaryVersionDescription { get; set; }
+        public string? SecondaryVersionDescription { get; set; }
 
         public Action InvalidateCanBatchUpdateExecute { get; }
 
-        public Command<MouseButtonEventArgs> CheckItem { get; set; }
+        public Command<MouseButtonEventArgs?> CheckItem { get; set; }
 
-        private void CheckItemExecute(MouseButtonEventArgs parameter)
+        private void CheckItemExecute(MouseButtonEventArgs? parameter)
         {
-            if (parameter.ClickCount < 2)
+            if (parameter?.ClickCount < 2)
             {
                 return;
             }
@@ -104,7 +106,7 @@
             return base.InitializeAsync();
         }
 
-        private void OnNuGetSettingsChanged(object sender, PropertyChangedEventArgs e)
+        private void OnNuGetSettingsChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (!e.HasPropertyChanged(nameof(ExplorerSettingsContainer.IsHideInstalled)))
             {
@@ -132,7 +134,7 @@
             return base.CloseAsync();
         }
 
-        private void OnPackageStatusChanged(object sender, PackageModelStatusEventArgs e)
+        private void OnPackageStatusChanged(object? sender, PackageModelStatusEventArgs e)
         {
             if (e.NewStatus == PackageStatus.LastVersionInstalled || e.NewStatus == PackageStatus.UpdateAvailable)
             {
@@ -140,7 +142,7 @@
             }
         }
 
-        protected override void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.HasPropertyChanged(nameof(Package.LastVersion)))
             {
@@ -175,7 +177,7 @@
 
         private void GetPrimaryVersionInfo(NuGetPackage package)
         {
-            PrimaryVersion = package.InstalledVersion;
+            PrimaryVersion = package.InstalledVersion ?? package.NuGetVersion;
             PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";
         }
     }

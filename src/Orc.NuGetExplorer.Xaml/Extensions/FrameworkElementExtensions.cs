@@ -1,30 +1,23 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FrameworkElementExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Linq;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Media;
-    using Catel;
 
     internal static class FrameworkElementExtensions
     {
         public static void UpdateItemSource(this FrameworkElement frameworkElement)
         {
-            Argument.IsNotNull(() => frameworkElement);
+            ArgumentNullException.ThrowIfNull(frameworkElement);
 
             var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
 
             foreach (var field in infos.Where(x => x.FieldType == typeof(DependencyProperty)))
             {
-                var dp = (DependencyProperty)field.GetValue(null);
+                var dp = (DependencyProperty?)field.GetValue(null);
                 var bindingExpression = frameworkElement.GetBindingExpression(dp);
                 if (bindingExpression is null)
                 {
@@ -50,11 +43,15 @@ namespace Orc.NuGetExplorer
 
         public static Visibility ToVisibleOrHidden(this FrameworkElement element, bool value)
         {
+            ArgumentNullException.ThrowIfNull(element);
+
             return value ? Visibility.Visible : Visibility.Hidden;
         }
 
         public static Visibility ToVisibleOrCollapsed(this FrameworkElement element, bool value)
         {
+            ArgumentNullException.ThrowIfNull(element);
+
             return value ? Visibility.Visible : Visibility.Collapsed;
         }
     }

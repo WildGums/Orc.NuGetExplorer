@@ -26,18 +26,12 @@
         Task<PackageCollection> CreatePackagesCollectionFromProjectsAsync(IEnumerable<IExtensibleProject> projects, CancellationToken cancellationToken);
 
         IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects);
-        Task<NuGetVersion> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token);
+        Task<NuGetVersion?> GetVersionInstalledAsync(IExtensibleProject project, string packageId, CancellationToken token);
 
-        /*
-        Task UninstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token);
-        Task InstallPackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token);
-        Task UpdatePackageForMultipleProject(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGet.Versioning.NuGetVersion targetVersion, CancellationToken token);
-        */
+        event AsyncEventHandler<InstallNuGetProjectEventArgs>? Install;
 
-        event AsyncEventHandler<InstallNuGetProjectEventArgs> Install;
+        event AsyncEventHandler<UninstallNuGetProjectEventArgs>? Uninstall;
 
-        event AsyncEventHandler<UninstallNuGetProjectEventArgs> Uninstall;
-
-        event AsyncEventHandler<UpdateNuGetProjectEventArgs> Update;
+        event AsyncEventHandler<UpdateNuGetProjectEventArgs>? Update;
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer
 {
     using Catel.Data;
 
-    public class ExplorerPage : ModelBase
+    internal class ExplorerPage : ModelBase
     {
         public ExplorerPage(INuGetExplorerInitialState parameters)
         {

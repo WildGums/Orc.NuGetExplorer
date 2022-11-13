@@ -3,16 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Catel;
     using Orc.FileSystem;
 
     public static class IFileServiceExtensions
     {
         public static void ForceDeleteFiles(this IFileService fileService, string filePath, List<string> failedEntries)
         {
-            Argument.IsNotNull(() => fileService);
-            Argument.IsNotNull(() => filePath);
-            Argument.IsNotNull(() => failedEntries);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             try
             {
@@ -37,7 +34,7 @@
 
         public static void SetAttributes(this IFileService fileService, string filePath, FileAttributes attribute)
         {
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             var attributes = File.GetAttributes(filePath);
             if (attributes.HasFlag(attribute))

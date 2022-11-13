@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Configuration;
     using Catel.Logging;
     using NuGet.Common;
@@ -19,13 +18,13 @@
 
         public CredentialProviderLoaderService(IConfigurationService configurationService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
 
             _configurationService = configurationService;
 
-            //this provider add yourself as default V3 credential
+            // this provider add yourself as default V3 credential
 
-            //set own provider 
+            // set own provider 
 #pragma warning disable IDISP005 // Return type should indicate that the value should be disposed.
             HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => new ExplorerCredentialService(
                     new AsyncLazy<IEnumerable<ICredentialProvider>>(() => GetCredentialProvidersAsync()),

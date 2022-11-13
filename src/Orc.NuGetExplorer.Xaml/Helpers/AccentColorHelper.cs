@@ -1,18 +1,9 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AccentColorHelper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System.Windows.Media;
 
     internal static class AccentColorHelper
     {
-        #region Methods
-
         public static Color ConvertToNonAlphaColor(Color backgroundColor, Color accentColor)
         {
             var alphaNormalized = accentColor.A / (double)255;
@@ -24,7 +15,5 @@ namespace Orc.NuGetExplorer
 
             return Color.FromRgb(newColorR, newColorG, newColorB);
         }
-
-        #endregion
     }
 }

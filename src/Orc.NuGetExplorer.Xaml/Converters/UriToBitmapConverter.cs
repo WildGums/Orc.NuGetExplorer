@@ -17,17 +17,22 @@
 
         private static IconCache InitCache()
         {
-            var appCacheProvider = ServiceLocator.Default.ResolveType<IApplicationCacheProvider>();
+            var appCacheProvider = ServiceLocator.Default.ResolveRequiredType<IApplicationCacheProvider>();
 
             return appCacheProvider.EnsureIconCache();
         }
 
-        protected override object Convert(Uri value, Type targetType, object parameter)
+        protected override object Convert(Uri? value, Type targetType, object? parameter)
         {
             try
             {
+                if (value is null)
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+
                 //get bitmap from stream cache
-                return IconCache.GetFromCache(value);
+                return IconCache.GetFromCache(value) ?? DependencyProperty.UnsetValue;
             }
             catch (Exception ex)
             {

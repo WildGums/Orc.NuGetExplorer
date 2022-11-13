@@ -1,41 +1,29 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BackupFileSystemService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.IO;
-    using Catel;
     using Catel.Logging;
     using Orc.FileSystem;
+    using Orc.NuGetExplorer.Services;
 
     internal class BackupFileSystemService : IBackupFileSystemService
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private readonly IPackageOperationContextService _operationContextService;
         private readonly IDirectoryService _directoryService;
         private readonly IFileService _fileService;
-        #endregion
 
-        #region Constructors
         public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
         {
-            Argument.IsNotNull(() => operationContextService);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(operationContextService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _operationContextService = operationContextService;
             _directoryService = directoryService;
             _fileService = fileService;
         }
-        #endregion
 
-        #region Methods
         public void BackupFolder(string fullPath)
         {
             Log.Info("Creating backup for {0}", fullPath);
@@ -61,7 +49,7 @@ namespace Orc.NuGetExplorer
                 var fileName = Path.GetFileName(filePath);
                 var fileDestinationPath = GetBackupFolder(Catel.IO.Path.GetDirectoryName(filePath));
 
-                File.Copy(filePath, Catel.IO.Path.Combine(fileDestinationPath, fileName), true);
+                _fileService.Copy(filePath, Path.Combine(fileDestinationPath, fileName), true);
             }
             catch (Exception ex)
             {
@@ -87,6 +75,7 @@ namespace Orc.NuGetExplorer
                 }
 
                 var sourceDirectory = GetBackupFolder(fullPath);
+
                 _directoryService.Copy(sourceDirectory, fullPath);
             }
             catch (Exception ex)
@@ -99,11 +88,14 @@ namespace Orc.NuGetExplorer
         {
             var parentDirectory = Catel.IO.Path.GetParentDirectory(fullPath);
             var directoryName = Catel.IO.Path.GetRelativePath(fullPath, parentDirectory);
-            var backupDirectory = _operationContextService.CurrentContext.FileSystemContext.GetDirectory(directoryName);
+            var backupDirectory = _operationContextService.CurrentContext?.FileSystemContext.GetDirectory(directoryName);
+
+            if (string.IsNullOrEmpty(backupDirectory))
+            {
+                throw Log.ErrorAndCreateException<InvalidPathException>($"Invalid path found for backup folder on '{fullPath}'");
+            }
 
             return backupDirectory;
         }
-
-        #endregion
     }
 }

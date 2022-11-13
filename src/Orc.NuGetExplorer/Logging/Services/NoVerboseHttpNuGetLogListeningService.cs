@@ -5,7 +5,6 @@
 
     public class NoVerboseHttpNuGetLogListeningService : INuGetLogListeningSevice
     {
-        #region Methods
         public void SendInfo(string message)
         {
             Argument.IsNotNullOrEmpty(() => message);
@@ -41,10 +40,9 @@
             Error?.Invoke(this, new NuGetLogRecordEventArgs(message));
         }
 
-        public event EventHandler<NuGetLogRecordEventArgs> Info;
-        public event EventHandler<NuGetLogRecordEventArgs> Warning;
-        public event EventHandler<NuGetLogRecordEventArgs> Debug;
-        public event EventHandler<NuGetLogRecordEventArgs> Error;
-        #endregion
+        public event EventHandler<NuGetLogRecordEventArgs>? Info;
+        public event EventHandler<NuGetLogRecordEventArgs>? Warning;
+        public event EventHandler<NuGetLogRecordEventArgs>? Debug;
+        public event EventHandler<NuGetLogRecordEventArgs>? Error;
     }
 }

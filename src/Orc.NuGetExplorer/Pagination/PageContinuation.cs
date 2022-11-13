@@ -24,7 +24,8 @@
             _lastNumber = continuation.Current;
         }
 
-        public PageContinuation(PageContinuation continuation, bool onlyLocal) : this(continuation)
+        public PageContinuation(PageContinuation continuation, bool onlyLocal)
+            : this(continuation)
         {
             OnlyLocal = onlyLocal;
         }

@@ -2,11 +2,9 @@
 {
     using System;
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using Catel;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Cache;
@@ -17,22 +15,24 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly IconDownloader IconDownloader = new IconDownloader();
+        private static readonly IconDownloader IconDownloader = new();
 
         private readonly IconCache _iconCache;
 
-        private readonly string _defaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
+        public const string DefaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-package-icon.png";
 
         public PackageMetadataMediaDownloadService(IApplicationCacheProvider appCacheProvider)
         {
-            Argument.IsNotNull(() => appCacheProvider);
+            ArgumentNullException.ThrowIfNull(appCacheProvider);
 
             _iconCache = appCacheProvider.EnsureIconCache();
-            _iconCache.FallbackValue = new System.Windows.Media.Imaging.BitmapImage(new Uri(_defaultIconUri));
+            _iconCache.FallbackValue = new BitmapImage(new Uri(DefaultIconUri));
         }
 
         public async Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata)
         {
+            ArgumentNullException.ThrowIfNull(packageMetadata);
+
             try
             {
                 //skip if already in cache
@@ -91,23 +91,27 @@
 
         #region IImageResolveService
 
-        public ImageSource ResolveImageFromUri(Uri uri, string defaultUrl = null)
+        public ImageSource ResolveImageFromUri(Uri uri)
         {
             try
             {
                 if (uri is not null && Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
                 {
-                    return GetFromCacheOrFetch(uri);
+                    var bitmapImage = GetFromCacheOrFetch(uri);
+                    if (bitmapImage is not null)
+                    {
+                        return bitmapImage;
+                    }
                 }
             }
             catch (WebException ex)
             {
                 Log.Error(ex);
             }
-            return new BitmapImage(new Uri(_defaultIconUri));
+            return new BitmapImage(new Uri(DefaultIconUri));
         }
 
-        private ImageSource GetFromCacheOrFetch(Uri uri)
+        private ImageSource? GetFromCacheOrFetch(Uri uri)
         {
             if (!_iconCache.IsCached(uri))
             {
@@ -117,7 +121,7 @@
             return _iconCache.GetFromCache(uri);
         }
 
-        public async Task<ImageSource> ResolveImageFromUriAsync(Uri uri, string defaultUrl = null)
+        public async Task<ImageSource?> ResolveImageFromUriAsync(Uri uri)
         {
             try
             {
@@ -131,10 +135,10 @@
                 Log.Error(ex);
             }
 
-            return new BitmapImage(new Uri(defaultUrl));
+            return new BitmapImage(new Uri(DefaultIconUri));
         }
 
-        private async Task<ImageSource> GetFromCacheOrFetchAsync(Uri uri)
+        private async Task<ImageSource?> GetFromCacheOrFetchAsync(Uri uri)
         {
             if (!_iconCache.IsCached(uri))
             {

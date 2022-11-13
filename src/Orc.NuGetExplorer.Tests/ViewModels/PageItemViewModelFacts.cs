@@ -5,10 +5,9 @@
     using Catel.IoC;
     using Catel.MVVM;
     using Moq;
+    using NuGet.Versioning;
     using NUnit.Framework;
-    using Orc.NuGetExplorer.Models;
     using Orc.NuGetExplorer.Providers;
-    using Orc.NuGetExplorer.Tests.TestCases;
     using Orc.NuGetExplorer.ViewModels;
 
     [TestFixture]
@@ -26,7 +25,6 @@
                 var commandManager = serviceLocator.ResolveType<ICommandManager>();
                 commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
-                commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
                 var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
 
                 var canExecuteRaised = false;
@@ -38,11 +36,14 @@
 
                 Assert.AreEqual(false, testCommand.CanExecute());
 
-                var modelProvider = new Mock<IModelProvider<ExplorerSettingsContainer>>().Object;
+                var settingsProviderMock = new Mock<IModelProvider<ExplorerSettingsContainer>>();
+                settingsProviderMock.Setup(x => x.Model).Returns(new ExplorerSettingsContainer());
+                var settingsProvider = settingsProviderMock.Object;
 
-                var model = FixtureNuGetPackageFactory.CreateFixturePackage("1.0.0", "WildGums");
+                var model = GlobalMocks.CreateMockPackage("1.0.0", "WildGums");
+                model.InstalledVersion = new NuGetVersion(model.Version);
 
-                var vm = new PageItemViewModel(model, modelProvider, commandManager);
+                var vm = new PageItemViewModel(model, settingsProvider, commandManager);
                 await vm.InitializeViewModelAsync();
 
                 model.IsChecked = true;

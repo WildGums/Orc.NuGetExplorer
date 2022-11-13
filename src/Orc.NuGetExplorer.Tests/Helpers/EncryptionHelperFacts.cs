@@ -1,15 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Md5HelperFacts.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-#if !NET40
-
-namespace Orc.NuGetExplorer.Tests
+﻿namespace Orc.NuGetExplorer.Tests
 {
-    using NUnit.Framework;
     using NuGetExplorer;
+    using NUnit.Framework;
 
     [TestFixture]
     public class EncryptionHelperFacts
@@ -23,10 +15,8 @@ namespace Orc.NuGetExplorer.Tests
             Assert.AreNotEqual(input, encrypted);
 
             var decrypted = EncryptionHelper.Decrypt(encrypted, password);
-            
+
             Assert.AreEqual(input, decrypted);
         }
     }
 }
-
-#endif

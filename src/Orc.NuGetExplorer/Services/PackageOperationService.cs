@@ -1,17 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageOperationService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
+    using Catel.Data;
     using NuGet.Common;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
@@ -22,28 +15,25 @@ namespace Orc.NuGetExplorer
 
     internal sealed class PackageOperationService : IPackageOperationService
     {
-        #region Fields
         private readonly ILogger _logger;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IPackageOperationContextService _packageOperationContextService;
         private readonly IApiPackageRegistry _apiPackageRegistry;
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly IExtensibleProject _defaultProject;
-        #endregion
 
-        #region Constructors
         public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, INuGetPackageManager nuGetPackageManager,
             IRepositoryService repositoryService, IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
             ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => logger);
-            Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => sourceRepositoryProvider);
-            Argument.IsNotNull(() => defaultExtensibleProjectProvider);
-            Argument.IsNotNull(() => packageOperationNotificationService);
+            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+            ArgumentNullException.ThrowIfNull(logger);
+            ArgumentNullException.ThrowIfNull(nuGetPackageManager);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
 
             _packageOperationContextService = packageOperationContextService;
             _logger = logger;
@@ -55,16 +45,12 @@ namespace Orc.NuGetExplorer
             // Note: this setting should be global, probably set by Resolver (which replaced the old one InstallWalker);
             DependencyVersion = DependencyBehavior.Lowest;
         }
-        #endregion
 
-        #region Properties
         internal DependencyBehavior DependencyVersion { get; set; }
-        #endregion
 
-        #region Methods
         public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var uninstalledIdentity = package.GetIdentity();
             var uninstallPath = _defaultProject.GetInstallPath(uninstalledIdentity);
@@ -78,7 +64,7 @@ namespace Orc.NuGetExplorer
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -88,7 +74,7 @@ namespace Orc.NuGetExplorer
 
         public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var installedIdentity = package.GetIdentity();
             var operationPath = _defaultProject.GetInstallPath(installedIdentity);
@@ -108,7 +94,7 @@ namespace Orc.NuGetExplorer
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -118,7 +104,7 @@ namespace Orc.NuGetExplorer
 
         public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             var updateIdentity = package.GetIdentity();
             var installPath = _defaultProject.GetInstallPath(updateIdentity);
@@ -159,7 +145,7 @@ namespace Orc.NuGetExplorer
             catch (Exception ex)
             {
                 await _logger.LogAsync(LogLevel.Error, ex.Message);
-                _packageOperationContextService.CurrentContext.Exceptions.Add(ex);
+                _packageOperationContextService.CurrentContext?.Exceptions?.Add(ex);
             }
             finally
             {
@@ -171,10 +157,13 @@ namespace Orc.NuGetExplorer
 
         private void ValidatePackage(IPackageDetails package)
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             package.ResetValidationContext();
 
             _apiPackageRegistry.Validate(package);
 
+            package.ValidationContext ??= new ValidationContext();
             if (package.ValidationContext.GetErrorCount(ValidationTags.Api) > 0)
             {
                 throw new ApiValidationException(package.ValidationContext.GetErrors(ValidationTags.Api).First().Message);
@@ -186,7 +175,5 @@ namespace Orc.NuGetExplorer
             PackagingDeletemeMessage.SendWith(new PackageOperationInfo(operationPath, type, package));
             _packageOperationNotificationService.NotifyOperationFinished(operationPath, type, package);
         }
-
-        #endregion
     }
 }

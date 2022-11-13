@@ -1,25 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Repository.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
 
     public sealed class Repository : IRepository
     {
-        #region Properties
+        public Repository(string source)
+        {
+            Name = string.Empty;
+            Source = source;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Source { get; set; }
         public PackageOperationType OperationType { get; set; }
 
         public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
-        #endregion
 
-        #region Methods
         private bool Equals(Repository other)
         {
             return Id == other.Id && string.Equals(Name, other.Name)
@@ -39,16 +36,14 @@ namespace Orc.NuGetExplorer
             }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            var repository = obj as Repository;
-            if (repository is null)
+            if (obj is not Repository repository)
             {
                 return false;
             }
 
             return Equals(repository);
         }
-        #endregion
     }
 }

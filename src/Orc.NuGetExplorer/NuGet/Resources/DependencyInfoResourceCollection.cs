@@ -1,11 +1,11 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using global::NuGet.Protocol.Core.Types;
     using MethodTimer;
@@ -35,14 +35,14 @@
 
         public DependencyInfoResourceCollection(IReadOnlyList<DependencyInfoResource> resources)
         {
-            Argument.IsNotNull(() => resources);
+            ArgumentNullException.ThrowIfNull(resources);
 
             _resources = resources.ToList();
         }
 
         public DependencyInfoResourceCollection(DependencyInfoResource resource)
         {
-            Argument.IsNotNull(() => resource);
+            ArgumentNullException.ThrowIfNull(resource);
 
             _resources = new List<DependencyInfoResource>
             {
@@ -53,6 +53,9 @@
         public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesWithVersionSatisfyRangeAsync(PackageIdentity package, VersionRange versionRange, NuGetFramework projectFramework, SourceCacheContext cacheContext,
             ILogger log, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(projectFramework);
+
             var singlePackage = await ResolvePackageAsync(package, projectFramework, cacheContext, log, token);
 
             // Check is this package satisfy requirements, if not, retrieve all dependency infos and find required package
@@ -66,8 +69,11 @@
             return packagesInRange;
         }
 
-        public async Task<SourcePackageDependencyInfo> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+        public async Task<SourcePackageDependencyInfo?> ResolvePackageAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(projectFramework);
+
             foreach (var resource in _resources)
             {
                 try
@@ -94,7 +100,10 @@
         [Time]
         public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
         {
-            HashSet<SourcePackageDependencyInfo> packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(projectFramework);
+
+            var packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
 
             foreach (var resource in _resources)
             {

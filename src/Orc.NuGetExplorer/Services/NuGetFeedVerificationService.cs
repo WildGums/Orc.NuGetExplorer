@@ -25,9 +25,9 @@ namespace Orc.NuGetExplorer
 
         public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
-            Argument.IsNotNull(() => credentialProviderLoaderService);
-            Argument.IsNotNull(() => repositoryProvider);
-            Argument.IsNotNull(() => logger);
+            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(logger);
 
             _credentialProviderLoaderService = credentialProviderLoaderService;
             _repositoryProvider = repositoryProvider;
@@ -36,11 +36,11 @@ namespace Orc.NuGetExplorer
 
         public async Task<FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = false, CancellationToken cancellationToken = default)
         {
-            Argument.IsNotNull(() => source);
+            Argument.IsNotNullOrEmpty(() => source);
 
             var result = FeedVerificationResult.Valid;
 
-            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+            var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 
@@ -96,13 +96,13 @@ namespace Orc.NuGetExplorer
         [ObsoleteEx]
         public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
         {
-            int timeOut = 3000;
+            Argument.IsNotNullOrEmpty(() => source);
 
-            Argument.IsNotNull(() => source);
+            var timeOut = 3000;
 
             var result = FeedVerificationResult.Valid;
 
-            StringBuilder errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
+            var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
             Log.Debug("Verifying feed '{0}'", source);
 
@@ -119,7 +119,7 @@ namespace Orc.NuGetExplorer
                     var cancellationToken = cts.Token;
 
                     //try to perform search
-                    var searchTask = searchResource.SearchAsync(String.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
+                    var searchTask = searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
 
                     var searchCompletion = Task.WhenAny(searchTask, Task.Delay(timeOut, cancellationToken)).Result;
 

@@ -10,21 +10,23 @@
 
         public FeedVerificationResult HandleException(WebException exception, string source)
         {
+            ArgumentNullException.ThrowIfNull(exception);
+
             try
             {
-                var httpWebResponse = (HttpWebResponse)exception.Response;
-                if (ReferenceEquals(httpWebResponse, null))
+                var httpWebResponse = (HttpWebResponse?)exception.Response;
+                if (httpWebResponse is null)
                 {
                     return FeedVerificationResult.Invalid;
                 }
 
-                //403 error
+                // 403 error
                 if (httpWebResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
                     return FeedVerificationResult.AuthorizationRequired;
                 }
 
-                //401 error
+                // 401 error
                 if (httpWebResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     return FeedVerificationResult.AuthenticationRequired;

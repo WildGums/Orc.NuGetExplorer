@@ -14,11 +14,16 @@
     {
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new Dictionary<IViewModel, DataWindow>();
+        private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new();
 
         public void ShowBar(IViewModel vm)
         {
             var window = GetCurrentActiveDataWindow();
+            if (window is null)
+            {
+                Log.Warning("No active window found for progress manager");
+                return;
+            }
 
             foreach (var behavior in GetOverlayBehaviors(window))
             {
@@ -30,7 +35,7 @@
 
         public void HideBar(IViewModel vm)
         {
-            DataWindow window = null;
+            DataWindow? window = null;
 
             if (_storedManagedWindows.TryGetValue(vm, out window))
             {
@@ -42,12 +47,12 @@
             }
         }
 
-        private DataWindow GetCurrentActiveDataWindow()
+        private static DataWindow? GetCurrentActiveDataWindow()
         {
             return Application.Current.Windows.OfType<DataWindow>().FirstOrDefault(x => x.IsActive);
         }
 
-        private IEnumerable<AnimatedOverlayBehavior> GetOverlayBehaviors(DataWindow window)
+        private static IEnumerable<AnimatedOverlayBehavior> GetOverlayBehaviors(DataWindow window)
         {
             var behaviors = Interaction.GetBehaviors(window);
 

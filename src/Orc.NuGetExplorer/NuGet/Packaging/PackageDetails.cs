@@ -16,7 +16,7 @@
         public PackageDetails(IPackageSearchMetadata metadata, bool isLatestVersion = false)
         {
             Id = metadata.Identity.Id;
-            FullName = metadata.Identity?.ToFullString();
+            FullName = metadata.Identity.ToFullString();
             Description = metadata.Description;
             IconUrl = metadata.IconUrl;
             NuGetVersion = metadata.Identity.Version;
@@ -52,14 +52,9 @@
 
         public Uri IconUrl { get; }
 
-        public Version Version => NuGetVersion?.Version;
+        public Version Version => NuGetVersion.Version;
 
         public NuGetVersion NuGetVersion { get; }
-
-        public string SpecialVersion => NuGetVersion?.Release; //todo check semver 2.0
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "IsLatestVersion")]
-        public bool IsAbsoluteLatestVersion { get; }
 
         public bool IsLatestVersion { get; }
 
@@ -73,15 +68,11 @@
 
         public int? DownloadCount { get; }
 
-        public virtual string Dependencies { get; protected set; }
-
         public bool? IsInstalled { get; set; }
-
-        public IList<string> AvailableVersions { get; }
 
         public string SelectedVersion { get; set; }
 
-        public IValidationContext ValidationContext { get; protected set; }
+        public IValidationContext? ValidationContext { get; set; }
 
         public virtual PackageIdentity GetIdentity()
         {

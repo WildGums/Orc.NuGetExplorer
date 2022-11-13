@@ -7,13 +7,13 @@ namespace Orc.NuGetExplorer.Controls.Templating
 
     public class BadgeContentTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate NotAvailable { get; set; }
+        public DataTemplate? NotAvailable { get; set; }
 
-        public DataTemplate Available { get; set; }
+        public DataTemplate? Available { get; set; }
 
-        public DataTemplate Default { get; set; }
+        public DataTemplate? Default { get; set; }
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
             if (item is not null)
             {

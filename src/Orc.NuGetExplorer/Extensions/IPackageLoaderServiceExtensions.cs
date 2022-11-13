@@ -1,9 +1,9 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using NuGet.Protocol.Core.Types;
     using Orc.NuGetExplorer.Pagination;
 
@@ -11,7 +11,7 @@
     {
         public static async Task<IEnumerable<IPackageSearchMetadata>> LoadWithDefaultsAsync(this IPackageLoaderService packageLoaderService, string repository, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => packageLoaderService);
+            ArgumentNullException.ThrowIfNull(packageLoaderService);
 
             var defaultFilter = new SearchFilter(true);
             var localPagination = new PageContinuation(0, new PackageSourceWrapper(repository));

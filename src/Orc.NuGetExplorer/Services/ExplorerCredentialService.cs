@@ -17,10 +17,10 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ConcurrentDictionary<string, bool> _retryCache
-             = new ConcurrentDictionary<string, bool>();
+             = new();
 
         private readonly ConcurrentDictionary<string, CredentialResponse> _providerCredentialCache
-            = new ConcurrentDictionary<string, CredentialResponse>();
+            = new();
 
         private readonly bool _nonInteractive;
 
@@ -29,7 +29,7 @@
         /// </summary>
         private AsyncLazy<IEnumerable<ICredentialProvider>> _providers { get; }
 
-        private readonly Semaphore _providerSemaphore = new Semaphore(1, 1);
+        private readonly Semaphore _providerSemaphore = new(1, 1);
         private bool _disposedValue;
 
         public bool HandlesDefaultCredentials { get; }
@@ -44,8 +44,6 @@
         /// NonInteractive requests must not promt the user for credentials.</param>
         public ExplorerCredentialService(AsyncLazy<IEnumerable<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials)
         {
-            Argument.IsNotNull(() => providers);
-
             _providers = providers;
             _nonInteractive = nonInteractive;
             HandlesDefaultCredentials = handlesDefaultCredentials;
@@ -70,19 +68,16 @@
         /// </param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A credential object, or null if no credentials could be acquired.</returns>
-        public async Task<ICredentials> GetCredentialsAsync(
+        public async Task<ICredentials?> GetCredentialsAsync(
             Uri uri,
             IWebProxy proxy,
             CredentialRequestType type,
             string message,
             CancellationToken cancellationToken)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
+            ArgumentNullException.ThrowIfNull(uri);
 
-            ICredentials creds = null;
+            ICredentials? creds = null;
 
             foreach (var provider in await _providers)
             {
@@ -93,10 +88,6 @@
 
                 try
                 {
-                    //original implementation contains semaphore
-                    //in fact unecessary, because service called
-                    //only when no one provider cached
-
                     _providerSemaphore.WaitOne();
 
                     Log.Debug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
@@ -129,7 +120,7 @@
                         }
                     }
 
-                    if (response.Status == CredentialStatus.Success)
+                    if (response?.Status == CredentialStatus.Success)
                     {
                         _retryCache[retryKey] = true;
                         Log.Debug($"_retryCache count now is {_retryCache.Count}");
@@ -167,16 +158,12 @@
         /// <param name="isProxy"><c>true</c> for proxy credentials; otherwise, <c>false</c>.</param>
         /// <param name="credentials">Cached credentials or <c>null</c>.</param>
         /// <returns><c>true</c> if a result is returned from the cache; otherwise, false.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="uri" /> is <c>null</c>.</exception>
         public bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,
-            out ICredentials credentials)
+            out ICredentials? credentials)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
+            ArgumentNullException.ThrowIfNull(uri);
 
             credentials = null;
 
@@ -197,16 +184,17 @@
         }
 
         private bool TryFromCredentialCache(Uri uri, CredentialRequestType type, bool isRetry, ICredentialProvider provider,
-            out CredentialResponse credentials)
+            out CredentialResponse? credentials)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             credentials = null;
 
             var key = CredentialsKeyHelper.GetCacheKey(uri, type, provider);
 
             if (isRetry)
             {
-                CredentialResponse removed;
-                _providerCredentialCache.TryRemove(key, out removed);
+                _providerCredentialCache.TryRemove(key, out _);
                 return false;
             }
 
@@ -216,6 +204,8 @@
         private void AddToCredentialCache(Uri uri, CredentialRequestType type, ICredentialProvider provider,
             CredentialResponse credentials)
         {
+            ArgumentNullException.ThrowIfNull(uri);
+
             _providerCredentialCache[CredentialsKeyHelper.GetCacheKey(uri, type, provider)] = credentials;
         }
 

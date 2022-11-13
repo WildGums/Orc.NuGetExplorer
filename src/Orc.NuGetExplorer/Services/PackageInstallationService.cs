@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using MethodTimer;
@@ -35,8 +34,6 @@
         private readonly VersionFolderPathResolver _installerPathResolver;
 
         private readonly ILogger _nugetLogger;
-        private readonly IServiceLocator _serviceLocator;
-        private readonly ITypeFactory _typeFactory;
         private readonly IFrameworkNameProvider _frameworkNameProvider;
         private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
         private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
@@ -51,21 +48,30 @@
         private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
 
-        public PackageInstallationService(IServiceLocator serviceLocator, ITypeFactory typeFactory, IFrameworkNameProvider frameworkNameProvider, ISourceRepositoryProvider sourceRepositoryProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
-            INuGetProjectContextProvider nuGetProjectContextProvider, IDirectoryService directoryService, IFileService fileService, IApiPackageRegistry apiPackageRegistry, IFileSystemService fileSystemService, ILogger logger)
+        public PackageInstallationService(IServiceLocator serviceLocator,
+                                          IFrameworkNameProvider frameworkNameProvider,
+                                          ISourceRepositoryProvider sourceRepositoryProvider,
+                                          INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
+                                          INuGetProjectContextProvider nuGetProjectContextProvider,
+                                          IDirectoryService directoryService,
+                                          IFileService fileService,
+                                          IApiPackageRegistry apiPackageRegistry,
+                                          IFileSystemService fileSystemService,
+                                          IDownloadingProgressTrackerService downloadingProgressTrackerService,
+                                          ILogger logger)
         {
-            Argument.IsNotNull(() => frameworkNameProvider);
-            Argument.IsNotNull(() => sourceRepositoryProvider);
-            Argument.IsNotNull(() => nuGetProjectConfigurationProvider);
-            Argument.IsNotNull(() => nuGetProjectContextProvider);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => fileService);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => logger);
+            ArgumentNullException.ThrowIfNull(serviceLocator);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
+            ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(fileService);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
+            ArgumentNullException.ThrowIfNull(logger);
 
-            _serviceLocator = serviceLocator;
-            _typeFactory = typeFactory;
             _frameworkNameProvider = frameworkNameProvider;
             _sourceRepositoryProvider = sourceRepositoryProvider;
             _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -74,14 +80,10 @@
             _fileService = fileService;
             _apiPackageRegistry = apiPackageRegistry;
             _fileSystemService = fileSystemService;
+            _downloadingProgressTrackerService = downloadingProgressTrackerService;
             _nugetLogger = logger;
 
             _nuGetCacheManager = new NuGetCacheManager(_directoryService, _fileService);
-
-            if (serviceLocator.IsTypeRegistered<IDownloadingProgressTrackerService>())
-            {
-                _downloadingProgressTrackerService = serviceLocator.ResolveType<IDownloadingProgressTrackerService>();
-            }
 
             _installerPathResolver = new VersionFolderPathResolver(DefaultNuGetFolders.GetGlobalPackagesFolder());
         }
@@ -91,15 +93,17 @@
         public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
             CancellationToken cancellationToken = default)
         {
-            List<string> failedEntries = null;
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(project);
+
+            var failedEntries = new List<string>();
             ICollection<PackageIdentity> uninstalledPackages;
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
 #if NET5_0_OR_GREATER
-            var reducer = new FrameworkReducer();
-            var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
-            targetFramework = mostSpecific;
+            var reducedFramework = new FrameworkReducer().ReduceUpwards(project.SupportedPlatforms).First();
+            targetFramework = reducedFramework;
 #endif
 
             var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
@@ -186,16 +190,19 @@
             bool ignoreMissingPackages = false,
             CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(repositories);
+
             try
             {
                 // Step 1. Decide what framework version used on package resolving
                 // Enforce platform-specific framework for .NET 5.0
 
                 var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
-                var reducer = new FrameworkReducer();
 
 #if NET5_0_OR_GREATER
-                var mostSpecific = reducer.ReduceUpwards(project.SupportedPlatforms).FirstOrDefault();
+                var mostSpecific = new FrameworkReducer().ReduceUpwards(project.SupportedPlatforms).First();
                 targetFramework = mostSpecific;
 #endif
 
@@ -212,7 +219,7 @@
                 }
 
                 // Step 2. Build list of dependencies and determine DependencyBehavior if some packages are misssed in current feed
-                Resolver.PackageResolverContext resolverContext = null;
+                Resolver.PackageResolverContext? resolverContext = null;
 
                 using (var cacheContext = new SourceCacheContext())
                 {
@@ -221,7 +228,7 @@
 #pragma warning restore IDISP013 // Await in using.
 
                     var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess && x.Result is not null)
-                        .Select(x => x.Result).ToArray();
+                        .Select(x => x.Result!).ToArray();
 
                     var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
@@ -236,7 +243,7 @@
                     }
 
                     // Step 3. Try to check is main package can be downloaded from resource
-                    var mainPackageInfo = resolverContext.AvailablePackages.FirstOrDefault(p => p.Id == package.Id);
+                    var mainPackageInfo = resolverContext.AvailablePackages.First(p => p.Id == package.Id);
 
                     _nugetLogger.LogInformation($"Downloading {package}...");
                     var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
@@ -293,6 +300,9 @@
         // TODO move to separate class
         public async Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository)
         {
+            ArgumentNullException.ThrowIfNull(packageIdentity);
+            ArgumentNullException.ThrowIfNull(sourceRepository);
+
             var registrationResource = await sourceRepository.GetResourceAsync<RegistrationResourceV3>();
             if (registrationResource is null)
             {
@@ -323,6 +333,12 @@
         private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
             DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(identity);
+            ArgumentNullException.ThrowIfNull(targetFramework);
+            ArgumentNullException.ThrowIfNull(equalityComparer);
+            ArgumentNullException.ThrowIfNull(dependencyInfoResource);
+            ArgumentNullException.ThrowIfNull(project);
+
             // The collection of already processed packages
             var packageStore = new HashSet<SourcePackageDependencyInfo>(equalityComparer);
             var ignoredPackages = new HashSet<PackageIdentity>();
@@ -428,9 +444,11 @@
         private async Task<IDictionary<SourcePackageDependencyInfo, DownloadResourceResult>> DownloadPackagesResourcesAsync(
             IEnumerable<SourcePackageDependencyInfo> packageIdentities, SourceCacheContext cacheContext, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(packageIdentities);
+
             var downloaded = new Dictionary<SourcePackageDependencyInfo, DownloadResourceResult>();
 
-            string globalFolderPath = DefaultNuGetFolders.GetGlobalPackagesFolder();
+            var globalFolderPath = DefaultNuGetFolders.GetGlobalPackagesFolder();
 
             foreach (var package in packageIdentities)
             {
@@ -445,12 +463,14 @@
         private async Task<DownloadResourceResult> DownloadPackageResourceAsync(
             SourcePackageDependencyInfo package, SourceCacheContext cacheContext, CancellationToken cancellationToken, string globalFolder = "")
         {
+            ArgumentNullException.ThrowIfNull(package);
+
             if (string.Equals(globalFolder, ""))
             {
                 globalFolder = DefaultNuGetFolders.GetGlobalPackagesFolder();
             }
 
-            using (var progressToken = await _downloadingProgressTrackerService?.TrackDownloadOperationAsync(this, package))
+            using (var progressToken = await _downloadingProgressTrackerService.TrackDownloadOperationAsync(this, package))
             {
                 var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
@@ -475,7 +495,11 @@
             PackageExtractionContext extractionContext,
             CancellationToken cancellationToken)
         {
-            List<PackageIdentity> extractedPackages = new List<PackageIdentity>();
+            ArgumentNullException.ThrowIfNull(packageResources);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(extractionContext);
+
+            var extractedPackages = new List<PackageIdentity>();
 
             try
             {
@@ -541,6 +565,9 @@
         private Resolver.PackageResolverContext GetResolverContext(PackageIdentity package, DependencyBehavior dependencyBehavior, IEnumerable<SourcePackageDependencyInfo> availablePackages,
             IEnumerable<PackageReference> packagesConfig, IEnumerable<PackageIdentity> ignoredDependenciesList)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(availablePackages);
+
             var idArray = new[] { package.Id };
 
             var requiredPackageIds = availablePackages.Select(x => x.Id).Distinct();
@@ -579,8 +606,9 @@
 
         private async Task<bool> CheckCanBeInstalledAsync(IExtensibleProject project, PackageReaderBase packageReader, NuGetFramework targetFramework, CancellationToken token)
         {
-            Argument.IsNotNull(() => project);
-            Argument.IsNotNull(() => packageReader);
+            ArgumentNullException.ThrowIfNull(project);
+            ArgumentNullException.ThrowIfNull(packageReader);
+            ArgumentNullException.ThrowIfNull(targetFramework);
 
             var frameworkReducer = new FrameworkReducer();
 
@@ -610,19 +638,17 @@
             IEnumerable<SourcePackageDependencyInfo> markedForUninstall,
             IEnumerable<PackageIdentity> installedPackages)
         {
-            IDictionary<PackageIdentity, HashSet<PackageIdentity>> dependenciesDictionary;
-            var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out dependenciesDictionary);
+            var dependentsDictionary = UninstallResolver.GetPackageDependents(markedForUninstall, installedPackages, out var dependenciesDictionary);
 
             //exclude packages which should not be removed, because of dependent packages
-            HashSet<PackageIdentity> shouldBeExcludedSet = new HashSet<PackageIdentity>();
+            var shouldBeExcludedSet = new HashSet<PackageIdentity>();
 
             foreach (var identity in dependenciesDictionary)
             {
                 var markedOnUninstallDependency = identity.Key;
 
-                HashSet<PackageIdentity> dependents;
 
-                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out dependents) && dependents is not null)
+                if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out var dependents) && dependents is not null)
                 {
                     var externalDependants = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
 
@@ -648,6 +674,9 @@
         private async Task CheckLibAndFrameworkItemsAsync(IDictionary<SourcePackageDependencyInfo, DownloadResourceResult> downloadedPackagesDictionary,
             NuGetFramework targetFramework, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(downloadedPackagesDictionary);
+            ArgumentNullException.ThrowIfNull(targetFramework);
+
             var frameworkReducer = new FrameworkReducer();
 
             foreach (var package in downloadedPackagesDictionary.Keys)
@@ -677,11 +706,9 @@
             using (var nuspec = await packageReader.GetNuspecAsync(cancellationToken))
             {
                 var nuspecReader = new NuspecReader(nuspec);
-
                 var satelliteFilesInGroup = libraryFrameworkSpecificGroup.Items
-                    .Where(item => Path.GetDirectoryName(item)
-                        .Split(Path.DirectorySeparatorChar)
-                        .Contains(nuspecReader.GetLanguage(), StringComparer.OrdinalIgnoreCase)).ToList();
+                        .Where(item => Path.GetDirectoryName(item)?.Split(Path.DirectorySeparatorChar)?.Contains(nuspecReader.GetLanguage(), StringComparer.OrdinalIgnoreCase) ?? false)
+                        .ToList();
 
                 satelliteFiles.AddRange(satelliteFilesInGroup);
 

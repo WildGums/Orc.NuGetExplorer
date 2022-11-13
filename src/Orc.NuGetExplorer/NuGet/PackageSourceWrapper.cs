@@ -3,17 +3,28 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Catel.Logging;
     using NuGet.Configuration;
 
     public class PackageSourceWrapper
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         public static explicit operator PackageSource(PackageSourceWrapper wrapper)
         {
+            ArgumentNullException.ThrowIfNull(wrapper);
+
             if (wrapper.IsMultipleSource)
             {
-                throw new InvalidCastException("Wrong casting from 'PackageSourceWrapper' to single 'PackageSource' because of wrapper containing multiple sources");
+                throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
             }
-            return wrapper.PackageSources.FirstOrDefault();
+
+            if (!wrapper.PackageSources.Any())
+            {
+                throw Log.ErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
+            }
+
+            return wrapper.PackageSources[0];
         }
 
         public IReadOnlyList<PackageSource> PackageSources { get; private set; }
@@ -22,7 +33,10 @@
 
         public PackageSourceWrapper(string source)
         {
-            PackageSources = new List<PackageSource>() { new PackageSource(source) };
+            PackageSources = new List<PackageSource>()
+            {
+                new PackageSource(source)
+            };
         }
 
         public PackageSourceWrapper(IReadOnlyList<string> sources)
@@ -32,7 +46,7 @@
 
         public override string ToString()
         {
-            return String.Join<PackageSource>("; ", PackageSources.ToArray());
+            return string.Join<PackageSource>("; ", PackageSources.ToArray());
         }
     }
 }

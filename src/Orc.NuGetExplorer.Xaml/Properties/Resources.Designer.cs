@@ -257,6 +257,15 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string NuGetExplorer_PackageSourceSettingViewModel_Title {
+            get {
+                return ResourceManager.GetString("NuGetExplorer_PackageSourceSettingViewModel_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         internal static string NuGetExplorer_PagingView_Button_Content_Back {

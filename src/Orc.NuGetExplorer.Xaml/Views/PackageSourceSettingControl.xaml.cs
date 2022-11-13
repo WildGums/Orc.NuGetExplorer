@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageSourceSettingControl.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -14,7 +7,6 @@ namespace Orc.NuGetExplorer.Views
 
     public sealed partial class PackageSourceSettingControl
     {
-        #region Constructors
         static PackageSourceSettingControl()
         {
             typeof(PackageSourceSettingControl).AutoDetectViewPropertiesToSubscribe();
@@ -27,7 +19,6 @@ namespace Orc.NuGetExplorer.Views
 
             InitializeComponent();
         }
-        #endregion
 
         #region DependencyProperty
         /// <summary>

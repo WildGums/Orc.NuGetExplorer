@@ -5,16 +5,13 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
 
     public class MultiplySourceSearchResource : PackageSearchResource
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources;
+        private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources = new();
         private bool _v2Used;
 
         private MultiplySourceSearchResource()
@@ -23,6 +20,8 @@
 
         public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             var searchRes = new MultiplySourceSearchResource();
             await searchRes.LoadResourcesAsync(sourceRepositories);
 
@@ -31,6 +30,8 @@
 
         private async Task LoadResourcesAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             await ResolveResourcesAsync(sourceRepositories);
 
             _v2Used = _resolvedResources.Values.Any(resource => resource is PackageSearchResourceV2Feed);
@@ -41,6 +42,8 @@
         /// </summary>
         private async Task ResolveResourcesAsync(SourceRepository[] sourceRepositories)
         {
+            ArgumentNullException.ThrowIfNull(sourceRepositories);
+
             //get one source for repositories with same uri
             //nonetheless repository provider is already aware of source duplicates, so check is unnecessary
             var combinedResourcesTasks = sourceRepositories.Distinct(DefaultNuGetComparers.SourceRepository)
@@ -102,8 +105,18 @@
 
         private class PackageIdentityEqualityComparer : IEqualityComparer<IPackageSearchMetadata>
         {
-            public bool Equals(IPackageSearchMetadata x, IPackageSearchMetadata y)
+            public bool Equals(IPackageSearchMetadata? x, IPackageSearchMetadata? y)
             {
+                if (x is null && y is null)
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
+
                 return x.Identity.Equals(y.Identity);
             }
 

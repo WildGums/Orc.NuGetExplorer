@@ -6,48 +6,46 @@
 
     internal class PackageOperationContextService : IPackageOperationContextService
     {
-        #region Fields
-        private readonly object _lockObject = new object();
+        private readonly object _lockObject = new();
         private readonly IPackageOperationNotificationService _packageOperationNotificationService;
         private readonly ITypeFactory _typeFactory;
-        private PackageOperationContext _rootContext;
-        #endregion
+        private PackageOperationContext? _rootContext;
 
-        #region Constructors
         public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => packageOperationNotificationService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _packageOperationNotificationService = packageOperationNotificationService;
             _typeFactory = typeFactory;
         }
-        #endregion
 
-        #region Properties
-        public IPackageOperationContext CurrentContext { get; private set; }
-        #endregion
+        public IPackageOperationContext? CurrentContext { get; private set; }
 
-        #region Methods
-        public event EventHandler<OperationContextEventArgs> OperationContextDisposing;
+        public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
 
         public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
         {
-            var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>();
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext { OperationType = operationType, Packages = packages, FileSystemContext = context },
-                token => ApplyOperationContext(token.Instance),
-                token => CloseCurrentOperationContext(token.Instance));
+#pragma warning disable IDISP001 // Dispose created
+            var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
+#pragma warning restore IDISP001 // Dispose created
+            return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
+            {
+                OperationType = operationType,
+            },
+            token => ApplyOperationContext(token.Instance),
+            token => CloseCurrentOperationContext(token.Instance));
         }
 
         private void ApplyOperationContext(PackageOperationContext context)
         {
-            Argument.IsNotNull(() => context);
+            ArgumentNullException.ThrowIfNull(context);
 
             lock (_lockObject)
             {
                 if (_rootContext is null)
                 {
-                    context.Exceptions.Clear();
+                    context.Exceptions?.Clear();
 
                     _rootContext = context;
                     CurrentContext = context;
@@ -63,11 +61,11 @@
 
         private void CloseCurrentOperationContext(PackageOperationContext context)
         {
-            Argument.IsNotNull(() => context);
+            ArgumentNullException.ThrowIfNull(context);
 
             lock (_lockObject)
             {
-                if (CurrentContext.Parent is null)
+                if (CurrentContext?.Parent is null)
                 {
                     OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
 #pragma warning disable IDISP007 // Don't dispose injected.
@@ -78,9 +76,8 @@
                     _rootContext = null;
                 }
 
-                CurrentContext = CurrentContext.Parent;
+                CurrentContext = CurrentContext?.Parent;
             }
         }
-        #endregion
     }
 }

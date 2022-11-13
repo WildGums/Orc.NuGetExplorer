@@ -9,6 +9,9 @@
     {
         public static NuGetFramework TryParseFrameworkName(string frameworkString, IFrameworkNameProvider frameworkNameProvider)
         {
+            Argument.IsNotNullOrEmpty(() => frameworkString);
+            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+
             try
             {
                 return NuGetFramework.ParseFrameworkName(frameworkString, frameworkNameProvider);
@@ -25,7 +28,7 @@
         /// <returns></returns>
         public static NuGetFramework ToSpecificPlatform(NuGetFramework framework)
         {
-            Argument.IsNotNull(() => framework);
+            ArgumentNullException.ThrowIfNull(framework);
 
             if (framework.Version.Major < 5)
             {

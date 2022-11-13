@@ -28,13 +28,10 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         public IEnumerable<SourcePackageDependencyInfo> Resolve(PackageResolverContext context, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(context);
+
             var stopWatch = new Stopwatch();
             token.ThrowIfCancellationRequested();
-
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
 
             // validation 
             foreach (var requiredId in context.RequiredPackageIds)
@@ -102,17 +99,9 @@ namespace Orc.NuGetExplorer.Resolver
 
             foreach (var package in availablePackages)
             {
-                IEnumerable<PackageDependency> dependencies = null;
-
-                // clear out the dependencies if the behavior is set to ignore
-                if (context.DependencyBehavior == DependencyBehavior.Ignore)
-                {
-                    dependencies = Enumerable.Empty<PackageDependency>();
-                }
-                else
-                {
-                    dependencies = package.Dependencies ?? Enumerable.Empty<PackageDependency>();
-                }
+                var dependencies = context.DependencyBehavior == DependencyBehavior.Ignore ?
+                    Enumerable.Empty<PackageDependency>() :
+                    package.Dependencies ?? Enumerable.Empty<PackageDependency>();
 
                 resolverPackages.Add(new ResolverPackage(package.Id, package.Version, dependencies, package.Listed, false));
             }
@@ -147,7 +136,7 @@ namespace Orc.NuGetExplorer.Resolver
 
             //var ignoredDependencyIds = dependencyIds.
 
-            foreach (string depId in dependencyIds)
+            foreach (var depId in dependencyIds)
             {
                 // packages which are unavailable need to be added as absent packages
                 // ex: if A -> B  and B is not found anywhere in the source repositories we add B as absent
@@ -222,6 +211,9 @@ namespace Orc.NuGetExplorer.Resolver
             Action<IExtensibleProject, PackageReference> conflictResolveAction,
             CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(context);
+            ArgumentNullException.ThrowIfNull(project);
+
             var availablePackages = Resolve(context, cancellationToken);
             // note: probably this is not required
             var installablePackages = availablePackages
@@ -241,7 +233,7 @@ namespace Orc.NuGetExplorer.Resolver
 
                 foreach (var conflict in packageConflicts)
                 {
-                    bool needToFix = false;
+                    var needToFix = false;
                     var conflictedVersion = conflict.PackageIdentity.Version;
 
                     switch (dependencyBehavior)
@@ -277,6 +269,9 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static IEnumerable<PackageDependency> GetBrokenDependencies(SourcePackageDependencyInfo package, IEnumerable<PackageIdentity> packages)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(packages);
+
             foreach (var dependency in package.Dependencies)
             {
                 var target = packages.FirstOrDefault(targetPackage => StringComparer.OrdinalIgnoreCase.Equals(targetPackage.Id, dependency.Id));
@@ -292,6 +287,9 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static string FormatDependencyConstraint(SourcePackageDependencyInfo package, PackageDependency dependency)
         {
+            ArgumentNullException.ThrowIfNull(package);
+            ArgumentNullException.ThrowIfNull(dependency);
+
             var range = dependency.VersionRange;
             var dependencyString = $"{dependency.Id} {range?.ToNonSnapshotRange().PrettyPrint() ?? string.Empty}";
 
@@ -304,8 +302,10 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         private static IEnumerable<SourcePackageDependencyInfo> RemoveImpossiblePackages(IEnumerable<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+
             List<SourcePackageDependencyInfo> before;
-            List<SourcePackageDependencyInfo> after = new List<SourcePackageDependencyInfo>(packages);
+            var after = new List<SourcePackageDependencyInfo>(packages);
 
             do
             {
@@ -319,6 +319,8 @@ namespace Orc.NuGetExplorer.Resolver
 
         private static List<SourcePackageDependencyInfo> InnerPruneImpossiblePackages(List<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
         {
+            ArgumentNullException.ThrowIfNull(packages);
+
             if (packages.Count == 0)
             {
                 return packages;
@@ -338,10 +340,9 @@ namespace Orc.NuGetExplorer.Resolver
             //  (2) Create a look-up of every dependency that refers to a particular package Id
             foreach (var package in packages)
             {
-                foreach (var dependency in package?.Dependencies)
+                foreach (var dependency in package.Dependencies)
                 {
-                    IList<VersionRange> dependencyVersionRanges;
-                    if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out dependencyVersionRanges))
+                    if (dependencyRangesByPackageId.TryGetValue(dependency.Id, out var dependencyVersionRanges))
                     {
                         dependencyVersionRanges.Add(dependency.VersionRange);
                     }
@@ -370,6 +371,9 @@ namespace Orc.NuGetExplorer.Resolver
         /// </summary>
         private static bool ShouldRejectPackagePair(ResolverPackage p1, ResolverPackage p2)
         {
+            ArgumentNullException.ThrowIfNull(p1);
+            ArgumentNullException.ThrowIfNull(p2);
+
             var p1ToP2Dependency = p1.FindDependencyRange(p2.Id);
             if (p1ToP2Dependency is not null)
             {

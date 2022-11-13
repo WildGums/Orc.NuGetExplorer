@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Data;
     using Catel.Fody;
     using Catel.IoC;
@@ -14,7 +14,6 @@
     using NuGet.Protocol.Core.Types;
     using NuGet.Versioning;
     using NuGetExplorer.Enums;
-    using NuGetExplorer.Models;
     using NuGetExplorer.Pagination;
     using NuGetExplorer.Providers;
     using NuGetExplorer.Windows;
@@ -26,7 +25,8 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly int Timeout = 500;
 
-        private static IPackageMetadataProvider PackageMetadataProvider;
+        private static IPackageMetadataProvider? PackageMetadataProvider;
+
         private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
         private readonly IProgressManager _progressManager;
         private readonly IApiPackageRegistry _apiPackageRegistry;
@@ -35,10 +35,10 @@
         public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
             IPackageCommandService packageCommandService)
         {
-            Argument.IsNotNull(() => settingsProvider);
-            Argument.IsNotNull(() => progressManager);
-            Argument.IsNotNull(() => apiPackageRegistry);
-            Argument.IsNotNull(() => packageCommandService);
+            ArgumentNullException.ThrowIfNull(settingsProvider);
+            ArgumentNullException.ThrowIfNull(progressManager);
+            ArgumentNullException.ThrowIfNull(apiPackageRegistry);
+            ArgumentNullException.ThrowIfNull(packageCommandService);
 
             _settingsProvider = settingsProvider;
             _progressManager = progressManager;
@@ -48,6 +48,9 @@
             LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
             InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
             UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
+
+            VersionsCollection = new();
+            ValidationContext = new ValidationContext();
         }
 
         private bool IsPackageApplied { get; set; }
@@ -60,13 +63,13 @@
         [Expose("Authors")]
         [Expose("IconUrl")]
         [Expose("Identity")]
-        public NuGetPackage Package { get; set; }
+        public NuGetPackage? Package { get; set; }
 
         public ObservableCollection<NuGetVersion> VersionsCollection { get; set; }
 
-        public object DependencyInfo { get; set; }
+        public object? DependencyInfo { get; set; }
 
-        public DeferToken DefferedLoadingToken { get; set; }
+        public DeferToken? DefferedLoadingToken { get; set; }
 
         [ViewModelToModel]
         public PackageStatus Status { get; set; }
@@ -76,18 +79,33 @@
 
         public NuGetActionTarget NuGetActionTarget { get; } = new NuGetActionTarget();
 
-        public IPackageSearchMetadata VersionData { get; set; }
+        public IPackageSearchMetadata? VersionData { get; set; }
 
-        public NuGetVersion SelectedVersion { get; set; }
+        private NuGetVersion? _selectedVersion;
 
-        public PackageIdentity SelectedPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, SelectedVersion);
+        public NuGetVersion? SelectedVersion
+        {
+            get => _selectedVersion;
+            set
+            {
+                if (_selectedVersion != value)
+                {
+                    var oldValue = _selectedVersion;
+                    _selectedVersion = value;
 
-        public PackageIdentity InstalledPackage => Package is null ? null : new PackageIdentity(Package.Identity.Id, InstalledVersion);
+                    RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<NuGetVersion>(oldValue, value));
+                }
+            }
+        }
+
+        public PackageIdentity? SelectedPackage => Package is null ? null : new(Package.Identity.Id, SelectedVersion);
+
+        public PackageIdentity? InstalledPackage => Package is null ? null : new(Package.Identity.Id, InstalledVersion);
 
         [ViewModelToModel]
-        public NuGetVersion InstalledVersion { get; set; }
+        public NuGetVersion? InstalledVersion { get; set; }
 
-        public string[] ApiValidationMessages { get; private set; }
+        public string[]? ApiValidationMessages { get; private set; }
 
         #region Commands
 
@@ -122,8 +140,11 @@
                     }
                     else
                     {
-                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
-                        await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
+                        if (SelectedPackage is not null)
+                        {
+                            var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, VersionData, SelectedPackage, null);
+                            await _packageCommandService.ExecuteInstallAsync(installPackageDetails, cts.Token);
+                        }
                     }
                 }
 
@@ -131,7 +152,7 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error when installing package {Package.Identity}, installation failed");
+                Log.Error(ex, $"Error when installing package {Package?.Identity}, installation failed");
             }
             finally
             {
@@ -151,13 +172,18 @@
                 return false;
             }
 
-            return !(Package?.ValidationContext.HasErrors ?? false) && !IsVersionInstalled();
+            return !(Package?.ValidationContext?.HasErrors ?? false) && !IsVersionInstalled();
         }
 
         public TaskCommand UninstallPackage { get; set; }
 
         private async Task OnUninstallPackageExecuteAsync()
         {
+            if (Package is null || InstalledPackage is null)
+            {
+                return;
+            }
+
             try
             {
                 _progressManager.ShowBar(this);
@@ -198,11 +224,17 @@
 
         #endregion
 
-        protected static async Task<IPackageSearchMetadata> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
+        protected static async Task<IPackageSearchMetadata?> LoadSinglePackageMetadataAsync(PackageIdentity identity, NuGetPackage packageModel, bool isPreReleaseIncluded)
         {
+            ArgumentNullException.ThrowIfNull(identity);
+
             try
             {
-                var versionMetadata = await PackageMetadataProvider?.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
+                if (PackageMetadataProvider is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(PackageMetadataProvider)}' value incorrect");
+                }
+                var versionMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
                 if (versionMetadata?.Identity?.Version is not null)
                 {
                     packageModel.AddDependencyInfo(versionMetadata.Identity.Version, versionMetadata.DependencySets);
@@ -238,21 +270,35 @@
             return base.CloseAsync();
         }
 
-        private void OnNuGetActionTargetPropertyPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnNuGetActionTargetPropertyPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             var commandManager = this.GetViewModelCommandManager();
             commandManager.InvalidateCommands();
         }
 
-        protected async override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected async override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
-            if (string.Equals(e.PropertyName, nameof(SelectedVersion)))
+            if (e.HasPropertyChanged(nameof(SelectedVersion)))
             {
-                if ((e.OldValue is null && SelectedVersion == Package.Identity.Version) || e.NewValue is null)
+                if (e is PropertyChangedExtendedEventArgs<NuGetVersion> args)
                 {
-                    // Skip loading on version list first load
+                    if ((args.OldValue is null && SelectedVersion == Package?.Identity.Version) || args.NewValue is null)
+                    {
+                        // Skip loading on version list first load
+                        return;
+                    }
+                }
+
+                if (_settingsProvider.Model is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                }
+
+                if (Package is null)
+                {
+                    Log.Debug("No package selected");
                     return;
                 }
 
@@ -260,7 +306,7 @@
 
                 VersionData = await LoadSinglePackageMetadataAsync(identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
-                if (Package is not null)
+                if (Package is not null && VersionData is not null)
                 {
                     // Note: Workaround, this is a hack way to set specific version of package
                     var tempPackage = new NuGetPackage(VersionData, Package.FromPage);
@@ -293,14 +339,26 @@
         {
             try
             {
-                //select identity version
-                var selectedVersion = Package?.Identity?.Version;
+                if (Package is null)
+                {
+                    return;
+                }
 
-                VersionsCollection = new ObservableCollection<NuGetVersion>() { selectedVersion };
+                //select identity version
+                var selectedVersion = Package.Identity.Version;
+
+                VersionsCollection = new ObservableCollection<NuGetVersion>()
+                {
+                    selectedVersion
+                };
 
                 SelectedVersion = selectedVersion;
 
                 PackageMetadataProvider = Providers.PackageMetadataProvider.CreateFromSourceContext(ServiceLocator.Default);
+                if (_settingsProvider.Model is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                }
 
                 VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
 
@@ -321,9 +379,9 @@
 
         private void ValidateCurrentPackage(NuGetPackage package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
-            //validate loaded dependencies
+            // validate loaded dependencies
             package.ResetValidationContext();
             _apiPackageRegistry.Validate(package);
 
@@ -332,12 +390,18 @@
             // Note: this is a workaround to pass validation context from specific version package to main model
             if (!ReferenceEquals(Package, package))
             {
+                package.ValidationContext ??= new ValidationContext();
                 ValidationContext = package.ValidationContext;
             }
         }
 
         private void PopulateVersionCollection()
         {
+            if (Package is null)
+            {
+                return;
+            }
+
             try
             {
                 if (Package.LoadVersionsAsync().Wait(Timeout))
@@ -372,10 +436,10 @@
 
         private void GetPackageValidationErrors(NuGetPackage package)
         {
-            Argument.IsNotNull(() => package);
+            ArgumentNullException.ThrowIfNull(package);
 
             // title: NuGetExplorer_PackageDetailsService_PackageToFlowDocument_GetAlertRecords_Errors
-            ApiValidationMessages = package.ValidationContext.GetAlertMessages(ValidationTags.Api);
+            ApiValidationMessages = package.ValidationContext?.GetAlertMessages(ValidationTags.Api) ?? Array.Empty<string>();
         }
     }
 }

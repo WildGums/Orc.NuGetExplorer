@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer
 {
     using System.Text.RegularExpressions;
+    using Catel;
     using Catel.Logging;
     using NuGet.Packaging.Core;
     using NuGet.Versioning;
@@ -14,8 +15,10 @@
         /// </summary>
         private static readonly string IdentityPattern = @"(@?[a-z_A-Z]\w+(?:\.@?[a-z_A-Z]\w+)*)";
 
-        public static PackageIdentity Parse(string packageString)
+        public static PackageIdentity? Parse(string packageString)
         {
+            Argument.IsNotNullOrEmpty(() => packageString);
+
             var rgx = new Regex(IdentityPattern);
 
             var match = rgx.Match(packageString);
@@ -34,9 +37,9 @@
 
             var identity = match.Captures[0].Value;
 
-            var versionString = packageString.Replace(identity, "");
+            var versionString = packageString.Replace(identity, string.Empty);
 
-            if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out NuGetVersion version))
+            if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out var version))
             {
                 Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
                 return null;

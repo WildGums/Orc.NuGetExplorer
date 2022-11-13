@@ -13,27 +13,30 @@
         public EmptyPackageDetails(PackageIdentity package)
         {
             _package = package;
+
             ResetValidationContext();
-            FullName = package?.ToFullString();
+
+            FullName = package.ToFullString();
+
+            Description = string.Empty;
+            Authors = Array.Empty<string>();
+            Title = string.Empty;
+            Dependencies = string.Empty;
+            SelectedVersion = string.Empty;
         }
 
         #region IPackageDetails
-        public string Id => _package?.Id;
+        public string Id => _package.Id;
 
         public string FullName { get; }
 
         public string Description { get; }
 
-        public Uri IconUrl { get; }
+        public Uri? IconUrl { get; }
 
         public Version Version => NuGetVersion.Version;
 
-        public NuGetVersion NuGetVersion => _package?.Version;
-
-        public string SpecialVersion { get; }
-
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "IsLatestVersion")]
-        public bool IsAbsoluteLatestVersion => false;
+        public NuGetVersion NuGetVersion => _package.Version;
 
         public bool IsLatestVersion => false;
 
@@ -51,11 +54,9 @@
 
         public bool? IsInstalled { get; set; }
 
-        public IList<string> AvailableVersions { get; }
-
         public string SelectedVersion { get; set; }
 
-        public IValidationContext ValidationContext { get; private set; }
+        public IValidationContext? ValidationContext { get; set; }
 
         public PackageIdentity GetIdentity()
         {

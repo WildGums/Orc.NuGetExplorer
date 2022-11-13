@@ -8,7 +8,8 @@
         {
         }
 
-        public ProjectManageException(string message, Exception innerException) : base(message, innerException)
+        public ProjectManageException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

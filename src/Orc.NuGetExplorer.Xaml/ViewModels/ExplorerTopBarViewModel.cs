@@ -5,7 +5,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Configuration;
     using Catel.IoC;
     using Catel.Logging;
@@ -13,7 +12,6 @@
     using Catel.MVVM;
     using Catel.Services;
     using NuGetExplorer.Cache;
-    using NuGetExplorer.Models;
     using Orc.NuGetExplorer.Messaging;
 
     internal class ExplorerTopBarViewModel : ViewModelBase
@@ -21,41 +19,43 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ITypeFactory _typeFactory;
-
         private readonly IUIVisualizerService _uIVisualizerService;
-
         private readonly INuGetCacheManager _nuGetCacheManager;
-
-        private readonly IPleaseWaitService _pleaseWaitService;
+        private readonly IBusyIndicatorService _busyIndicatorService;
 
         private readonly IMessageService _messageService;
         private readonly IMessageMediator _messageMediator;
         private readonly INuGetConfigurationService _configurationService;
 
         public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
-            INuGetCacheManager nuGetCacheManager, IPleaseWaitService pleaseWaitService, IMessageService messageService, IMessageMediator messageMediator)
+            INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService, IMessageService messageService, IMessageMediator messageMediator)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => uIVisualizerService);
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => settings);
-            Argument.IsNotNull(() => nuGetCacheManager);
-            Argument.IsNotNull(() => pleaseWaitService);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => messageMediator);
+            ArgumentNullException.ThrowIfNull(settings);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(uIVisualizerService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(nuGetCacheManager);
+            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(messageMediator);
 
             _typeFactory = typeFactory;
             _uIVisualizerService = uIVisualizerService;
             _configurationService = configurationService;
             _nuGetCacheManager = nuGetCacheManager;
-            _pleaseWaitService = pleaseWaitService;
+            _busyIndicatorService = busyIndicatorService;
             _messageService = messageService;
             _messageMediator = messageMediator;
 
             Settings = settings;
 
+            ActiveFeeds = new();
+
             Title = "Manage NuGet Packages";
-            CommandInitialize();
+
+            ShowPackageSourceSettings = new TaskCommand(OnShowPackageSourceSettingsExecuteAsync);
+            ShowExtensibles = new TaskCommand(OnShowExtensiblesAsync);
+            RunNuGetCachesClearing = new TaskCommand(OnRunNuGetCachesClearingAsync);
         }
 
         [Model(SupportIEditableObject = false)]
@@ -70,13 +70,13 @@
         public bool IsHideInstalledOptionEnabled { get; private set; }
 
         [ViewModelToModel]
-        public string SearchString { get; set; }
+        public string? SearchString { get; set; }
 
         [ViewModelToModel]
-        public INuGetSource ObservedFeed { get; set; }
+        public INuGetSource? ObservedFeed { get; set; }
 
         [ViewModelToModel]
-        public INuGetSource DefaultFeed { get; set; }
+        public INuGetSource? DefaultFeed { get; set; }
 
         public bool SelectFirstPageOnLoad { get; set; } = true;
 
@@ -89,8 +89,8 @@
 
             ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
 
-            //"all" feed is default
-            DefaultFeed = ActiveFeeds.FirstOrDefault(x => string.Equals(x.Name, Constants.CombinedSourceName));
+            // "All" feed is default
+            DefaultFeed = ActiveFeeds.First(x => string.Equals(x.Name, Constants.CombinedSourceName));
 
             ObservedFeed = SetObservedFeed(ActiveFeeds, DefaultFeed);
 
@@ -103,13 +103,6 @@
             return base.CloseAsync();
         }
 
-        protected void CommandInitialize()
-        {
-            ShowPackageSourceSettings = new TaskCommand(OnShowPackageSourceSettingsExecuteAsync);
-            ShowExtensibles = new TaskCommand(OnShowExtensiblesAsync);
-            RunNuGetCachesClearing = new TaskCommand(OnRunNuGetCachesClearingAsync);
-        }
-
         public TaskCommand ShowPackageSourceSettings { get; set; }
 
         private async Task OnShowPackageSourceSettingsExecuteAsync()
@@ -119,8 +112,7 @@
             if (nugetSettingsVm is not null)
             {
                 var result = await _uIVisualizerService.ShowDialogAsync(nugetSettingsVm);
-
-                if (result ?? false)
+                if (result.DialogResult ?? false)
                 {
                     //update available feeds
                     ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
@@ -153,11 +145,11 @@
                     return;
                 }
 
-                _pleaseWaitService.Push();
+                _busyIndicatorService.Push();
 
                 var noErrors = _nuGetCacheManager.ClearAll();
 
-                _pleaseWaitService.Pop();
+                _busyIndicatorService.Pop();
 
                 if (noErrors)
                 {
@@ -196,7 +188,7 @@
         {
             if (ParentViewModel is ExplorerViewModel explorerViewModel)
             {
-                var activePage = explorerViewModel.Pages.FirstOrDefault(p => p.IsActive);
+                var activePage = explorerViewModel.Pages.First(p => p.IsActive);
                 return activePage.Parameters.Tab == ExplorerTab.Browse;
             }
 

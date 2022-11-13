@@ -14,14 +14,14 @@
             [TestCase]
             public async Task Returns_True_For_Not_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
@@ -37,14 +37,14 @@
             [TestCase]
             public async Task Returns_False_For_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
@@ -64,14 +64,14 @@
             [TestCase]
             public async Task Returns_False_For_Not_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
@@ -87,14 +87,14 @@
             [TestCase]
             public async Task Returns_True_For_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
@@ -114,14 +114,14 @@
             [TestCase]
             public async Task Returns_False_For_Not_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
@@ -137,14 +137,14 @@
             [TestCase]
             public async Task Returns_True_For_Installed_Package_Async()
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
+                var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
                 var repositoryServiceMock = new Mock<IRepositoryService>();
                 var packageQueryServiceMock = new Mock<IPackageQueryService>();
                 var packageOperationServiceMock = new Mock<IPackageOperationService>();
                 var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
                 var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
+                var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
                     packageQueryServiceMock.Object, packageOperationServiceMock.Object,
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 

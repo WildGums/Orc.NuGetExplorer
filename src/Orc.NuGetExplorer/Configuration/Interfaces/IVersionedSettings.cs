@@ -7,9 +7,9 @@
     {
         bool IsLastVersion { get; }
 
-        Version Version { get; }
+        Version? Version { get; }
 
-        Version MinimalVersion { get; }
+        Version? MinimalVersion { get; }
 
         event EventHandler SettingsRead;
 

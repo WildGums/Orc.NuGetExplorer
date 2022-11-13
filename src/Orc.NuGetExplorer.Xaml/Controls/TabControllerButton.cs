@@ -14,14 +14,14 @@
     /// </summary>
     public class TabControllerButton : RadioButton
     {
-        private LinkedList<TabControllerButton> _group = new LinkedList<TabControllerButton>();
+        private LinkedList<TabControllerButton> _group = new();
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         static TabControllerButton()
         {
             //custom metadata for checked property
-            FrameworkPropertyMetadata pmeta = new FrameworkPropertyMetadata(false, (s, e) => ((TabControllerButton)s).OnIsCheckedChanged(e));
+            var pmeta = new FrameworkPropertyMetadata(false, (s, e) => ((TabControllerButton)s).OnIsCheckedChanged(e));
 
             IsCheckedProperty.OverrideMetadata(typeof(TabControllerButton), pmeta);
         }
@@ -39,9 +39,9 @@
             }
         }
 
-        public TabControl TabSource
+        public TabControl? TabSource
         {
-            get { return (TabControl)GetValue(TabSourceProperty); }
+            get { return (TabControl?)GetValue(TabSourceProperty); }
             set { SetValue(TabSourceProperty, value); }
         }
 
@@ -52,9 +52,9 @@
         public static readonly DependencyProperty TabSourceProperty =
             DependencyProperty.Register(nameof(TabSource), typeof(TabControl), typeof(TabControllerButton), new PropertyMetadata(null, OnTabSourceChanged));
 
-        public TabControllerButton Next
+        public TabControllerButton? Next
         {
-            get { return (TabControllerButton)GetValue(NextProperty); }
+            get { return (TabControllerButton?)GetValue(NextProperty); }
             set { SetValue(NextProperty, value); }
         }
 
@@ -116,7 +116,10 @@
                         current = _group.Find(this);
                     }
 
-                    _group.AddAfter(current, nextButton);
+                    if (current is not null)
+                    {
+                        _group.AddAfter(current, nextButton);
+                    }
                 }
             }
             catch (Exception ex)
@@ -136,7 +139,7 @@
             {
                 var index = MyIndex();
 
-                int i = 0;
+                var i = 0;
 
                 if (TabSource.ItemsSource is null)
                 {

@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Constants.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     internal static class RepositoryCategoryName
     {
@@ -49,7 +42,7 @@ namespace Orc.NuGetExplorer
         internal static class Packages
         {
             public const string BatchUpdate = $"{nameof(Packages)}.{nameof(BatchUpdate)}";
-            public static readonly Catel.Windows.Input.InputGesture BatchUpdateInputGesture = null;
+            public static readonly Catel.Windows.Input.InputGesture? BatchUpdateInputGesture = null;
         }
     }
 }

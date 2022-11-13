@@ -2,19 +2,18 @@
 {
     using System;
     using System.Linq;
-    using Catel;
     using NuGet.Configuration;
 
     public abstract class PackageSourcesWatcherBase
     {
         protected PackageSourcesWatcherBase(IPackageSourceProvider packageSourceProvider)
         {
-            Argument.IsNotNull(() => packageSourceProvider);
+            ArgumentNullException.ThrowIfNull(packageSourceProvider);
 
             packageSourceProvider.PackageSourcesChanged += OnPackageSourcesChanged;
         }
 
-        private void OnPackageSourcesChanged(object sender, EventArgs e)
+        private void OnPackageSourcesChanged(object? sender, EventArgs e)
         {
             if (sender is IPackageSourceProvider provider)
             {
@@ -24,7 +23,7 @@
             }
         }
 
-        protected virtual void OnPackageSourcesChanged(string packageSource)
+        protected virtual void OnPackageSourcesChanged(string? packageSource)
         {
 
         }

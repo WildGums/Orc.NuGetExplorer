@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Loggers
 {
+    using System;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.Logging;
     using NuGet.Common;
 
@@ -14,13 +14,14 @@
 
         public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
         {
-            Argument.IsNotNull(() => logListeningService);
+            ArgumentNullException.ThrowIfNull(logListeningService);
 
             _logListeningService = logListeningService;
             _verbose = verbose;
         }
 
-        public NuGetLogger(INuGetLogListeningSevice logListeningService) : this(true, logListeningService)
+        public NuGetLogger(INuGetLogListeningSevice logListeningService)
+            : this(true, logListeningService)
         {
 
         }

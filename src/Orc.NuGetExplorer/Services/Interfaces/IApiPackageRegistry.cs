@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IApiPackageRegistry.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     public interface IApiPackageRegistry
     {

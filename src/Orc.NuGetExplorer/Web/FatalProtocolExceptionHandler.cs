@@ -13,6 +13,8 @@
 
         public FeedVerificationResult HandleException(FatalProtocolException exception, string source)
         {
+            ArgumentNullException.ThrowIfNull(exception);
+
             try
             {
                 var innerException = exception.InnerException;
@@ -31,9 +33,9 @@
                 }
                 else
                 {
-                    if (innerException is WebException)
+                    if (innerException is WebException webException)
                     {
-                        WebExceptionHandler.HandleException(innerException as WebException, source);
+                        WebExceptionHandler.HandleException(webException, source);
                     }
                 }
 

@@ -29,16 +29,17 @@
         public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
             INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
         {
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
-            Argument.IsNotNull(() => repositoryService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
 
+            _directoryService = directoryService;
+            _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
             _projectManager = nuGetExtensibleProjectManager;
             _repositoryProvider = repositoryProvider;
-            _directoryService = directoryService;
-            _repositoryService = repositoryService;
         }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
@@ -48,7 +49,7 @@
             var source = pageContinuation.Source.PackageSources.FirstOrDefault();
             var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
 
-            SourceRepository repository = null;
+            SourceRepository? repository = null;
 
             if (source is not null)
             {
@@ -56,7 +57,7 @@
             }
             else
             {
-                repository = observedProjects.FirstOrDefault().AsSourceRepository(_repositoryProvider);
+                repository = observedProjects.FirstOrDefault()?.AsSourceRepository(_repositoryProvider);
             }
 
             try
@@ -65,7 +66,7 @@
 
                 var pagedPackages = localPackages
                     .GetLatest(VersionComparer.Default)
-                    .Where(package => package.Id.IndexOf(searchTerm ?? String.Empty, StringComparison.OrdinalIgnoreCase) != -1)
+                    .Where(package => package.Id.IndexOf(searchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) != -1)
                     .OrderBy(package => package.Id)
                     .Skip(pageContinuation.GetNext());
 
@@ -75,12 +76,11 @@
                     pagedPackages = pagedPackages.Take(pageContinuation.Size).ToList();
                 }
 
-                List<IPackageSearchMetadata> combinedFindedMetadata = new List<IPackageSearchMetadata>();
+                var combinedFindedMetadata = new List<IPackageSearchMetadata>();
 
                 foreach (var package in pagedPackages)
                 {
                     var metadata = await GetPackageMetadataAsync(package, searchFilter.IncludePrerelease, token);
-
                     if (metadata is not null)
                     {
                         combinedFindedMetadata.Add(metadata);
@@ -96,16 +96,12 @@
             }
         }
 
-        public async Task<IPackageSearchMetadata> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
+        public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
         {
             // first we try and load the metadata from a local package
             var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
 
-            if (packageMetadata is null)
-            {
-                //fallback network package if local installation exists but package cannot be read
-                packageMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-            }
+            packageMetadata ??= await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
             return packageMetadata;
         }
     }

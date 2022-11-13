@@ -1,14 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeletemeWatcher.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
-    using System.Threading.Tasks;
-    using Catel;
+    using System;
     using Catel.Messaging;
     using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
@@ -20,17 +12,15 @@ namespace Orc.NuGetExplorer
         private readonly IDirectoryService _directoryService;
         private readonly INuGetPackageManager _nuGetPackageManager;
         private readonly IExtensibleProject _defaultProject;
-
-        #region Constructors
         public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
             IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
             : base(packageOperationNotificationService)
         {
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => directoryService);
-            Argument.IsNotNull(() => nuGetPackageManager);
-            Argument.IsNotNull(() => projectProvider);
-            Argument.IsNotNull(() => messageMediator);
+            ArgumentNullException.ThrowIfNull(fileSystemService);
+            ArgumentNullException.ThrowIfNull(directoryService);
+            ArgumentNullException.ThrowIfNull(nuGetPackageManager);
+            ArgumentNullException.ThrowIfNull(projectProvider);
+            ArgumentNullException.ThrowIfNull(messageMediator);
 
             _fileSystemService = fileSystemService;
             _directoryService = directoryService;
@@ -40,11 +30,10 @@ namespace Orc.NuGetExplorer
 
             _defaultProject = projectProvider.GetDefaultProject();
         }
-        #endregion
-
-        #region Methods
         private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
         {
+            ArgumentNullException.ThrowIfNull(message);
+
             if (message.Data.OperationType == PackageOperationType.Uninstall)
             {
                 if (!_directoryService.Exists(message.Data.OperationPath))
@@ -69,6 +58,5 @@ namespace Orc.NuGetExplorer
                 _fileSystemService.CreateDeleteme(message.Data.Package.Id, message.Data.OperationPath);
             }
         }
-        #endregion
     }
 }

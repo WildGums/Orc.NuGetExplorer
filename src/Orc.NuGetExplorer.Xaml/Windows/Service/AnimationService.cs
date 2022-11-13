@@ -17,7 +17,7 @@
 
         public Storyboard GetFadeInAnimation(DependencyObject dependencyObject)
         {
-            var sb = (_resourceDictionary["FastFadeIn"] as Storyboard)?.Clone();
+            var sb = ((Storyboard)_resourceDictionary["FastFadeIn"]).Clone();
 
             ValidateFadeAnimation(sb, dependencyObject, "FastFadeIn");
 
@@ -26,7 +26,7 @@
 
         public Storyboard GetFadeOutAnimation(DependencyObject dependencyObject)
         {
-            var sb = (_resourceDictionary["FastFadeOut"] as Storyboard)?.Clone();
+            var sb = ((Storyboard)_resourceDictionary["FastFadeOut"]).Clone();
 
             ValidateFadeAnimation(sb, dependencyObject, "FastFadeOut");
 

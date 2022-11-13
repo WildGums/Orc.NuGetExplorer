@@ -7,7 +7,7 @@
     [System.Windows.Data.ValueConversion(typeof(PackageStatus), typeof(bool))]
     public class PackageStatusEnumToBoolConverter : ValueConverterBase<PackageStatus, bool>
     {
-        protected override object Convert(PackageStatus value, Type targetType, object parameter)
+        protected override object Convert(PackageStatus value, Type targetType, object? parameter)
         {
             return Math.Abs((int)value) <= 1;
         }

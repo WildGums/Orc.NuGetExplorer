@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using NuGet.Protocol.Core.Types;
@@ -31,14 +30,14 @@
         private readonly Lazy<IPackageLoaderService> _feedRepositoryLoader;
         private readonly Lazy<IPackageLoaderService> _projectRepositoryLoader;
 
-        private readonly HashSet<string> _discardedPackagesSet = new HashSet<string>();
+        private readonly HashSet<string> _discardedPackagesSet = new();
 
         public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
            INuGetPackageManager nuGetExtensibleProjectManager)
         {
-            Argument.IsNotNull(() => repositoryService);
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => nuGetExtensibleProjectManager);
+            ArgumentNullException.ThrowIfNull(repositoryService);
+            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
 
             _repositoryService = repositoryService;
             _extensibleProjectLocator = extensibleProjectLocator;
@@ -46,14 +45,16 @@
 
             _serviceLocator = this.GetServiceLocator();
 
-            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>());
-            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveType<IPackageLoaderService>("Installed"));
+            _feedRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveRequiredType<IPackageLoaderService>());
+            _projectRepositoryLoader = new Lazy<IPackageLoaderService>(() => _serviceLocator.ResolveRequiredType<IPackageLoaderService>("Installed"));
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
+        public IPackageMetadataProvider? PackageMetadataProvider => _projectRepositoryLoader.Value.PackageMetadataProvider;
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(pageContinuation);
+
             try
             {
                 if (pageContinuation.Current <= 0)
@@ -70,7 +71,7 @@
 
                 Log.Info("Local packages queryed for further available update searching");
 
-                List<IPackageSearchMetadata> updateList = new List<IPackageSearchMetadata>();
+                var updateList = new List<IPackageSearchMetadata>();
 
                 //getting last metadata
                 foreach (var package in installedPackagesMetadatas)
@@ -80,7 +81,7 @@
                         continue;
                     }
 
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+                    var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
 
                     if (clonedMetadata is null)
                     {
@@ -90,7 +91,7 @@
 
                     if (clonedMetadata.Identity.Version > package.Identity.Version)
                     {
-                        var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas(clonedMetadata as ClonedPackageSearchMetadata, package).Build();
+                        var combinedMetadata = UpdatePackageSearchMetadataBuilder.FromMetadatas((ClonedPackageSearchMetadata)clonedMetadata, package).Build();
                         updateList.Add(combinedMetadata);
                     }
 
@@ -133,7 +134,7 @@
                     // Pre-release versions upgraded to latest stable or pre-release
                     // Stable versions upgraded to latest stable only
                     var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
-                    var clonedMetadata = await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
+                    var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
                     if (clonedMetadata is null)
                     {
@@ -167,8 +168,6 @@
 
         public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleaseTags, bool? allowPrerelease = null, CancellationToken token = default)
         {
-            Argument.IsNotNull(() => excludeReleaseTags);
-
             var foundUpdates = (await SearchForPackagesUpdatesAsync(allowPrerelease, true, token)).ToList();
 
             // Replace all packages with restricted tag with nearest possible
@@ -177,13 +176,13 @@
 
             if (packagesToExclude.Any())
             {
-                var localRepositorySource = _repositoryService.LocalRepository?.Source;
+                var localRepositorySource = _repositoryService.LocalRepository.Source;
                 var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepositorySource, token);
 
                 foreach (var package in packagesToExclude)
                 {
                     foundUpdates.Remove(package);
-                    var metadata = await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
+                    var metadata = metadataProvider is null ? null : await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
                     if (metadata is null)
                     {
                         Log.Debug($"Couldn't retrieve update metadata for installed package {package.Identity.Id}");

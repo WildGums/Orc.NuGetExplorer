@@ -4,6 +4,6 @@
 
     internal class NuGetProjectMetadata
     {
-        public Dictionary<string, object> Data = new Dictionary<string, object>();
+        public Dictionary<string, object> Data = new();
     }
 }

@@ -22,14 +22,14 @@
         private int _packageQuerySize = 40;
 
         // Note: Lazy allows to avoid circular types resolving if construct from TypeFactory
-        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new Lazy<IPackageSourceProvider>(
+        private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new(
                 () =>
                 {
-                    return ServiceLocator.Default.ResolveType<IPackageSourceProvider>();
+                    return ServiceLocator.Default.ResolveRequiredType<IPackageSourceProvider>();
                 }
             );
 
-        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new Dictionary<ConfigurationSection, string>()
+        private readonly Dictionary<ConfigurationSection, string> _masterKeys = new()
         {
             { ConfigurationSection.Feeds, $"NuGet_{ConfigurationSection.Feeds}" },
             { ConfigurationSection.ProjectExtensions, $"NuGet_{ConfigurationSection.ProjectExtensions}" }
@@ -37,7 +37,8 @@
 
         public NuGetConfigurationService(IConfigurationService configurationService, IAppDataService appDataService)
         {
-            Argument.IsNotNull(() => configurationService);
+            ArgumentNullException.ThrowIfNull(configurationService);
+            ArgumentNullException.ThrowIfNull(appDataService);
 
             _configurationService = configurationService;
 
@@ -116,7 +117,8 @@
 
         public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
         {
-            Argument.IsNotNull(() => packageSources);
+            ArgumentNullException.ThrowIfNull(packageSources);
+
             _packageSourceProvider.Value.SavePackageSources(packageSources.ToPackageSourceInstances());
 
             if (_packageSourceProvider.Value is NuGetPackageSourceProvider nugetPackageSourceProvider)
@@ -127,8 +129,6 @@
 
         public void SetIsPrereleaseAllowed(IRepository repository, bool value)
         {
-            Argument.IsNotNull(() => repository);
-
             var key = GetIsPrereleaseAllowedKey(repository);
             _configurationService.SetRoamingValue(key, value);
         }
@@ -138,8 +138,7 @@
             var key = GetIsPrereleaseAllowedKey(repository);
             var stringValue = _configurationService.GetRoamingValue(key, false.ToString());
 
-            bool value;
-            if (bool.TryParse(stringValue, out value))
+            if (bool.TryParse(stringValue, out var value))
             {
                 return value;
             }

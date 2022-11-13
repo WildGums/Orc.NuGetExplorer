@@ -1,39 +1,25 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleLogListener.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example
 {
-    using Catel;
+    using System;
     using Catel.Services;
-    using Models;
 
     public class SimpleLogListener : PackageManagerLogListenerBase
     {
         private readonly IDispatcherService _dispatcherService;
-
-        #region Fields
         private readonly PackageManagementEcho _echo;
-        #endregion
 
-        #region Constructors
         public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
             IEchoService echoService, IDispatcherService dispatcherService)
             : base(nuGetLogListeningSevice)
         {
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => dispatcherService);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
+            ArgumentNullException.ThrowIfNull(echoService);
 
             _dispatcherService = dispatcherService;
 
             _echo = echoService.GetPackageManagementEcho();
         }
-        #endregion
 
-        #region Methods
         protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
         {
             _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Info: {0}", e.Message)), true);
@@ -53,6 +39,5 @@ namespace Orc.NuGetExplorer.Example
         {
             _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Warning: {0}", e.Message)), true);
         }
-        #endregion
     }
 }

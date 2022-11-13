@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Providers
 {
+    using System;
     using System.ComponentModel;
-    using Catel;
     using Catel.Data;
     using Catel.IoC;
 
@@ -11,13 +11,14 @@
 
         public ModelProvider(ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+
             _typeFactory = typeFactory;
         }
 
-        private T _model;
+        private T? _model;
 
-        public virtual T Model
+        public virtual T? Model
         {
             get => _model;
             set
@@ -30,11 +31,11 @@
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public virtual T Create()
         {
-            return _typeFactory.CreateInstance<T>();
+            return _typeFactory.CreateRequiredInstance<T>();
         }
 
         private void RaisePropertyChanged()

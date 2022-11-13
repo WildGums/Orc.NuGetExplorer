@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Catel;
-    using Catel.Logging;
     using NuGet.Common;
     using NuGet.Protocol;
     using NuGet.Protocol.Core.Types;
@@ -15,24 +14,23 @@
 
     internal class PackagesLoaderService : IPackageLoaderService
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         private readonly ILogger _nugetLogger;
         private readonly ISourceRepositoryProvider _repositoryProvider;
 
         public PackagesLoaderService(ISourceRepositoryProvider repositoryProvider, ILogger logger)
         {
-            Argument.IsNotNull(() => logger);
-            Argument.IsNotNull(() => repositoryProvider);
+            ArgumentNullException.ThrowIfNull(repositoryProvider);
+            ArgumentNullException.ThrowIfNull(logger);
 
             _nugetLogger = logger;
             _repositoryProvider = repositoryProvider;
         }
 
-        public IPackageMetadataProvider PackageMetadataProvider { get; }
+        public IPackageMetadataProvider? PackageMetadataProvider { get; }
 
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(pageContinuation);
             Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
 
             if (pageContinuation.Source.PackageSources.Count < 2)
@@ -66,7 +64,9 @@
         public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
             SearchFilter searchFilter, CancellationToken token)
         {
-            SourceRepository tempRepoLocal = null;
+            ArgumentNullException.ThrowIfNull(pageContinuation);
+
+            SourceRepository? tempRepoLocal = null;
 
             var repositoryCollection = pageContinuation.Source.PackageSources.Select(source =>
             {

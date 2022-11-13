@@ -21,14 +21,19 @@
 
         public NuGetProjectUpgradeService(ISettings settings)
         {
-            Argument.IsNotNull(() => settings);
+            ArgumentNullException.ThrowIfNull(settings);
             Argument.IsOfType(() => settings, typeof(IVersionedSettings));
 
-            _settings = settings as IVersionedSettings;
+            if (settings is not IVersionedSettings versionedSettings)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Current configuration should have defined versions for controlling {nameof(NuGetProjectUpgradeService)}");
+            }
+
+            _settings = versionedSettings;
         }
 
-        public event EventHandler UpgradeStart;
-        public event EventHandler UpgradeEnd;
+        public event EventHandler? UpgradeStart;
+        public event EventHandler? UpgradeEnd;
 
         public async Task<bool> CheckCurrentConfigurationAndRunAsync()
         {
@@ -48,9 +53,9 @@
 
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-            if (currentVersion.CompareTo(_settings.Version) > 0)
+            if (currentVersion is not null && currentVersion.CompareTo(_settings.Version) > 0)
             {
-                bool anyCompleted = false;
+                var anyCompleted = false;
 
                 foreach (var scenario in _runOnCheckList)
                 {
@@ -61,7 +66,7 @@
                     anyCompleted = anyCompleted || result;
                 }
 
-                //update config version even if operation wasn't successful
+                // update config version even if operation wasn't successful
                 _settings.UpdateVersion();
                 _settings.UpdateMinimalVersion();
 
@@ -86,6 +91,8 @@
 
         public void AddUpgradeScenario(IUpgradeScenario scenario)
         {
+            ArgumentNullException.ThrowIfNull(scenario);
+
             _runOnCheckList.Add(scenario);
         }
 
