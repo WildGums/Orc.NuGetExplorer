@@ -12,6 +12,7 @@ using System.Windows.Markup;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
+[assembly: InternalsVisibleTo("Gum.CodeAutomation.Builder")]
 
 [assembly: XmlnsPrefix("http://schemas.wildgums.com/orc/nugetexplorer", "orcnugetexplorer")]
 [assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/nugetexplorer", "Orc.NuGetExplorer")]

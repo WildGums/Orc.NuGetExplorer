@@ -10,3 +10,5 @@ using System.Runtime.CompilerServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
+[assembly: InternalsVisibleTo("Gum.CodeAutomation.Api")]
+[assembly: InternalsVisibleTo("Gum.CodeAutomation.Builder")]
