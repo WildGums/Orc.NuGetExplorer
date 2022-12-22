@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer
 {
+    using System;
     using System.Text.RegularExpressions;
     using Catel;
     using Catel.Logging;
@@ -19,7 +20,7 @@
         {
             Argument.IsNotNullOrEmpty(() => packageString);
 
-            var rgx = new Regex(IdentityPattern);
+            var rgx = new Regex(IdentityPattern, RegexOptions.None, TimeSpan.FromSeconds(1));
 
             var match = rgx.Match(packageString);
 
