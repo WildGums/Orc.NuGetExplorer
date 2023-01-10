@@ -22,7 +22,6 @@
         private const string MinimalVersionNumber = "4.0.0";
         private const string ConfigurationFileName = "configuration.xml";
 
-        private readonly Dictionary<string, string> _valuesCache = new();
         private readonly IConfigurationService _configurationService;
 
         public NuGetSettings(IConfigurationService configurationService)
@@ -206,13 +205,7 @@
             Argument.IsNotNullOrWhitespace(() => sectionName);
 
             var valuesListKey = GetSectionValuesListKey(sectionName);
-
-            if (!_valuesCache.TryGetValue(valuesListKey, out var valueKeysString))
-            {
-                valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-                _valuesCache[valuesListKey] = valueKeysString;
-            }
-
+            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
             if (string.IsNullOrEmpty(valueKeysString))
             {
                 return new NuGetSettingsSection(sectionName);
