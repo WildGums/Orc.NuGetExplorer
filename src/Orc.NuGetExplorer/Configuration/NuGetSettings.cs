@@ -206,12 +206,8 @@
             Argument.IsNotNullOrWhitespace(() => sectionName);
 
             var valuesListKey = GetSectionValuesListKey(sectionName);
-            string valueKeysString;
-            if (_valuesCache.ContainsKey(valuesListKey))
-            {
-                valueKeysString = _valuesCache[valuesListKey];
-            }
-            else
+
+            if (!_valuesCache.TryGetValue(valuesListKey, out var valueKeysString))
             {
                 valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
                 _valuesCache[valuesListKey] = valueKeysString;
