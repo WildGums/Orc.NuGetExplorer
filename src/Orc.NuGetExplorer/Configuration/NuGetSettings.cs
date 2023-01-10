@@ -22,6 +22,7 @@
         private const string MinimalVersionNumber = "4.0.0";
         private const string ConfigurationFileName = "configuration.xml";
 
+        private readonly Dictionary<string, string> _valuesCache = new();
         private readonly IConfigurationService _configurationService;
 
         public NuGetSettings(IConfigurationService configurationService)
@@ -199,13 +200,22 @@
 
             return result;
         }
-
+        
         public SettingSection GetSection(string sectionName)
         {
             Argument.IsNotNullOrWhitespace(() => sectionName);
 
             var valuesListKey = GetSectionValuesListKey(sectionName);
-            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+            string valueKeysString;
+            if (_valuesCache.ContainsKey(valuesListKey))
+            {
+                valueKeysString = _valuesCache[valuesListKey];
+            }
+            else
+            {
+                valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+                _valuesCache[valuesListKey] = valueKeysString;
+            }
 
             if (string.IsNullOrEmpty(valueKeysString))
             {
