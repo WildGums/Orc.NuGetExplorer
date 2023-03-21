@@ -1,27 +1,26 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using System;
+using Catel.IoC;
+using NuGet.ProjectManagement;
+using Orc.NuGetExplorer.Management;
+
+
+public class NuGetProjectContextProvider : INuGetProjectContextProvider
 {
-    using System;
-    using Catel.IoC;
-    using NuGet.ProjectManagement;
-    using Orc.NuGetExplorer.Management;
+    private readonly ITypeFactory _typeFactory;
 
-
-    public class NuGetProjectContextProvider : INuGetProjectContextProvider
+    public NuGetProjectContextProvider(ITypeFactory typeFactory)
     {
-        private readonly ITypeFactory _typeFactory;
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        public NuGetProjectContextProvider(ITypeFactory typeFactory)
-        {
-            ArgumentNullException.ThrowIfNull(typeFactory);
+        _typeFactory = typeFactory;
+    }
 
-            _typeFactory = typeFactory;
-        }
+    public INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction)
+    {
+        var projectContext = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetProjectContext>(fileConflictAction);
 
-        public INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction)
-        {
-            var projectContext = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetProjectContext>(fileConflictAction);
-
-            return projectContext;
-        }
+        return projectContext;
     }
 }

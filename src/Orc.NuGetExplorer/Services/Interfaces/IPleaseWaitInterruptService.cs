@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using System;
+﻿namespace Orc.NuGetExplorer;
 
-    public interface IPleaseWaitInterruptService
-    {
-        IDisposable InterruptTemporarily();
-    }
+using System;
+
+public interface IPleaseWaitInterruptService
+{
+    IDisposable InterruptTemporarily();
 }

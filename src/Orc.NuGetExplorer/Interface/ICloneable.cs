@@ -1,7 +1,6 @@
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer;
+
+public interface ICloneable<out T>
 {
-    public interface ICloneable<out T>
-    {
-        T Clone();
-    }
+    T Clone();
 }

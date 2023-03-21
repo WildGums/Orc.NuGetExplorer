@@ -1,129 +1,128 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using NuGet.Common;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+
+public class MultiplySourceSearchResource : PackageSearchResource
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using NuGet.Common;
-    using NuGet.Protocol;
-    using NuGet.Protocol.Core.Types;
+    private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources = new();
+    private bool _v2Used;
 
-    public class MultiplySourceSearchResource : PackageSearchResource
+    private MultiplySourceSearchResource()
     {
-        private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources = new();
-        private bool _v2Used;
+    }
 
-        private MultiplySourceSearchResource()
-        {
-        }
+    public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
+    {
+        ArgumentNullException.ThrowIfNull(sourceRepositories);
 
-        public async static Task<MultiplySourceSearchResource> CreateAsync(SourceRepository[] sourceRepositories)
-        {
-            ArgumentNullException.ThrowIfNull(sourceRepositories);
+        var searchRes = new MultiplySourceSearchResource();
+        await searchRes.LoadResourcesAsync(sourceRepositories);
 
-            var searchRes = new MultiplySourceSearchResource();
-            await searchRes.LoadResourcesAsync(sourceRepositories);
+        return searchRes;
+    }
 
-            return searchRes;
-        }
+    private async Task LoadResourcesAsync(SourceRepository[] sourceRepositories)
+    {
+        ArgumentNullException.ThrowIfNull(sourceRepositories);
 
-        private async Task LoadResourcesAsync(SourceRepository[] sourceRepositories)
-        {
-            ArgumentNullException.ThrowIfNull(sourceRepositories);
+        await ResolveResourcesAsync(sourceRepositories);
 
-            await ResolveResourcesAsync(sourceRepositories);
+        _v2Used = _resolvedResources.Values.Any(resource => resource is PackageSearchResourceV2Feed);
+    }
 
-            _v2Used = _resolvedResources.Values.Any(resource => resource is PackageSearchResourceV2Feed);
-        }
+    /// <summary>
+    /// Get optimized resources
+    /// </summary>
+    private async Task ResolveResourcesAsync(SourceRepository[] sourceRepositories)
+    {
+        ArgumentNullException.ThrowIfNull(sourceRepositories);
 
-        /// <summary>
-        /// Get optimized resources
-        /// </summary>
-        private async Task ResolveResourcesAsync(SourceRepository[] sourceRepositories)
-        {
-            ArgumentNullException.ThrowIfNull(sourceRepositories);
-
-            //get one source for repositories with same uri
-            //nonetheless repository provider is already aware of source duplicates, so check is unnecessary
-            var combinedResourcesTasks = sourceRepositories.Distinct(DefaultNuGetComparers.SourceRepository)
-                .Select(async x =>
-                {
-                    var resource = await x.GetResourceAsync<PackageSearchResource>();
-                    return new KeyValuePair<SourceRepository, PackageSearchResource>(x, resource);
-                }).ToList();
-
-            var taskResults = (await combinedResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
-               .Select(x => x.UnwrapResult());
-
-            _resolvedResources = taskResults.Where(x => x.Value is not null).ToDictionary(x => x.Key, x => x.Value);
-        }
-
-
-        public override async Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filters, int skip, int take, ILogger log, CancellationToken cancellationToken)
-        {
-            try
+        //get one source for repositories with same uri
+        //nonetheless repository provider is already aware of source duplicates, so check is unnecessary
+        var combinedResourcesTasks = sourceRepositories.Distinct(DefaultNuGetComparers.SourceRepository)
+            .Select(async x =>
             {
-                var resources = _resolvedResources.Values;
+                var resource = await x.GetResourceAsync<PackageSearchResource>();
+                return new KeyValuePair<SourceRepository, PackageSearchResource>(x, resource);
+            }).ToList();
 
-                var searchTasks = resources.Select(res => res.SearchAsync(searchTerm, filters, skip, take, log, cancellationToken));
+        var taskResults = (await combinedResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
+            .Select(x => x.UnwrapResult());
 
-                var results = await Task.WhenAll(searchTasks);
+        _resolvedResources = taskResults.Where(x => x.Value is not null).ToDictionary(x => x.Key, x => x.Value);
+    }
 
-                var combinedResults = results.SelectMany(metadataCollection => metadataCollection.Select(metadata => metadata));
 
-                var mergedResults = await MergeVersionsAsync(combinedResults);
+    public override async Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filters, int skip, int take, ILogger log, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var resources = _resolvedResources.Values;
 
-                if (_v2Used)
+            var searchTasks = resources.Select(res => res.SearchAsync(searchTerm, filters, skip, take, log, cancellationToken));
+
+            var results = await Task.WhenAll(searchTasks);
+
+            var combinedResults = results.SelectMany(metadataCollection => metadataCollection.Select(metadata => metadata));
+
+            var mergedResults = await MergeVersionsAsync(combinedResults);
+
+            if (_v2Used)
+            {
+                //load all versions early
+                foreach (var package in mergedResults)
                 {
-                    //load all versions early
-                    foreach (var package in mergedResults)
-                    {
-                        await V2SearchHelper.GetVersionsMetadataAsync(package);
-                    }
-
+                    await V2SearchHelper.GetVersionsMetadataAsync(package);
                 }
 
-                return mergedResults;
             }
-            catch (FatalProtocolException ex) when (cancellationToken.IsCancellationRequested)
+
+            return mergedResults;
+        }
+        catch (FatalProtocolException ex) when (cancellationToken.IsCancellationRequested)
+        {
+            throw new OperationCanceledException("Search request was cancelled", ex, cancellationToken);
+        }
+    }
+
+    private async Task<IEnumerable<IPackageSearchMetadata>> MergeVersionsAsync(IEnumerable<IPackageSearchMetadata> metadatas)
+    {
+        var identityGroups = metadatas.GroupBy(x => x.Identity.Id)
+            .OrderByDescending(x => x.Max(e => e.DownloadCount))
+            .Select(g => g.OrderByDescending(e => e.Identity.Version))
+            .SelectMany(g => g).Distinct(new PackageIdentityEqualityComparer());
+
+
+        return identityGroups.ToList();
+    }
+
+    private class PackageIdentityEqualityComparer : IEqualityComparer<IPackageSearchMetadata>
+    {
+        public bool Equals(IPackageSearchMetadata? x, IPackageSearchMetadata? y)
+        {
+            if (x is null && y is null)
             {
-                throw new OperationCanceledException("Search request was cancelled", ex, cancellationToken);
+                return true;
             }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            return x.Identity.Equals(y.Identity);
         }
 
-        private async Task<IEnumerable<IPackageSearchMetadata>> MergeVersionsAsync(IEnumerable<IPackageSearchMetadata> metadatas)
+        public int GetHashCode(IPackageSearchMetadata obj)
         {
-            var identityGroups = metadatas.GroupBy(x => x.Identity.Id)
-                .OrderByDescending(x => x.Max(e => e.DownloadCount))
-                .Select(g => g.OrderByDescending(e => e.Identity.Version))
-                .SelectMany(g => g).Distinct(new PackageIdentityEqualityComparer());
-
-
-            return identityGroups.ToList();
-        }
-
-        private class PackageIdentityEqualityComparer : IEqualityComparer<IPackageSearchMetadata>
-        {
-            public bool Equals(IPackageSearchMetadata? x, IPackageSearchMetadata? y)
-            {
-                if (x is null && y is null)
-                {
-                    return true;
-                }
-
-                if (x is null || y is null)
-                {
-                    return false;
-                }
-
-                return x.Identity.Equals(y.Identity);
-            }
-
-            public int GetHashCode(IPackageSearchMetadata obj)
-            {
-                return obj.Identity.GetHashCode();
-            }
+            return obj.Identity.GetHashCode();
         }
     }
 }

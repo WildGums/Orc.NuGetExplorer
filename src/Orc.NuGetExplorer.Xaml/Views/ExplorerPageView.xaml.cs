@@ -1,111 +1,110 @@
-﻿namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views;
+
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using Catel.MVVM.Views;
+using Orc.NuGetExplorer.Controls;
+
+/// <summary>
+/// Interaction logic for ExplorerPageView.xaml
+/// </summary>
+internal partial class ExplorerPageView : Catel.Windows.Controls.UserControl
 {
-    using System;
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Controls;
-    using Catel.MVVM.Views;
-    using Orc.NuGetExplorer.Controls;
+    private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
+    private const string ArrowDownResourceKey = "ArrowDownBadgeContent";
+    private const int IndicatorOffset = 2;
+
+    private readonly FrameworkElement _arrowUpResource;
+    private readonly FrameworkElement _arrowDownResource;
+
+    private ScrollViewer? _infinityboxScrollViewer;
+    private bool _isViewportWidthListened = false;
+
+    static ExplorerPageView()
+    {
+        typeof(ExplorerPageView).AutoDetectViewPropertiesToSubscribe();
+    }
+
+    public ExplorerPageView()
+    {
+        InitializeComponent();
+
+        _arrowUpResource = (FrameworkElement)FindResource(ArrowUpResourceKey);
+        _arrowDownResource = (FrameworkElement)FindResource(ArrowDownResourceKey);
+    }
+
+    [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
+    public NuGetPackage? SelectedItemOnPage
+    {
+        get { return (NuGetPackage?)GetValue(SelectedItemOnPageProperty); }
+        set { SetValue(SelectedItemOnPageProperty, value); }
+    }
 
     /// <summary>
-    /// Interaction logic for ExplorerPageView.xaml
+    /// Identifies the <see cref="SelectedItemOnPage"/> dependency property.
     /// </summary>
-    internal partial class ExplorerPageView : Catel.Windows.Controls.UserControl
+    public static readonly DependencyProperty SelectedItemOnPageProperty =
+        DependencyProperty.Register(nameof(SelectedItemOnPage), typeof(NuGetPackage), typeof(ExplorerPageView), new PropertyMetadata(null));
+
+    private void Border_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
-        private const string ArrowDownResourceKey = "ArrowDownBadgeContent";
-        private const int IndicatorOffset = 2;
+        //fix loading indicator part size
+        _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
 
-        private readonly FrameworkElement _arrowUpResource;
-        private readonly FrameworkElement _arrowDownResource;
-
-        private ScrollViewer? _infinityboxScrollViewer;
-        private bool _isViewportWidthListened = false;
-
-        static ExplorerPageView()
+        if (_infinityboxScrollViewer is null)
         {
-            typeof(ExplorerPageView).AutoDetectViewPropertiesToSubscribe();
+            return;
         }
 
-        public ExplorerPageView()
+        if (!_isViewportWidthListened)
         {
-            InitializeComponent();
+            SubscribeToScrollViewerPropertyChanges();
+        }
+    }
 
-            _arrowUpResource = (FrameworkElement)FindResource(ArrowUpResourceKey);
-            _arrowDownResource = (FrameworkElement)FindResource(ArrowDownResourceKey);
+    private void SubscribeToScrollViewerPropertyChanges()
+    {
+        // listen ViewportWidth
+        if (_isViewportWidthListened)
+        {
+            return;
         }
 
-        [ViewToViewModel(viewModelPropertyName: "SelectedPackageItem", MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public NuGetPackage? SelectedItemOnPage
+        DependencyPropertyDescriptor
+            .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
+            .AddValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
+
+        // manual recount
+        OnInfinityScrollViewPortChanged(this, EventArgs.Empty);
+
+        _isViewportWidthListened = true;
+    }
+
+
+    private void OnInfinityScrollViewPortChanged(object? sender, EventArgs e)
+    {
+        if (_infinityboxScrollViewer is null)
         {
-            get { return (NuGetPackage?)GetValue(SelectedItemOnPageProperty); }
-            set { SetValue(SelectedItemOnPageProperty, value); }
+            return;
         }
+        indicatorScreen.SetCurrentValue(WidthProperty, _infinityboxScrollViewer.ViewportWidth + IndicatorOffset);
+    }
 
-        /// <summary>
-        /// Identifies the <see cref="SelectedItemOnPage"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty SelectedItemOnPageProperty =
-            DependencyProperty.Register(nameof(SelectedItemOnPage), typeof(NuGetPackage), typeof(ExplorerPageView), new PropertyMetadata(null));
-
-        private void Border_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    private void UnsubscribeFromScrollViewerProperyChanged()
+    {
+        if (_isViewportWidthListened && _infinityboxScrollViewer is not null)
         {
-            //fix loading indicator part size
-            _infinityboxScrollViewer = _infinityboxScrollViewer ?? WpfHelper.FindVisualChild<ScrollViewer>(infinitybox);
-
-            if (_infinityboxScrollViewer is null)
-            {
-                return;
-            }
-
-            if (!_isViewportWidthListened)
-            {
-                SubscribeToScrollViewerPropertyChanges();
-            }
-        }
-
-        private void SubscribeToScrollViewerPropertyChanges()
-        {
-            // listen ViewportWidth
-            if (_isViewportWidthListened)
-            {
-                return;
-            }
-
             DependencyPropertyDescriptor
                 .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
-                .AddValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
-
-            // manual recount
-            OnInfinityScrollViewPortChanged(this, EventArgs.Empty);
-
-            _isViewportWidthListened = true;
+                .RemoveValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
+            _isViewportWidthListened = false;
         }
+    }
 
-
-        private void OnInfinityScrollViewPortChanged(object? sender, EventArgs e)
-        {
-            if (_infinityboxScrollViewer is null)
-            {
-                return;
-            }
-            indicatorScreen.SetCurrentValue(WidthProperty, _infinityboxScrollViewer.ViewportWidth + IndicatorOffset);
-        }
-
-        private void UnsubscribeFromScrollViewerProperyChanged()
-        {
-            if (_isViewportWidthListened && _infinityboxScrollViewer is not null)
-            {
-                DependencyPropertyDescriptor
-                   .FromProperty(ScrollViewer.ViewportWidthProperty, typeof(ScrollViewer))
-                   .RemoveValueChanged(_infinityboxScrollViewer, (s, e) => OnInfinityScrollViewPortChanged(s, e));
-                _isViewportWidthListened = false;
-            }
-        }
-
-        protected override void OnUnloaded(EventArgs e)
-        {
-            UnsubscribeFromScrollViewerProperyChanged();
-        }
+    protected override void OnUnloaded(EventArgs e)
+    {
+        UnsubscribeFromScrollViewerProperyChanged();
     }
 }

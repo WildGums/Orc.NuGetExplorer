@@ -1,8 +1,7 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public interface IFileSystemService
 {
-    public interface IFileSystemService
-    {
-        void CreateDeleteme(string name, string path);
-        void RemoveDeleteme(string name, string path);
-    }
+    void CreateDeleteme(string name, string path);
+    void RemoveDeleteme(string name, string path);
 }

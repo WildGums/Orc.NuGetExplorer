@@ -1,28 +1,27 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Collections.Generic;
+
+public interface INuGetConfigurationService
 {
-    using System.Collections.Generic;
+    string GetDestinationFolder();
+    void SetDestinationFolder(string value);
+    IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
 
-    public interface INuGetConfigurationService
-    {
-        string GetDestinationFolder();
-        void SetDestinationFolder(string value);
-        IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
+    bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true);
 
-        bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true);
+    void DisablePackageSource(string name, string source);
+    void SavePackageSources(IEnumerable<IPackageSource> packageSources);
 
-        void DisablePackageSource(string name, string source);
-        void SavePackageSources(IEnumerable<IPackageSource> packageSources);
+    void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects);
 
-        void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects);
+    void SetPackageQuerySize(int size);
+    int GetPackageQuerySize();
 
-        void SetPackageQuerySize(int size);
-        int GetPackageQuerySize();
+    void SetIsPrereleaseAllowed(IRepository repository, bool value);
+    bool GetIsPrereleaseAllowed(IRepository repository);
 
-        void SetIsPrereleaseAllowed(IRepository repository, bool value);
-        bool GetIsPrereleaseAllowed(IRepository repository);
+    void RemovePackageSource(IPackageSource source);
 
-        void RemovePackageSource(IPackageSource source);
-
-        bool IsProjectConfigured(IExtensibleProject project);
-    }
+    bool IsProjectConfigured(IExtensibleProject project);
 }

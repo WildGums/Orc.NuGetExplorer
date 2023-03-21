@@ -1,83 +1,82 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel;
+using Catel.IoC;
+
+internal class PackageOperationContextService : IPackageOperationContextService
 {
-    using System;
-    using Catel;
-    using Catel.IoC;
+    private readonly object _lockObject = new();
+    private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+    private readonly ITypeFactory _typeFactory;
+    private PackageOperationContext? _rootContext;
 
-    internal class PackageOperationContextService : IPackageOperationContextService
+    public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
     {
-        private readonly object _lockObject = new();
-        private readonly IPackageOperationNotificationService _packageOperationNotificationService;
-        private readonly ITypeFactory _typeFactory;
-        private PackageOperationContext? _rootContext;
+        ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
-        {
-            ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
-            ArgumentNullException.ThrowIfNull(typeFactory);
+        _packageOperationNotificationService = packageOperationNotificationService;
+        _typeFactory = typeFactory;
+    }
 
-            _packageOperationNotificationService = packageOperationNotificationService;
-            _typeFactory = typeFactory;
-        }
+    public IPackageOperationContext? CurrentContext { get; private set; }
 
-        public IPackageOperationContext? CurrentContext { get; private set; }
+    public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
 
-        public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
-
-        public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
-        {
+    public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
+    {
 #pragma warning disable IDISP001 // Dispose created
-            var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
+        var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
 #pragma warning restore IDISP001 // Dispose created
-            return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
+        return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
             {
                 OperationType = operationType,
             },
             token => ApplyOperationContext(token.Instance),
             token => CloseCurrentOperationContext(token.Instance));
-        }
+    }
 
-        private void ApplyOperationContext(PackageOperationContext context)
+    private void ApplyOperationContext(PackageOperationContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        lock (_lockObject)
         {
-            ArgumentNullException.ThrowIfNull(context);
-
-            lock (_lockObject)
+            if (_rootContext is null)
             {
-                if (_rootContext is null)
-                {
-                    context.Exceptions?.Clear();
+                context.Exceptions?.Clear();
 
-                    _rootContext = context;
-                    CurrentContext = context;
-                    _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages ?? new IPackageDetails[0]);
-                }
-                else
-                {
-                    context.Parent = CurrentContext;
-                    CurrentContext = context;
-                }
+                _rootContext = context;
+                CurrentContext = context;
+                _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages ?? new IPackageDetails[0]);
+            }
+            else
+            {
+                context.Parent = CurrentContext;
+                CurrentContext = context;
             }
         }
+    }
 
-        private void CloseCurrentOperationContext(PackageOperationContext context)
+    private void CloseCurrentOperationContext(PackageOperationContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        lock (_lockObject)
         {
-            ArgumentNullException.ThrowIfNull(context);
-
-            lock (_lockObject)
+            if (CurrentContext?.Parent is null)
             {
-                if (CurrentContext?.Parent is null)
-                {
-                    OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
+                OperationContextDisposing?.Invoke(this, new OperationContextEventArgs(context));
 #pragma warning disable IDISP007 // Don't dispose injected.
-                    context.FileSystemContext.Dispose();
+                context.FileSystemContext.Dispose();
 #pragma warning restore IDISP007 // Don't dispose injected.
 
-                    _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages ?? new IPackageDetails[0]);
-                    _rootContext = null;
-                }
-
-                CurrentContext = CurrentContext?.Parent;
+                _packageOperationNotificationService.NotifyOperationBatchFinished(context.OperationType, context.Packages ?? new IPackageDetails[0]);
+                _rootContext = null;
             }
+
+            CurrentContext = CurrentContext?.Parent;
         }
     }
 }

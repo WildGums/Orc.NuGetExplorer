@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Scenario
-{
-    using System.Threading.Tasks;
+﻿namespace Orc.NuGetExplorer.Scenario;
 
-    public interface IUpgradeScenario
-    {
-        Task<bool> RunAsync();
-    }
+using System.Threading.Tasks;
+
+public interface IUpgradeScenario
+{
+    Task<bool> RunAsync();
 }

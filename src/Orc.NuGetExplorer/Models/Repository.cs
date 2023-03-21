@@ -1,49 +1,48 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+
+public sealed class Repository : IRepository
 {
-    using System;
-
-    public sealed class Repository : IRepository
+    public Repository(string source)
     {
-        public Repository(string source)
+        Name = string.Empty;
+        Source = source;
+    }
+
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Source { get; set; }
+    public PackageOperationType OperationType { get; set; }
+
+    public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
+
+    private bool Equals(Repository other)
+    {
+        return Id == other.Id && string.Equals(Name, other.Name)
+                              && string.Equals(Source, other.Source)
+                              && OperationType == other.OperationType;
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            Name = string.Empty;
-            Source = source;
+            var hashCode = Id;
+            hashCode = (hashCode * 397) ^ (Name is not null ? Name.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (Source is not null ? Source.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (int)OperationType;
+            return hashCode;
+        }
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Repository repository)
+        {
+            return false;
         }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Source { get; set; }
-        public PackageOperationType OperationType { get; set; }
-
-        public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
-
-        private bool Equals(Repository other)
-        {
-            return Id == other.Id && string.Equals(Name, other.Name)
-                && string.Equals(Source, other.Source)
-                && OperationType == other.OperationType;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Id;
-                hashCode = (hashCode * 397) ^ (Name is not null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Source is not null ? Source.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int)OperationType;
-                return hashCode;
-            }
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not Repository repository)
-            {
-                return false;
-            }
-
-            return Equals(repository);
-        }
+        return Equals(repository);
     }
 }

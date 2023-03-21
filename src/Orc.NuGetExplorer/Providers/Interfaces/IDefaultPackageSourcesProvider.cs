@@ -1,11 +1,10 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Collections.Generic;
+
+public interface IDefaultPackageSourcesProvider
 {
-    using System.Collections.Generic;
+    string DefaultSource { get; set; }
 
-    public interface IDefaultPackageSourcesProvider
-    {
-        string DefaultSource { get; set; }
-
-        IEnumerable<IPackageSource> GetDefaultPackages();
-    }
+    IEnumerable<IPackageSource> GetDefaultPackages();
 }

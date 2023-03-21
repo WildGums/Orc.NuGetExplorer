@@ -1,24 +1,23 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.Logging;
+
+public class LogHelper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel.Logging;
-
-    public class LogHelper
+    public static void LogUnclearedPaths(List<string>? unclearedPaths, ILog log)
     {
-        public static void LogUnclearedPaths(List<string> unclearedPaths, ILog log)
+        ArgumentNullException.ThrowIfNull(log);
+
+        if (unclearedPaths?.Any() ?? false)
         {
-            ArgumentNullException.ThrowIfNull(log);
+            log.Info("Some directories cannot be deleted, directory tree was partially cleared:");
 
-            if (unclearedPaths?.Any() ?? false)
+            foreach (var failedDelete in unclearedPaths.OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
             {
-                log.Info("Some directories cannot be deleted, directory tree was partially cleared:");
-
-                foreach (var failedDelete in unclearedPaths.OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
-                {
-                    log.Info($"Failed to delete path {failedDelete}");
-                }
+                log.Info($"Failed to delete path {failedDelete}");
             }
         }
     }

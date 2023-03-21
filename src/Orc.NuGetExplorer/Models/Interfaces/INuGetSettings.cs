@@ -1,10 +1,9 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using System.Collections.Generic;
-    using NuGet.Configuration;
+﻿namespace Orc.NuGetExplorer;
 
-    public interface INuGetSettings
-    {
-        IReadOnlyList<PackageSource> GetAllPackageSources();
-    }
+using System.Collections.Generic;
+using NuGet.Configuration;
+
+public interface INuGetSettings
+{
+    IReadOnlyList<PackageSource> GetAllPackageSources();
 }

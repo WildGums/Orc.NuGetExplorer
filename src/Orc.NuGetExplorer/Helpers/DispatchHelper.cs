@@ -1,27 +1,27 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+
+public static class DispatchHelper
 {
-    using System;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Threading;
+    private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
-    public static class DispatchHelper
+    public static async Task DispatchIfNecessaryAsync(Action action)
     {
-        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
+        ArgumentNullException.ThrowIfNull(action);
 
-        public static async Task DispatchIfNecessaryAsync(Action action)
+        if (!Dispatcher.CheckAccess())
         {
-            ArgumentNullException.ThrowIfNull(action);
-
-            if (!Dispatcher.CheckAccess())
-            {
-                await Dispatcher.InvokeAsync(action);
-            }
-            else
-            {
-                action.Invoke();
-            }
+            await Dispatcher.InvokeAsync(action);
         }
+        else
+        {
+            action.Invoke();
+        }
+    }
 
 #if NET40
        /// <summary>
@@ -52,5 +52,4 @@
             return tcs.Task;
         }
 #endif
-    }
 }

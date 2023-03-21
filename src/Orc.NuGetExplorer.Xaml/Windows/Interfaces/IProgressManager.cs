@@ -1,11 +1,10 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows;
+
+using Catel.MVVM;
+
+public interface IProgressManager
 {
-    using Catel.MVVM;
+    void ShowBar(IViewModel vm);
 
-    public interface IProgressManager
-    {
-        void ShowBar(IViewModel vm);
-
-        void HideBar(IViewModel vm);
-    }
+    void HideBar(IViewModel vm);
 }

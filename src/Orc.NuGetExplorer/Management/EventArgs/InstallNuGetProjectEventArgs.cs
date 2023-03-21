@@ -1,23 +1,22 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using NuGet.Packaging.Core;
+
+public class InstallNuGetProjectEventArgs : NuGetProjectEventArgs
 {
-    using NuGet.Packaging.Core;
-
-    public class InstallNuGetProjectEventArgs : NuGetProjectEventArgs
+    public InstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
     {
-        public InstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
-        {
-            Result = result;
-        }
-
-        public bool Result { get; }
+        Result = result;
     }
 
-    public class BatchedInstallNuGetProjectEventArgs : InstallNuGetProjectEventArgs
-    {
-        public BatchedInstallNuGetProjectEventArgs(InstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
-        {
-        }
+    public bool Result { get; }
+}
 
-        public bool IsBatchEnd { get; set; }
+public class BatchedInstallNuGetProjectEventArgs : InstallNuGetProjectEventArgs
+{
+    public BatchedInstallNuGetProjectEventArgs(InstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
+    {
     }
+
+    public bool IsBatchEnd { get; set; }
 }

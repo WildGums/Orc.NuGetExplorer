@@ -1,11 +1,10 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public enum FeedVerificationResult
 {
-    public enum FeedVerificationResult
-    {
-        Unknown,
-        Valid,
-        AuthenticationRequired,
-        AuthorizationRequired,
-        Invalid
-    }
+    Unknown,
+    Valid,
+    AuthenticationRequired,
+    AuthorizationRequired,
+    Invalid
 }

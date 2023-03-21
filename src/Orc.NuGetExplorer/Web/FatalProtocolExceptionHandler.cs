@@ -1,51 +1,50 @@
-﻿namespace Orc.NuGetExplorer.Web
+﻿namespace Orc.NuGetExplorer.Web;
+
+using System;
+using System.Net;
+using Catel.Logging;
+using NuGet.Protocol.Core.Types;
+
+public class FatalProtocolExceptionHandler : IHttpExceptionHandler<FatalProtocolException>
 {
-    using System;
-    using System.Net;
-    using Catel.Logging;
-    using NuGet.Protocol.Core.Types;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class FatalProtocolExceptionHandler : IHttpExceptionHandler<FatalProtocolException>
+    private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
+
+    public FeedVerificationResult HandleException(FatalProtocolException exception, string source)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(exception);
 
-        private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
-
-        public FeedVerificationResult HandleException(FatalProtocolException exception, string source)
+        try
         {
-            ArgumentNullException.ThrowIfNull(exception);
+            var innerException = exception.InnerException;
 
-            try
+            if (innerException is null)
             {
-                var innerException = exception.InnerException;
-
-                if (innerException is null)
+                //handle based on protocol error messages
+                if (exception.HidesUnauthorizedError())
                 {
-                    //handle based on protocol error messages
-                    if (exception.HidesUnauthorizedError())
-                    {
-                        return FeedVerificationResult.AuthenticationRequired;
-                    }
-                    if (exception.HidesForbiddenError())
-                    {
-                        return FeedVerificationResult.AuthorizationRequired;
-                    }
+                    return FeedVerificationResult.AuthenticationRequired;
                 }
-                else
+                if (exception.HidesForbiddenError())
                 {
-                    if (innerException is WebException webException)
-                    {
-                        WebExceptionHandler.HandleException(webException, source);
-                    }
+                    return FeedVerificationResult.AuthorizationRequired;
                 }
-
             }
-            catch (Exception ex)
+            else
             {
-                Log.Debug(ex, "Failed to verify feed '{0}'", source);
+                if (innerException is WebException webException)
+                {
+                    WebExceptionHandler.HandleException(webException, source);
+                }
             }
 
-            return FeedVerificationResult.Invalid;
         }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "Failed to verify feed '{0}'", source);
+        }
+
+        return FeedVerificationResult.Invalid;
     }
 }

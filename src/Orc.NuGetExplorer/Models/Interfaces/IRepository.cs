@@ -1,11 +1,10 @@
-﻿namespace Orc.NuGetExplorer
-{
-    public interface IRepository
-    {
-        string Name { get; }
-        string Source { get; }
-        PackageOperationType OperationType { get; }
+﻿namespace Orc.NuGetExplorer;
 
-        bool IsLocal { get; }
-    }
+public interface IRepository
+{
+    string Name { get; }
+    string Source { get; }
+    PackageOperationType OperationType { get; }
+
+    bool IsLocal { get; }
 }

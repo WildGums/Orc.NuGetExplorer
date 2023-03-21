@@ -1,11 +1,10 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+
+internal interface ITemporaryFIleSystemContextService
 {
-    using System;
+    ITemporaryFileSystemContext? Context { get; }
 
-    internal interface ITemporaryFIleSystemContextService
-    {
-        ITemporaryFileSystemContext? Context { get; }
-
-        IDisposable UseTemporaryFIleSystemContext();
-    }
+    IDisposable UseTemporaryFIleSystemContext();
 }

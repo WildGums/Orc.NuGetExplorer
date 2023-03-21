@@ -1,118 +1,117 @@
-﻿namespace Orc.NuGetExplorer.Loggers
+﻿namespace Orc.NuGetExplorer.Loggers;
+
+using System;
+using System.Threading.Tasks;
+using Catel.Logging;
+using NuGet.Common;
+
+public class NuGetLogger : ILogger
 {
-    using System;
-    using System.Threading.Tasks;
-    using Catel.Logging;
-    using NuGet.Common;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class NuGetLogger : ILogger
+    private readonly bool _verbose;
+    private readonly INuGetLogListeningSevice _logListeningService;
+
+    public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(logListeningService);
 
-        private readonly bool _verbose;
-        private readonly INuGetLogListeningSevice _logListeningService;
+        _logListeningService = logListeningService;
+        _verbose = verbose;
+    }
 
-        public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
+    public NuGetLogger(INuGetLogListeningSevice logListeningService)
+        : this(true, logListeningService)
+    {
+
+    }
+
+    #region ILogger
+    void ILogger.Log(LogLevel level, string data)
+    {
+        switch (level)
         {
-            ArgumentNullException.ThrowIfNull(logListeningService);
+            case LogLevel.Debug:
+                LogDebug(data);
+                break;
 
-            _logListeningService = logListeningService;
-            _verbose = verbose;
+            case LogLevel.Error:
+                LogError(data);
+                break;
+
+            case LogLevel.Information:
+                LogInformation(data);
+                break;
+
+            case LogLevel.Warning:
+                LogWarning(data);
+                break;
+
+            case LogLevel.Minimal:
+                LogMinimal(data);
+                break;
+
+            case LogLevel.Verbose:
+                LogVerbose(data);
+                break;
         }
+    }
 
-        public NuGetLogger(INuGetLogListeningSevice logListeningService)
-            : this(true, logListeningService)
-        {
+    void ILogger.Log(ILogMessage message)
+    {
+        Log.Debug($"Send {message.Level} message to log listeners");
+        ((ILogger)this).Log(message.Level, message.Message);
+    }
 
-        }
+    public async Task LogAsync(ILogMessage message)
+    {
+        Log.Debug($"Send {message.Level} message to log listeners");
+        await LogAsync(message.Level, message.Message);
+    }
 
-        #region ILogger
-        void ILogger.Log(LogLevel level, string data)
-        {
-            switch (level)
-            {
-                case LogLevel.Debug:
-                    LogDebug(data);
-                    break;
+    public async Task LogAsync(LogLevel level, string data)
+    {
+        var logginTask = Task.Run(() => ((ILogger)this).Log(level, data));
+        await logginTask;
+    }
 
-                case LogLevel.Error:
-                    LogError(data);
-                    break;
+    public void LogDebug(string data)
+    {
+        _logListeningService.SendDebug(data);
+    }
 
-                case LogLevel.Information:
-                    LogInformation(data);
-                    break;
+    public void LogError(string data)
+    {
+        _logListeningService.SendError(data);
+    }
 
-                case LogLevel.Warning:
-                    LogWarning(data);
-                    break;
+    public void LogInformation(string data)
+    {
+        _logListeningService.SendInfo(data);
+    }
 
-                case LogLevel.Minimal:
-                    LogMinimal(data);
-                    break;
+    public void LogWarning(string data)
+    {
+        _logListeningService.SendWarning(data);
+    }
 
-                case LogLevel.Verbose:
-                    LogVerbose(data);
-                    break;
-            }
-        }
+    public void LogInformationSummary(string data)
+    {
+        _logListeningService.SendInfo(data);
+    }
 
-        void ILogger.Log(ILogMessage message)
-        {
-            Log.Debug($"Send {message.Level} message to log listeners");
-            ((ILogger)this).Log(message.Level, message.Message);
-        }
+    public void LogMinimal(string data)
+    {
+        LogInformation(data);
+    }
 
-        public async Task LogAsync(ILogMessage message)
-        {
-            Log.Debug($"Send {message.Level} message to log listeners");
-            await LogAsync(message.Level, message.Message);
-        }
-
-        public async Task LogAsync(LogLevel level, string data)
-        {
-            var logginTask = Task.Run(() => ((ILogger)this).Log(level, data));
-            await logginTask;
-        }
-
-        public void LogDebug(string data)
-        {
-            _logListeningService.SendDebug(data);
-        }
-
-        public void LogError(string data)
-        {
-            _logListeningService.SendError(data);
-        }
-
-        public void LogInformation(string data)
-        {
-            _logListeningService.SendInfo(data);
-        }
-
-        public void LogWarning(string data)
-        {
-            _logListeningService.SendWarning(data);
-        }
-
-        public void LogInformationSummary(string data)
-        {
-            _logListeningService.SendInfo(data);
-        }
-
-        public void LogMinimal(string data)
+    public void LogVerbose(string data)
+    {
+        if (_verbose)
         {
             LogInformation(data);
         }
-
-        public void LogVerbose(string data)
-        {
-            if (_verbose)
-            {
-                LogInformation(data);
-            }
-        }
-
-        #endregion
     }
+
+    #endregion
 }

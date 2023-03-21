@@ -1,10 +1,9 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public enum PackageOperationType
 {
-    public enum PackageOperationType
-    {
-        None = 0, // default value
-        Install,
-        Uninstall,
-        Update
-    }
+    None = 0, // default value
+    Install,
+    Uninstall,
+    Update
 }

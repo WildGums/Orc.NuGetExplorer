@@ -1,52 +1,51 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.Logging;
+using NuGet.Configuration;
+
+public class PackageSourceWrapper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel.Logging;
-    using NuGet.Configuration;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class PackageSourceWrapper
+    public static explicit operator PackageSource(PackageSourceWrapper wrapper)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(wrapper);
 
-        public static explicit operator PackageSource(PackageSourceWrapper wrapper)
+        if (wrapper.IsMultipleSource)
         {
-            ArgumentNullException.ThrowIfNull(wrapper);
-
-            if (wrapper.IsMultipleSource)
-            {
-                throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
-            }
-
-            if (!wrapper.PackageSources.Any())
-            {
-                throw Log.ErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
-            }
-
-            return wrapper.PackageSources[0];
+            throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
         }
 
-        public IReadOnlyList<PackageSource> PackageSources { get; private set; }
-
-        public bool IsMultipleSource => PackageSources.Count > 1;
-
-        public PackageSourceWrapper(string source)
+        if (!wrapper.PackageSources.Any())
         {
-            PackageSources = new List<PackageSource>()
-            {
-                new PackageSource(source)
-            };
+            throw Log.ErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
         }
 
-        public PackageSourceWrapper(IReadOnlyList<string> sources)
-        {
-            PackageSources = new List<PackageSource>(sources.Select(x => new PackageSource(x)));
-        }
+        return wrapper.PackageSources[0];
+    }
 
-        public override string ToString()
+    public IReadOnlyList<PackageSource> PackageSources { get; private set; }
+
+    public bool IsMultipleSource => PackageSources.Count > 1;
+
+    public PackageSourceWrapper(string source)
+    {
+        PackageSources = new List<PackageSource>()
         {
-            return string.Join<PackageSource>("; ", PackageSources.ToArray());
-        }
+            new PackageSource(source)
+        };
+    }
+
+    public PackageSourceWrapper(IReadOnlyList<string> sources)
+    {
+        PackageSources = new List<PackageSource>(sources.Select(x => new PackageSource(x)));
+    }
+
+    public override string ToString()
+    {
+        return string.Join<PackageSource>("; ", PackageSources.ToArray());
     }
 }

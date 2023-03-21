@@ -1,70 +1,70 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel.Logging;
+using Orc.FileSystem;
+
+public class RollbackWatcher : PackageManagerContextWatcherBase
 {
-    using System;
-    using Catel.Logging;
-    using Orc.FileSystem;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class RollbackWatcher : PackageManagerContextWatcherBase
+    private readonly IBackupFileSystemService _backupFileSystemService;
+    private readonly IFileSystemService _fileSystemService;
+    private readonly IDirectoryService _directoryService;
+    private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
+
+    public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService,
+        IPackageOperationContextService packageOperationContextService,
+        IRollbackPackageOperationService rollbackPackageOperationService,
+        IBackupFileSystemService backupFileSystemService,
+        IFileSystemService fileSystemService,
+        IDirectoryService directoryService)
+        : base(packageOperationNotificationService, packageOperationContextService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
+        ArgumentNullException.ThrowIfNull(backupFileSystemService);
+        ArgumentNullException.ThrowIfNull(fileSystemService);
+        ArgumentNullException.ThrowIfNull(directoryService);
 
-        private readonly IBackupFileSystemService _backupFileSystemService;
-        private readonly IFileSystemService _fileSystemService;
-        private readonly IDirectoryService _directoryService;
-        private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
+        _rollbackPackageOperationService = rollbackPackageOperationService;
+        _backupFileSystemService = backupFileSystemService;
+        _fileSystemService = fileSystemService;
+        _directoryService = directoryService;
+    }
 
-        public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService,
-                               IPackageOperationContextService packageOperationContextService,
-                               IRollbackPackageOperationService rollbackPackageOperationService,
-                               IBackupFileSystemService backupFileSystemService,
-                               IFileSystemService fileSystemService,
-                               IDirectoryService directoryService)
-            : base(packageOperationNotificationService, packageOperationContextService)
+    protected override void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
+    {
+        var context = e.PackageOperationContext;
+
+        if (HasContextErrors)
         {
-            ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
-            ArgumentNullException.ThrowIfNull(backupFileSystemService);
-            ArgumentNullException.ThrowIfNull(fileSystemService);
-            ArgumentNullException.ThrowIfNull(directoryService);
+            _rollbackPackageOperationService.Rollback(context);
+        }
+        else
+        {
+            _rollbackPackageOperationService.ClearRollbackActions(context);
+        }
+    }
 
-            _rollbackPackageOperationService = rollbackPackageOperationService;
-            _backupFileSystemService = backupFileSystemService;
-            _fileSystemService = fileSystemService;
-            _directoryService = directoryService;
+    protected override void OnOperationStarting(object? sender, PackageOperationEventArgs e)
+    {
+        var packagesConfig = System.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
+
+        if (e.PackageOperationType == PackageOperationType.Uninstall)
+        {
+            _backupFileSystemService.BackupFolder(e.InstallPath);
+            _backupFileSystemService.BackupFile(packagesConfig);
+
+            _rollbackPackageOperationService.PushRollbackAction(() =>
+            {
+                _backupFileSystemService.Restore(e.InstallPath);
+                _backupFileSystemService.Restore(packagesConfig);
+            }, CurrentContext);
         }
 
-        protected override void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
+        if (e.PackageOperationType == PackageOperationType.Install)
         {
-            var context = e.PackageOperationContext;
-
-            if (HasContextErrors)
-            {
-                _rollbackPackageOperationService.Rollback(context);
-            }
-            else
-            {
-                _rollbackPackageOperationService.ClearRollbackActions(context);
-            }
-        }
-
-        protected override void OnOperationStarting(object? sender, PackageOperationEventArgs e)
-        {
-            var packagesConfig = System.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
-
-            if (e.PackageOperationType == PackageOperationType.Uninstall)
-            {
-                _backupFileSystemService.BackupFolder(e.InstallPath);
-                _backupFileSystemService.BackupFile(packagesConfig);
-
-                _rollbackPackageOperationService.PushRollbackAction(() =>
-                {
-                    _backupFileSystemService.Restore(e.InstallPath);
-                    _backupFileSystemService.Restore(packagesConfig);
-                }, CurrentContext);
-            }
-
-            if (e.PackageOperationType == PackageOperationType.Install)
-            {
-                _rollbackPackageOperationService.PushRollbackAction(() =>
+            _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
                     var success = true;
                     try
@@ -85,9 +85,8 @@
                         }
                     }
                 },
-                    CurrentContext
-                );
-            }
+                CurrentContext
+            );
         }
     }
 }

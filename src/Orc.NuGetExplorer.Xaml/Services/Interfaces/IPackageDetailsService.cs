@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using System.Windows.Documents;
+﻿namespace Orc.NuGetExplorer;
 
-    internal interface IPackageDetailsService
-    {
-        FlowDocument PackageToFlowDocument(IPackageDetails package);
-    }
+using System.Windows.Documents;
+
+internal interface IPackageDetailsService
+{
+    FlowDocument PackageToFlowDocument(IPackageDetails package);
 }

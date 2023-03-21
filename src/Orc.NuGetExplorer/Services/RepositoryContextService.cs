@@ -1,61 +1,60 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using NuGet.Configuration;
+using NuGet.Protocol.Core.Types;
+using NuGetExplorer.Management;
+
+internal class RepositoryContextService : IRepositoryContextService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Management;
+    private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
 
-    internal class RepositoryContextService : IRepositoryContextService
+    public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
     {
-        private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
+        ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
 
-        public RepositoryContextService(ISourceRepositoryProvider sourceRepositoryProvider)
+        _sourceRepositoryProvider = sourceRepositoryProvider;
+    }
+
+    public SourceRepository? GetRepository(PackageSource source)
+    {
+        if (source is null)
         {
-            ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
-
-            _sourceRepositoryProvider = sourceRepositoryProvider;
+            return null;
         }
 
-        public SourceRepository? GetRepository(PackageSource source)
+        var sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
+
+        return sourceRepo;
+    }
+
+    public SourceContext AcquireContext(PackageSource source)
+    {
+        var repo = GetRepository(source);
+
+        if (repo is null)
         {
-            if (source is null)
-            {
-                return null;
-            }
-
-            var sourceRepo = _sourceRepositoryProvider.CreateRepository(source);
-
-            return sourceRepo;
-        }
-
-        public SourceContext AcquireContext(PackageSource source)
-        {
-            var repo = GetRepository(source);
-
-            if (repo is null)
-            {
-                return SourceContext.EmptyContext;
-            }
-
-            var context = new SourceContext(new List<SourceRepository>() { repo });
-
-            return context;
-        }
-
-
-        public SourceContext AcquireContext(bool ignoreLocal = false)
-        {
-            //acquire for all by default
-            IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().Where(r => !r.PackageSource.IsLocal || !ignoreLocal).ToList();
-
-            if (repos.Any())
-            {
-                return new SourceContext(repos);
-            }
-
             return SourceContext.EmptyContext;
         }
+
+        var context = new SourceContext(new List<SourceRepository>() { repo });
+
+        return context;
+    }
+
+
+    public SourceContext AcquireContext(bool ignoreLocal = false)
+    {
+        //acquire for all by default
+        IReadOnlyList<SourceRepository> repos = _sourceRepositoryProvider.GetRepositories().Where(r => !r.PackageSource.IsLocal || !ignoreLocal).ToList();
+
+        if (repos.Any())
+        {
+            return new SourceContext(repos);
+        }
+
+        return SourceContext.EmptyContext;
     }
 }

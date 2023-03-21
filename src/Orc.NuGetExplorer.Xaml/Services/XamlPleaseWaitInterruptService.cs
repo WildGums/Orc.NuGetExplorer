@@ -1,22 +1,21 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel.Services;
+
+public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
 {
-    using System;
-    using Catel.Services;
+    private readonly IBusyIndicatorService _busyIndicatorService;
 
-    public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
+    public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
     {
-        private readonly IBusyIndicatorService _busyIndicatorService;
+        ArgumentNullException.ThrowIfNull(busyIndicatorService);
 
-        public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
-        {
-            ArgumentNullException.ThrowIfNull(busyIndicatorService);
+        _busyIndicatorService = busyIndicatorService;
+    }
 
-            _busyIndicatorService = busyIndicatorService;
-        }
-
-        public IDisposable InterruptTemporarily()
-        {
-            return _busyIndicatorService.HideTemporarily();
-        }
+    public IDisposable InterruptTemporarily()
+    {
+        return _busyIndicatorService.HideTemporarily();
     }
 }

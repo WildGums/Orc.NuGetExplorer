@@ -1,70 +1,69 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services;
+
+using System;
+using System.Threading.Tasks;
+using Catel;
+using Catel.IoC;
+using Catel.MVVM;
+using Catel.Services;
+
+public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
 {
-    using System;
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.IoC;
-    using Catel.MVVM;
-    using Catel.Services;
+    private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
+    private readonly INuGetConfigurationService _nuGetConfigurationService;
 
-    public class NuGetExplorerInitializationService : INuGetExplorerInitializationService
+    public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
+        INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
     {
-        private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
+        ArgumentNullException.ThrowIfNull(languageService);
+        ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
+        ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
+        ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
+        ArgumentNullException.ThrowIfNull(vmLocator);
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
-            INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
+        InitializeTypes(ServiceLocator.Default);
+
+        // set language resources
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
+
+        // Note: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
+        // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
+
+        _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
+        _nuGetConfigurationService = nuGetConfigurationService;
+    }
+
+    private void InitializeTypes(IServiceLocator serviceLocator)
+    {
+        ArgumentNullException.ThrowIfNull(serviceLocator);
+
+        // instantiate watchers
+        serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
+        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
+
+        // instantiate package manager listener
+        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+
+        // register commands
+        var commandManager = serviceLocator.ResolveRequiredType<ICommandManager>();
+        commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+    }
+
+    public string DefaultSourceKey => Settings.NuGet.FallbackUrl;
+
+    public int PackageQuerySize
+    {
+        get { return _nuGetConfigurationService.GetPackageQuerySize(); }
+        set
         {
-            ArgumentNullException.ThrowIfNull(languageService);
-            ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
-            ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
-            ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
-            ArgumentNullException.ThrowIfNull(vmLocator);
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
-            InitializeTypes(ServiceLocator.Default);
-
-            // set language resources
-            languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-            languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
-
-            // Note: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
-            // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
-
-            _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
-            _nuGetConfigurationService = nuGetConfigurationService;
+            _nuGetConfigurationService.SetPackageQuerySize(value);
         }
+    }
 
-        private void InitializeTypes(IServiceLocator serviceLocator)
-        {
-            ArgumentNullException.ThrowIfNull(serviceLocator);
-
-            // instantiate watchers
-            serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-            serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-
-            // instantiate package manager listener
-            serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
-
-            // register commands
-            var commandManager = serviceLocator.ResolveRequiredType<ICommandManager>();
-            commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
-        }
-
-        public string DefaultSourceKey => Settings.NuGet.FallbackUrl;
-
-        public int PackageQuerySize
-        {
-            get { return _nuGetConfigurationService.GetPackageQuerySize(); }
-            set
-            {
-                _nuGetConfigurationService.SetPackageQuerySize(value);
-            }
-        }
-
-        public virtual async Task<bool> UpgradeNuGetPackagesIfNeededAsync()
-        {
-            return await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
-        }
+    public virtual async Task<bool> UpgradeNuGetPackagesIfNeededAsync()
+    {
+        return await _nuGetProjectUpgradeService.CheckCurrentConfigurationAndRunAsync();
     }
 }

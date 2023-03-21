@@ -1,13 +1,12 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services;
+
+using System.Threading.Tasks;
+
+public interface INuGetExplorerInitializationService
 {
-    using System.Threading.Tasks;
+    string DefaultSourceKey { get; }
 
-    public interface INuGetExplorerInitializationService
-    {
-        string DefaultSourceKey { get; }
+    int PackageQuerySize { get; set; }
 
-        int PackageQuerySize { get; set; }
-
-        Task<bool> UpgradeNuGetPackagesIfNeededAsync();
-    }
+    Task<bool> UpgradeNuGetPackagesIfNeededAsync();
 }

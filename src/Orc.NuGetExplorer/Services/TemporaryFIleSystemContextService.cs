@@ -1,28 +1,27 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel;
+using Catel.IoC;
+
+internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
 {
-    using System;
-    using Catel;
-    using Catel.IoC;
+    private readonly ITypeFactory _typeFactory;
 
-    internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
+    public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
     {
-        private readonly ITypeFactory _typeFactory;
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
+        _typeFactory = typeFactory;
+    }
+
+    public ITemporaryFileSystemContext? Context { get; private set; }
+
+    public IDisposable UseTemporaryFIleSystemContext()
+    {
+        using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
-            _typeFactory = typeFactory;
-        }
-
-        public ITemporaryFileSystemContext? Context { get; private set; }
-
-        public IDisposable UseTemporaryFIleSystemContext()
-        {
-            using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
-            {
-                return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
-            }
+            return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
         }
     }
 }

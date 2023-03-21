@@ -1,14 +1,13 @@
-﻿namespace Orc.NuGetExplorer.Cache
+﻿namespace Orc.NuGetExplorer.Cache;
+
+using NuGet.Protocol.Core.Types;
+public interface INuGetCacheManager
 {
-    using NuGet.Protocol.Core.Types;
-    public interface INuGetCacheManager
-    {
-        bool ClearAll();
-        bool ClearHttpCache();
-        SourceCacheContext GetCacheContext();
+    bool ClearAll();
+    bool ClearHttpCache();
+    SourceCacheContext GetCacheContext();
 
-        HttpSourceCacheContext GetHttpCacheContext();
+    HttpSourceCacheContext GetHttpCacheContext();
 
-        HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false);
-    }
+    HttpSourceCacheContext GetHttpCacheContext(int retryCount, bool directDownload = false);
 }

@@ -1,65 +1,64 @@
-﻿namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels;
+
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Catel.MVVM;
+using NuGetExplorer.Management;
+
+internal class ExtensiblesViewModel : ViewModelBase
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Catel.MVVM;
-    using NuGetExplorer.Management;
+    private readonly IExtensibleProjectLocator _extensiblesManager;
 
-    internal class ExtensiblesViewModel : ViewModelBase
+    public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
     {
-        private readonly IExtensibleProjectLocator _extensiblesManager;
+        ArgumentNullException.ThrowIfNull(extensiblesManager);
 
-        public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
+        _extensiblesManager = extensiblesManager;
+
+        ExtensiblesCollection = new();
+
+        Title = "Project extensions";
+    }
+
+    protected override Task InitializeAsync()
+    {
+        var registeredProjects = _extensiblesManager.GetAllExtensibleProjects(onlyEnabled: false);
+
+        if (!_extensiblesManager.IsConfigLoaded)
         {
-            ArgumentNullException.ThrowIfNull(extensiblesManager);
-
-            _extensiblesManager = extensiblesManager;
-
-            ExtensiblesCollection = new();
-
-            Title = "Project extensions";
+            _extensiblesManager.RestoreStateFromConfig();
         }
 
-        protected override Task InitializeAsync()
-        {
-            var registeredProjects = _extensiblesManager.GetAllExtensibleProjects(onlyEnabled: false);
-
-            if (!_extensiblesManager.IsConfigLoaded)
-            {
-                _extensiblesManager.RestoreStateFromConfig();
-            }
-
-            ExtensiblesCollection = new ObservableCollection<CheckableUnit<IExtensibleProject>>(
-                registeredProjects
+        ExtensiblesCollection = new ObservableCollection<CheckableUnit<IExtensibleProject>>(
+            registeredProjects
                 .Select(
                     x => new CheckableUnit<IExtensibleProject>(_extensiblesManager.IsEnabled(x), x, ExtensibleProjectStatusChange))
-                );
+        );
 
-            return base.InitializeAsync();
-        }
+        return base.InitializeAsync();
+    }
 
-        public void ExtensibleProjectStatusChange(IExtensibleProject project, bool isShouldBeEnabled)
+    public void ExtensibleProjectStatusChange(IExtensibleProject project, bool isShouldBeEnabled)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+
+        if (isShouldBeEnabled)
         {
-            ArgumentNullException.ThrowIfNull(project);
-
-            if (isShouldBeEnabled)
-            {
-                _extensiblesManager.Enable(project);
-            }
-            else
-            {
-                _extensiblesManager.Disable(project);
-            }
+            _extensiblesManager.Enable(project);
         }
-
-        public ObservableCollection<CheckableUnit<IExtensibleProject>> ExtensiblesCollection { get; set; }
-
-        protected override Task OnClosingAsync()
+        else
         {
-            _extensiblesManager.PersistChanges();
-            return base.OnClosingAsync();
+            _extensiblesManager.Disable(project);
         }
+    }
+
+    public ObservableCollection<CheckableUnit<IExtensibleProject>> ExtensiblesCollection { get; set; }
+
+    protected override Task OnClosingAsync()
+    {
+        _extensiblesManager.PersistChanges();
+        return base.OnClosingAsync();
     }
 }

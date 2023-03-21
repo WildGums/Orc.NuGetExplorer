@@ -1,31 +1,30 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+using System;
+using Catel.IoC;
+using Orc.NuGetExplorer.Management;
+
+public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
 {
-    using System;
-    using Catel.IoC;
-    using Orc.NuGetExplorer.Management;
+    private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
-    public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
+    private readonly IExtensibleProject _defaultProject;
+
+    public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
     {
-        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
+        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        private readonly IExtensibleProject _defaultProject;
+        _extensibleProjectLocator = extensibleProjectLocator;
 
-        public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
-        {
-            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-            ArgumentNullException.ThrowIfNull(typeFactory);
+        _defaultProject = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExampleProject>();
 
-            _extensibleProjectLocator = extensibleProjectLocator;
+        _extensibleProjectLocator.Register(_defaultProject);
+        _extensibleProjectLocator.Enable(_defaultProject);
+    }
 
-            _defaultProject = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExampleProject>();
-
-            _extensibleProjectLocator.Register(_defaultProject);
-            _extensibleProjectLocator.Enable(_defaultProject);
-        }
-
-        public IExtensibleProject GetDefaultProject()
-        {
-            return _defaultProject;
-        }
+    public IExtensibleProject GetDefaultProject()
+    {
+        return _defaultProject;
     }
 }

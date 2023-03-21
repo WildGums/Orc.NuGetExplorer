@@ -1,40 +1,39 @@
-﻿namespace Orc.NuGetExplorer.Web
+﻿namespace Orc.NuGetExplorer.Web;
+
+using System;
+using System.Net;
+using System.Threading.Tasks;
+using Catel.Logging;
+
+public class IconDownloader
 {
-    using System;
-    using System.Net;
-    using System.Threading.Tasks;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class IconDownloader
+    public IconDownloader()
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        SetProtocolSecurity();
+    }
 
-        public IconDownloader()
-        {
-            SetProtocolSecurity();
-        }
+    public static async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
+    {
+        Log.Debug($"Webclient request on {uri}");
 
-        public static async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
-        {
-            Log.Debug($"Webclient request on {uri}");
+        var array = await client.DownloadDataTaskAsync(uri);
 
-            var array = await client.DownloadDataTaskAsync(uri);
+        return array;
+    }
 
-            return array;
-        }
+    public static byte[] GetByUrl(Uri uri, WebClient client)
+    {
+        Log.Debug($"Webclient request on {uri}");
 
-        public static byte[] GetByUrl(Uri uri, WebClient client)
-        {
-            Log.Debug($"Webclient request on {uri}");
+        var array = client.DownloadData(uri);
 
-            var array = client.DownloadData(uri);
+        return array;
+    }
 
-            return array;
-        }
-
-        private static void SetProtocolSecurity()
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-        }
+    private static void SetProtocolSecurity()
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
     }
 }

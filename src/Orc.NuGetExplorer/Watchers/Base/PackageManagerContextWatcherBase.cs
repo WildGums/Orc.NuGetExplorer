@@ -1,29 +1,28 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Linq;
+
+public abstract class PackageManagerContextWatcherBase : PackageManagerWatcherBase
 {
-    using System;
-    using System.Linq;
+    private readonly IPackageOperationContextService _packageOperationContextService;
 
-    public abstract class PackageManagerContextWatcherBase : PackageManagerWatcherBase
+    protected PackageManagerContextWatcherBase(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService)
+        : base(packageOperationNotificationService)
     {
-        private readonly IPackageOperationContextService _packageOperationContextService;
+        ArgumentNullException.ThrowIfNull(packageOperationContextService);
 
-        protected PackageManagerContextWatcherBase(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService)
-            : base(packageOperationNotificationService)
-        {
-            ArgumentNullException.ThrowIfNull(packageOperationContextService);
+        _packageOperationContextService = packageOperationContextService;
 
-            _packageOperationContextService = packageOperationContextService;
+        _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
+    }
 
-            _packageOperationContextService.OperationContextDisposing += OnOperationContextDisposing;
-        }
+    public bool HasContextErrors => CurrentContext?.Exceptions?.Any() ?? false;
 
-        public bool HasContextErrors => CurrentContext?.Exceptions?.Any() ?? false;
+    public IPackageOperationContext? CurrentContext => _packageOperationContextService.CurrentContext;
 
-        public IPackageOperationContext? CurrentContext => _packageOperationContextService.CurrentContext;
+    protected virtual void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
+    {
 
-        protected virtual void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
-        {
-
-        }
     }
 }

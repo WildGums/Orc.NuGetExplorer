@@ -1,18 +1,17 @@
-﻿namespace Orc.NuGetExplorer.Scopes
+﻿namespace Orc.NuGetExplorer.Scopes;
+
+using Catel;
+
+public class AuthenticationScope : Disposable
 {
-    using Catel;
+    private readonly bool _canPromptForAuthentication;
 
-    public class AuthenticationScope : Disposable
+    public AuthenticationScope(bool? canPromptForAuthentication = null)
     {
-        private readonly bool _canPromptForAuthentication;
-
-        public AuthenticationScope(bool? canPromptForAuthentication = null)
-        {
-            _canPromptForAuthentication = canPromptForAuthentication ?? true;
-        }
-
-        public bool CanPromptForAuthentication => !HasPromptedForAuthentication && _canPromptForAuthentication;
-
-        public bool HasPromptedForAuthentication { get; set; }
+        _canPromptForAuthentication = canPromptForAuthentication ?? true;
     }
+
+    public bool CanPromptForAuthentication => !HasPromptedForAuthentication && _canPromptForAuthentication;
+
+    public bool HasPromptedForAuthentication { get; set; }
 }

@@ -1,43 +1,42 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using Catel;
+
+internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
 {
-    using System;
-    using System.Collections.Generic;
-    using Catel;
-
-    internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
+    public PackageOperationContext(IPackageDetails[] packages, ITemporaryFileSystemContext fileSystemContext)
     {
-        public PackageOperationContext(IPackageDetails[] packages, ITemporaryFileSystemContext fileSystemContext)
-        {
-            ArgumentNullException.ThrowIfNull(packages);
-            ArgumentNullException.ThrowIfNull(fileSystemContext);
+        ArgumentNullException.ThrowIfNull(packages);
+        ArgumentNullException.ThrowIfNull(fileSystemContext);
 
-            UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
-            Exceptions = new List<Exception>();
-            FileSystemContext = fileSystemContext;
-            Packages = packages;
+        UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
+        Exceptions = new List<Exception>();
+        FileSystemContext = fileSystemContext;
+        Packages = packages;
+    }
+
+    public int UniqueIdentifier { get; }
+    public IRepository? Repository { get; set; }
+    public IPackageDetails[] Packages { get; set; }
+    public PackageOperationType OperationType { get; set; }
+    public IPackageOperationContext? Parent { get; set; }
+    public IList<Exception>? Exceptions { get; private set; }
+    public ITemporaryFileSystemContext FileSystemContext { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not PackageOperationContext context)
+        {
+            return false;
         }
 
-        public int UniqueIdentifier { get; }
-        public IRepository? Repository { get; set; }
-        public IPackageDetails[] Packages { get; set; }
-        public PackageOperationType OperationType { get; set; }
-        public IPackageOperationContext? Parent { get; set; }
-        public IList<Exception>? Exceptions { get; private set; }
-        public ITemporaryFileSystemContext FileSystemContext { get; set; }
+        return UniqueIdentifier.Equals(context.UniqueIdentifier);
+    }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is not PackageOperationContext context)
-            {
-                return false;
-            }
-
-            return UniqueIdentifier.Equals(context.UniqueIdentifier);
-        }
-
-        public override int GetHashCode()
-        {
-            return UniqueIdentifier.GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return UniqueIdentifier.GetHashCode();
     }
 }

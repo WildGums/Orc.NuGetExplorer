@@ -1,13 +1,12 @@
-﻿namespace Orc.NuGetExplorer.Providers
-{
-    using NuGet.ProjectManagement;
+﻿namespace Orc.NuGetExplorer.Providers;
 
-    public class EmptyProjectContextProvider : INuGetProjectContextProvider
+using NuGet.ProjectManagement;
+
+public class EmptyProjectContextProvider : INuGetProjectContextProvider
+{
+    public INuGetProjectContext? GetProjectContext(FileConflictAction fileConflictAction)
     {
-        public INuGetProjectContext? GetProjectContext(FileConflictAction fileConflictAction)
-        {
-            //no project context
-            return null;
-        }
+        //no project context
+        return null;
     }
 }

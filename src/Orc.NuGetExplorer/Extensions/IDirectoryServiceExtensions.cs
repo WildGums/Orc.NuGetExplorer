@@ -1,99 +1,102 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Catel;
+using FileSystem;
+
+public static class IDirectoryServiceExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using Catel;
-    using Orc.FileSystem;
-
-    public static class IDirectoryServiceExtensions
+    public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
     {
-        public static void ForceDeleteDirectory(this IDirectoryService directoryService, IFileService fileService, string folderPath, out List<string> failedEntries)
+        ArgumentNullException.ThrowIfNull(directoryService);
+        ArgumentNullException.ThrowIfNull(fileService);
+
+        failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
+        var fallbackFlag = false;
+
+        try
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(fileService);
-
-            failedEntries = new List<string>(); //list of directories which cause unavoidable errors during deletion 
-            var fallbackFlag = false;
-
-            try
-            {
-                directoryService.Delete(folderPath, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Caller doesn't have enough permissions
-                fallbackFlag = true;
-            }
-            catch (PathTooLongException)
-            {
-                // Exceed the system maximum length
-                failedEntries.Add(folderPath);
-            }
-            catch (IOException)
-            {
-                // Directory.Delete has multiple causes of exception
-                // We try to handle read-only attributes on file in sub-directories which can cause this exceptions
-                fallbackFlag = true;
-            }
-
-            // Do some preparations and try again
-            if (fallbackFlag)
-            {
-                ForceDeleteFilesFromSubDirectories(folderPath, directoryService, fileService, failedEntries);
-
-                try
-                {
-                    directoryService.Delete(folderPath, true);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // The caller does not have the required permission
-                    failedEntries.Add(folderPath);
-                }
-                catch (PathTooLongException)
-                {
-                    // Exceed the system maximum length
-                    failedEntries.Add(folderPath);
-                }
-
-                catch (IOException)
-                {
-                    throw;
-                }
-            }
+            directoryService.Delete(folderPath);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Caller doesn't have enough permissions
+            fallbackFlag = true;
+        }
+        catch (PathTooLongException)
+        {
+            // Exceed the system maximum length
+            failedEntries.Add(folderPath);
+        }
+        catch (IOException)
+        {
+            // Directory.Delete has multiple causes of exception
+            // We try to handle read-only attributes on file in sub-directories which can cause this exceptions
+            fallbackFlag = true;
         }
 
-        private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
+        // Do some preparations and try again
+        if (!fallbackFlag)
         {
-            Argument.IsNotNullOrEmpty(() => folderPath);
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(fileService);
+            return;
+        }
 
-            var directoryStack = new Stack<string>();
+        ForceDeleteFilesFromSubDirectories(folderPath, directoryService, fileService, failedEntries);
 
-            directoryStack.Push(folderPath);
+        try
+        {
+            directoryService.Delete(folderPath, true);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // The caller does not have the required permission
+            failedEntries.Add(folderPath);
+        }
+        catch (PathTooLongException)
+        {
+            // Exceed the system maximum length
+            failedEntries.Add(folderPath);
+        }
 
-            while (directoryStack.Count > 0)
+        catch (IOException)
+        {
+            throw;
+        }
+    }
+
+    private static void ForceDeleteFilesFromSubDirectories(string folderPath, IDirectoryService directoryService, IFileService fileService, List<string> failedEntries)
+    {
+        Argument.IsNotNullOrEmpty(() => folderPath);
+        ArgumentNullException.ThrowIfNull(directoryService);
+        ArgumentNullException.ThrowIfNull(fileService);
+
+        var directoryStack = new Stack<string>();
+
+        directoryStack.Push(folderPath);
+
+        while (directoryStack.Count > 0)
+        {
+            var path = directoryStack.Pop();
+
+            // Using the default SearchOption.TopDirectoryOnly, as SearchOption.AllDirectories would also
+            // include reparse points such as mounted drives and symbolic links in the search.
+            foreach (var subFolderPath in directoryService.GetDirectories(path, searchOption: SearchOption.TopDirectoryOnly))
             {
-                var path = directoryStack.Pop();
+                directoryStack.Push(subFolderPath);
+            }
 
-                // Using the default SearchOption.TopDirectoryOnly, as SearchOption.AllDirectories would also
-                // include reparse points such as mounted drives and symbolic links in the search.
-                foreach (var subFolderPath in directoryService.GetDirectories(path, searchOption: SearchOption.TopDirectoryOnly))
-                {
-                    directoryStack.Push(subFolderPath);
-                }
+            var directoryInfo = new DirectoryInfo(path);
 
-                var directoryInfo = new DirectoryInfo(path);
+            if (directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                continue;
+            }
 
-                if (!directoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                {
-                    foreach (var filePath in directoryService.GetFiles(path))
-                    {
-                        fileService.ForceDeleteFiles(filePath, failedEntries);
-                    }
-                }
+            foreach (var filePath in directoryService.GetFiles(path))
+            {
+                fileService.ForceDeleteFiles(filePath, failedEntries);
             }
         }
     }

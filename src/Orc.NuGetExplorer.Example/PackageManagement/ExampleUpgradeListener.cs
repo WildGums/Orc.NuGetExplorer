@@ -1,30 +1,29 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+using System;
+using Catel.Services;
+using Orc.NuGetExplorer.Scenario;
+using Orc.NuGetExplorer.Services;
+
+internal class ExampleUpgradeListener : UpgradeListenerBase
 {
-    using System;
-    using Catel.Services;
-    using Orc.NuGetExplorer.Scenario;
-    using Orc.NuGetExplorer.Services;
+    private readonly IMessageService _messageService;
 
-    internal class ExampleUpgradeListener : UpgradeListenerBase
+    public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService)
+        : base(upgradeService)
     {
-        private readonly IMessageService _messageService;
+        ArgumentNullException.ThrowIfNull(messageService);
 
-        public ExampleUpgradeListener(INuGetProjectUpgradeService upgradeService, IMessageService messageService)
-            : base(upgradeService)
-        {
-            ArgumentNullException.ThrowIfNull(messageService);
+        _messageService = messageService;
+    }
 
-            _messageService = messageService;
-        }
+    protected override void OnUpgraded(object sender, EventArgs e)
+    {
+        _messageService.ShowAsync("NuGet data updated");
+    }
 
-        protected override void OnUpgraded(object sender, EventArgs e)
-        {
-            _messageService.ShowAsync("NuGet data updated");
-        }
-
-        protected override void OnUpgrading(object sender, EventArgs e)
-        {
-            _messageService.ShowAsync("Updating NuGet data");
-        }
+    protected override void OnUpgrading(object sender, EventArgs e)
+    {
+        _messageService.ShowAsync("Updating NuGet data");
     }
 }

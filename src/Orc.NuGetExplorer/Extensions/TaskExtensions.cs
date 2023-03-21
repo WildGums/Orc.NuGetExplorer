@@ -1,32 +1,31 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+public static class TaskExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    public static class TaskExtensions
+    public static async Task<TaskResultOrException<T>[]> WhenAllOrExceptionAsync<T>(this IEnumerable<Task<T>> tasks)
     {
-        public static async Task<TaskResultOrException<T>[]> WhenAllOrExceptionAsync<T>(this IEnumerable<Task<T>> tasks)
-        {
-            ArgumentNullException.ThrowIfNull(tasks);
+        ArgumentNullException.ThrowIfNull(tasks);
 
-            return await Task.WhenAll(tasks.Select(task => WrapResultOrExceptionAsync(task)));
+        return await Task.WhenAll(tasks.Select(WrapResultOrExceptionAsync));
+    }
+
+    public static async Task<TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this Task<T> task)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+
+        try
+        {
+            var result = await task;
+            return new TaskResultOrException<T>(result);
         }
-
-        public static async Task<TaskResultOrException<T>> WrapResultOrExceptionAsync<T>(this Task<T> task)
+        catch (Exception ex)
         {
-            ArgumentNullException.ThrowIfNull(task);
-
-            try
-            {
-                var result = await task;
-                return new TaskResultOrException<T>(result);
-            }
-            catch (Exception ex)
-            {
-                return new TaskResultOrException<T>(ex);
-            }
+            return new TaskResultOrException<T>(ex);
         }
     }
 }

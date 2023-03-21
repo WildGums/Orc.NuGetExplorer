@@ -1,10 +1,9 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public interface IPackageSource
 {
-    public interface IPackageSource
-    {
-        bool IsEnabled { get; }
-        bool IsOfficial { get; }
-        string Name { get; }
-        string Source { get; }
-    }
+    bool IsEnabled { get; }
+    bool IsOfficial { get; }
+    string Name { get; }
+    string Source { get; }
 }

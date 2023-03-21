@@ -1,14 +1,13 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Threading.Tasks;
+using Catel.Services;
+
+public interface IPackagesUIService
 {
-    using System.Threading.Tasks;
-    using Catel.Services;
+    string SettingsTitle { get; set; }
 
-    public interface IPackagesUIService
-    {
-        string SettingsTitle { get; set; }
-
-        Task ShowPackagesExplorerAsync();
-        Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState);
-        Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync();
-    }
+    Task ShowPackagesExplorerAsync();
+    Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState);
+    Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync();
 }

@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer.Views
-{
-    using Catel.Windows.Controls;
+﻿namespace Orc.NuGetExplorer.Views;
 
-    internal partial class PageActionBar : UserControl
+using Catel.Windows.Controls;
+
+internal partial class PageActionBar : UserControl
+{
+    public PageActionBar()
     {
-        public PageActionBar()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

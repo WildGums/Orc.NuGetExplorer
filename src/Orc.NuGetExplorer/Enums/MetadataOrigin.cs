@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Enums
+﻿namespace Orc.NuGetExplorer.Enums;
+
+public enum MetadataOrigin
 {
-    public enum MetadataOrigin
-    {
-        Browse,
-        Installed,
-        Updates
-    }
+    Browse,
+    Installed,
+    Updates
 }

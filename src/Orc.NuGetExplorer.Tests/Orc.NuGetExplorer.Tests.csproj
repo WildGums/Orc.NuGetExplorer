@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orc.NuGetExplorer\Orc.NuGetExplorer.csproj" />
     <ProjectReference Include="..\Orc.NuGetExplorer.Xaml\Orc.NuGetExplorer.Xaml.csproj" />
   </ItemGroup>
 

@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows;
+
+internal enum DownlevelTextMode
 {
-    internal enum DownlevelTextMode
-    {
-        MainInstructionAndContent = 0,
-        MainInstructionOnly = 1,
-        ContentOnly = 2,
-    }
+    MainInstructionAndContent = 0,
+    MainInstructionOnly = 1,
+    ContentOnly = 2,
 }

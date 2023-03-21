@@ -1,17 +1,16 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using NuGet.Packaging.Core;
+
+public class NuGetProjectEventArgs : System.EventArgs
 {
-    using NuGet.Packaging.Core;
-
-    public class NuGetProjectEventArgs : System.EventArgs
+    public NuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package)
     {
-        public NuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package)
-        {
-            Project = project;
-            Package = package;
-        }
-
-        public IExtensibleProject Project { get; }
-
-        public PackageIdentity Package { get; }
+        Project = project;
+        Package = package;
     }
+
+    public IExtensibleProject Project { get; }
+
+    public PackageIdentity Package { get; }
 }

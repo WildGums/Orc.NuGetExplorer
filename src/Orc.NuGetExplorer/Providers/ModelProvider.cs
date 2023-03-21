@@ -1,46 +1,45 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using System;
+using System.ComponentModel;
+using Catel.Data;
+using Catel.IoC;
+
+public class ModelProvider<T> : IModelProvider<T> where T : ModelBase
 {
-    using System;
-    using System.ComponentModel;
-    using Catel.Data;
-    using Catel.IoC;
+    private readonly ITypeFactory _typeFactory;
 
-    public class ModelProvider<T> : IModelProvider<T> where T : ModelBase
+    public ModelProvider(ITypeFactory typeFactory)
     {
-        private readonly ITypeFactory _typeFactory;
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        public ModelProvider(ITypeFactory typeFactory)
+        _typeFactory = typeFactory;
+    }
+
+    private T? _model;
+
+    public virtual T? Model
+    {
+        get => _model;
+        set
         {
-            ArgumentNullException.ThrowIfNull(typeFactory);
-
-            _typeFactory = typeFactory;
-        }
-
-        private T? _model;
-
-        public virtual T? Model
-        {
-            get => _model;
-            set
+            if (value != _model)
             {
-                if (value != _model)
-                {
-                    _model = value;
-                    RaisePropertyChanged();
-                }
+                _model = value;
+                RaisePropertyChanged();
             }
         }
+    }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        public virtual T Create()
-        {
-            return _typeFactory.CreateRequiredInstance<T>();
-        }
+    public virtual T Create()
+    {
+        return _typeFactory.CreateRequiredInstance<T>();
+    }
 
-        private void RaisePropertyChanged()
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Model)));
-        }
+    private void RaisePropertyChanged()
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Model)));
     }
 }

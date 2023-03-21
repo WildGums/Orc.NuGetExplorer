@@ -1,19 +1,18 @@
-﻿namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters;
+
+using System;
+using Catel.MVVM.Converters;
+
+[System.Windows.Data.ValueConversion(typeof(Uri), typeof(string))]
+public class ExtendedUriToStringConverter : ValueConverterBase<Uri, string>
 {
-    using System;
-    using Catel.MVVM.Converters;
-
-    [System.Windows.Data.ValueConversion(typeof(Uri), typeof(string))]
-    public class ExtendedUriToStringConverter : ValueConverterBase<Uri, string>
+    protected override object? Convert(Uri? value, Type targetType, object? parameter)
     {
-        protected override object? Convert(Uri? value, Type targetType, object? parameter)
+        if (value is null)
         {
-            if (value is null)
-            {
-                return string.Empty;
-            }
-
-            return value.ToString();
+            return string.Empty;
         }
+
+        return value.ToString();
     }
 }

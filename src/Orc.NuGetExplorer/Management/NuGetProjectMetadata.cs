@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Management
-{
-    using System.Collections.Generic;
+﻿namespace Orc.NuGetExplorer.Management;
 
-    internal class NuGetProjectMetadata
-    {
-        public Dictionary<string, object> Data = new();
-    }
+using System.Collections.Generic;
+
+internal class NuGetProjectMetadata
+{
+    public Dictionary<string, object> Data = new();
 }

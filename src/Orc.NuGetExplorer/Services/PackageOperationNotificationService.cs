@@ -1,142 +1,141 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel;
+using Catel.Logging;
+
+public class PackageOperationNotificationService : IPackageOperationNotificationService
 {
-    using System;
-    using Catel;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private bool _isNotificationsDisabled = false;
 
-    public class PackageOperationNotificationService : IPackageOperationNotificationService
+    public event EventHandler<PackageOperationBatchEventArgs>? OperationsBatchStarting;
+    public event EventHandler<PackageOperationBatchEventArgs>? OperationsBatchFinished;
+    public event EventHandler<PackageOperationEventArgs>? OperationStarting;
+    public event EventHandler<PackageOperationEventArgs>? OperationFinished;
+
+    public bool MuteAutomaticEvents { get; set; }
+    public bool IsNotificationsDisabled { get => _isNotificationsDisabled; private set => _isNotificationsDisabled = value; }
+
+    public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private bool _isNotificationsDisabled = false;
-
-        public event EventHandler<PackageOperationBatchEventArgs>? OperationsBatchStarting;
-        public event EventHandler<PackageOperationBatchEventArgs>? OperationsBatchFinished;
-        public event EventHandler<PackageOperationEventArgs>? OperationStarting;
-        public event EventHandler<PackageOperationEventArgs>? OperationFinished;
-
-        public bool MuteAutomaticEvents { get; set; }
-        public bool IsNotificationsDisabled { get => _isNotificationsDisabled; private set => _isNotificationsDisabled = value; }
-
-        public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
+        if (IsNotificationsDisabled)
         {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
-
-            OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+            return;
         }
 
-        public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
-        {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
+        OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+    }
 
-            OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+    public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
+    {
+        if (IsNotificationsDisabled)
+        {
+            return;
         }
 
-        public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
-        {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
+        OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
+    }
 
-            OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+    public void NotifyOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+    {
+        if (IsNotificationsDisabled)
+        {
+            return;
         }
 
-        public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
-        {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
+        OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+    }
 
-            OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+    public void NotifyOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+    {
+        if (IsNotificationsDisabled)
+        {
+            return;
         }
 
-        public void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
+        OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
+    }
+
+    public void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
+    {
+        if (IsNotificationsDisabled)
         {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
-
-            if (MuteAutomaticEvents)
-            {
-                Log.Info($"{operationType} notification was muted by notification service");
-                return;
-            }
-
-            OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
+            return;
         }
 
-        public void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
+        if (MuteAutomaticEvents)
         {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
-
-            if (MuteAutomaticEvents)
-            {
-                Log.Info($"{operationType} notification was muted by notification service");
-                return;
-            }
-
-            OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
+            Log.Info($"{operationType} notification was muted by notification service");
+            return;
         }
 
-        public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
+    }
+
+    public void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
+    {
+        if (IsNotificationsDisabled)
         {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
-
-            if (MuteAutomaticEvents)
-            {
-                Log.Info($"{operationType} notification was muted by notification service");
-                return;
-            }
-
-            OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
+            return;
         }
 
-        public void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+        if (MuteAutomaticEvents)
         {
-            if (IsNotificationsDisabled)
-            {
-                return;
-            }
-
-            if (MuteAutomaticEvents)
-            {
-                Log.Info($"{operationType} notification was muted by notification service");
-                return;
-            }
-
-            OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
+            Log.Info($"{operationType} notification was muted by notification service");
+            return;
         }
 
-        public IDisposable DisableNotifications()
+        OperationsBatchFinished?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
+    }
+
+    public void NotifyAutomaticOperationStarting(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+    {
+        if (IsNotificationsDisabled)
         {
-            return new DisableNotificationToken(this);
+            return;
         }
 
-        private sealed class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
+        if (MuteAutomaticEvents)
         {
-            public DisableNotificationToken(PackageOperationNotificationService instance)
-                : this(instance, token => token.Instance.IsNotificationsDisabled = true, token => token.Instance.IsNotificationsDisabled = false, null)
-            {
-            }
+            Log.Info($"{operationType} notification was muted by notification service");
+            return;
+        }
 
-            public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object? tag = null)
-                : base(instance, initialize, dispose, tag)
-            {
-            }
+        OperationStarting?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
+    }
+
+    public void NotifyAutomaticOperationFinished(string installPath, PackageOperationType operationType, IPackageDetails packageDetails)
+    {
+        if (IsNotificationsDisabled)
+        {
+            return;
+        }
+
+        if (MuteAutomaticEvents)
+        {
+            Log.Info($"{operationType} notification was muted by notification service");
+            return;
+        }
+
+        OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType) { IsAutomatic = true });
+    }
+
+    public IDisposable DisableNotifications()
+    {
+        return new DisableNotificationToken(this);
+    }
+
+    private sealed class DisableNotificationToken : DisposableToken<PackageOperationNotificationService>
+    {
+        public DisableNotificationToken(PackageOperationNotificationService instance)
+            : this(instance, token => token.Instance.IsNotificationsDisabled = true, token => token.Instance.IsNotificationsDisabled = false, null)
+        {
+        }
+
+        public DisableNotificationToken(PackageOperationNotificationService instance, Action<IDisposableToken<PackageOperationNotificationService>> initialize, Action<IDisposableToken<PackageOperationNotificationService>> dispose, object? tag = null)
+            : base(instance, initialize, dispose, tag)
+        {
         }
     }
 }

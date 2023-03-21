@@ -1,58 +1,57 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.Logging;
+
+internal class RollbackPackageOperationService : IRollbackPackageOperationService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private readonly IDictionary<IPackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<IPackageOperationContext, Stack<Action>>();
 
-    internal class RollbackPackageOperationService : IRollbackPackageOperationService
+    public void PushRollbackAction(Action rollbackAction, IPackageOperationContext? context)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IDictionary<IPackageOperationContext, Stack<Action>> _rollbackActions = new Dictionary<IPackageOperationContext, Stack<Action>>();
-
-        public void PushRollbackAction(Action rollbackAction, IPackageOperationContext? context)
+        if (context is null)
         {
-            if (context is null)
-            {
-                Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
-                return;
-            }
-
-            if (!_rollbackActions.TryGetValue(context, out var stack))
-            {
-                stack = new Stack<Action>();
-                _rollbackActions.Add(context, stack);
-            }
-
-            stack.Push(rollbackAction);
+            Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
+            return;
         }
 
-        public void Rollback(IPackageOperationContext context)
+        if (!_rollbackActions.TryGetValue(context, out var stack))
         {
-            if (_rollbackActions.TryGetValue(context, out var stack))
-            {
-                while (stack.Any())
-                {
-                    var action = stack.Pop();
-                    action();
-                }
-            }
+            stack = new Stack<Action>();
+            _rollbackActions.Add(context, stack);
         }
 
-        public void ClearRollbackActions(IPackageOperationContext context)
+        stack.Push(rollbackAction);
+    }
+
+    public void Rollback(IPackageOperationContext context)
+    {
+        if (_rollbackActions.TryGetValue(context, out var stack))
         {
-
-            if (context is null)
+            while (stack.Any())
             {
-                Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
-                return;
+                var action = stack.Pop();
+                action();
             }
+        }
+    }
 
-            if (_rollbackActions.TryGetValue(context, out var stack))
-            {
-                stack.Clear();
-                _rollbackActions.Remove(context);
-            }
+    public void ClearRollbackActions(IPackageOperationContext context)
+    {
+
+        if (context is null)
+        {
+            Log.Warning("Current package operation context doesn't exist. Ignore rollback actions");
+            return;
+        }
+
+        if (_rollbackActions.TryGetValue(context, out var stack))
+        {
+            stack.Clear();
+            _rollbackActions.Remove(context);
         }
     }
 }

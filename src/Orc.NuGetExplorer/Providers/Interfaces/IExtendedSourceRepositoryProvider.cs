@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using NuGet.Configuration;
+using NuGet.Protocol.Core.Types;
+
+public interface IExtendedSourceRepositoryProvider : ISourceRepositoryProvider
 {
-    using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
+    SourceRepository CreateLocalRepository(string source);
 
-    public interface IExtendedSourceRepositoryProvider : ISourceRepositoryProvider
-    {
-        SourceRepository CreateLocalRepository(string source);
-
-        SourceRepository CreateRepository(PackageSource source, bool forceUpdate);
-    }
+    SourceRepository CreateRepository(PackageSource source, bool forceUpdate);
 }

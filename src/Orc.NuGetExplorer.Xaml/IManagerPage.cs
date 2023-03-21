@@ -1,16 +1,15 @@
 ﻿
-namespace Orc.NuGetExplorer
+namespace Orc.NuGetExplorer;
+
+using Catel.Collections;
+
+internal interface IManagerPage
 {
-    using Catel.Collections;
+    FastObservableCollection<NuGetPackage> PackageItems { get; }
 
-    internal interface IManagerPage
-    {
-        FastObservableCollection<NuGetPackage> PackageItems { get; }
+    bool CanBatchUpdateOperations { get; }
 
-        bool CanBatchUpdateOperations { get; }
+    bool CanBatchInstallOperations { get; }
 
-        bool CanBatchInstallOperations { get; }
-
-        void StartLoadingTimerOrInvalidateData();
-    }
+    void StartLoadingTimerOrInvalidateData();
 }
