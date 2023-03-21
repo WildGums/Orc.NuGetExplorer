@@ -1,17 +1,16 @@
-﻿namespace Orc.NuGetExplorer.Messaging
+﻿namespace Orc.NuGetExplorer.Messaging;
+
+using Catel.Messaging;
+
+public class ActivatedExplorerTabMessage : MessageBase<ActivatedExplorerTabMessage, ExplorerTab>
 {
-    using Catel.Messaging;
-
-    public class ActivatedExplorerTabMessage : MessageBase<ActivatedExplorerTabMessage, ExplorerTab>
+    public ActivatedExplorerTabMessage()
     {
-        public ActivatedExplorerTabMessage()
-        {
-        }
+    }
 
-        public ActivatedExplorerTabMessage(ExplorerTab data)
-            : base(data)
-        {
+    public ActivatedExplorerTabMessage(ExplorerTab data)
+        : base(data)
+    {
 
-        }
     }
 }

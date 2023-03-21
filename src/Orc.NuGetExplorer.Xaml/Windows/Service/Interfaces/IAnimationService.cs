@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows;
+
+using System.Windows;
+using System.Windows.Media.Animation;
+
+internal interface IAnimationService
 {
-    using System.Windows;
-    using System.Windows.Media.Animation;
+    Storyboard GetFadeInAnimation(DependencyObject dependencyObject);
 
-    internal interface IAnimationService
-    {
-        Storyboard GetFadeInAnimation(DependencyObject dependencyObject);
-
-        Storyboard GetFadeOutAnimation(DependencyObject dependencyObject);
-    }
+    Storyboard GetFadeOutAnimation(DependencyObject dependencyObject);
 }

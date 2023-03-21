@@ -1,83 +1,82 @@
-﻿namespace Orc.NuGetExplorer.Tests.ViewModels
-{
-    using System;
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.Collections;
-    using Catel.IoC;
-    using Catel.MVVM;
-    using Catel.Services;
-    using Moq;
-    using NUnit.Framework;
-    using Orc.NuGetExplorer.ViewModels;
-    using Orc.NuGetExplorer.Windows;
+﻿namespace Orc.NuGetExplorer.Tests.ViewModels;
 
-    [TestFixture]
-    internal class PageActionBarViewModelFacts
+using System;
+using System.Threading.Tasks;
+using Catel;
+using Catel.Collections;
+using Catel.IoC;
+using Catel.MVVM;
+using Catel.Services;
+using Moq;
+using NUnit.Framework;
+using Orc.NuGetExplorer.ViewModels;
+using Orc.NuGetExplorer.Windows;
+
+[TestFixture]
+internal class PageActionBarViewModelFacts
+{
+    public class TheCheckAllExecuteAsyncMethod
     {
-        public class TheCheckAllExecuteAsyncMethod
+        [TestCase]
+        public async Task InvalidatesPackagesBatchUpdateCommandAsync()
         {
-            [TestCase]
-            public async Task InvalidatesPackagesBatchUpdateCommandAsync()
-            {
 #pragma warning disable IDISP001 // Dispose created
-                var serviceLocator = new ServiceLocator(ServiceLocator.Default);
+            var serviceLocator = new ServiceLocator(ServiceLocator.Default);
 #pragma warning restore IDISP001 // Dispose created
 
-                // Resolve Catel services
-                var commandManager = serviceLocator.ResolveType<ICommandManager>();
-                var messageService = serviceLocator.ResolveType<IMessageService>();
+            // Resolve Catel services
+            var commandManager = serviceLocator.ResolveType<ICommandManager>();
+            var messageService = serviceLocator.ResolveType<IMessageService>();
 
-                commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+            commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
-                // commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
-                var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+            // commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
+            var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
 
-                var canExecuteRaised = false;
+            var canExecuteRaised = false;
 
-                testCommand.CanExecuteChanged += (sender, args) =>
-                {
-                    canExecuteRaised = true;
-                };
+            testCommand.CanExecuteChanged += (sender, args) =>
+            {
+                canExecuteRaised = true;
+            };
 
-                Assert.AreEqual(false, testCommand.CanExecute());
+            Assert.AreEqual(false, testCommand.CanExecute());
 
-                var progressManager = new Mock<IProgressManager>().Object;
-                var packageCommandService = new Mock<IPackageCommandService>().Object;
-                var packageOperationContextService = new Mock<IPackageOperationContextService>().Object;
+            var progressManager = new Mock<IProgressManager>().Object;
+            var packageCommandService = new Mock<IPackageCommandService>().Object;
+            var packageOperationContextService = new Mock<IPackageOperationContextService>().Object;
 
 
-                var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, packageOperationContextService, messageService, commandManager);
-                await vm.InitializeViewModelAsync();
+            var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, packageOperationContextService, messageService, commandManager);
+            await vm.InitializeViewModelAsync();
 
-                var vmCommand = vm.CheckAll;
-                vmCommand.Execute();
-                await vmCommand.Task;
+            var vmCommand = vm.CheckAll;
+            vmCommand.Execute();
+            await vmCommand.Task;
 
-                Assert.AreEqual(true, canExecuteRaised);
-            }
+            Assert.AreEqual(true, canExecuteRaised);
+        }
+    }
+
+    public class TestPage : IManagerPage
+    {
+        public TestPage()
+        {
+            PackageItems = new FastObservableCollection<NuGetPackage>()
+            {
+                GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
+            };
+            CanBatchUpdateOperations = true;
+            CanBatchInstallOperations = true;
         }
 
-        public class TestPage : IManagerPage
+        public FastObservableCollection<NuGetPackage> PackageItems { get; }
+        public bool CanBatchUpdateOperations { get; }
+        public bool CanBatchInstallOperations { get; }
+
+        public void StartLoadingTimerOrInvalidateData()
         {
-            public TestPage()
-            {
-                PackageItems = new FastObservableCollection<NuGetPackage>()
-                {
-                    GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
-                };
-                CanBatchUpdateOperations = true;
-                CanBatchInstallOperations = true;
-            }
-
-            public FastObservableCollection<NuGetPackage> PackageItems { get; }
-            public bool CanBatchUpdateOperations { get; }
-            public bool CanBatchInstallOperations { get; }
-
-            public void StartLoadingTimerOrInvalidateData()
-            {
-                throw new NotSupportedException();
-            }
+            throw new NotSupportedException();
         }
     }
 }

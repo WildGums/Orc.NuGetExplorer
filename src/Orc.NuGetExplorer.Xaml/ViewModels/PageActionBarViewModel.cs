@@ -1,185 +1,184 @@
-﻿namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Catel.Collections;
+using Catel.Logging;
+using Catel.MVVM;
+using Catel.Services;
+using NuGetExplorer.Windows;
+using Orc.NuGetExplorer;
+using Orc.NuGetExplorer.Packaging;
+
+internal class PageActionBarViewModel : ViewModelBase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Catel.Collections;
-    using Catel.Logging;
-    using Catel.MVVM;
-    using Catel.Services;
-    using NuGetExplorer.Windows;
-    using Orc.NuGetExplorer;
-    using Orc.NuGetExplorer.Packaging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    internal class PageActionBarViewModel : ViewModelBase
+    private readonly IManagerPage _parentManagerPage;
+
+    private readonly IProgressManager _progressManager;
+    private readonly IPackageCommandService _packageCommandService;
+    private readonly IPackageOperationContextService _packageOperationContextService;
+    private readonly IMessageService _messageService;
+
+    public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
+        IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(managerPage);
+        ArgumentNullException.ThrowIfNull(progressManager);
+        ArgumentNullException.ThrowIfNull(packageCommandService);
+        ArgumentNullException.ThrowIfNull(packageOperationContextService);
+        ArgumentNullException.ThrowIfNull(messageService);
+        ArgumentNullException.ThrowIfNull(commandManager);
 
-        private readonly IManagerPage _parentManagerPage;
+        _parentManagerPage = managerPage;
+        _progressManager = progressManager;
+        _packageCommandService = packageCommandService;
+        _packageOperationContextService = packageOperationContextService;
+        _messageService = messageService;
 
-        private readonly IProgressManager _progressManager;
-        private readonly IPackageCommandService _packageCommandService;
-        private readonly IPackageOperationContextService _packageOperationContextService;
-        private readonly IMessageService _messageService;
+        BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
+        CheckAll = new TaskCommand(CheckAllExecuteAsync);
 
-        public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
-            IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
+        CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
+        CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
+
+        var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
+        if (batchUpdateCommand is null)
         {
-            ArgumentNullException.ThrowIfNull(managerPage);
-            ArgumentNullException.ThrowIfNull(progressManager);
-            ArgumentNullException.ThrowIfNull(packageCommandService);
-            ArgumentNullException.ThrowIfNull(packageOperationContextService);
-            ArgumentNullException.ThrowIfNull(messageService);
-            ArgumentNullException.ThrowIfNull(commandManager);
+            throw Log.ErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
+        }
+        InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
-            _parentManagerPage = managerPage;
-            _progressManager = progressManager;
-            _packageCommandService = packageCommandService;
-            _packageOperationContextService = packageOperationContextService;
-            _messageService = messageService;
+        Parent = _parentManagerPage;
+    }
 
-            BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
-            CheckAll = new TaskCommand(CheckAllExecuteAsync);
+    public bool IsCheckAll { get; set; }
 
-            CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
-            CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
+    public bool CanBatchUpdate { get; set; }
 
-            var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
-            if (batchUpdateCommand is null)
+    public bool CanBatchInstall { get; set; }
+
+    public IManagerPage Parent { get; private set; }
+
+    public Action InvalidateCanBatchUpdateExecute { get; set; }
+
+    protected override Task InitializeAsync()
+    {
+        _parentManagerPage.PackageItems.CollectionChanged += OnParentPagePackageItemsCollectionChanged;
+        NuGetPackage.AnyNuGetPackageCheckedChanged += OnAnyNuGetPackageCheckedChanged;
+        return base.InitializeAsync();
+    }
+
+    protected override Task OnClosingAsync()
+    {
+        _parentManagerPage.PackageItems.CollectionChanged -= OnParentPagePackageItemsCollectionChanged;
+        return base.OnClosingAsync();
+    }
+
+    #region Commands
+
+    public TaskCommand BatchInstall { get; set; }
+
+    private async Task BatchInstallExecuteAsync()
+    {
+        try
+        {
+            _progressManager.ShowBar(this);
+
+            var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
+
+            if (batchedPackages.Any(x => x.ValidationContext?.HasErrors ?? false))
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
+                await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
+                return;
             }
-            InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
-            Parent = _parentManagerPage;
-        }
-
-        public bool IsCheckAll { get; set; }
-
-        public bool CanBatchUpdate { get; set; }
-
-        public bool CanBatchInstall { get; set; }
-
-        public IManagerPage Parent { get; private set; }
-
-        public Action InvalidateCanBatchUpdateExecute { get; set; }
-
-        protected override Task InitializeAsync()
-        {
-            _parentManagerPage.PackageItems.CollectionChanged += OnParentPagePackageItemsCollectionChanged;
-            NuGetPackage.AnyNuGetPackageCheckedChanged += OnAnyNuGetPackageCheckedChanged;
-            return base.InitializeAsync();
-        }
-
-        protected override Task OnClosingAsync()
-        {
-            _parentManagerPage.PackageItems.CollectionChanged -= OnParentPagePackageItemsCollectionChanged;
-            return base.OnClosingAsync();
-        }
-
-        #region Commands
-
-        public TaskCommand BatchInstall { get; set; }
-
-        private async Task BatchInstallExecuteAsync()
-        {
-            try
+            using (var cts = new CancellationTokenSource())
             {
-                _progressManager.ShowBar(this);
+                var installPackageList = new List<IPackageDetails>();
 
-                var batchedPackages = _parentManagerPage.PackageItems.Where(x => x.IsChecked).ToList();
-
-                if (batchedPackages.Any(x => x.ValidationContext?.HasErrors ?? false))
+                foreach (var package in batchedPackages)
                 {
-                    await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
-                    return;
-                }
-
-                using (var cts = new CancellationTokenSource())
-                {
-                    var installPackageList = new List<IPackageDetails>();
-
-                    foreach (var package in batchedPackages)
+                    var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
+                    if (targetVersion is null)
                     {
-                        var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
-                        if (targetVersion is null)
-                        {
-                            Log.Debug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
-                        }
-                        else
-                        {
-                            var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
-                            installPackageList.Add(installPackageDetails);
-                        }
+                        Log.Debug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
                     }
-
-                    using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Install, installPackageList.ToArray()))
+                    else
                     {
-                        foreach (var packageDetails in installPackageList)
-                        {
-                            await _packageCommandService.ExecuteInstallAsync(packageDetails, operationContext, cts.Token);
-                        }
+                        var installPackageDetails = PackageDetailsFactory.Create(PackageOperationType.Install, package.GetMetadata(), targetVersion, null);
+                        installPackageList.Add(installPackageDetails);
                     }
                 }
 
-                await Task.Delay(200);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Error when updating package");
-            }
-            finally
-            {
-                _progressManager.HideBar(this);
-
-                _parentManagerPage.StartLoadingTimerOrInvalidateData();
-            }
-        }
-
-        private bool BatchInstallCanExecute()
-        {
-            return AnyItemOnPageChecked();
-        }
-
-        public TaskCommand CheckAll { get; set; }
-
-        private async Task CheckAllExecuteAsync()
-        {
-            var packages = _parentManagerPage.PackageItems;
-            packages.ForEach(package => package.IsChecked = IsCheckAll);
-
-            BatchInstall.RaiseCanExecuteChanged();
-            InvalidateCanBatchUpdateExecute();
-        }
-
-        #endregion
-
-        private void OnParentPagePackageItemsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            InvalidateCommands();
-        }
-
-        private void OnAnyNuGetPackageCheckedChanged(object? sender, EventArgs e)
-        {
-            InvalidateCommands();
-        }
-
-        private void InvalidateCommands()
-        {
-            var commandManager = this.GetViewModelCommandManager();
-            commandManager.InvalidateCommands();
-        }
-
-        private bool AnyItemOnPageChecked()
-        {
-            if (_parentManagerPage is null)
-            {
-                return false;
+                using (var operationContext = _packageOperationContextService.UseOperationContext(PackageOperationType.Install, installPackageList.ToArray()))
+                {
+                    foreach (var packageDetails in installPackageList)
+                    {
+                        await _packageCommandService.ExecuteInstallAsync(packageDetails, operationContext, cts.Token);
+                    }
+                }
             }
 
-            return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
+            await Task.Delay(200);
         }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error when updating package");
+        }
+        finally
+        {
+            _progressManager.HideBar(this);
+
+            _parentManagerPage.StartLoadingTimerOrInvalidateData();
+        }
+    }
+
+    private bool BatchInstallCanExecute()
+    {
+        return AnyItemOnPageChecked();
+    }
+
+    public TaskCommand CheckAll { get; set; }
+
+    private async Task CheckAllExecuteAsync()
+    {
+        var packages = _parentManagerPage.PackageItems;
+        packages.ForEach(package => package.IsChecked = IsCheckAll);
+
+        BatchInstall.RaiseCanExecuteChanged();
+        InvalidateCanBatchUpdateExecute();
+    }
+
+    #endregion
+
+    private void OnParentPagePackageItemsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        InvalidateCommands();
+    }
+
+    private void OnAnyNuGetPackageCheckedChanged(object? sender, EventArgs e)
+    {
+        InvalidateCommands();
+    }
+
+    private void InvalidateCommands()
+    {
+        var commandManager = this.GetViewModelCommandManager();
+        commandManager.InvalidateCommands();
+    }
+
+    private bool AnyItemOnPageChecked()
+    {
+        if (_parentManagerPage is null)
+        {
+            return false;
+        }
+
+        return _parentManagerPage.PackageItems.Any(x => x.IsChecked);
     }
 }

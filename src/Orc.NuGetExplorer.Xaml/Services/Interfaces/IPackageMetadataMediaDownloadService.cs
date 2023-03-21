@@ -1,10 +1,9 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using System.Threading.Tasks;
-    using NuGet.Protocol.Core.Types;
+﻿namespace Orc.NuGetExplorer;
 
-    public interface IPackageMetadataMediaDownloadService
-    {
-        Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata);
-    }
+using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
+
+public interface IPackageMetadataMediaDownloadService
+{
+    Task DownloadMediaForMetadataAsync(IPackageSearchMetadata packageMetadata);
 }

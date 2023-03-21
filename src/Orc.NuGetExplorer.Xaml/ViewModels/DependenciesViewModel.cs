@@ -1,25 +1,24 @@
-﻿namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels;
+
+using System.Collections.Generic;
+using System.ComponentModel;
+using Catel.MVVM;
+using NuGet.Packaging;
+
+internal class DependenciesViewModel : ViewModelBase
 {
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using Catel.MVVM;
-    using NuGet.Packaging;
+    /// <summary>
+    /// This is property mapped via attribute
+    /// </summary>
+    public object? Collection { get; set; }
 
-    internal class DependenciesViewModel : ViewModelBase
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        /// <summary>
-        /// This is property mapped via attribute
-        /// </summary>
-        public object? Collection { get; set; }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        if (e.HasPropertyChanged(nameof(Collection)))
         {
-            if (e.HasPropertyChanged(nameof(Collection)))
-            {
-                HasDependency = ((Collection as List<PackageDependencyGroup>)?.Count ?? 0) > 0;
-            }
+            HasDependency = ((Collection as List<PackageDependencyGroup>)?.Count ?? 0) > 0;
         }
-
-        public bool HasDependency { get; set; }
     }
+
+    public bool HasDependency { get; set; }
 }

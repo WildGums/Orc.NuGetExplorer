@@ -1,23 +1,22 @@
-﻿namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters;
+
+using System;
+using Catel.MVVM.Converters;
+
+[System.Windows.Data.ValueConversion(typeof(bool?), typeof(bool))]
+public class NullableBooleanTrueConverter : ValueConverterBase<bool?>
 {
-    using System;
-    using Catel.MVVM.Converters;
-
-    [System.Windows.Data.ValueConversion(typeof(bool?), typeof(bool))]
-    public class NullableBooleanTrueConverter : ValueConverterBase<bool?>
+    protected override object Convert(bool? value, Type targetType, object? parameter)
     {
-        protected override object Convert(bool? value, Type targetType, object? parameter)
-        {
-            return value ?? true;
-        }
+        return value ?? true;
+    }
 
-        protected override object ConvertBack(object? value, Type targetType, object? parameter)
+    protected override object ConvertBack(object? value, Type targetType, object? parameter)
+    {
+        if (value is null)
         {
-            if (value is null)
-            {
-                return false;
-            }
-            return (bool)value;
+            return false;
         }
+        return (bool)value;
     }
 }

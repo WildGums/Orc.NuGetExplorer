@@ -1,15 +1,14 @@
-﻿namespace Orc.NuGetExplorer.Views
-{
-    using Catel.Windows.Controls;
+﻿namespace Orc.NuGetExplorer.Views;
 
-    /// <summary>
-    /// Interaction logic for PageItemView.xaml
-    /// </summary>
-    internal partial class PageItemView : UserControl
+using Catel.Windows.Controls;
+
+/// <summary>
+/// Interaction logic for PageItemView.xaml
+/// </summary>
+internal partial class PageItemView : UserControl
+{
+    public PageItemView()
     {
-        public PageItemView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,45 +1,44 @@
-﻿namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters;
+
+using System;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Catel.IoC;
+using Catel.Logging;
+using Catel.MVVM.Converters;
+using NuGetExplorer.Cache;
+using NuGetExplorer.Providers;
+
+[System.Windows.Data.ValueConversion(typeof(Uri), typeof(BitmapImage))]
+public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Media.Imaging;
-    using Catel.IoC;
-    using Catel.Logging;
-    using Catel.MVVM.Converters;
-    using NuGetExplorer.Cache;
-    using NuGetExplorer.Providers;
+    private static readonly IconCache IconCache = InitCache();
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    [System.Windows.Data.ValueConversion(typeof(Uri), typeof(BitmapImage))]
-    public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
+    private static IconCache InitCache()
     {
-        private static readonly IconCache IconCache = InitCache();
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        var appCacheProvider = ServiceLocator.Default.ResolveRequiredType<IApplicationCacheProvider>();
 
-        private static IconCache InitCache()
+        return appCacheProvider.EnsureIconCache();
+    }
+
+    protected override object Convert(Uri? value, Type targetType, object? parameter)
+    {
+        try
         {
-            var appCacheProvider = ServiceLocator.Default.ResolveRequiredType<IApplicationCacheProvider>();
-
-            return appCacheProvider.EnsureIconCache();
-        }
-
-        protected override object Convert(Uri? value, Type targetType, object? parameter)
-        {
-            try
+            if (value is null)
             {
-                if (value is null)
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
-                //get bitmap from stream cache
-                return IconCache.GetFromCache(value) ?? DependencyProperty.UnsetValue;
-            }
-            catch (Exception ex)
-            {
-                // Don't list this as error, it's possible to have pacakges with missed icon.png
-                Log.Warning($"Error occured during value conversion, {ex}");
                 return DependencyProperty.UnsetValue;
             }
+
+            //get bitmap from stream cache
+            return IconCache.GetFromCache(value) ?? DependencyProperty.UnsetValue;
+        }
+        catch (Exception ex)
+        {
+            // Don't list this as error, it's possible to have pacakges with missed icon.png
+            Log.Warning($"Error occured during value conversion, {ex}");
+            return DependencyProperty.UnsetValue;
         }
     }
 }
