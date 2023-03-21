@@ -45,7 +45,8 @@
         /// Identifies the <see cref="StartPage"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty StartPageProperty =
-            DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView), new PropertyMetadata("", (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
+            DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView),
+                new PropertyMetadata(string.Empty, (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
 
 
         private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)

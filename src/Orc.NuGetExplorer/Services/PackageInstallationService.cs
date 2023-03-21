@@ -263,7 +263,7 @@
 
                     if (!canBeInstalled)
                     {
-                        throw new IncompatiblePackageException($"Package {package} incompatible with project target platform {targetFramework}");
+                        throw Log.ErrorAndCreateException<IncompatiblePackageException>($"Package {package} incompatible with project target platform {targetFramework}");
                     }
 
                     // Step 5. Build install list using NuGet Resolver and select available resources. 
@@ -288,7 +288,7 @@
             }
             catch (NuGetResolverInputException ex)
             {
-                throw new IncompatiblePackageException($"Package {package} or some of it dependencies are missed for current target framework", ex);
+                throw Log.ErrorAndCreateException<IncompatiblePackageException>($"Package {package} or some of it dependencies are missed for current target framework", ex);
             }
             catch (Exception ex)
             {
@@ -427,7 +427,7 @@
                     }
                     else
                     {
-                        throw new MissingPackageException($"Cannot find package {dependencyIdentity}");
+                        throw Log.ErrorAndCreateException<MissingPackageException>($"Cannot find package {dependencyIdentity}");
                     }
                 }
             }
@@ -465,28 +465,24 @@
         {
             ArgumentNullException.ThrowIfNull(package);
 
-            if (string.Equals(globalFolder, ""))
+            if (string.Equals(globalFolder, string.Empty))
             {
                 globalFolder = DefaultNuGetFolders.GetGlobalPackagesFolder();
             }
 
-            using (var progressToken = await _downloadingProgressTrackerService.TrackDownloadOperationAsync(this, package))
-            {
-                var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
+            using var progressToken = await _downloadingProgressTrackerService.TrackDownloadOperationAsync(this, package);
+            var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
-                var packageDownloadContext = new PackageDownloadContext(cacheContext);
+            var downloadResult = await downloadResource.GetDownloadResourceResultAsync
+            (
+                package,
+                new PackageDownloadContext(cacheContext),
+                globalFolder,
+                _nugetLogger,
+                cancellationToken
+            );
 
-                var downloadResult = await downloadResource.GetDownloadResourceResultAsync
-                    (
-                        package,
-                        new PackageDownloadContext(cacheContext),
-                        globalFolder,
-                        _nugetLogger,
-                        cancellationToken
-                    );
-
-                return downloadResult;
-            }
+            return downloadResult;
         }
 
         private async Task ExtractPackagesResourcesAsync(
@@ -543,7 +539,7 @@
                         }
                         else
                         {
-                            throw new InvalidOperationException("An error occured during package extraction", ex);
+                            throw Log.ErrorAndCreateException<InvalidOperationException>("An error occured during package extraction", ex);
                         }
                     }
                 }

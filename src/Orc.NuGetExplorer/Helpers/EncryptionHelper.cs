@@ -1,11 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MD5Helper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer
 {
     using System;
     using System.Security.Cryptography;
@@ -13,6 +6,7 @@ namespace Orc.NuGetExplorer
 
     internal static class EncryptionHelper
     {
+        // ReSharper disable once InconsistentNaming
         private static readonly byte[] IV = new byte[16] { 210, 10, 56, 110, 98, 189, 66, 77, 83, 120, 86, 44, 67, 111, 98, 66 };
 
         public static string GetMd5Hash(string s)

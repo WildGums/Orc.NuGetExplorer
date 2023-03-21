@@ -106,7 +106,7 @@
                         // Check that the provider gave us a valid response.
                         if (!IsValidResponse(response))
                         {
-                            throw new ProviderException("Credential provider gaves malformed response.");
+                            throw Log.ErrorAndCreateException<ProviderException>("Credential provider gaves malformed response.");
                         }
 
                         if (response.Status == CredentialStatus.UserCanceled)
@@ -226,12 +226,12 @@
                 // Note: don't cache by root uri, just remove catalog info
                 //var rootUri = uri.GetRootUri();
 
-                const string IndexName = "index.json";
+                const string indexName = "index.json";
 
                 var rootUrl = uri.ToString();
-                if (rootUrl.EndsWithIgnoreCase(IndexName))
+                if (rootUrl.EndsWithIgnoreCase(indexName))
                 {
-                    rootUrl = rootUrl.Substring(0, rootUrl.Length - IndexName.Length);
+                    rootUrl = rootUrl.Substring(0, rootUrl.Length - indexName.Length);
                 }
 
                 return GetUriKey(new Uri(rootUrl, UriKind.RelativeOrAbsolute), type, provider);

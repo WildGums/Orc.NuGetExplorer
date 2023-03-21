@@ -108,7 +108,7 @@
             }
             catch (Exception ex) when (token.IsCancellationRequested)
             {
-                throw new OperationCanceledException("Search request was canceled", ex, token);
+                throw Log.ErrorAndCreateException<OperationCanceledException>("Search request was canceled", ex, token);
             }
         }
 
@@ -153,7 +153,7 @@
             }
             catch (Exception ex) when (token.IsCancellationRequested)
             {
-                throw new OperationCanceledException("Search request was canceled", ex, token);
+                throw Log.ErrorAndCreateException<OperationCanceledException>("Search request was canceled", ex, token);
             }
         }
 

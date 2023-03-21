@@ -221,8 +221,8 @@
         private void ShowAnimatedOverlay()
         {
             if (OverlayGrid is null)
-            {
-                throw new InvalidOperationException("Cannot find overlay in Associated object");
+            { 
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
             }
 
             if (OverlayGrid.Visibility == Visibility.Visible && _overlayStoryboard is null)
@@ -251,16 +251,16 @@
 
                 animation?.SetCurrentValue(DoubleAnimation.ToProperty, (double?)0.7);
 
-                void completionHandler(object? sender, EventArgs args)
+                void CompletionHandler(object? sender, EventArgs args)
                 {
-                    storyboard.Completed -= completionHandler;
+                    storyboard.Completed -= CompletionHandler;
                     if (_overlayStoryboard == storyboard)
                     {
                         _overlayStoryboard = null;
                     }
                 }
 
-                storyboard.Completed += completionHandler;
+                storyboard.Completed += CompletionHandler;
                 OverlayGrid.BeginStoryboard(storyboard);
             }
             else
@@ -273,7 +273,7 @@
         {
             if (OverlayGrid is null)
             {
-                throw new InvalidOperationException("Cannot find overlay in Associated object");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
             }
 
             if (OverlayGrid.Visibility == Visibility.Visible && OverlayGrid.Opacity <= 0.0)
@@ -285,12 +285,9 @@
             Dispatcher.VerifyAccess();
 
             var storyboard = AnimationService?.GetFadeOutAnimation(OverlayGrid);
-            if (storyboard is null)
-            {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
-            }
 
-            _overlayStoryboard = storyboard;
+            _overlayStoryboard = storyboard 
+                                 ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
 
             if (TryGetOverlayFadingStoryboardAnimation(storyboard, out var animation))
             {

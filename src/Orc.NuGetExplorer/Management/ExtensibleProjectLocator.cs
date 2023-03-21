@@ -44,7 +44,7 @@
 
             if (registeredProject != extensibleProject)
             {
-                throw new ProjectStateException("ExtensibleProject must be registered before use");
+                throw Log.ErrorAndCreateException<ProjectStateException>("ExtensibleProject must be registered before use");
             }
 
             if (!_enabledProjects.Add(registeredProject))
@@ -61,7 +61,7 @@
 
             if (registeredProject != extensibleProject)
             {
-                throw new InvalidOperationException("ExtensibleProject must be registered before use");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("ExtensibleProject must be registered before use");
             }
 
             if (!_enabledProjects.Remove(registeredProject))

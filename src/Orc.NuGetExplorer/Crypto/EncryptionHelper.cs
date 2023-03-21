@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MD5Helper.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.NuGetExplorer.Crypto
+﻿namespace Orc.NuGetExplorer.Crypto
 {
     using System;
     using System.Security.Cryptography;

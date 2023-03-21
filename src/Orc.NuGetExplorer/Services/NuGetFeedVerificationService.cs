@@ -66,7 +66,7 @@ namespace Orc.NuGetExplorer
                 if (cancellationToken.IsCancellationRequested)
                 {
                     //cancel operation
-                    throw new OperationCanceledException("Verification was canceled", ex, cancellationToken);
+                    throw Log.ErrorAndCreateException<OperationCanceledException>("Verification was canceled", ex, cancellationToken);
                 }
                 result = FatalProtocolExceptionHandler.HandleException(ex, source);
             }
@@ -125,7 +125,7 @@ namespace Orc.NuGetExplorer
 
                     if (searchCompletion != searchTask)
                     {
-                        throw new TimeoutException("Search operation has timed out");
+                        throw Log.ErrorAndCreateException<TimeoutException>("Search operation has timed out");
                     }
 
                     if (searchTask.IsFaulted && searchTask.Exception is not null)
