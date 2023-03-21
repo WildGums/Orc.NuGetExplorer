@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer.Management
-{
-    using System;
+﻿namespace Orc.NuGetExplorer.Management;
 
-    public class ProjectStateException : Exception
+using System;
+
+public class ProjectStateException : Exception
+{
+    public ProjectStateException(string message)
+        : base(message)
     {
-        public ProjectStateException(string message)
-            : base(message)
-        {
-        }
     }
 }

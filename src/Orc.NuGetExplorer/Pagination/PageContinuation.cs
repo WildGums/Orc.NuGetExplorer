@@ -1,76 +1,75 @@
-﻿namespace Orc.NuGetExplorer.Pagination
+﻿namespace Orc.NuGetExplorer.Pagination;
+
+using System.Linq;
+using Catel.Logging;
+
+public class PageContinuation
 {
-    using System.Linq;
-    using Catel.Logging;
+    private int _lastNumber = -1;
 
-    public class PageContinuation
+    private readonly int _pageSize = -1;
+
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+    public PageContinuation(int pageSize, PackageSourceWrapper packageSourceWrapper)
     {
-        private int _lastNumber = -1;
+        _pageSize = pageSize;
 
-        private readonly int _pageSize = -1;
+        Source = packageSourceWrapper;
+    }
 
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    public PageContinuation(PageContinuation continuation)
+    {
+        Source = continuation.Source;
+        _lastNumber = continuation.Current;
+    }
 
-        public PageContinuation(int pageSize, PackageSourceWrapper packageSourceWrapper)
-        {
-            _pageSize = pageSize;
-
-            Source = packageSourceWrapper;
-        }
-
-        public PageContinuation(PageContinuation continuation)
-        {
-            Source = continuation.Source;
-            _lastNumber = continuation.Current;
-        }
-
-        public PageContinuation(PageContinuation continuation, bool onlyLocal)
-            : this(continuation)
-        {
-            OnlyLocal = onlyLocal;
-        }
+    public PageContinuation(PageContinuation continuation, bool onlyLocal)
+        : this(continuation)
+    {
+        OnlyLocal = onlyLocal;
+    }
 
 
-        public int LastNumber { get => _lastNumber; private set => _lastNumber = value; }
+    public int LastNumber { get => _lastNumber; private set => _lastNumber = value; }
 
-        public int Size => _pageSize;
+    public int Size => _pageSize;
 
-        public int Next => LastNumber + 1;
+    public int Next => LastNumber + 1;
 
-        public int Current => _lastNumber;
+    public int Current => _lastNumber;
 
-        public bool OnlyLocal { get; set; } = false;
+    public bool OnlyLocal { get; set; } = false;
 
-        public bool IsValid => Source.PackageSources.Any() || OnlyLocal;
+    public bool IsValid => Source.PackageSources.Any() || OnlyLocal;
 
-        public PackageSourceWrapper Source { get; private set; }
+    public PackageSourceWrapper Source { get; private set; }
 
-        public int GetNext()
-        {
-            Log.Debug($"Got next {Size} positions, starts from {Next}");
+    public int GetNext()
+    {
+        Log.Debug($"Got next {Size} positions, starts from {Next}");
 
-            var next = Next;
+        var next = Next;
 
-            LastNumber += Size;
+        LastNumber += Size;
 
-            return next;
-        }
+        return next;
+    }
 
-        public int GetNext(int count)
-        {
-            Log.Debug($"Got next {count} positions, starts from {Next}");
+    public int GetNext(int count)
+    {
+        Log.Debug($"Got next {count} positions, starts from {Next}");
 
-            var next = Next;
+        var next = Next;
 
-            LastNumber += Size;
+        LastNumber += Size;
 
-            return next;
-        }
+        return next;
+    }
 
-        public int GetPrevious()
-        {
-            LastNumber -= Size;
-            return Next;
-        }
+    public int GetPrevious()
+    {
+        LastNumber -= Size;
+        return Next;
     }
 }

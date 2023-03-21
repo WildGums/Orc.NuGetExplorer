@@ -1,27 +1,26 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using System.Collections.Generic;
+
+public interface IExtensibleProjectLocator
 {
-    using System.Collections.Generic;
+    IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true);
 
-    public interface IExtensibleProjectLocator
-    {
-        IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true);
+    void Register(IExtensibleProject project);
 
-        void Register(IExtensibleProject project);
+    void Register<T>() where T : IExtensibleProject;
 
-        void Register<T>() where T : IExtensibleProject;
+    void Register<T>(params object[] parameters) where T : IExtensibleProject;
 
-        void Register<T>(params object[] parameters) where T : IExtensibleProject;
+    void Enable(IExtensibleProject extensibleProject);
 
-        void Enable(IExtensibleProject extensibleProject);
+    void Disable(IExtensibleProject extensibleProject);
 
-        void Disable(IExtensibleProject extensibleProject);
+    bool IsEnabled(IExtensibleProject extensibleProject);
 
-        bool IsEnabled(IExtensibleProject extensibleProject);
+    bool IsConfigLoaded { get; }
 
-        bool IsConfigLoaded { get; }
+    void PersistChanges();
 
-        void PersistChanges();
-
-        void RestoreStateFromConfig();
-    }
+    void RestoreStateFromConfig();
 }

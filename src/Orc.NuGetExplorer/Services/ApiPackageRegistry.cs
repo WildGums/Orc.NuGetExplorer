@@ -1,142 +1,141 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using Catel;
+using Catel.Data;
+using Catel.Logging;
+using Catel.Services;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
+using Orc.NuGetExplorer.Packaging;
+
+internal sealed class ApiPackageRegistry : IApiPackageRegistry
 {
-    using System;
-    using System.Collections.Generic;
-    using Catel;
-    using Catel.Data;
-    using Catel.Logging;
-    using Catel.Services;
-    using NuGet.Packaging;
-    using NuGet.Packaging.Core;
-    using NuGet.Versioning;
-    using Orc.NuGetExplorer.Packaging;
-
-    internal sealed class ApiPackageRegistry : IApiPackageRegistry
+    public ApiPackageRegistry(ILanguageService languageService)
     {
-        public ApiPackageRegistry(ILanguageService languageService)
-        {
-            ArgumentNullException.ThrowIfNull(languageService);
+        ArgumentNullException.ThrowIfNull(languageService);
 
-            _languageService = languageService;
+        _languageService = languageService;
+    }
+
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+    private readonly Dictionary<string, SemanticVersion> _apiPackages = new();
+
+    private readonly ILanguageService _languageService;
+
+    private readonly object _syncObj = new();
+
+    public void Register(string packageName, string version)
+    {
+        Argument.IsNotNullOrWhitespace(() => packageName);
+
+        var semanticVersion = SemanticVersion.Parse(version);
+
+        lock (_syncObj)
+        {
+            if (_apiPackages.TryGetValue(packageName, out var storedSemanticVersion))
+            {
+                throw Log.ErrorAndCreateException<ArgumentException>("The api package '{0}' is already registered with version '{1}'", packageName, storedSemanticVersion);
+            }
+
+            _apiPackages.Add(packageName, semanticVersion);
+        }
+    }
+
+    public bool IsRegistered(string packageName)
+    {
+        lock (_syncObj)
+        {
+            return _apiPackages.ContainsKey(packageName);
+        }
+    }
+
+    public void Validate(IPackageDetails package)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+
+        IEnumerable<PackageDependencyGroup>? dependencyGroups;
+        switch (package)
+        {
+            case NuGetPackage modelPackage:
+                dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
+                break;
+
+            case PackageDetails details:
+                dependencyGroups = details.DependencySets;
+                break;
+
+            case MultiVersionPackageSearchMetadata packageMetadata:
+                dependencyGroups = packageMetadata.DependencySets;
+                break;
+
+            default:
+                Log.Warning($"{package} package API cannot be validated, because dependencies aren't recognized");
+                return;
         }
 
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private readonly Dictionary<string, SemanticVersion> _apiPackages = new();
-
-        private readonly ILanguageService _languageService;
-
-        private readonly object _syncObj = new();
-
-        public void Register(string packageName, string version)
+        lock (_syncObj)
         {
-            Argument.IsNotNullOrWhitespace(() => packageName);
-
-            var semanticVersion = SemanticVersion.Parse(version);
-
-            lock (_syncObj)
+            foreach (var depencyGroup in dependencyGroups)
             {
-                if (_apiPackages.TryGetValue(packageName, out var storedSemanticVersion))
+                foreach (var dependency in depencyGroup.Packages)
                 {
-                    throw Log.ErrorAndCreateException<ArgumentException>("The api package '{0}' is already registered with version '{1}'", packageName, storedSemanticVersion);
-                }
-
-                _apiPackages.Add(packageName, semanticVersion);
-            }
-        }
-
-        public bool IsRegistered(string packageName)
-        {
-            lock (_syncObj)
-            {
-                return _apiPackages.ContainsKey(packageName);
-            }
-        }
-
-        public void Validate(IPackageDetails package)
-        {
-            ArgumentNullException.ThrowIfNull(package);
-
-            IEnumerable<PackageDependencyGroup>? dependencyGroups;
-            switch (package)
-            {
-                case NuGetPackage modelPackage:
-                    dependencyGroups = modelPackage.GetDependencyInfo(package.NuGetVersion);
-                    break;
-
-                case PackageDetails details:
-                    dependencyGroups = details.DependencySets;
-                    break;
-
-                case MultiVersionPackageSearchMetadata packageMetadata:
-                    dependencyGroups = packageMetadata.DependencySets;
-                    break;
-
-                default:
-                    Log.Warning($"{package} package API cannot be validated, because dependencies aren't recognized");
-                    return;
-            }
-
-            lock (_syncObj)
-            {
-                foreach (var depencyGroup in dependencyGroups)
-                {
-                    foreach (var dependency in depencyGroup.Packages)
-                    {
-                        ValidateDependency(package, dependency);
-                    }
+                    ValidateDependency(package, dependency);
                 }
             }
         }
+    }
 
-        private void ValidateDependency(IPackageDetails package, PackageDependency dependency)
+    private void ValidateDependency(IPackageDetails package, PackageDependency dependency)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+        ArgumentNullException.ThrowIfNull(dependency);
+
+        SemanticVersion? currentVersion;
+
+        lock (_syncObj)
         {
-            ArgumentNullException.ThrowIfNull(package);
-            ArgumentNullException.ThrowIfNull(dependency);
-
-            SemanticVersion? currentVersion;
-
-            lock (_syncObj)
-            {
-                if (!_apiPackages.TryGetValue(dependency.Id, out currentVersion))
-                {
-                    return;
-                }
-            }
-
-            var versionSpec = dependency.VersionRange;
-
-            package.ValidationContext ??= new ValidationContext();
-
-            var minVersion = versionSpec.MinVersion;
-            if (minVersion is not null)
-            {
-                if (versionSpec.IsMinInclusive && currentVersion < minVersion)
-                {
-                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
-                }
-
-                if (!versionSpec.IsMinInclusive && currentVersion <= minVersion)
-                {
-                    package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
-                }
-            }
-
-            var maxVersion = versionSpec.MaxVersion;
-            if (maxVersion is null)
+            if (!_apiPackages.TryGetValue(dependency.Id, out currentVersion))
             {
                 return;
             }
+        }
 
-            if (versionSpec.IsMaxInclusive && currentVersion > maxVersion)
+        var versionSpec = dependency.VersionRange;
+
+        package.ValidationContext ??= new ValidationContext();
+
+        var minVersion = versionSpec.MinVersion;
+        if (minVersion is not null)
+        {
+            if (versionSpec.IsMinInclusive && currentVersion < minVersion)
             {
-                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
+                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
             }
 
-            if (!versionSpec.IsMaxInclusive && currentVersion >= maxVersion)
+            if (!versionSpec.IsMinInclusive && currentVersion <= minVersion)
             {
-                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
+                package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2"), package.Id, dependency.Id, minVersion, currentVersion), ValidationTags.Api));
             }
+        }
+
+        var maxVersion = versionSpec.MaxVersion;
+        if (maxVersion is null)
+        {
+            return;
+        }
+
+        if (versionSpec.IsMaxInclusive && currentVersion > maxVersion)
+        {
+            package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
+        }
+
+        if (!versionSpec.IsMaxInclusive && currentVersion >= maxVersion)
+        {
+            package.ValidationContext.Add(BusinessRuleValidationResult.CreateErrorWithTag(string.Format(_languageService.GetRequiredString("NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4"), package.Id, dependency.Id, maxVersion, currentVersion), ValidationTags.Api));
         }
     }
 }

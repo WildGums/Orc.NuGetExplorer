@@ -1,32 +1,31 @@
-﻿namespace Orc.NuGetExplorer.Example.Views
+﻿namespace Orc.NuGetExplorer.Example.Views;
+
+using Catel.Windows;
+using Orc.NuGetExplorer.Example.ViewModels;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : DataWindow
 {
-    using Catel.Windows;
-    using Orc.NuGetExplorer.Example.ViewModels;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
+    /// </summary>
+    public MainWindow()
+        : this(null)
+    {
+    }
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
-    public partial class MainWindow : DataWindow
+    /// <param name="viewModel">The view model to inject.</param>
+    /// <remarks>
+    /// This constructor can be used to use view-model injection.
+    /// </remarks>
+    public MainWindow(MainViewModel viewModel)
+        : base(viewModel, DataWindowMode.Custom)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        public MainWindow()
-            : this(null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// </summary>
-        /// <param name="viewModel">The view model to inject.</param>
-        /// <remarks>
-        /// This constructor can be used to use view-model injection.
-        /// </remarks>
-        public MainWindow(MainViewModel viewModel)
-            : base(viewModel, DataWindowMode.Custom)
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

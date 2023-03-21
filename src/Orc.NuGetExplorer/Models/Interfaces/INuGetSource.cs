@@ -1,13 +1,12 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public interface INuGetSource : IPackageSource
 {
-    public interface INuGetSource : IPackageSource
-    {
-        bool IsAccessible { get; }
+    bool IsAccessible { get; }
 
-        bool IsVerified { get; }
+    bool IsVerified { get; }
 
-        bool IsSelected { get; set; }
+    bool IsSelected { get; set; }
 
-        PackageSourceWrapper GetPackageSource();
-    }
+    PackageSourceWrapper GetPackageSource();
 }

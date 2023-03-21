@@ -1,108 +1,107 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Catel;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
+using NuGetExplorer.Management;
+using NuGetExplorer.Pagination;
+using NuGetExplorer.Providers;
+using Orc.FileSystem;
+
+internal class LocalPackagesLoaderService : IPackageLoaderService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Catel;
-    using NuGet.Packaging.Core;
-    using NuGet.Protocol.Core.Types;
-    using NuGet.Versioning;
-    using NuGetExplorer.Management;
-    using NuGetExplorer.Pagination;
-    using NuGetExplorer.Providers;
-    using Orc.FileSystem;
+    private readonly IExtensibleProjectLocator _extensibleProjectLocator;
 
-    internal class LocalPackagesLoaderService : IPackageLoaderService
+    private readonly INuGetPackageManager _projectManager;
+    private readonly ISourceRepositoryProvider _repositoryProvider;
+    private readonly IDirectoryService _directoryService;
+    private readonly IRepositoryContextService _repositoryService;
+
+    public IPackageMetadataProvider PackageMetadataProvider =>
+        Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _projectManager);
+
+    public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
+        INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
     {
-        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
+        ArgumentNullException.ThrowIfNull(directoryService);
+        ArgumentNullException.ThrowIfNull(repositoryService);
+        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
+        ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+        ArgumentNullException.ThrowIfNull(repositoryProvider);
 
-        private readonly INuGetPackageManager _projectManager;
-        private readonly ISourceRepositoryProvider _repositoryProvider;
-        private readonly IDirectoryService _directoryService;
-        private readonly IRepositoryContextService _repositoryService;
+        _directoryService = directoryService;
+        _repositoryService = repositoryService;
+        _extensibleProjectLocator = extensibleProjectLocator;
+        _projectManager = nuGetExtensibleProjectManager;
+        _repositoryProvider = repositoryProvider;
+    }
 
-        public IPackageMetadataProvider PackageMetadataProvider =>
-            Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _projectManager);
+    public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
+    {
+        Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
 
-        public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-            INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
+        var source = pageContinuation.Source.PackageSources.FirstOrDefault();
+        var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
+
+        SourceRepository? repository = null;
+
+        if (source is not null)
         {
-            ArgumentNullException.ThrowIfNull(directoryService);
-            ArgumentNullException.ThrowIfNull(repositoryService);
-            ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-            ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
-            ArgumentNullException.ThrowIfNull(repositoryProvider);
-
-            _directoryService = directoryService;
-            _repositoryService = repositoryService;
-            _extensibleProjectLocator = extensibleProjectLocator;
-            _projectManager = nuGetExtensibleProjectManager;
-            _repositoryProvider = repositoryProvider;
+            repository = _repositoryProvider.CreateRepository(source);
+        }
+        else
+        {
+            repository = observedProjects.FirstOrDefault()?.AsSourceRepository(_repositoryProvider);
         }
 
-        public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
+        try
         {
-            Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
+            var localPackages = await _projectManager.CreatePackagesCollectionFromProjectsAsync(observedProjects, token);
 
-            var source = pageContinuation.Source.PackageSources.FirstOrDefault();
-            var observedProjects = _extensibleProjectLocator.GetAllExtensibleProjects();
+            var pagedPackages = localPackages
+                .GetLatest(VersionComparer.Default)
+                .Where(package => package.Id.IndexOf(searchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) != -1)
+                .OrderBy(package => package.Id)
+                .Skip(pageContinuation.GetNext());
 
-            SourceRepository? repository = null;
 
-            if (source is not null)
+            if (pageContinuation.Size > 0)
             {
-                repository = _repositoryProvider.CreateRepository(source);
-            }
-            else
-            {
-                repository = observedProjects.FirstOrDefault()?.AsSourceRepository(_repositoryProvider);
+                pagedPackages = pagedPackages.Take(pageContinuation.Size).ToList();
             }
 
-            try
+            var combinedFindedMetadata = new List<IPackageSearchMetadata>();
+
+            foreach (var package in pagedPackages)
             {
-                var localPackages = await _projectManager.CreatePackagesCollectionFromProjectsAsync(observedProjects, token);
-
-                var pagedPackages = localPackages
-                    .GetLatest(VersionComparer.Default)
-                    .Where(package => package.Id.IndexOf(searchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) != -1)
-                    .OrderBy(package => package.Id)
-                    .Skip(pageContinuation.GetNext());
-
-
-                if (pageContinuation.Size > 0)
+                var metadata = await GetPackageMetadataAsync(package, searchFilter.IncludePrerelease, token);
+                if (metadata is not null)
                 {
-                    pagedPackages = pagedPackages.Take(pageContinuation.Size).ToList();
+                    combinedFindedMetadata.Add(metadata);
                 }
-
-                var combinedFindedMetadata = new List<IPackageSearchMetadata>();
-
-                foreach (var package in pagedPackages)
-                {
-                    var metadata = await GetPackageMetadataAsync(package, searchFilter.IncludePrerelease, token);
-                    if (metadata is not null)
-                    {
-                        combinedFindedMetadata.Add(metadata);
-                    }
-                }
-
-                return combinedFindedMetadata;
             }
-            catch (FatalProtocolException ex) when (token.IsCancellationRequested)
-            {
-                //task is cancelled, supress
-                throw new OperationCanceledException("Search request was canceled", ex, token);
-            }
+
+            return combinedFindedMetadata;
         }
-
-        public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
+        catch (FatalProtocolException ex) when (token.IsCancellationRequested)
         {
-            // first we try and load the metadata from a local package
-            var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-
-            packageMetadata ??= await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-            return packageMetadata;
+            //task is cancelled, supress
+            throw new OperationCanceledException("Search request was canceled", ex, token);
         }
+    }
+
+    public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
+    {
+        // first we try and load the metadata from a local package
+        var packageMetadata = await PackageMetadataProvider.GetLocalPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+
+        packageMetadata ??= await PackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
+        return packageMetadata;
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public interface IBackupFileSystemService
 {
-    public interface IBackupFileSystemService
-    {
-        void BackupFolder(string fullPath);
-        void BackupFile(string filePath);
-        void Restore(string fullPath);
-    }
+    void BackupFolder(string fullPath);
+    void BackupFile(string filePath);
+    void Restore(string fullPath);
 }

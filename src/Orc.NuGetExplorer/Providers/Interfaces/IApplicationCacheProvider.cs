@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Providers
-{
-    using NuGetExplorer.Cache;
+﻿namespace Orc.NuGetExplorer.Providers;
 
-    public interface IApplicationCacheProvider
-    {
-        IconCache EnsureIconCache();
-    }
+using NuGetExplorer.Cache;
+
+public interface IApplicationCacheProvider
+{
+    IconCache EnsureIconCache();
 }

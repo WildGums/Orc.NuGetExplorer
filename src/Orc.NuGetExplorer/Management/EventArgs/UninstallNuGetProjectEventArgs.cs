@@ -1,23 +1,22 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using NuGet.Packaging.Core;
+
+public class UninstallNuGetProjectEventArgs : NuGetProjectEventArgs
 {
-    using NuGet.Packaging.Core;
-
-    public class UninstallNuGetProjectEventArgs : NuGetProjectEventArgs
+    public UninstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
     {
-        public UninstallNuGetProjectEventArgs(IExtensibleProject project, PackageIdentity package, bool result) : base(project, package)
-        {
-            Result = result;
-        }
-
-        public bool Result { get; }
+        Result = result;
     }
 
-    public class BatchedUninstallNuGetProjectEventArgs : UninstallNuGetProjectEventArgs
-    {
-        public BatchedUninstallNuGetProjectEventArgs(UninstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
-        {
-        }
+    public bool Result { get; }
+}
 
-        public bool IsBatchEnd { get; set; }
+public class BatchedUninstallNuGetProjectEventArgs : UninstallNuGetProjectEventArgs
+{
+    public BatchedUninstallNuGetProjectEventArgs(UninstallNuGetProjectEventArgs eventArgs) : base(eventArgs.Project, eventArgs.Package, eventArgs.Result)
+    {
     }
+
+    public bool IsBatchEnd { get; set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+public interface IEchoService
 {
-    public interface IEchoService
-    {
-        PackageManagementEcho GetPackageManagementEcho();
-    }
+    PackageManagementEcho GetPackageManagementEcho();
 }

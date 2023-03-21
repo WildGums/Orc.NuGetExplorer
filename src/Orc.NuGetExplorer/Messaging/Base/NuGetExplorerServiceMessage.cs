@@ -1,7 +1,6 @@
-﻿namespace Orc.NuGetExplorer.Messaging
-{
-    public interface INuGetExplorerServiceMessage
-    {
+﻿namespace Orc.NuGetExplorer.Messaging;
 
-    }
+public interface INuGetExplorerServiceMessage
+{
+
 }

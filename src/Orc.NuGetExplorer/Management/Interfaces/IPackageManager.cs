@@ -1,6 +1,5 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+public interface IPackageManager //: IPackageOperationNotificationService
 {
-    public interface IPackageManager //: IPackageOperationNotificationService
-    {
-    }
 }

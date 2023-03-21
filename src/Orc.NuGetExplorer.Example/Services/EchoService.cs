@@ -1,14 +1,13 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+public class EchoService : IEchoService
 {
-    public class EchoService : IEchoService
+    private PackageManagementEcho _echo;
+
+    public PackageManagementEcho GetPackageManagementEcho()
     {
-        private PackageManagementEcho _echo;
+        _echo ??= new PackageManagementEcho();
 
-        public PackageManagementEcho GetPackageManagementEcho()
-        {
-            _echo ??= new PackageManagementEcho();
-
-            return _echo;
-        }
+        return _echo;
     }
 }

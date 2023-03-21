@@ -1,20 +1,19 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Collections.Generic;
+using System.Linq;
+
+public class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    public class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
+    public EmptyDefaultPackageSourcesProvider()
     {
-        public EmptyDefaultPackageSourcesProvider()
-        {
-            DefaultSource = string.Empty;
-        }
+        DefaultSource = string.Empty;
+    }
 
-        public string DefaultSource { get; set; }
+    public string DefaultSource { get; set; }
 
-        public IEnumerable<IPackageSource> GetDefaultPackages()
-        {
-            return Enumerable.Empty<IPackageSource>();
-        }
+    public IEnumerable<IPackageSource> GetDefaultPackages()
+    {
+        return Enumerable.Empty<IPackageSource>();
     }
 }

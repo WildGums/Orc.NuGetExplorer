@@ -1,66 +1,65 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using System;
+using System.Collections.Generic;
+using NuGet.Frameworks;
+using NuGet.ProjectManagement;
+using Orc.NuGetExplorer.Management;
+
+internal class PackagesConfigProvider : INuGetProjectConfigurationProvider
 {
-    using System;
-    using System.Collections.Generic;
-    using NuGet.Frameworks;
-    using NuGet.ProjectManagement;
-    using Orc.NuGetExplorer.Management;
+    private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new();
+    private readonly IFrameworkNameProvider _frameworkNameProvider;
 
-    internal class PackagesConfigProvider : INuGetProjectConfigurationProvider
+    private const string MetadataTargetFramework = "TargetFramework";
+    private const string MetadataName = "Name";
+
+    public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
     {
-        private readonly Dictionary<IExtensibleProject, NuGetProjectMetadata> _storedProjectMetadata = new();
-        private readonly IFrameworkNameProvider _frameworkNameProvider;
+        ArgumentNullException.ThrowIfNull(frameworkNameProvider);
 
-        private const string MetadataTargetFramework = "TargetFramework";
-        private const string MetadataName = "Name";
+        _frameworkNameProvider = frameworkNameProvider;
+    }
 
-        public PackagesConfigProvider(IFrameworkNameProvider frameworkNameProvider)
+    /// <summary>
+    /// Creates minimal required metadata for initializing NuGet PackagesConfigNuGetProject from
+    /// our IExtensibleProject
+    /// </summary>
+    /// <param name="project"></param>
+    /// <returns></returns>
+    public NuGetProject GetProjectConfig(IExtensibleProject project)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+
+        if (!_storedProjectMetadata.TryGetValue(project, out var metadata))
         {
-            ArgumentNullException.ThrowIfNull(frameworkNameProvider);
+            var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-            _frameworkNameProvider = frameworkNameProvider;
+            metadata = BuildMetadataForConfig(targetFramework, project.Name);
+
+            _storedProjectMetadata.Add(project, metadata);
         }
 
-        /// <summary>
-        /// Creates minimal required metadata for initializing NuGet PackagesConfigNuGetProject from
-        /// our IExtensibleProject
-        /// </summary>
-        /// <param name="project"></param>
-        /// <returns></returns>
-        public NuGetProject GetProjectConfig(IExtensibleProject project)
-        {
-            ArgumentNullException.ThrowIfNull(project);
+        var packagesConfigProject = new PackagesConfigNuGetProject(project.ContentPath, metadata.Data);
 
-            if (!_storedProjectMetadata.TryGetValue(project, out var metadata))
-            {
-                var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
+        return packagesConfigProject;
+    }
 
-                metadata = BuildMetadataForConfig(targetFramework, project.Name);
+    public NuGetProject GetPackagesConfig(string packagesConfigPath, NuGetFramework targetFramework, string projectName)
+    {
+        var metadata = BuildMetadataForConfig(targetFramework, projectName);
+        var packagesConfigProject = new PackagesConfigNuGetProject(packagesConfigPath, metadata.Data);
 
-                _storedProjectMetadata.Add(project, metadata);
-            }
+        return packagesConfigProject;
+    }
 
-            var packagesConfigProject = new PackagesConfigNuGetProject(project.ContentPath, metadata.Data);
+    private static NuGetProjectMetadata BuildMetadataForConfig(NuGetFramework targetFramework, string projectName)
+    {
+        var metadata = new NuGetProjectMetadata();
 
-            return packagesConfigProject;
-        }
+        metadata.Data.Add(MetadataTargetFramework, targetFramework);
+        metadata.Data.Add(MetadataName, projectName);
 
-        public NuGetProject GetPackagesConfig(string packagesConfigPath, NuGetFramework targetFramework, string projectName)
-        {
-            var metadata = BuildMetadataForConfig(targetFramework, projectName);
-            var packagesConfigProject = new PackagesConfigNuGetProject(packagesConfigPath, metadata.Data);
-
-            return packagesConfigProject;
-        }
-
-        private static NuGetProjectMetadata BuildMetadataForConfig(NuGetFramework targetFramework, string projectName)
-        {
-            var metadata = new NuGetProjectMetadata();
-
-            metadata.Data.Add(MetadataTargetFramework, targetFramework);
-            metadata.Data.Add(MetadataName, projectName);
-
-            return metadata;
-        }
+        return metadata;
     }
 }

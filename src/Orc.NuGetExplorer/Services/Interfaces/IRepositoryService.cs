@@ -1,13 +1,12 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Collections.Generic;
+
+public interface IRepositoryService
 {
-    using System.Collections.Generic;
+    IRepository LocalRepository { get; }
 
-    public interface IRepositoryService
-    {
-        IRepository LocalRepository { get; }
-
-        IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
-        IEnumerable<IRepository> GetSourceRepositories();
-        IEnumerable<IRepository> GetUpdateRepositories();
-    }
+    IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
+    IEnumerable<IRepository> GetSourceRepositories();
+    IEnumerable<IRepository> GetUpdateRepositories();
 }

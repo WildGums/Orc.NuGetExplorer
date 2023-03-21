@@ -26,8 +26,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = false
+                };
 
                 var canInstall = await service.CanInstallAsync(packageDetails);
 
@@ -49,8 +51,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = true
+                };
 
                 var canInstall = await service.CanInstallAsync(packageDetails);
 
@@ -76,8 +80,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = false
+                };
 
                 var canUpdate = await service.CanUpdateAsync(packageDetails);
 
@@ -99,8 +105,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = true
+                };
 
                 var canUpdate = await service.CanUpdateAsync(packageDetails);
 
@@ -126,8 +134,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = false
+                };
 
                 var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
 
@@ -149,8 +159,10 @@
                     packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
                 var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
+                var packageDetails = new PackageDetails(packageSearchMetadata)
+                {
+                    IsInstalled = true
+                };
 
                 var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
 

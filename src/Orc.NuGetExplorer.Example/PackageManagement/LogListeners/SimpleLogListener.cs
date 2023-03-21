@@ -1,43 +1,42 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+using System;
+using Catel.Services;
+
+public class SimpleLogListener : PackageManagerLogListenerBase
 {
-    using System;
-    using Catel.Services;
+    private readonly IDispatcherService _dispatcherService;
+    private readonly PackageManagementEcho _echo;
 
-    public class SimpleLogListener : PackageManagerLogListenerBase
+    public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
+        IEchoService echoService, IDispatcherService dispatcherService)
+        : base(nuGetLogListeningSevice)
     {
-        private readonly IDispatcherService _dispatcherService;
-        private readonly PackageManagementEcho _echo;
+        ArgumentNullException.ThrowIfNull(dispatcherService);
+        ArgumentNullException.ThrowIfNull(echoService);
 
-        public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
-            IEchoService echoService, IDispatcherService dispatcherService)
-            : base(nuGetLogListeningSevice)
-        {
-            ArgumentNullException.ThrowIfNull(dispatcherService);
-            ArgumentNullException.ThrowIfNull(echoService);
+        _dispatcherService = dispatcherService;
 
-            _dispatcherService = dispatcherService;
+        _echo = echoService.GetPackageManagementEcho();
+    }
 
-            _echo = echoService.GetPackageManagementEcho();
-        }
+    protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Info: {0}", e.Message)), true);
+    }
 
-        protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Info: {0}", e.Message)), true);
-        }
+    protected override void OnError(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Error: {0}", e.Message)), true);
+    }
 
-        protected override void OnError(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Error: {0}", e.Message)), true);
-        }
+    protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Debug: {0}", e.Message)), true);
+    }
 
-        protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Debug: {0}", e.Message)), true);
-        }
-
-        protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Warning: {0}", e.Message)), true);
-        }
+    protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Warning: {0}", e.Message)), true);
     }
 }

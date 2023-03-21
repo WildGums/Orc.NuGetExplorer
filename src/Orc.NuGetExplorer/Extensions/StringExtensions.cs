@@ -1,44 +1,43 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+
+public static class StringExtensions
 {
-    using System;
-    using System.Collections.Generic;
-
-    public static class StringExtensions
+    public static string GetSafeScopeName(this string? value)
     {
-        public static string GetSafeScopeName(this string value)
+        if (value is null)
         {
-            if (value is null)
-            {
-                return "null";
-            }
-
-            return value.ToLower();
+            return "null";
         }
 
-        public static IList<string> SplitOrEmpty(this string value, char separator = ',')
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value.Split(separator);
-            }
+        return value.ToLower();
+    }
 
-            return new List<string>();
+    public static IList<string> SplitOrEmpty(this string value, char separator = ',')
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value.Split(separator);
         }
 
-        public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            ArgumentNullException.ThrowIfNull(str);
+        return new List<string>();
+    }
 
-            for (var i = 0; i < str.Length; i++)
+    public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(str);
+
+        for (var i = 0; i < str.Length; i++)
+        {
+            var s = str[i];
+            if (value.Contains(s, comparisonType))
             {
-                var s = str[i];
-                if (value.Contains(s, comparisonType))
-                {
-                    return true;
-                }
+                return true;
             }
-            return false;
         }
+        return false;
     }
 }

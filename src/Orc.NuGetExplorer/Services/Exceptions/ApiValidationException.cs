@@ -1,28 +1,27 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Runtime.Serialization;
+
+[Serializable]
+public class ApiValidationException : Exception
 {
-    using System;
-    using System.Runtime.Serialization;
-
-    [Serializable]
-    public class ApiValidationException : Exception
+    public ApiValidationException()
     {
-        public ApiValidationException()
-        {
-        }
+    }
 
-        public ApiValidationException(string message)
-            : base(message)
-        {
-        }
+    public ApiValidationException(string message)
+        : base(message)
+    {
+    }
 
-        public ApiValidationException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public ApiValidationException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected ApiValidationException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected ApiValidationException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

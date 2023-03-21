@@ -1,18 +1,17 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class PropertyChangedExtendedEventArgs<T> : PropertyChangedEventArgs
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    public virtual T? OldValue { get; }
+    public virtual T? NewValue { get; }
 
-    public class PropertyChangedExtendedEventArgs<T> : PropertyChangedEventArgs
+    public PropertyChangedExtendedEventArgs(T? oldValue, T? newValue, [CallerMemberName] string propertyName = "")
+        : base(propertyName)
     {
-        public virtual T? OldValue { get; private set; }
-        public virtual T? NewValue { get; private set; }
-
-        public PropertyChangedExtendedEventArgs(T? oldValue, T? newValue, [CallerMemberName] string propertyName = "")
-               : base(propertyName)
-        {
-            OldValue = oldValue;
-            NewValue = newValue;
-        }
+        OldValue = oldValue;
+        NewValue = newValue;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+public interface IDefaultExtensibleProjectProvider
 {
-    public interface IDefaultExtensibleProjectProvider
-    {
-        IExtensibleProject GetDefaultProject();
-    }
+    IExtensibleProject GetDefaultProject();
 }

@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+
+public interface IPackageOperationContextService
 {
-    using System;
+    IPackageOperationContext? CurrentContext { get; }
 
-    public interface IPackageOperationContextService
-    {
-        IPackageOperationContext? CurrentContext { get; }
-
-        event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
-        IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages);
-    }
+    event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
+    IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages);
 }

@@ -1,17 +1,16 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel;
+
+public class NuGetLogRecordEventArgs : EventArgs
 {
-    using System;
-    using Catel;
-
-    public class NuGetLogRecordEventArgs : EventArgs
+    public NuGetLogRecordEventArgs(string message)
     {
-        public NuGetLogRecordEventArgs(string message)
-        {
-            Argument.IsNotNullOrEmpty(() => message);
+        Argument.IsNotNullOrEmpty(() => message);
 
-            Message = message;
-        }
-
-        public string Message { get; private set; }
+        Message = message;
     }
+
+    public string Message { get; private set; }
 }

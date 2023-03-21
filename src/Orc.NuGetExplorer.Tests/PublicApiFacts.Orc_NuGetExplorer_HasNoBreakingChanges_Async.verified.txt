@@ -443,7 +443,7 @@ namespace Orc.NuGetExplorer
     public class LogHelper
     {
         public LogHelper() { }
-        public static void LogUnclearedPaths(System.Collections.Generic.List<string> unclearedPaths, Catel.Logging.ILog log) { }
+        public static void LogUnclearedPaths(System.Collections.Generic.List<string>? unclearedPaths, Catel.Logging.ILog log) { }
     }
     public class MultiplySourceSearchResource : NuGet.Protocol.Core.Types.PackageSearchResource
     {
@@ -706,8 +706,8 @@ namespace Orc.NuGetExplorer
     public class PropertyChangedExtendedEventArgs<T> : System.ComponentModel.PropertyChangedEventArgs
     {
         public PropertyChangedExtendedEventArgs(T? oldValue, T? newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") { }
-        public T NewValue { get; }
-        public T OldValue { get; }
+        public virtual T NewValue { get; }
+        public virtual T OldValue { get; }
     }
     public sealed class Repository : Orc.NuGetExplorer.IRepository
     {
@@ -746,7 +746,7 @@ namespace Orc.NuGetExplorer
     public static class StringExtensions
     {
         public static bool ContainsAny(this string value, string[] str, System.StringComparison comparisonType) { }
-        public static string GetSafeScopeName(this string value) { }
+        public static string GetSafeScopeName(this string? value) { }
         public static System.Collections.Generic.IList<string> SplitOrEmpty(this string value, char separator = ,) { }
     }
     public static class TaskExtensions

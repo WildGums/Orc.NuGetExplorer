@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+
+public interface ITemporaryFileSystemContext : IDisposable
 {
-    using System;
+    string RootDirectory { get; }
 
-    public interface ITemporaryFileSystemContext : IDisposable
-    {
-        string RootDirectory { get; }
-
-        string GetDirectory(string relativeDirectoryName);
-        string GetFile(string relativeFilePath);
-    }
+    string GetDirectory(string relativeDirectoryName);
+    string GetFile(string relativeFilePath);
 }

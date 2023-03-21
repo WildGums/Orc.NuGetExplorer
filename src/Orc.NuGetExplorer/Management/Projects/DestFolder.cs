@@ -1,72 +1,71 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using Catel.Logging;
+using NuGet.Frameworks;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+
+/// <summary>
+/// Default project which represents "plugins" folder
+/// </summary>
+public class DestFolder : IExtensibleProject
 {
-    using System;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Catel.Logging;
-    using NuGet.Frameworks;
-    using NuGet.Packaging;
-    using NuGet.Packaging.Core;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    /// <summary>
-    /// Default project which represents "plugins" folder
-    /// </summary>
-    public class DestFolder : IExtensibleProject
+    private readonly PackagePathResolver _pathResolver;
+
+    public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(destinationFolder);
+        ArgumentNullException.ThrowIfNull(defaultFramework);
 
-        private readonly PackagePathResolver _pathResolver;
+        var targetFramework = defaultFramework.GetHighest().First();
+        Framework = targetFramework.DotNetFrameworkName;
+        SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
 
-        public DestFolder(string destinationFolder, IDefaultNuGetFramework defaultFramework)
-        {
-            ArgumentNullException.ThrowIfNull(destinationFolder);
-            ArgumentNullException.ThrowIfNull(defaultFramework);
+        Log.Info($"Current target framework for plugins set as '{Framework}'");
 
-            var targetFramework = defaultFramework.GetHighest().First();
-            Framework = targetFramework.DotNetFrameworkName;
-            SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
+        // Note: commented part for testing correct package resolving to 4.X versions
+        //var tfm472 = (defaultFramework as DefaultNuGetFramework).GetFirst();
+        //Framework = tfm472.ToString();
+        // SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(tfm472));
 
-            Log.Info($"Current target framework for plugins set as '{Framework}'");
+        // Default initialization
+        SupportedPlatforms ??= ImmutableList.Create<NuGetFramework>();
 
-            // Note: commented part for testing correct package resolving to 4.X versions
-            //var tfm472 = (defaultFramework as DefaultNuGetFramework).GetFirst();
-            //Framework = tfm472.ToString();
-            // SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(tfm472));
+        ContentPath = destinationFolder;
+        _pathResolver = new PackagePathResolver(destinationFolder);
+    }
 
-            // Default initialization
-            SupportedPlatforms ??= ImmutableList.Create<NuGetFramework>();
+    public string Name => "Plugins";
 
-            ContentPath = destinationFolder;
-            _pathResolver = new PackagePathResolver(destinationFolder);
-        }
+    public string Framework { get; private set; }
 
-        public string Name => "Plugins";
+    public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
-        public string Framework { get; private set; }
+    public string ContentPath { get; }
 
-        public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
+    public bool IgnoreDependencies { get; } = true;
 
-        public string ContentPath { get; }
+    public bool SupportSideBySide { get; } = false;
 
-        public bool IgnoreDependencies { get; } = true;
+    public bool NoCache { get; } = false;
 
-        public bool SupportSideBySide { get; } = false;
+    public PackagePathResolver GetPathResolver()
+    {
+        return _pathResolver;
+    }
 
-        public bool NoCache { get; } = false;
+    public string GetInstallPath(PackageIdentity packageIdentity)
+    {
+        return _pathResolver.GetInstallPath(packageIdentity);
+    }
 
-        public PackagePathResolver GetPathResolver()
-        {
-            return _pathResolver;
-        }
-
-        public string GetInstallPath(PackageIdentity packageIdentity)
-        {
-            return _pathResolver.GetInstallPath(packageIdentity);
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
+    public override string ToString()
+    {
+        return Name;
     }
 }

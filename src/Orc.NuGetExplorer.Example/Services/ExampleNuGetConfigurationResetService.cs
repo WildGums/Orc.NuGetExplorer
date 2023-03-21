@@ -1,12 +1,11 @@
-﻿namespace Orc.NuGetExplorer.Example
+﻿namespace Orc.NuGetExplorer.Example;
+
+using System.Threading.Tasks;
+
+public class ExampleNuGetConfigurationResetService : INuGetConfigurationResetService
 {
-    using System.Threading.Tasks;
-
-    public class ExampleNuGetConfigurationResetService : INuGetConfigurationResetService
+    public async Task ResetAsync()
     {
-        public async Task ResetAsync()
-        {
 
-        }
     }
 }
