@@ -42,7 +42,7 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
         _packageOperationContextService = packageOperationContextService;
     }
 
-    protected override bool CanExecute(IManagerPage? parameter)
+    public override bool CanExecute(IManagerPage? parameter)
     {
         if (parameter is null)
         {
@@ -52,7 +52,7 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
         return parameter.PackageItems.Any(x => x.IsChecked);
     }
 
-    protected async override Task ExecuteAsync(IManagerPage? parameter)
+    public async override Task ExecuteAsync(IManagerPage? parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
 
