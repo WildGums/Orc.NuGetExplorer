@@ -18,9 +18,4 @@ public class InvalidPathException : Exception
         : base(message, innerException)
     {
     }
-
-    protected InvalidPathException(SerializationInfo info, StreamingContext context) 
-        : base(info, context)
-    {
-    }
 }

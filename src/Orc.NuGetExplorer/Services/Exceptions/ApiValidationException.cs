@@ -19,9 +19,4 @@ public class ApiValidationException : Exception
         : base(message, innerException)
     {
     }
-
-    protected ApiValidationException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

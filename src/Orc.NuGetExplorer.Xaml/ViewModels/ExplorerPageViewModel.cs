@@ -699,7 +699,11 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         {
             foreach (var token in _tokenSource)
             {
+#if NET8_0_OR_GREATER
+                await token.CancelAsync();
+#else
                 token.Cancel();
+#endif
             }
         }
 

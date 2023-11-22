@@ -1,6 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 public static class LoadAssembliesOnStartup { }
 public static class ModuleInitializer
 {
@@ -13,7 +13,6 @@ namespace Orc.NuGetExplorer
     {
         public ApiValidationException() { }
         public ApiValidationException(string message) { }
-        protected ApiValidationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public ApiValidationException(string message, System.Exception innerException) { }
     }
     public sealed class CombinedNuGetSource : Orc.NuGetExplorer.INuGetSource, Orc.NuGetExplorer.IPackageSource
@@ -437,7 +436,6 @@ namespace Orc.NuGetExplorer
     {
         public InvalidPathException() { }
         public InvalidPathException(string? message) { }
-        protected InvalidPathException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public InvalidPathException(string? message, System.Exception? innerException) { }
     }
     public class LogHelper
@@ -1316,7 +1314,6 @@ namespace Orc.NuGetExplorer.Windows
         public CredentialException(int error) { }
         public CredentialException(string message) { }
         public CredentialException(int error, string message) { }
-        protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public CredentialException(string message, System.Exception innerException) { }
     }
 }

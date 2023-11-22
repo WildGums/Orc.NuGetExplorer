@@ -6,7 +6,7 @@ using System;
 /// The exception that is thrown when an error occurs getting credentials.
 /// </summary>
 /// <threadsafety instance="false" static="true" />
-[Serializable()]
+[Serializable]
 public class CredentialException : System.ComponentModel.Win32Exception
 {
     private const string CredentialError = "An error occurred acquiring credentials.";
@@ -54,16 +54,6 @@ public class CredentialException : System.ComponentModel.Win32Exception
     /// <param name="innerException">A reference to the inner exception that is the cause of the current exception.</param>
     public CredentialException(string message, Exception innerException)
         : base(message, innerException)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CredentialException" /> class with serialized data.
-    /// </summary>
-    /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-    /// <param name="context">The <see cref="System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
-    protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        : base(info, context)
     {
     }
 }
