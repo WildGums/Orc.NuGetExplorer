@@ -39,7 +39,7 @@ public static class GlobalMocks
         private readonly PackagePathResolver _packageResolver = new PackagePathResolver(ContentFolder);
 
         public string Name => "Test project";
-        public string Framework => "net6.0-windows";
+        public string Framework => "net8.0-windows";
         public string ContentPath => ContentFolder;
         public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
         public bool IgnoreDependencies { get; }
