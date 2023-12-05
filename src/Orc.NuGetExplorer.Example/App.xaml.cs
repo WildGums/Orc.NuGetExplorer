@@ -8,7 +8,6 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
 using Orc.NuGetExplorer.Services;
-using Orc.Theming;
 using Orchestra;
 
 /// <summary>

@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
-using System.Runtime.Serialization;
 
 public class InvalidPathException : Exception
 {

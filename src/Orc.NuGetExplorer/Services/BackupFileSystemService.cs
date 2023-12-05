@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using Catel.Logging;
 using Orc.FileSystem;
-using Orc.NuGetExplorer.Services;
 
 internal class BackupFileSystemService : IBackupFileSystemService
 {
