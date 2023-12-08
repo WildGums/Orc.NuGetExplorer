@@ -40,7 +40,7 @@ internal class PageActionBarViewModelFacts
                 canExecuteRaised = true;
             };
 
-            Assert.AreEqual(false, testCommand.CanExecute());
+            Assert.That(testCommand.CanExecute(), Is.EqualTo(false));
 
             var progressManager = new Mock<IProgressManager>().Object;
             var packageCommandService = new Mock<IPackageCommandService>().Object;
@@ -54,7 +54,7 @@ internal class PageActionBarViewModelFacts
             vmCommand.Execute();
             await vmCommand.Task;
 
-            Assert.AreEqual(true, canExecuteRaised);
+            Assert.That(canExecuteRaised, Is.EqualTo(true));
         }
     }
 

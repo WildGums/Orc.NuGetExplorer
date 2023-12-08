@@ -12,10 +12,10 @@ public class EncryptionHelperFacts
     {
         var encrypted = EncryptionHelper.Encrypt(input, password);
 
-        Assert.AreNotEqual(input, encrypted);
+        Assert.That(encrypted, Is.Not.EqualTo(input));
 
         var decrypted = EncryptionHelper.Decrypt(encrypted, password);
 
-        Assert.AreEqual(input, decrypted);
+        Assert.That(decrypted, Is.EqualTo(input));
     }
 }

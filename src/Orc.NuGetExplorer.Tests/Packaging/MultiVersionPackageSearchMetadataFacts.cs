@@ -25,8 +25,8 @@ public class MultiVersionPackageSearchMetadataFacts
 
             var stringVersion = multiVersionPackageSearchMetadata.ToString();
 
-            Assert.IsFalse(stringVersion.Contains(nameof(MultiVersionPackageSearchMetadata)));
-            Assert.AreEqual("(no identity)", stringVersion);
+            Assert.That(stringVersion.Contains(nameof(MultiVersionPackageSearchMetadata)), Is.False);
+            Assert.That(stringVersion, Is.EqualTo("(no identity)"));
         }
 
         [TestCase]
@@ -44,8 +44,8 @@ public class MultiVersionPackageSearchMetadataFacts
 
             var stringVersion = multiVersionPackageSearchMetadata.ToString();
 
-            Assert.IsFalse(stringVersion.Contains(nameof(MultiVersionPackageSearchMetadata)));
-            Assert.AreEqual("MyPackage (1.0.0)", stringVersion);
+            Assert.That(stringVersion.Contains(nameof(MultiVersionPackageSearchMetadata)), Is.False);
+            Assert.That(stringVersion, Is.EqualTo("MyPackage (1.0.0)"));
         }
     }
 }

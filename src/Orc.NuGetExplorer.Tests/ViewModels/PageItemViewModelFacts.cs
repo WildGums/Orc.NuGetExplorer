@@ -34,7 +34,7 @@ internal class PageItemViewModelFacts
                 canExecuteRaised = true;
             };
 
-            Assert.AreEqual(false, testCommand.CanExecute());
+            Assert.That(testCommand.CanExecute(), Is.EqualTo(false));
 
             var settingsProviderMock = new Mock<IModelProvider<ExplorerSettingsContainer>>();
             settingsProviderMock.Setup(x => x.Model).Returns(new ExplorerSettingsContainer());
@@ -48,7 +48,7 @@ internal class PageItemViewModelFacts
 
             model.IsChecked = true;
 
-            Assert.AreEqual(true, canExecuteRaised);
+            Assert.That(canExecuteRaised, Is.EqualTo(true));
         }
     }
 }

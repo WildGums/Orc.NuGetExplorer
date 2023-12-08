@@ -29,11 +29,11 @@ public class PackagePathResolverFacts
         var packageFileName = pathResolver.GetPackageFileName(dummyPackage);
 
         // We are expecting no packages installed on this path, therefore all "installed" path methods returning null
-        Assert.IsNull(installedPackageFilePath);
-        Assert.IsNull(installedPath);
+        Assert.That(installedPackageFilePath, Is.Null);
+        Assert.That(installedPath, Is.Null);
 
-        Assert.AreEqual("C:\\Users\\JustAnotherUser\\AppData\\Roaming\\Microsoft Corporation\\Microsoft.TestHost\\WildGums\\PM\\MyApp.1.0.0", installPath);
-        Assert.AreEqual("MyApp.1.0.0.nupkg", packageFileName);
-        Assert.AreEqual("MyApp.1.0.0", packageDirectoryName);
+        Assert.That(installPath, Is.EqualTo("C:\\Users\\JustAnotherUser\\AppData\\Roaming\\Microsoft Corporation\\Microsoft.TestHost\\WildGums\\PM\\MyApp.1.0.0"));
+        Assert.That(packageFileName, Is.EqualTo("MyApp.1.0.0.nupkg"));
+        Assert.That(packageDirectoryName, Is.EqualTo("MyApp.1.0.0"));
     }
 }

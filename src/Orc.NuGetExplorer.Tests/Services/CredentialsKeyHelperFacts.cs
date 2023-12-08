@@ -21,7 +21,7 @@ public class CredentialsKeyHelperFacts
         var actual = ExplorerCredentialService.CredentialsKeyHelper.GetCacheKey(uri, NuGet.Configuration.CredentialRequestType.Forbidden, new DummyCredentialsProvider());
         var expected = $"dummy_{false}_{expectedUrlPart}";
 
-        Assert.AreEqual(expected, actual);
+        Assert.That(actual, Is.EqualTo(expected));
     }
 }
 

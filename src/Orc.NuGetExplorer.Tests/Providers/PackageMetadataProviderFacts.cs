@@ -71,8 +71,8 @@ public class PackageMetadataProviderFacts
             var actualRepository = packageMetadataProvider.GetType().GetField("_localRepository", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(packageMetadataProvider) as SourceRepository;
 
-            Assert.IsNotNull(actualRepository);
-            Assert.IsNotNull(actualRepository.PackageSource);
+            Assert.That(actualRepository, Is.Not.Null);
+            Assert.That(actualRepository.PackageSource, Is.Not.Null);
             Assert.That(actualRepository.PackageSource.Source, Is.EqualTo($"{Environment.CurrentDirectory}\\{relativePath}"));
         }
     }

@@ -33,7 +33,7 @@ public class PackageCommandServiceFacts
 
             var canInstall = await service.CanInstallAsync(packageDetails);
 
-            Assert.IsTrue(canInstall);
+            Assert.That(canInstall, Is.True);
         }
 
         [TestCase]
@@ -58,7 +58,7 @@ public class PackageCommandServiceFacts
 
             var canInstall = await service.CanInstallAsync(packageDetails);
 
-            Assert.IsFalse(canInstall);
+            Assert.That(canInstall, Is.False);
         }
     }
 
@@ -87,7 +87,7 @@ public class PackageCommandServiceFacts
 
             var canUpdate = await service.CanUpdateAsync(packageDetails);
 
-            Assert.IsFalse(canUpdate);
+            Assert.That(canUpdate, Is.False);
         }
 
         [TestCase]
@@ -112,7 +112,7 @@ public class PackageCommandServiceFacts
 
             var canUpdate = await service.CanUpdateAsync(packageDetails);
 
-            Assert.IsTrue(canUpdate);
+            Assert.That(canUpdate, Is.True);
         }
     }
 
@@ -141,7 +141,7 @@ public class PackageCommandServiceFacts
 
             var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
 
-            Assert.IsFalse(isInstalled);
+            Assert.That(isInstalled, Is.False);
         }
 
         [TestCase]
@@ -166,7 +166,7 @@ public class PackageCommandServiceFacts
 
             var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
 
-            Assert.IsTrue(isInstalled);
+            Assert.That(isInstalled, Is.True);
         }
     }
 }
