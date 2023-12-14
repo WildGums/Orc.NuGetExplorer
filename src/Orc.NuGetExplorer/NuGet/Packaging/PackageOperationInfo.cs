@@ -1,18 +1,17 @@
-﻿namespace Orc.NuGetExplorer.Packaging
+﻿namespace Orc.NuGetExplorer.Packaging;
+
+public class PackageOperationInfo
 {
-    public class PackageOperationInfo
+    public PackageOperationInfo(string operationPath, PackageOperationType operationType, IPackageDetails package)
     {
-        public PackageOperationInfo(string operationPath, PackageOperationType operationType, IPackageDetails package)
-        {
-            OperationPath = operationPath;
-            OperationType = operationType;
-            Package = package;
-        }
-
-        public string OperationPath { get; }
-
-        public PackageOperationType OperationType { get; }
-
-        public IPackageDetails Package { get; }
+        OperationPath = operationPath;
+        OperationType = operationType;
+        Package = package;
     }
+
+    public string OperationPath { get; }
+
+    public PackageOperationType OperationType { get; }
+
+    public IPackageDetails Package { get; }
 }

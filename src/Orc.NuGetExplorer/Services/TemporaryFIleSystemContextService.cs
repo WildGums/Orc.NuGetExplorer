@@ -1,43 +1,27 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TemporaryFIleSystemContextService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using Catel;
+using Catel.IoC;
 
-namespace Orc.NuGetExplorer
+internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
 {
-    using System;
-    using Catel;
-    using Catel.IoC;
+    private readonly ITypeFactory _typeFactory;
 
-    internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
+    public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
     {
-        #region Fields
-        private readonly ITypeFactory _typeFactory;
-        #endregion
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        #region Constructors
-        public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
+        _typeFactory = typeFactory;
+    }
+
+    public ITemporaryFileSystemContext? Context { get; private set; }
+
+    public IDisposable UseTemporaryFIleSystemContext()
+    {
+        using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
         {
-            Argument.IsNotNull(() => typeFactory);
-
-            _typeFactory = typeFactory;
+            return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
         }
-        #endregion
-
-        #region Properties
-        public ITemporaryFileSystemContext Context { get; private set; }
-        #endregion
-
-        #region Methods
-        public IDisposable UseTemporaryFIleSystemContext()
-        {
-            using (var context = _typeFactory.CreateInstance<TemporaryFileSystemContext>())
-            {
-                return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
-            }
-        }
-        #endregion
     }
 }

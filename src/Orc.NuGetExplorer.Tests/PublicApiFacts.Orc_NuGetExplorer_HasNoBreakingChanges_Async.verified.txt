@@ -1,6 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 public static class LoadAssembliesOnStartup { }
 public static class ModuleInitializer
 {
@@ -13,8 +13,25 @@ namespace Orc.NuGetExplorer
     {
         public ApiValidationException() { }
         public ApiValidationException(string message) { }
-        protected ApiValidationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public ApiValidationException(string message, System.Exception innerException) { }
+    }
+    public sealed class CombinedNuGetSource : Orc.NuGetExplorer.INuGetSource, Orc.NuGetExplorer.IPackageSource
+    {
+        public CombinedNuGetSource(System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.INuGetSource> feedList) { }
+        public bool IsAccessible { get; }
+        public bool IsEnabled { get; }
+        public bool IsOfficial { get; set; }
+        public bool IsSelected { get; set; }
+        public bool IsVerified { get; }
+        public string Name { get; }
+        public string Source { get; }
+        public void AddFeed(Orc.NuGetExplorer.NuGetFeed feed) { }
+        public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.NuGetFeed> GetAllSources() { }
+        public Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource() { }
+        public bool IsAllFeedsAccessible() { }
+        public bool IsAllVerified() { }
+        public void RemoveFeed(Orc.NuGetExplorer.NuGetFeed feed) { }
+        public override string ToString() { }
     }
     public static class Constants
     {
@@ -67,7 +84,7 @@ namespace Orc.NuGetExplorer
     public class DefaultNuGetFramework : Orc.NuGetExplorer.IDefaultNuGetFramework
     {
         public DefaultNuGetFramework(NuGet.Frameworks.IFrameworkNameProvider frameworkNameProvider) { }
-        public NuGet.Frameworks.NuGetFramework GetFirst() { }
+        public NuGet.Frameworks.NuGetFramework? GetFirst() { }
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetHighest() { }
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetLowest() { }
     }
@@ -80,7 +97,7 @@ namespace Orc.NuGetExplorer
         public DependencyInfoResourceCollection(NuGet.Protocol.Core.Types.DependencyInfoResource resource) { }
         public DependencyInfoResourceCollection(System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.DependencyInfoResource> resources) { }
         public System.Collections.Generic.IEnumerator<NuGet.Protocol.Core.Types.DependencyInfoResource> GetEnumerator() { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> ResolvePackageAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo?> ResolvePackageAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolvePackagesAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>> ResolvePackagesWithVersionSatisfyRangeAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Versioning.VersionRange versionRange, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) { }
     }
@@ -106,9 +123,29 @@ namespace Orc.NuGetExplorer
         public void ClearRetryCache() { }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
-        public System.Threading.Tasks.Task<System.Net.ICredentials> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<System.Net.ICredentials?> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
         public bool IsValidResponse(NuGet.Credentials.CredentialResponse response) { }
-        public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) { }
+        public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials? credentials) { }
+    }
+    public sealed class ExplorerSettingsContainer : Catel.Data.ModelBase, Orc.NuGetExplorer.INuGetSettings
+    {
+        public static readonly Catel.Data.IPropertyData DefaultFeedProperty;
+        public static readonly Catel.Data.IPropertyData IsHideInstalledProperty;
+        public static readonly Catel.Data.IPropertyData IsPreReleaseIncludedProperty;
+        public static readonly Catel.Data.IPropertyData IsRecommendedOnlyProperty;
+        public static readonly Catel.Data.IPropertyData NuGetFeedsProperty;
+        public static readonly Catel.Data.IPropertyData SearchStringProperty;
+        public ExplorerSettingsContainer() { }
+        public Orc.NuGetExplorer.INuGetSource? DefaultFeed { get; set; }
+        public bool IsHideInstalled { get; set; }
+        public bool IsPreReleaseIncluded { get; set; }
+        public bool IsRecommendedOnly { get; set; }
+        public System.Collections.Generic.List<Orc.NuGetExplorer.NuGetFeed> NuGetFeeds { get; set; }
+        public Orc.NuGetExplorer.INuGetSource? ObservedFeed { get; set; }
+        public string SearchString { get; set; }
+        public void Clear() { }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> GetAllPackageSources() { }
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
     }
     public enum FeedVerificationResult
     {
@@ -243,35 +280,42 @@ namespace Orc.NuGetExplorer
     }
     public interface INuGetProjectContextProvider
     {
-        NuGet.ProjectManagement.INuGetProjectContext GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction);
+        NuGet.ProjectManagement.INuGetProjectContext? GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction);
+    }
+    public interface INuGetSettings
+    {
+        System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> GetAllPackageSources();
+    }
+    public interface INuGetSource : Orc.NuGetExplorer.IPackageSource
+    {
+        bool IsAccessible { get; }
+        bool IsSelected { get; set; }
+        bool IsVerified { get; }
+        Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource();
     }
     public interface IPackageDetails
     {
         System.Collections.Generic.IEnumerable<string> Authors { get; }
-        System.Collections.Generic.IList<string> AvailableVersions { get; }
-        string Dependencies { get; }
         string Description { get; }
         int? DownloadCount { get; }
         string FullName { get; }
-        System.Uri IconUrl { get; }
+        System.Uri? IconUrl { get; }
         string Id { get; }
-        bool IsAbsoluteLatestVersion { get; }
         bool? IsInstalled { get; set; }
         bool IsLatestVersion { get; }
         bool IsPrerelease { get; }
         NuGet.Versioning.NuGetVersion NuGetVersion { get; }
         System.DateTimeOffset? Published { get; }
         string SelectedVersion { get; set; }
-        string SpecialVersion { get; }
         string Title { get; }
-        Catel.Data.IValidationContext ValidationContext { get; }
+        Catel.Data.IValidationContext? ValidationContext { get; set; }
         System.Version Version { get; }
         NuGet.Packaging.Core.PackageIdentity GetIdentity();
         void ResetValidationContext();
     }
     public interface IPackageLoaderService
     {
-        Orc.NuGetExplorer.Providers.IPackageMetadataProvider PackageMetadataProvider { get; }
+        Orc.NuGetExplorer.Providers.IPackageMetadataProvider? PackageMetadataProvider { get; }
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> LoadAsync(string searchTerm, Orc.NuGetExplorer.Pagination.PageContinuation pageContinuation, NuGet.Protocol.Core.Types.SearchFilter searchFilter, System.Threading.CancellationToken token);
     }
     public static class IPackageLoaderServiceExtensions
@@ -281,24 +325,24 @@ namespace Orc.NuGetExplorer
     public interface IPackageManager { }
     public interface IPackageOperationContext
     {
-        System.Collections.Generic.IList<System.Exception> Exceptions { get; }
+        System.Collections.Generic.IList<System.Exception>? Exceptions { get; }
         Orc.NuGetExplorer.ITemporaryFileSystemContext FileSystemContext { get; set; }
-        Orc.NuGetExplorer.IPackageOperationContext Parent { get; set; }
-        Orc.NuGetExplorer.IRepository Repository { get; set; }
+        Orc.NuGetExplorer.IPackageOperationContext? Parent { get; set; }
+        Orc.NuGetExplorer.IRepository? Repository { get; set; }
     }
     public interface IPackageOperationContextService
     {
-        Orc.NuGetExplorer.IPackageOperationContext CurrentContext { get; }
-        event System.EventHandler<Orc.NuGetExplorer.OperationContextEventArgs> OperationContextDisposing;
+        Orc.NuGetExplorer.IPackageOperationContext? CurrentContext { get; }
+        event System.EventHandler<Orc.NuGetExplorer.OperationContextEventArgs>? OperationContextDisposing;
         System.IDisposable UseOperationContext(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
     }
     public interface IPackageOperationNotificationService
     {
         bool MuteAutomaticEvents { get; set; }
-        event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationFinished;
-        event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationStarting;
-        event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchFinished;
-        event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchStarting;
+        event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs>? OperationFinished;
+        event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs>? OperationStarting;
+        event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs>? OperationsBatchFinished;
+        event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs>? OperationsBatchStarting;
         System.IDisposable DisableNotifications();
         void NotifyAutomaticOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
         void NotifyAutomaticOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages);
@@ -317,8 +361,8 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackageQueryService
     {
-        System.Threading.Tasks.Task<Orc.NuGetExplorer.IPackageDetails> GetPackageAsync(Orc.NuGetExplorer.IRepository packageRepository, string packageId, string version);
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> GetPackagesAsync(Orc.NuGetExplorer.IRepository packageRepository, bool allowPrereleaseVersions, string filter = null, int skip = 0, int take = 10);
+        System.Threading.Tasks.Task<Orc.NuGetExplorer.IPackageDetails?> GetPackageAsync(Orc.NuGetExplorer.IRepository packageRepository, string packageId, string version);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> GetPackagesAsync(Orc.NuGetExplorer.IRepository packageRepository, bool allowPrereleaseVersions, string? filter = null, int skip = 0, int take = 10);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetVersionsOfPackageAsync(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails package, bool allowPrereleaseVersions, int skip);
         System.Threading.Tasks.Task<bool> PackageExistsAsync(Orc.NuGetExplorer.IRepository packageRepository, Orc.NuGetExplorer.IPackageDetails packageDetails);
         System.Threading.Tasks.Task<bool> PackageExistsAsync(Orc.NuGetExplorer.IRepository packageRepository, string packageId);
@@ -335,14 +379,12 @@ namespace Orc.NuGetExplorer
     {
         Orc.NuGetExplorer.IPackageSource CreatePackageSource(string source, string name, bool isEnabled, bool isOfficial);
     }
-    public static class IPackagesBatchServiceExtensions { }
     public interface IPackagesUpdatesSearcherService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
     }
-    public static class IPackagesUpdatesSearcherServiceExtensions { }
     public interface IPleaseWaitInterruptService
     {
         System.IDisposable InterruptTemporarily();
@@ -358,7 +400,7 @@ namespace Orc.NuGetExplorer
     {
         Orc.NuGetExplorer.Management.SourceContext AcquireContext(NuGet.Configuration.PackageSource source);
         Orc.NuGetExplorer.Management.SourceContext AcquireContext(bool ignoreLocal = false);
-        NuGet.Protocol.Core.Types.SourceRepository GetRepository(NuGet.Configuration.PackageSource source);
+        NuGet.Protocol.Core.Types.SourceRepository? GetRepository(NuGet.Configuration.PackageSource source);
     }
     public static class IRepositoryExtensions
     {
@@ -368,15 +410,13 @@ namespace Orc.NuGetExplorer
     {
         Orc.NuGetExplorer.IRepository LocalRepository { get; }
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IRepository> GetRepositories(Orc.NuGetExplorer.PackageOperationType packageOperationType);
-        Orc.NuGetExplorer.IRepository GetSourceAggregateRepository();
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IRepository> GetSourceRepositories();
-        Orc.NuGetExplorer.IRepository GetUpdateAggeregateRepository();
         System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IRepository> GetUpdateRepositories();
     }
     public interface IRollbackPackageOperationService
     {
         void ClearRollbackActions(Orc.NuGetExplorer.IPackageOperationContext context);
-        void PushRollbackAction(System.Action rollbackAction, Orc.NuGetExplorer.IPackageOperationContext context);
+        void PushRollbackAction(System.Action rollbackAction, Orc.NuGetExplorer.IPackageOperationContext? context);
         void Rollback(Orc.NuGetExplorer.IPackageOperationContext context);
     }
     public interface ITemporaryFileSystemContext : System.IDisposable
@@ -392,10 +432,16 @@ namespace Orc.NuGetExplorer
         public string ErrorMessage { get; }
         public System.Collections.Generic.IDictionary<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo, NuGet.Protocol.Core.Types.DownloadResourceResult> Result { get; }
     }
+    public class InvalidPathException : System.Exception
+    {
+        public InvalidPathException() { }
+        public InvalidPathException(string? message) { }
+        public InvalidPathException(string? message, System.Exception? innerException) { }
+    }
     public class LogHelper
     {
         public LogHelper() { }
-        public static void LogUnclearedPaths(System.Collections.Generic.List<string> unclearedPaths, Catel.Logging.ILog log) { }
+        public static void LogUnclearedPaths(System.Collections.Generic.List<string>? unclearedPaths, Catel.Logging.ILog log) { }
     }
     public class MultiplySourceSearchResource : NuGet.Protocol.Core.Types.PackageSearchResource
     {
@@ -405,14 +451,77 @@ namespace Orc.NuGetExplorer
     public class NoVerboseHttpNuGetLogListeningService : Orc.NuGetExplorer.INuGetLogListeningSevice
     {
         public NoVerboseHttpNuGetLogListeningService() { }
-        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Debug;
-        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Error;
-        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Info;
-        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs> Warning;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs>? Debug;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs>? Error;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs>? Info;
+        public event System.EventHandler<Orc.NuGetExplorer.NuGetLogRecordEventArgs>? Warning;
         public void SendDebug(string message) { }
         public void SendError(string message) { }
         public void SendInfo(string message) { }
         public void SendWarning(string message) { }
+    }
+    public class NuGetActionTarget : Catel.Data.ModelBase
+    {
+        public static readonly Catel.Data.IPropertyData IsValidProperty;
+        public NuGetActionTarget() { }
+        public bool IsTargetProjectCanBeChanged { get; }
+        public bool IsValid { get; }
+        public System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.IExtensibleProject> TargetProjects { get; }
+        public void Add(Orc.NuGetExplorer.IExtensibleProject project) { }
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
+        public void Remove(Orc.NuGetExplorer.IExtensibleProject project) { }
+    }
+    public sealed class NuGetFeed : Catel.Data.ModelBase, Orc.NuGetExplorer.ICloneable<Orc.NuGetExplorer.NuGetFeed>, Orc.NuGetExplorer.INuGetSource, Orc.NuGetExplorer.IPackageSource, System.ComponentModel.IDataErrorInfo, System.ComponentModel.INotifyDataErrorInfo
+    {
+        public static readonly Catel.Data.IPropertyData ErrorProperty;
+        public static readonly Catel.Data.IPropertyData IsAccessibleProperty;
+        public static readonly Catel.Data.IPropertyData IsEnabledProperty;
+        public static readonly Catel.Data.IPropertyData IsNameValidProperty;
+        public static readonly Catel.Data.IPropertyData IsOfficialProperty;
+        public static readonly Catel.Data.IPropertyData IsRestrictedProperty;
+        public static readonly Catel.Data.IPropertyData IsSelectedProperty;
+        public static readonly Catel.Data.IPropertyData IsVerifiedNowProperty;
+        public static readonly Catel.Data.IPropertyData IsVerifiedProperty;
+        public static readonly Catel.Data.IPropertyData NameProperty;
+        public static readonly Catel.Data.IPropertyData SerializationIdentifierProperty;
+        public static readonly Catel.Data.IPropertyData SourceProperty;
+        public static readonly Catel.Data.IPropertyData VerificationResultProperty;
+        public NuGetFeed(string name, string source) { }
+        public NuGetFeed(string name, string source, bool isEnabled) { }
+        public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) { }
+        public string Error { get; }
+        public bool HasErrors { get; }
+        [System.Xml.Serialization.XmlIgnore]
+        public bool IsAccessible { get; set; }
+        public bool IsEnabled { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        public bool IsNameValid { get; }
+        public bool IsOfficial { get; set; }
+        public bool IsRestricted { get; set; }
+        public bool IsSelected { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        public bool IsVerified { get; }
+        [System.Xml.Serialization.XmlIgnore]
+        public bool IsVerifiedNow { get; set; }
+        public string this[string columnName] { get; }
+        public string Name { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        public System.Guid SerializationIdentifier { get; set; }
+        public string Source { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        public Orc.NuGetExplorer.FeedVerificationResult VerificationResult { get; set; }
+        public event System.EventHandler<System.ComponentModel.DataErrorsChangedEventArgs>? ErrorsChanged;
+        public Orc.NuGetExplorer.NuGetFeed Clone() { }
+        public void ForceCancelEdit() { }
+        public void ForceEndEdit() { }
+        public System.Collections.IEnumerable GetErrors(string? propertyName) { }
+        public Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource() { }
+        public System.Uri? GetUriSource() { }
+        public new void Initialize() { }
+        public bool IsLocal() { }
+        public bool IsValid() { }
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
+        public override string ToString() { }
     }
     public static class NuGetFrameworkExtensions
     {
@@ -423,13 +532,67 @@ namespace Orc.NuGetExplorer
         public NuGetLogRecordEventArgs(string message) { }
         public string Message { get; }
     }
+    public sealed class NuGetPackage : Catel.Data.ModelBase, Orc.NuGetExplorer.IPackageDetails
+    {
+        public static readonly Catel.Data.IPropertyData AuthorsProperty;
+        public static readonly Catel.Data.IPropertyData DescriptionProperty;
+        public static readonly Catel.Data.IPropertyData DownloadCountProperty;
+        public static readonly Catel.Data.IPropertyData IconUrlProperty;
+        public static readonly Catel.Data.IPropertyData InstalledVersionProperty;
+        public static readonly Catel.Data.IPropertyData IsDelistedProperty;
+        public static readonly Catel.Data.IPropertyData IsInstalledProperty;
+        public static readonly Catel.Data.IPropertyData IsLoadedProperty;
+        public static readonly Catel.Data.IPropertyData LastVersionProperty;
+        public static readonly Catel.Data.IPropertyData SelectedVersionProperty;
+        public static readonly Catel.Data.IPropertyData SummaryProperty;
+        public static readonly Catel.Data.IPropertyData TitleProperty;
+        public static readonly Catel.Data.IPropertyData ValidationContextProperty;
+        public static readonly Catel.Data.IPropertyData VersionsInfoProperty;
+        public NuGetPackage(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin fromPage) { }
+        public string Authors { get; }
+        public string Description { get; }
+        public int? DownloadCount { get; }
+        public Orc.NuGetExplorer.Enums.MetadataOrigin FromPage { get; }
+        public string FullName { get; }
+        public System.Uri IconUrl { get; }
+        public string Id { get; }
+        public NuGet.Packaging.Core.PackageIdentity Identity { get; }
+        public NuGet.Versioning.NuGetVersion? InstalledVersion { get; set; }
+        public bool IsChecked { get; set; }
+        public bool IsDelisted { get; set; }
+        public bool? IsInstalled { get; set; }
+        public bool IsLatestVersion { get; }
+        public bool IsLoaded { get; }
+        public bool IsPrerelease { get; }
+        public NuGet.Versioning.NuGetVersion LastVersion { get; }
+        public NuGet.Versioning.NuGetVersion NuGetVersion { get; }
+        public System.DateTimeOffset? Published { get; }
+        public string SelectedVersion { get; set; }
+        public Orc.NuGetExplorer.Enums.PackageStatus Status { get; set; }
+        public string Summary { get; }
+        public string Title { get; }
+        public Catel.Data.IValidationContext? ValidationContext { get; set; }
+        public System.Version Version { get; }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Versioning.NuGetVersion> Versions { get; }
+        public System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo> VersionsInfo { get; }
+        public event System.EventHandler<Orc.NuGetExplorer.PackageModelStatusEventArgs>? StatusChanged;
+        public  static  event System.EventHandler? AnyNuGetPackageCheckedChanged;
+        public void AddDependencyInfo(NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> dependencyGroups) { }
+        public System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> GetDependencyInfo(NuGet.Versioning.NuGetVersion version) { }
+        public NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
+        public NuGet.Protocol.Core.Types.IPackageSearchMetadata GetMetadata() { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>?> LoadVersionsAsync() { }
+        public System.Threading.Tasks.Task MergeMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata searchMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin pageToken) { }
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
+        public void ResetValidationContext() { }
+    }
     public class NuGetToCatelLogTranslator : Orc.NuGetExplorer.PackageManagerLogListenerBase
     {
         public NuGetToCatelLogTranslator(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
-        protected override void OnDebug(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnError(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnInfo(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnWarning(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnDebug(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnError(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnInfo(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected override void OnWarning(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
     }
     public class OperationContextEventArgs : System.EventArgs
     {
@@ -447,30 +610,30 @@ namespace Orc.NuGetExplorer
     public class PackageIdentityParser
     {
         public PackageIdentityParser() { }
-        public static NuGet.Packaging.Core.PackageIdentity Parse(string packageString) { }
+        public static NuGet.Packaging.Core.PackageIdentity? Parse(string packageString) { }
     }
     public abstract class PackageManagerContextWatcherBase : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
         protected PackageManagerContextWatcherBase(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService) { }
-        public Orc.NuGetExplorer.IPackageOperationContext CurrentContext { get; }
+        public Orc.NuGetExplorer.IPackageOperationContext? CurrentContext { get; }
         public bool HasContextErrors { get; }
-        protected virtual void OnOperationContextDisposing(object sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
+        protected virtual void OnOperationContextDisposing(object? sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
     }
     public abstract class PackageManagerLogListenerBase
     {
         protected PackageManagerLogListenerBase(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
-        protected virtual void OnDebug(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected virtual void OnError(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected virtual void OnInfo(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected virtual void OnWarning(object sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected virtual void OnDebug(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected virtual void OnError(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected virtual void OnInfo(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
+        protected virtual void OnWarning(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
     }
     public abstract class PackageManagerWatcherBase
     {
         protected PackageManagerWatcherBase(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
-        protected virtual void OnOperationFinished(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
-        protected virtual void OnOperationStarting(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
-        protected virtual void OnOperationsBatchFinished(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
-        protected virtual void OnOperationsBatchStarting(object sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
+        protected virtual void OnOperationFinished(object? sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
+        protected virtual void OnOperationStarting(object? sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
+        protected virtual void OnOperationsBatchFinished(object? sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
+        protected virtual void OnOperationsBatchStarting(object? sender, Orc.NuGetExplorer.PackageOperationBatchEventArgs e) { }
     }
     public class PackageModelStatusEventArgs : System.EventArgs
     {
@@ -496,10 +659,10 @@ namespace Orc.NuGetExplorer
         public PackageOperationNotificationService() { }
         public bool IsNotificationsDisabled { get; }
         public bool MuteAutomaticEvents { get; set; }
-        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationFinished;
-        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs> OperationStarting;
-        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchFinished;
-        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs> OperationsBatchStarting;
+        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs>? OperationFinished;
+        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationEventArgs>? OperationStarting;
+        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs>? OperationsBatchFinished;
+        public event System.EventHandler<Orc.NuGetExplorer.PackageOperationBatchEventArgs>? OperationsBatchStarting;
         public System.IDisposable DisableNotifications() { }
         public void NotifyAutomaticOperationBatchFinished(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
         public void NotifyAutomaticOperationBatchStarting(Orc.NuGetExplorer.PackageOperationType operationType, params Orc.NuGetExplorer.IPackageDetails[] packages) { }
@@ -538,15 +701,21 @@ namespace Orc.NuGetExplorer
         public override string ToString() { }
         public static NuGet.Configuration.PackageSource op_Explicit(Orc.NuGetExplorer.PackageSourceWrapper wrapper) { }
     }
+    public class PropertyChangedExtendedEventArgs<T> : System.ComponentModel.PropertyChangedEventArgs
+    {
+        public PropertyChangedExtendedEventArgs(T? oldValue, T? newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") { }
+        public virtual T NewValue { get; }
+        public virtual T OldValue { get; }
+    }
     public sealed class Repository : Orc.NuGetExplorer.IRepository
     {
-        public Repository() { }
+        public Repository(string source) { }
         public int Id { get; set; }
         public bool IsLocal { get; }
         public string Name { get; set; }
         public Orc.NuGetExplorer.PackageOperationType OperationType { get; set; }
         public string Source { get; set; }
-        public override bool Equals(object obj) { }
+        public override bool Equals(object? obj) { }
         public override int GetHashCode() { }
     }
     public static class RepositoryName
@@ -556,8 +725,8 @@ namespace Orc.NuGetExplorer
     public class RollbackWatcher : Orc.NuGetExplorer.PackageManagerContextWatcherBase
     {
         public RollbackWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IPackageOperationContextService packageOperationContextService, Orc.NuGetExplorer.IRollbackPackageOperationService rollbackPackageOperationService, Orc.NuGetExplorer.IBackupFileSystemService backupFileSystemService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService) { }
-        protected override void OnOperationContextDisposing(object sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
-        protected override void OnOperationStarting(object sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
+        protected override void OnOperationContextDisposing(object? sender, Orc.NuGetExplorer.OperationContextEventArgs e) { }
+        protected override void OnOperationStarting(object? sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
     }
     public static class Settings
     {
@@ -575,7 +744,7 @@ namespace Orc.NuGetExplorer
     public static class StringExtensions
     {
         public static bool ContainsAny(this string value, string[] str, System.StringComparison comparisonType) { }
-        public static string GetSafeScopeName(this string value) { }
+        public static string GetSafeScopeName(this string? value) { }
         public static System.Collections.Generic.IList<string> SplitOrEmpty(this string value, char separator = ,) { }
     }
     public static class TaskExtensions
@@ -587,13 +756,14 @@ namespace Orc.NuGetExplorer
     {
         public TaskResultOrException(System.Exception ex) { }
         public TaskResultOrException(T result) { }
-        public System.Exception Exception { get; }
+        public System.Exception? Exception { get; }
         public bool IsSuccess { get; }
         public T Result { get; }
-        public T UnwrapResult() { }
+        public T? UnwrapResult() { }
     }
     public static class UriExtensions
     {
+        public static System.Uri? GetLocalUriForFragment(this System.Uri uri) { }
         public static System.Uri GetRootUri(this System.Uri uri) { }
     }
     public static class V2SearchHelper
@@ -617,10 +787,10 @@ namespace Orc.NuGetExplorer.Cache
     }
     public class IconCache
     {
-        public IconCache(Catel.Caching.Policies.ExpirationPolicy cacheItemPolicy = null) { }
-        public System.Windows.Media.Imaging.BitmapImage FallbackValue { get; set; }
+        public IconCache(Catel.Caching.Policies.ExpirationPolicy? cacheItemPolicy = null) { }
+        public System.Windows.Media.Imaging.BitmapImage? FallbackValue { get; set; }
         public Catel.Caching.Policies.ExpirationPolicy StoringPolicy { get; }
-        public System.Windows.Media.Imaging.BitmapImage GetFromCache(System.Uri iconUri) { }
+        public System.Windows.Media.Imaging.BitmapImage? GetFromCache(System.Uri? iconUri) { }
         public bool IsCached(System.Uri iconUri) { }
         public void SaveToCache(System.Uri iconUri, byte[] streamContent) { }
     }
@@ -651,8 +821,8 @@ namespace Orc.NuGetExplorer.Configuration
     public interface IVersionedSettings : NuGet.Configuration.ISettings
     {
         bool IsLastVersion { get; }
-        System.Version MinimalVersion { get; }
-        System.Version Version { get; }
+        System.Version? MinimalVersion { get; }
+        System.Version? Version { get; }
         event System.EventHandler SettingsRead;
         void UpdateMinimalVersion();
         void UpdateVersion();
@@ -738,13 +908,13 @@ namespace Orc.NuGetExplorer.Management
     }
     public interface INuGetPackageManager : Orc.NuGetExplorer.IPackageManager
     {
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.InstallNuGetProjectEventArgs> Install;
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UninstallNuGetProjectEventArgs> Uninstall;
-        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UpdateNuGetProjectEventArgs> Update;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.InstallNuGetProjectEventArgs>? Install;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UninstallNuGetProjectEventArgs>? Uninstall;
+        event Catel.AsyncEventHandler<Orc.NuGetExplorer.Management.UpdateNuGetProjectEventArgs>? Update;
         System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> AsLocalRepositories(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects);
         System.Threading.Tasks.Task<Orc.NuGetExplorer.Packaging.PackageCollection> CreatePackagesCollectionFromProjectsAsync(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>> GetInstalledPackagesAsync(Orc.NuGetExplorer.IExtensibleProject project, System.Threading.CancellationToken token);
-        System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion> GetVersionInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion?> GetVersionInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token, bool showErrors = true);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
@@ -766,7 +936,7 @@ namespace Orc.NuGetExplorer.Management
     {
         public ProjectInstallException(string message) { }
         public ProjectInstallException(string message, System.Exception innerException) { }
-        public System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> CurrentBatch { get; set; }
+        public System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>? CurrentBatch { get; set; }
     }
     public class ProjectManageException : System.Exception
     {
@@ -777,13 +947,13 @@ namespace Orc.NuGetExplorer.Management
     {
         public ProjectStateException(string message) { }
     }
-    public class SourceContext : System.IDisposable
+    public sealed class SourceContext : System.IDisposable
     {
         public SourceContext(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> packageSources) { }
         public SourceContext(System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories) { }
-        public System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> PackageSources { get; }
-        public System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> Repositories { get; }
-        public static Orc.NuGetExplorer.Management.SourceContext CurrentContext { get; }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource>? PackageSources { get; }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>? Repositories { get; }
+        public static Orc.NuGetExplorer.Management.SourceContext? CurrentContext { get; }
         public static Orc.NuGetExplorer.Management.SourceContext EmptyContext { get; set; }
         public void Dispose() { }
     }
@@ -796,7 +966,7 @@ namespace Orc.NuGetExplorer.Management
     {
         public UpdateNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package) { }
         public UpdateNuGetProjectEventArgs(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity beforeUpdate, System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Management.NuGetProjectEventArgs> updateEventArgs) { }
-        public NuGet.Versioning.NuGetVersion InstalledVersion { get; set; }
+        public NuGet.Versioning.NuGetVersion? InstalledVersion { get; set; }
         public System.Collections.Generic.List<NuGet.Versioning.NuGetVersion> RemovedVersions { get; set; }
     }
 }
@@ -822,222 +992,26 @@ namespace Orc.NuGetExplorer.Messaging
         public PackagingDeletemeMessage(Orc.NuGetExplorer.Packaging.PackageOperationInfo content) { }
     }
 }
-namespace Orc.NuGetExplorer.Models
-{
-    public sealed class CombinedNuGetSource : Orc.NuGetExplorer.IPackageSource, Orc.NuGetExplorer.Models.INuGetSource
-    {
-        public CombinedNuGetSource(System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.Models.INuGetSource> feedList) { }
-        public bool IsAccessible { get; }
-        public bool IsEnabled { get; }
-        public bool IsOfficial { get; set; }
-        public bool IsSelected { get; set; }
-        public bool IsVerified { get; }
-        public string Name { get; }
-        public string Source { get; }
-        public void AddFeed(Orc.NuGetExplorer.Models.NuGetFeed feed) { }
-        public System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Models.NuGetFeed> GetAllSources() { }
-        public Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource() { }
-        public bool IsAllFeedsAccessible() { }
-        public bool IsAllVerified() { }
-        public void RemoveFeed(Orc.NuGetExplorer.Models.NuGetFeed feed) { }
-        public override string ToString() { }
-    }
-    public sealed class ExplorerSettingsContainer : Catel.Data.ModelBase, Orc.NuGetExplorer.Models.INuGetSettings
-    {
-        public static readonly Catel.Data.PropertyData DefaultFeedProperty;
-        public static readonly Catel.Data.PropertyData IsHideInstalledProperty;
-        public static readonly Catel.Data.PropertyData IsPreReleaseIncludedProperty;
-        public static readonly Catel.Data.PropertyData IsRecommendedOnlyProperty;
-        public static readonly Catel.Data.PropertyData NuGetFeedsProperty;
-        public static readonly Catel.Data.PropertyData ObservedFeedProperty;
-        public static readonly Catel.Data.PropertyData SearchStringProperty;
-        public ExplorerSettingsContainer() { }
-        public Orc.NuGetExplorer.Models.INuGetSource DefaultFeed { get; set; }
-        public bool IsHideInstalled { get; set; }
-        public bool IsPreReleaseIncluded { get; set; }
-        public bool IsRecommendedOnly { get; set; }
-        public System.Collections.Generic.List<Orc.NuGetExplorer.Models.NuGetFeed> NuGetFeeds { get; set; }
-        public Orc.NuGetExplorer.Models.INuGetSource ObservedFeed { get; set; }
-        public string SearchString { get; set; }
-        public void Clear() { }
-        public System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> GetAllPackageSources() { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs e) { }
-    }
-    public interface INuGetSettings
-    {
-        System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> GetAllPackageSources();
-    }
-    public interface INuGetSource : Orc.NuGetExplorer.IPackageSource
-    {
-        bool IsAccessible { get; }
-        bool IsSelected { get; set; }
-        bool IsVerified { get; }
-        Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource();
-    }
-    public class NuGetActionTarget : Catel.Data.ModelBase
-    {
-        public static readonly Catel.Data.PropertyData IsValidProperty;
-        public NuGetActionTarget() { }
-        public bool IsTargetProjectCanBeChanged { get; }
-        public bool IsValid { get; }
-        public System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.IExtensibleProject> TargetProjects { get; }
-        public void Add(Orc.NuGetExplorer.IExtensibleProject project) { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs e) { }
-        public void Remove(Orc.NuGetExplorer.IExtensibleProject project) { }
-    }
-    public sealed class NuGetFeed : Catel.Data.ModelBase, Orc.NuGetExplorer.ICloneable<Orc.NuGetExplorer.Models.NuGetFeed>, Orc.NuGetExplorer.IPackageSource, Orc.NuGetExplorer.Models.INuGetSource, System.ComponentModel.IDataErrorInfo, System.ComponentModel.INotifyDataErrorInfo
-    {
-        public static readonly Catel.Data.PropertyData ErrorProperty;
-        public static readonly Catel.Data.PropertyData IsAccessibleProperty;
-        public static readonly Catel.Data.PropertyData IsEnabledProperty;
-        public static readonly Catel.Data.PropertyData IsNameValidProperty;
-        public static readonly Catel.Data.PropertyData IsOfficialProperty;
-        public static readonly Catel.Data.PropertyData IsRestrictedProperty;
-        public static readonly Catel.Data.PropertyData IsSelectedProperty;
-        public static readonly Catel.Data.PropertyData IsVerifiedNowProperty;
-        public static readonly Catel.Data.PropertyData IsVerifiedProperty;
-        public static readonly Catel.Data.PropertyData NameProperty;
-        public static readonly Catel.Data.PropertyData SerializationIdentifierProperty;
-        public static readonly Catel.Data.PropertyData SourceProperty;
-        public static readonly Catel.Data.PropertyData VerificationResultProperty;
-        public NuGetFeed() { }
-        public NuGetFeed(string name, string source) { }
-        public NuGetFeed(string name, string source, bool isEnabled) { }
-        public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) { }
-        public string Error { get; }
-        public bool HasErrors { get; }
-        [System.Xml.Serialization.XmlIgnore]
-        public bool IsAccessible { get; set; }
-        public bool IsEnabled { get; set; }
-        [System.Xml.Serialization.XmlIgnore]
-        public bool IsNameValid { get; }
-        public bool IsOfficial { get; set; }
-        public bool IsRestricted { get; set; }
-        public bool IsSelected { get; set; }
-        [System.Xml.Serialization.XmlIgnore]
-        public bool IsVerified { get; }
-        [System.Xml.Serialization.XmlIgnore]
-        public bool IsVerifiedNow { get; set; }
-        public string this[string columnName] { get; }
-        public string Name { get; set; }
-        [System.Xml.Serialization.XmlIgnore]
-        public System.Guid SerializationIdentifier { get; set; }
-        public string Source { get; set; }
-        [System.Xml.Serialization.XmlIgnore]
-        public Orc.NuGetExplorer.FeedVerificationResult VerificationResult { get; set; }
-        public event System.EventHandler<System.ComponentModel.DataErrorsChangedEventArgs> ErrorsChanged;
-        public Orc.NuGetExplorer.Models.NuGetFeed Clone() { }
-        public void ForceCancelEdit() { }
-        public void ForceEndEdit() { }
-        public System.Collections.IEnumerable GetErrors(string propertyName) { }
-        public Orc.NuGetExplorer.PackageSourceWrapper GetPackageSource() { }
-        public System.Uri GetUriSource() { }
-        public new void Initialize() { }
-        public bool IsLocal() { }
-        public bool IsValid() { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs e) { }
-        public override string ToString() { }
-    }
-    public sealed class NuGetPackage : Catel.Data.ModelBase, Orc.NuGetExplorer.IPackageDetails
-    {
-        public static readonly Catel.Data.PropertyData AuthorsProperty;
-        public static readonly Catel.Data.PropertyData AvailableVersionsProperty;
-        public static readonly Catel.Data.PropertyData DependenciesProperty;
-        public static readonly Catel.Data.PropertyData DescriptionProperty;
-        public static readonly Catel.Data.PropertyData DownloadCountProperty;
-        public static readonly Catel.Data.PropertyData IconUrlProperty;
-        public static readonly Catel.Data.PropertyData InstalledVersionProperty;
-        public static readonly Catel.Data.PropertyData IsDelistedProperty;
-        public static readonly Catel.Data.PropertyData IsInstalledProperty;
-        public static readonly Catel.Data.PropertyData IsLoadedProperty;
-        public static readonly Catel.Data.PropertyData LastVersionProperty;
-        public static readonly Catel.Data.PropertyData SelectedVersionProperty;
-        public static readonly Catel.Data.PropertyData SpecialVersionProperty;
-        public static readonly Catel.Data.PropertyData StatusProperty;
-        public static readonly Catel.Data.PropertyData SummaryProperty;
-        public static readonly Catel.Data.PropertyData TitleProperty;
-        public static readonly Catel.Data.PropertyData ValidationContextProperty;
-        public static readonly Catel.Data.PropertyData VersionsInfoProperty;
-        public NuGetPackage(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin fromPage) { }
-        public string Authors { get; }
-        public System.Collections.Generic.IList<string> AvailableVersions { get; set; }
-        public string Dependencies { get; set; }
-        public string Description { get; }
-        public int? DownloadCount { get; }
-        public Orc.NuGetExplorer.Enums.MetadataOrigin FromPage { get; }
-        public string FullName { get; }
-        public System.Uri IconUrl { get; }
-        public string Id { get; }
-        public NuGet.Packaging.Core.PackageIdentity Identity { get; }
-        public NuGet.Versioning.NuGetVersion InstalledVersion { get; set; }
-        public bool IsAbsoluteLatestVersion { get; }
-        public bool IsChecked { get; set; }
-        public bool IsDelisted { get; set; }
-        public bool? IsInstalled { get; set; }
-        public bool IsLatestVersion { get; }
-        public bool IsLoaded { get; }
-        public bool IsPrerelease { get; }
-        public NuGet.Versioning.NuGetVersion LastVersion { get; }
-        public NuGet.Versioning.NuGetVersion NuGetVersion { get; }
-        public System.DateTimeOffset? Published { get; }
-        public string SelectedVersion { get; set; }
-        public string SpecialVersion { get; set; }
-        public Orc.NuGetExplorer.Enums.PackageStatus Status { get; set; }
-        public string Summary { get; }
-        public string Title { get; }
-        public Catel.Data.IValidationContext ValidationContext { get; set; }
-        public System.Version Version { get; }
-        public System.Collections.Generic.IReadOnlyList<NuGet.Versioning.NuGetVersion> Versions { get; }
-        public System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo> VersionsInfo { get; }
-        public event System.EventHandler<Orc.NuGetExplorer.PackageModelStatusEventArgs> StatusChanged;
-        public  static  event System.EventHandler AnyNuGetPackageCheckedChanged;
-        public void AddDependencyInfo(NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> dependencyGroups) { }
-        public System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> GetDependencyInfo(NuGet.Versioning.NuGetVersion version) { }
-        public NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
-        public NuGet.Protocol.Core.Types.IPackageSearchMetadata GetMetadata() { }
-        public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>> LoadVersionsAsync() { }
-        public System.Threading.Tasks.Task MergeMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata searchMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin pageToken) { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs e) { }
-        public void ResetValidationContext() { }
-    }
-}
-namespace Orc.NuGetExplorer.Native
-{
-    [System.Serializable]
-    public class CredentialException : System.ComponentModel.Win32Exception
-    {
-        public CredentialException() { }
-        public CredentialException(int error) { }
-        public CredentialException(string message) { }
-        public CredentialException(int error, string message) { }
-        protected CredentialException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public CredentialException(string message, System.Exception innerException) { }
-    }
-}
 namespace Orc.NuGetExplorer.Packaging
 {
     public class EmptyPackageDetails : Orc.NuGetExplorer.IPackageDetails
     {
         public EmptyPackageDetails(NuGet.Packaging.Core.PackageIdentity package) { }
         public System.Collections.Generic.IEnumerable<string> Authors { get; }
-        public System.Collections.Generic.IList<string> AvailableVersions { get; }
         public string Dependencies { get; }
         public string Description { get; }
         public int? DownloadCount { get; }
         public string FullName { get; }
-        public System.Uri IconUrl { get; }
+        public System.Uri? IconUrl { get; }
         public string Id { get; }
-        [System.Obsolete("Use `IsLatestVersion` instead. Will be removed in version 5.0.0.", true)]
-        public bool IsAbsoluteLatestVersion { get; }
         public bool? IsInstalled { get; set; }
         public bool IsLatestVersion { get; }
         public bool IsPrerelease { get; }
         public NuGet.Versioning.NuGetVersion NuGetVersion { get; }
         public System.DateTimeOffset? Published { get; }
         public string SelectedVersion { get; set; }
-        public string SpecialVersion { get; }
         public string Title { get; }
-        public Catel.Data.IValidationContext ValidationContext { get; }
+        public Catel.Data.IValidationContext? ValidationContext { get; set; }
         public System.Version Version { get; }
         public NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
         public void ResetValidationContext() { }
@@ -1045,7 +1019,7 @@ namespace Orc.NuGetExplorer.Packaging
     public class NuGetPackageCombinator
     {
         public NuGetPackageCombinator() { }
-        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.Enums.PackageStatus> CombineAsync(Orc.NuGetExplorer.Models.NuGetPackage package, Orc.NuGetExplorer.Enums.MetadataOrigin tokenPage, NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata) { }
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.Enums.PackageStatus> CombineAsync(Orc.NuGetExplorer.NuGetPackage package, Orc.NuGetExplorer.Enums.MetadataOrigin tokenPage, NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata) { }
     }
     public sealed class PackageCollection : System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.Packaging.PackageCollectionItem>, System.Collections.IEnumerable
     {
@@ -1063,25 +1037,20 @@ namespace Orc.NuGetExplorer.Packaging
         public PackageDetails(NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, bool isLatestVersion = false) { }
         public PackageDetails(NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, NuGet.Packaging.Core.PackageIdentity identity, bool isLatestVersion = false) { }
         public System.Collections.Generic.IEnumerable<string> Authors { get; }
-        public System.Collections.Generic.IList<string> AvailableVersions { get; }
-        public virtual string Dependencies { get; set; }
         public System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> DependencySets { get; set; }
         public string Description { get; }
         public int? DownloadCount { get; }
         public string FullName { get; }
         public System.Uri IconUrl { get; }
         public string Id { get; }
-        [System.Obsolete("Use `IsLatestVersion` instead. Will be removed in version 5.0.0.", true)]
-        public bool IsAbsoluteLatestVersion { get; }
         public bool? IsInstalled { get; set; }
         public bool IsLatestVersion { get; }
         public bool IsPrerelease { get; }
         public NuGet.Versioning.NuGetVersion NuGetVersion { get; }
         public System.DateTimeOffset? Published { get; }
         public string SelectedVersion { get; set; }
-        public string SpecialVersion { get; }
         public string Title { get; }
-        public Catel.Data.IValidationContext ValidationContext { get; set; }
+        public Catel.Data.IValidationContext? ValidationContext { get; set; }
         public System.Version Version { get; }
         public virtual NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
         public virtual void ResetValidationContext() { }
@@ -1091,8 +1060,8 @@ namespace Orc.NuGetExplorer.Packaging
     {
         public PackageDetailsFactory() { }
         public static Orc.NuGetExplorer.IPackageDetails Create(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
-        public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata versionMetadata, NuGet.Packaging.Core.PackageIdentity packageIdentity, bool? isLastVersion) { }
-        public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata versionMetadata, NuGet.Versioning.NuGetVersion packageVersion, bool? isLastVersion) { }
+        public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata? versionMetadata, NuGet.Packaging.Core.PackageIdentity packageIdentity, bool? isLastVersion) { }
+        public static Orc.NuGetExplorer.IPackageDetails Create(Orc.NuGetExplorer.PackageOperationType operationType, NuGet.Protocol.Core.Types.IPackageSearchMetadata? versionMetadata, NuGet.Versioning.NuGetVersion? packageVersion, bool? isLastVersion) { }
     }
     public class PackageOperationInfo
     {
@@ -1103,7 +1072,7 @@ namespace Orc.NuGetExplorer.Packaging
     }
     public class UpdatePackageSearchMetadata : NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder.ClonedPackageSearchMetadata
     {
-        public UpdatePackageSearchMetadata() { }
+        public UpdatePackageSearchMetadata(NuGet.Protocol.Core.Types.VersionInfo from, NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> versionsInitialization) { }
         public NuGet.Protocol.Core.Types.VersionInfo FromVersion { get; set; }
         public new NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> LazyVersionsFactory { get; set; }
     }
@@ -1117,12 +1086,12 @@ namespace Orc.NuGetExplorer.Pagination
 {
     public class DeferToken
     {
-        public DeferToken() { }
-        public Orc.NuGetExplorer.Enums.MetadataOrigin LoadType { get; set; }
-        public Orc.NuGetExplorer.Models.NuGetPackage Package { get; set; }
-        public System.Func<NuGet.Protocol.Core.Types.IPackageSearchMetadata> PackageSelector { get; set; }
-        public NuGet.Protocol.Core.Types.IPackageSearchMetadata Result { get; set; }
-        public System.Action<Orc.NuGetExplorer.Enums.PackageStatus> UpdateAction { get; set; }
+        public DeferToken(Orc.NuGetExplorer.Enums.MetadataOrigin loadType, Orc.NuGetExplorer.NuGetPackage nuGetPackage) { }
+        public Orc.NuGetExplorer.Enums.MetadataOrigin LoadType { get; }
+        public Orc.NuGetExplorer.NuGetPackage Package { get; set; }
+        public System.Func<NuGet.Protocol.Core.Types.IPackageSearchMetadata>? PackageSelector { get; set; }
+        public NuGet.Protocol.Core.Types.IPackageSearchMetadata? Result { get; set; }
+        public System.Action<Orc.NuGetExplorer.Enums.PackageStatus>? UpdateAction { get; set; }
     }
     public class PageContinuation
     {
@@ -1145,8 +1114,8 @@ namespace Orc.NuGetExplorer.Providers
 {
     public class DefaultSourceRepositoryProvider : NuGet.Protocol.Core.Types.ISourceRepositoryProvider, Orc.NuGetExplorer.IExtendedSourceRepositoryProvider
     {
-        public DefaultSourceRepositoryProvider(Orc.NuGetExplorer.Providers.IModelProvider<Orc.NuGetExplorer.Models.ExplorerSettingsContainer> settingsProvider, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService) { }
-        public NuGet.Configuration.IPackageSourceProvider PackageSourceProvider { get; }
+        public DefaultSourceRepositoryProvider(Orc.NuGetExplorer.Providers.IModelProvider<Orc.NuGetExplorer.ExplorerSettingsContainer> settingsProvider, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService) { }
+        public NuGet.Configuration.IPackageSourceProvider? PackageSourceProvider { get; }
         public NuGet.Protocol.Core.Types.SourceRepository CreateLocalRepository(string source) { }
         public NuGet.Protocol.Core.Types.SourceRepository CreateRepository(NuGet.Configuration.PackageSource source) { }
         public NuGet.Protocol.Core.Types.SourceRepository CreateRepository(NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) { }
@@ -1156,7 +1125,7 @@ namespace Orc.NuGetExplorer.Providers
     public class EmptyProjectContextProvider : Orc.NuGetExplorer.INuGetProjectContextProvider
     {
         public EmptyProjectContextProvider() { }
-        public NuGet.ProjectManagement.INuGetProjectContext GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction) { }
+        public NuGet.ProjectManagement.INuGetProjectContext? GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction) { }
     }
     public class ExplorerCacheProvider : Orc.NuGetExplorer.Providers.IApplicationCacheProvider
     {
@@ -1175,11 +1144,11 @@ namespace Orc.NuGetExplorer.Providers
     }
     public interface IPackageMetadataProvider
     {
-        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
-        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken);
-        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
-        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken);
-        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken);
     }
     public class ModelProvider<T> : Orc.NuGetExplorer.Providers.IModelProvider<T>, System.ComponentModel.INotifyPropertyChanged
@@ -1187,19 +1156,18 @@ namespace Orc.NuGetExplorer.Providers
     {
         public ModelProvider(Catel.IoC.ITypeFactory typeFactory) { }
         public virtual T Model { get; set; }
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
         public virtual T Create() { }
     }
     public class PackageMetadataProvider : Orc.NuGetExplorer.Providers.IPackageMetadataProvider
     {
-        public PackageMetadataProvider(NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
         public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
-        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider, Orc.FileSystem.IDirectoryService directoryService) { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken) { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
-        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
+        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, Orc.FileSystem.IDirectoryService directoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetLocalPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetPackageMetadataAsync(NuGet.Packaging.Core.PackageIdentity identity, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(NuGet.Protocol.Core.Types.SourceRepository repository, string packageId, bool includePrerelease, bool includeUnlisted, System.Threading.CancellationToken cancellationToken) { }
         public static Orc.NuGetExplorer.Providers.PackageMetadataProvider CreateFromSourceContext(Catel.IoC.IServiceLocator serviceLocator) { }
@@ -1240,14 +1208,8 @@ namespace Orc.NuGetExplorer.Scenario
     public abstract class UpgradeListenerBase
     {
         protected UpgradeListenerBase(Orc.NuGetExplorer.Services.INuGetProjectUpgradeService upgradeRunner) { }
-        protected virtual void OnUpgraded(object sender, System.EventArgs e) { }
-        protected virtual void OnUpgrading(object sender, System.EventArgs e) { }
-    }
-    public class V3RestorePackageConfigAndReinstall : Orc.NuGetExplorer.Scenario.IUpgradeScenario
-    {
-        public V3RestorePackageConfigAndReinstall(Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.IRepositoryContextService repositoryContextService, NuGet.Common.ILogger logger, Catel.Configuration.IConfigurationService configurationService, Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.FileSystem.IDirectoryService directoryService) { }
-        public System.Threading.Tasks.Task<bool> RunAsync() { }
-        public override string ToString() { }
+        protected virtual void OnUpgraded(object? sender, System.EventArgs e) { }
+        protected virtual void OnUpgrading(object? sender, System.EventArgs e) { }
     }
 }
 namespace Orc.NuGetExplorer.Scopes
@@ -1283,8 +1245,8 @@ namespace Orc.NuGetExplorer.Services
     }
     public interface INuGetProjectUpgradeService
     {
-        event System.EventHandler UpgradeEnd;
-        event System.EventHandler UpgradeStart;
+        event System.EventHandler? UpgradeEnd;
+        event System.EventHandler? UpgradeStart;
         void AddUpgradeScenario(Orc.NuGetExplorer.Scenario.IUpgradeScenario scenario);
         System.Threading.Tasks.Task<bool> CheckCurrentConfigurationAndRunAsync();
     }
@@ -1318,7 +1280,7 @@ namespace Orc.NuGetExplorer.Watchers.Base
     public abstract class PackageSourcesWatcherBase
     {
         protected PackageSourcesWatcherBase(NuGet.Configuration.IPackageSourceProvider packageSourceProvider) { }
-        protected virtual void OnPackageSourcesChanged(string packageSource) { }
+        protected virtual void OnPackageSourcesChanged(string? packageSource) { }
     }
 }
 namespace Orc.NuGetExplorer.Web
@@ -1341,5 +1303,17 @@ namespace Orc.NuGetExplorer.Web
     public interface IHttpExceptionHandler<T>
     {
         Orc.NuGetExplorer.FeedVerificationResult HandleException(T exception, string source);
+    }
+}
+namespace Orc.NuGetExplorer.Windows
+{
+    [System.Serializable]
+    public class CredentialException : System.ComponentModel.Win32Exception
+    {
+        public CredentialException() { }
+        public CredentialException(int error) { }
+        public CredentialException(string message) { }
+        public CredentialException(int error, string message) { }
+        public CredentialException(string message, System.Exception innerException) { }
     }
 }

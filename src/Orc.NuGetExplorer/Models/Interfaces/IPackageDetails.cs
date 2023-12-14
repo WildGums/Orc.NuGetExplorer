@@ -1,67 +1,44 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPackageDetails.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Collections.Generic;
+using Catel.Data;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 
-namespace Orc.NuGetExplorer
+public interface IPackageDetails
 {
-    using System;
-    using System.Collections.Generic;
+    string Id { get; }
 
-    using Catel.Data;
-    using NuGet.Packaging.Core;
-    using NuGet.Versioning;
+    string FullName { get; }
 
-    public interface IPackageDetails
-    {
-        #region Properties
-        string Id { get; }
+    string Description { get; }
 
-        string FullName { get; }
+    Uri? IconUrl { get; }
 
-        string Description { get; }
+    Version Version { get; }
 
-        Uri IconUrl { get; }
+    NuGetVersion NuGetVersion { get; }
 
-        Version Version { get; }
+    bool IsLatestVersion { get; }
 
-        NuGetVersion NuGetVersion { get; }
+    bool IsPrerelease { get; }
 
-        string SpecialVersion { get; }
+    string Title { get; }
 
-        bool IsAbsoluteLatestVersion { get; }
+    IEnumerable<string> Authors { get; }
 
-        bool IsLatestVersion { get; }
+    DateTimeOffset? Published { get; }
 
-        bool IsPrerelease { get; }
+    int? DownloadCount { get; }
 
-        string Title { get; }
+    bool? IsInstalled { get; set; }
 
-        IEnumerable<string> Authors { get; }
+    string SelectedVersion { get; set; }
 
-        DateTimeOffset? Published { get; }
+    IValidationContext? ValidationContext { get; set; }
 
-        int? DownloadCount { get; }
+    void ResetValidationContext();
 
-        string Dependencies { get; }
-
-        bool? IsInstalled { get; set; }
-
-        IList<string> AvailableVersions { get; }
-
-        string SelectedVersion { get; set; }
-
-        IValidationContext ValidationContext { get; }
-
-        #endregion
-
-        #region Methods
-        void ResetValidationContext();
-
-        PackageIdentity GetIdentity();
-
-        #endregion
-    }
+    PackageIdentity GetIdentity();
 }

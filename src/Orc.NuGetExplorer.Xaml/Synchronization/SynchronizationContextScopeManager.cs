@@ -1,33 +1,39 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Threading;
+using Catel.Logging;
+
+public class SynchronizationContextScopeManager
 {
-    using System;
-    using System.Threading;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class SynchronizationContextScopeManager
+    public static IDisposable OutOfContext()
     {
-        public static IDisposable OutOfContext()
+        if (SynchronizationContext.Current is null)
         {
-            var token = new SynchronizationDisabilityToken(SynchronizationContext.Current);
+            throw Log.ErrorAndCreateException<InvalidOperationException>("Invalid synchronization context");
+        }
+        var token = new SynchronizationDisabilityToken(SynchronizationContext.Current);
 
-            SynchronizationContext.SetSynchronizationContext(null);
+        SynchronizationContext.SetSynchronizationContext(null);
 
-            return token;
+        return token;
+    }
+
+    private struct SynchronizationDisabilityToken : IDisposable
+    {
+        private readonly SynchronizationContext _synchContext;
+
+        public SynchronizationDisabilityToken(SynchronizationContext currentContext)
+        {
+            _synchContext = currentContext;
         }
 
-        private struct SynchronizationDisabilityToken : IDisposable
+        public void Dispose()
         {
-            private readonly SynchronizationContext _synchContext;
-
-            public SynchronizationDisabilityToken(SynchronizationContext currentContext)
-            {
-                _synchContext = currentContext;
-            }
-
-            public void Dispose()
-            {
-                // Restore context;
-                SynchronizationContext.SetSynchronizationContext(_synchContext);
-            }
+            // Restore context;
+            SynchronizationContext.SetSynchronizationContext(_synchContext);
         }
     }
 }

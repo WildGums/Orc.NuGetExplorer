@@ -1,12 +1,14 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using NuGet.Configuration;
+﻿namespace Orc.NuGetExplorer;
 
-    public static class IRepositoryExtensions
+using System;
+using NuGet.Configuration;
+
+public static class IRepositoryExtensions
+{
+    public static PackageSource ToPackageSource(this IRepository repository)
     {
-        public static PackageSource ToPackageSource(this IRepository repository)
-        {
-            return new PackageSource(repository.Source, repository.Name);
-        }
+        ArgumentNullException.ThrowIfNull(repository);
+
+        return new PackageSource(repository.Source, repository.Name);
     }
 }

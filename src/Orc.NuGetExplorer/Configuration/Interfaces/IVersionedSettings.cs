@@ -1,19 +1,18 @@
-﻿namespace Orc.NuGetExplorer.Configuration
+﻿namespace Orc.NuGetExplorer.Configuration;
+
+using System;
+using NuGet.Configuration;
+
+public interface IVersionedSettings : ISettings
 {
-    using System;
-    using NuGet.Configuration;
+    bool IsLastVersion { get; }
 
-    public interface IVersionedSettings : ISettings
-    {
-        bool IsLastVersion { get; }
+    Version? Version { get; }
 
-        Version Version { get; }
+    Version? MinimalVersion { get; }
 
-        Version MinimalVersion { get; }
+    event EventHandler SettingsRead;
 
-        event EventHandler SettingsRead;
-
-        void UpdateMinimalVersion();
-        void UpdateVersion();
-    }
+    void UpdateMinimalVersion();
+    void UpdateVersion();
 }

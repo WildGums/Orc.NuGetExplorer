@@ -1,19 +1,15 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using NuGetExplorer.Cache;
+
+public class ExplorerCacheProvider : IApplicationCacheProvider
 {
-    using NuGetExplorer.Cache;
+    private IconCache? _iconCache;
 
-    public class ExplorerCacheProvider : IApplicationCacheProvider
+    public IconCache EnsureIconCache()
     {
-        private IconCache _iconCache;
+        _iconCache ??= new IconCache();
 
-        public IconCache EnsureIconCache()
-        {
-            if (_iconCache is null)
-            {
-                _iconCache = new IconCache();
-            }
-
-            return _iconCache;
-        }
+        return _iconCache;
     }
 }

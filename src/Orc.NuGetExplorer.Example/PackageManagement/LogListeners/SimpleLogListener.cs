@@ -1,58 +1,42 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleLogListener.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Example;
 
+using System;
+using Catel.Services;
 
-namespace Orc.NuGetExplorer.Example
+public class SimpleLogListener : PackageManagerLogListenerBase
 {
-    using Catel;
-    using Catel.Services;
-    using Models;
+    private readonly IDispatcherService _dispatcherService;
+    private readonly PackageManagementEcho _echo;
 
-    public class SimpleLogListener : PackageManagerLogListenerBase
+    public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
+        IEchoService echoService, IDispatcherService dispatcherService)
+        : base(nuGetLogListeningSevice)
     {
-        private readonly IDispatcherService _dispatcherService;
+        ArgumentNullException.ThrowIfNull(dispatcherService);
+        ArgumentNullException.ThrowIfNull(echoService);
 
-        #region Fields
-        private readonly PackageManagementEcho _echo;
-        #endregion
+        _dispatcherService = dispatcherService;
 
-        #region Constructors
-        public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
-            IEchoService echoService, IDispatcherService dispatcherService)
-            : base(nuGetLogListeningSevice)
-        {
-            Argument.IsNotNull(() => echoService);
-            Argument.IsNotNull(() => dispatcherService);
+        _echo = echoService.GetPackageManagementEcho();
+    }
 
-            _dispatcherService = dispatcherService;
+    protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Info: {0}", e.Message)), true);
+    }
 
-            _echo = echoService.GetPackageManagementEcho();
-        }
-        #endregion
+    protected override void OnError(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Error: {0}", e.Message)), true);
+    }
 
-        #region Methods
-        protected override void OnInfo(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Info: {0}", e.Message)), true);
-        }
+    protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Debug: {0}", e.Message)), true);
+    }
 
-        protected override void OnError(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Error: {0}", e.Message)), true);
-        }
-
-        protected override void OnDebug(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Debug: {0}", e.Message)), true);
-        }
-
-        protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
-        {
-            _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Warning: {0}", e.Message)), true);
-        }
-        #endregion
+    protected override void OnWarning(object sender, NuGetLogRecordEventArgs e)
+    {
+        _dispatcherService.Invoke(() => _echo.Lines.Add(string.Format("Warning: {0}", e.Message)), true);
     }
 }

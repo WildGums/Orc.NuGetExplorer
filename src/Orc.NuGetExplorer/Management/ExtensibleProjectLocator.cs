@@ -1,133 +1,139 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.IoC;
+using Catel.Logging;
+
+internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel;
-    using Catel.IoC;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    internal class ExtensibleProjectLocator : IExtensibleProjectLocator
+    private readonly ITypeFactory _typeFactory;
+
+    private readonly INuGetConfigurationService _managerConfigurationService;
+
+    private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new();
+
+    private readonly HashSet<IExtensibleProject> _enabledProjects = new();
+
+    public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(typeFactory);
+        ArgumentNullException.ThrowIfNull(configurationService);
 
-        private readonly ITypeFactory _typeFactory;
+        _typeFactory = typeFactory;
+        _managerConfigurationService = configurationService;
+    }
 
-        private readonly INuGetConfigurationService _managerConfigurationService;
+    public bool IsConfigLoaded { get; private set; }
 
-        private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new Dictionary<Type, IExtensibleProject>();
+    public bool IsEnabled(IExtensibleProject extensibleProject)
+    {
+        ArgumentNullException.ThrowIfNull(extensibleProject);
 
-        private readonly HashSet<IExtensibleProject> _enabledProjects = new HashSet<IExtensibleProject>();
+        return _enabledProjects.Contains(extensibleProject);
+    }
 
-        public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
+    public void Enable(IExtensibleProject extensibleProject)
+    {
+        ArgumentNullException.ThrowIfNull(extensibleProject);
+
+        var registeredProject = _registredProjects[extensibleProject.GetType()];
+
+        if (registeredProject != extensibleProject)
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => configurationService);
-
-            _typeFactory = typeFactory;
-            _managerConfigurationService = configurationService;
+            throw Log.ErrorAndCreateException<ProjectStateException>("ExtensibleProject must be registered before use");
         }
 
-        public bool IsConfigLoaded { get; private set; }
-
-        public bool IsEnabled(IExtensibleProject extensibleProject)
+        if (!_enabledProjects.Add(registeredProject))
         {
-            return _enabledProjects.Contains(extensibleProject);
+            Log.Info($"Project {extensibleProject} already enabled");
+        }
+    }
+
+    public void Disable(IExtensibleProject extensibleProject)
+    {
+        ArgumentNullException.ThrowIfNull(extensibleProject);
+
+        var registeredProject = _registredProjects[extensibleProject.GetType()];
+
+        if (registeredProject != extensibleProject)
+        {
+            throw Log.ErrorAndCreateException<InvalidOperationException>("ExtensibleProject must be registered before use");
         }
 
-        public void Enable(IExtensibleProject extensibleProject)
+        if (!_enabledProjects.Remove(registeredProject))
         {
-            var registeredProject = _registredProjects[extensibleProject.GetType()];
+            Log.Info($"Attempt to disable Project {extensibleProject}, which is not enabled");
+        }
+    }
 
-            if (registeredProject != extensibleProject)
+    public IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
+    {
+        if (onlyEnabled)
+        {
+            return _enabledProjects.ToList();
+        }
+
+        return _registredProjects.Values.ToList();
+    }
+
+    public void Register(IExtensibleProject project)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+
+        _registredProjects[project.GetType()] = project;
+    }
+
+    public void Register<T>()
+        where T : IExtensibleProject
+    {
+        Register(_typeFactory.CreateRequiredInstance<T>());
+    }
+
+    public void Register<T>(params object[] parameters)
+        where T : IExtensibleProject
+    {
+        if (parameters is null)
+        {
+            Register<T>();
+        }
+        else
+        {
+            Register(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<T>(parameters));
+        }
+    }
+
+    public void PersistChanges()
+    {
+        _managerConfigurationService.SaveProjects(_enabledProjects);
+    }
+
+    public void RestoreStateFromConfig()
+    {
+        try
+        {
+            foreach (var project in _registredProjects.Values)
             {
-                throw new ProjectStateException("ExtensibleProject must be registered before use");
-            }
-
-            if (!_enabledProjects.Add(registeredProject))
-            {
-                Log.Info($"Project {extensibleProject} already enabled");
-            }
-        }
-
-        public void Disable(IExtensibleProject extensibleProject)
-        {
-            var registeredProject = _registredProjects[extensibleProject.GetType()];
-
-            if (registeredProject != extensibleProject)
-            {
-                throw new InvalidOperationException("ExtensibleProject must be registered before use");
-            }
-
-            if (!_enabledProjects.Remove(registeredProject))
-            {
-                Log.Info($"Attempt to disable Project {extensibleProject}, which is not enabled");
-            }
-        }
-
-        public IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
-        {
-            if (onlyEnabled)
-            {
-                return _enabledProjects.ToList();
-            }
-
-            return _registredProjects.Values.ToList();
-        }
-
-        public void Register(IExtensibleProject project)
-        {
-            _registredProjects[project.GetType()] = project;
-        }
-
-        public void Register<T>() 
-            where T : IExtensibleProject
-        {
-            Register(_typeFactory.CreateInstance<T>());
-        }
-
-        public void Register<T>(params object[] parameters) 
-            where T : IExtensibleProject
-        {
-            if (parameters is null)
-            {
-                Register<T>();
-            }
-            else
-            {
-                Register(_typeFactory.CreateInstanceWithParametersAndAutoCompletion<T>(parameters));
-            }
-        }
-
-        public void PersistChanges()
-        {
-            _managerConfigurationService.SaveProjects(_enabledProjects);
-        }
-
-        public void RestoreStateFromConfig()
-        {
-            try
-            {
-                foreach (var project in _registredProjects.Values)
+                if (_managerConfigurationService.IsProjectConfigured(project))
                 {
-                    if (_managerConfigurationService.IsProjectConfigured(project))
-                    {
-                        Enable(project);
-                    }
+                    Enable(project);
                 }
             }
-            catch (ProjectStateException ex)
-            {
-                Log.Error(ex, "Mismatch between configuration and registered projects");
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error when restoring project extensions state from configuration");
-            }
-            finally
-            {
-                IsConfigLoaded = true;
-            }
+        }
+        catch (ProjectStateException ex)
+        {
+            Log.Error(ex, "Mismatch between configuration and registered projects");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error when restoring project extensions state from configuration");
+        }
+        finally
+        {
+            IsConfigLoaded = true;
         }
     }
 }

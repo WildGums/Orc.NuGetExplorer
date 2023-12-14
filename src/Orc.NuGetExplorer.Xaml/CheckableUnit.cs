@@ -1,39 +1,35 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.ComponentModel;
+using Catel.Data;
+
+internal class CheckableUnit<T> : ObservableObject
 {
-    using System;
-    using Catel.Data;
+    private readonly Action<T, bool> _onCheckedChangedCallback;
 
-    internal class CheckableUnit<T> : ObservableObject
+    public CheckableUnit(bool isChecked, T value, Action<T, bool> onCheckedChangedCallback)
     {
-        private readonly Action<bool, T> _onCheckedChangedCallback;
+        IsChecked = isChecked;
+        Value = value;
 
-        public CheckableUnit(bool isChecked, T value)
-        {
-            IsChecked = isChecked;
-            Value = value;
-        }
-
-        public CheckableUnit(bool isChecked, T value, Action<bool, T> onCheckedChangedCallback)
-            : this(isChecked, value)
-        {
-            _onCheckedChangedCallback = onCheckedChangedCallback;
-        }
-
-        public bool IsChecked { get; set; }
-
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            if (Value is null)
-            {
-                return;
-            }
-
-            if (string.Equals(e.PropertyName, nameof(IsChecked)))
-            {
-                _onCheckedChangedCallback((bool)e.NewValue, Value);
-            }
-        }
-
-        public T Value { get; set; }
+        _onCheckedChangedCallback = onCheckedChangedCallback;
     }
+
+    public bool IsChecked { get; set; }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        if (Value is null)
+        {
+            return;
+        }
+
+        if (e.HasPropertyChanged(nameof(IsChecked)))
+        {
+            _onCheckedChangedCallback(Value, IsChecked);
+        }
+    }
+
+    public T Value { get; set; }
 }

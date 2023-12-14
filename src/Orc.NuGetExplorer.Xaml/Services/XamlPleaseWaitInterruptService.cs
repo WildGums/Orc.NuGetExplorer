@@ -1,36 +1,21 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PleaseWaitInterruptService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using Catel.Services;
 
-namespace Orc.NuGetExplorer
+public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
 {
-    using System;
-    using Catel;
-    using Catel.Services;
+    private readonly IBusyIndicatorService _busyIndicatorService;
 
-    public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
+    public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
     {
-        #region Fields
-        private readonly IPleaseWaitService _pleaseWaitService;
-        #endregion
+        ArgumentNullException.ThrowIfNull(busyIndicatorService);
 
-        #region Constructors
-        public XamlPleaseWaitInterruptService(IPleaseWaitService pleaseWaitService)
-        {
-            Argument.IsNotNull(() => pleaseWaitService);
+        _busyIndicatorService = busyIndicatorService;
+    }
 
-            _pleaseWaitService = pleaseWaitService;
-        }
-        #endregion
-
-        #region Methods
-        public IDisposable InterruptTemporarily()
-        {
-            return _pleaseWaitService.HideTemporarily();
-        }
-        #endregion
+    public IDisposable InterruptTemporarily()
+    {
+        return _busyIndicatorService.HideTemporarily();
     }
 }

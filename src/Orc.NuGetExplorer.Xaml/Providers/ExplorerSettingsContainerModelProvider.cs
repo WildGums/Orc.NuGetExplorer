@@ -1,77 +1,80 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using System;
+using System.Linq;
+using Catel.Configuration;
+using Catel.IoC;
+using Catel.Logging;
+
+public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
 {
-    using System;
-    using System.Linq;
-    using Catel;
-    using Catel.Configuration;
-    using Catel.IoC;
-    using Orc.NuGetExplorer.Models;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
+    private readonly INuGetConfigurationService _nugetConfigurationService;
+    private readonly IConfigurationService _configurationService;
+    private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
+
+    public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
+        : base(typeFactory)
     {
-        private readonly INuGetConfigurationService _nugetConfigurationService;
-        private readonly IConfigurationService _configurationService;
-        private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
+        ArgumentNullException.ThrowIfNull(nugetConfigurationService);
+        ArgumentNullException.ThrowIfNull(configurationService);
 
-        public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
-            : base(typeFactory)
+        _nugetConfigurationService = nugetConfigurationService;
+        _configurationService = configurationService;
+
+        _explorerSettings = new Lazy<ExplorerSettingsContainer>(() => Create());
+    }
+
+    public override ExplorerSettingsContainer? Model
+    {
+        get
         {
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => nugetConfigurationService);
-            Argument.IsNotNull(() => configurationService);
-
-            _nugetConfigurationService = nugetConfigurationService;
-            _configurationService = configurationService;
-
-            _explorerSettings = new Lazy<ExplorerSettingsContainer>(() => Create());
-        }
-
-        public override ExplorerSettingsContainer Model
-        {
-            get
+            if (!_explorerSettings.IsValueCreated)
             {
-                if (!_explorerSettings.IsValueCreated)
-                {
-                    base.Model = _explorerSettings.Value;
-                    IsInitialized = true;
-                }
-
-
-                if (!IsInitialized)
-                {
-                    var currentValue = base.Model;
-                    currentValue.Clear();
-                    base.Model = InitializeModel(base.Model);
-                    IsInitialized = true;
-                }
-
-
-                return base.Model;
+                base.Model = _explorerSettings.Value;
+                IsInitialized = true;
             }
-            set
+
+            if (!IsInitialized)
             {
-                base.Model = value;
+                var currentValue = base.Model;
+                if (currentValue is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("'Model' must be non-null value");
+                }
+                currentValue.Clear();
+                base.Model = InitializeModel(currentValue);
+                IsInitialized = true;
             }
+
+            return base.Model;
         }
-
-        public bool IsInitialized { get; set; }
-
-        public override ExplorerSettingsContainer Create()
+        set
         {
-            return InitializeModel(base.Create());
+            base.Model = value;
         }
+    }
 
-        private ExplorerSettingsContainer InitializeModel(ExplorerSettingsContainer value)
-        {
-            var feeds = _nugetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
-            var prerelease = _configurationService.GetIsPrereleaseIncluded();
+    public bool IsInitialized { get; set; }
 
-            feeds.ForEach(feed => feed.Initialize());
+    public override ExplorerSettingsContainer Create()
+    {
+        return InitializeModel(base.Create());
+    }
 
-            value.NuGetFeeds.AddRange(feeds);
-            value.IsPreReleaseIncluded = prerelease;
+    private ExplorerSettingsContainer InitializeModel(ExplorerSettingsContainer value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
 
-            return value;
-        }
+        var feeds = _nugetConfigurationService.LoadPackageSources(false).OfType<NuGetFeed>().ToList();
+        var prerelease = _configurationService.GetIsPrereleaseIncluded();
+
+        feeds.ForEach(feed => feed.Initialize());
+
+        value.NuGetFeeds.AddRange(feeds);
+        value.IsPreReleaseIncluded = prerelease;
+
+        return value;
     }
 }

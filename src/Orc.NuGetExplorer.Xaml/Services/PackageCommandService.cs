@@ -1,251 +1,223 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageCommandService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Catel.Logging;
+using Catel.Services;
 
-namespace Orc.NuGetExplorer
+internal class PackageCommandService : IPackageCommandService
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.Logging;
-    using Catel.Services;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    internal class PackageCommandService : IPackageCommandService
+    private readonly IApiPackageRegistry _apiPackageRegistry;
+
+    private readonly IRepository _localRepository;
+
+    private readonly IPackageOperationContextService _packageOperationContextService;
+
+    private readonly IPackageOperationService _packageOperationService;
+
+    private readonly IPackageQueryService _packageQueryService;
+
+    private readonly IBusyIndicatorService _busyIndicatorService;
+
+    public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
+        IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(busyIndicatorService);
+        ArgumentNullException.ThrowIfNull(repositoryService);
+        ArgumentNullException.ThrowIfNull(packageQueryService);
+        ArgumentNullException.ThrowIfNull(packageOperationService);
+        ArgumentNullException.ThrowIfNull(packageOperationContextService);
+        ArgumentNullException.ThrowIfNull(apiPackageRegistry);
 
-        private readonly IApiPackageRegistry _apiPackageRegistry;
+        _busyIndicatorService = busyIndicatorService;
+        _packageQueryService = packageQueryService;
+        _packageOperationService = packageOperationService;
+        _packageOperationContextService = packageOperationContextService;
+        _apiPackageRegistry = apiPackageRegistry;
 
-        private readonly IRepository _localRepository;
+        _localRepository = repositoryService.LocalRepository;
+    }
 
-        private readonly IPackageOperationContextService _packageOperationContextService;
+    public string GetActionName(PackageOperationType operationType)
+    {
+        return Enum.GetName(typeof(PackageOperationType), operationType) ?? string.Empty;
+    }
 
-        private readonly IPackageOperationService _packageOperationService;
-
-        private readonly IPackageQueryService _packageQueryService;
-
-        private readonly IPleaseWaitService _pleaseWaitService;
-
-        public PackageCommandService(IPleaseWaitService pleaseWaitService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
-            IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
+    public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
+    {
+        switch (operationType)
         {
-            Argument.IsNotNull(() => pleaseWaitService);
-            Argument.IsNotNull(() => packageQueryService);
-            Argument.IsNotNull(() => packageOperationService);
-            Argument.IsNotNull(() => packageOperationContextService);
-            Argument.IsNotNull(() => apiPackageRegistry);
+            case PackageOperationType.Uninstall:
+                await ExecuteUninstallAsync(packageDetails, default);
+                break;
 
-            _pleaseWaitService = pleaseWaitService;
-            _packageQueryService = packageQueryService;
-            _packageOperationService = packageOperationService;
-            _packageOperationContextService = packageOperationContextService;
-            _apiPackageRegistry = apiPackageRegistry;
+            case PackageOperationType.Install:
+                await ExecuteInstallAsync(packageDetails, default);
+                break;
 
-            _localRepository = repositoryService.LocalRepository;
+            case PackageOperationType.Update:
+                await ExecuteUpdateAsync(packageDetails, default);
+                break;
+        }
+    }
+
+    public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
+    {
+        using (_busyIndicatorService.PushInScope())
+        using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
+        {
+            await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
+        }
+    }
+
+    public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
+    {
+        using (_busyIndicatorService.PushInScope())
+        {
+            await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
+        }
+    }
+
+    public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
+    {
+        using (_busyIndicatorService.PushInScope())
+        using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
+        {
+            await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
+        }
+    }
+
+    public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
+    {
+        using (_busyIndicatorService.PushInScope())
+        using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
+        {
+            await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
+        }
+    }
+
+    public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
+    {
+        using (_busyIndicatorService.PushInScope())
+        {
+            await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
+        }
+    }
+
+    public async Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package)
+    {
+        if (package is null)
+        {
+            Log.Debug("Cannot execute command for null package");
+            return false;
         }
 
-        public string GetActionName(PackageOperationType operationType)
+        var selectedPackage = await GetPackageDetailsFromSelectedVersionAsync(package, _localRepository) ?? package;
+
+        switch (operationType)
         {
-            return Enum.GetName(typeof(PackageOperationType), operationType);
+            case PackageOperationType.Install:
+                return await CanInstallAsync(selectedPackage);
+
+            case PackageOperationType.Update:
+                return await CanUpdateAsync(selectedPackage);
+
+            case PackageOperationType.Uninstall:
+                return true;
         }
 
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0", ReplacementTypeOrMember = "ExecuteAsync")]
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails, IRepository sourceRepository = null, bool allowedPrerelease = false)
+        return false;
+    }
+
+    private async Task<IPackageDetails?> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
+    {
+        ArgumentNullException.ThrowIfNull(packageDetails);
+
+        if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
         {
-            await ExecuteAsync(operationType, packageDetails);
+            var details = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
+            return details;
         }
 
-        public async Task ExecuteAsync(PackageOperationType operationType, IPackageDetails packageDetails)
+        return packageDetails;
+    }
+
+    internal async Task<bool> CanInstallAsync(IPackageDetails package)
+    {
+        var packageExists = await VerifyLocalPackageExistsAsync(package);
+
+        Log.Debug($"Can install for '{package}': {packageExists}");
+
+        return !packageExists;
+    }
+
+    internal async Task<bool> CanUpdateAsync(IPackageDetails package)
+    {
+        var packageExists = await VerifyLocalPackageExistsAsync(package);
+
+        Log.Debug($"Can update for '{package}': {packageExists}");
+
+        return packageExists;
+    }
+
+    internal async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+
+        if (package.IsInstalled is null)
         {
-            Argument.IsNotNull(() => packageDetails);
+            Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
 
-            switch (operationType)
-            {
-                case PackageOperationType.Uninstall:
-                    await ExecuteUninstallAsync(packageDetails, default);
-                    break;
+            package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
 
-                case PackageOperationType.Install:
-                    await ExecuteInstallAsync(packageDetails, default);
-                    break;
-
-                case PackageOperationType.Update:
-                    await ExecuteUpdateAsync(packageDetails, default);
-                    break;
-            }
+            ValidatePackage(package);
         }
 
-        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, CancellationToken token)
+        if (package.ValidationContext?.HasErrors ?? false)
         {
-            using (_pleaseWaitService.WaitingScope())
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Install, packageDetails))
-            {
-                await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
-            }
-        }
+            Log.Debug($"Package '{package}' has validation errors, package is not available locally");
 
-        public async Task ExecuteInstallAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
-        {
-            using (_pleaseWaitService.WaitingScope())
-            {
-                await _packageOperationService.InstallPackageAsync(packageDetails, token: token);
-            }
-        }
-
-        public async Task ExecuteUninstallAsync(IPackageDetails packageDetails, CancellationToken token)
-        {
-            using (_pleaseWaitService.WaitingScope())
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Uninstall, packageDetails))
-            {
-                await _packageOperationService.UninstallPackageAsync(packageDetails, token: token);
-            }
-        }
-
-        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, CancellationToken token)
-        {
-            using (_pleaseWaitService.WaitingScope())
-            using (_packageOperationContextService.UseOperationContext(PackageOperationType.Update, packageDetails))
-            {
-                await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
-            }
-        }
-
-        public async Task ExecuteUpdateAsync(IPackageDetails packageDetails, IDisposable packageOperationContext, CancellationToken token)
-        {
-            using (_pleaseWaitService.WaitingScope())
-            {
-                await _packageOperationService.UpdatePackagesAsync(packageDetails, token: token);
-            }
-        }
-
-        public async Task<bool> CanExecuteAsync(PackageOperationType operationType, IPackageDetails package)
-        {
-            if (package is null)
-            {
-                Log.Debug("Cannot execute command for null package");
-                return false;
-            }
-
-            var selectedPackage = await GetPackageDetailsFromSelectedVersionAsync(package, _localRepository) ?? package;
-
-            switch (operationType)
-            {
-                case PackageOperationType.Install:
-                    return await CanInstallAsync(selectedPackage);
-
-                case PackageOperationType.Update:
-                    return await CanUpdateAsync(selectedPackage);
-
-                case PackageOperationType.Uninstall:
-                    return true;
-            }
+            LogValidationErrors(package);
 
             return false;
         }
 
-        public bool IsRefreshRequired(PackageOperationType operationType)
+        if (!package.IsInstalled.HasValue)
         {
-            switch (operationType)
-            {
-                case PackageOperationType.Uninstall:
-                    return true;
-
-                case PackageOperationType.Install:
-                    return false;
-
-                case PackageOperationType.Update:
-                    return true;
-            }
+            Log.Debug($"Package '{package}' IsInstalled value is null, package is not available locally");
 
             return false;
         }
 
-        public string GetPluralActionName(PackageOperationType operationType)
+        Log.Debug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
+
+        return package.IsInstalled.Value;
+    }
+
+    private void LogValidationErrors(IPackageDetails package)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+
+        if (package.ValidationContext is null)
         {
-            return $"{Enum.GetName(typeof(PackageOperationType), operationType)} all";
+            return;
         }
 
-        private async Task<IPackageDetails> GetPackageDetailsFromSelectedVersionAsync(IPackageDetails packageDetails, IRepository repository)
+        foreach (var error in package.ValidationContext.GetErrors())
         {
-            if (!string.IsNullOrWhiteSpace(packageDetails.SelectedVersion) && packageDetails.Version.ToString() != packageDetails.SelectedVersion)
-            {
-                packageDetails = await _packageQueryService.GetPackageAsync(repository, packageDetails.Id, packageDetails.SelectedVersion);
-            }
-
-            return packageDetails;
+            Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
         }
+    }
 
-        internal async Task<bool> CanInstallAsync(IPackageDetails package)
-        {
-            Argument.IsNotNull(() => package);
+    private void ValidatePackage(IPackageDetails package)
+    {
+        ArgumentNullException.ThrowIfNull(package);
 
-            var packageExists = await VerifyLocalPackageExistsAsync(package);
+        package.ResetValidationContext();
 
-            Log.Debug($"Can install for '{package}': {packageExists}");
-
-            return !packageExists;
-        }
-
-        internal async Task<bool> CanUpdateAsync(IPackageDetails package)
-        {
-            Argument.IsNotNull(() => package);
-
-            var packageExists = await VerifyLocalPackageExistsAsync(package);
-
-            Log.Debug($"Can update for '{package}': {packageExists}");
-
-            return packageExists;
-        }
-
-        internal async Task<bool> VerifyLocalPackageExistsAsync(IPackageDetails package)
-        {
-            if (package.IsInstalled is null)
-            {
-                Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
-
-                package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
-
-                ValidatePackage(package);
-            }
-
-            if (package.ValidationContext.HasErrors)
-            {
-                Log.Debug($"Package '{package}' has validation errors, package is not available locally");
-
-                LogValidationErrors(package);
-
-                return false;
-            }
-
-            if (!package.IsInstalled.HasValue)
-            {
-                Log.Debug($"Package '{package}' IsInstalled value is null, package is not available locally");
-
-                return false;
-            }
-
-            Log.Debug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
-
-            return package.IsInstalled.Value;
-        }
-
-        private void LogValidationErrors(IPackageDetails package)
-        {
-            foreach (var error in package.ValidationContext.GetErrors())
-            {
-                Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
-            }
-        }
-
-        private void ValidatePackage(IPackageDetails package)
-        {
-            package.ResetValidationContext();
-
-            _apiPackageRegistry.Validate(package);
-        }
+        _apiPackageRegistry.Validate(package);
     }
 }

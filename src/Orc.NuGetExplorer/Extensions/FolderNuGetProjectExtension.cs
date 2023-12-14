@@ -1,16 +1,18 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using NuGet.ProjectManagement;
+
+public static class FolderNuGetProjectExtension
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using NuGet.ProjectManagement;
-
-    public static class FolderNuGetProjectExtension
+    public static IEnumerable<string> GetPackageDirectories(this FolderNuGetProject project)
     {
-        public static IEnumerable<string> GetPackageDirectories(this FolderNuGetProject project)
-        {
-            var packageDirs = Directory.GetDirectories(project.Root);
+        ArgumentNullException.ThrowIfNull(project);
 
-            return packageDirs;
-        }
+        var packageDirs = Directory.GetDirectories(project.Root);
+
+        return packageDirs;
     }
 }

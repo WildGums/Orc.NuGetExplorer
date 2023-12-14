@@ -1,63 +1,37 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PublicApiFacts.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Tests;
 
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using Orc.NuGetExplorer.Services;
+using PublicApiGenerator;
+using VerifyNUnit;
 
-namespace Orc.NuGetExplorer.Tests
+[TestFixture]
+public class PublicApiFacts
 {
-    using System.IO;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using ApprovalTests;
-    using ApprovalTests.Namers;
-    using NUnit.Framework;
-    using Orc.NuGetExplorer.Services;
-    using PublicApiGenerator;
-
-    [TestFixture]
-    public class PublicApiFacts
+    [Test, MethodImpl(MethodImplOptions.NoInlining)]
+    public async Task Orc_NuGetExplorer_HasNoBreakingChanges_Async()
     {
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
-        public void Orc_NuGetExplorer_HasNoBreakingChanges()
+        var assembly = typeof(DefferedPackageLoaderService).Assembly;
+
+        await PublicApiApprover.ApprovePublicApiAsync(assembly);
+    }
+
+    [Test, MethodImpl(MethodImplOptions.NoInlining)]
+    public async Task Orc_NuGetExplorer_Xaml_HasNoBreakingChanges_Async()
+    {
+        var assembly = typeof(XamlPleaseWaitInterruptService).Assembly;
+
+        await PublicApiApprover.ApprovePublicApiAsync(assembly);
+    }
+    internal static class PublicApiApprover
+    {
+        public static async Task ApprovePublicApiAsync(Assembly assembly)
         {
-            var assembly = typeof(DefferedPackageLoaderService).Assembly;
-
-            PublicApiApprover.ApprovePublicApi(assembly);
-        }
-
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
-        public void Orc_NuGetExplorer_Xaml_HasNoBreakingChanges()
-        {
-            var assembly = typeof(XamlPleaseWaitInterruptService).Assembly;
-
-            PublicApiApprover.ApprovePublicApi(assembly);
-        }
-        internal static class PublicApiApprover
-        {
-            public static void ApprovePublicApi(Assembly assembly)
-            {
-                var publicApi = ApiGenerator.GeneratePublicApi(assembly, new ApiGeneratorOptions());
-                var writer = new ApprovalTextWriter(publicApi, "cs");
-                var approvalNamer = new AssemblyPathNamer(assembly.Location);
-                Approvals.Verify(writer, approvalNamer, Approvals.GetReporter());
-            }
-        }
-
-        internal class AssemblyPathNamer : UnitTestFrameworkNamer
-        {
-            private readonly string _name;
-
-            public AssemblyPathNamer(string assemblyPath)
-            {
-                _name = Path.GetFileNameWithoutExtension(assemblyPath);
-
-            }
-            public override string Name
-            {
-                get { return _name; }
-            }
+            var publicApi = ApiGenerator.GeneratePublicApi(assembly, new ApiGeneratorOptions());
+            await Verifier.Verify(publicApi);
         }
     }
 }

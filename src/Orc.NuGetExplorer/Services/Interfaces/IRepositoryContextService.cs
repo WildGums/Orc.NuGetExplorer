@@ -1,14 +1,13 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using NuGet.Configuration;
+using NuGet.Protocol.Core.Types;
+using NuGetExplorer.Management;
+
+public interface IRepositoryContextService
 {
-    using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Management;
+    SourceRepository? GetRepository(PackageSource source);
+    SourceContext AcquireContext(PackageSource source);
+    SourceContext AcquireContext(bool ignoreLocal = false);
 
-    public interface IRepositoryContextService
-    {
-        SourceRepository GetRepository(PackageSource source);
-        SourceContext AcquireContext(PackageSource source);
-        SourceContext AcquireContext(bool ignoreLocal = false);
-
-    }
 }

@@ -1,68 +1,47 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackagesUIService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Threading.Tasks;
+using Catel.IoC;
+using Catel.Services;
+using ViewModels;
 
-namespace Orc.NuGetExplorer
+internal class PackagesUIService : IPackagesUIService
 {
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.IoC;
-    using Catel.Services;
-    using ViewModels;
+    private readonly IUIVisualizerService _uiVisualizerService;
+    private readonly ITypeFactory _typeFactory;
 
-    internal class PackagesUIService : IPackagesUIService
+    public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
     {
-        #region Fields
-        private readonly IUIVisualizerService _uiVisualizerService;
-        private readonly ITypeFactory _typeFactory;
-        #endregion
+        ArgumentNullException.ThrowIfNull(uiVisualizerService);
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        #region Constructors
-        public PackagesUIService(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
-        {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
+        _uiVisualizerService = uiVisualizerService;
+        _typeFactory = typeFactory;
 
-            _uiVisualizerService = uiVisualizerService;
-            _typeFactory = typeFactory;
+        SettingsTitle = string.Empty;
+    }
 
-            SettingsTitle = null;
-        }
-        #endregion
+    /// <summary>
+    /// Overriden title for settings window
+    /// </summary>
+    public string SettingsTitle { get; set; }
 
-        #region Properties
+    public async Task ShowPackagesExplorerAsync()
+    {
+        await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
+    }
 
-        /// <summary>
-        /// Overriden title for settings window
-        /// </summary>
-        public string SettingsTitle { get; set; }
+    public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
+    {
+        var explorerVM = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
+        explorerVM.ChangeStartPage(initialState.Tab.Name);
+        explorerVM.SetInitialPageParameters(initialState);
+        await _uiVisualizerService.ShowDialogAsync(explorerVM);
+    }
 
-        #endregion
-
-        #region Methods
-        public async Task ShowPackagesExplorerAsync()
-        {
-            await _uiVisualizerService.ShowDialogAsync<ExplorerViewModel>();
-        }
-
-        public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
-        {
-            Argument.IsNotNull(() => initialState);
-
-            var explorerVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExplorerViewModel>();
-            explorerVM.ChangeStartPage(initialState.Tab.Name);
-            explorerVM.SetInitialPageParameters(initialState);
-            await _uiVisualizerService.ShowDialogAsync(explorerVM);
-        }
-
-
-        public async Task<bool?> ShowPackagesSourceSettingsAsync()
-        {
-            return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
-        }
-        #endregion
+    public async Task<UIVisualizerResult?> ShowPackagesSourceSettingsAsync()
+    {
+        return await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>(SettingsTitle);
     }
 }

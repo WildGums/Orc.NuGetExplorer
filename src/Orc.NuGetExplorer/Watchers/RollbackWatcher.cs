@@ -1,82 +1,72 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RollbackWatcher.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using Catel.Logging;
+using Orc.FileSystem;
 
-namespace Orc.NuGetExplorer
+public class RollbackWatcher : PackageManagerContextWatcherBase
 {
-    using System;
-    using Catel;
-    using Catel.Logging;
-    using Orc.FileSystem;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class RollbackWatcher : PackageManagerContextWatcherBase
+    private readonly IBackupFileSystemService _backupFileSystemService;
+    private readonly IFileSystemService _fileSystemService;
+    private readonly IDirectoryService _directoryService;
+    private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
+
+    public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService,
+        IPackageOperationContextService packageOperationContextService,
+        IRollbackPackageOperationService rollbackPackageOperationService,
+        IBackupFileSystemService backupFileSystemService,
+        IFileSystemService fileSystemService,
+        IDirectoryService directoryService)
+        : base(packageOperationNotificationService, packageOperationContextService)
     {
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
+        ArgumentNullException.ThrowIfNull(backupFileSystemService);
+        ArgumentNullException.ThrowIfNull(fileSystemService);
+        ArgumentNullException.ThrowIfNull(directoryService);
 
-        private readonly IBackupFileSystemService _backupFileSystemService;
-        private readonly IFileSystemService _fileSystemService;
-        private readonly IDirectoryService _directoryService;
-        private readonly IRollbackPackageOperationService _rollbackPackageOperationService;
-        #endregion
+        _rollbackPackageOperationService = rollbackPackageOperationService;
+        _backupFileSystemService = backupFileSystemService;
+        _fileSystemService = fileSystemService;
+        _directoryService = directoryService;
+    }
 
-        #region Constructors
-        public RollbackWatcher(IPackageOperationNotificationService packageOperationNotificationService, IPackageOperationContextService packageOperationContextService,
-            IRollbackPackageOperationService rollbackPackageOperationService, IBackupFileSystemService backupFileSystemService, IFileSystemService fileSystemService, 
-            IDirectoryService directoryService)
-            : base(packageOperationNotificationService, packageOperationContextService)
+    protected override void OnOperationContextDisposing(object? sender, OperationContextEventArgs e)
+    {
+        var context = e.PackageOperationContext;
+
+        if (HasContextErrors)
         {
-            Argument.IsNotNull(() => rollbackPackageOperationService);
-            Argument.IsNotNull(() => backupFileSystemService);
-            Argument.IsNotNull(() => fileSystemService);
-            Argument.IsNotNull(() => directoryService);
-
-            _rollbackPackageOperationService = rollbackPackageOperationService;
-            _backupFileSystemService = backupFileSystemService;
-            _fileSystemService = fileSystemService;
-            _directoryService = directoryService;
+            _rollbackPackageOperationService.Rollback(context);
         }
-        #endregion
-
-        #region Methods
-        protected override void OnOperationContextDisposing(object sender, OperationContextEventArgs e)
+        else
         {
-            var context = e.PackageOperationContext;
+            _rollbackPackageOperationService.ClearRollbackActions(context);
+        }
+    }
 
-            if (HasContextErrors)
+    protected override void OnOperationStarting(object? sender, PackageOperationEventArgs e)
+    {
+        var packagesConfig = System.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
+
+        if (e.PackageOperationType == PackageOperationType.Uninstall)
+        {
+            _backupFileSystemService.BackupFolder(e.InstallPath);
+            _backupFileSystemService.BackupFile(packagesConfig);
+
+            _rollbackPackageOperationService.PushRollbackAction(() =>
             {
-                _rollbackPackageOperationService.Rollback(context);
-            }
-            else
-            {
-                _rollbackPackageOperationService.ClearRollbackActions(context);
-            }
+                _backupFileSystemService.Restore(e.InstallPath);
+                _backupFileSystemService.Restore(packagesConfig);
+            }, CurrentContext);
         }
 
-        protected override void OnOperationStarting(object sender, PackageOperationEventArgs e)
+        if (e.PackageOperationType == PackageOperationType.Install)
         {
-            var packagesConfig = Catel.IO.Path.Combine(Catel.IO.Path.GetParentDirectory(e.InstallPath), "packages.config");
-
-            if (e.PackageOperationType == PackageOperationType.Uninstall)
-            {
-                _backupFileSystemService.BackupFolder(e.InstallPath);
-                _backupFileSystemService.BackupFile(packagesConfig);
-
-                _rollbackPackageOperationService.PushRollbackAction(() =>
+            _rollbackPackageOperationService.PushRollbackAction(() =>
                 {
-                    _backupFileSystemService.Restore(e.InstallPath);
-                    _backupFileSystemService.Restore(packagesConfig);
-                }, CurrentContext);
-            }
-
-            if (e.PackageOperationType == PackageOperationType.Install)
-            {
-                _rollbackPackageOperationService.PushRollbackAction(() =>
-                {
-                    bool success = true;
+                    var success = true;
                     try
                     {
                         _directoryService.Delete(e.InstallPath);
@@ -95,10 +85,8 @@ namespace Orc.NuGetExplorer
                         }
                     }
                 },
-                    CurrentContext
-                );
-            }
+                CurrentContext
+            );
         }
-        #endregion
     }
 }

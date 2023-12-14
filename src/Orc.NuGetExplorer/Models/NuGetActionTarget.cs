@@ -1,41 +1,46 @@
-﻿namespace Orc.NuGetExplorer.Models
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Catel.Data;
+
+public class NuGetActionTarget : ModelBase
 {
-    using System.Collections.Generic;
-    using Catel.Data;
+    private readonly List<IExtensibleProject> _extensibleProjects = new();
 
-    public class NuGetActionTarget : ModelBase
+    public IReadOnlyList<IExtensibleProject> TargetProjects => _extensibleProjects;
+
+    /// <summary>
+    /// Disable ability to see and change target project for commands
+    /// </summary>
+    public bool IsTargetProjectCanBeChanged => false;
+
+    public bool IsValid { get; private set; }
+
+    public void Add(IExtensibleProject project)
     {
-        private readonly List<IExtensibleProject> _extensibleProjects = new List<IExtensibleProject>();
+        ArgumentNullException.ThrowIfNull(project);
 
-        public IReadOnlyList<IExtensibleProject> TargetProjects => _extensibleProjects;
+        _extensibleProjects.Add(project);
 
-        /// <summary>
-        /// Disable ability to see and change target project for commands
-        /// </summary>
-        public bool IsTargetProjectCanBeChanged => false;
+        RaisePropertyChanged(nameof(TargetProjects));
+    }
 
-        public bool IsValid { get; private set; }
+    public void Remove(IExtensibleProject project)
+    {
+        ArgumentNullException.ThrowIfNull(project);
 
-        public void Add(IExtensibleProject project)
+        _extensibleProjects.Remove(project);
+
+        RaisePropertyChanged(nameof(TargetProjects));
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        if (string.Equals(e.PropertyName, nameof(TargetProjects)))
         {
-            _extensibleProjects.Add(project);
-
-            RaisePropertyChanged(nameof(TargetProjects));
-        }
-
-        public void Remove(IExtensibleProject project)
-        {
-            _extensibleProjects.Remove(project);
-
-            RaisePropertyChanged(nameof(TargetProjects));
-        }
-
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            if (string.Equals(e.PropertyName, nameof(TargetProjects)))
-            {
-                IsValid = _extensibleProjects.Count > 0;
-            }
+            IsValid = _extensibleProjects.Count > 0;
         }
     }
 }

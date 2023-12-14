@@ -1,30 +1,29 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+
+public class TaskResultOrException<T>
 {
-    using System;
-
-    public class TaskResultOrException<T>
+    public TaskResultOrException(T result)
     {
-        public TaskResultOrException(T result)
-        {
-            IsSuccess = true;
-            Result = result;
-        }
+        IsSuccess = true;
+        Result = result;
+    }
 
-        public TaskResultOrException(Exception ex)
-        {
-            IsSuccess = false;
-            Exception = ex;
-        }
+    public TaskResultOrException(Exception ex)
+    {
+        IsSuccess = false;
+        Exception = ex;
+    }
 
-        public bool IsSuccess { get; }
+    public bool IsSuccess { get; }
 
-        public T Result { get; }
+    public T? Result { get; }
 
-        public Exception Exception { get; }
+    public Exception? Exception { get; }
 
-        public T UnwrapResult()
-        {
-            return Result;
-        }
+    public T? UnwrapResult()
+    {
+        return Result;
     }
 }

@@ -1,39 +1,26 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using System;
+using Catel.IoC;
+
+internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider
 {
-    using Catel;
-    using Catel.IoC;
+    private readonly IExtensibleProject _defaultProject;
 
-    internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider
+    public DefaultExtensibleProjectProvider(ITypeFactory typeFactory, INuGetConfigurationService configurationService, IExtensibleProjectLocator extensibleProjectLocator)
     {
-        private readonly INuGetConfigurationService _configurationService;
-        private readonly IExtensibleProjectLocator _extensibleProjectLocator;
-        private readonly ITypeFactory _typeFactory;
+        ArgumentNullException.ThrowIfNull(typeFactory);
+        ArgumentNullException.ThrowIfNull(configurationService);
+        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
 
-        private IExtensibleProject _defaultProject;
+        _defaultProject = typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DestFolder>(configurationService.GetDestinationFolder());
 
-        public DefaultExtensibleProjectProvider(INuGetConfigurationService configurationService, IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
-        {
-            Argument.IsNotNull(() => configurationService);
-            Argument.IsNotNull(() => extensibleProjectLocator);
-            Argument.IsNotNull(() => typeFactory);
+        extensibleProjectLocator.Register(_defaultProject);
+        extensibleProjectLocator.Enable(_defaultProject);
+    }
 
-            _configurationService = configurationService;
-            _extensibleProjectLocator = extensibleProjectLocator;
-            _typeFactory = typeFactory;
-
-            CreateAndRegisterDefaultProject();
-        }
-
-        public IExtensibleProject GetDefaultProject()
-        {
-            return _defaultProject;
-        }
-
-        private void CreateAndRegisterDefaultProject()
-        {
-            _defaultProject = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<DestFolder>(_configurationService.GetDestinationFolder());
-            _extensibleProjectLocator.Register(_defaultProject);
-            _extensibleProjectLocator.Enable(_defaultProject);
-        }
+    public IExtensibleProject GetDefaultProject()
+    {
+        return _defaultProject;
     }
 }

@@ -1,20 +1,19 @@
-﻿namespace Orc.NuGetExplorer.Converters
+﻿namespace Orc.NuGetExplorer.Converters;
+
+using System;
+using Catel.MVVM.Converters;
+using NuGet.Frameworks;
+
+[System.Windows.Data.ValueConversion(typeof(NuGetFramework), typeof(string))]
+public class NuGetFrameworkToStringConverter : ValueConverterBase<NuGetFramework, string>
 {
-    using System;
-    using Catel.MVVM.Converters;
-    using NuGet.Frameworks;
-
-    [System.Windows.Data.ValueConversion(typeof(NuGetFramework), typeof(string))]
-    public class NuGetFrameworkToStringConverter : ValueConverterBase<NuGetFramework, string>
+    protected override object Convert(NuGetFramework? value, Type targetType, object? parameter)
     {
-        protected override object Convert(NuGetFramework value, Type targetType, object parameter)
+        if (value is null)
         {
-            if (value is null)
-            {
-                return string.Empty;
-            }
-
-            return value.IsSpecificFramework ? value.ToString() : value.Framework;
+            return string.Empty;
         }
+
+        return value.IsSpecificFramework ? value.ToString() : value.Framework;
     }
 }

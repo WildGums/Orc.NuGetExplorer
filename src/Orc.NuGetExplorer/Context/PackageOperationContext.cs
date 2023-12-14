@@ -1,51 +1,42 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageOperationContext.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Collections.Generic;
+using Catel;
 
-namespace Orc.NuGetExplorer
+internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
 {
-    using System;
-    using System.Collections.Generic;
-    using Catel;
-
-    internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
+    public PackageOperationContext(IPackageDetails[] packages, ITemporaryFileSystemContext fileSystemContext)
     {
-        #region Constructors
-        public PackageOperationContext()
+        ArgumentNullException.ThrowIfNull(packages);
+        ArgumentNullException.ThrowIfNull(fileSystemContext);
+
+        UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
+        Exceptions = new List<Exception>();
+        FileSystemContext = fileSystemContext;
+        Packages = packages;
+    }
+
+    public int UniqueIdentifier { get; }
+    public IRepository? Repository { get; set; }
+    public IPackageDetails[] Packages { get; set; }
+    public PackageOperationType OperationType { get; set; }
+    public IPackageOperationContext? Parent { get; set; }
+    public IList<Exception>? Exceptions { get; private set; }
+    public ITemporaryFileSystemContext FileSystemContext { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not PackageOperationContext context)
         {
-            UniqueIdentifier = UniqueIdentifierHelper.GetUniqueIdentifier<PackageOperationContext>();
-            Exceptions = new List<Exception>();
-        }
-        #endregion
-
-        #region Properties
-        public int UniqueIdentifier { get; }
-        public IRepository Repository { get; set; }
-        public IPackageDetails[] Packages { get; set; }
-        public PackageOperationType OperationType { get; set; }
-        public IPackageOperationContext Parent { get; set; }
-        public IList<Exception> Exceptions { get; private set; }
-        public ITemporaryFileSystemContext FileSystemContext { get; set; }
-        #endregion
-
-        #region Methods
-        public override bool Equals(object obj)
-        {
-            if (!(obj is PackageOperationContext context))
-            {
-                return false;
-            }
-
-            return UniqueIdentifier.Equals(context.UniqueIdentifier);
+            return false;
         }
 
-        public override int GetHashCode()
-        {
-            return UniqueIdentifier.GetHashCode();
-        }
-        #endregion
+        return UniqueIdentifier.Equals(context.UniqueIdentifier);
+    }
+
+    public override int GetHashCode()
+    {
+        return UniqueIdentifier.GetHashCode();
     }
 }

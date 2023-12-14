@@ -1,17 +1,16 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using NuGet.Packaging.Core;
+
+public static class PackageIdentityExtensions
 {
-    using NuGet.Packaging.Core;
-
-    public static class PackageIdentityExtensions
+    public static string ToFullString(this PackageIdentity packageIdentity)
     {
-        public static string ToFullString(this PackageIdentity packageIdentity)
-        {
-            if (packageIdentity.HasVersion)
-            {
-                return $"{packageIdentity} {packageIdentity.Version.ToFullString()}";
-            }
+        ArgumentNullException.ThrowIfNull(packageIdentity);
 
-            return packageIdentity.ToString();
-        }
+        return packageIdentity.HasVersion 
+            ? $"{packageIdentity} {packageIdentity.Version.ToFullString()}"
+            : packageIdentity.ToString();
     }
 }

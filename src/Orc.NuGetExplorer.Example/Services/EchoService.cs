@@ -1,30 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EchoService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Example;
 
-
-namespace Orc.NuGetExplorer.Example
+public class EchoService : IEchoService
 {
-    using Models;
+    private PackageManagementEcho _echo;
 
-    public class EchoService : IEchoService
+    public PackageManagementEcho GetPackageManagementEcho()
     {
-        #region Fields
-        private PackageManagementEcho _echo;
-        #endregion
+        _echo ??= new PackageManagementEcho();
 
-        #region Methods
-        public PackageManagementEcho GetPackageManagementEcho()
-        {
-            if (_echo is null)
-            {
-                _echo = new PackageManagementEcho();
-            }
-
-            return _echo;
-        }
-        #endregion
+        return _echo;
     }
 }

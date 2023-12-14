@@ -1,19 +1,18 @@
-﻿namespace Orc.NuGetExplorer.Messaging
+﻿namespace Orc.NuGetExplorer.Messaging;
+
+using Catel.Messaging;
+using Packaging;
+
+public class PackagingDeletemeMessage : MessageBase<PackagingDeletemeMessage, PackageOperationInfo>, INuGetExplorerServiceMessage
 {
-    using Catel.Messaging;
-    using Orc.NuGetExplorer.Packaging;
-
-    public class PackagingDeletemeMessage : MessageBase<PackagingDeletemeMessage, PackageOperationInfo>, INuGetExplorerServiceMessage
+    public PackagingDeletemeMessage()
     {
-        public PackagingDeletemeMessage()
-        {
 
-        }
+    }
 
-        public PackagingDeletemeMessage(PackageOperationInfo content)
-            : base(content)
-        {
+    public PackagingDeletemeMessage(PackageOperationInfo content)
+        : base(content)
+    {
 
-        }
     }
 }

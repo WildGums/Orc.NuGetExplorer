@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Configuration
+﻿namespace Orc.NuGetExplorer.Configuration;
+
+// Note: do not use plural name if this is not a collection property
+public enum ConfigurationSection
 {
-    // Note: do not use plural name if this is not a collection property
-    public enum ConfigurationSection
-    {
-        Feeds = 0,
-        ProjectExtensions = 1
-    }
+    Feeds = 0,
+    ProjectExtensions = 1
 }

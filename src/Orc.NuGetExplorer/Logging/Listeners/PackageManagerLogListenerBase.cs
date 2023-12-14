@@ -1,44 +1,32 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageManagerLogListenerBase.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
 
-namespace Orc.NuGetExplorer
+public abstract class PackageManagerLogListenerBase
 {
-    using Catel;
-
-    public abstract class PackageManagerLogListenerBase
+    protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
     {
-        #region Constructors
-        protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
-        {
-            Argument.IsNotNull(() => nuGetLogListeningSevice);
+        ArgumentNullException.ThrowIfNull(nuGetLogListeningSevice);
 
-            nuGetLogListeningSevice.Error += OnError;
-            nuGetLogListeningSevice.Info += OnInfo;
-            nuGetLogListeningSevice.Debug += OnDebug;
-            nuGetLogListeningSevice.Warning += OnWarning;
-        }
-        #endregion
+        nuGetLogListeningSevice.Error += OnError;
+        nuGetLogListeningSevice.Info += OnInfo;
+        nuGetLogListeningSevice.Debug += OnDebug;
+        nuGetLogListeningSevice.Warning += OnWarning;
+    }
 
-        #region Methods
-        protected virtual void OnWarning(object sender, NuGetLogRecordEventArgs e)
-        {
-        }
+    protected virtual void OnWarning(object? sender, NuGetLogRecordEventArgs e)
+    {
+    }
 
-        protected virtual void OnDebug(object sender, NuGetLogRecordEventArgs e)
-        {
-        }
+    protected virtual void OnDebug(object? sender, NuGetLogRecordEventArgs e)
+    {
+    }
 
-        protected virtual void OnInfo(object sender, NuGetLogRecordEventArgs e)
-        {
-        }
+    protected virtual void OnInfo(object? sender, NuGetLogRecordEventArgs e)
+    {
+    }
 
-        protected virtual void OnError(object sender, NuGetLogRecordEventArgs e)
-        {
-        }
-        #endregion
+    protected virtual void OnError(object? sender, NuGetLogRecordEventArgs e)
+    {
     }
 }

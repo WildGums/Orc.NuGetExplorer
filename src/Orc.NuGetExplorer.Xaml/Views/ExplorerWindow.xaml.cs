@@ -1,57 +1,52 @@
-﻿namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views;
+
+using System.Windows;
+using Catel.MVVM.Views;
+using Catel.Windows;
+using Orc.NuGetExplorer.ViewModels;
+
+/// <summary>
+/// Interaction logic for ExplorerWindow.xaml
+/// </summary>
+internal partial class ExplorerWindow : DataWindow
 {
-    using System.Windows;
-    using Catel.MVVM.Views;
-    using Catel.Windows;
-    using Orc.NuGetExplorer.ViewModels;
+    static ExplorerWindow()
+    {
+        typeof(ExplorerWindow).AutoDetectViewPropertiesToSubscribe();
+    }
+
+    public ExplorerWindow(ExplorerViewModel viewModel)
+        : base(viewModel, DataWindowMode.Custom)
+    {
+        InitializeComponent();
+        ShowInTaskbar = false;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+        var screenHeight = SystemParameters.PrimaryScreenHeight;
+        TopGrid.Height = screenHeight * 2 / 3;
+
+        Title = viewModel.Title;
+    }
+
+    #region DependencyProperty
 
     /// <summary>
-    /// Interaction logic for ExplorerWindow.xaml
+    /// Identifies the <see cref="StartPage"/> dependency property.
     /// </summary>
-    internal partial class ExplorerWindow : DataWindow
+    public static readonly DependencyProperty StartPageProperty =
+        DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
+
+    [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+    public string StartPage
     {
-        static ExplorerWindow()
-        {
-            typeof(ExplorerWindow).AutoDetectViewPropertiesToSubscribe();
-        }
-
-        public ExplorerWindow() : this(null)
-        {
-        }
-
-        public ExplorerWindow(ExplorerViewModel viewModel)
-            : base(viewModel, DataWindowMode.Custom)
-        {
-            InitializeComponent();
-            ShowInTaskbar = false;
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-            var screenHeight = SystemParameters.PrimaryScreenHeight;
-            TopGrid.Height = screenHeight * 2 / 3;
-
-            Title = viewModel.Title;
-        }
-
-        #region DependencyProperty
-
-        /// <summary>
-        /// Identifies the <see cref="StartPage"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty StartPageProperty =
-            DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
-
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-        public string StartPage
-        {
-            get { return (string)GetValue(StartPageProperty); }
-            set { SetValue(StartPageProperty, value); }
-        }
-
-        private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            // Property changed callback
-        }
-
-        #endregion
+        get { return (string)GetValue(StartPageProperty); }
+        set { SetValue(StartPageProperty, value); }
     }
+
+    private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+    {
+        // Property changed callback
+    }
+
+    #endregion
 }

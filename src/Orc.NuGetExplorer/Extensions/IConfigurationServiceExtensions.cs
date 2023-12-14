@@ -1,20 +1,21 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using Catel.Configuration;
+
+public static class IConfigurationServiceExtensions
 {
-    using Catel;
-    using Catel.Configuration;
-
-    public static class IConfigurationServiceExtensions
+    public static CredentialStoragePolicy GetCredentialStoragePolicy(this IConfigurationService configurationService)
     {
-        public static CredentialStoragePolicy GetCredentialStoragePolicy(this IConfigurationService configurationService)
-        {
-            Argument.IsNotNull(() => configurationService);
-            return configurationService.GetRoamingValue(Settings.NuGet.CredentialStorage, CredentialStoragePolicy.WindowsVaultConfigurationFallback);
-        }
+        ArgumentNullException.ThrowIfNull(configurationService);
 
-        public static void SetCredentialStoragePolicy(this IConfigurationService configurationService, CredentialStoragePolicy value)
-        {
-            Argument.IsNotNull(() => configurationService);
-            configurationService.SetRoamingValue(Settings.NuGet.CredentialStorage, value);
-        }
+        return configurationService.GetRoamingValue(Settings.NuGet.CredentialStorage, CredentialStoragePolicy.WindowsVaultConfigurationFallback);
+    }
+
+    public static void SetCredentialStoragePolicy(this IConfigurationService configurationService, CredentialStoragePolicy value)
+    {
+        ArgumentNullException.ThrowIfNull(configurationService);
+
+        configurationService.SetRoamingValue(Settings.NuGet.CredentialStorage, value);
     }
 }

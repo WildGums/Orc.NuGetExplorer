@@ -1,41 +1,31 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdateSelectedItemSourceBehavior.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Behaviors;
 
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using Catel.Windows.Interactivity;
 
-namespace Orc.NuGetExplorer.Behaviors
+internal class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
 {
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using Catel.Windows.Interactivity;
-
-    internal class UpdateSelectedItemSourceBehavior : BehaviorBase<Selector>
+    protected override void OnAssociatedObjectLoaded()
     {
-        #region Methods
-        protected override void OnAssociatedObjectLoaded()
+        base.OnAssociatedObjectLoaded();
+
+        AssociatedObject.SelectionChanged += OnIsVisibleChanged;
+    }
+
+    protected override void OnAssociatedObjectUnloaded()
+    {
+        AssociatedObject.SelectionChanged -= OnIsVisibleChanged;
+
+        base.OnAssociatedObjectUnloaded();
+    }
+
+    private void OnIsVisibleChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+    {
+        var binding = AssociatedObject.GetBindingExpression(Selector.SelectedItemProperty);
+        if (binding is not null)
         {
-            base.OnAssociatedObjectLoaded();
-
-            AssociatedObject.SelectionChanged += OnIsVisibleChanged;
+            binding.UpdateSource();
         }
-
-        protected override void OnAssociatedObjectUnloaded()
-        {
-            AssociatedObject.SelectionChanged -= OnIsVisibleChanged;
-
-            base.OnAssociatedObjectUnloaded();
-        }
-
-        private void OnIsVisibleChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
-        {
-            var binding = AssociatedObject.GetBindingExpression(Selector.SelectedItemProperty);
-            if (binding is not null)
-            {
-                binding.UpdateSource();
-            }
-        }
-        #endregion
     }
 }

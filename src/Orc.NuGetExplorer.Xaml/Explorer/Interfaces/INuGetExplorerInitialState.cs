@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
-{
-    public interface INuGetExplorerInitialState
-    {
-        ExplorerTab Tab { get; }
+﻿namespace Orc.NuGetExplorer;
 
-        PackageSearchParameters InitialSearchParameters { get; }
-    }
+public interface INuGetExplorerInitialState
+{
+    ExplorerTab Tab { get; }
+
+    PackageSearchParameters? InitialSearchParameters { get; }
 }

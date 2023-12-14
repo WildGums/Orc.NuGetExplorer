@@ -1,17 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IApiPackageRegistry.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
-namespace Orc.NuGetExplorer
+public interface IApiPackageRegistry
 {
-    public interface IApiPackageRegistry
-    {
-        void Register(string packageName, string version);
+    void Register(string packageName, string version);
 
-        bool IsRegistered(string packageName);
+    bool IsRegistered(string packageName);
 
-        void Validate(IPackageDetails package);
-    }
+    void Validate(IPackageDetails package);
 }

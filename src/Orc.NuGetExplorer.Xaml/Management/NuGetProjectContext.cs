@@ -1,141 +1,110 @@
-﻿namespace Orc.NuGetExplorer.Management
+﻿namespace Orc.NuGetExplorer.Management;
+
+using System;
+using System.Xml.Linq;
+using Catel.Logging;
+using NuGet.Common;
+using NuGet.Packaging;
+using NuGet.ProjectManagement;
+
+internal class NuGetProjectContext : INuGetProjectContext
 {
-    using System;
-    using System.Xml.Linq;
-    using Catel;
-    using Catel.Logging;
-    using NuGet.Common;
-    using NuGet.Packaging;
-    using NuGet.ProjectManagement;
-    using NuGetExplorer.Windows.Dialogs;
-    using Orc.NuGetExplorer.Windows;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    internal class NuGetProjectContext : INuGetProjectContext
+    public NuGetProjectContext(FileConflictAction fileConflictAction, ILogger logger)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        FileConflictAction = fileConflictAction;
+    }
 
-        private readonly ILogger _nugetLogger;
+    public PackageExtractionContext? PackageExtractionContext { get; set; }
 
-        private readonly IMessageDialogService _messageDialogService;
+    public ISourceControlManagerProvider SourceControlManagerProvider => throw new NotSupportedException();
 
-        public NuGetProjectContext(FileConflictAction fileConflictAction, IMessageDialogService messageDialogService, ILogger logger)
+    public ExecutionContext ExecutionContext => throw new NotSupportedException();
+
+    public FileConflictAction FileConflictAction { get; private set; }
+
+    public XDocument? OriginalPackagesConfig { get; set; }
+
+    public NuGetActionType ActionType { get; set; }
+
+    public Guid OperationId { get; set; }
+
+    void INuGetProjectContext.Log(MessageLevel level, string message, params object[] args)
+    {
+        switch (level)
         {
-            Argument.IsNotNull(() => messageDialogService);
-            Argument.IsNotNull(() => logger);
+            case MessageLevel.Debug:
+                Log.Debug(string.Format(message, args));
+                break;
 
-            FileConflictAction = fileConflictAction;
+            case MessageLevel.Error:
+                Log.Error(string.Format(message, args));
+                break;
 
-            _messageDialogService = messageDialogService;
-            _nugetLogger = logger;
+            case MessageLevel.Info:
+                Log.Info(string.Format(message, args));
+                break;
+
+            case MessageLevel.Warning:
+                Log.Warning(string.Format(message, args));
+                break;
+        }
+    }
+
+    void INuGetProjectContext.Log(ILogMessage message)
+    {
+        switch (message.Level)
+        {
+            case LogLevel.Debug:
+                Log.Debug(FormatStringMessage(message));
+                break;
+
+            case LogLevel.Verbose:
+                Log.Debug(FormatStringMessage(message));
+                break;
+
+            case LogLevel.Information:
+                Log.Info(FormatStringMessage(message));
+                break;
+
+            case LogLevel.Minimal:
+                Log.Info(FormatStringMessage(message));
+                break;
+
+            case LogLevel.Warning:
+                Log.Warning(FormatStringMessage(message));
+                break;
+
+            case LogLevel.Error:
+                Log.Error(FormatStringMessage(message));
+                break;
+        }
+    }
+
+    public FileConflictAction ResolveFileConflict(string message)
+    {
+        if (FileConflictAction == FileConflictAction.PromptUser)
+        {
+            throw Log.ErrorAndCreateException<InvalidOperationException>("Manual resoltuion for packages conflict is not supported in Orc.NuGetExplorer");
         }
 
-        public PackageExtractionContext PackageExtractionContext { get; set; }
+        return FileConflictAction;
+    }
 
-        public ISourceControlManagerProvider SourceControlManagerProvider { get; }
+    public void ReportError(string message)
+    {
+        Log.Error(message);
+    }
 
-        public ExecutionContext ExecutionContext { get; }
+    public void ReportError(ILogMessage message)
+    {
+        Log.Error(FormatStringMessage(message));
+    }
 
-        public FileConflictAction FileConflictAction { get; private set; }
-
-        public XDocument OriginalPackagesConfig { get; set; }
-
-        public NuGetActionType ActionType { get; set; }
-
-        public Guid OperationId { get; set; }
-
-        void INuGetProjectContext.Log(MessageLevel level, string message, params object[] args)
-        {
-            switch (level)
-            {
-                case MessageLevel.Debug:
-                    Log.Debug(string.Format(message, args));
-                    break;
-
-                case MessageLevel.Error:
-                    Log.Error(string.Format(message, args));
-                    break;
-
-                case MessageLevel.Info:
-                    Log.Info(string.Format(message, args));
-                    break;
-
-                case MessageLevel.Warning:
-                    Log.Warning(string.Format(message, args));
-                    break;
-            }
-        }
-
-        void INuGetProjectContext.Log(ILogMessage message)
-        {
-            switch (message.Level)
-            {
-                case LogLevel.Debug:
-                    Log.Debug(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Verbose:
-                    Log.Debug(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Information:
-                    Log.Info(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Minimal:
-                    Log.Info(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Warning:
-                    Log.Warning(FormatStringMessage(message));
-                    break;
-
-                case LogLevel.Error:
-                    Log.Error(FormatStringMessage(message));
-                    break;
-            }
-        }
-
-        public FileConflictAction ResolveFileConflict(string message)
-        {
-            if (FileConflictAction == FileConflictAction.PromptUser)
-            {
-                var resolution = ShowConflictPrompt(message);
-
-                FileConflictAction = resolution;
-            }
-
-            return FileConflictAction;
-        }
-
-        private FileConflictAction ShowConflictPrompt(string message)
-        {
-
-            var result = _messageDialogService.ShowDialog<FileConflictAction>(NuGetExplorer.Constants.PackageInstallationConflictMessage,
-                 message,
-                 false,
-                 FileConflictDialogOption.OverWrite,
-                 FileConflictDialogOption.OverWriteAll,
-                 FileConflictDialogOption.Ignore,
-                 FileConflictDialogOption.IgnoreAll
-             );
-
-            return result;
-        }
-
-        public void ReportError(string message)
-        {
-            Log.Error(message);
-        }
-
-        public void ReportError(ILogMessage message)
-        {
-            Log.Error(FormatStringMessage(message));
-        }
-
-        private static string FormatStringMessage(ILogMessage logMessage)
-        {
-            // For now simple write Code + Message
-            return $"{logMessage.Code}: {logMessage.Message}";
-        }
+    private static string FormatStringMessage(ILogMessage logMessage)
+    {
+        // For now simple write Code + Message
+        return $"{logMessage.Code}: {logMessage.Message}";
     }
 }

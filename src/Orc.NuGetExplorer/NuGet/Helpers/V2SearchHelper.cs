@@ -1,26 +1,27 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Threading.Tasks;
+using Catel.Logging;
+using NuGet.Protocol.Core.Types;
+
+//Helper for v2 NuGet - eager loading for packages versions from v2, because they failed later with NRE, since
+//lazyFactory inside ClonePackageSearchMetadata constains reference on CancellationToken used in SearchAsync
+public static class V2SearchHelper
 {
-    using System;
-    using System.Threading.Tasks;
-    using Catel.Logging;
-    using NuGet.Protocol.Core.Types;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    //Helper for v2 NuGet - eager loading for packages versions from v2, because they failed later with NRE, since
-    //lazyFactory inside ClonePackageSearchMetadata constains reference on CancellationToken used in SearchAsync
-    public static class V2SearchHelper
+    public static async Task GetVersionsMetadataAsync(IPackageSearchMetadata package)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(package);
 
-        public static async Task GetVersionsMetadataAsync(IPackageSearchMetadata package)
+        try
         {
-            try
-            {
-                await package.GetVersionsAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, $"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error");
-            }
+            await package.GetVersionsAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, $"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error");
         }
     }
 }

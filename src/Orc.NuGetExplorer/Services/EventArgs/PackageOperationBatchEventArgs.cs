@@ -1,34 +1,24 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageOperationBatchEventArgs.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System.ComponentModel;
+using Catel;
 
-namespace Orc.NuGetExplorer
+public class PackageOperationBatchEventArgs : CancelEventArgs
 {
-    using System.ComponentModel;
-    using Catel;
-
-    public class PackageOperationBatchEventArgs : CancelEventArgs
+    internal PackageOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
     {
-        #region Constructors
-        internal PackageOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
-        {
-            Argument.IsNotNullOrEmptyArray(() => packages);
+        Argument.IsNotNullOrEmptyArray(() => packages);
 
-            Packages = packages;
-            OperationType = operationType;
-        }
-        #endregion
-
-        #region Properties
-        public IPackageDetails[] Packages { get; private set; }
-        public PackageOperationType OperationType { get; private set; }
-        /// <summary>
-        /// Determine is event raised by user actions or automatically
-        /// </summary>
-        public bool IsAutomatic { get; set; }
-        #endregion
+        Packages = packages;
+        OperationType = operationType;
     }
+
+    public IPackageDetails[] Packages { get; private set; }
+
+    public PackageOperationType OperationType { get; private set; }
+
+    /// <summary>
+    /// Determine is event raised by user actions or automatically
+    /// </summary>
+    public bool IsAutomatic { get; set; }
 }

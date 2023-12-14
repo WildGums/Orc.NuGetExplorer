@@ -1,27 +1,26 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Threading.Tasks;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+
+internal sealed class CredentialsToken : IDisposable
 {
-    using System;
-    using System.Threading.Tasks;
-    using NuGet.Protocol;
-    using NuGet.Protocol.Core.Types;
+    private readonly HttpHandlerResourceV3 _repositoryHttpHandler;
 
-    internal sealed class CredentialsToken : IDisposable
+    public static async Task<CredentialsToken> CreateAsync(SourceRepository repository)
     {
-        private readonly HttpHandlerResourceV3 _repositoryHttpHandler;
+        return new CredentialsToken(await repository.GetResourceAsync<HttpHandlerResourceV3>());
+    }
 
-        public static async Task<CredentialsToken> CreateAsync(SourceRepository repository)
-        {
-            return new CredentialsToken(await repository.GetResourceAsync<HttpHandlerResourceV3>());
-        }
+    public CredentialsToken(HttpHandlerResourceV3 httpHandler)
+    {
+        _repositoryHttpHandler = httpHandler;
+    }
 
-        public CredentialsToken(HttpHandlerResourceV3 httpHandler)
-        {
-            _repositoryHttpHandler = httpHandler;
-        }
-
-        public void Dispose()
-        {
-            _repositoryHttpHandler.ResetCredentials();
-        }
+    public void Dispose()
+    {
+        _repositoryHttpHandler.ResetCredentials();
     }
 }

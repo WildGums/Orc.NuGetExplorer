@@ -1,32 +1,27 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StringExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Windows.Documents;
+using System.Windows.Media;
 
-namespace Orc.NuGetExplorer
+public static class StringExtensions
 {
-    using System.Windows.Documents;
-    using System.Windows.Media;
-
-    public static class StringExtensions
+    public static Inline ToInline(this string text)
     {
-        #region Methods
-        public static Inline ToInline(this string text)
-        {
-            return text.ToInline(Brushes.Black);
-        }
+        ArgumentNullException.ThrowIfNull(text);
 
-        public static Inline ToInline(this string text, Brush brush)
-        {
-            var inline = new Run(text)
-            {
-                Foreground = brush ?? Brushes.Black
-            };
+        return text.ToInline(Brushes.Black);
+    }
 
-            return inline;
-        }
-        #endregion
+    public static Inline ToInline(this string text, Brush brush)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        var inline = new Run(text)
+        {
+            Foreground = brush ?? Brushes.Black
+        };
+
+        return inline;
     }
 }

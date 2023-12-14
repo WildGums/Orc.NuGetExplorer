@@ -1,54 +1,48 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Repository.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
-namespace Orc.NuGetExplorer
+using System;
+
+public sealed class Repository : IRepository
 {
-    using System;
-
-    public sealed class Repository : IRepository
+    public Repository(string source)
     {
-        #region Properties
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Source { get; set; }
-        public PackageOperationType OperationType { get; set; }
+        Name = string.Empty;
+        Source = source;
+    }
 
-        public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
-        #endregion
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Source { get; set; }
+    public PackageOperationType OperationType { get; set; }
 
-        #region Methods
-        private bool Equals(Repository other)
+    public bool IsLocal => new Uri(Source)?.IsLoopback ?? false;
+
+    private bool Equals(Repository other)
+    {
+        return Id == other.Id && string.Equals(Name, other.Name)
+                              && string.Equals(Source, other.Source)
+                              && OperationType == other.OperationType;
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            return Id == other.Id && string.Equals(Name, other.Name)
-                && string.Equals(Source, other.Source)
-                && OperationType == other.OperationType;
+            var hashCode = Id;
+            hashCode = (hashCode * 397) ^ (Name is not null ? Name.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (Source is not null ? Source.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (int)OperationType;
+            return hashCode;
+        }
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Repository repository)
+        {
+            return false;
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Id;
-                hashCode = (hashCode * 397) ^ (Name is not null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Source is not null ? Source.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int)OperationType;
-                return hashCode;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            var repository = obj as Repository;
-            if (repository is null)
-            {
-                return false;
-            }
-
-            return Equals(repository);
-        }
-        #endregion
+        return Equals(repository);
     }
 }

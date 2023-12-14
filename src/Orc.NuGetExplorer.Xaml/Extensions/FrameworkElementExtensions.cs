@@ -1,61 +1,57 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FrameworkElementExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
 
-namespace Orc.NuGetExplorer
+internal static class FrameworkElementExtensions
 {
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Data;
-    using System.Windows.Media;
-    using Catel;
-
-    internal static class FrameworkElementExtensions
+    public static void UpdateItemSource(this FrameworkElement frameworkElement)
     {
-        public static void UpdateItemSource(this FrameworkElement frameworkElement)
+        ArgumentNullException.ThrowIfNull(frameworkElement);
+
+        var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
+
+        foreach (var field in infos.Where(x => x.FieldType == typeof(DependencyProperty)))
         {
-            Argument.IsNotNull(() => frameworkElement);
-
-            var infos = frameworkElement.GetType().GetFields(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Static);
-
-            foreach (var field in infos.Where(x => x.FieldType == typeof(DependencyProperty)))
+            var dp = (DependencyProperty?)field.GetValue(null);
+            var bindingExpression = frameworkElement.GetBindingExpression(dp);
+            if (bindingExpression is null)
             {
-                var dp = (DependencyProperty)field.GetValue(null);
-                var bindingExpression = frameworkElement.GetBindingExpression(dp);
-                if (bindingExpression is null)
-                {
-                    continue;
-                }
-
-                if (bindingExpression.ParentBinding.UpdateSourceTrigger == UpdateSourceTrigger.Explicit)
-                {
-                    bindingExpression.UpdateSource();
-                }
+                continue;
             }
 
-            var count = VisualTreeHelper.GetChildrenCount(frameworkElement);
-            for (var i = 0; i < count; i++)
+            if (bindingExpression.ParentBinding.UpdateSourceTrigger == UpdateSourceTrigger.Explicit)
             {
-                var child = VisualTreeHelper.GetChild(frameworkElement, i) as FrameworkElement;
-                if (child is not null)
-                {
-                    child.UpdateItemSource();
-                }
+                bindingExpression.UpdateSource();
             }
         }
 
-        public static Visibility ToVisibleOrHidden(this FrameworkElement element, bool value)
+        var count = VisualTreeHelper.GetChildrenCount(frameworkElement);
+        for (var i = 0; i < count; i++)
         {
-            return value ? Visibility.Visible : Visibility.Hidden;
+            var child = VisualTreeHelper.GetChild(frameworkElement, i) as FrameworkElement;
+            if (child is not null)
+            {
+                child.UpdateItemSource();
+            }
         }
+    }
 
-        public static Visibility ToVisibleOrCollapsed(this FrameworkElement element, bool value)
-        {
-            return value ? Visibility.Visible : Visibility.Collapsed;
-        }
+    public static Visibility ToVisibleOrHidden(this FrameworkElement element, bool value)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+
+        return value ? Visibility.Visible : Visibility.Hidden;
+    }
+
+    public static Visibility ToVisibleOrCollapsed(this FrameworkElement element, bool value)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+
+        return value ? Visibility.Visible : Visibility.Collapsed;
     }
 }

@@ -1,10 +1,9 @@
-﻿namespace Orc.NuGetExplorer.Enums
+﻿namespace Orc.NuGetExplorer.Enums;
+
+public enum PackageStatus
 {
-    public enum PackageStatus
-    {
-        NotInstalled = -2,
-        UpdateAvailable = -1,
-        LastVersionInstalled = 0,
-        Pending = 1
-    }
+    NotInstalled = -2,
+    UpdateAvailable = -1,
+    LastVersionInstalled = 0,
+    Pending = 1
 }

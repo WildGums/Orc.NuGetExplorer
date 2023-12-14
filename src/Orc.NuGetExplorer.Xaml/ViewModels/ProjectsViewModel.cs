@@ -1,61 +1,61 @@
-﻿namespace Orc.NuGetExplorer.ViewModels
+﻿namespace Orc.NuGetExplorer.ViewModels;
+
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Catel.Collections;
+using Catel.MVVM;
+using NuGetExplorer.Management;
+using Orc.NuGetExplorer;
+
+internal class ProjectsViewModel : ViewModelBase
 {
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.Collections;
-    using Catel.MVVM;
-    using NuGetExplorer.Management;
-    using NuGetExplorer.Models;
-    using Orc.NuGetExplorer;
+    private readonly IExtensibleProjectLocator _extensiblesManager;
 
-    internal class ProjectsViewModel : ViewModelBase
+    public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
     {
-        private readonly IExtensibleProjectLocator _extensiblesManager;
+        ArgumentNullException.ThrowIfNull(projectsModel);
+        ArgumentNullException.ThrowIfNull(extensiblesManager);
 
-        public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
+        _extensiblesManager = extensiblesManager;
+        ProjectsModel = projectsModel;
+    }
+
+    [Model(SupportIEditableObject = false)]
+    public NuGetActionTarget ProjectsModel { get; set; }
+
+    public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
+
+    protected override Task InitializeAsync()
+    {
+        if (!_extensiblesManager.IsConfigLoaded)
         {
-            Argument.IsNotNull(() => extensiblesManager);
-            Argument.IsNotNull(() => projectsModel);
-
-            _extensiblesManager = extensiblesManager;
-            ProjectsModel = projectsModel;
+            _extensiblesManager.RestoreStateFromConfig();
         }
 
-        [Model(SupportIEditableObject = false)]
-        public NuGetActionTarget ProjectsModel { get; set; }
+        var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
 
-        public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; }
+        Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
+            .Select(x =>
+                new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
 
-        protected override Task InitializeAsync()
+        Projects.ForEach(x => ProjectsModel.Add(x.Value));
+
+        return base.InitializeAsync();
+    }
+
+    private void NotifyOnProjectSelectionChanged(IExtensibleProject project, bool isSelected)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+
+        if (isSelected)
         {
-            if (!_extensiblesManager.IsConfigLoaded)
-            {
-                _extensiblesManager.RestoreStateFromConfig();
-            }
-
-            var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
-
-            Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
-                .Select(x =>
-                    new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
-
-            Projects.ForEach(x => ProjectsModel.Add(x.Value));
-
-            return base.InitializeAsync();
+            ProjectsModel.Add(project);
         }
-
-        private void NotifyOnProjectSelectionChanged(bool isSelected, IExtensibleProject project)
+        else
         {
-            if (isSelected)
-            {
-                ProjectsModel.Add(project);
-            }
-            else
-            {
-                ProjectsModel.Remove(project);
-            }
+            ProjectsModel.Remove(project);
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using NuGet.ProjectManagement;
+﻿namespace Orc.NuGetExplorer;
 
-    public interface INuGetProjectContextProvider
-    {
-        INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction);
-    }
+using NuGet.ProjectManagement;
+
+public interface INuGetProjectContextProvider
+{
+    INuGetProjectContext? GetProjectContext(FileConflictAction fileConflictAction);
 }

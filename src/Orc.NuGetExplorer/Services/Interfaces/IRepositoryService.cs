@@ -1,26 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRepositoryService.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System.Collections.Generic;
 
-namespace Orc.NuGetExplorer
+public interface IRepositoryService
 {
-    using System.Collections.Generic;
+    IRepository LocalRepository { get; }
 
-    public interface IRepositoryService
-    {
-        #region Properties
-        IRepository LocalRepository { get; }
-        #endregion
-
-        #region Methods
-        IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
-        IEnumerable<IRepository> GetSourceRepositories();
-        IRepository GetSourceAggregateRepository();
-        IEnumerable<IRepository> GetUpdateRepositories();
-        IRepository GetUpdateAggeregateRepository();
-        #endregion
-    }
+    IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
+    IEnumerable<IRepository> GetSourceRepositories();
+    IEnumerable<IRepository> GetUpdateRepositories();
 }

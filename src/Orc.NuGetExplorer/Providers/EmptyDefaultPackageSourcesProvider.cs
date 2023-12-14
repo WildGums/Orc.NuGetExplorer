@@ -1,26 +1,19 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EmptyDefaultPackageSourcesProvider.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Orc.NuGetExplorer
+public class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    public class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
+    public EmptyDefaultPackageSourcesProvider()
     {
-        #region Properties
-        public string DefaultSource { get; set; }
-        #endregion
+        DefaultSource = string.Empty;
+    }
 
-        #region Methods
-        public IEnumerable<IPackageSource> GetDefaultPackages()
-        {
-            return Enumerable.Empty<IPackageSource>();
-        }
-        #endregion
+    public string DefaultSource { get; set; }
+
+    public IEnumerable<IPackageSource> GetDefaultPackages()
+    {
+        return Enumerable.Empty<IPackageSource>();
     }
 }

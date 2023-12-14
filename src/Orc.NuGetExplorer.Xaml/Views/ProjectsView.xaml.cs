@@ -1,22 +1,21 @@
-﻿namespace Orc.NuGetExplorer.Views
+﻿namespace Orc.NuGetExplorer.Views;
+
+using Catel.Windows.Controls;
+using Orc.NuGetExplorer.ViewModels;
+
+/// <summary>
+/// Interaction logic for ProjectsView.xaml
+/// </summary>
+internal partial class ProjectsView : UserControl
 {
-    using Catel.Windows.Controls;
-    using Orc.NuGetExplorer.ViewModels;
-
-    /// <summary>
-    /// Interaction logic for ProjectsView.xaml
-    /// </summary>
-    internal partial class ProjectsView : UserControl
+    public ProjectsView()
     {
-        public ProjectsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public ProjectsView(ProjectsViewModel viewModel)
-            : base(viewModel)
-        {
-            InitializeComponent();
-        }
+    public ProjectsView(ProjectsViewModel viewModel)
+        : base(viewModel)
+    {
+        InitializeComponent();
     }
 }

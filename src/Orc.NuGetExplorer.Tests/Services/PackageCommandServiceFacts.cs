@@ -1,161 +1,172 @@
-﻿namespace Orc.NuGetExplorer.Tests.Services
+﻿namespace Orc.NuGetExplorer.Tests.Services;
+
+using System.Threading.Tasks;
+using Catel.Services;
+using Moq;
+using NUnit.Framework;
+using Orc.NuGetExplorer.Packaging;
+
+public class PackageCommandServiceFacts
 {
-    using System.Threading.Tasks;
-    using Catel.Services;
-    using Moq;
-    using NUnit.Framework;
-    using Orc.NuGetExplorer.Packaging;
-
-    public class PackageCommandServiceFacts
+    [TestFixture]
+    public class TheCanInstallAsyncMethod : TestFixtureBase
     {
-        [TestFixture]
-        public class TheCanInstallAsyncMethod : TestFixtureBase
+        [TestCase]
+        public async Task Returns_True_For_Not_Installed_Package_Async()
         {
-            [TestCase]
-            public async Task Returns_True_For_Not_Installed_Package_Async()
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+                IsInstalled = false
+            };
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+            var canInstall = await service.CanInstallAsync(packageDetails);
 
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
-
-                var canInstall = await service.CanInstallAsync(packageDetails);
-
-                Assert.IsTrue(canInstall);
-            }
-
-            [TestCase]
-            public async Task Returns_False_For_Installed_Package_Async()
-            {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
-
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
-
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
-
-                var canInstall = await service.CanInstallAsync(packageDetails);
-
-                Assert.IsFalse(canInstall);
-            }
+            Assert.That(canInstall, Is.True);
         }
 
-        [TestFixture]
-        public class TheCanUpdateAsyncMethod : TestFixtureBase
+        [TestCase]
+        public async Task Returns_False_For_Installed_Package_Async()
         {
-            [TestCase]
-            public async Task Returns_False_For_Not_Installed_Package_Async()
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+                IsInstalled = true
+            };
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+            var canInstall = await service.CanInstallAsync(packageDetails);
 
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
+            Assert.That(canInstall, Is.False);
+        }
+    }
 
-                var canUpdate = await service.CanUpdateAsync(packageDetails);
+    [TestFixture]
+    public class TheCanUpdateAsyncMethod : TestFixtureBase
+    {
+        [TestCase]
+        public async Task Returns_False_For_Not_Installed_Package_Async()
+        {
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                Assert.IsFalse(canUpdate);
-            }
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
-            [TestCase]
-            public async Task Returns_True_For_Installed_Package_Async()
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+                IsInstalled = false
+            };
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+            var canUpdate = await service.CanUpdateAsync(packageDetails);
 
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
-
-                var canUpdate = await service.CanUpdateAsync(packageDetails);
-
-                Assert.IsTrue(canUpdate);
-            }
+            Assert.That(canUpdate, Is.False);
         }
 
-        [TestFixture]
-        public class TheVerifyLocalPackageExistsAsyncMethod : TestFixtureBase
+        [TestCase]
+        public async Task Returns_True_For_Installed_Package_Async()
         {
-            [TestCase]
-            public async Task Returns_False_For_Not_Installed_Package_Async()
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+                IsInstalled = true
+            };
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+            var canUpdate = await service.CanUpdateAsync(packageDetails);
 
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = false;
+            Assert.That(canUpdate, Is.True);
+        }
+    }
 
-                var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
+    [TestFixture]
+    public class TheVerifyLocalPackageExistsAsyncMethod : TestFixtureBase
+    {
+        [TestCase]
+        public async Task Returns_False_For_Not_Installed_Package_Async()
+        {
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                Assert.IsFalse(isInstalled);
-            }
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
 
-            [TestCase]
-            public async Task Returns_True_For_Installed_Package_Async()
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
             {
-                var pleaseWaitServiceMock = new Mock<IPleaseWaitService>();
-                var repositoryServiceMock = new Mock<IRepositoryService>();
-                var packageQueryServiceMock = new Mock<IPackageQueryService>();
-                var packageOperationServiceMock = new Mock<IPackageOperationService>();
-                var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
-                var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
+                IsInstalled = false
+            };
 
-                var service = new PackageCommandService(pleaseWaitServiceMock.Object, repositoryServiceMock.Object,
-                    packageQueryServiceMock.Object, packageOperationServiceMock.Object,
-                    packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+            var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
 
-                var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
-                var packageDetails = new PackageDetails(packageSearchMetadata);
-                packageDetails.IsInstalled = true;
+            Assert.That(isInstalled, Is.False);
+        }
 
-                var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
+        [TestCase]
+        public async Task Returns_True_For_Installed_Package_Async()
+        {
+            var busyIndicatorServiceMock = new Mock<IBusyIndicatorService>();
+            var repositoryServiceMock = new Mock<IRepositoryService>();
+            var packageQueryServiceMock = new Mock<IPackageQueryService>();
+            var packageOperationServiceMock = new Mock<IPackageOperationService>();
+            var packageOperationContextServiceMock = new Mock<IPackageOperationContextService>();
+            var apiPackageRegistryMock = new Mock<IApiPackageRegistry>();
 
-                Assert.IsTrue(isInstalled);
-            }
+            var service = new PackageCommandService(busyIndicatorServiceMock.Object, repositoryServiceMock.Object,
+                packageQueryServiceMock.Object, packageOperationServiceMock.Object,
+                packageOperationContextServiceMock.Object, apiPackageRegistryMock.Object);
+
+            var packageSearchMetadata = CreatePackageSearchMetadata("MyPackageId", "1.0.0");
+            var packageDetails = new PackageDetails(packageSearchMetadata)
+            {
+                IsInstalled = true
+            };
+
+            var isInstalled = await service.VerifyLocalPackageExistsAsync(packageDetails);
+
+            Assert.That(isInstalled, Is.True);
         }
     }
 }

@@ -1,67 +1,68 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows;
+
+using System;
+using Catel.Logging;
+using Catel.MVVM;
+using Catel.Services;
+
+/// <summary>
+/// Synchronous implementation of Catel IUIVisualizerService
+/// It used only for compatibility purposes
+/// to satisfy necessity of calling visualizer from implementations of NuGet Library's synchronous interfaces
+/// </summary>
+internal class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
 {
-    using System;
-    using Catel;
-    using Catel.Logging;
-    using Catel.MVVM;
-    using Catel.Services;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    /// <summary>
-    /// Synchronous implementation of Catel IUIVisualizerService
-    /// It used only for compatibility purposes
-    /// to satisfy necessity of calling visualizer from implementations of NuGet Library's synchronous interfaces
-    /// </summary>
-    internal class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
+    public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService)
+        : base(viewLocator, dispatcherService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    }
 
-        public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService)
-            : base(viewLocator, dispatcherService)
+    public virtual bool? ShowDialog(string name, object data, EventHandler<UICompletedEventArgs>? completedProc = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
         {
+            throw Log.ErrorAndCreateException<ArgumentException>($"'{nameof(name)}' parameter is incorrect");
         }
 
-        public virtual bool? ShowDialog(string name, object data, EventHandler<UICompletedEventArgs> completedProc = null)
+        EnsureViewIsRegistered(name);
+
+        var context = new UIVisualizerContext
         {
-            Argument.IsNotNullOrWhitespace("name", name);
+            Name = name,
+            Data = data,
+            CompletedCallback = completedProc,
+            IsModal = true
+        };
 
-            EnsureViewIsRegistered(name);
+        var windowTask = CreateWindowAsync(context);
+        var window = windowTask.Result;
+        if (window is not null)
+        {
+            // aware this place
+            // awaiting on this method in async implementation causes hardly avoidable deadlock
+            // if it called from synchronous code
+            var task = ShowWindowAsync(window, context);
 
-            var context = new UIVisualizerContext
-            {
-                Name = name,
-                Data = data,
-                CompletedCallback = completedProc,
-                IsModal = true
-            };
+            task.Wait();
 
-            var windowTask = CreateWindowAsync(context);
-            var window = windowTask.Result;
-            if (window is not null)
-            {
-                //aware this place
-                //awaiting on this method in async implementation causes hardly avoidable deadlock
-                //if it called from synchronous code
-                var task = ShowWindowAsync(window, context);
+            return task.Result.DialogResult;
 
-                task.Wait();
-
-                return task.Result;
-
-            }
-
-            return false;
         }
 
-        public virtual bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs> completedProc = null)
-        {
-            Argument.IsNotNull("viewModel", viewModel);
+        return false;
+    }
 
-            var viewModelType = viewModel.GetType();
-            var viewModelTypeName = viewModelType.FullName;
+    public virtual bool? ShowDialog(IViewModel viewModel, EventHandler<UICompletedEventArgs>? completedProc = null)
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
 
-            RegisterViewForViewModelIfRequired(viewModelType);
+        var viewModelType = viewModel.GetType();
+        var viewModelTypeName = viewModelType.FullName;
 
-            return ShowDialog(viewModelTypeName, viewModel, completedProc);
-        }
+        RegisterViewForViewModelIfRequired(viewModelType);
+
+        return ShowDialog(viewModelTypeName ?? string.Empty, viewModel, completedProc);
     }
 }

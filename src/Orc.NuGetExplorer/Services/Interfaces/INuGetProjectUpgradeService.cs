@@ -1,15 +1,14 @@
-﻿namespace Orc.NuGetExplorer.Services
+﻿namespace Orc.NuGetExplorer.Services;
+
+using System;
+using System.Threading.Tasks;
+using Orc.NuGetExplorer.Scenario;
+
+public interface INuGetProjectUpgradeService
 {
-    using System;
-    using System.Threading.Tasks;
-    using Orc.NuGetExplorer.Scenario;
+    event EventHandler? UpgradeStart;
+    event EventHandler? UpgradeEnd;
 
-    public interface INuGetProjectUpgradeService
-    {
-        event EventHandler UpgradeStart;
-        event EventHandler UpgradeEnd;
-
-        void AddUpgradeScenario(IUpgradeScenario scenario);
-        Task<bool> CheckCurrentConfigurationAndRunAsync();
-    }
+    void AddUpgradeScenario(IUpgradeScenario scenario);
+    Task<bool> CheckCurrentConfigurationAndRunAsync();
 }

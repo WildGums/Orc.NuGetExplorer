@@ -1,32 +1,21 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Md5HelperFacts.cs" company="WildGums">
-//   Copyright (c) 2008 - 2016 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Tests;
 
-#if !NET40
+using NuGetExplorer;
+using NUnit.Framework;
 
-namespace Orc.NuGetExplorer.Tests
+[TestFixture]
+public class EncryptionHelperFacts
 {
-    using NUnit.Framework;
-    using NuGetExplorer;
-
-    [TestFixture]
-    public class EncryptionHelperFacts
+    [TestCase("sadf32ASDF43", "some password")]
+    [TestCase("very long string with spaces", "another password")]
+    public void EncryptsAndDecryptsCorrectly(string input, string password)
     {
-        [TestCase("sadf32ASDF43", "some password")]
-        [TestCase("very long string with spaces", "another password")]
-        public void EncryptsAndDecryptsCorrectly(string input, string password)
-        {
-            var encrypted = EncryptionHelper.Encrypt(input, password);
+        var encrypted = EncryptionHelper.Encrypt(input, password);
 
-            Assert.AreNotEqual(input, encrypted);
+        Assert.That(encrypted, Is.Not.EqualTo(input));
 
-            var decrypted = EncryptionHelper.Decrypt(encrypted, password);
-            
-            Assert.AreEqual(input, decrypted);
-        }
+        var decrypted = EncryptionHelper.Decrypt(encrypted, password);
+
+        Assert.That(decrypted, Is.EqualTo(input));
     }
 }
-
-#endif

@@ -1,97 +1,100 @@
-﻿namespace Orc.NuGetExplorer.Providers
+﻿namespace Orc.NuGetExplorer.Providers;
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using NuGet.Configuration;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+
+public class DefaultSourceRepositoryProvider : IExtendedSourceRepositoryProvider
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel;
-    using NuGet.Configuration;
-    using NuGet.Protocol;
-    using NuGet.Protocol.Core.Types;
-    using NuGetExplorer.Models;
+    private static readonly IEnumerable<Lazy<INuGetResourceProvider>> V3ProtocolProviders = Repository.Provider.GetCoreV3();
 
-    public class DefaultSourceRepositoryProvider : IExtendedSourceRepositoryProvider
+    private readonly INuGetSettings _settings;
+    private readonly INuGetConfigurationService _nuGetConfigurationService;
+
+    private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new(DefaultNuGetComparers.PackageSource);
+
+    /// <summary>
+    /// Unused provider from NuGet library
+    /// </summary>
+    public IPackageSourceProvider? PackageSourceProvider => null;
+
+    public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
     {
-        private static readonly IEnumerable<Lazy<INuGetResourceProvider>> V3ProtocolProviders = Repository.Provider.GetCoreV3();
+        ArgumentNullException.ThrowIfNull(settingsProvider);
+        ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
 
-        private readonly INuGetSettings _settings;
-        private readonly INuGetConfigurationService _nuGetConfigurationService;
+        _settings = settingsProvider.Model ?? throw new InvalidOperationException("Settings must be initialized first");
+        _nuGetConfigurationService = nuGetConfigurationService;
+    }
 
-        private readonly ConcurrentDictionary<PackageSource, SourceRepository> _repositoryStore = new ConcurrentDictionary<PackageSource, SourceRepository>(DefaultNuGetComparers.PackageSource);
+    public SourceRepository CreateRepository(PackageSource source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
 
-        /// <summary>
-        /// Unused provider from NuGet library
-        /// </summary>
-        public IPackageSourceProvider PackageSourceProvider => null;
+        var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined));
+        return repo;
+    }
 
-        public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
+    public SourceRepository CreateRepository(PackageSource source, FeedType type)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, type));
+        return repo;
+    }
+
+    public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        if (forceUpdate)
         {
-            Argument.IsNotNull(() => settingsProvider);
-            _settings = settingsProvider.Model;
-            _nuGetConfigurationService = nuGetConfigurationService;
-        }
+            var repo = _repositoryStore.AddOrUpdate(
+                source,
+                key => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined),
+                (key, oldValue) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined)
+            );
 
-        public SourceRepository CreateRepository(PackageSource source)
-        {
-            var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined));
             return repo;
         }
 
-        public SourceRepository CreateRepository(PackageSource source, FeedType type)
+        return CreateRepository(source);
+    }
+
+    public IEnumerable<SourceRepository> GetRepositories()
+    {
+        var repos = new List<SourceRepository>();
+
+        // from config
+        var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)
+            .ToPackageSourceInstances().ToList();
+
+        // from settings model
+        foreach (var source in _settings.GetAllPackageSources())
         {
-            var repo = _repositoryStore.GetOrAdd(source, (sourcekey) => new SourceRepository(source, V3ProtocolProviders, type));
-            return repo;
+            repos.Add(CreateRepository(source));
         }
 
-        public SourceRepository CreateRepository(PackageSource source, bool forceUpdate)
+        foreach (var configSource in configuredSources)
         {
-            if (forceUpdate)
+            if (repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) is null)
             {
-                var repo = _repositoryStore.AddOrUpdate(
-                    source,
-                    key => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined),
-                    (key, oldValue) => new SourceRepository(source, V3ProtocolProviders, FeedType.Undefined)
-                );
-
-                return repo;
+                repos.Add(CreateRepository(configSource));
             }
-
-            return CreateRepository(source);
         }
 
-        public IEnumerable<SourceRepository> GetRepositories()
-        {
-            List<SourceRepository> repos = new List<SourceRepository>();
+        // this provider aware of same-source repositories
+        repos = repos.Distinct(DefaultNuGetComparers.SourceRepository).ToList();
 
-            //from config
-            var configuredSources = _nuGetConfigurationService.LoadPackageSources(true)
-                .ToPackageSourceInstances().ToList();
+        return repos;
+    }
 
-            //from settings model
-            foreach (var source in _settings.GetAllPackageSources())
-            {
-                repos.Add(CreateRepository(source));
-            }
-
-            foreach (var configSource in configuredSources)
-            {
-                if (repos.FirstOrDefault(source => source.PackageSource.Name == configSource.Name) is null)
-                {
-                    repos.Add(CreateRepository(configSource));
-                }
-            }
-
-            //this provider aware of same-source repositories
-            repos = repos.Distinct(DefaultNuGetComparers.SourceRepository).ToList();
-
-            return repos;
-        }
-
-        public SourceRepository CreateLocalRepository(string source)
-        {
-            return new SourceRepository(
-                        new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2
-                );
-        }
+    public SourceRepository CreateLocalRepository(string source)
+    {
+        return new SourceRepository(new PackageSource(source), Repository.Provider.GetCoreV3(), FeedType.FileSystemV2);
     }
 }

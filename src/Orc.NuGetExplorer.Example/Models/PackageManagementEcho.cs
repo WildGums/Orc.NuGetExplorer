@@ -1,35 +1,17 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PackageManagementEcho.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer.Example;
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Catel.Data;
 
-namespace Orc.NuGetExplorer.Example.Models
+[Serializable]
+public class PackageManagementEcho : ModelBase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Runtime.Serialization;
-    using Catel.Data;
-
-    [Serializable]
-    public class PackageManagementEcho : ModelBase
+    public PackageManagementEcho()
     {
-        #region
-        protected PackageManagementEcho(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        public PackageManagementEcho()
-        {
-            Lines = new ObservableCollection<string>();
-        }
-        #endregion
-
-        #region Properties
-        public IList<string> Lines { get; private set; }
-        #endregion
+        Lines = new ObservableCollection<string>();
     }
+
+    public IList<string> Lines { get; private set; }
 }

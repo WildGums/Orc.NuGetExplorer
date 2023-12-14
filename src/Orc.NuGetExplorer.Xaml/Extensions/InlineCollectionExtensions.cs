@@ -1,22 +1,19 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InlineCollectionExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.Windows.Documents;
+
+public static class InlineCollectionExtensions
 {
-    using System.Windows.Documents;
-
-    public static class InlineCollectionExtensions
+    public static void AddIfNotNull(this InlineCollection inlineCollection, Inline inline)
     {
-        public static void AddIfNotNull(this InlineCollection inlineCollection, Inline inline)
-        {
-            if (inline is null)
-            {
-                return;
-            }
+        ArgumentNullException.ThrowIfNull(inlineCollection);
 
-            inlineCollection.Add(inline);
+        if (inline is null)
+        {
+            return;
         }
+
+        inlineCollection.Add(inline);
     }
 }

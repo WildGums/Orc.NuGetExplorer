@@ -1,53 +1,60 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System;
+using System.IO;
+using Catel.Logging;
+using Orc.FileSystem;
+
+internal class FileSystemService : IFileSystemService
 {
-    using System.IO;
-    using Catel;
-    using Catel.Logging;
-    using Orc.FileSystem;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private readonly IFileService _fileService;
+    private readonly IDirectoryService _directoryService;
 
-    internal class FileSystemService : IFileSystemService
+    public FileSystemService(IFileService fileService, IDirectoryService directoryService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IFileService _fileService;
-        private readonly IDirectoryService _directoryService;
+        ArgumentNullException.ThrowIfNull(fileService);
+        ArgumentNullException.ThrowIfNull(directoryService);
 
-        public FileSystemService(IFileService fileService, IDirectoryService directoryService)
+        _fileService = fileService;
+        _directoryService = directoryService;
+    }
+
+    public void CreateDeleteme(string name, string path)
+    {
+        Log.Debug($"Creating delete.me file on path '{path}'");
+
+        var fullPath = GetDeletemePath(name, path);
+        var directoryPath = Path.GetDirectoryName(fullPath);
+        if (string.IsNullOrEmpty(directoryPath))
         {
-            Argument.IsNotNull(() => fileService);
-            Argument.IsNotNull(() => directoryService);
-
-            _fileService = fileService;
-            _directoryService = directoryService;
+            Log.Debug("Cannot obtain directory path for creating file.");
+            return;
         }
 
-        public void CreateDeleteme(string name, string path)
+        if (_fileService.Exists(fullPath))
         {
-            var fullPath = GetDeletemePath(name, path);
-            var directoryPath = Path.GetDirectoryName(fullPath);
-
-            if (_fileService.Exists(fullPath))
-            {
-                return;
-            }
-
-            _directoryService.Create(directoryPath);
-
-            using (_fileService.Create(fullPath))
-            {
-            }
+            return;
         }
 
-        public void RemoveDeleteme(string name, string path)
-        {
-            var fullPath = GetDeletemePath(name, path);
-            {
-                _fileService.Delete(fullPath);
-            }
-        }
+        _directoryService.Create(directoryPath);
 
-        private static string GetDeletemePath(string name, string path)
+        using (_fileService.Create(fullPath))
         {
-            return Path.Combine(path, $"{name}.deleteme");
+            Log.Debug($"Created delete.me file on path {fullPath}");
         }
+    }
+
+    public void RemoveDeleteme(string name, string path)
+    {
+        var fullPath = GetDeletemePath(name, path);
+        {
+            _fileService.Delete(fullPath);
+        }
+    }
+
+    private static string GetDeletemePath(string name, string path)
+    {
+        return Path.Combine(path, $"{name}.deleteme");
     }
 }

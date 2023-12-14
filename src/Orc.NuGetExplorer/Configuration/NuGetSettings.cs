@@ -1,487 +1,464 @@
-﻿namespace Orc.NuGetExplorer.Configuration
+﻿namespace Orc.NuGetExplorer.Configuration;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Catel;
+using Catel.Configuration;
+using Catel.Logging;
+using NuGet.Configuration;
+
+internal class NuGetSettings : IVersionedSettings
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Catel;
-    using Catel.Configuration;
-    using Catel.IO;
-    using Catel.Logging;
-    using NuGet.Configuration;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version
+                                                      ?? throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(Assembly.GetExecutingAssembly)}' was 'null' therefore there is no '{nameof(AssemblyVersion)}' defined");
 
-    internal class NuGetSettings : IVersionedSettings
+    private const char Separator = '|';
+    private const string SectionListKey = "NuGet_sections";
+    private const string VersionKey = "NuGetExplorer.Version";
+    private const string MinimalVersionKey = "NuGetExplorer.MinimalVersion";
+    private const string MinimalVersionNumber = "4.0.0";
+    private const string ConfigurationFileName = "configuration.xml";
+
+    private readonly IConfigurationService _configurationService;
+
+    public NuGetSettings(IConfigurationService configurationService)
     {
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        ArgumentNullException.ThrowIfNull(configurationService);
 
-        private const char Separator = '|';
-        private const string SectionListKey = "NuGet_sections";
-        private const string VersionKey = "NuGetExplorer.Version";
-        private const string MinimalVersionKey = "NuGetExplorer.MinimalVersion";
-        private const string MinimalVersionNumber = "4.0.0";
-        private const string ConfigurationFileName = "configuration.xml";
+        _configurationService = configurationService;
 
-        private readonly IConfigurationService _configurationService;
-        #endregion
+        // version of configuration is a version of assembly
+        // get version from configuration
+        var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
 
-        #region Constructors
-        public NuGetSettings(IConfigurationService configurationService)
+        if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out var configurationVersion))
         {
-            Argument.IsNotNull(() => configurationService);
-
-            _configurationService = configurationService;
-
-            //version of configuration is a version of assembly
-            //get version from configuration
-            GetVersionFromConfiguration();
-
-            SettingsChanged += OnSettingsChanged;
-        }
-        #endregion
-
-        public bool IsLastVersion => AssemblyVersion.Equals(Version);
-
-        public Version Version { get; private set; }
-
-        public Version MinimalVersion { get; private set; }
-
-        public event EventHandler SettingsChanged;
-
-        public event EventHandler SettingsRead;
-
-        private void RaiseSettingsChanged()
-        {
-            SettingsChanged?.Invoke(this, EventArgs.Empty);
+            Version = configurationVersion;
         }
 
-        private void RaiseSettingsRead()
+        var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
+
+        if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
         {
-            SettingsRead?.Invoke(this, EventArgs.Empty);
+            MinimalVersion = configurationVersion;
         }
 
-        #region ISettings
+        RaiseSettingsRead();
 
-        public string GetValue(string section, string key, bool isPath = false)
+        SettingsChanged += OnSettingsChanged;
+    }
+
+    public bool IsLastVersion => AssemblyVersion.Equals(Version);
+
+    public Version? Version { get; private set; }
+
+    public Version? MinimalVersion { get; private set; }
+
+    public event EventHandler? SettingsChanged;
+
+    public event EventHandler? SettingsRead;
+
+    private void RaiseSettingsChanged()
+    {
+        SettingsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void RaiseSettingsRead()
+    {
+        SettingsRead?.Invoke(this, EventArgs.Empty);
+    }
+
+    #region ISettings
+
+    public string GetValue(string section, string key, bool isPath = false)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        var settingValue = GetNuGetValues(section, isPath).FirstOrDefault(x => string.Equals(x.Key, key));
+
+        var result = settingValue is null ? string.Empty : settingValue.Value;
+
+        RaiseSettingsRead();
+
+        return result;
+    }
+
+    public IReadOnlyList<string> GetAllSubsections(string section)
+    {
+        Argument.IsNotNullOrEmpty(() => section);
+
+        RaiseSettingsRead();
+
+        return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
+    }
+
+    public IList<KeyValuePair<string, string>> GetNestedValues(string section, string subSection)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subSection);
+
+        RaiseSettingsRead();
+
+        //extract key-value pairs from AddItem
+        return GetNuGetValues(section, subSection)
+            .Select(item => new KeyValuePair<string, string>(item.Key, item.Value))
+            .ToList();
+    }
+
+    public void SetValue(string section, string key, string value)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        SetNuGetValues(section, new[] { new AddItem(key, value) });
+
+        RaiseSettingsChanged();
+    }
+
+    public void SetNestedValues(string section, string subsection, IList<KeyValuePair<string, string>> values)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subsection);
+
+        var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
+        SetNuGetValues(section, subsection, addItems);
+
+        RaiseSettingsChanged();
+    }
+
+    public bool DeleteValue(string section, string key)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        try
         {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            var settingValue = GetNuGetValues(section, isPath).FirstOrDefault(x => string.Equals(x.Key, key));
-
-            var result = settingValue is null ? string.Empty : settingValue.Value;
-
-            RaiseSettingsRead();
-
-            return result;
-        }
-
-        public IReadOnlyList<string> GetAllSubsections(string section)
-        {
-            RaiseSettingsRead();
-
-            return GetNuGetValues(section).Select(subsection => subsection.Key).ToList();
-        }
-
-        public IList<KeyValuePair<string, string>> GetNestedValues(string section, string subSection)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subSection);
-
-            RaiseSettingsRead();
-
-            //extract key-value pairs from AddItem
-            return GetNuGetValues(section, subSection)
-                .Select(item => new KeyValuePair<string, string>(item.Key, item.Value))
-                .ToList();
-        }
-
-        public void SetValue(string section, string key, string value)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            SetNuGetValues(section, new[] { new AddItem(key, value) });
-
-            RaiseSettingsChanged();
-        }
-
-        public void SetNestedValues(string section, string subsection, IList<KeyValuePair<string, string>> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            var addItems = values.Select(x => new AddItem(x.Key, x.Value)).ToList();
-            SetNuGetValues(section, subsection, addItems);
-
-            RaiseSettingsChanged();
-        }
-
-        public bool DeleteValue(string section, string key)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            try
-            {
-                var valuesListKey = GetSectionValuesListKey(section);
-                var keysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-                if (string.IsNullOrEmpty(keysString))
-                {
-                    return true;
-                }
-
-                var newKeys = keysString.Split(Separator).Where(x => !string.Equals(x, key));
-                keysString = string.Join(Separator.ToString(), newKeys);
-                _configurationService.SetRoamingValue(valuesListKey, keysString);
-
-                var valueKey = GetSectionValueKey(section, key);
-                _configurationService.SetRoamingValue(valueKey, string.Empty);
-            }
-            catch
-            {
-                return false;
-            }
-
-            RaiseSettingsChanged();
-
-            return true;
-        }
-
-        public bool DeleteSection(string section)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            var result = true;
-
-            try
-            {
-                var sectionsString = _configurationService.GetRoamingValue<string>(SectionListKey);
-                if (string.IsNullOrEmpty(sectionsString))
-                {
-                    return true;
-                }
-
-                var newSections = sectionsString.Split(Separator).Where(x => !string.Equals(x, section));
-                sectionsString = string.Join(Separator.ToString(), newSections);
-                _configurationService.SetRoamingValue(SectionListKey, sectionsString);
-
-                var values = GetNuGetValues(section, false);
-                if (values is null)
-                {
-                    return false;
-                }
-
-                foreach (var settingValue in values)
-                {
-                    result = result && DeleteValue(section, settingValue.Key);
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
-            RaiseSettingsChanged();
-
-            return result;
-        }
-
-        public SettingSection GetSection(string sectionName)
-        {
-            Argument.IsNotNullOrWhitespace(() => sectionName);
-
-            var valuesListKey = GetSectionValuesListKey(sectionName);
-            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-
-            if (string.IsNullOrEmpty(valueKeysString))
-            {
-                return new NuGetSettingsSection(sectionName);
-            }
-
-            var keys = valueKeysString.Split(Separator);
-
-            var subsections = keys.Select(key => GetNuGetValue(sectionName, key, false)).ToList();
-
-            RaiseSettingsRead();
-
-            var section = new NuGetSettingsSection(sectionName, subsections);
-            return section;
-        }
-
-        public void AddOrUpdate(string sectionName, SettingItem item)
-        {
-            Argument.IsNotNullOrWhitespace(() => sectionName);
-
-            EnsureSectionExists(sectionName);
-
-            var section = GetSection(sectionName);
-
-            if (item is AddItem addItem)
-            {
-                SetValue(sectionName, addItem.Key, addItem.Value);
-                return;
-            }
-
-            Log.Debug($"Cannot add or update unknown item of type {item.GetType()}");
-        }
-
-        public void Remove(string sectionName, SettingItem item)
-        {
-            if (item is AddItem addItem)
-            {
-                DeleteValue(sectionName, addItem.Key);
-                return;
-            }
-
-            Log.Debug($"Cannot remove unknown item of type {item.GetType()}");
-        }
-
-        public void SaveToDisk()
-        {
-            // Note: Implementations of ISettings designed assuming that all updates are storing in-memory and flushed to disk file only on call of SaveToDisk()
-            // Here we are using Catel's configuration and saving all changes instantly, thats why implementation of this method is empty
-            Log.Debug("SaveToDisk method called from PackageSourceProvider");
-        }
-
-        public IList<string> GetConfigFilePaths()
-        {
-            var localFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
-            var roamingFolderConfig = Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
-
-            return new string[] { localFolderConfig, roamingFolderConfig };
-        }
-
-        public IList<string> GetConfigRoots()
-        {
-            return new string[] { DefaultNuGetFolders.GetApplicationLocalFolder(), DefaultNuGetFolders.GetApplicationRoamingFolder() };
-        }
-
-        #endregion
-
-        #region Methods
-
-        private void SetNuGetValues(string section, IList<AddItem> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            EnsureSectionExists(section);
-
             var valuesListKey = GetSectionValuesListKey(section);
-            UpdateKeyList(values, valuesListKey);
-
-            foreach (var item in values)
+            var keysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+            if (string.IsNullOrEmpty(keysString))
             {
-                SetNuGetValue(section, item.Key, item.Value);
-            }
-        }
-
-        private void EnsureSectionExists(string section)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-
-            var sectionsString = _configurationService.GetRoamingValue(SectionListKey, string.Empty);
-            var sections = sectionsString.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (!sections.Contains(section))
-            {
-                sections.Add(section);
-                sectionsString = string.Join(Separator.ToString(), sections);
-                _configurationService.SetRoamingValue(SectionListKey, sectionsString);
-            }
-        }
-
-
-        private void SetNuGetValues(string section, string subsection, IList<AddItem> values)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            EnsureSectionExists(section);
-
-            var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            UpdateKeyList(values, valuesListKey);
-            foreach (var keyValuePair in values)
-            {
-                SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
-            }
-        }
-
-        private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
-        {
-            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-            var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
-            var keysToSave = values.Select(x => x.Key);
-
-            var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
-            _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
-        }
-
-        public void UpdatePackageSourcesKeyListSorting(List<string> packageSourceNames)
-        {
-            var packageSourcesKeyListKey = GetSectionValuesListKey(ConfigurationConstants.PackageSources);
-            var enabledPackageSourcesKeys = _configurationService.GetRoamingValue<string>(packageSourcesKeyListKey).Split(Separator);
-            var sortedKeys = enabledPackageSourcesKeys.OrderBy(key => packageSourceNames.IndexOf(key));
-            var sortedKeysStringValue = string.Join(Separator, sortedKeys);
-            _configurationService.SetRoamingValue(packageSourcesKeyListKey, sortedKeysStringValue);
-        }
-
-        private string ConvertToFullPath(string result)
-        {
-            return result;
-        }
-
-        private IList<AddItem> GetNuGetValues(string sectionName, bool isPath = false)
-        {
-            Argument.IsNotNullOrWhitespace(() => sectionName);
-
-            var section = GetSection(sectionName);
-
-            return section.Items.OfType<AddItem>().ToList();
-        }
-
-        private IList<AddItem> GetNuGetValues(string section, string subsection, bool isPath = false)
-        {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-
-            var valuesListKey = GetSubsectionValuesListKey(section, subsection);
-            var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
-            if (string.IsNullOrEmpty(valueKeysString))
-            {
-                return new List<AddItem>();
+                return true;
             }
 
-            var keys = valueKeysString.Split(Separator);
+            var newKeys = keysString.Split(Separator).Where(x => !string.Equals(x, key));
+            keysString = string.Join(Separator.ToString(), newKeys);
+            _configurationService.SetRoamingValue(valuesListKey, keysString);
 
-            return keys.Select(key => GetNuGetValue(section, subsection, key, isPath)).ToList();
+            var valueKey = GetSectionValueKey(section, key);
+            _configurationService.SetRoamingValue(valueKey, string.Empty);
+        }
+        catch
+        {
+            return false;
         }
 
-        private AddItem GetNuGetValue(string section, string key, bool isPath)
+        RaiseSettingsChanged();
+
+        return true;
+    }
+
+    public bool DeleteSection(string section)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+
+        var result = true;
+
+        try
         {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            var combinedKey = GetSectionValueKey(section, key);
-            var value = _configurationService.GetRoamingValue<string>(combinedKey);
-
-            if (isPath)
+            var sectionsString = _configurationService.GetRoamingValue<string>(SectionListKey);
+            if (string.IsNullOrEmpty(sectionsString))
             {
-                value = ConvertToFullPath(value);
+                return true;
             }
 
-            if (IsSourceItem(section))
+            var newSections = sectionsString.Split(Separator).Where(x => !string.Equals(x, section));
+            sectionsString = string.Join(Separator.ToString(), newSections);
+            _configurationService.SetRoamingValue(SectionListKey, sectionsString);
+
+            var values = GetNuGetValues(section);
+            foreach (var settingValue in values)
             {
-                return new SourceItem(key, value);
+                result = result && DeleteValue(section, settingValue.Key);
             }
-
-            return new AddItem(key, value);
         }
-
-        private AddItem GetNuGetValue(string section, string subsection, string key, bool isPath)
+        catch
         {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            var combinedKey = GetSubsectionValueKey(section, subsection, key);
-            var value = _configurationService.GetRoamingValue<string>(combinedKey);
-
-            if (isPath)
-            {
-                value = ConvertToFullPath(value);
-            }
-
-            if (IsSourceItem(section))
-            {
-                return new SourceItem(key, value);
-            }
-
-            return new AddItem(key, value);
+            return false;
         }
 
-        private void SetNuGetValue(string section, string key, string value)
+        RaiseSettingsChanged();
+
+        return result;
+    }
+        
+    public SettingSection GetSection(string sectionName)
+    {
+        Argument.IsNotNullOrWhitespace(() => sectionName);
+
+        var valuesListKey = GetSectionValuesListKey(sectionName);
+        var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+        if (string.IsNullOrEmpty(valueKeysString))
         {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            var combinedKey = GetSectionValueKey(section, key);
-            _configurationService.SetRoamingValue(combinedKey, value);
+            return new NuGetSettingsSection(sectionName);
         }
 
-        private void SetNuGetValue(string section, string subsection, string key, string value)
+        var keys = valueKeysString.Split(Separator);
+
+        var subsections = keys.Select(key => GetNuGetValue(sectionName, key, false)).ToList();
+
+        RaiseSettingsRead();
+
+        var section = new NuGetSettingsSection(sectionName, subsections);
+        return section;
+    }
+
+    public void AddOrUpdate(string sectionName, SettingItem item)
+    {
+        Argument.IsNotNullOrWhitespace(() => sectionName);
+
+        EnsureSectionExists(sectionName);
+
+        //NOTE:Vladimir: DO we need this method here: section never used
+        var section = GetSection(sectionName);
+
+        if (item is AddItem addItem)
         {
-            Argument.IsNotNullOrWhitespace(() => section);
-            Argument.IsNotNullOrWhitespace(() => subsection);
-            Argument.IsNotNullOrWhitespace(() => key);
-
-            var combinedKey = GetSubsectionValueKey(section, subsection, key);
-            _configurationService.SetRoamingValue(combinedKey, value);
+            SetValue(sectionName, addItem.Key, addItem.Value);
+            return;
         }
 
-        private void GetVersionFromConfiguration()
+        Log.Debug($"Cannot add or update unknown item of type {item.GetType()}");
+    }
+
+    public void Remove(string sectionName, SettingItem item)
+    {
+        if (item is AddItem addItem)
         {
-            var configurationVersionString = _configurationService.GetRoamingValue<string>(VersionKey);
-
-            Version configurationVersion = null;
-
-            if (!string.IsNullOrEmpty(configurationVersionString) && Version.TryParse(configurationVersionString, out configurationVersion))
-            {
-                Version = configurationVersion;
-            }
-
-            var configurationMinimalVersionString = _configurationService.GetRoamingValue<string>(MinimalVersionKey);
-
-            if (!string.IsNullOrEmpty(configurationMinimalVersionString) && Version.TryParse(configurationMinimalVersionString, out configurationVersion))
-            {
-                MinimalVersion = configurationVersion;
-            }
-
-            RaiseSettingsRead();
+            DeleteValue(sectionName, addItem.Key);
+            return;
         }
 
-        private void OnSettingsChanged(object sender, EventArgs e)
+        Log.Debug($"Cannot remove unknown item of type {item.GetType()}");
+    }
+
+    public void SaveToDisk()
+    {
+        // Note: Implementations of ISettings designed assuming that all updates are storing in-memory and flushed to disk file only on call of SaveToDisk()
+        // Here we are using Catel's configuration and saving all changes instantly, thats why implementation of this method is empty
+        Log.Debug("SaveToDisk method called from PackageSourceProvider");
+    }
+
+    public IList<string> GetConfigFilePaths()
+    {
+        var localFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationLocalFolder(), ConfigurationFileName);
+        var roamingFolderConfig = System.IO.Path.Combine(DefaultNuGetFolders.GetApplicationRoamingFolder(), ConfigurationFileName);
+
+        return new string[] { localFolderConfig, roamingFolderConfig };
+    }
+
+    public IList<string> GetConfigRoots()
+    {
+        return new string[] { DefaultNuGetFolders.GetApplicationLocalFolder(), DefaultNuGetFolders.GetApplicationRoamingFolder() };
+    }
+
+    #endregion
+
+    private void SetNuGetValues(string section, IList<AddItem> values)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+
+        EnsureSectionExists(section);
+
+        var valuesListKey = GetSectionValuesListKey(section);
+        UpdateKeyList(values, valuesListKey);
+
+        foreach (var item in values)
         {
-            SettingsChanged -= OnSettingsChanged;
-            //write version one time
-            UpdateMinimalVersion();
+            SetNuGetValue(section, item.Key, item.Value);
         }
+    }
 
-        private string GetSectionValueKey(string section, string key)
+    private void EnsureSectionExists(string section)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+
+        var sectionsString = _configurationService.GetRoamingValue(SectionListKey, string.Empty);
+        var sections = sectionsString.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (!sections.Contains(section))
         {
-            return $"NuGet_{section}_value_{key}";
+            sections.Add(section);
+            sectionsString = string.Join(Separator.ToString(), sections);
+            _configurationService.SetRoamingValue(SectionListKey, sectionsString);
         }
+    }
 
-        private string GetSubsectionValueKey(string section, string subsection, string key)
+
+    private void SetNuGetValues(string section, string subsection, IList<AddItem> values)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subsection);
+
+        EnsureSectionExists(section);
+
+        var valuesListKey = GetSubsectionValuesListKey(section, subsection);
+        UpdateKeyList(values, valuesListKey);
+        foreach (var keyValuePair in values)
         {
-            return $"NuGet_{section}_{subsection}_value_{key}";
+            SetNuGetValue(section, subsection, keyValuePair.Key, keyValuePair.Value);
         }
+    }
 
-        private static string GetSectionValuesListKey(string section)
+    private void UpdateKeyList(IList<AddItem> values, string valuesListKey)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+
+        var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+        var existedKeys = string.IsNullOrEmpty(valueKeysString) ? Enumerable.Empty<string>() : valueKeysString.Split(Separator);
+        var keysToSave = values.Select(x => x.Key);
+
+        var newValueKeysString = string.Join(Separator.ToString(), existedKeys.Union(keysToSave));
+        _configurationService.SetRoamingValue(valuesListKey, newValueKeysString);
+    }
+
+    public void UpdatePackageSourcesKeyListSorting(List<string> packageSourceNames)
+    {
+        var packageSourcesKeyListKey = GetSectionValuesListKey(ConfigurationConstants.PackageSources);
+        var enabledPackageSourcesKeys = _configurationService.GetRoamingValue<string>(packageSourcesKeyListKey).Split(Separator);
+        var sortedKeys = enabledPackageSourcesKeys.OrderBy(packageSourceNames.IndexOf);
+        var sortedKeysStringValue = string.Join(Separator, sortedKeys);
+        _configurationService.SetRoamingValue(packageSourcesKeyListKey, sortedKeysStringValue);
+    }
+
+    private string ConvertToFullPath(string result)
+    {
+        return result;
+    }
+
+    private IList<AddItem> GetNuGetValues(string sectionName, bool isPath = false)
+    {
+        Argument.IsNotNullOrWhitespace(() => sectionName);
+
+        var section = GetSection(sectionName);
+
+        return section.Items.OfType<AddItem>().ToList();
+    }
+
+    private IList<AddItem> GetNuGetValues(string section, string subsection, bool isPath = false)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subsection);
+
+        var valuesListKey = GetSubsectionValuesListKey(section, subsection);
+        var valueKeysString = _configurationService.GetRoamingValue<string>(valuesListKey);
+        if (string.IsNullOrEmpty(valueKeysString))
         {
-            return $"NuGet_{section}_values";
+            return new List<AddItem>();
         }
 
-        private static string GetSubsectionValuesListKey(string section, string subsection)
+        var keys = valueKeysString.Split(Separator);
+
+        return keys.Select(key => GetNuGetValue(section, subsection, key, isPath)).ToList();
+    }
+
+    private AddItem GetNuGetValue(string section, string key, bool isPath)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        var combinedKey = GetSectionValueKey(section, key);
+        var value = _configurationService.GetRoamingValue<string>(combinedKey);
+
+        if (isPath)
         {
-            return $"NuGet_{section}_{subsection}_values";
+            value = ConvertToFullPath(value);
         }
 
-        private static bool IsSourceItem(string sectionKey)
+        return IsSourceItem(section) 
+            ? new SourceItem(key, value)
+            : new AddItem(key, value);
+    }
+
+    private AddItem GetNuGetValue(string section, string subsection, string key, bool isPath)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subsection);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        var combinedKey = GetSubsectionValueKey(section, subsection, key);
+        var value = _configurationService.GetRoamingValue<string>(combinedKey);
+
+        if (isPath)
         {
-            return string.Equals(sectionKey, ConfigurationConstants.PackageSources) || string.Equals(sectionKey, ConfigurationConstants.DisabledPackageSources);
+            value = ConvertToFullPath(value);
         }
 
-        public void UpdateVersion()
-        {
-            _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
-        }
+        return IsSourceItem(section) 
+            ? new SourceItem(key, value) 
+            : new AddItem(key, value);
+    }
 
-        public void UpdateMinimalVersion()
-        {
-            _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
-        }
+    private void SetNuGetValue(string section, string key, string value)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => key);
 
-        #endregion
+        var combinedKey = GetSectionValueKey(section, key);
+        _configurationService.SetRoamingValue(combinedKey, value);
+    }
+
+    private void SetNuGetValue(string section, string subsection, string key, string value)
+    {
+        Argument.IsNotNullOrWhitespace(() => section);
+        Argument.IsNotNullOrWhitespace(() => subsection);
+        Argument.IsNotNullOrWhitespace(() => key);
+
+        var combinedKey = GetSubsectionValueKey(section, subsection, key);
+        _configurationService.SetRoamingValue(combinedKey, value);
+    }
+
+    private void OnSettingsChanged(object? sender, EventArgs e)
+    {
+        SettingsChanged -= OnSettingsChanged;
+        //write version one time
+        UpdateMinimalVersion();
+    }
+
+    private string GetSectionValueKey(string section, string key)
+    {
+        return $"NuGet_{section}_value_{key}";
+    }
+
+    private string GetSubsectionValueKey(string section, string subsection, string key)
+    {
+        return $"NuGet_{section}_{subsection}_value_{key}";
+    }
+
+    private static string GetSectionValuesListKey(string section)
+    {
+        return $"NuGet_{section}_values";
+    }
+
+    private static string GetSubsectionValuesListKey(string section, string subsection)
+    {
+        return $"NuGet_{section}_{subsection}_values";
+    }
+
+    private static bool IsSourceItem(string sectionKey)
+    {
+        return string.Equals(sectionKey, ConfigurationConstants.PackageSources) || string.Equals(sectionKey, ConfigurationConstants.DisabledPackageSources);
+    }
+
+    public void UpdateVersion()
+    {
+        _configurationService.SetRoamingValue(VersionKey, AssemblyVersion);
+    }
+
+    public void UpdateMinimalVersion()
+    {
+        _configurationService.SetRoamingValue(MinimalVersionKey, MinimalVersionNumber);
     }
 }

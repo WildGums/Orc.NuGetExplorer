@@ -1,28 +1,16 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NuGetLogRecordEventArgs.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using Catel;
 
-namespace Orc.NuGetExplorer
+public class NuGetLogRecordEventArgs : EventArgs
 {
-    using System;
-    using Catel;
-
-    public class NuGetLogRecordEventArgs : EventArgs
+    public NuGetLogRecordEventArgs(string message)
     {
-        #region Constructors
-        public NuGetLogRecordEventArgs(string message)
-        {
-            Argument.IsNotNullOrEmpty(() => message);
+        Argument.IsNotNullOrEmpty(() => message);
 
-            Message = message;
-        }
-        #endregion
-
-        #region Properties
-        public string Message { get; private set; }
-        #endregion
+        Message = message;
     }
+
+    public string Message { get; private set; }
 }

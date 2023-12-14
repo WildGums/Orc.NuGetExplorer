@@ -1,22 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDefaultPackageSourcesProvider.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System.Collections.Generic;
 
-namespace Orc.NuGetExplorer
+public interface IDefaultPackageSourcesProvider
 {
-    using System.Collections.Generic;
+    string DefaultSource { get; set; }
 
-    public interface IDefaultPackageSourcesProvider
-    {
-        #region Properties
-        string DefaultSource { get; set; }
-        #endregion
-
-        #region Methods
-        IEnumerable<IPackageSource> GetDefaultPackages();
-        #endregion
-    }
+    IEnumerable<IPackageSource> GetDefaultPackages();
 }

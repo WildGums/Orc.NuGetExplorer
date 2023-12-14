@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Logging;
-using Orc.NuGetExplorer.Models;
 using Orc.NuGetExplorer.Providers;
 using Orc.NuGetExplorer.Services;
 using Orc.NuGetExplorer.ViewModels;
@@ -32,7 +30,6 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
         serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();
-        serviceLocator.RegisterType<IMessageDialogService, MessageDialogService>();
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();
@@ -44,7 +41,7 @@ public static class ModuleInitializer
 
         serviceLocator.RegisterType<NuGetLogListener>();
 
-        var vmLocator = serviceLocator.ResolveType<IViewModelLocator>();
+        var vmLocator = serviceLocator.ResolveRequiredType<IViewModelLocator>();
 
         // register some view models
         vmLocator.Register<PackageSourceSettingControl, PackageSourceSettingViewModel>();

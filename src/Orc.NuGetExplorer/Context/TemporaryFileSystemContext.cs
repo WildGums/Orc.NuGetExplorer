@@ -1,99 +1,83 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TemporaryFileSystemContext.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
+using System.IO;
+using Catel.Logging;
+using Catel.Reflection;
+using FileSystem;
 
-namespace Orc.NuGetExplorer
+internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
 {
-    using System;
-    using System.IO;
-    using Catel;
-    using Catel.Logging;
-    using Catel.Reflection;
-    using Orc.FileSystem;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
+    private readonly IDirectoryService _directoryService;
+    private readonly string _rootDirectory;
+
+    public TemporaryFileSystemContext(IDirectoryService directoryService)
     {
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        private readonly IDirectoryService _directoryService;
-        private readonly string _rootDirectory;
-        #endregion
+        ArgumentNullException.ThrowIfNull(directoryService);
 
-        #region Constructors
-        public TemporaryFileSystemContext(IDirectoryService directoryService)
-        {
-            Argument.IsNotNull(() => directoryService);
+        _directoryService = directoryService;
 
-            _directoryService = directoryService;
+        var assembly = AssemblyHelper.GetRequiredEntryAssembly();
 
-            var assembly = AssemblyHelper.GetEntryAssembly();
+        _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company() ?? string.Empty, assembly.Title() ?? string.Empty,
+            "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
-            _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company(), assembly.Title(),
-                "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+        _directoryService.Create(_rootDirectory);
+    }
 
-            _directoryService.Create(_rootDirectory);
-        }
-        #endregion
+    public string RootDirectory
+    {
+        get { return _rootDirectory; }
+    }
 
-        #region Properties
-        public string RootDirectory
-        {
-            get { return _rootDirectory; }
-        }
-        #endregion
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        #region Methods
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
+    protected virtual void Dispose(bool disposing)
+    {
 #pragma warning disable IDISP023 // Don't use reference types in finalizer context.
-            try
-            {
-                Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+        try
+        {
+            Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
 
-                _directoryService.Delete(_rootDirectory, true);
+            _directoryService.Delete(_rootDirectory, true);
 
-                Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
-            }
-            catch (Exception)
-            {
-                Log.Warning("Unable to cleanup temporary files");
-            }
+            Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
+        }
+        catch (Exception)
+        {
+            Log.Warning("Unable to cleanup temporary files");
+        }
 #pragma warning restore IDISP023 // Don't use reference types in finalizer context.
-        }
+    }
 
-        public string GetDirectory(string relativeDirectoryName)
+    public string GetDirectory(string relativeDirectoryName)
+    {
+        var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
+
+        if (!_directoryService.Exists(fullPath))
         {
-            var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
-
-            if (!_directoryService.Exists(fullPath))
-            {
-                _directoryService.Create(fullPath);
-            }
-
-            return fullPath;
+            _directoryService.Create(fullPath);
         }
 
-        public string GetFile(string relativeFilePath)
+        return fullPath;
+    }
+
+    public string GetFile(string relativeFilePath)
+    {
+        var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
+        var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
+
+        if (!_directoryService.Exists(directory))
         {
-            var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
-            var directory = Path.GetDirectoryName(fullPath);
-
-            if (!_directoryService.Exists(directory))
-            {
-                _directoryService.Create(directory);
-            }
-
-            return fullPath;
+            _directoryService.Create(directory);
         }
-        #endregion
+
+        return fullPath;
     }
 }

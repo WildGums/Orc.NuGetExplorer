@@ -1,48 +1,47 @@
-﻿namespace Orc.NuGetExplorer.Windows
+﻿namespace Orc.NuGetExplorer.Windows;
+
+using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media.Animation;
+
+internal class AnimationService : IAnimationService
 {
-    using System;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Media.Animation;
+    private readonly Themes.Animations _resourceDictionary;
 
-    internal class AnimationService : IAnimationService
+    public AnimationService()
     {
-        private readonly Themes.Animations _resourceDictionary;
+        _resourceDictionary = new Themes.Animations();
+        _resourceDictionary.InitializeComponent();
+    }
 
-        public AnimationService()
+    public Storyboard GetFadeInAnimation(DependencyObject dependencyObject)
+    {
+        var sb = ((Storyboard)_resourceDictionary["FastFadeIn"]).Clone();
+
+        ValidateFadeAnimation(sb, dependencyObject, "FastFadeIn");
+
+        return sb;
+    }
+
+    public Storyboard GetFadeOutAnimation(DependencyObject dependencyObject)
+    {
+        var sb = ((Storyboard)_resourceDictionary["FastFadeOut"]).Clone();
+
+        ValidateFadeAnimation(sb, dependencyObject, "FastFadeOut");
+
+        return sb;
+    }
+
+    private void ValidateFadeAnimation(Storyboard sb, DependencyObject dependencyObject, string key)
+    {
+        if (sb is not null && sb.Children.Count > 0)
         {
-            _resourceDictionary = new Themes.Animations();
-            _resourceDictionary.InitializeComponent();
+            Storyboard.SetTarget(sb.Children.First(), dependencyObject);
         }
-
-        public Storyboard GetFadeInAnimation(DependencyObject dependencyObject)
+        else
         {
-            var sb = (_resourceDictionary["FastFadeIn"] as Storyboard)?.Clone();
-
-            ValidateFadeAnimation(sb, dependencyObject, "FastFadeIn");
-
-            return sb;
-        }
-
-        public Storyboard GetFadeOutAnimation(DependencyObject dependencyObject)
-        {
-            var sb = (_resourceDictionary["FastFadeOut"] as Storyboard)?.Clone();
-
-            ValidateFadeAnimation(sb, dependencyObject, "FastFadeOut");
-
-            return sb;
-        }
-
-        private void ValidateFadeAnimation(Storyboard sb, DependencyObject dependencyObject, string key)
-        {
-            if (sb is not null && sb.Children.Count > 0)
-            {
-                Storyboard.SetTarget(sb.Children.First(), dependencyObject);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Resource under key '{key}' is not exist or can't be used as animation");
-            }
+            throw new InvalidOperationException($"Resource under key '{key}' is not exist or can't be used as animation");
         }
     }
 }

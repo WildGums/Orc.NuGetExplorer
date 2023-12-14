@@ -1,25 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INuGetLogListeningSevice.cs" company="WildGums">
-//   Copyright (c) 2008 - 2015 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.NuGetExplorer;
 
+using System;
 
-namespace Orc.NuGetExplorer
+public interface INuGetLogListeningSevice
 {
-    using System;
-
-    public interface INuGetLogListeningSevice
-    {
-        #region Methods
-        void SendInfo(string message);
-        void SendWarning(string message);
-        void SendDebug(string message);
-        void SendError(string message);
-        event EventHandler<NuGetLogRecordEventArgs> Info;
-        event EventHandler<NuGetLogRecordEventArgs> Warning;
-        event EventHandler<NuGetLogRecordEventArgs> Debug;
-        event EventHandler<NuGetLogRecordEventArgs> Error;
-        #endregion
-    }
+    void SendInfo(string message);
+    void SendWarning(string message);
+    void SendDebug(string message);
+    void SendError(string message);
+    event EventHandler<NuGetLogRecordEventArgs> Info;
+    event EventHandler<NuGetLogRecordEventArgs> Warning;
+    event EventHandler<NuGetLogRecordEventArgs> Debug;
+    event EventHandler<NuGetLogRecordEventArgs> Error;
 }
