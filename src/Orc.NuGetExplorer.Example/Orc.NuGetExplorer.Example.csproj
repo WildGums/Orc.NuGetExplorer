@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="Orc.Notifications" Version="5.0.0" />
-    <PackageReference Include="Orchestra.Core" Version="7.0.0-alpha0430" />
+    <PackageReference Include="Orchestra.Core" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
