@@ -14,7 +14,7 @@ using NuGet.Versioning;
 using Enums;
 using Packaging;
 
-public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackage
+public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservablePackage
 {
     private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
@@ -107,7 +107,14 @@ public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackag
             {
                 var oldValue = _status;
                 _status = value;
-                RaisePropertyChanged(this, new PropertyChangedExtendedEventArgs<PackageStatus>(oldValue, _status));
+
+                var eventArgs = new PropertyChangedExtendedEventArgs<PackageStatus>(oldValue, _status);
+
+                RaisePropertyChanged(this, eventArgs);
+
+                RaiseStatusChanged(eventArgs.OldValue, eventArgs.NewValue);
+
+                Log.Info($"{Identity} status was changed from {eventArgs.OldValue} to {eventArgs.NewValue}");
             }
         }
     }
@@ -182,7 +189,7 @@ public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackag
 
             _additionalMetadata.Add(searchMetadata);
 
-            //merge versions
+            // merge versions
             var versInfo = await searchMetadata.GetVersionsAsync();
 
             if (!Versions.Any())
@@ -227,23 +234,23 @@ public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackag
             return null;
         }
 
-        //Error on v2 feed
-        var versinfo = await _packageMetadata.GetVersionsAsync();
+        // Error on v2 feed
+        var versionInfos = await _packageMetadata.GetVersionsAsync();
 
-        //Workaround for Updates metadata
-        if (!versinfo.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
+        // Workaround for Updates metadata
+        if (!versionInfos.Any() && _packageMetadata is UpdatePackageSearchMetadata updateMetadata)
         {
-            versinfo = await updateMetadata.LazyVersionsFactory;
+            versionInfos = await updateMetadata.LazyVersionsFactory;
         }
 
-        var versions = versinfo.Select(x => x.Version).Union(Versions).OrderByDescending(x => x)
+        var versions = versionInfos.Select(x => x.Version).Union(Versions).OrderByDescending(x => x)
             .ToList();
 
         _versions.Clear();
 
         _versions.AddRange(versions);
 
-        VersionsInfo = versinfo;
+        VersionsInfo = versionInfos;
 
         IsLoaded = true;
 
@@ -271,28 +278,6 @@ public sealed class NuGetPackage : ModelBase, IPackageDetails, IObservablePackag
     public PackageIdentity GetIdentity()
     {
         return Identity;
-    }
-
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        base.OnPropertyChanged(e);
-
-        if (_packageMetadata is null)
-        {
-            return;
-        }
-
-        if (string.Equals(e.PropertyName, nameof(Status)))
-        {
-            if (e.HasPropertyChanged(nameof(Status)))
-            {
-                if (e is PropertyChangedExtendedEventArgs<PackageStatus> statusChangedArgs)
-                {
-                    RaiseStatusChanged(statusChangedArgs.OldValue, statusChangedArgs.NewValue);
-                    Log.Info($"{Identity} status was changed from {statusChangedArgs.OldValue} to {statusChangedArgs.NewValue}");
-                }
-            }
-        }
     }
 
     private void OnIsCheckedChanged()

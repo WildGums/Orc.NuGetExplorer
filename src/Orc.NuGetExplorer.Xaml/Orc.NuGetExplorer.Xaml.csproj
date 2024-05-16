@@ -9,6 +9,7 @@
     <Description>NuGet explorer library.</Description>
     <PackageTags>orc;nuget;explorer;packages;nupkg;nuspec;xaml;wpf</PackageTags>
     <UseWpf>true</UseWpf>
+    <FodyTreatWarningsAsErrors>false</FodyTreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>

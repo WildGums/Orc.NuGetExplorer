@@ -32,7 +32,9 @@ public class ExampleProject : IExtensibleProject
 
     public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
 
-    public bool IgnoreDependencies { get; } = false;
+    public bool IgnoreDependencies { get { return IgnoreMissingDependencies; } }
+
+    public bool IgnoreMissingDependencies { get; } = false;
 
     public bool SupportSideBySide { get; } = true;
 

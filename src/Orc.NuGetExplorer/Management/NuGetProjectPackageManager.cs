@@ -215,7 +215,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         return installedVersion;
     }
 
-    public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true)
+    public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(package);
@@ -240,8 +241,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
                 return false;
             }
 
-            var installerResults = await Task.Run(async () => await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, token), token);
-
+            var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, packagePredicate, token);
             if (!installerResults.Result.Any())
             {
                 if (showErrors)
@@ -314,7 +314,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
     }
 
-    public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
+    public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(projects);
         ArgumentNullException.ThrowIfNull(package);
@@ -323,18 +324,19 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         {
             foreach (var project in projects)
             {
-                await InstallPackageForProjectAsync(project, package, token);
+                await InstallPackageForProjectAsync(project, package, packagePredicate, token);
             }
         }
 
-        // raise supressed events
+        // raise suppressed events
         foreach (var args in _batchToken.GetInvokationList<InstallNuGetProjectEventArgs>())
         {
             await Install.SafeInvokeAsync(this, args);
         }
     }
 
-    public async Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token)
+    public async Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(package);
@@ -343,7 +345,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         {
             var installedPackages = await GetInstalledPackagesAsync(project, token);
 
-            await _packageInstallationService.UninstallAsync(package, project, installedPackages, token);
+            await _packageInstallationService.UninstallAsync(package, project, installedPackages, packagePredicate, token);
 
             await OnUninstallAsync(project, package, true);
         }
@@ -353,7 +355,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
     }
 
-    public async Task UninstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package, CancellationToken token)
+    public async Task UninstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(projects);
         ArgumentNullException.ThrowIfNull(package);
@@ -362,29 +365,30 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         {
             foreach (var project in projects)
             {
-                await UninstallPackageForProjectAsync(project, package, token);
+                await UninstallPackageForProjectAsync(project, package, packagePredicate, token);
             }
         }
 
-        // raise supressed events
+        // raise suppressed events
         foreach (var args in _batchToken.GetInvokationList<UninstallNuGetProjectEventArgs>())
         {
             await Uninstall.SafeInvokeAsync(this, args);
         }
     }
 
-    public async Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token)
+    public async Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageId, NuGetVersion targetVersion,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(targetVersion);
 
         try
         {
-            var version = await GetVersionInstalledAsync(project, packageid, token);
+            var version = await GetVersionInstalledAsync(project, packageId, token);
 
-            using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, version)))
+            using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageId, version)))
             {
-                await UpdatePackageAsync(project, new PackageIdentity(packageid, version), targetVersion, token);
+                await UpdatePackageAsync(project, new PackageIdentity(packageId, version), targetVersion, packagePredicate, token);
             }
 
             var updates = _updateToken.GetUpdateEventArgs();
@@ -396,25 +400,26 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error during package {packageid} update");
+            Log.Error(ex, $"Error during package {packageId} update");
             throw;
         }
     }
 
-    public async Task UpdatePackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, string packageid, NuGetVersion targetVersion, CancellationToken token)
+    public async Task UpdatePackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, string packageId, NuGetVersion targetVersion,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(projects);
         ArgumentNullException.ThrowIfNull(targetVersion);
 
         try
         {
-            using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageid, targetVersion)))
+            using (_updateToken = new BatchUpdateToken(new PackageIdentity(packageId, targetVersion)))
             {
                 foreach (var project in projects)
                 {
-                    var version = await GetVersionInstalledAsync(project, packageid, token);
+                    var version = await GetVersionInstalledAsync(project, packageId, token);
 
-                    await UpdatePackageAsync(project, new PackageIdentity(packageid, version), targetVersion, token);
+                    await UpdatePackageAsync(project, new PackageIdentity(packageId, version), targetVersion, packagePredicate, token);
                 }
             }
 
@@ -427,11 +432,12 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error during package {packageid} update");
+            Log.Error(ex, $"Error during package {packageId} update");
         }
     }
 
-    private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion, CancellationToken token)
+    private async Task UpdatePackageAsync(IExtensibleProject project, PackageIdentity installedVersion, NuGetVersion targetVersion,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(project);
         ArgumentNullException.ThrowIfNull(installedVersion);
@@ -441,8 +447,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         {
             await UpdateLocker.WaitAsync(token);
 
-            await UninstallPackageForProjectAsync(project, installedVersion, token);
-            await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), token);
+            await UninstallPackageForProjectAsync(project, installedVersion, packagePredicate, token);
+            await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), packagePredicate, token);
         }
         finally
         {

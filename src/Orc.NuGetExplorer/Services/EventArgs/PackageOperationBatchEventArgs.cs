@@ -7,7 +7,7 @@ public class PackageOperationBatchEventArgs : CancelEventArgs
 {
     internal PackageOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
     {
-        Argument.IsNotNullOrEmptyArray(() => packages);
+        Argument.IsNotNullOrEmptyArray(nameof(packages), packages);
 
         Packages = packages;
         OperationType = operationType;
