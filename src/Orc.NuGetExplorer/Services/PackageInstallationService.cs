@@ -91,7 +91,7 @@ internal class PackageInstallationService : IPackageInstallationService
     public VersionFolderPathResolver InstallerPathResolver => _installerPathResolver;
 
     public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
-        CancellationToken cancellationToken = default)
+        Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(project);
@@ -101,10 +101,8 @@ internal class PackageInstallationService : IPackageInstallationService
 
         var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-#if NET5_0_OR_GREATER
         var reducedFramework = new FrameworkReducer().ReduceUpwards(project.SupportedPlatforms).First();
         targetFramework = reducedFramework;
-#endif
 
         var projectConfig = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
         var uninstallationContext = new UninstallationContext(false, false);
@@ -127,7 +125,8 @@ internal class PackageInstallationService : IPackageInstallationService
 
             var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
-            var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, cacheContext, project, true, cancellationToken);
+            var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, 
+                cacheContext, project, true, packagePredicate, cancellationToken);
 
             var packageReferences = installedPackageReferences.ToList();
 
@@ -188,6 +187,7 @@ internal class PackageInstallationService : IPackageInstallationService
         IExtensibleProject project,
         IReadOnlyList<SourceRepository> repositories,
         bool ignoreMissingPackages = false,
+        Func<PackageIdentity, bool>? packagePredicate = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(package);
@@ -201,10 +201,8 @@ internal class PackageInstallationService : IPackageInstallationService
 
             var targetFramework = FrameworkParser.TryParseFrameworkName(project.Framework, _frameworkNameProvider);
 
-#if NET5_0_OR_GREATER
             var mostSpecific = new FrameworkReducer().ReduceUpwards(project.SupportedPlatforms).First();
             targetFramework = mostSpecific;
-#endif
 
             _nugetLogger.LogInformation($"Installing package {package}, Target framework: {targetFramework}");
 
@@ -218,7 +216,7 @@ internal class PackageInstallationService : IPackageInstallationService
                 repositories = repositoryList;
             }
 
-            // Step 2. Build list of dependencies and determine DependencyBehavior if some packages are misssed in current feed
+            // Step 2. Build list of dependencies and determine DependencyBehavior if some packages are missed in current feed
             Resolver.PackageResolverContext? resolverContext = null;
 
             using (var cacheContext = new SourceCacheContext())
@@ -227,12 +225,14 @@ internal class PackageInstallationService : IPackageInstallationService
                 var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
 #pragma warning restore IDISP013 // Await in using.
 
-                var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess && x.Result is not null)
+                var dependencyResources = (await getDependencyResourcesTasks.WhenAllOrExceptionAsync())
+                    .Where(x => x.IsSuccess && x.Result is not null)
                     .Select(x => x.Result!).ToArray();
 
                 var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
-                resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, cacheContext, project, ignoreMissingPackages, cancellationToken);
+                resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, 
+                    cacheContext, project, ignoreMissingPackages, packagePredicate, cancellationToken);
 
                 if (resolverContext is null ||
                     !(resolverContext?.AvailablePackages?.Any() ?? false))
@@ -246,13 +246,14 @@ internal class PackageInstallationService : IPackageInstallationService
                 var mainPackageInfo = resolverContext.AvailablePackages.First(p => p.Id == package.Id);
 
                 _nugetLogger.LogInformation($"Downloading {package}...");
+
                 var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
 
                 _nugetLogger.LogInformation($"{package} download completed");
 
                 if (!mainDownloadedFiles.IsAvailable())
                 {
-                    // Downlod failed by some reasons (probably connection issue or package goes deleted before feed updated)
+                    // Download failed by some reasons (probably connection issue or package goes deleted before feed updated)
                     var errorMessage = $"Current source lists package {package} but attempts to download it have failed. The source in invalid or required packages were removed while the current operation was in progress";
                     _nugetLogger.LogError(errorMessage);
                     return new InstallerResult(errorMessage);
@@ -331,7 +332,8 @@ internal class PackageInstallationService : IPackageInstallationService
     }
 
     private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
-        DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false, CancellationToken cancellationToken = default)
+        DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false,
+        Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(targetFramework);
@@ -376,6 +378,12 @@ internal class PackageInstallationService : IPackageInstallationService
                 // but possibly it should be configured in project
                 var dependencyIdentity = new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion);
 
+                if (packagePredicate is not null &&
+                    !packagePredicate(dependencyIdentity))
+                {
+                    continue;
+                }
+
                 var isPackageRequiresOwnDependencies = !_apiPackageRegistry.IsRegistered(dependencyIdentity.Id);
                 if (isPackageRequiresOwnDependencies)
                 {
@@ -386,9 +394,10 @@ internal class PackageInstallationService : IPackageInstallationService
                     }
 
                     var relatedDepInfos = await dependencyInfoResource.ResolvePackagesWithVersionSatisfyRangeAsync(dependencyIdentity, dependency.VersionRange, targetFramework, cacheContext, _nugetLogger, cancellationToken);
-                    foreach (var relatedDepedencyInfoResource in relatedDepInfos)
+
+                    foreach (var relatedDependencyInfoResource in relatedDepInfos)
                     {
-                        downloadStack.Push(relatedDepedencyInfoResource);
+                        downloadStack.Push(relatedDependencyInfoResource);
                     }
 
                     if (relatedDepInfos.Any())
@@ -431,7 +440,6 @@ internal class PackageInstallationService : IPackageInstallationService
                 }
             }
         }
-
 
         // Pass packages.config to resolver
         var nugetPackagesConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);

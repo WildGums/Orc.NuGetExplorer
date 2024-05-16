@@ -48,7 +48,8 @@ internal sealed class PackageOperationService : IPackageOperationService
 
     internal DependencyBehavior DependencyVersion { get; set; }
 
-    public async Task UninstallPackageAsync(IPackageDetails package, CancellationToken token = default)
+    public async Task UninstallPackageAsync(IPackageDetails package,
+        Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(package);
 
@@ -59,7 +60,7 @@ internal sealed class PackageOperationService : IPackageOperationService
         {
             //nuPackage should provide identity of installed package, which targeted for uninstall action
             _packageOperationNotificationService.NotifyOperationStarting(uninstallPath, PackageOperationType.Uninstall, package);
-            await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
+            await _nuGetPackageManager.UninstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), packagePredicate, token);
         }
         catch (Exception ex)
         {
@@ -72,7 +73,8 @@ internal sealed class PackageOperationService : IPackageOperationService
         }
     }
 
-    public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
+    public async Task InstallPackageAsync(IPackageDetails package, bool allowedPrerelease = false,
+        Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(package);
 
@@ -89,7 +91,7 @@ internal sealed class PackageOperationService : IPackageOperationService
             //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
 
             _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Install, package);
-            await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), token);
+            await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), packagePredicate, token);
         }
         catch (Exception ex)
         {
@@ -102,7 +104,8 @@ internal sealed class PackageOperationService : IPackageOperationService
         }
     }
 
-    public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false, CancellationToken token = default)
+    public async Task UpdatePackagesAsync(IPackageDetails package, bool allowedPrerelease = false,
+        Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(package);
 
@@ -121,7 +124,7 @@ internal sealed class PackageOperationService : IPackageOperationService
             ValidatePackage(package);
             _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
 
-            await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
+            await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, packagePredicate, token);
 
             return;
         }
@@ -140,7 +143,7 @@ internal sealed class PackageOperationService : IPackageOperationService
 
             _packageOperationNotificationService.NotifyOperationStarting(installPath, PackageOperationType.Install, package);
 
-            await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, token);
+            await _nuGetPackageManager.UpdatePackageForProjectAsync(_defaultProject, updateIdentity.Id, updateIdentity.Version, packagePredicate, token);
         }
         catch (Exception ex)
         {
