@@ -17,7 +17,10 @@ public interface IExtensibleProject
 
     PackagePathResolver GetPathResolver();
 
+    [ObsoleteEx(ReplacementTypeOrMember = "IgnoreMissingDependencies", TreatAsErrorFromVersion = "6.0", RemoveInVersion = "6.0")]
     bool IgnoreDependencies { get; }
+
+    bool IgnoreMissingDependencies { get; }
 
     bool SupportSideBySide { get; }
 
