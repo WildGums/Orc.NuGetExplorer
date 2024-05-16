@@ -219,7 +219,10 @@ namespace Orc.NuGetExplorer
     {
         string ContentPath { get; }
         string Framework { get; }
+        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
+            " 6.0.0. Will be removed in version 6.0.0.", false)]
         bool IgnoreDependencies { get; }
+        bool IgnoreMissingDependencies { get; }
         string Name { get; }
         bool NoCache { get; }
         bool SupportSideBySide { get; }
@@ -355,9 +358,9 @@ namespace Orc.NuGetExplorer
     }
     public interface IPackageOperationService
     {
-        System.Threading.Tasks.Task InstallPackageAsync(Orc.NuGetExplorer.IPackageDetails package, bool allowedPrerelease = false, System.Threading.CancellationToken token = default);
-        System.Threading.Tasks.Task UninstallPackageAsync(Orc.NuGetExplorer.IPackageDetails package, System.Threading.CancellationToken token = default);
-        System.Threading.Tasks.Task UpdatePackagesAsync(Orc.NuGetExplorer.IPackageDetails package, bool allowedPrerelease = false, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task InstallPackageAsync(Orc.NuGetExplorer.IPackageDetails package, bool allowedPrerelease = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task UninstallPackageAsync(Orc.NuGetExplorer.IPackageDetails package, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task UpdatePackagesAsync(Orc.NuGetExplorer.IPackageDetails package, bool allowedPrerelease = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken token = default);
     }
     public interface IPackageQueryService
     {
@@ -532,22 +535,8 @@ namespace Orc.NuGetExplorer
         public NuGetLogRecordEventArgs(string message) { }
         public string Message { get; }
     }
-    public sealed class NuGetPackage : Catel.Data.ModelBase, Orc.NuGetExplorer.IPackageDetails
+    public sealed class NuGetPackage : Catel.Data.ObservableObject, Orc.NuGetExplorer.IPackageDetails
     {
-        public static readonly Catel.Data.IPropertyData AuthorsProperty;
-        public static readonly Catel.Data.IPropertyData DescriptionProperty;
-        public static readonly Catel.Data.IPropertyData DownloadCountProperty;
-        public static readonly Catel.Data.IPropertyData IconUrlProperty;
-        public static readonly Catel.Data.IPropertyData InstalledVersionProperty;
-        public static readonly Catel.Data.IPropertyData IsDelistedProperty;
-        public static readonly Catel.Data.IPropertyData IsInstalledProperty;
-        public static readonly Catel.Data.IPropertyData IsLoadedProperty;
-        public static readonly Catel.Data.IPropertyData LastVersionProperty;
-        public static readonly Catel.Data.IPropertyData SelectedVersionProperty;
-        public static readonly Catel.Data.IPropertyData SummaryProperty;
-        public static readonly Catel.Data.IPropertyData TitleProperty;
-        public static readonly Catel.Data.IPropertyData ValidationContextProperty;
-        public static readonly Catel.Data.IPropertyData VersionsInfoProperty;
         public NuGetPackage(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin fromPage) { }
         public string Authors { get; }
         public string Description { get; }
@@ -878,7 +867,10 @@ namespace Orc.NuGetExplorer.Management
         public DestFolder(string destinationFolder, Orc.NuGetExplorer.IDefaultNuGetFramework defaultFramework) { }
         public string ContentPath { get; }
         public string Framework { get; }
+        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
+            " 6.0.0. Will be removed in version 6.0.0.", false)]
         public bool IgnoreDependencies { get; }
+        public bool IgnoreMissingDependencies { get; }
         public string Name { get; }
         public bool NoCache { get; }
         public bool SupportSideBySide { get; }
@@ -915,11 +907,11 @@ namespace Orc.NuGetExplorer.Management
         System.Threading.Tasks.Task<Orc.NuGetExplorer.Packaging.PackageCollection> CreatePackagesCollectionFromProjectsAsync(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>> GetInstalledPackagesAsync(Orc.NuGetExplorer.IExtensibleProject project, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion?> GetVersionInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
-        System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token, bool showErrors = true);
+        System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate, System.Threading.CancellationToken token, bool showErrors = true);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
-        System.Threading.Tasks.Task UninstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
-        System.Threading.Tasks.Task UpdatePackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageid, NuGet.Versioning.NuGetVersion targetVersion, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task UninstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task UpdatePackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, NuGet.Versioning.NuGetVersion targetVersion, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate, System.Threading.CancellationToken token);
     }
     public class InstallNuGetProjectEventArgs : Orc.NuGetExplorer.Management.NuGetProjectEventArgs
     {
@@ -1253,9 +1245,9 @@ namespace Orc.NuGetExplorer.Services
     public interface IPackageInstallationService
     {
         NuGet.Packaging.VersionFolderPathResolver InstallerPathResolver { get; }
-        System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<long?> MeasurePackageSizeFromRepositoryAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository);
-        System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
     }
     public class NuGetConfigurationService : Orc.NuGetExplorer.INuGetConfigurationService
     {

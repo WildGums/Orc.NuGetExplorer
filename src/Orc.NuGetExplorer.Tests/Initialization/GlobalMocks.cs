@@ -42,7 +42,9 @@ public static class GlobalMocks
         public string Framework => "net8.0-windows";
         public string ContentPath => ContentFolder;
         public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
-        public bool IgnoreDependencies { get; }
+        public bool IgnoreDependencies { get { return IgnoreMissingDependencies; } }
+        public bool IgnoreMissingDependencies { get; }
+
         public bool SupportSideBySide => true;
         public bool NoCache { get; }
 
