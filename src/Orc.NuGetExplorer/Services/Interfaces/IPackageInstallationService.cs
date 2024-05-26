@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Services;
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,9 +20,13 @@ public interface IPackageInstallationService
         IExtensibleProject project,
         IReadOnlyList<SourceRepository> repositories,
         bool ignoreMissingPackages = false,
+        Func<PackageIdentity, bool>? packagePredicate = null,
         CancellationToken cancellationToken = default);
 
-    Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
+    Task UninstallAsync(PackageIdentity package, 
+        IExtensibleProject project, 
+        IEnumerable<PackageReference> installedPackageReferences,
+        Func<PackageIdentity, bool>? packagePredicate = null,
         CancellationToken cancellationToken = default);
 
     Task<long?> MeasurePackageSizeFromRepositoryAsync(PackageIdentity packageIdentity, SourceRepository sourceRepository);

@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Management;
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,11 +13,14 @@ using Orc.NuGetExplorer.Packaging;
 
 public interface INuGetPackageManager : IPackageManager
 {
-    Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token, bool showErrors = true);
+    Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true);
 
-    Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package, CancellationToken token);
+    Task UninstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token);
 
-    Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageid, NuGetVersion targetVersion, CancellationToken token);
+    Task UpdatePackageForProjectAsync(IExtensibleProject project, string packageId, NuGetVersion targetVersion,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token);
 
     Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token);
 

@@ -22,7 +22,7 @@ internal class NuGetProjectUpgradeService : INuGetProjectUpgradeService
     public NuGetProjectUpgradeService(ISettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        Argument.IsOfType(() => settings, typeof(IVersionedSettings));
+        Argument.IsOfType(nameof(settings), settings, typeof(IVersionedSettings));
 
         if (settings is not IVersionedSettings versionedSettings)
         {
