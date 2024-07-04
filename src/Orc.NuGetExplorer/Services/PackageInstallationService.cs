@@ -445,6 +445,11 @@ internal class PackageInstallationService : IPackageInstallationService
         var nugetPackagesConfigProject = _nuGetProjectConfigurationProvider.GetProjectConfig(project);
         var packagesConfigReferences = await nugetPackagesConfigProject.GetInstalledPackagesAsync(cancellationToken);
 
+        if (project.IgnoreDependencies)
+        {
+            resolvingBehavior = DependencyBehavior.Ignore;
+        }
+
         // Construct context for package resolver
         return GetResolverContext(identity, resolvingBehavior, packageStore, packagesConfigReferences, ignoredPackages);
     }
