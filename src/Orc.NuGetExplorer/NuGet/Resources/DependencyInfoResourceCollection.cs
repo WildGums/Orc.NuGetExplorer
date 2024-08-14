@@ -99,8 +99,8 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
     }
 
     [Time("{package}")]
-    public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, 
-        SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+    public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework,
+        SourceCacheContext cacheContext, ILogger log, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(projectFramework);
@@ -111,14 +111,20 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
 
         foreach (var resource in _resources)
         {
-            var packageDependencyInfo = await resource.ResolvePackages(package.Id, projectFramework, cacheContext, log, token);
-
-            foreach (var packageInfo in packageDependencyInfo)
+            foreach (var packageInfo in await ResolvePackagesFromSourceAsync(package, resource, projectFramework, cacheContext, log, cancellationToken))
             {
                 packageDependencyInfos.Add(packageInfo);
             }
         }
 
         return packageDependencyInfos;
+    }
+
+    [Time("{resource}")]
+    private async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesFromSourceAsync(PackageIdentity package, DependencyInfoResource resource, NuGetFramework projectFramework,
+        SourceCacheContext cacheContext, ILogger log, CancellationToken cancellationToken)
+    {
+        var packageDependencyInfo = await resource.ResolvePackages(package.Id, projectFramework, cacheContext, log, cancellationToken);
+        return packageDependencyInfo;
     }
 }
