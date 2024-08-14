@@ -15,7 +15,7 @@ using NuGet.Packaging.Core;
 using NuGet.Versioning;
 
 /// <summary>
-/// Wrapper against list of dependency recources from multiple repositories
+/// Wrapper against list of dependency resources from multiple repositories
 /// </summary>
 public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResource>
 {
@@ -120,7 +120,7 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
         return packageDependencyInfos;
     }
 
-    [Time("{resource}")]
+    //[Time("{resource}")]
     private async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesFromSourceAsync(PackageIdentity package, DependencyInfoResource resource, NuGetFramework projectFramework,
         SourceCacheContext cacheContext, ILogger log, CancellationToken cancellationToken)
     {

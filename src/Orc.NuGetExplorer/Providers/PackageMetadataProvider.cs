@@ -255,6 +255,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             //todo
             //check httpCache created inside GetMetadataAsync()
             //The Root folder value didn't used when retry count is 0
@@ -327,6 +329,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
             sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
@@ -366,6 +370,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             var localPackages = await localResource.GetMetadataAsync(
                 packageId,
                 includePrerelease: true,

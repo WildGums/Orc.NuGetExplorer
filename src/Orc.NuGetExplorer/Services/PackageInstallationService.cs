@@ -114,13 +114,13 @@ internal class PackageInstallationService : IPackageInstallationService
             _nugetLogger.LogWarning($"Project {project.Name} doesn't implement any configuration for own packages");
         }
 
-        using (var cacheContext = new SourceCacheContext
+        using (var sourceCacheContext = new SourceCacheContext
                {
                    NoCache = false,
                    DirectDownload = false,
                })
         {
-            Log.Debug($"Cache context: DirectDownload: {cacheContext.DirectDownload} | IgnoreFailedSources: {cacheContext.IgnoreFailedSources} | NoCache: {cacheContext.NoCache} | RefreshMemoryCache: {cacheContext.RefreshMemoryCache}");
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                 .GetResourceAsync<DependencyInfoResource>(cancellationToken);
@@ -128,7 +128,7 @@ internal class PackageInstallationService : IPackageInstallationService
             var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
             var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, 
-                cacheContext, project, true, packagePredicate, cancellationToken);
+                sourceCacheContext, project, true, packagePredicate, cancellationToken);
 
             var packageReferences = installedPackageReferences.ToList();
 
@@ -221,8 +221,10 @@ internal class PackageInstallationService : IPackageInstallationService
             // Step 2. Build list of dependencies and determine DependencyBehavior if some packages are missed in current feed
             Resolver.PackageResolverContext? resolverContext = null;
 
-            using (var cacheContext = new SourceCacheContext())
+            using (var sourceCacheContext = new SourceCacheContext())
             {
+                Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
 #pragma warning disable IDISP013 // Await in using.
                 var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
 #pragma warning restore IDISP013 // Await in using.
@@ -234,7 +236,7 @@ internal class PackageInstallationService : IPackageInstallationService
                 var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
                 resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, 
-                    cacheContext, project, ignoreMissingPackages, packagePredicate, cancellationToken);
+                    sourceCacheContext, project, ignoreMissingPackages, packagePredicate, cancellationToken);
 
                 if (resolverContext is null ||
                     !(resolverContext?.AvailablePackages?.Any() ?? false))
@@ -249,7 +251,7 @@ internal class PackageInstallationService : IPackageInstallationService
 
                 _nugetLogger.LogInformation($"Downloading {package}...");
 
-                var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, cacheContext, cancellationToken);
+                var mainDownloadedFiles = await DownloadPackageResourceAsync(mainPackageInfo, sourceCacheContext, cancellationToken);
 
                 _nugetLogger.LogInformation($"{package} download completed");
 
@@ -279,7 +281,7 @@ internal class PackageInstallationService : IPackageInstallationService
                 // Step 6. Download everything except main package and extract all
                 availablePackagesToInstall.Remove(mainPackageInfo);
                 _nugetLogger.LogInformation($"Downloading package dependencies...");
-                var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, cacheContext, cancellationToken);
+                var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, sourceCacheContext, cancellationToken);
                 downloadResults[mainPackageInfo] = mainDownloadedFiles;
                 _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
                 var extractionContext = GetExtractionContext();
@@ -320,6 +322,8 @@ internal class PackageInstallationService : IPackageInstallationService
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, sourceCacheContext, _nugetLogger, default);
             if (rawPackageMetadata is null)
             {
@@ -548,14 +552,14 @@ internal class PackageInstallationService : IPackageInstallationService
                 {
                     if (alreadyInstalled)
                     {
-                        // supress error
+                        // suppress error
                         _nugetLogger.LogInformation($"Package {packageIdentity} already located in extraction directory");
 
                         // TODO: verify installation?
                     }
                     else
                     {
-                        throw Log.ErrorAndCreateException<InvalidOperationException>("An error occured during package extraction", ex);
+                        throw Log.ErrorAndCreateException<InvalidOperationException>("An error occurred during package extraction", ex);
                     }
                 }
             }
@@ -662,14 +666,14 @@ internal class PackageInstallationService : IPackageInstallationService
 
             if (dependentsDictionary.TryGetValue(markedOnUninstallDependency, out var dependents) && dependents is not null)
             {
-                var externalDependants = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
+                var externalDependents = dependents.Where(x => !dependenciesDictionary.ContainsKey(x)).ToList();
 
-                if (externalDependants.Count > 0)
+                if (externalDependents.Count > 0)
                 {
                     _nugetLogger.LogInformation($"{identity} package skipped, because one or more installed packages depends on it");
                 }
 
-                externalDependants.ForEach(d => shouldBeExcludedSet.Add(d));
+                externalDependents.ForEach(d => shouldBeExcludedSet.Add(d));
             }
         }
 
