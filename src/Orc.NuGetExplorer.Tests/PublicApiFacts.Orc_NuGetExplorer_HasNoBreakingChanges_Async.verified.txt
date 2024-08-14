@@ -123,7 +123,7 @@ namespace Orc.NuGetExplorer
         public void ClearRetryCache() { }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
-        public System.Threading.Tasks.Task<System.Net.ICredentials?> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<System.Net.ICredentials?> GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy? proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) { }
         public bool IsValidResponse(NuGet.Credentials.CredentialResponse response) { }
         public bool TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials? credentials) { }
     }
