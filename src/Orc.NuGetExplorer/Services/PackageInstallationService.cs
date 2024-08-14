@@ -114,12 +114,14 @@ internal class PackageInstallationService : IPackageInstallationService
             _nugetLogger.LogWarning($"Project {project.Name} doesn't implement any configuration for own packages");
         }
 
-        using (var cacheContext = new SourceCacheContext()
+        using (var cacheContext = new SourceCacheContext
                {
                    NoCache = false,
                    DirectDownload = false,
                })
         {
+            Log.Debug($"Cache context: DirectDownload: {cacheContext.DirectDownload} | IgnoreFailedSources: {cacheContext.IgnoreFailedSources} | NoCache: {cacheContext.NoCache} | RefreshMemoryCache: {cacheContext.RefreshMemoryCache}");
+
             var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                 .GetResourceAsync<DependencyInfoResource>(cancellationToken);
 
@@ -331,6 +333,7 @@ internal class PackageInstallationService : IPackageInstallationService
         }
     }
 
+    [Time("{identity}")]
     private async Task<Resolver.PackageResolverContext> ResolveDependenciesAsync(PackageIdentity identity, NuGetFramework targetFramework, IEqualityComparer<PackageIdentity> equalityComparer,
         DependencyInfoResourceCollection dependencyInfoResource, SourceCacheContext cacheContext, IExtensibleProject project, bool ignoreMissingPackages = false,
         Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
