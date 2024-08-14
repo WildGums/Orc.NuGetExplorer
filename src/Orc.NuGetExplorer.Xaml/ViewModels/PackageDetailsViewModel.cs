@@ -69,7 +69,7 @@ internal class PackageDetailsViewModel : ViewModelBase
 
     public object? DependencyInfo { get; set; }
 
-    public DeferToken? DefferedLoadingToken { get; set; }
+    public DeferToken? DeferredLoadingToken { get; set; }
 
     [ViewModelToModel]
     public PackageStatus Status { get; set; }
