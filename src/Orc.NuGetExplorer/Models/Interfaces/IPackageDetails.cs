@@ -30,7 +30,7 @@ public interface IPackageDetails
 
     DateTimeOffset? Published { get; }
 
-    int? DownloadCount { get; }
+    long? DownloadCount { get; }
 
     bool? IsInstalled { get; set; }
 

@@ -35,7 +35,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
         Description = packageMetadata.Description;
         IconUrl = packageMetadata.IconUrl;
         Authors = packageMetadata.Authors;
-        DownloadCount = (int?)packageMetadata.DownloadCount;
+        DownloadCount = packageMetadata.DownloadCount;
         Summary = packageMetadata.Summary;
 
         LastVersion = packageMetadata.Identity.Version;
@@ -170,7 +170,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
     IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
-    public int? DownloadCount { get; private set; }
+    public long? DownloadCount { get; private set; }
 
     public DateTimeOffset? Published => _packageMetadata.Published;
 

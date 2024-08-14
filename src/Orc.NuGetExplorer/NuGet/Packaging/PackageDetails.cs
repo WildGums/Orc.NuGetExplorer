@@ -66,7 +66,7 @@ public class PackageDetails : IPackageDetails
 
     public DateTimeOffset? Published { get; }
 
-    public int? DownloadCount { get; }
+    public long? DownloadCount { get; }
 
     public bool? IsInstalled { get; set; }
 
