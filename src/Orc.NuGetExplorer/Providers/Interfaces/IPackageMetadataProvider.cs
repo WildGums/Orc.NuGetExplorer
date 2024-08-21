@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Providers;
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +55,9 @@ public interface IPackageMetadataProvider
     /// <returns>Package metadata</returns>
     Task<IPackageSearchMetadata?> GetLocalPackageMetadataAsync(PackageIdentity identity,
         bool includePrerelease, CancellationToken cancellationToken);
-    Task<IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken);
+    Task<IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
     Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken);
     Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken);
+    Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, Func<IPackageSearchMetadata, bool> additionalPredicate, CancellationToken cancellationToken);
+    Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, Func<IPackageSearchMetadata, bool> predicate, CancellationToken cancellationToken);
 }

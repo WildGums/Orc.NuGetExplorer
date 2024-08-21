@@ -79,9 +79,9 @@ internal sealed class ApiPackageRegistry : IApiPackageRegistry
 
         lock (_syncObj)
         {
-            foreach (var depencyGroup in dependencyGroups)
+            foreach (var dependencyGroup in dependencyGroups)
             {
-                foreach (var dependency in depencyGroup.Packages)
+                foreach (var dependency in dependencyGroup.Packages)
                 {
                     ValidateDependency(package, dependency);
                 }
