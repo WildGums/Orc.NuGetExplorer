@@ -70,7 +70,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
     /// <returns>A credential object, or null if no credentials could be acquired.</returns>
     public async Task<ICredentials?> GetCredentialsAsync(
         Uri uri,
-        IWebProxy proxy,
+        IWebProxy? proxy,
         CredentialRequestType type,
         string message,
         CancellationToken cancellationToken)

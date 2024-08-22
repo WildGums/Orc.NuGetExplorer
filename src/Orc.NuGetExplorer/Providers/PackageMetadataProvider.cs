@@ -94,7 +94,6 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         return typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
     }
 
-
     public async Task<IPackageSearchMetadata?> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(identity);
@@ -146,7 +145,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         return null;
     }
 
-    public async Task<IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageid, bool includePrrelease, CancellationToken cancellationToken)
+    public async Task<IPackageSearchMetadata?> GetLowestLocalPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
     {
         var sources = new List<SourceRepository>();
 
@@ -155,7 +154,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
             sources.AddRange(_optionalLocalRepositories);
         }
 
-        var tasks = sources.Select(r => GetPackageMetadataFromLocalSourceAsync(r, packageid, cancellationToken)).ToArray();
+        var tasks = sources.Select(r => GetPackageMetadataFromLocalSourceAsync(r, packageId, cancellationToken)).ToArray();
 
         var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess)
             .Select(x => x.UnwrapResult())
@@ -167,7 +166,6 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         return lowest;
     }
-
 
     public async Task<IPackageSearchMetadata?> GetPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
     {
@@ -197,32 +195,47 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         return master;
     }
 
-    public async Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
+    public Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
+    {
+        return GetHighestPackageMetadataAsync(packageId, includePrerelease, 
+            (p) => true, cancellationToken);
+    }
+
+    public Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken)
+    {
+        return GetHighestPackageMetadataAsync(packageId, includePrerelease, 
+            (p) => !p.Identity.Version.Release.ContainsAny(ignoredReleases, StringComparison.OrdinalIgnoreCase), cancellationToken);
+    }
+
+    public Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, Func<IPackageSearchMetadata, bool> additionalPredicate, CancellationToken cancellationToken)
+    {
+        return GetHighestPackageMetadataAsync(packageId, includePrerelease, (p) =>
+        {
+            return !p.Identity.Version.Release.ContainsAny(ignoredReleases, StringComparison.OrdinalIgnoreCase) &&
+                additionalPredicate(p);
+        }, cancellationToken);
+    }
+
+    public virtual async Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, Func<IPackageSearchMetadata, bool> predicate, CancellationToken cancellationToken)
     {
         //returned type - packageRegistrationMetadata
         var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
 
-        var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault();
+        var master = metadataList.OrderByDescending(x => x.Identity.Version)
+            .FirstOrDefault(x => predicate(x));
 
         return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
     }
 
-    public async Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken)
-    {
-        var metadataList = await GetPackageMetadataListAsync(packageId, includePrerelease, false, cancellationToken);
-
-        var master = metadataList.OrderByDescending(x => x.Identity.Version).FirstOrDefault(x => !x.Identity.Version.Release.ContainsAny(ignoredReleases, StringComparison.OrdinalIgnoreCase));
-
-        return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
-    }
-
-    public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken)
+    public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, 
+        bool includeUnlisted, CancellationToken cancellationToken)
     {
         var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
 
-        var completed = (await tasks.WhenAllOrExceptionAsync()).Where(x => x.IsSuccess).
-            Select(x => x.UnwrapResult())
-            .Where(metadata => metadata is not null);
+        var completed = (await tasks.WhenAllOrExceptionAsync())
+            .Where(x => x.IsSuccess)
+            .Select(x => x.UnwrapResult())
+                .Where(metadata => metadata is not null);
 
         var packages = completed.SelectMany(p => p!);
 
@@ -255,6 +268,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             //todo
             //check httpCache created inside GetMetadataAsync()
             //The Root folder value didn't used when retry count is 0
@@ -282,12 +297,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
             Log.Debug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
 
             return packages;
-
         }
     }
 
     /// <summary>
-    /// Returns list of package metadata objects along with all version metadtas from repository
+    /// Returns list of package metadata objects along with all version metadatas from repository
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="identity"></param>
@@ -327,6 +341,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
             sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
@@ -335,7 +351,6 @@ public class PackageMetadataProvider : IPackageMetadataProvider
             return package;
         }
     }
-
 
     private async Task<IPackageSearchMetadata?> GetPackageMetadataFromLocalSourceAsync(SourceRepository localRepository, PackageIdentity packageIdentity, CancellationToken token)
     {
@@ -366,6 +381,8 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
+            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+
             var localPackages = await localResource.GetMetadataAsync(
                 packageId,
                 includePrerelease: true,

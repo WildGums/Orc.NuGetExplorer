@@ -53,7 +53,7 @@ internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, 
 
     IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
-    int? IPackageDetails.DownloadCount => (int?)DownloadCount;
+    long? IPackageDetails.DownloadCount => DownloadCount;
 
     public PackageIdentity GetIdentity()
     {

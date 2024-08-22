@@ -15,7 +15,7 @@ using NuGet.Packaging.Core;
 using NuGet.Versioning;
 
 /// <summary>
-/// Wrapper against list of dependency recources from multiple repositories
+/// Wrapper against list of dependency resources from multiple repositories
 /// </summary>
 public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResource>
 {
@@ -50,6 +50,7 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
         };
     }
 
+    [Time("{package}")]
     public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesWithVersionSatisfyRangeAsync(PackageIdentity package, VersionRange versionRange, NuGetFramework projectFramework, SourceCacheContext cacheContext,
         ILogger log, CancellationToken token)
     {
@@ -88,7 +89,7 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
             }
             catch (FatalProtocolException ex)
             {
-                // The resource cannot be unnaccessible of package metadata missed from feed
+                // The resource cannot be inaccessible of package metadata missed from feed
                 // Just log exception here and proceed, it contains enough info
                 Log.Warning(ex);
             }
@@ -97,24 +98,33 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
         return null;
     }
 
-    [Time]
-    public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, ILogger log, CancellationToken token)
+    [Time("{package}")]
+    public async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(PackageIdentity package, NuGetFramework projectFramework,
+        SourceCacheContext cacheContext, ILogger log, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(projectFramework);
+
+        Log.Debug($"Checking {_resources.Count} resource(s) for '{package}'");
 
         var packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
 
         foreach (var resource in _resources)
         {
-            var packageDependencyInfo = await resource.ResolvePackages(package.Id, projectFramework, cacheContext, log, token);
-
-            foreach (var packageInfo in packageDependencyInfo)
+            foreach (var packageInfo in await ResolvePackagesFromSourceAsync(package, resource, projectFramework, cacheContext, log, cancellationToken))
             {
                 packageDependencyInfos.Add(packageInfo);
             }
         }
 
         return packageDependencyInfos;
+    }
+
+    //[Time("{resource}")]
+    private async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesFromSourceAsync(PackageIdentity package, DependencyInfoResource resource, NuGetFramework projectFramework,
+        SourceCacheContext cacheContext, ILogger log, CancellationToken cancellationToken)
+    {
+        var packageDependencyInfo = await resource.ResolvePackages(package.Id, projectFramework, cacheContext, log, cancellationToken);
+        return packageDependencyInfo;
     }
 }
