@@ -34,6 +34,10 @@ public class IconDownloader
 
     private static void SetProtocolSecurity()
     {
+#if NET9_0_OR_GREATER
+        // Do nothing
+#else
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+#endif
     }
 }
