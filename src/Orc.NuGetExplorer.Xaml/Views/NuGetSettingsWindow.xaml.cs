@@ -1,6 +1,8 @@
 ﻿namespace Orc.NuGetExplorer.Views;
 
 using System;
+using Catel.IoC;
+using Catel.Services;
 using Catel.Windows;
 using Orc.Controls;
 using Orc.NuGetExplorer.ViewModels;
@@ -27,12 +29,14 @@ internal partial class NuGetSettingsWindow : DataWindow
     {
         base.OnLoaded(e);
 
-        this.LoadWindowSize(true);
+        var appDataService = ServiceLocator.Default.ResolveType<IAppDataService>();
+        appDataService?.LoadWindowSize(this, true);
     }
 
     protected override void OnUnloaded(EventArgs e)
     {
-        this.SaveWindowSize();
+        var appDataService = ServiceLocator.Default.ResolveType<IAppDataService>();
+        appDataService?.SaveWindowSize(this);
 
         base.OnUnloaded(e);
     }
