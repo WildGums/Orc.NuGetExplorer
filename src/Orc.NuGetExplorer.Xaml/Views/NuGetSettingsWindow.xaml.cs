@@ -29,13 +29,13 @@ internal partial class NuGetSettingsWindow : DataWindow
     {
         base.OnLoaded(e);
 
-        var appDataService = ServiceLocator.Default.ResolveType<IAppDataService>();
+        var appDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
         appDataService?.LoadWindowSize(this, true);
     }
 
     protected override void OnUnloaded(EventArgs e)
     {
-        var appDataService = ServiceLocator.Default.ResolveType<IAppDataService>();
+        var appDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
         appDataService?.SaveWindowSize(this);
 
         base.OnUnloaded(e);
