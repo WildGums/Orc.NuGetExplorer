@@ -15,7 +15,7 @@ public class PackagePathResolverFacts
     [Explicit]
     public void CheckPathAreExpected()
     {
-        var applicationDataService = ServiceLocator.Default.ResolveType<IAppDataService>();
+        var applicationDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
         var contentPath = System.IO.Path.Combine(applicationDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming),
             @"WildGums\PM\");
         var pathResolver = new PackagePathResolver(contentPath);
