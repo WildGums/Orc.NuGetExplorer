@@ -1,6 +1,6 @@
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net8.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <AssemblyName>Orc.NuGetExplorer.Xaml</AssemblyName>
     <RootNamespace>Orc.NuGetExplorer</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="5.3.0" PrivateAssets="all" />
-    <PackageReference Include="Orc.Controls" Version="5.0.5" />
+    <PackageReference Include="Orc.Controls" Version="5.1.1" />
   </ItemGroup>
   
   <ItemGroup>
