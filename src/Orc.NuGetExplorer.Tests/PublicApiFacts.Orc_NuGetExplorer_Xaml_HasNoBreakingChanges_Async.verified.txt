@@ -236,8 +236,8 @@ namespace Orc.NuGetExplorer
     }
     public class PackageMetadataMediaDownloadService : Orc.NuGetExplorer.IImageResolveService, Orc.NuGetExplorer.IPackageMetadataMediaDownloadService
     {
-        public const string DefaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-" +
-            "package-icon.png";
+        public const string DefaultIconUri = ("pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-" +
+            "package-icon.png");
         public PackageMetadataMediaDownloadService(Orc.NuGetExplorer.Providers.IApplicationCacheProvider appCacheProvider) { }
         public System.Threading.Tasks.Task DownloadMediaForMetadataAsync(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata) { }
         public System.Windows.Media.ImageSource ResolveImageFromUri(System.Uri uri) { }

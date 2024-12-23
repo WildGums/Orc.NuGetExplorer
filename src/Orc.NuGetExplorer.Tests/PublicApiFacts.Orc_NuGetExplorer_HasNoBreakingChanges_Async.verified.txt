@@ -56,8 +56,8 @@ namespace Orc.NuGetExplorer
         {
             public const string CacheClearEndedSuccessful = "NuGet cache cleared";
             public const string CacheClearFailed = "Fatal error during cache clearing";
-            public const string CachedClearEndedWithError = "NuGet cache cleared with some errors. It means some cached files may kept on cach" +
-                "e folder";
+            public const string CachedClearEndedWithError = ("NuGet cache cleared with some errors. It means some cached files may kept on cach" +
+                "e folder");
             public const string PackageParserInvalidIdentity = "parameter doesn\'t contain valid package identity";
             public const string PackageParserInvalidVersion = "parameter doesn\'t contain valid package version";
         }
@@ -219,8 +219,8 @@ namespace Orc.NuGetExplorer
     {
         string ContentPath { get; }
         string Framework { get; }
-        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
-            " 6.0.0. Will be removed in version 6.0.0.", false)]
+        [System.Obsolete(("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
+            " 6.0.0. Will be removed in version 6.0.0."), false)]
         bool IgnoreDependencies { get; }
         bool IgnoreMissingDependencies { get; }
         string Name { get; }
@@ -867,8 +867,8 @@ namespace Orc.NuGetExplorer.Management
         public DestFolder(string destinationFolder, Orc.NuGetExplorer.IDefaultNuGetFramework defaultFramework) { }
         public string ContentPath { get; }
         public string Framework { get; }
-        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
-            " 6.0.0. Will be removed in version 6.0.0.", false)]
+        [System.Obsolete(("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
+            " 6.0.0. Will be removed in version 6.0.0."), false)]
         public bool IgnoreDependencies { get; }
         public bool IgnoreMissingDependencies { get; }
         public string Name { get; }
