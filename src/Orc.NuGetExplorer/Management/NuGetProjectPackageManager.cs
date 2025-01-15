@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
 using Catel.Services;
+using Models;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -240,8 +241,16 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
 
                 return false;
             }
+            var context = new InstallationContext
+            {
+                Project = project,
+                Repositories = repositories,
+                Package = package,
+                PackagePredicate = packagePredicate,
+                AllowMultipleVersions = true
+            };
 
-            var installerResults = await _packageInstallationService.InstallAsync(package, project, repositories, project.IgnoreDependencies, packagePredicate, token);
+            var installerResults = await _packageInstallationService.InstallAsync(context, token);
             if (!installerResults.Result.Any())
             {
                 if (showErrors)

@@ -18,14 +18,6 @@ public interface IPackageInstallationService
 
     Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default);
 
-    Task<InstallerResult> InstallAsync(
-        PackageIdentity package,
-        IExtensibleProject project,
-        IReadOnlyList<SourceRepository> repositories,
-        bool ignoreMissingPackages = false,
-        Func<PackageIdentity, bool>? packagePredicate = null,
-        CancellationToken cancellationToken = default);
-
     Task UninstallAsync(PackageIdentity package, 
         IExtensibleProject project, 
         IEnumerable<PackageReference> installedPackageReferences,
