@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Logging;
 using MethodTimer;
-using Models;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -91,6 +90,23 @@ internal class PackageInstallationService : IPackageInstallationService
     }
 
     public VersionFolderPathResolver InstallerPathResolver => _installerPathResolver;
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    public Task<InstallerResult> InstallAsync(PackageIdentity package, IExtensibleProject project, IReadOnlyList<SourceRepository> repositories, bool ignoreMissingPackages = false, Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+        ArgumentNullException.ThrowIfNull(project);
+        ArgumentNullException.ThrowIfNull(repositories);
+        var context = new InstallationContext
+        {
+            Package = package,
+            Project = project,
+            Repositories = repositories,
+            IgnoreMissingPackages = ignoreMissingPackages,
+            PackagePredicate = packagePredicate,
+        };
+        return InstallAsync(context, cancellationToken);
+    }
 
     public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
         Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
@@ -282,7 +298,7 @@ internal class PackageInstallationService : IPackageInstallationService
                 {
                     // Track packages which already installed and make sure only one version of package exists
                     var resolver = new Resolver.PackageResolver();
-                    availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Ignore,
+                    availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
                         (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
                         cancellationToken);
                 }

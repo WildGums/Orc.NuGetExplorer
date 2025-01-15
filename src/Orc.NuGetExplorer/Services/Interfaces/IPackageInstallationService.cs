@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
-using Orc.NuGetExplorer.Models;
 
 public interface IPackageInstallationService
 {
@@ -17,6 +16,15 @@ public interface IPackageInstallationService
     VersionFolderPathResolver InstallerPathResolver { get; }
 
     Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default);
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    public Task<InstallerResult> InstallAsync(
+        PackageIdentity package,
+        IExtensibleProject project,
+        IReadOnlyList<SourceRepository> repositories,
+        bool ignoreMissingPackages = false,
+        Func<PackageIdentity, bool>? packagePredicate = null,
+        CancellationToken cancellationToken = default);
 
     Task UninstallAsync(PackageIdentity package, 
         IExtensibleProject project, 

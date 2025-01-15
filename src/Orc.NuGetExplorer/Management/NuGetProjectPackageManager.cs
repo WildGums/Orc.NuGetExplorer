@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
 using Catel.Services;
-using Models;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
