@@ -185,7 +185,7 @@ internal class PackageInstallationService : IPackageInstallationService
         }
     }
 
-    public async Task<InstallerResult> InstallAsync(InstallationContext context)
+    public async Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -194,7 +194,6 @@ internal class PackageInstallationService : IPackageInstallationService
         var repositories = context.Repositories;
         var ignoreMissingPackages = context.IgnoreMissingPackages;
         var packagePredicate = context.PackagePredicate;
-        var cancellationToken = context.CancellationToken;
         var allowMultipleVersions = context.AllowMultipleVersions;
 
         try
@@ -331,10 +330,9 @@ internal class PackageInstallationService : IPackageInstallationService
             Repositories = repositories,
             IgnoreMissingPackages = ignoreMissingPackages,
             PackagePredicate = packagePredicate,
-            CancellationToken = cancellationToken
         };
 
-        return await InstallAsync(context);
+        return await InstallAsync(context, cancellationToken);
     }
 
     // TODO move to separate class
