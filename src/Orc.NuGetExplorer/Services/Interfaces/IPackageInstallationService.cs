@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using Orc.NuGetExplorer.Models;
 
 public interface IPackageInstallationService
 {
@@ -14,6 +15,8 @@ public interface IPackageInstallationService
     /// V3 package path resolver
     /// </summary>
     VersionFolderPathResolver InstallerPathResolver { get; }
+
+    Task<InstallerResult> InstallAsync(InstallationContext context);
 
     Task<InstallerResult> InstallAsync(
         PackageIdentity package,
