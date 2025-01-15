@@ -185,6 +185,7 @@ internal class PackageInstallationService : IPackageInstallationService
         }
     }
 
+    [Time]
     public async Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -308,31 +309,6 @@ internal class PackageInstallationService : IPackageInstallationService
             Log.Error(ex);
             throw;
         }
-    }
-
-    [Time]
-    public async Task<InstallerResult> InstallAsync(
-        PackageIdentity package,
-        IExtensibleProject project,
-        IReadOnlyList<SourceRepository> repositories,
-        bool ignoreMissingPackages = false,
-        Func<PackageIdentity, bool>? packagePredicate = null,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(package);
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(repositories);
-
-        var context = new InstallationContext
-        {
-            Package = package,
-            Project = project,
-            Repositories = repositories,
-            IgnoreMissingPackages = ignoreMissingPackages,
-            PackagePredicate = packagePredicate,
-        };
-
-        return await InstallAsync(context, cancellationToken);
     }
 
     // TODO move to separate class

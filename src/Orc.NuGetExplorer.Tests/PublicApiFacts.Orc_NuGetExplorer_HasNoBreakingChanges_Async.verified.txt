@@ -316,6 +316,10 @@ namespace Orc.NuGetExplorer
         NuGet.Packaging.Core.PackageIdentity GetIdentity();
         void ResetValidationContext();
     }
+    public static class IPackageInstallationServiceExtensions
+    {
+        public static System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(this Orc.NuGetExplorer.Services.IPackageInstallationService service, NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default) { }
+    }
     public interface IPackageLoaderService
     {
         Orc.NuGetExplorer.Providers.IPackageMetadataProvider? PackageMetadataProvider { get; }
@@ -1270,7 +1274,6 @@ namespace Orc.NuGetExplorer.Services
     {
         NuGet.Packaging.VersionFolderPathResolver InstallerPathResolver { get; }
         System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(Orc.NuGetExplorer.Models.InstallationContext context, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<long?> MeasurePackageSizeFromRepositoryAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository);
         System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
     }
