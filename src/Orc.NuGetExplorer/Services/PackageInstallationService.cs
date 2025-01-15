@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,6 +90,23 @@ internal class PackageInstallationService : IPackageInstallationService
     }
 
     public VersionFolderPathResolver InstallerPathResolver => _installerPathResolver;
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    public Task<InstallerResult> InstallAsync(PackageIdentity package, IExtensibleProject project, IReadOnlyList<SourceRepository> repositories, bool ignoreMissingPackages = false, Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+        ArgumentNullException.ThrowIfNull(project);
+        ArgumentNullException.ThrowIfNull(repositories);
+        var context = new InstallationContext
+        {
+            Package = package,
+            Project = project,
+            Repositories = repositories,
+            IgnoreMissingPackages = ignoreMissingPackages,
+            PackagePredicate = packagePredicate,
+        };
+        return InstallAsync(context, cancellationToken);
+    }
 
     public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
         Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
@@ -184,17 +202,16 @@ internal class PackageInstallationService : IPackageInstallationService
     }
 
     [Time]
-    public async Task<InstallerResult> InstallAsync(
-        PackageIdentity package,
-        IExtensibleProject project,
-        IReadOnlyList<SourceRepository> repositories,
-        bool ignoreMissingPackages = false,
-        Func<PackageIdentity, bool>? packagePredicate = null,
-        CancellationToken cancellationToken = default)
+    public async Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(package);
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(repositories);
+        ArgumentNullException.ThrowIfNull(context);
+
+        var project = context.Project;
+        var package = context.Package;
+        var repositories = context.Repositories;
+        var ignoreMissingPackages = context.IgnoreMissingPackages;
+        var packagePredicate = context.PackagePredicate;
+        var allowMultipleVersions = context.AllowMultipleVersions;
 
         try
         {
@@ -235,7 +252,7 @@ internal class PackageInstallationService : IPackageInstallationService
 
                 var dependencyInfoResources = new DependencyInfoResourceCollection(dependencyResources);
 
-                resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources, 
+                resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentityComparer.Default, dependencyInfoResources,
                     sourceCacheContext, project, ignoreMissingPackages, packagePredicate, cancellationToken);
 
                 if (resolverContext is null ||
@@ -271,12 +288,20 @@ internal class PackageInstallationService : IPackageInstallationService
                     throw Log.ErrorAndCreateException<IncompatiblePackageException>($"Package {package} incompatible with project target platform {targetFramework}");
                 }
 
-                // Step 5. Build install list using NuGet Resolver and select available resources. 
-                // Track packages which already installed and make sure only one version of package exists
-                var resolver = new Resolver.PackageResolver();
-                var availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
-                    (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
-                    cancellationToken);
+                // Step 5. Build install list using NuGet Resolver and select available resources.
+                List<SourcePackageDependencyInfo> availablePackagesToInstall;
+                if (allowMultipleVersions)
+                {
+                    availablePackagesToInstall = resolverContext.AvailablePackages.ToList();
+                }
+                else
+                {
+                    // Track packages which already installed and make sure only one version of package exists
+                    var resolver = new Resolver.PackageResolver();
+                    availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
+                        (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
+                        cancellationToken);
+                }
 
                 // Step 6. Download everything except main package and extract all
                 availablePackagesToInstall.Remove(mainPackageInfo);

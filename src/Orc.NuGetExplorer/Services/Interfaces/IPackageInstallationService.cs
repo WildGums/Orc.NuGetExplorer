@@ -15,7 +15,10 @@ public interface IPackageInstallationService
     /// </summary>
     VersionFolderPathResolver InstallerPathResolver { get; }
 
-    Task<InstallerResult> InstallAsync(
+    Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default);
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    public Task<InstallerResult> InstallAsync(
         PackageIdentity package,
         IExtensibleProject project,
         IReadOnlyList<SourceRepository> repositories,
