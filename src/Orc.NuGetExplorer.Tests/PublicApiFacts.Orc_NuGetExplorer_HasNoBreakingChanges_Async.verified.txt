@@ -984,6 +984,27 @@ namespace Orc.NuGetExplorer.Messaging
         public PackagingDeletemeMessage(Orc.NuGetExplorer.Packaging.PackageOperationInfo content) { }
     }
 }
+namespace Orc.NuGetExplorer.Models
+{
+    [System.Runtime.CompilerServices.RequiredMember]
+    public class InstallationContext
+    {
+        [System.Obsolete(("Constructors of types with required members are not supported in this version of " +
+            "your compiler."), true)]
+        [System.Runtime.CompilerServices.CompilerFeatureRequired("RequiredMembers")]
+        public InstallationContext() { }
+        public bool AllowMultipleVersions { get; set; }
+        public System.Threading.CancellationToken CancellationToken { get; set; }
+        public bool IgnoreMissingPackages { get; set; }
+        [System.Runtime.CompilerServices.RequiredMember]
+        public NuGet.Packaging.Core.PackageIdentity Package { get; set; }
+        public System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? PackagePredicate { get; set; }
+        [System.Runtime.CompilerServices.RequiredMember]
+        public Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
+        [System.Runtime.CompilerServices.RequiredMember]
+        public System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> Repositories { get; set; }
+    }
+}
 namespace Orc.NuGetExplorer.Packaging
 {
     public class EmptyPackageDetails : Orc.NuGetExplorer.IPackageDetails
@@ -1249,6 +1270,7 @@ namespace Orc.NuGetExplorer.Services
     public interface IPackageInstallationService
     {
         NuGet.Packaging.VersionFolderPathResolver InstallerPathResolver { get; }
+        System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(Orc.NuGetExplorer.Models.InstallationContext context);
         System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<long?> MeasurePackageSizeFromRepositoryAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository);
         System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
