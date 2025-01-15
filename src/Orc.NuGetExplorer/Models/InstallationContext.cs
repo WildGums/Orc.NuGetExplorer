@@ -13,6 +13,5 @@ public class InstallationContext
     public required IReadOnlyList<SourceRepository> Repositories { get; set; }
     public bool IgnoreMissingPackages { get; set; }
     public Func<PackageIdentity, bool>? PackagePredicate { get; set; }
-    public CancellationToken CancellationToken { get; set; }
     public bool AllowMultipleVersions { get; set; } = false;
 }

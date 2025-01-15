@@ -16,7 +16,7 @@ public interface IPackageInstallationService
     /// </summary>
     VersionFolderPathResolver InstallerPathResolver { get; }
 
-    Task<InstallerResult> InstallAsync(InstallationContext context);
+    Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default);
 
     Task<InstallerResult> InstallAsync(
         PackageIdentity package,
