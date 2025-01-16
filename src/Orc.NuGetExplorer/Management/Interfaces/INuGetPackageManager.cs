@@ -13,6 +13,9 @@ using Orc.NuGetExplorer.Packaging;
 
 public interface INuGetPackageManager : IPackageManager
 {
+    Task<bool> InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token);
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
     Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
         Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true);
 
