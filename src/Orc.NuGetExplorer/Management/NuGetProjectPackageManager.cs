@@ -1,7 +1,8 @@
-﻿namespace Orc.NuGetExplorer.Management;
+namespace Orc.NuGetExplorer.Management;
 
 using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -215,11 +216,14 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         return installedVersion;
     }
 
-    public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
-        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true)
+    public async Task<bool> InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(package);
+        var package = context.Package;
+        var project = context.Project;
+        var packagePredicate = context.PackagePredicate;
+        var showErrors = context.ShowErrors;
+        var ignoreMissingPackages = context.IgnoreMissingPackages;
+        var allowMultipleVersions = context.AllowMultipleVersions;
 
         try
         {
@@ -240,16 +244,17 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
 
                 return false;
             }
-            var context = new InstallationContext
+            var installationContext = new InstallationContext
             {
                 Project = project,
                 Repositories = repositories,
                 Package = package,
                 PackagePredicate = packagePredicate,
-                AllowMultipleVersions = true
+                IgnoreMissingPackages = ignoreMissingPackages,
+                AllowMultipleVersions = allowMultipleVersions
             };
 
-            var installerResults = await _packageInstallationService.InstallAsync(context, token);
+            var installerResults = await _packageInstallationService.InstallAsync(installationContext, token);
             if (!installerResults.Result.Any())
             {
                 if (showErrors)
@@ -320,6 +325,26 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
             Log.Error(ex, $"The Installation of package {package} was failed");
             throw;
         }
+    }
+
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    public async Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
+        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+        ArgumentNullException.ThrowIfNull(package);
+
+        var context = new PackageInstallationContext
+        {
+            Package = package,
+            Project = project,
+            PackagePredicate = packagePredicate,
+            AllowMultipleVersions = false,
+            IgnoreMissingPackages = false,
+            ShowErrors = showErrors
+        };
+
+        return await InstallPackageForProjectAsync(context, token);
     }
 
     public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package,

@@ -1,4 +1,4 @@
-﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 public static class LoadAssembliesOnStartup { }
@@ -431,8 +431,8 @@ namespace Orc.NuGetExplorer
     [System.Runtime.CompilerServices.RequiredMember]
     public class InstallationContext
     {
-        [System.Obsolete(("Constructors of types with required members are not supported in this version of " +
-            "your compiler."), true)]
+        [System.Obsolete("Constructors of types with required members are not supported in this version of " +
+            "your compiler.", true)]
         [System.Runtime.CompilerServices.CompilerFeatureRequired("RequiredMembers")]
         public InstallationContext() { }
         public bool AllowMultipleVersions { get; set; }
@@ -617,6 +617,22 @@ namespace Orc.NuGetExplorer
     {
         public PackageIdentityParser() { }
         public static NuGet.Packaging.Core.PackageIdentity? Parse(string packageString) { }
+    }
+    [System.Runtime.CompilerServices.RequiredMember]
+    public class PackageInstallationContext
+    {
+        [System.Obsolete("Constructors of types with required members are not supported in this version of " +
+            "your compiler.", true)]
+        [System.Runtime.CompilerServices.CompilerFeatureRequired("RequiredMembers")]
+        public PackageInstallationContext() { }
+        public bool AllowMultipleVersions { get; set; }
+        public bool IgnoreMissingPackages { get; set; }
+        [System.Runtime.CompilerServices.RequiredMember]
+        public NuGet.Packaging.Core.PackageIdentity Package { get; set; }
+        public System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? PackagePredicate { get; set; }
+        [System.Runtime.CompilerServices.RequiredMember]
+        public Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
+        public bool ShowErrors { get; set; }
     }
     public abstract class PackageManagerContextWatcherBase : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
@@ -924,6 +940,10 @@ namespace Orc.NuGetExplorer.Management
         System.Threading.Tasks.Task<Orc.NuGetExplorer.Packaging.PackageCollection> CreatePackagesCollectionFromProjectsAsync(System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IExtensibleProject> projects, System.Threading.CancellationToken cancellationToken);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>> GetInstalledPackagesAsync(Orc.NuGetExplorer.IExtensibleProject project, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<NuGet.Versioning.NuGetVersion?> GetVersionInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
+        System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.PackageInstallationContext context, System.Threading.CancellationToken token);
+        [System.Obsolete("Use `InstallPackageForProjectAsync(PackageInstallationContext context, Cancellati" +
+            "onToken token)` instead. Will be treated as an error from version 6.0.0. Will be" +
+            " removed in version 7.0.0.", false)]
         System.Threading.Tasks.Task<bool> InstallPackageForProjectAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate, System.Threading.CancellationToken token, bool showErrors = true);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, NuGet.Packaging.Core.PackageIdentity package, System.Threading.CancellationToken token);
         System.Threading.Tasks.Task<bool> IsPackageInstalledAsync(Orc.NuGetExplorer.IExtensibleProject project, string packageId, System.Threading.CancellationToken token);
@@ -1267,9 +1287,9 @@ namespace Orc.NuGetExplorer.Services
     {
         NuGet.Packaging.VersionFolderPathResolver InstallerPathResolver { get; }
         System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(Orc.NuGetExplorer.InstallationContext context, System.Threading.CancellationToken cancellationToken = default);
-        [System.Obsolete(("Use `InstallAsync(InstallationContext context, CancellationToken cancellationToke" +
+        [System.Obsolete("Use `InstallAsync(InstallationContext context, CancellationToken cancellationToke" +
             "n = default)` instead. Will be treated as an error from version 6.0.0. Will be r" +
-            "emoved in version 7.0.0."), false)]
+            "emoved in version 7.0.0.", false)]
         System.Threading.Tasks.Task<Orc.NuGetExplorer.InstallerResult> InstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> repositories, bool ignoreMissingPackages = false, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<long?> MeasurePackageSizeFromRepositoryAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository);
         System.Threading.Tasks.Task UninstallAsync(NuGet.Packaging.Core.PackageIdentity package, Orc.NuGetExplorer.IExtensibleProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> installedPackageReferences, System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? packagePredicate = null, System.Threading.CancellationToken cancellationToken = default);
