@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Example;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Catel.IoC;
 using Catel.Logging;
@@ -21,7 +22,7 @@ public class ExampleProject : IExtensibleProject
         _pathResolver = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<ExamplePackagePathResolver>();
 
         var targetFramework = FrameworkParser.TryParseFrameworkName(Framework, frameworkNameProvider);
-        SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
+        SupportedPlatforms = [FrameworkParser.ToSpecificPlatform(targetFramework)];
     }
 
     public string Name => "Example";
@@ -30,7 +31,7 @@ public class ExampleProject : IExtensibleProject
 
     public string ContentPath => _pathResolver.AppRootDirectory;
 
-    public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
+    public IReadOnlyList<NuGetFramework> SupportedPlatforms { get; set; }
 
     public bool IgnoreDependencies { get { return IgnoreMissingDependencies; } }
 

@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Management;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Catel.Logging;
@@ -24,7 +25,7 @@ public class DestFolder : IExtensibleProject
 
         var targetFramework = defaultFramework.GetHighest().First();
         Framework = targetFramework.DotNetFrameworkName;
-        SupportedPlatforms = ImmutableList.Create(FrameworkParser.ToSpecificPlatform(targetFramework));
+        SupportedPlatforms = [FrameworkParser.ToSpecificPlatform(targetFramework)];
 
         Log.Info($"Current target framework for plugins set as '{Framework}'");
 
@@ -44,7 +45,7 @@ public class DestFolder : IExtensibleProject
 
     public string Framework { get; private set; }
 
-    public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
+    public IReadOnlyList<NuGetFramework> SupportedPlatforms { get; set; }
 
     public string ContentPath { get; }
 
