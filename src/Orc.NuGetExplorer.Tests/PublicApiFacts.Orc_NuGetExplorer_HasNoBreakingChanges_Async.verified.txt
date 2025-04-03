@@ -226,7 +226,7 @@ namespace Orc.NuGetExplorer
         string Name { get; }
         bool NoCache { get; }
         bool SupportSideBySide { get; }
-        System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
+        System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
         NuGet.Packaging.PackagePathResolver GetPathResolver();
     }
@@ -905,7 +905,7 @@ namespace Orc.NuGetExplorer.Management
         public string Name { get; }
         public bool NoCache { get; }
         public bool SupportSideBySide { get; }
-        public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public NuGet.Packaging.PackagePathResolver GetPathResolver() { }
         public override string ToString() { }
