@@ -5,7 +5,17 @@
       <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.6900.0" tool-company="Microsoft" />
     </header>
     <body>
-      <group id="ORC.NUGETEXPLORER/PROPERTIES/RESOURCES.RESX" datatype="resx" />
+      <group id="ORC.NUGETEXPLORER/PROPERTIES/RESOURCES.RESX" datatype="resx">
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" translate="yes" xml:space="preserve">
+          <source>Failed to install package '{0}'.
+{1}</source>
+          <target state="new"></target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" translate="yes" xml:space="preserve">
+          <source>No package sources provided for installing package '{0}'</source>
+          <target state="new"></target>
+        </trans-unit>
+      </group>
     </body>
   </file>
 </xliff>
