@@ -128,7 +128,7 @@ namespace Orc.NuGetExplorer.Converters
         public NuGetVersionToStringConverter() { }
         protected override object Convert(NuGet.Versioning.NuGetVersion? value, System.Type targetType, object? parameter) { }
     }
-    [System.Windows.Data.ValueConversion(typeof(System.Nullable<bool>), typeof(bool))]
+    [System.Windows.Data.ValueConversion(typeof(bool?), typeof(bool))]
     public class NullableBooleanTrueConverter : Catel.MVVM.Converters.ValueConverterBase<bool?>
     {
         public NullableBooleanTrueConverter() { }

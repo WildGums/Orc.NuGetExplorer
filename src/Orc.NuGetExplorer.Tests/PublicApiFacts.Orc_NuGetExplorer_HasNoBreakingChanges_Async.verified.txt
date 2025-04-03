@@ -385,8 +385,8 @@ namespace Orc.NuGetExplorer
     public interface IPackagesUpdatesSearcherService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
     }
     public interface IPleaseWaitInterruptService
     {
