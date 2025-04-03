@@ -641,7 +641,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         }
         else if (source is CombinedNuGetSource combinedSource)
         {
-            var unaccessibleFeeds = new List<NuGetFeed>();
+            var inaccessibleFeeds = new List<NuGetFeed>();
 
             foreach (var feed in combinedSource.GetAllSources())
             {
@@ -651,12 +651,12 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
                 if (!feed.IsAccessible)
                 {
-                    unaccessibleFeeds.Add(feed);
-                    Log.Warning($"{feed} is unaccessible. It won't be used when 'All' option selected");
+                    inaccessibleFeeds.Add(feed);
+                    Log.Warning($"{feed} is inaccessible. It won't be used when 'All' option selected");
                 }
             }
 
-            unaccessibleFeeds.ForEach(x => combinedSource.RemoveFeed(x));
+            inaccessibleFeeds.ForEach(x => combinedSource.RemoveFeed(x));
         }
         else
         {
@@ -699,11 +699,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         {
             foreach (var token in _tokenSource)
             {
-#if NET8_0_OR_GREATER
                 await token.CancelAsync();
-#else
-                token.Cancel();
-#endif
             }
         }
 
@@ -715,6 +711,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     private async Task RefreshCurrentPageExecuteAsync()
     {
         _nuGetCacheManager.ClearHttpCache();
+
         StartLoadingTimerOrInvalidateData();
     }
     #endregion
