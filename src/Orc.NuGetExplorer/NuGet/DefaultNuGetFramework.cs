@@ -71,6 +71,7 @@ public class DefaultNuGetFramework : IDefaultNuGetFramework
             }
         }
 #endif
+
         foreach (var frameworkName in frameworkStringList.Distinct())
         {
             var targetFramework = FrameworkParser.TryParseFrameworkName(frameworkName, _frameworkNameProvider);

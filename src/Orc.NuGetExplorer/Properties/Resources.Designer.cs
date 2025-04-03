@@ -61,7 +61,8 @@ namespace Orc.NuGetExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to install package &apos;{0}&apos;.\n{1}.
+        ///   Looks up a localized string similar to Failed to install package &apos;{0}&apos;.
+        ///{1}.
         /// </summary>
         internal static string NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template {
             get {

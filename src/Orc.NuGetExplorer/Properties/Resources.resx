@@ -118,7 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" xml:space="preserve">
-    <value>Failed to install package '{0}'.\n{1}</value>
+    <value>Failed to install package '{0}'.
+{1}</value>
   </data>
   <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" xml:space="preserve">
     <value>No package sources provided for installing package '{0}'</value>

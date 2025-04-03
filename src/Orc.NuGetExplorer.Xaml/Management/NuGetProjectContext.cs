@@ -86,7 +86,7 @@ internal class NuGetProjectContext : INuGetProjectContext
     {
         if (FileConflictAction == FileConflictAction.PromptUser)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Manual resoltuion for packages conflict is not supported in Orc.NuGetExplorer");
+            throw Log.ErrorAndCreateException<InvalidOperationException>("Manual resolution for packages conflict is not supported in Orc.NuGetExplorer");
         }
 
         return FileConflictAction;

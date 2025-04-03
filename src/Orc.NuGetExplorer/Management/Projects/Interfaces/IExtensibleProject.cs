@@ -1,6 +1,6 @@
 ﻿namespace Orc.NuGetExplorer;
 
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -13,7 +13,7 @@ public interface IExtensibleProject
 
     string ContentPath { get; }
 
-    ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
+    IReadOnlyList<NuGetFramework> SupportedPlatforms { get; set; }
 
     PackagePathResolver GetPathResolver();
 

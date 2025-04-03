@@ -51,7 +51,7 @@ namespace Orc.NuGetExplorer.Controls
         public static readonly System.Windows.DependencyProperty SuccessProperty;
         public RotationProgressBar() { }
         public System.Windows.Shapes.Path? IconData { get; set; }
-        public bool IsInProgress { get; set; }
+        public bool IsInProgress { get; protected set; }
         public bool ShowError { get; set; }
         public bool ShowWarning { get; set; }
         public double Speed { get; set; }
@@ -128,7 +128,7 @@ namespace Orc.NuGetExplorer.Converters
         public NuGetVersionToStringConverter() { }
         protected override object Convert(NuGet.Versioning.NuGetVersion? value, System.Type targetType, object? parameter) { }
     }
-    [System.Windows.Data.ValueConversion(typeof(System.Nullable<bool>), typeof(bool))]
+    [System.Windows.Data.ValueConversion(typeof(bool?), typeof(bool))]
     public class NullableBooleanTrueConverter : Catel.MVVM.Converters.ValueConverterBase<bool?>
     {
         public NullableBooleanTrueConverter() { }
@@ -411,17 +411,5 @@ namespace Themes
     {
         public Compiled() { }
         public void InitializeComponent() { }
-    }
-}
-namespace XamlGeneratedNamespace
-{
-    public sealed class GeneratedInternalTypeHelper : System.Windows.Markup.InternalTypeHelper
-    {
-        public GeneratedInternalTypeHelper() { }
-        protected override void AddEventHandler(System.Reflection.EventInfo eventInfo, object target, System.Delegate handler) { }
-        protected override System.Delegate CreateDelegate(System.Type delegateType, object target, string handler) { }
-        protected override object CreateInstance(System.Type type, System.Globalization.CultureInfo culture) { }
-        protected override object GetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, System.Globalization.CultureInfo culture) { }
-        protected override void SetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, object value, System.Globalization.CultureInfo culture) { }
     }
 }

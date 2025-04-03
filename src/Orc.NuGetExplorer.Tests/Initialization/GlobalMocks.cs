@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Tests;
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.IO;
 using Moq;
 using NuGet.Frameworks;
@@ -22,8 +22,10 @@ public static class GlobalMocks
     public static IRepository CreateMockRepository(string name, string path)
     {
         var projectRepositoryMock = new Mock<IRepository>();
-        projectRepositoryMock.Setup(x => x.Source).Returns(() => (Path.Combine(Environment.CurrentDirectory, path)));
-        projectRepositoryMock.Setup(x => x.Name).Returns(() => name);
+        projectRepositoryMock.Setup(x => x.Source)
+            .Returns(() => (Path.Combine(Environment.CurrentDirectory, path)));
+        projectRepositoryMock.Setup(x => x.Name)
+            .Returns(() => name);
 
         return projectRepositoryMock.Object;
     }
@@ -41,7 +43,7 @@ public static class GlobalMocks
         public string Name => "Test project";
         public string Framework => "net8.0-windows";
         public string ContentPath => ContentFolder;
-        public ImmutableList<NuGetFramework> SupportedPlatforms { get; set; }
+        public IReadOnlyList<NuGetFramework> SupportedPlatforms { get; set; }
         public bool IgnoreDependencies { get { return IgnoreMissingDependencies; } }
         public bool IgnoreMissingDependencies { get; }
 

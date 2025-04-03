@@ -1,4 +1,4 @@
-﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.NuGetExplorer.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 public static class LoadAssembliesOnStartup { }
@@ -226,7 +226,7 @@ namespace Orc.NuGetExplorer
         string Name { get; }
         bool NoCache { get; }
         bool SupportSideBySide { get; }
-        System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
+        System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity);
         NuGet.Packaging.PackagePathResolver GetPathResolver();
     }
@@ -385,8 +385,8 @@ namespace Orc.NuGetExplorer
     public interface IPackagesUpdatesSearcherService
     {
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchForPackagesUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = default, bool authenticateIfRequired = true, System.Threading.CancellationToken token = default);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Orc.NuGetExplorer.IPackageDetails>> SearchForUpdatesAsync(string[] excludeReleasesTag, bool? allowPrerelease = default, System.Threading.CancellationToken token = default);
     }
     public interface IPleaseWaitInterruptService
     {
@@ -433,7 +433,6 @@ namespace Orc.NuGetExplorer
     {
         [System.Obsolete("Constructors of types with required members are not supported in this version of " +
             "your compiler.", true)]
-        [System.Runtime.CompilerServices.CompilerFeatureRequired("RequiredMembers")]
         public InstallationContext() { }
         public bool AllowMultipleVersions { get; set; }
         public bool IgnoreMissingPackages { get; set; }
@@ -582,7 +581,7 @@ namespace Orc.NuGetExplorer
         public System.Collections.Generic.IReadOnlyList<NuGet.Versioning.NuGetVersion> Versions { get; }
         public System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo> VersionsInfo { get; }
         public event System.EventHandler<Orc.NuGetExplorer.PackageModelStatusEventArgs>? StatusChanged;
-        public  static  event System.EventHandler? AnyNuGetPackageCheckedChanged;
+        public static event System.EventHandler? AnyNuGetPackageCheckedChanged;
         public void AddDependencyInfo(NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> dependencyGroups) { }
         public System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup> GetDependencyInfo(NuGet.Versioning.NuGetVersion version) { }
         public NuGet.Packaging.Core.PackageIdentity GetIdentity() { }
@@ -623,7 +622,6 @@ namespace Orc.NuGetExplorer
     {
         [System.Obsolete("Constructors of types with required members are not supported in this version of " +
             "your compiler.", true)]
-        [System.Runtime.CompilerServices.CompilerFeatureRequired("RequiredMembers")]
         public PackageInstallationContext() { }
         public bool AllowMultipleVersions { get; set; }
         public bool IgnoreMissingPackages { get; set; }
@@ -907,7 +905,7 @@ namespace Orc.NuGetExplorer.Management
         public string Name { get; }
         public bool NoCache { get; }
         public bool SupportSideBySide { get; }
-        public System.Collections.Immutable.ImmutableList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
+        public System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> SupportedPlatforms { get; set; }
         public string GetInstallPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) { }
         public NuGet.Packaging.PackagePathResolver GetPathResolver() { }
         public override string ToString() { }
