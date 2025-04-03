@@ -27,7 +27,7 @@ public class ExampleProject : IExtensibleProject
 
     public string Name => "Example";
 
-    public string Framework => ".NETCoreApp,Version=v5.0";
+    public string Framework => ".NETCoreApp,Version=v8.0";
 
     public string ContentPath => _pathResolver.AppRootDirectory;
 
