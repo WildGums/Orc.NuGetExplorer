@@ -17,7 +17,7 @@
     public partial class UpdatePackagesLoaderServiceFacts
     {
         [TestFixture]
-        public class The_SearchForUpdatesAsync_Method
+        public class The_SearchForPackagesUpdatesAsync_Method
         {
             [Test]
             public async Task Returns_EmptyList_When_NoUpdatesAvailable_Async()
@@ -87,7 +87,7 @@
                     });
 
                 // Act
-                var result = await service.SearchForUpdatesAsync();
+                var result = await service.SearchForPackagesUpdatesAsync();
 
                 // Assert
                 Assert.That(result, Is.Not.Null);
@@ -170,13 +170,13 @@
                     });
 
                 // Act
-                var result = await service.SearchForUpdatesAsync();
+                var result = await service.SearchForPackagesUpdatesAsync();
 
                 // Assert
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Count(), Is.EqualTo(1));
-                Assert.That(result.First().GetIdentity().Id, Is.EqualTo("TestPackage"));
-                Assert.That(result.First().GetIdentity().Version.ToString(), Is.EqualTo("2.0.0"));
+                Assert.That(result.First().Identity.Id, Is.EqualTo("TestPackage"));
+                Assert.That(result.First().Identity.Version.ToString(), Is.EqualTo("2.0.0"));
             }
 
             [Test]
@@ -261,7 +261,7 @@
                     });
 
                 // Act
-                var result = await service.SearchForUpdatesAsync();
+                var result = await service.SearchForPackagesUpdatesAsync();
 
                 // Assert
                 Assert.That(result, Is.Not.Null);
