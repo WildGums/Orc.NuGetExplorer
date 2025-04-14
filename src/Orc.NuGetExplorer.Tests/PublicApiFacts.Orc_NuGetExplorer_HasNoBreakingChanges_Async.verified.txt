@@ -88,6 +88,11 @@ namespace Orc.NuGetExplorer
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetHighest() { }
         public System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> GetLowest() { }
     }
+    public class DefaultPackageValidatorProvider : Orc.NuGetExplorer.IPackageValidatorProvider
+    {
+        public DefaultPackageValidatorProvider(Orc.NuGetExplorer.IDefaultNuGetFramework defaultNuGetFramework) { }
+        public virtual System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.IPackageValidator> GetValidators() { }
+    }
     public class DeletemeWatcher : Orc.NuGetExplorer.PackageManagerWatcherBase
     {
         public DeletemeWatcher(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService, Orc.NuGetExplorer.IFileSystemService fileSystemService, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.Management.INuGetPackageManager nuGetPackageManager, Orc.NuGetExplorer.Management.IDefaultExtensibleProjectProvider projectProvider, Catel.Messaging.IMessageMediator messageMediator) { }
@@ -381,6 +386,14 @@ namespace Orc.NuGetExplorer
     public interface IPackageSourceFactory
     {
         Orc.NuGetExplorer.IPackageSource CreatePackageSource(string source, string name, bool isEnabled, bool isOfficial);
+    }
+    public interface IPackageValidator
+    {
+        Catel.Data.IValidationContext Validate(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageSearchMetadata);
+    }
+    public interface IPackageValidatorProvider
+    {
+        System.Collections.Generic.IReadOnlyList<Orc.NuGetExplorer.IPackageValidator> GetValidators();
     }
     public interface IPackagesUpdatesSearcherService
     {
@@ -720,6 +733,13 @@ namespace Orc.NuGetExplorer
         public System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource> PackageSources { get; }
         public override string ToString() { }
         public static NuGet.Configuration.PackageSource op_Explicit(Orc.NuGetExplorer.PackageSourceWrapper wrapper) { }
+    }
+    public class PackageTargetFrameworkValidator : Orc.NuGetExplorer.IPackageValidator
+    {
+        public PackageTargetFrameworkValidator(Orc.NuGetExplorer.IDefaultNuGetFramework defaultNuGetFramework) { }
+        public bool ExcludeFullFramework { get; set; }
+        protected virtual NuGet.Frameworks.NuGetFramework GetHighestNuGetFramework() { }
+        public Catel.Data.IValidationContext Validate(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageSearchMetadata) { }
     }
     public class PropertyChangedExtendedEventArgs<T> : System.ComponentModel.PropertyChangedEventArgs
     {
