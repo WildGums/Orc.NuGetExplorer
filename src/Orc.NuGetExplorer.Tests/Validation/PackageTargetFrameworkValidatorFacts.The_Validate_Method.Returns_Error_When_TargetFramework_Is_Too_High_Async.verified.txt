@@ -1,0 +1,6 @@
+﻿[
+  {
+    ValidationResultType: Error,
+    Message: Package is not compatible with the current target framework (net8.0)
+  }
+]

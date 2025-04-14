@@ -21,6 +21,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
     private readonly IRepositoryService _repositoryService;
     private readonly IExtensibleProjectLocator _extensibleProjectLocator;
     private readonly INuGetPackageManager _nuGetExtensibleProjectManager;
+    private readonly IPackageValidatorProvider _packageValidatorProvider;
 
 #pragma warning disable IDISP006 // Implement IDisposable.
     private readonly IServiceLocator _serviceLocator;
@@ -33,15 +34,17 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
     private readonly HashSet<string> _discardedPackagesSet = new();
 
     public UpdatePackagesLoaderService(IRepositoryService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-        INuGetPackageManager nuGetExtensibleProjectManager)
+        INuGetPackageManager nuGetExtensibleProjectManager, IPackageValidatorProvider packageValidatorProvider)
     {
         ArgumentNullException.ThrowIfNull(repositoryService);
         ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
         ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
+        ArgumentNullException.ThrowIfNull(packageValidatorProvider);
 
         _repositoryService = repositoryService;
         _extensibleProjectLocator = extensibleProjectLocator;
         _nuGetExtensibleProjectManager = nuGetExtensibleProjectManager;
+        _packageValidatorProvider = packageValidatorProvider;
 
         _serviceLocator = this.GetServiceLocator();
 
@@ -69,9 +72,11 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
 
             pageContinuation.GetNext();
 
-            Log.Info("Local packages queryed for further available update searching");
+            Log.Info("Local packages queried for further available update searching");
 
             var updateList = new List<IPackageSearchMetadata>();
+
+            var validators = _packageValidatorProvider.GetValidators();
 
             //getting last metadata
             foreach (var package in installedPackagesMetadatas)
@@ -81,8 +86,20 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                     continue;
                 }
 
-                var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease, token);
+                var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, searchFilter.IncludePrerelease,
+                    (p) =>
+                    {
+                        foreach (var validator in validators)
+                        {
+                            var validationContext = validator.Validate(p);
+                            if (validationContext.HasErrors)
+                            {
+                                return false;
+                            }
+                        }
 
+                        return true;
+                    }, token);
                 if (clonedMetadata is null)
                 {
                     Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
@@ -96,7 +113,6 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                 }
 
                 _discardedPackagesSet.Add(package.Identity.Id);
-
 
                 if (updateList.Count >= pageContinuation.Size)
                 {
@@ -127,6 +143,8 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
 
             var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepo.Source, token);
 
+            var validators = _packageValidatorProvider.GetValidators();
+
             // Getting updates
             foreach (var package in installedPackagesMetadatas)
             {
@@ -134,13 +152,28 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                 // Pre-release versions upgraded to latest stable or pre-release
                 // Stable versions upgraded to latest stable only
                 var isPrereleaseUpdate = allowPrerelease ?? package.Identity.Version.IsPrerelease;
-                var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate, token);
 
+                var clonedMetadata = PackageMetadataProvider is null ? null : await PackageMetadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, isPrereleaseUpdate,
+                    (p) =>
+                    {
+                        foreach (var validator in validators)
+                        {
+                            var validationContext = validator.Validate(p);
+                            if (validationContext.HasErrors)
+                            {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }, token);
                 if (clonedMetadata is null)
                 {
                     Log.Warning($"Couldn't retrieve update metadata for installed {package.Identity}");
                     continue;
                 }
+
+                // TODO: Check target framework
 
                 if (clonedMetadata.Identity.Version > package.Identity.Version)
                 {
@@ -159,10 +192,8 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
 
     public async Task<IEnumerable<IPackageDetails>> SearchForUpdatesAsync(bool? allowPrerelease = null, bool authenticateIfRequired = true, CancellationToken token = default)
     {
-
         return (await SearchForPackagesUpdatesAsync(allowPrerelease, authenticateIfRequired, token))
-            .Select(
-                m => PackageDetailsFactory.Create(PackageOperationType.Update, m, m.Identity, true))
+            .Select(m => PackageDetailsFactory.Create(PackageOperationType.Update, m, m.Identity, true))
             .ToList();
     }
 
@@ -179,10 +210,26 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
             var localRepositorySource = _repositoryService.LocalRepository.Source;
             var installedPackagesMetadatas = await _projectRepositoryLoader.Value.LoadWithDefaultsAsync(localRepositorySource, token);
 
+            var validators = _packageValidatorProvider.GetValidators();
+
             foreach (var package in packagesToExclude)
             {
                 foundUpdates.Remove(package);
-                var metadata = metadataProvider is null ? null : await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, token);
+
+                var metadata = metadataProvider is null ? null : await metadataProvider.GetHighestPackageMetadataAsync(package.Identity.Id, allowPrerelease ?? true, excludeReleaseTags, 
+                    (p) =>
+                    {
+                        foreach (var validator in validators)
+                        {
+                            var validationContext = validator.Validate(p);
+                            if (validationContext.HasErrors)
+                            {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }, token);
                 if (metadata is null)
                 {
                     Log.Debug($"Couldn't retrieve update metadata for installed package {package.Identity.Id}");
@@ -196,6 +243,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                     Log.Debug($"Couldn't match retrieved update metadata with any local package");
                     continue;
                 }
+
                 if (metadata.Identity.Version > localPackage.Identity.Version)
                 {
                     // Add as replacement for alpha
