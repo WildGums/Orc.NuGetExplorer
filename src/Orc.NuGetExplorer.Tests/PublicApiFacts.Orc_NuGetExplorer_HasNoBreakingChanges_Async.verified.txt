@@ -441,21 +441,15 @@ namespace Orc.NuGetExplorer
         string GetDirectory(string relativeDirectoryName);
         string GetFile(string relativeFilePath);
     }
-    [System.Runtime.CompilerServices.RequiredMember]
     public class InstallationContext
     {
-        [System.Obsolete("Constructors of types with required members are not supported in this version of " +
-            "your compiler.", true)]
         public InstallationContext() { }
         public bool AllowMultipleVersions { get; set; }
         public bool IgnoreMissingPackages { get; set; }
-        [System.Runtime.CompilerServices.RequiredMember]
-        public NuGet.Packaging.Core.PackageIdentity Package { get; set; }
+        public required NuGet.Packaging.Core.PackageIdentity Package { get; set; }
         public System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? PackagePredicate { get; set; }
-        [System.Runtime.CompilerServices.RequiredMember]
-        public Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
-        [System.Runtime.CompilerServices.RequiredMember]
-        public System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> Repositories { get; set; }
+        public required Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
+        public required System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> Repositories { get; set; }
     }
     public class InstallerResult
     {
@@ -630,19 +624,14 @@ namespace Orc.NuGetExplorer
         public PackageIdentityParser() { }
         public static NuGet.Packaging.Core.PackageIdentity? Parse(string packageString) { }
     }
-    [System.Runtime.CompilerServices.RequiredMember]
     public class PackageInstallationContext
     {
-        [System.Obsolete("Constructors of types with required members are not supported in this version of " +
-            "your compiler.", true)]
         public PackageInstallationContext() { }
         public bool AllowMultipleVersions { get; set; }
         public bool IgnoreMissingPackages { get; set; }
-        [System.Runtime.CompilerServices.RequiredMember]
-        public NuGet.Packaging.Core.PackageIdentity Package { get; set; }
+        public required NuGet.Packaging.Core.PackageIdentity Package { get; set; }
         public System.Func<NuGet.Packaging.Core.PackageIdentity, bool>? PackagePredicate { get; set; }
-        [System.Runtime.CompilerServices.RequiredMember]
-        public Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
+        public required Orc.NuGetExplorer.IExtensibleProject Project { get; set; }
         public bool ShowErrors { get; set; }
     }
     public abstract class PackageManagerContextWatcherBase : Orc.NuGetExplorer.PackageManagerWatcherBase
