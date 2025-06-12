@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Win32;
 
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
@@ -35,14 +36,11 @@ internal static class CredUi
     internal const int CREDUI_MAX_USERNAME_LENGTH = 256 + 1 + 256;
     internal const int CREDUI_MAX_PASSWORD_LENGTH = 256;
 
-    public static bool IsWindowsVistaOrEarlier
-    {
-        get { return Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version <= new Version(6, 0, 6000); }
-    }
-
 #pragma warning disable IDE1006 // Naming Styles
     public static string DecryptPassword(byte[] encrypted)
     {
+        // Step 1: backwards compatibility, check if stored encrypted
+
         try
         {
             var unprotectedBytes = System.Security.Cryptography.ProtectedData.Unprotect(encrypted, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
@@ -50,15 +48,36 @@ internal static class CredUi
         }
         catch (System.Security.Cryptography.CryptographicException)
         {
-            return string.Empty;
+            // Ignore, expected
         }
+
+        // Step 2: if not encrypted, assume UTF-8 encoding
+
+        var decrypted = Encoding.UTF8.GetString(encrypted);
+
+        if (!string.IsNullOrWhiteSpace(decrypted))
+        {
+            // Replace \0, passwords set via PowerShell show a \0 after each character, so we need to remove them
+            var countedEscapes = decrypted.Count(c => c == '\0');
+            if (countedEscapes == encrypted.Length / 2)
+            {
+                decrypted = decrypted.Replace("\0", string.Empty);
+            }
+        }
+
+        return decrypted;
     }
 
     public static byte[] EncryptPassword(string password)
     {
         var unprotectedBytes = Encoding.UTF8.GetBytes(password);
-        var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-        return protectedBytes;
+
+        // Note: no longer storing as encrypted since this won't allow setting up
+        // values in the Credential Manager to automate installations
+        //var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+        //return protectedBytes;
+
+        return unprotectedBytes;
     }
 
     [DllImport("credui.dll", CharSet = CharSet.Unicode)]
