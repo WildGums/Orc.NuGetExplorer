@@ -86,7 +86,7 @@ internal class CredentialsPrompter
         }
     }
 
-    private bool TryReadStoredCredentials()
+    internal bool TryReadStoredCredentials()
     {
         if (!AllowStoredCredentials)
         {
@@ -106,6 +106,7 @@ internal class CredentialsPrompter
 
         UserName = credentials.UserName;
         Password = credentials.Password;
+
         return true;
 
     }
@@ -221,7 +222,7 @@ internal class CredentialsPrompter
         return configurationKey;
     }
 
-    private SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
+    internal SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
     {
         Log.Debug("Trying to read credentials for key '{0}'", key);
 
@@ -305,7 +306,7 @@ internal class CredentialsPrompter
         return credentials;
     }
 
-    private void WriteCredential(string key, string userName, string secret)
+    internal void WriteCredential(string key, string userName, string secret)
     {
         if (_credentialStoragePolicy == CredentialStoragePolicy.None)
         {
@@ -369,6 +370,8 @@ internal class CredentialsPrompter
         var encryptionKey = GetEncryptionKey(key, userName);
 
         Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
+
+        // Note: secrets in the config should be encrypted
 
         var encryptedPassword = EncryptionHelper.Encrypt(secret, encryptionKey);
         _configurationService.SetRoamingValue(configurationKey, encryptedPassword);

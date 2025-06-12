@@ -43,6 +43,8 @@ internal static class CredUi
 #pragma warning disable IDE1006 // Naming Styles
     public static string DecryptPassword(byte[] encrypted)
     {
+        // Step 1: backwards compatibility, check if stored encrypted
+
         try
         {
             var unprotectedBytes = System.Security.Cryptography.ProtectedData.Unprotect(encrypted, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
@@ -50,15 +52,24 @@ internal static class CredUi
         }
         catch (System.Security.Cryptography.CryptographicException)
         {
-            return string.Empty;
+            // Ignore, expected
         }
+
+        // Step 2: if not encrypted, assume UTF-8 encoding
+
+        return Encoding.UTF8.GetString(encrypted);
     }
 
     public static byte[] EncryptPassword(string password)
     {
         var unprotectedBytes = Encoding.UTF8.GetBytes(password);
-        var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-        return protectedBytes;
+
+        // Note: no longer storing as encrypted since this won't allow setting up
+        // values in the Credential Manager to automate installations
+        //var protectedBytes = System.Security.Cryptography.ProtectedData.Protect(unprotectedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+        //return protectedBytes;
+
+        return unprotectedBytes;
     }
 
     [DllImport("credui.dll", CharSet = CharSet.Unicode)]
