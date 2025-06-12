@@ -1,0 +1,7 @@
+﻿[
+  {
+    ValidationResultType: Error,
+    Message: Package 'MyPackage' depends on API 'MyApp.Api' min version '3.0.0-alpha.9999' but the installed version is '2.0.0-alpha.9999',
+    Tag: API
+  }
+]
