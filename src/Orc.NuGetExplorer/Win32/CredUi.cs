@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Win32;
 
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
@@ -35,11 +36,6 @@ internal static class CredUi
     internal const int CREDUI_MAX_USERNAME_LENGTH = 256 + 1 + 256;
     internal const int CREDUI_MAX_PASSWORD_LENGTH = 256;
 
-    public static bool IsWindowsVistaOrEarlier
-    {
-        get { return Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version <= new Version(6, 0, 6000); }
-    }
-
 #pragma warning disable IDE1006 // Naming Styles
     public static string DecryptPassword(byte[] encrypted)
     {
@@ -57,7 +53,19 @@ internal static class CredUi
 
         // Step 2: if not encrypted, assume UTF-8 encoding
 
-        return Encoding.UTF8.GetString(encrypted);
+        var decrypted = Encoding.UTF8.GetString(encrypted);
+
+        if (!string.IsNullOrWhiteSpace(decrypted))
+        {
+            // Replace \0, passwords set via PowerShell show a \0 after each character, so we need to remove them
+            var countedEscapes = decrypted.Count(c => c == '\0');
+            if (countedEscapes == encrypted.Length / 2)
+            {
+                decrypted = decrypted.Replace("\0", string.Empty);
+            }
+        }
+
+        return decrypted;
     }
 
     public static byte[] EncryptPassword(string password)

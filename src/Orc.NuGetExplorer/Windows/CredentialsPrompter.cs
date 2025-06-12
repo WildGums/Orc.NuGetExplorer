@@ -340,7 +340,7 @@ internal class CredentialsPrompter
             Comment = null,
             TargetAlias = null,
             Type = CredTypes.CRED_TYPE_GENERIC,
-            Persist = IsWindowsVistaOrEarlier ? CredPersistance.Session : CredPersistance.LocalMachine
+            Persist = CredPersistance.LocalMachine
         };
 
         Log.Debug("Persisting credentials as '{0}'", cred.Persist);
