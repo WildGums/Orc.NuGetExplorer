@@ -1,4 +1,5 @@
 ﻿using Catel.IoC;
+using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -91,5 +92,8 @@ public static class ModuleInitializer
 
         // Validation
         serviceLocator.RegisterType<IPackageValidatorProvider, DefaultPackageValidatorProvider>();
+
+        var languageService = serviceLocator.ResolveRequiredType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
     }
 }
