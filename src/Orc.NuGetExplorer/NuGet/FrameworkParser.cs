@@ -46,7 +46,11 @@ public static class FrameworkParser
             // TFM's versions does not match to OS versions, we can just use last to match all actual frameworks,
             // Windows10.0 is not a valid framework, so we are using the absolute minimum version required: 
             // net8.0-windows10.0.17763.0
-            return new NuGetFramework(framework.Framework, framework.Version, "windows", new Version(10, 0, 17763));
+
+            // Note: we try to auto determine the version
+            var osVersion = Environment.OSVersion.Version;
+
+            return new NuGetFramework(framework.Framework, framework.Version, "windows", osVersion);
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))

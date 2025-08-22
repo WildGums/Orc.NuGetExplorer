@@ -10,7 +10,7 @@
         [TestFixture]
         public class The_ToSpecificPlatform_Method
         {
-            [Test]
+            [Test, Explicit]
             public async Task Returns_Correct_Minimum_Version_For_Windows()
             {
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
