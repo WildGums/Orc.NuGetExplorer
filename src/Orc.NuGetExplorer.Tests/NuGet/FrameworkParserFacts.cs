@@ -25,6 +25,22 @@
 
                 await Verifier.Verify(result);
             }
+
+            [Test]
+            public async Task Returns_Correct_Minimum_Version_For_Windows_Auto()
+            {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return;
+                }
+
+                //var nuGetFramework = new NuGet.Frameworks.NuGetFramework("net", new System.Version(8, 0),
+                //    "windows", new System.Version(10, 0));
+                var nuGetFramework = new NuGet.Frameworks.NuGetFramework(".NETCoreApp", new System.Version(8, 0));
+                var result = FrameworkParser.ToSpecificPlatform(nuGetFramework);
+
+                Assert.That(result.PlatformVersion, Is.EqualTo(System.Environment.OSVersion.Version));
+            }
         }
     }
 }
