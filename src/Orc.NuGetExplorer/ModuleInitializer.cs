@@ -1,4 +1,5 @@
-﻿using Catel.IoC;
+using System.Runtime.CompilerServices;
+using Catel.IoC;
 using Catel.Services;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -23,6 +24,7 @@ public static class ModuleInitializer
     /// <summary>
     /// Initializes the module.
     /// </summary>
+    [ModuleInitializer]
     public static void Initialize()
     {
         var serviceLocator = ServiceLocator.Default;
