@@ -1,0 +1,18 @@
+﻿{
+  Framework: .NETCoreApp,
+  Version: 8.0.0.0,
+  Platform: windows,
+  PlatformVersion: 10.0.22631.0,
+  HasPlatform: true,
+  HasProfile: false,
+  Profile: ,
+  DotNetFrameworkName: .NETCoreApp,Version=v8.0,
+  DotNetPlatformName: windows,Version=10.0.22631,
+  IsPCL: false,
+  IsPackageBased: true,
+  AllFrameworkVersions: false,
+  IsUnsupported: false,
+  IsAgnostic: false,
+  IsAny: false,
+  IsSpecificFramework: true
+}

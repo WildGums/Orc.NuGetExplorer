@@ -14,7 +14,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
     private readonly INuGetConfigurationService _managerConfigurationService;
 
-    private readonly Dictionary<Type, IExtensibleProject> _registredProjects = new();
+    private readonly Dictionary<Type, IExtensibleProject> _registeredProjects = new();
 
     private readonly HashSet<IExtensibleProject> _enabledProjects = new();
 
@@ -40,7 +40,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
         ArgumentNullException.ThrowIfNull(extensibleProject);
 
-        var registeredProject = _registredProjects[extensibleProject.GetType()];
+        var registeredProject = _registeredProjects[extensibleProject.GetType()];
 
         if (registeredProject != extensibleProject)
         {
@@ -57,7 +57,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
         ArgumentNullException.ThrowIfNull(extensibleProject);
 
-        var registeredProject = _registredProjects[extensibleProject.GetType()];
+        var registeredProject = _registeredProjects[extensibleProject.GetType()];
 
         if (registeredProject != extensibleProject)
         {
@@ -77,14 +77,14 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
             return _enabledProjects.ToList();
         }
 
-        return _registredProjects.Values.ToList();
+        return _registeredProjects.Values.ToList();
     }
 
     public void Register(IExtensibleProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
 
-        _registredProjects[project.GetType()] = project;
+        _registeredProjects[project.GetType()] = project;
     }
 
     public void Register<T>()
@@ -115,7 +115,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     {
         try
         {
-            foreach (var project in _registredProjects.Values)
+            foreach (var project in _registeredProjects.Values)
             {
                 if (_managerConfigurationService.IsProjectConfigured(project))
                 {

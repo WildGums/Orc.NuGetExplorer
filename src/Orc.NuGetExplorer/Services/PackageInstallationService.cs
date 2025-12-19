@@ -48,7 +48,6 @@ internal class PackageInstallationService : IPackageInstallationService
 #pragma warning restore IDISP006 // Implement IDisposable.
     private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
-
     public PackageInstallationService(IServiceLocator serviceLocator,
         IFrameworkNameProvider frameworkNameProvider,
         ISourceRepositoryProvider sourceRepositoryProvider,
