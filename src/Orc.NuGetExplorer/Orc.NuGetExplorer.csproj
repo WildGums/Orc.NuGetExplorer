@@ -26,7 +26,7 @@
     <PackageReference Include="MethodTimer.Fody" Version="3.2.3" PrivateAssets="all" />
     <PackageReference Include="NuGet.PackageManagement" Version="7.0.1" />
     <PackageReference Include="Obsolete.Fody" Version="5.3.1" PrivateAssets="all" />
-    <PackageReference Include="Orc.FileSystem" Version="5.1.0-alpha0848" />
+    <PackageReference Include="Orc.FileSystem" Version="5.1.0" />
   </ItemGroup>
   
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.Build.nullable.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.Build.nullable.props')" />
