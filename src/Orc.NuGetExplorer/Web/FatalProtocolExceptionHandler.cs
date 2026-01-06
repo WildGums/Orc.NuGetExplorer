@@ -3,11 +3,12 @@
 using System;
 using System.Net;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Core.Types;
 
 public class FatalProtocolExceptionHandler : IHttpExceptionHandler<FatalProtocolException>
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(FatalProtocolExceptionHandler));
 
     private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
 
@@ -42,7 +43,7 @@ public class FatalProtocolExceptionHandler : IHttpExceptionHandler<FatalProtocol
         }
         catch (Exception ex)
         {
-            Log.Debug(ex, "Failed to verify feed '{0}'", source);
+            Logger.LogDebug(ex, "Failed to verify feed '{0}'", source);
         }
 
         return FeedVerificationResult.Invalid;

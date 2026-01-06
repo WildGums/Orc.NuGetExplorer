@@ -15,14 +15,14 @@ public static class StringExtensions
         return value.ToLower();
     }
 
-    public static IList<string> SplitOrEmpty(this string value, char separator = ',')
+    public static IReadOnlyList<string> SplitOrEmpty(this string value, char separator = ',')
     {
         if (!string.IsNullOrWhiteSpace(value))
         {
             return value.Split(separator);
         }
 
-        return new List<string>();
+        return Array.Empty<string>();
     }
 
     public static bool ContainsAny(this string value, string[] str, StringComparison comparisonType)

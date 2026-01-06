@@ -3,10 +3,11 @@
 using System;
 using System.IO;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public static class UriExtensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(UriExtensions));
 
     public static Uri GetRootUri(this Uri uri)
     {
@@ -31,7 +32,7 @@ public static class UriExtensions
             return new Uri(Path.Combine(folderPath, fileName));
         }
 
-        Log.Debug("Cannot parse source uri for local icon");
+        Logger.LogDebug("Cannot parse source uri for local icon");
         return null;
     }
 }

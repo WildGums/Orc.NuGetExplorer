@@ -6,6 +6,7 @@ using Catel;
 using Catel.Data;
 using Catel.Logging;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -20,7 +21,7 @@ internal sealed class ApiPackageRegistry : IApiPackageRegistry
         _languageService = languageService;
     }
 
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ApiPackageRegistry));
 
     private readonly Dictionary<string, SemanticVersion> _apiPackages = new();
 
@@ -38,7 +39,7 @@ internal sealed class ApiPackageRegistry : IApiPackageRegistry
         {
             if (_apiPackages.TryGetValue(packageName, out var storedSemanticVersion))
             {
-                throw Log.ErrorAndCreateException<ArgumentException>("The api package '{0}' is already registered with version '{1}'", packageName, storedSemanticVersion);
+                throw Logger.LogErrorAndCreateException<ArgumentException>("The api package '{0}' is already registered with version '{1}'", packageName, storedSemanticVersion);
             }
 
             _apiPackages.Add(packageName, semanticVersion);
@@ -73,7 +74,7 @@ internal sealed class ApiPackageRegistry : IApiPackageRegistry
                 break;
 
             default:
-                Log.Warning($"{package} package API cannot be validated, because dependencies aren't recognized");
+                Logger.LogWarning($"{package} package API cannot be validated, because dependencies aren't recognized");
                 return;
         }
 

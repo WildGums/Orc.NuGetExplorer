@@ -5,6 +5,6 @@ using NuGet.Frameworks;
 
 public interface IDefaultNuGetFramework
 {
-    IEnumerable<NuGetFramework> GetHighest();
-    IEnumerable<NuGetFramework> GetLowest();
+    IReadOnlyList<NuGetFramework> GetHighest();
+    IReadOnlyList<NuGetFramework> GetLowest();
 }

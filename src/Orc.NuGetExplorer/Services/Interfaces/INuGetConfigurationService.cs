@@ -6,14 +6,14 @@ public interface INuGetConfigurationService
 {
     string GetDestinationFolder();
     void SetDestinationFolder(string value);
-    IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
+    IReadOnlyList<IPackageSource> LoadPackageSources(bool onlyEnabled = false);
 
     bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true);
 
     void DisablePackageSource(string name, string source);
-    void SavePackageSources(IEnumerable<IPackageSource> packageSources);
+    void SavePackageSources(IReadOnlyList<IPackageSource> packageSources);
 
-    void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects);
+    void SaveProjects(IReadOnlyList<IExtensibleProject> extensibleProjects);
 
     void SetPackageQuerySize(int size);
     int GetPackageQuerySize();

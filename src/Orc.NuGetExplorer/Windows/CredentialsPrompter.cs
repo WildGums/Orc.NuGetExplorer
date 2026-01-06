@@ -6,13 +6,14 @@ using System.Text;
 using Catel;
 using Catel.Configuration;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGetExplorer.Crypto;
 using Orc.NuGetExplorer.Win32;
 using static Orc.NuGetExplorer.Win32.CredUi;
 
 internal class CredentialsPrompter
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(CredentialsPrompter));
 
     private readonly IConfigurationService _configurationService;
     private readonly CredentialStoragePolicy _credentialStoragePolicy;
@@ -61,7 +62,7 @@ internal class CredentialsPrompter
 
         if (!IsAuthenticationRequired)
         {
-            Log.Debug("No authentication is required, no need to prompt for credentials");
+            Logger.LogDebug("No authentication is required, no need to prompt for credentials");
             return false;
         }
 
@@ -90,11 +91,11 @@ internal class CredentialsPrompter
     {
         if (!AllowStoredCredentials)
         {
-            Log.Debug("Stored credentials are not allowed on retry");
+            Logger.LogDebug("Stored credentials are not allowed on retry");
             return false;
         }
 
-        Log.Debug("Stored credentials are allowed");
+        Logger.LogDebug("Stored credentials are allowed");
 
         var credentials = ReadCredential(Target, _credentialStoragePolicy == CredentialStoragePolicy.WindowsVaultConfigurationFallback);
         if (credentials is null)
@@ -102,7 +103,7 @@ internal class CredentialsPrompter
             return false;
         }
 
-        Log.Debug("Successfully read stored credentials: '{0}'", credentials);
+        Logger.LogDebug("Successfully read stored credentials: '{0}'", credentials);
 
         UserName = credentials.UserName;
         Password = credentials.Password;
@@ -130,7 +131,7 @@ internal class CredentialsPrompter
                 inBuffer = Marshal.AllocCoTaskMem((int)inBufferSize);
                 if (!CredPackAuthenticationBuffer(0, UserName, Password, inBuffer, ref inBufferSize))
                 {
-                    throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
+                    throw Logger.LogErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
                         "Failed to create the authentication buffer before prompting");
                 }
             }
@@ -138,7 +139,7 @@ internal class CredentialsPrompter
 
         uint package = 0;
 
-        Log.Debug("Prompting user for credentials");
+        Logger.LogDebug("Prompting user for credentials");
 
         var result = CredUIPromptForWindowsCredentials(ref info, 0, ref package, inBuffer, inBufferSize,
             out outBuffer, out var outBufferSize, ref _isSaveChecked, flags);
@@ -150,11 +151,11 @@ internal class CredentialsPrompter
                 return true;
 
             case CredUiReturnCodes.ERROR_CANCELLED:
-                Log.Debug("User canceled the credentials prompt");
+                Logger.LogDebug("User canceled the credentials prompt");
                 return false;
 
             default:
-                throw Log.ErrorAndCreateException(x => new CredentialException((int)result),
+                throw Logger.LogErrorAndCreateException(x => new CredentialException((int)result),
                     "Failed to prompt for credentials, error code '{0}'", result);
         }
     }
@@ -168,14 +169,14 @@ internal class CredentialsPrompter
         uint domainSize = 0;
         if (!CredUnPackAuthenticationBuffer(0, outBuffer, outBufferSize, userName, ref userNameSize, null, ref domainSize, password, ref passwordSize))
         {
-            throw Log.ErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
+            throw Logger.LogErrorAndCreateException(x => new CredentialException(Marshal.GetLastWin32Error()),
                 "Failed to create the authentication buffer after prompting");
         }
 
         UserName = userName.ToString();
         Password = password.ToString();
 
-        Log.Debug("User entered credentials with username '{0}'", UserName);
+        Logger.LogDebug("User entered credentials with username '{0}'", UserName);
 
         if (!ShowSaveCheckBox)
         {
@@ -224,7 +225,7 @@ internal class CredentialsPrompter
 
     internal SimpleCredentials? ReadCredential(string key, bool allowConfigurationFallback)
     {
-        Log.Debug("Trying to read credentials for key '{0}'", key);
+        Logger.LogDebug("Trying to read credentials for key '{0}'", key);
 
         // Immediately return if saved credentials disabled by policy
         if (_credentialStoragePolicy == CredentialStoragePolicy.None)
@@ -244,18 +245,18 @@ internal class CredentialsPrompter
         {
             if (lastError == (int)CredUIReturnCodes.ERROR_NOT_FOUND)
             {
-                Log.Debug("Failed to read credentials, credentials are not found");
+                Logger.LogDebug("Failed to read credentials, credentials are not found");
                 return null;
             }
 
-            throw Log.ErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
+            throw Logger.LogErrorAndCreateException(x => new CredentialException(lastError), "Failed to read credentials, error code is '{0}'", lastError);
         }
 
         using (var criticalCredentialHandle = new CriticalCredentialHandle(nCredPtr))
         {
             var cred = criticalCredentialHandle.GetCredential();
 
-            Log.Debug("Retrieved credentials: {0}", cred);
+            Logger.LogDebug("Retrieved credentials: {0}", cred);
 
             var credential = new SimpleCredentials(cred.UserName, cred.CredentialBlob);
 
@@ -271,7 +272,7 @@ internal class CredentialsPrompter
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Failed to read credentials from alternative configuration");
+                        Logger.LogError(ex, "Failed to read credentials from alternative configuration");
                     }
                 }
 
@@ -293,7 +294,7 @@ internal class CredentialsPrompter
         var configurationKey = GetPasswordConfigurationKey(key, userName);
         var encryptionKey = GetEncryptionKey(key, userName);
 
-        Log.Debug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
+        Logger.LogDebug("Failed to read credentials from vault, probably a company policy. Falling back to reading configuration key '{0}'", configurationKey);
 
         var encryptedPassword = _configurationService.GetRoamingValue(configurationKey, string.Empty);
         var password = encryptedPassword;
@@ -310,13 +311,13 @@ internal class CredentialsPrompter
     {
         if (_credentialStoragePolicy == CredentialStoragePolicy.None)
         {
-            Log.Debug("Writing credentials disabled according to used storage policy");
+            Logger.LogDebug("Writing credentials disabled according to used storage policy");
             return;
         }
 
         if (_credentialStoragePolicy == CredentialStoragePolicy.Configuration)
         {
-            Log.Debug("Force writing credentials to configuration");
+            Logger.LogDebug("Force writing credentials to configuration");
             WriteCredentialToConfiguration(key, userName, secret);
             return;
         }
@@ -324,10 +325,10 @@ internal class CredentialsPrompter
         var byteArray = Encoding.Unicode.GetBytes(secret);
         if (byteArray.Length > 512)
         {
-            throw Log.ErrorAndCreateException(x => new ArgumentOutOfRangeException(nameof(secret), x), "The secret message has exceeded 512 bytes.");
+            throw Logger.LogErrorAndCreateException(x => new ArgumentOutOfRangeException(nameof(secret), x), "The secret message has exceeded 512 bytes.");
         }
 
-        Log.Debug("Writing credentials with username '{0}' for key '{1}'", userName, key);
+        Logger.LogDebug("Writing credentials with username '{0}' for key '{1}'", userName, key);
 
         var cred = new Credential
         {
@@ -343,14 +344,14 @@ internal class CredentialsPrompter
             Persist = CredPersistance.LocalMachine
         };
 
-        Log.Debug("Persisting credentials as '{0}'", cred.Persist);
+        Logger.LogDebug("Persisting credentials as '{0}'", cred.Persist);
 
         var ncred = NativeCredential.GetNativeCredential(cred);
         var written = CredWrite(ref ncred, 0);
         var lastError = Marshal.GetLastWin32Error();
         if (!written)
         {
-            throw Log.ErrorAndCreateException(x => new CredentialException(lastError, x), "CredWrite failed with the error code '{0}'", lastError);
+            throw Logger.LogErrorAndCreateException(x => new CredentialException(lastError, x), "CredWrite failed with the error code '{0}'", lastError);
         }
 
         // Note: immediately read it for ORCOMP-229
@@ -360,7 +361,7 @@ internal class CredentialsPrompter
             WriteCredentialToConfiguration(key, cred.UserName, secret);
         }
 
-        Log.Debug("Successfully written credentials for key '{0}'", key);
+        Logger.LogDebug("Successfully written credentials for key '{0}'", key);
     }
 
     private void WriteCredentialToConfiguration(string key, string userName, string secret)
@@ -369,7 +370,7 @@ internal class CredentialsPrompter
         var configurationKey = GetPasswordConfigurationKey(key, userName);
         var encryptionKey = GetEncryptionKey(key, userName);
 
-        Log.Debug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
+        Logger.LogDebug("Failed to write credentials to vault, probably a company policy. Falling back to writing configuration key '{0}'", configurationKey);
 
         // Note: secrets in the config should be encrypted
 
@@ -382,18 +383,18 @@ internal class CredentialsPrompter
     {
         Argument.IsNotNullOrWhitespace(() => key);
 
-        Log.Debug("Deleting credentials with key '{0}'", key);
+        Logger.LogDebug("Deleting credentials with key '{0}'", key);
 
         if (CredDelete(key, CredTypes.CRED_TYPE_GENERIC, 0))
         {
-            Log.Debug("Successfully deleted credentials");
+            Logger.LogDebug("Successfully deleted credentials");
         }
         else
         {
             var error = Marshal.GetLastWin32Error();
             if (error != (int)CredUiReturnCodes.ERROR_NOT_FOUND)
             {
-                throw Log.ErrorAndCreateException(x => new CredentialException(error),
+                throw Logger.LogErrorAndCreateException(x => new CredentialException(error),
                     "Failed to delete credentials, error code '{0}'", error);
             }
         }

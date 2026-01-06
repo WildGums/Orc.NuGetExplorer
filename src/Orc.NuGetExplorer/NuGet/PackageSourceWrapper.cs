@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 
 public class PackageSourceWrapper
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageSourceWrapper));
 
     public static explicit operator PackageSource(PackageSourceWrapper wrapper)
     {
@@ -16,12 +17,12 @@ public class PackageSourceWrapper
 
         if (wrapper.IsMultipleSource)
         {
-            throw Log.ErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
+            throw Logger.LogErrorAndCreateException<InvalidCastException>("Invalid cast from 'PackageSourceWrapper' to 'PackageSource' since wrapper represents multiple PackageSource(s)");
         }
 
         if (!wrapper.PackageSources.Any())
         {
-            throw Log.ErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
+            throw Logger.LogErrorAndCreateException<InvalidCastException>("Failed to cast empty PackageSource with operator");
         }
 
         return wrapper.PackageSources[0];

@@ -6,7 +6,7 @@ public interface IRepositoryService
 {
     IRepository LocalRepository { get; }
 
-    IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType);
-    IEnumerable<IRepository> GetSourceRepositories();
-    IEnumerable<IRepository> GetUpdateRepositories();
+    IReadOnlyList<IRepository> GetRepositories(PackageOperationType packageOperationType);
+    IReadOnlyList<IRepository> GetSourceRepositories();
+    IReadOnlyList<IRepository> GetUpdateRepositories();
 }

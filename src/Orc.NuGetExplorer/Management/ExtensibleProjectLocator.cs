@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExtensibleProjectLocator));
 
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
 
     private readonly INuGetConfigurationService _managerConfigurationService;
 
@@ -18,12 +20,9 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
     private readonly HashSet<IExtensibleProject> _enabledProjects = new();
 
-    public ExtensibleProjectLocator(ITypeFactory typeFactory, INuGetConfigurationService configurationService)
+    public ExtensibleProjectLocator(IServiceProvider serviceProvider, INuGetConfigurationService configurationService)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(configurationService);
-
-        _typeFactory = typeFactory;
+        _serviceProvider = serviceProvider;
         _managerConfigurationService = configurationService;
     }
 
@@ -44,12 +43,12 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
         if (registeredProject != extensibleProject)
         {
-            throw Log.ErrorAndCreateException<ProjectStateException>("ExtensibleProject must be registered before use");
+            throw Logger.LogErrorAndCreateException<ProjectStateException>("ExtensibleProject must be registered before use");
         }
 
         if (!_enabledProjects.Add(registeredProject))
         {
-            Log.Info($"Project {extensibleProject} already enabled");
+            Logger.LogInformation($"Project {extensibleProject} already enabled");
         }
     }
 
@@ -61,23 +60,23 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
         if (registeredProject != extensibleProject)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("ExtensibleProject must be registered before use");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("ExtensibleProject must be registered before use");
         }
 
         if (!_enabledProjects.Remove(registeredProject))
         {
-            Log.Info($"Attempt to disable Project {extensibleProject}, which is not enabled");
+            Logger.LogInformation($"Attempt to disable Project {extensibleProject}, which is not enabled");
         }
     }
 
-    public IEnumerable<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
+    public IReadOnlyList<IExtensibleProject> GetAllExtensibleProjects(bool onlyEnabled = true)
     {
         if (onlyEnabled)
         {
-            return _enabledProjects.ToList();
+            return _enabledProjects.ToArray();
         }
 
-        return _registeredProjects.Values.ToList();
+        return _registeredProjects.Values.ToArray();
     }
 
     public void Register(IExtensibleProject project)
@@ -90,7 +89,9 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
     public void Register<T>()
         where T : IExtensibleProject
     {
-        Register(_typeFactory.CreateRequiredInstance<T>());
+        var project = ActivatorUtilities.CreateInstance<T>(_serviceProvider);
+
+        Register(project);
     }
 
     public void Register<T>(params object[] parameters)
@@ -102,13 +103,15 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
         }
         else
         {
-            Register(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<T>(parameters));
+            var project = ActivatorUtilities.CreateInstance<T>(_serviceProvider, parameters);
+
+            Register(project);
         }
     }
 
     public void PersistChanges()
     {
-        _managerConfigurationService.SaveProjects(_enabledProjects);
+        _managerConfigurationService.SaveProjects(_enabledProjects.ToArray());
     }
 
     public void RestoreStateFromConfig()
@@ -125,11 +128,11 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
         }
         catch (ProjectStateException ex)
         {
-            Log.Error(ex, "Mismatch between configuration and registered projects");
+            Logger.LogError(ex, "Mismatch between configuration and registered projects");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error when restoring project extensions state from configuration");
+            Logger.LogError(ex, "Error when restoring project extensions state from configuration");
         }
         finally
         {

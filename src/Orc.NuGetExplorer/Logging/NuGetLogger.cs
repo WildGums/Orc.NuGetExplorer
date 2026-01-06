@@ -7,12 +7,12 @@ using NuGet.Common;
 
 public class NuGetLogger : ILogger
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(NuGetLogger));
 
     private readonly bool _verbose;
-    private readonly INuGetLogListeningSevice _logListeningService;
+    private readonly INuGetLogListeningService _logListeningService;
 
-    public NuGetLogger(bool verbose, INuGetLogListeningSevice logListeningService)
+    public NuGetLogger(bool verbose, INuGetLogListeningService logListeningService)
     {
         ArgumentNullException.ThrowIfNull(logListeningService);
 
@@ -20,7 +20,7 @@ public class NuGetLogger : ILogger
         _verbose = verbose;
     }
 
-    public NuGetLogger(INuGetLogListeningSevice logListeningService)
+    public NuGetLogger(INuGetLogListeningService logListeningService)
         : this(true, logListeningService)
     {
 
@@ -59,20 +59,20 @@ public class NuGetLogger : ILogger
 
     void ILogger.Log(ILogMessage message)
     {
-        Log.Debug($"Send {message.Level} message to log listeners");
+        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, $"Send {message.Level} message to log listeners");
         ((ILogger)this).Log(message.Level, message.Message);
     }
 
     public async Task LogAsync(ILogMessage message)
     {
-        Log.Debug($"Send {message.Level} message to log listeners");
+        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, $"Send {message.Level} message to log listeners");
         await LogAsync(message.Level, message.Message);
     }
 
     public async Task LogAsync(LogLevel level, string data)
     {
-        var logginTask = Task.Run(() => ((ILogger)this).Log(level, data));
-        await logginTask;
+        var loggingTask = Task.Run(() => ((ILogger)this).Log(level, data));
+        await loggingTask;
     }
 
     public void LogDebug(string data)

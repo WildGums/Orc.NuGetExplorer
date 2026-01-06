@@ -2,12 +2,13 @@
 
 using System.Threading.Tasks;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Core.Types;
 using NuGetExplorer.Enums;
 
 public class NuGetPackageCombinator
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetPackageCombinator));
 
     /// <summary>
     /// Combines NuGet Package with other metadata
@@ -25,7 +26,7 @@ public class NuGetPackageCombinator
 
         if (tokenPage == MetadataOrigin.Installed)
         {
-            //then original package retrived from real source and should be merged with
+            //then original package retrieved from real source and should be merged with
             //installed local metadata
 
             await package.MergeMetadataAsync(metadata, tokenPage);
@@ -36,7 +37,7 @@ public class NuGetPackageCombinator
             }
             else
             {
-                Log.Warning("Package merged metadata from installed package doesn't have package version");
+                Logger.LogWarning("Package merged metadata from installed package doesn't have package version");
             }
         }
 
@@ -51,7 +52,7 @@ public class NuGetPackageCombinator
         {
             //because of version comparer fallen back to StringComparison of non-numeric labels.
 
-            Log.Debug($"Two packages was compared by release labels with result: {comparison}");
+            Logger.LogDebug($"Two packages was compared by release labels with result: {comparison}");
 
             return comparison < 0 ? PackageStatus.UpdateAvailable : PackageStatus.LastVersionInstalled;
         }

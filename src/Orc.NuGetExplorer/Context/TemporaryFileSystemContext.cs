@@ -5,10 +5,11 @@ using System.IO;
 using Catel.Logging;
 using Catel.Reflection;
 using FileSystem;
+using Microsoft.Extensions.Logging;
 
 internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(TemporaryFileSystemContext));
 
     private readonly IDirectoryService _directoryService;
     private readonly string _rootDirectory;
@@ -43,15 +44,15 @@ internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
 #pragma warning disable IDISP023 // Don't use reference types in finalizer context.
         try
         {
-            Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+            Logger.LogInformation("Deleting temporary files from '{0}'", _rootDirectory);
 
             _directoryService.Delete(_rootDirectory, true);
 
-            Log.Info("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
+            Logger.LogInformation("Temporary files has been successfully deleted from '{0}'", _rootDirectory);
         }
         catch (Exception)
         {
-            Log.Warning("Unable to cleanup temporary files");
+            Logger.LogWarning("Unable to cleanup temporary files");
         }
 #pragma warning restore IDISP023 // Don't use reference types in finalizer context.
     }

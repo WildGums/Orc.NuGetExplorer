@@ -1,19 +1,18 @@
 ﻿namespace Orc.NuGetExplorer;
 
+using System.Collections.Generic;
 using System.ComponentModel;
 using Catel;
 
 public class PackageOperationBatchEventArgs : CancelEventArgs
 {
-    internal PackageOperationBatchEventArgs(PackageOperationType operationType, params IPackageDetails[] packages)
+    internal PackageOperationBatchEventArgs(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
-        Argument.IsNotNullOrEmptyArray(nameof(packages), packages);
-
         Packages = packages;
         OperationType = operationType;
     }
 
-    public IPackageDetails[] Packages { get; private set; }
+    public IReadOnlyList<IPackageDetails> Packages { get; private set; }
 
     public PackageOperationType OperationType { get; private set; }
 

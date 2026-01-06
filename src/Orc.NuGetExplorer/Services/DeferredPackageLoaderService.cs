@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGetExplorer.Enums;
@@ -15,9 +17,10 @@ using NuGetExplorer.Packaging;
 using NuGetExplorer.Pagination;
 using NuGetExplorer.Providers;
 
-internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
+internal class DeferredPackageLoaderService : IDefferedPackageLoaderService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DeferredPackageLoaderService));
+
     private readonly IList<DeferToken> _taskTokenList = new List<DeferToken>();
 
     private CancellationToken _aliveCancellationToken;
@@ -28,21 +31,21 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
     private readonly INuGetPackageManager _projectManager;
     private readonly IModelProvider<ExplorerSettingsContainer> _settingsProvider;
     private readonly IDefaultExtensibleProjectProvider _projectProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     private IPackageMetadataProvider? _packageMetadataProvider;
 
-    public DefferedPackageLoaderService(IRepositoryContextService repositoryService, INuGetPackageManager nuGetExtensibleProjectManager,
-        IModelProvider<ExplorerSettingsContainer> settingsProvider, IDefaultExtensibleProjectProvider projectProvider)
+    public DeferredPackageLoaderService(IRepositoryContextService repositoryService, 
+        INuGetPackageManager nuGetExtensibleProjectManager,
+        IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+        IDefaultExtensibleProjectProvider projectProvider,
+        IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
-        ArgumentNullException.ThrowIfNull(settingsProvider);
-        ArgumentNullException.ThrowIfNull(projectProvider);
-
         _repositoryService = repositoryService;
         _projectManager = nuGetExtensibleProjectManager;
         _settingsProvider = settingsProvider;
         _projectProvider = projectProvider;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task StartLoadingAsync()
@@ -66,7 +69,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
 
             if (_packageMetadataProvider is null)
             {
-                Log.Info("Cannot acquire metadata provider for background loading tasks");
+                Logger.LogInformation("Cannot acquire metadata provider for background loading tasks");
                 return;
             }
 
@@ -78,7 +81,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
                 var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 #pragma warning restore IDISP013 // Await in using.
 
-                Log.Info($"Start updating {_taskTokenList.Count} items in background");
+                Logger.LogInformation($"Start updating {_taskTokenList.Count} items in background");
 
                 while (taskList.Any())
                 {
@@ -95,7 +98,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Package loading background task failed, cannot get result");
+                        Logger.LogError(ex, "Package loading background task failed, cannot get result");
                     }
                     finally
                     {
@@ -106,7 +109,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
                     {
                         if (executedToken is null)
                         {
-                            throw Log.ErrorAndCreateException<InvalidOperationException>($"Unexpected null value: \"{nameof(executedToken)}\"");
+                            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Unexpected null value: \"{nameof(executedToken)}\"");
                         }
 
                         updateStateValue = await NuGetPackageCombinator.CombineAsync(executedToken.Package, executedToken.LoadType, result);
@@ -123,7 +126,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Background loading task was failed");
+            Logger.LogError(ex, "Background loading task was failed");
         }
         finally
         {
@@ -146,8 +149,6 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
 
     public IPackageMetadataProvider? InitializeMetadataProvider()
     {
-
-        var typeFactory = TypeFactory.Default;
         //todo provide more automatic way
         //create package metadata provider from context
         using (var context = _repositoryService.AcquireContext())
@@ -162,9 +163,9 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
                 _projectProvider.GetDefaultProject()
             });
 
-            var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? Enumerable.Empty<SourceRepository>();
+            var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? Array.Empty<SourceRepository>();
 
-            return typeFactory.CreateInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
+            return ActivatorUtilities.CreateInstance<PackageMetadataProvider>(_serviceProvider, repos, localRepos);
         }
     }
 
@@ -193,7 +194,7 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
 
         if (_packageMetadataProvider is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
         }
 
         var metadata = await _packageMetadataProvider.GetLocalPackageMetadataAsync(new PackageIdentity(packageId, installedVersion), true, cancellationToken);
@@ -207,13 +208,13 @@ internal class DefferedPackageLoaderService : IDefferedPackageLoaderService
     {
         if (_settingsProvider is null || _settingsProvider.Model is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
         }
 
         var prerelease = _settingsProvider.Model.IsPreReleaseIncluded;
         if (_packageMetadataProvider is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Initialization must be called first");
         }
 
         var searchMetadata = await _packageMetadataProvider.GetPackageMetadataAsync(token.Package.Identity, prerelease, cancellationToken);

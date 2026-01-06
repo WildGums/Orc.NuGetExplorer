@@ -6,24 +6,21 @@ using System.Threading.Tasks;
 using System.Timers;
 using Catel;
 using Catel.Logging;
-using NuGet.Common;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using Orc.FileSystem;
 
 public class DownloadingProgressTrackerService : IDownloadingProgressTrackerService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-    private readonly ILogger _nugetLogger;
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DownloadingProgressTrackerService));
+
+    private readonly NuGet.Common.ILogger _nugetLogger;
     private readonly IDirectoryService _directoryService;
     private readonly IFileService _fileService;
 
-    public DownloadingProgressTrackerService(ILogger nugetLogger, IDirectoryService directoryService, IFileService fileService)
+    public DownloadingProgressTrackerService(NuGet.Common.ILogger nugetLogger, IDirectoryService directoryService, IFileService fileService)
     {
-        ArgumentNullException.ThrowIfNull(nugetLogger);
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(fileService);
-
         _nugetLogger = nugetLogger;
         _directoryService = directoryService;
         _fileService = fileService;
@@ -42,7 +39,7 @@ public class DownloadingProgressTrackerService : IDownloadingProgressTrackerServ
 
         if (string.IsNullOrEmpty(downloadDirectoryPath))
         {
-            throw Log.ErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
+            throw Logger.LogErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
         }
 
         // the download method creates directory itself, but we need to create it eager to start watching
@@ -51,7 +48,7 @@ public class DownloadingProgressTrackerService : IDownloadingProgressTrackerServ
         var directoryName = Path.GetDirectoryName(downloadPath);
         if (string.IsNullOrEmpty(directoryName))
         {
-            throw Log.ErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
+            throw Logger.LogErrorAndCreateException<InvalidPathException>("Directory path cannot be empty");
         }
 
         watcher.Path = directoryName;

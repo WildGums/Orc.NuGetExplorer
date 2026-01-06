@@ -49,7 +49,7 @@ public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
     }
 
     /// <summary>
-    /// Create and retrive all unique enabled package sources
+    /// Create and retrieve all unique enabled package sources
     /// </summary>
     /// <returns></returns>
     public IReadOnlyList<PackageSource> GetAllPackageSources()

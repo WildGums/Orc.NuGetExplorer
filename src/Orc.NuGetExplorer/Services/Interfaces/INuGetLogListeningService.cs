@@ -2,7 +2,7 @@
 
 using System;
 
-public interface INuGetLogListeningSevice
+public interface INuGetLogListeningService
 {
     void SendInfo(string message);
     void SendWarning(string message);

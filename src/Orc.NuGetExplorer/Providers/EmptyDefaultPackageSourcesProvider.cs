@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,8 +13,8 @@ public class EmptyDefaultPackageSourcesProvider : IDefaultPackageSourcesProvider
 
     public string DefaultSource { get; set; }
 
-    public IEnumerable<IPackageSource> GetDefaultPackages()
+    public IReadOnlyList<IPackageSource> GetDefaultPackages()
     {
-        return Enumerable.Empty<IPackageSource>();
+        return Array.Empty<IPackageSource>();
     }
 }

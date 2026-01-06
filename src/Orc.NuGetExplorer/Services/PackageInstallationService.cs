@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Logging;
 using MethodTimer;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -30,11 +31,11 @@ using Resolver = Orc.NuGetExplorer.Resolver;
 
 internal class PackageInstallationService : IPackageInstallationService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(PackageInstallationService));
 
     private readonly VersionFolderPathResolver _installerPathResolver;
 
-    private readonly ILogger _nugetLogger;
+    private readonly NuGet.Common.ILogger _nugetLogger;
     private readonly IFrameworkNameProvider _frameworkNameProvider;
     private readonly ISourceRepositoryProvider _sourceRepositoryProvider;
     private readonly INuGetProjectConfigurationProvider _nuGetProjectConfigurationProvider;
@@ -48,7 +49,7 @@ internal class PackageInstallationService : IPackageInstallationService
 #pragma warning restore IDISP006 // Implement IDisposable.
     private readonly IDownloadingProgressTrackerService _downloadingProgressTrackerService;
 
-    public PackageInstallationService(IServiceLocator serviceLocator,
+    public PackageInstallationService(IServiceProvider serviceProvider,
         IFrameworkNameProvider frameworkNameProvider,
         ISourceRepositoryProvider sourceRepositoryProvider,
         INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
@@ -58,20 +59,8 @@ internal class PackageInstallationService : IPackageInstallationService
         IApiPackageRegistry apiPackageRegistry,
         IFileSystemService fileSystemService,
         IDownloadingProgressTrackerService downloadingProgressTrackerService,
-        ILogger logger)
+        NuGet.Common.ILogger logger)
     {
-        ArgumentNullException.ThrowIfNull(serviceLocator);
-        ArgumentNullException.ThrowIfNull(frameworkNameProvider);
-        ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
-        ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
-        ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(fileService);
-        ArgumentNullException.ThrowIfNull(apiPackageRegistry);
-        ArgumentNullException.ThrowIfNull(fileSystemService);
-        ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
-        ArgumentNullException.ThrowIfNull(logger);
-
         _frameworkNameProvider = frameworkNameProvider;
         _sourceRepositoryProvider = sourceRepositoryProvider;
         _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -89,23 +78,6 @@ internal class PackageInstallationService : IPackageInstallationService
     }
 
     public VersionFolderPathResolver InstallerPathResolver => _installerPathResolver;
-
-    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
-    public Task<InstallerResult> InstallAsync(PackageIdentity package, IExtensibleProject project, IReadOnlyList<SourceRepository> repositories, bool ignoreMissingPackages = false, Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(package);
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(repositories);
-        var context = new InstallationContext
-        {
-            Package = package,
-            Project = project,
-            Repositories = repositories,
-            IgnoreMissingPackages = ignoreMissingPackages,
-            PackagePredicate = packagePredicate,
-        };
-        return InstallAsync(context, cancellationToken);
-    }
 
     public async Task UninstallAsync(PackageIdentity package, IExtensibleProject project, IEnumerable<PackageReference> installedPackageReferences,
         Func<PackageIdentity, bool>? packagePredicate = null, CancellationToken cancellationToken = default)
@@ -132,19 +104,19 @@ internal class PackageInstallationService : IPackageInstallationService
         }
 
         using (var sourceCacheContext = new SourceCacheContext
-               {
-                   NoCache = false,
-                   DirectDownload = false,
-               })
         {
-            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            NoCache = false,
+            DirectDownload = false,
+        })
+        {
+            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                 .GetResourceAsync<DependencyInfoResource>(cancellationToken);
 
             var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
-            var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection, 
+            var resolverContext = await ResolveDependenciesAsync(package, targetFramework, PackageIdentity.Comparer, dependencyInfoResourceCollection,
                 sourceCacheContext, project, true, packagePredicate, cancellationToken);
 
             var packageReferences = installedPackageReferences.ToList();
@@ -191,12 +163,12 @@ internal class PackageInstallationService : IPackageInstallationService
         }
         catch (IOException ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
             _nugetLogger.LogError("Package files cannot be complete deleted by unexpected error (may be directory in use by another process?");
         }
         finally
         {
-            LogHelper.LogUnclearedPaths(failedEntries, Log);
+            LogHelper.LogUnclearedPaths(failedEntries, Logger);
         }
     }
 
@@ -239,7 +211,7 @@ internal class PackageInstallationService : IPackageInstallationService
 
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+                Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
 #pragma warning disable IDISP013 // Await in using.
                 var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
@@ -284,22 +256,22 @@ internal class PackageInstallationService : IPackageInstallationService
 
                 if (!canBeInstalled)
                 {
-                    throw Log.ErrorAndCreateException<IncompatiblePackageException>($"Package {package} incompatible with project target platform {targetFramework}");
+                    throw Logger.LogErrorAndCreateException<IncompatiblePackageException>($"Package {package} incompatible with project target platform {targetFramework}");
                 }
 
                 // Step 5. Build install list using NuGet Resolver and select available resources.
-                List<SourcePackageDependencyInfo> availablePackagesToInstall;
+                var availablePackagesToInstall = new List<SourcePackageDependencyInfo>();
                 if (allowMultipleVersions)
                 {
-                    availablePackagesToInstall = resolverContext.AvailablePackages.ToList();
+                    availablePackagesToInstall.AddRange(resolverContext.AvailablePackages);
                 }
                 else
                 {
                     // Track packages which already installed and make sure only one version of package exists
                     var resolver = new Resolver.PackageResolver();
-                    availablePackagesToInstall = await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
+                    availablePackagesToInstall.AddRange(await resolver.ResolveWithVersionOverrideAsync(resolverContext, project, DependencyBehavior.Highest,
                         (project, conflict) => _fileSystemService.CreateDeleteme(conflict.PackageIdentity.Id, project.GetInstallPath(conflict.PackageIdentity)),
-                        cancellationToken);
+                        cancellationToken));
                 }
 
                 // Step 6. Download everything except main package and extract all
@@ -317,11 +289,11 @@ internal class PackageInstallationService : IPackageInstallationService
         }
         catch (NuGetResolverInputException ex)
         {
-            throw Log.ErrorAndCreateException<IncompatiblePackageException>($"Package {package} or some of it dependencies are missed for current target framework", ex);
+            throw Logger.LogErrorAndCreateException<IncompatiblePackageException>($"Package {package} or some of it dependencies are missed for current target framework", ex);
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
             throw;
         }
     }
@@ -346,7 +318,7 @@ internal class PackageInstallationService : IPackageInstallationService
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, sourceCacheContext, _nugetLogger, default);
             if (rawPackageMetadata is null)
@@ -455,19 +427,19 @@ internal class PackageInstallationService : IPackageInstallationService
                             // Show only for top package, not much effort to see this message multiple times
                             if (nextPackage == dependencyInfo)
                             {
-                                await _nugetLogger.LogAsync(LogLevel.Information, $"Package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                                await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Information, $"Package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
                             }
                         }
                     }
                     else
                     {
                         resolvingBehavior = DependencyBehavior.Ignore;
-                        await _nugetLogger.LogAsync(LogLevel.Warning, $"Available sources doesn't contain package {dependencyIdentity}. Package {dependencyIdentity} is missing");
+                        await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Warning, $"Available sources doesn't contain package {dependencyIdentity}. Package {dependencyIdentity} is missing");
                     }
                 }
                 else
                 {
-                    throw Log.ErrorAndCreateException<MissingPackageException>($"Cannot find package {dependencyIdentity}");
+                    throw Logger.LogErrorAndCreateException<MissingPackageException>($"Cannot find package {dependencyIdentity}");
                 }
             }
         }
@@ -583,14 +555,14 @@ internal class PackageInstallationService : IPackageInstallationService
                     }
                     else
                     {
-                        throw Log.ErrorAndCreateException<InvalidOperationException>("An error occurred during package extraction", ex);
+                        throw Logger.LogErrorAndCreateException<InvalidOperationException>("An error occurred during package extraction", ex);
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
 
             var extractionException = new ProjectInstallException(ex.Message, ex)
             {

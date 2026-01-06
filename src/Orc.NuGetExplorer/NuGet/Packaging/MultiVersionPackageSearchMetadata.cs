@@ -10,7 +10,7 @@ using NuGet.Versioning;
 using static NuGet.Protocol.Core.Types.PackageSearchMetadataBuilder;
 
 /// <summary>
-/// Aggregate package metadata containing preloaded informations about versions
+/// Aggregate package metadata containing preloaded information about versions
 /// </summary>
 internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, IPackageDetails
 {
@@ -51,7 +51,7 @@ internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, 
 
     public IValidationContext? ValidationContext { get; set; } = new ValidationContext();
 
-    IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+    IReadOnlyList<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
     long? IPackageDetails.DownloadCount => DownloadCount;
 

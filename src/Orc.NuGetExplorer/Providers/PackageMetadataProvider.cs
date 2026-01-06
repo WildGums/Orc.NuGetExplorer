@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
@@ -17,81 +19,86 @@ using Orc.NuGetExplorer.Management;
 
 public class PackageMetadataProvider : IPackageMetadataProvider
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(PackageMetadataProvider));
+    
+    private static NuGet.Common.ILogger NuGetLogger = default!;
 
-    private static readonly ILogger NuGetLogger;
     private readonly IDirectoryService _directoryService;
     private readonly ISourceRepositoryProvider _repositoryProvider;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IEnumerable<SourceRepository> _sourceRepositories;
 
     private readonly IEnumerable<SourceRepository> _optionalLocalRepositories;
 
-    private readonly Lazy<IExtensibleProject> _project = new(() => ServiceLocator.Default.ResolveRequiredType<IDefaultExtensibleProjectProvider>().GetDefaultProject());
+    private readonly Lazy<IExtensibleProject> _project;
 
     private SourceRepository? _localRepository;
 
-    static PackageMetadataProvider()
-    {
-        NuGetLogger = ServiceLocator.Default.ResolveRequiredType<ILogger>();
-    }
+    //static PackageMetadataProvider()
+    //{
+    //    NuGetLogger = ServiceLocator.Default.ResolveRequiredType<ILogger>();
+    //}
 
-    public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private PackageMetadataProvider(IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider,
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
+        if (NuGetLogger is null)
+        {
+            NuGetLogger = serviceProvider.GetRequiredService<NuGet.Common.ILogger>();
+        }
 
         _directoryService = directoryService;
+        _repositoryProvider = repositoryProvider;
+        _serviceProvider = serviceProvider;
+
+        _project = new(() => _serviceProvider.GetRequiredService<IDefaultExtensibleProjectProvider>().GetDefaultProject());
+    }
+
+    public PackageMetadataProvider(IDirectoryService directoryService, IRepositoryService repositoryService,
+        ISourceRepositoryProvider repositoryProvider, IServiceProvider serviceProvider)
+        : this(directoryService, repositoryProvider, serviceProvider)
+    {
         _sourceRepositories = repositoryProvider.GetRepositories();
         _optionalLocalRepositories = new[]
         {
             repositoryProvider.CreateRepository(repositoryService.LocalRepository.ToPackageSource())
         };
-        _repositoryProvider = repositoryProvider;
     }
 
     public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
-        IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider)
+        IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider, IServiceProvider serviceProvider)
+        : this(directoryService, repositoryProvider, serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(sourceRepositories);
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
-
         _sourceRepositories = sourceRepositories;
         _optionalLocalRepositories = optionalGlobalLocalRepositories;
-        _directoryService = directoryService;
-        _repositoryProvider = repositoryProvider;
     }
 
-    public static PackageMetadataProvider CreateFromSourceContext(IServiceLocator serviceLocator)
+    public static PackageMetadataProvider CreateFromSourceContext(IServiceProvider serviceProvider)
     {
-        var directoryService = serviceLocator.ResolveRequiredType<IDirectoryService>();
-        var repositoryService = serviceLocator.ResolveRequiredType<IRepositoryContextService>();
-        var projectSource = serviceLocator.ResolveRequiredType<IExtensibleProjectLocator>();
-        var packageManager = serviceLocator.ResolveRequiredType<INuGetPackageManager>();
+        var directoryService = serviceProvider.GetRequiredService<IDirectoryService>();
+        var repositoryService = serviceProvider.GetRequiredService<IRepositoryContextService>();
+        var projectSource = serviceProvider.GetRequiredService<IExtensibleProjectLocator>();
+        var packageManager = serviceProvider.GetRequiredService<INuGetPackageManager>();
 
-        return PackageMetadataProvider.CreateFromSourceContext(directoryService, repositoryService, projectSource, packageManager);
+        return PackageMetadataProvider.CreateFromSourceContext(directoryService, repositoryService, 
+            projectSource, packageManager, serviceProvider);
     }
 
-    public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
-        INuGetPackageManager projectManager)
+    public static PackageMetadataProvider CreateFromSourceContext(IDirectoryService directoryService, 
+        IRepositoryContextService repositoryService, IExtensibleProjectLocator projectSource,
+        INuGetPackageManager projectManager, IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(projectSource);
-        ArgumentNullException.ThrowIfNull(projectManager);
-
-        var typeFactory = TypeFactory.Default;
-
         var context = repositoryService.AcquireContext();
 
         var projects = projectSource.GetAllExtensibleProjects();
 
         var localRepos = projectManager.AsLocalRepositories(projects);
 
-        var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? new List<SourceRepository>();
+        var repos = context.Repositories ?? context.PackageSources?.Select(src => repositoryService.GetRepository(src)) ?? Array.Empty<SourceRepository>();
 
-        return typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<PackageMetadataProvider>(repos, localRepos);
+        return ActivatorUtilities.CreateInstance<PackageMetadataProvider>(serviceProvider, repos, localRepos);
     }
 
     public async Task<IPackageSearchMetadata?> GetLocalPackageMetadataAsync(PackageIdentity identity, bool includePrerelease, CancellationToken cancellationToken)
@@ -114,7 +121,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
                 var localProjectDirectory = Directory.GetParent(project.GetInstallPath(identity));
                 if (localProjectDirectory is null)
                 {
-                    Log.Warning("Cannot find destination folder in Side-by-side installation. Check project installation path.");
+                    Logger.LogWarning("Cannot find destination folder in Side-by-side installation. Check project installation path.");
                 }
                 else
                 {
@@ -173,7 +180,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         if (!_sourceRepositories.Any())
         {
-            Log.Warning("No repositories available");
+            Logger.LogWarning("No repositories available");
             return null;
         }
 
@@ -197,13 +204,13 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
     public Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, CancellationToken cancellationToken)
     {
-        return GetHighestPackageMetadataAsync(packageId, includePrerelease, 
+        return GetHighestPackageMetadataAsync(packageId, includePrerelease,
             (p) => true, cancellationToken);
     }
 
     public Task<IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, CancellationToken cancellationToken)
     {
-        return GetHighestPackageMetadataAsync(packageId, includePrerelease, 
+        return GetHighestPackageMetadataAsync(packageId, includePrerelease,
             (p) => !p.Identity.Version.Release.ContainsAny(ignoredReleases, StringComparison.OrdinalIgnoreCase), cancellationToken);
     }
 
@@ -227,7 +234,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         return master?.WithVersions(() => metadataList.ToVersionInfo(includePrerelease));
     }
 
-    public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease, 
+    public async Task<IReadOnlyList<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId, bool includePrerelease,
         bool includeUnlisted, CancellationToken cancellationToken)
     {
         var tasks = _sourceRepositories.Select(repo => GetPackageMetadataListAsyncFromSourceAsync(repo, packageId, includePrerelease, includeUnlisted, cancellationToken)).ToArray();
@@ -244,7 +251,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
                 m => m.Identity.Version,
                 (v, ms) => ms.First());
 
-        return uniquePackages ?? Array.Empty<IPackageSearchMetadata>();
+        return uniquePackages.ToArray() ?? Array.Empty<IPackageSearchMetadata>();
     }
 
     /// <summary>
@@ -256,7 +263,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
     /// <param name="includeUnlisted"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(SourceRepository repository,
+    public async Task<IReadOnlyList<IPackageSearchMetadata>> GetPackageMetadataListAsyncFromSourceAsync(SourceRepository repository,
         string packageId,
         bool includePrerelease,
         bool includeUnlisted,
@@ -268,7 +275,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             //todo
             //check httpCache created inside GetMetadataAsync()
@@ -284,7 +291,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
             //force creating folder for cache even http retry count is 0
             _directoryService.Create(sourceCacheContext.GeneratedTempFolder);
 
-            Log.Debug($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
+            Logger.LogDebug($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
 
             var packages = await metadataResource.GetMetadataAsync(
                 packageId,
@@ -294,9 +301,9 @@ public class PackageMetadataProvider : IPackageMetadataProvider
                 NuGetLogger,
                 cancellationToken) ?? Array.Empty<IPackageSearchMetadata>();
 
-            Log.Debug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
+            Logger.LogDebug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
 
-            return packages;
+            return packages.ToArray();
         }
     }
 
@@ -341,7 +348,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
@@ -381,7 +388,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Log.Debug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
 
             var localPackages = await localResource.GetMetadataAsync(
                 packageId,

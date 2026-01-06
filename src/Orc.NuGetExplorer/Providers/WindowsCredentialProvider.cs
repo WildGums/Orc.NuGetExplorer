@@ -6,13 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.Configuration;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Credentials;
 using Orc.NuGetExplorer.Windows;
 
 public class WindowsCredentialProvider : ICredentialProvider
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(WindowsCredentialProvider));
 
     private readonly IConfigurationService _configurationService;
     private readonly bool _canAccessStoredCredentials;
@@ -33,11 +34,11 @@ public class WindowsCredentialProvider : ICredentialProvider
 
         if (isRetry)
         {
-            Log.Debug($"Retrying to request credentials for '{uri}'");
+            Logger.LogDebug($"Retrying to request credentials for '{uri}'");
         }
         else
         {
-            Log.Debug($"Requesting credentials for '{uri}'");
+            Logger.LogDebug($"Requesting credentials for '{uri}'");
         }
 
         var uriString = uri.ToString().ToLower();
@@ -57,7 +58,7 @@ public class WindowsCredentialProvider : ICredentialProvider
         {
             //creating success response
 
-            Log.Debug("Successfully requested credentials for '{0}' using user '{1}'", uri, credentialsPrompter.UserName);
+            Logger.LogDebug("Successfully requested credentials for '{0}' using user '{1}'", uri, credentialsPrompter.UserName);
 
             //creating network credentials
             var nugetCredentials = new NetworkCredential(credentialsPrompter.UserName, credentialsPrompter.Password);
@@ -68,7 +69,7 @@ public class WindowsCredentialProvider : ICredentialProvider
         }
         else
         {
-            Log.Debug("Failed to request credentials for '{0}'", uri);
+            Logger.LogDebug("Failed to request credentials for '{0}'", uri);
             return new CredentialResponse(CredentialStatus.UserCanceled);
         }
     }

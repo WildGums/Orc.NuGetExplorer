@@ -3,10 +3,11 @@
 using System;
 using System.Net;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class HttpWebExceptionHandler : IHttpExceptionHandler<WebException>
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(HttpWebExceptionHandler));
 
     public FeedVerificationResult HandleException(WebException exception, string source)
     {
@@ -34,7 +35,7 @@ public class HttpWebExceptionHandler : IHttpExceptionHandler<WebException>
         }
         catch (Exception ex)
         {
-            Log.Debug(ex, "Failed to verify feed '{0}'", source);
+            Logger.LogDebug(ex, "Failed to verify feed '{0}'", source);
         }
 
         return FeedVerificationResult.Invalid;

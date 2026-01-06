@@ -3,32 +3,31 @@
 using System;
 using System.IO;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using Orc.FileSystem;
 
 internal class FileSystemService : IFileSystemService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(FileSystemService));
+
     private readonly IFileService _fileService;
     private readonly IDirectoryService _directoryService;
 
     public FileSystemService(IFileService fileService, IDirectoryService directoryService)
     {
-        ArgumentNullException.ThrowIfNull(fileService);
-        ArgumentNullException.ThrowIfNull(directoryService);
-
         _fileService = fileService;
         _directoryService = directoryService;
     }
 
     public void CreateDeleteme(string name, string path)
     {
-        Log.Debug($"Creating delete.me file on path '{path}'");
+        Logger.LogDebug($"Creating delete.me file on path '{path}'");
 
         var fullPath = GetDeletemePath(name, path);
         var directoryPath = Path.GetDirectoryName(fullPath);
         if (string.IsNullOrEmpty(directoryPath))
         {
-            Log.Debug("Cannot obtain directory path for creating file.");
+            Logger.LogDebug("Cannot obtain directory path for creating file.");
             return;
         }
 
@@ -41,7 +40,7 @@ internal class FileSystemService : IFileSystemService
 
         using (_fileService.Create(fullPath))
         {
-            Log.Debug($"Created delete.me file on path {fullPath}");
+            Logger.LogDebug($"Created delete.me file on path {fullPath}");
         }
     }
 

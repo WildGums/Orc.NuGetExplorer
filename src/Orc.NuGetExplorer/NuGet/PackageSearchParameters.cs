@@ -2,10 +2,10 @@
 
 public class PackageSearchParameters
 {
-    public PackageSearchParameters(bool prereleasIncluded, string searchString, bool isRecommendedOnly)
+    public PackageSearchParameters(bool prereleaseIncluded, string searchString, bool isRecommendedOnly)
     {
         SearchString = searchString;
-        IsPrereleaseIncluded = prereleasIncluded;
+        IsPrereleaseIncluded = prereleaseIncluded;
         IsRecommendedOnly = isRecommendedOnly;
     }
 

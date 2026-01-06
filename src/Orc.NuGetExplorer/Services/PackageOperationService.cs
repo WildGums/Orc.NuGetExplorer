@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Catel.Data;
+using Catel.Messaging;
 using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -20,26 +21,20 @@ internal sealed class PackageOperationService : IPackageOperationService
     private readonly IPackageOperationContextService _packageOperationContextService;
     private readonly IApiPackageRegistry _apiPackageRegistry;
     private readonly IPackageOperationNotificationService _packageOperationNotificationService;
+    private readonly IMessageMediator _messageMediator;
     private readonly IExtensibleProject _defaultProject;
 
     public PackageOperationService(IPackageOperationContextService packageOperationContextService, ILogger logger, INuGetPackageManager nuGetPackageManager,
         IRepositoryService repositoryService, IApiPackageRegistry apiPackageRegistry, IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider,
-        ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService)
+        ISourceRepositoryProvider sourceRepositoryProvider, IPackageOperationNotificationService packageOperationNotificationService,
+        IMessageMediator messageMediator)
     {
-        ArgumentNullException.ThrowIfNull(packageOperationContextService);
-        ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(nuGetPackageManager);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(apiPackageRegistry);
-        ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
-        ArgumentNullException.ThrowIfNull(sourceRepositoryProvider);
-        ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
-
         _packageOperationContextService = packageOperationContextService;
         _logger = logger;
         _nuGetPackageManager = nuGetPackageManager;
         _apiPackageRegistry = apiPackageRegistry;
         _packageOperationNotificationService = packageOperationNotificationService;
+        _messageMediator = messageMediator;
         _defaultProject = defaultExtensibleProjectProvider.GetDefaultProject();
 
         // Note: this setting should be global, probably set by Resolver (which replaced the old one InstallWalker);
@@ -91,7 +86,15 @@ internal sealed class PackageOperationService : IPackageOperationService
             //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
 
             _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Install, package);
-            await _nuGetPackageManager.InstallPackageForProjectAsync(_defaultProject, package.GetIdentity(), packagePredicate, token);
+
+            var context = new PackageInstallationContext
+            {
+                Project = _defaultProject,
+                Package = package.GetIdentity(),
+                PackagePredicate = packagePredicate,
+            };
+
+            await _nuGetPackageManager.InstallPackageForProjectAsync(context, token);
         }
         catch (Exception ex)
         {
@@ -175,7 +178,7 @@ internal sealed class PackageOperationService : IPackageOperationService
 
     private void FinishOperation(PackageOperationType type, string operationPath, IPackageDetails package)
     {
-        PackagingDeletemeMessage.SendWith(new PackageOperationInfo(operationPath, type, package));
+        PackagingDeletemeMessage.SendWith(_messageMediator, new PackageOperationInfo(operationPath, type, package));
         _packageOperationNotificationService.NotifyOperationFinished(operationPath, type, package);
     }
 }

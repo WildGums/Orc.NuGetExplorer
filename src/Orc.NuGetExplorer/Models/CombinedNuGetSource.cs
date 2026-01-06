@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public sealed class CombinedNuGetSource : INuGetSource
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(CombinedNuGetSource));
 
     private readonly List<INuGetSource> _sourceList = new();
 
@@ -19,7 +20,7 @@ public sealed class CombinedNuGetSource : INuGetSource
         {
             if (feed is CombinedNuGetSource)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Nested multiple source feeds are not allowed");
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>("Nested multiple source feeds are not allowed");
             }
             _sourceList.Add(feed);
         }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -21,7 +22,8 @@ using Services;
 
 internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDisposable
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetProjectPackageManager));
+
     private static readonly SemaphoreSlim UpdateLocker = new(1, 1);
 
     private readonly IPackageInstallationService _packageInstallationService;
@@ -39,13 +41,6 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         INuGetProjectContextProvider nuGetProjectContextProvider, INuGetProjectConfigurationProvider nuGetProjectConfigurationProvider,
         IMessageService messageService, IFileSystemService fileSystemService, ILanguageService languageService)
     {
-        ArgumentNullException.ThrowIfNull(packageInstallationService);
-        ArgumentNullException.ThrowIfNull(nuGetProjectContextProvider);
-        ArgumentNullException.ThrowIfNull(nuGetProjectConfigurationProvider);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(fileSystemService);
-        ArgumentNullException.ThrowIfNull(languageService);
-
         _packageInstallationService = packageInstallationService;
         _nuGetProjectContextProvider = nuGetProjectContextProvider;
         _nuGetProjectConfigurationProvider = nuGetProjectConfigurationProvider;
@@ -115,7 +110,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         await Update.SafeInvokeAsync(this, args);
     }
 
-    public async Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token)
+    public async Task<IReadOnlyList<PackageReference>> GetInstalledPackagesAsync(IExtensibleProject project, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(project);
 
@@ -125,7 +120,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
 
         var packageReferences = await packageConfigProject.GetInstalledPackagesAsync(token);
 
-        return packageReferences;
+        return packageReferences.ToArray();
     }
 
     /// <summary>
@@ -175,7 +170,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
             return false;
         }
     }
@@ -186,7 +181,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
 
         if (string.IsNullOrEmpty(packageId))
         {
-            throw Log.ErrorAndCreateException(message => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");
+            throw Logger.LogErrorAndCreateException(message => new ArgumentException(message, nameof(packageId)), "Cannot be null or empty string");
         }
 
         try
@@ -199,7 +194,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
             return false;
         }
     }
@@ -234,7 +229,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
             var repositories = SourceContext.CurrentContext?.Repositories;
             if (repositories is null || !repositories.Any())
             {
-                Log.Error($"Failed to install package {package}");
+                Logger.LogError($"Failed to install package {package}");
 
                 if (showErrors)
                 {
@@ -285,8 +280,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
                     }
                     catch (InvalidOperationException ex)
                     {
-                        Log.Error($"Saving package configuration failed in project {project} when installing package {package}");
-                        Log.Error(ex);
+                        Logger.LogError($"Saving package configuration failed in project {project} when installing package {package}");
+                        Logger.LogError(ex, null);
                         dependencyInstallResult = false;
                     }
                 }
@@ -298,7 +293,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (ProjectInstallException ex)
         {
-            Log.Error($"Failed to install package {package}");
+            Logger.LogError($"Failed to install package {package}");
 
             if (showErrors)
             {
@@ -322,12 +317,12 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"The Installation of package {package} was failed");
+            Logger.LogError(ex, $"The Installation of package {package} was failed");
             throw;
         }
     }
 
-    [ObsoleteEx(ReplacementTypeOrMember = "InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
+    [ObsoleteEx(ReplacementTypeOrMember = "InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)", TreatAsErrorFromVersion = "7", RemoveInVersion = "7")]
     public Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
         Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true)
     {
@@ -384,7 +379,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Uninstall of package {package} was failed");
+            Logger.LogError(ex, $"Uninstall of package {package} was failed");
         }
     }
 
@@ -433,7 +428,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error during package {packageId} update");
+            Logger.LogError(ex, $"Error during package {packageId} update");
             throw;
         }
     }
@@ -465,7 +460,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error during package {packageId} update");
+            Logger.LogError(ex, $"Error during package {packageId} update");
         }
     }
 
@@ -489,7 +484,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
     }
 
-    public IEnumerable<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
+    public IReadOnlyList<SourceRepository> AsLocalRepositories(IEnumerable<IExtensibleProject> projects)
     {
         ArgumentNullException.ThrowIfNull(projects);
 
@@ -499,7 +494,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
             ));
 
 
-        return repos;
+        return repos.ToArray();
     }
 
     protected virtual void Dispose(bool disposing)

@@ -2,7 +2,7 @@
 
 using System;
 
-public interface IPleaseWaitInterruptService
+public interface IBusyIndicatorInterruptService
 {
     IDisposable InterruptTemporarily();
 }

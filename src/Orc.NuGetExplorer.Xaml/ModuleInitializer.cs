@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using Catel.IoC;
 using Catel.MVVM;
@@ -32,7 +32,7 @@ public static class ModuleInitializer
         serviceLocator.RegisterType<IImageResolveService, PackageMetadataMediaDownloadService>();
         serviceLocator.RegisterType<IPackageCommandService, PackageCommandService>();
         serviceLocator.RegisterType<IPackagesUIService, PackagesUIService>();
-        serviceLocator.RegisterType<IPleaseWaitInterruptService, XamlPleaseWaitInterruptService>();
+        serviceLocator.RegisterType<IBusyIndicatorInterruptService, XamlPleaseWaitInterruptService>();
         serviceLocator.RegisterType<ISynchronousUiVisualizer, SynchronousUIVisualizerService>();
         serviceLocator.RegisterType<IAnimationService, AnimationService>();
         serviceLocator.RegisterType<IProgressManager, ProgressManager>();

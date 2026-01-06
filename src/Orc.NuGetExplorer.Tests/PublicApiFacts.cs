@@ -14,7 +14,7 @@ public class PublicApiFacts
     [Test, MethodImpl(MethodImplOptions.NoInlining)]
     public async Task Orc_NuGetExplorer_HasNoBreakingChanges_Async()
     {
-        var assembly = typeof(DefferedPackageLoaderService).Assembly;
+        var assembly = typeof(DeferredPackageLoaderService).Assembly;
 
         await PublicApiApprover.ApprovePublicApiAsync(assembly);
     }

@@ -1,6 +1,7 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -8,7 +9,7 @@ using Packaging;
 
 public static class PackageCollectionExtensions
 {
-    public static PackageIdentity[] GetLatest(this PackageCollection packages, IVersionComparer versionComparer)
+    public static IReadOnlyList<PackageIdentity> GetLatest(this PackageCollection packages, IVersionComparer versionComparer)
     {
         ArgumentNullException.ThrowIfNull(packages);
         ArgumentNullException.ThrowIfNull(versionComparer);

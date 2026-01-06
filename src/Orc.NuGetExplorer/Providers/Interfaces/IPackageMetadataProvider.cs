@@ -43,7 +43,7 @@ public interface IPackageMetadataProvider
     /// <param name="includeUnlisted">Filters unlisted versions</param>
     /// <param name="cancellationToken">A cancellation token</param>
     /// <returns>Collection of packages matching query parameters</returns>
-    Task<IEnumerable<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId,
+    Task<IReadOnlyList<IPackageSearchMetadata>> GetPackageMetadataListAsync(string packageId,
         bool includePrerelease, bool includeUnlisted, CancellationToken cancellationToken);
 
     /// <summary>

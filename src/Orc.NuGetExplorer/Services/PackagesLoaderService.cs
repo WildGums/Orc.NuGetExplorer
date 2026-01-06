@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Catel;
+using Catel.Collections;
 using NuGet.Common;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
@@ -28,7 +29,7 @@ internal class PackagesLoaderService : IPackageLoaderService
 
     public IPackageMetadataProvider? PackageMetadataProvider { get; }
 
-    public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
+    public async Task<IReadOnlyList<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(pageContinuation);
         Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
@@ -45,7 +46,7 @@ internal class PackagesLoaderService : IPackageLoaderService
 
                 await LoadVersionsEagerIfNeedAsync(searchResource, packages);
 
-                return packages;
+                return packages.ToArray();
             }
             catch (FatalProtocolException ex) when (token.IsCancellationRequested)
             {
@@ -57,11 +58,11 @@ internal class PackagesLoaderService : IPackageLoaderService
         {
             var packages = await LoadAsyncFromSourcesAsync(searchTerm, pageContinuation, searchFilter, token);
 
-            return packages;
+            return packages.ToArray();
         }
     }
 
-    public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
+    public async Task<IReadOnlyList<IPackageSearchMetadata>> LoadAsyncFromSourcesAsync(string searchTerm, PageContinuation pageContinuation,
         SearchFilter searchFilter, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(pageContinuation);
@@ -81,7 +82,7 @@ internal class PackagesLoaderService : IPackageLoaderService
 
             var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 
-            return packages;
+            return packages.ToArray();
         }
         catch (FatalProtocolException ex) when (token.IsCancellationRequested)
         {

@@ -2,18 +2,16 @@
 
 using System;
 using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class DefaultExtensibleProjectProvider : IDefaultExtensibleProjectProvider
 {
     private readonly IExtensibleProject _defaultProject;
 
-    public DefaultExtensibleProjectProvider(ITypeFactory typeFactory, INuGetConfigurationService configurationService, IExtensibleProjectLocator extensibleProjectLocator)
+    public DefaultExtensibleProjectProvider(IServiceProvider serviceProvider, 
+        INuGetConfigurationService configurationService, IExtensibleProjectLocator extensibleProjectLocator)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(configurationService);
-        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-
-        _defaultProject = typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DestFolder>(configurationService.GetDestinationFolder());
+        _defaultProject = ActivatorUtilities.CreateInstance<DestFolder>(serviceProvider, configurationService.GetDestinationFolder());
 
         extensibleProjectLocator.Register(_defaultProject);
         extensibleProjectLocator.Enable(_defaultProject);

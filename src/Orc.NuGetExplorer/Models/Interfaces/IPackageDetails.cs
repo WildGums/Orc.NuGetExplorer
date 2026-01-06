@@ -26,7 +26,7 @@ public interface IPackageDetails
 
     string Title { get; }
 
-    IEnumerable<string> Authors { get; }
+    IReadOnlyList<string> Authors { get; }
 
     DateTimeOffset? Published { get; }
 

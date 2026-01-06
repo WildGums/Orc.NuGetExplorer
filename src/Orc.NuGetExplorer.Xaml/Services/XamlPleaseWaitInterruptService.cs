@@ -3,7 +3,7 @@
 using System;
 using Catel.Services;
 
-public class XamlPleaseWaitInterruptService : IPleaseWaitInterruptService
+public class XamlPleaseWaitInterruptService : IBusyIndicatorInterruptService
 {
     private readonly IBusyIndicatorService _busyIndicatorService;
 

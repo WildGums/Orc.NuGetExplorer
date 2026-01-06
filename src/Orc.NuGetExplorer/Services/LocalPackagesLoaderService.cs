@@ -20,29 +20,29 @@ internal class LocalPackagesLoaderService : IPackageLoaderService
 
     private readonly INuGetPackageManager _projectManager;
     private readonly ISourceRepositoryProvider _repositoryProvider;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IDirectoryService _directoryService;
     private readonly IRepositoryContextService _repositoryService;
 
     public IPackageMetadataProvider PackageMetadataProvider =>
-        Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, _extensibleProjectLocator, _projectManager);
+        Providers.PackageMetadataProvider.CreateFromSourceContext(_directoryService, _repositoryService, 
+            _extensibleProjectLocator, _projectManager, _serviceProvider);
 
-    public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, IExtensibleProjectLocator extensibleProjectLocator,
-        INuGetPackageManager nuGetExtensibleProjectManager, ISourceRepositoryProvider repositoryProvider)
+    public LocalPackagesLoaderService(IDirectoryService directoryService, IRepositoryContextService repositoryService, 
+        IExtensibleProjectLocator extensibleProjectLocator,
+        INuGetPackageManager nuGetExtensibleProjectManager, 
+        ISourceRepositoryProvider repositoryProvider,
+        IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-        ArgumentNullException.ThrowIfNull(nuGetExtensibleProjectManager);
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
-
         _directoryService = directoryService;
         _repositoryService = repositoryService;
         _extensibleProjectLocator = extensibleProjectLocator;
         _projectManager = nuGetExtensibleProjectManager;
         _repositoryProvider = repositoryProvider;
+        _serviceProvider = serviceProvider;
     }
 
-    public async Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
+    public async Task<IReadOnlyList<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
     {
         Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
 

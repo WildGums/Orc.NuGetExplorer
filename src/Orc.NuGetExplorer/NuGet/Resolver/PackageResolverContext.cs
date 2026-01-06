@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging;
@@ -21,7 +22,7 @@ public class PackageResolverContext : NuGet.Resolver.PackageResolverContext
         Enumerable.Empty<SourcePackageDependencyInfo>(),
         Enumerable.Empty<PackageSource>(),
         Enumerable.Empty<string>(),
-        ServiceLocator.Default.ResolveRequiredType<ILogger>()
+        IoCContainer.ServiceProvider.GetRequiredService<ILogger>()
     );
 
     public PackageResolverContext(DependencyBehavior dependencyBehavior, IEnumerable<string> targetIds, IEnumerable<string> requiredPackageIds, IEnumerable<PackageReference> packagesConfig, IEnumerable<PackageIdentity> preferredVersions, IEnumerable<SourcePackageDependencyInfo> availablePackages, IEnumerable<PackageSource> packageSources, IEnumerable<string> ignoredIds, ILogger log)

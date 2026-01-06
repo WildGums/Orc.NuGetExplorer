@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Protocol.Core.Types;
 
 internal class MultiVersionPackageSearchMetadataBuilder
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(MultiVersionPackageSearchMetadataBuilder));
 
     private readonly IEnumerable<IPackageSearchMetadata> _searchMetadatas;
 
@@ -28,7 +29,7 @@ internal class MultiVersionPackageSearchMetadataBuilder
         var main = orderedMetadatas.FirstOrDefault(x => x.Identity.Version.OriginalVersion == version);
         if (main is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
         }
 
         var versions = orderedMetadatas.ToList();
@@ -46,7 +47,7 @@ internal class MultiVersionPackageSearchMetadataBuilder
         var main = orderedMetadatas.FirstOrDefault();
         if (main is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"'{nameof(main)}' cannot be null");
         }
 
         var versions = orderedMetadatas.Skip(1).ToList();

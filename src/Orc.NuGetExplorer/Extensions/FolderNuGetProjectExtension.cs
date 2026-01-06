@@ -7,7 +7,7 @@ using NuGet.ProjectManagement;
 
 public static class FolderNuGetProjectExtension
 {
-    public static IEnumerable<string> GetPackageDirectories(this FolderNuGetProject project)
+    public static IReadOnlyList<string> GetPackageDirectories(this FolderNuGetProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
 

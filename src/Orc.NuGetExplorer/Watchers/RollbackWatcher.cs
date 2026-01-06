@@ -2,11 +2,12 @@
 
 using System;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using Orc.FileSystem;
 
 public class RollbackWatcher : PackageManagerContextWatcherBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(RollbackWatcher));
 
     private readonly IBackupFileSystemService _backupFileSystemService;
     private readonly IFileSystemService _fileSystemService;
@@ -21,11 +22,6 @@ public class RollbackWatcher : PackageManagerContextWatcherBase
         IDirectoryService directoryService)
         : base(packageOperationNotificationService, packageOperationContextService)
     {
-        ArgumentNullException.ThrowIfNull(rollbackPackageOperationService);
-        ArgumentNullException.ThrowIfNull(backupFileSystemService);
-        ArgumentNullException.ThrowIfNull(fileSystemService);
-        ArgumentNullException.ThrowIfNull(directoryService);
-
         _rollbackPackageOperationService = rollbackPackageOperationService;
         _backupFileSystemService = backupFileSystemService;
         _fileSystemService = fileSystemService;
@@ -81,7 +77,7 @@ public class RollbackWatcher : PackageManagerContextWatcherBase
                         if (!success)
                         {
                             _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
-                            Log.Error($"Failed to delete directory {e.InstallPath} during rollback actions.");
+                            Logger.LogError($"Failed to delete directory {e.InstallPath} during rollback actions.");
                         }
                     }
                 },

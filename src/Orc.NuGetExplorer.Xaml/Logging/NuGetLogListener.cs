@@ -9,7 +9,7 @@ public class NuGetLogListener : PackageManagerLogListenerBase, ILogListener
     private static readonly ILog Log = LogManager.GetCurrentClassLogger();
     private static readonly LogData EmptyAdditionalData = new();
 
-    public NuGetLogListener(INuGetLogListeningSevice nuGetLogListeningSevice)
+    public NuGetLogListener(INuGetLogListeningService nuGetLogListeningSevice)
         : base(nuGetLogListeningSevice)
     {
     }

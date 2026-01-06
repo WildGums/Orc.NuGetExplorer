@@ -44,7 +44,7 @@ public class NuGetExplorerInitializationService : INuGetExplorerInitializationSe
         serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
 
         // instantiate package manager listener
-        serviceLocator.RegisterTypeAndInstantiate<NuGetToCatelLogTranslator>();
+        serviceLocator.RegisterTypeAndInstantiate<NuGetToMicrosoftLoggerTranslator>();
 
         // register commands
         var commandManager = serviceLocator.ResolveRequiredType<ICommandManager>();
