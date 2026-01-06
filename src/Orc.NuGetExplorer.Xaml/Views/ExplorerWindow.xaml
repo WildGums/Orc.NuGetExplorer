@@ -12,7 +12,6 @@
                   xmlns:log="clr-namespace:Orc.NuGetExplorer.Logging"
                   mc:Ignorable="d"
                   x:ClassModifier="internal"
-                  x:Name="MainWindow"
                   xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
                   d:DesignWidth="1000">
     

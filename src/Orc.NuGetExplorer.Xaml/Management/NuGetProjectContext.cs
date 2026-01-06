@@ -3,15 +3,15 @@
 using System;
 using System.Xml.Linq;
 using Catel.Logging;
-using NuGet.Common;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.ProjectManagement;
 
 internal class NuGetProjectContext : INuGetProjectContext
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetProjectContext));
 
-    public NuGetProjectContext(FileConflictAction fileConflictAction, ILogger logger)
+    public NuGetProjectContext(FileConflictAction fileConflictAction, NuGet.Common.ILogger logger)
     {
         FileConflictAction = fileConflictAction;
     }
@@ -35,49 +35,49 @@ internal class NuGetProjectContext : INuGetProjectContext
         switch (level)
         {
             case MessageLevel.Debug:
-                Log.Debug(string.Format(message, args));
+                Logger.LogDebug(string.Format(message, args));
                 break;
 
             case MessageLevel.Error:
-                Log.Error(string.Format(message, args));
+                Logger.LogError(string.Format(message, args));
                 break;
 
             case MessageLevel.Info:
-                Log.Info(string.Format(message, args));
+                Logger.LogInformation(string.Format(message, args));
                 break;
 
             case MessageLevel.Warning:
-                Log.Warning(string.Format(message, args));
+                Logger.LogWarning(string.Format(message, args));
                 break;
         }
     }
 
-    void INuGetProjectContext.Log(ILogMessage message)
+    void INuGetProjectContext.Log(NuGet.Common.ILogMessage message)
     {
         switch (message.Level)
         {
-            case LogLevel.Debug:
-                Log.Debug(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Debug:
+                Logger.LogDebug(FormatStringMessage(message));
                 break;
 
-            case LogLevel.Verbose:
-                Log.Debug(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Verbose:
+                Logger.LogDebug(FormatStringMessage(message));
                 break;
 
-            case LogLevel.Information:
-                Log.Info(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Information:
+                Logger.LogInformation(FormatStringMessage(message));
                 break;
 
-            case LogLevel.Minimal:
-                Log.Info(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Minimal:
+                Logger.LogInformation(FormatStringMessage(message));
                 break;
 
-            case LogLevel.Warning:
-                Log.Warning(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Warning:
+                Logger.LogWarning(FormatStringMessage(message));
                 break;
 
-            case LogLevel.Error:
-                Log.Error(FormatStringMessage(message));
+            case NuGet.Common.LogLevel.Error:
+                Logger.LogError(FormatStringMessage(message));
                 break;
         }
     }
@@ -86,7 +86,7 @@ internal class NuGetProjectContext : INuGetProjectContext
     {
         if (FileConflictAction == FileConflictAction.PromptUser)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Manual resolution for packages conflict is not supported in Orc.NuGetExplorer");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Manual resolution for packages conflict is not supported in Orc.NuGetExplorer");
         }
 
         return FileConflictAction;
@@ -94,15 +94,15 @@ internal class NuGetProjectContext : INuGetProjectContext
 
     public void ReportError(string message)
     {
-        Log.Error(message);
+        Logger.LogError(message);
     }
 
-    public void ReportError(ILogMessage message)
+    public void ReportError(NuGet.Common.ILogMessage message)
     {
-        Log.Error(FormatStringMessage(message));
+        Logger.LogError(FormatStringMessage(message));
     }
 
-    private static string FormatStringMessage(ILogMessage logMessage)
+    private static string FormatStringMessage(NuGet.Common.ILogMessage logMessage)
     {
         // For now simple write Code + Message
         return $"{logMessage.Code}: {logMessage.Message}";

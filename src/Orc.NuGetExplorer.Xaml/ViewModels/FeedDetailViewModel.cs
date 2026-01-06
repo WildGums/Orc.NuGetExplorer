@@ -4,14 +4,15 @@ using System;
 using Catel.MVVM;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-public class FeedDetailViewModel : ViewModelBase
+public class FeedDetailViewModel : FeaturedViewModelBase
 {
-    public FeedDetailViewModel(NuGetFeed feed)
+    public FeedDetailViewModel(NuGetFeed feed, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(feed);
 
         Feed = feed;
-        OpenChooseLocalPathToSourceDialog = new Command(OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
+        OpenChooseLocalPathToSourceDialog = new Command(serviceProvider, OnOpenChooseLocalPathToSourceDialogExecute, OnOpenChooseLocalPathToSourceDialogCanExecute);
     }
 
     [Model]

@@ -24,6 +24,11 @@ internal class PackageOperationContextService : IPackageOperationContextService
 
     public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
 
+    public IDisposable UseOperationContext(PackageOperationType operationType, IPackageDetails package)
+    {
+        return UseOperationContext(operationType, new[] { package });
+    }
+
     public IDisposable UseOperationContext(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
 #pragma warning disable IDISP001 // Dispose created

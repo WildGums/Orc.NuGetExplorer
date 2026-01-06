@@ -9,7 +9,7 @@ internal static class IConfigurationServiceExtensions
     {
         ArgumentNullException.ThrowIfNull(configurationService);
 
-        var value = configurationService.GetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, AppSettings.NuGetExplorer.LastRepositoryCaregoryDefaultValue);
+        var value = configurationService.GetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCategory, AppSettings.NuGetExplorer.LastRepositoryCategoryDefaultValue);
 
         return value;
     }
@@ -18,7 +18,7 @@ internal static class IConfigurationServiceExtensions
     {
         ArgumentNullException.ThrowIfNull(configurationService);
 
-        configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCaregory, value);
+        configurationService.SetRoamingValue(AppSettings.NuGetExplorer.LastRepositoryCategory, value);
     }
 
     public static string GetLastRepository(this IConfigurationService configurationService, string repositoryCategory)

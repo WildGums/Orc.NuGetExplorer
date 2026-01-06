@@ -11,10 +11,10 @@ internal class ExtensiblesViewModel : ViewModelBase
 {
     private readonly IExtensibleProjectLocator _extensiblesManager;
 
-    public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager)
+    public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(extensiblesManager);
-
         _extensiblesManager = extensiblesManager;
 
         ExtensiblesCollection = new();

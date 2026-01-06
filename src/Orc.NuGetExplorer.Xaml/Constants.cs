@@ -29,8 +29,8 @@ internal static class AppSettings
 {
     internal static class NuGetExplorer
     {
-        public const string LastRepositoryCaregory = "NuGetExplorer.LastRepositoryCaregory";
-        public const string LastRepositoryCaregoryDefaultValue = RepositoryCategoryName.Installed;
+        public const string LastRepositoryCategory = "NuGetExplorer.LastRepositoryCategory";
+        public const string LastRepositoryCategoryDefaultValue = RepositoryCategoryName.Installed;
 
         public const string LastRepository = "NuGetExplorer.LastRepository";
         public const string LastRepositoryDefaultValue = RepositoryName.All;

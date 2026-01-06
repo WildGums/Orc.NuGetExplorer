@@ -3,7 +3,9 @@
 using System;
 using Catel.Logging;
 using Catel.MVVM;
+using Catel.MVVM.Views;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Synchronous implementation of Catel IUIVisualizerService
@@ -12,10 +14,12 @@ using Catel.Services;
 /// </summary>
 internal class SynchronousUIVisualizerService : UIVisualizerService, ISynchronousUiVisualizer
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(SynchronousUIVisualizerService));
 
-    public SynchronousUIVisualizerService(IViewLocator viewLocator, IDispatcherService dispatcherService)
-        : base(viewLocator, dispatcherService)
+    public SynchronousUIVisualizerService(ILogger<UIVisualizerService> logger, 
+        IViewFactory viewFactory, IViewLocator viewLocator, IDispatcherService dispatcherService,
+        IViewModelFactory viewModelFactory)
+        : base(logger, viewLocator, viewFactory, dispatcherService, viewModelFactory)
     {
     }
 
@@ -23,7 +27,7 @@ internal class SynchronousUIVisualizerService : UIVisualizerService, ISynchronou
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw Log.ErrorAndCreateException<ArgumentException>($"'{nameof(name)}' parameter is incorrect");
+            throw Logger.LogErrorAndCreateException<ArgumentException>($"'{nameof(name)}' parameter is incorrect");
         }
 
         EnsureViewIsRegistered(name);

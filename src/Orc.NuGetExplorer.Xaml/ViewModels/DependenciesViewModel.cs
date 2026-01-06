@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels;
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Catel.MVVM;
@@ -7,6 +8,12 @@ using NuGet.Packaging;
 
 internal class DependenciesViewModel : ViewModelBase
 {
+    public DependenciesViewModel(IServiceProvider serviceProvider)
+        : base(serviceProvider)
+    {
+        
+    }
+
     /// <summary>
     /// This is property mapped via attribute
     /// </summary>

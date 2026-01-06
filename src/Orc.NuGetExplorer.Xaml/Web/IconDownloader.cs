@@ -4,10 +4,11 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class IconDownloader
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(IconDownloader));
 
     public IconDownloader()
     {
@@ -16,7 +17,7 @@ public class IconDownloader
 
     public static async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
     {
-        Log.Debug($"Webclient request on {uri}");
+        Logger.LogDebug($"Webclient request on {uri}");
 
         var array = await client.DownloadDataTaskAsync(uri);
 
@@ -25,7 +26,7 @@ public class IconDownloader
 
     public static byte[] GetByUrl(Uri uri, WebClient client)
     {
-        Log.Debug($"Webclient request on {uri}");
+        Logger.LogDebug($"Webclient request on {uri}");
 
         var array = client.DownloadData(uri);
 

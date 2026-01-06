@@ -22,7 +22,7 @@ public class PublicApiFacts
     [Test, MethodImpl(MethodImplOptions.NoInlining)]
     public async Task Orc_NuGetExplorer_Xaml_HasNoBreakingChanges_Async()
     {
-        var assembly = typeof(XamlPleaseWaitInterruptService).Assembly;
+        var assembly = typeof(XamlBusyIndicatorInterruptService).Assembly;
 
         await PublicApiApprover.ApprovePublicApiAsync(assembly);
     }

@@ -10,27 +10,20 @@ using Orc.NuGetExplorer.Controls;
 /// <summary>
 /// Interaction logic for ExplorerPageView.xaml
 /// </summary>
-internal partial class ExplorerPageView : Catel.Windows.Controls.UserControl
+internal partial class ExplorerPageView
 {
     private const string ArrowUpResourceKey = "ArrowUpBadgeContent";
     private const string ArrowDownResourceKey = "ArrowDownBadgeContent";
     private const int IndicatorOffset = 2;
 
-    private readonly FrameworkElement _arrowUpResource;
-    private readonly FrameworkElement _arrowDownResource;
+    private FrameworkElement? _arrowUpResource;
+    private FrameworkElement? _arrowDownResource;
 
     private ScrollViewer? _infinityboxScrollViewer;
     private bool _isViewportWidthListened = false;
 
-    static ExplorerPageView()
+    partial void OnInitializedComponent()
     {
-        typeof(ExplorerPageView).AutoDetectViewPropertiesToSubscribe();
-    }
-
-    public ExplorerPageView()
-    {
-        InitializeComponent();
-
         _arrowUpResource = (FrameworkElement)FindResource(ArrowUpResourceKey);
         _arrowDownResource = (FrameworkElement)FindResource(ArrowDownResourceKey);
     }

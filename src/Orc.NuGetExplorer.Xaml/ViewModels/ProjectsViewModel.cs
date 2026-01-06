@@ -9,16 +9,19 @@ using Catel.MVVM;
 using NuGetExplorer.Management;
 using Orc.NuGetExplorer;
 
-internal class ProjectsViewModel : ViewModelBase
+internal class ProjectsViewModel : FeaturedViewModelBase
 {
     private readonly IExtensibleProjectLocator _extensiblesManager;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
+    public ProjectsViewModel(NuGetActionTarget projectsModel, 
+        IExtensibleProjectLocator extensiblesManager,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(projectsModel);
-        ArgumentNullException.ThrowIfNull(extensiblesManager);
-
         _extensiblesManager = extensiblesManager;
+        _serviceProvider = serviceProvider;
+
         ProjectsModel = projectsModel;
     }
 

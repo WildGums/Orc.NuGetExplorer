@@ -11,13 +11,13 @@ public static class ObservableCollectionExtensions
         ArgumentNullException.ThrowIfNull(collection);
         ArgumentNullException.ThrowIfNull(item);
 
-        var oldindex = collection.IndexOf(item);
-        if (oldindex == 0)
+        var oldIndex = collection.IndexOf(item);
+        if (oldIndex == 0)
         {
             return;
         }
 
-        collection.Move(oldindex, oldindex - 1);
+        collection.Move(oldIndex, oldIndex - 1);
     }
 
     public static void MoveDown<T>(this ObservableCollection<T> collection, T item)
@@ -26,13 +26,13 @@ public static class ObservableCollectionExtensions
         ArgumentNullException.ThrowIfNull(collection);
         ArgumentNullException.ThrowIfNull(item);
 
-        var oldindex = collection.IndexOf(item);
+        var oldIndex = collection.IndexOf(item);
 
-        if (oldindex == collection.Count - 1)
+        if (oldIndex == collection.Count - 1)
         {
             return;
         }
 
-        collection.Move(oldindex, oldindex + 1);
+        collection.Move(oldIndex, oldIndex + 1);
     }
 }

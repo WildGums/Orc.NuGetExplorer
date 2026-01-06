@@ -8,20 +8,8 @@ using Catel.MVVM.Views;
 /// <summary>
 /// Interaction logic for ExplorerTopBarView.xaml
 /// </summary>
-internal partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
+internal partial class ExplorerTopBarView
 {
-    static ExplorerTopBarView()
-    {
-        typeof(ExplorerTopBarView).AutoDetectViewPropertiesToSubscribe();
-    }
-
-    public ExplorerTopBarView()
-    {
-        InitializeComponent();
-    }
-
-    #region DependencyProperty
-
     public TabControl? UsedOn
     {
         get { return (TabControl?)GetValue(UsedOnProperty); }
@@ -68,6 +56,4 @@ internal partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
                 return;
         }
     }
-
-    #endregion
 }

@@ -4,10 +4,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class RotationProgressBar : ProgressBar
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(RotationProgressBar));
 
     public RotationProgressBar()
     {
@@ -62,7 +63,7 @@ public class RotationProgressBar : ProgressBar
 
     private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
     {
-        Log.Debug($"Progress status changed: {((bool)e.NewValue ? "activated" : "ended")}");
+        Logger.LogDebug($"Progress status changed: {((bool)e.NewValue ? "activated" : "ended")}");
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
     }
 
@@ -98,7 +99,7 @@ public class RotationProgressBar : ProgressBar
     private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
     {
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-        Log.Debug($"Warning changed: set RotationProgressBar status to {Success}");
+        Logger.LogDebug($"Warning changed: set RotationProgressBar status to {Success}");
     }
 
 
@@ -117,6 +118,6 @@ public class RotationProgressBar : ProgressBar
     private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
     {
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-        Log.Debug($"Error changed: Set RotationProgressBar status to {Success}");
+        Logger.LogDebug($"Error changed: Set RotationProgressBar status to {Success}");
     }
 }

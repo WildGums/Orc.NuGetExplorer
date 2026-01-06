@@ -11,7 +11,10 @@ using Catel.Collections;
 using Catel.Configuration;
 using Catel.IoC;
 using Catel.Logging;
+using Catel.Messaging;
 using Catel.MVVM;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGetExplorer.Providers;
@@ -19,15 +22,15 @@ using Orc.NuGetExplorer.Configuration;
 using Orc.NuGetExplorer.Messaging;
 using Orc.NuGetExplorer.Services;
 
-internal class ExplorerViewModel : ViewModelBase
+internal class ExplorerViewModel : FeaturedViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExplorerViewModel));
 
     private const string DefaultStartPage = ExplorerPageName.Browse;
     private readonly IConfigurationService _configurationService;
     private readonly INuGetExplorerInitializationService _initializationService;
     private readonly ISettings _nuGetSettings;
-    private readonly ITypeFactory _typeFactory;
+    private readonly IMessageMediator _messageMediator;
 
     private readonly IDictionary<string, INuGetExplorerInitialState> _pageSetup = new Dictionary<string, INuGetExplorerInitialState>()
     {
@@ -38,20 +41,16 @@ internal class ExplorerViewModel : ViewModelBase
 
     private string _startPage = DefaultStartPage;
 
-    public ExplorerViewModel(ITypeFactory typeFactory, ICommandManager commandManager, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-        IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, ISettings nuGetSettings)
+    public ExplorerViewModel(IServiceProvider serviceProvider, ICommandManager commandManager, 
+        IModelProvider<ExplorerSettingsContainer> settingsProvider,
+        IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, 
+        ISettings nuGetSettings, IMessageMediator messageMediator)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(commandManager);
-        ArgumentNullException.ThrowIfNull(settingsProvider);
-        ArgumentNullException.ThrowIfNull(configurationService);
-        ArgumentNullException.ThrowIfNull(initializationService);
-        ArgumentNullException.ThrowIfNull(nuGetSettings);
-
         _configurationService = configurationService;
         _initializationService = initializationService;
         _nuGetSettings = nuGetSettings;
-        _typeFactory = typeFactory;
+        _messageMediator = messageMediator;
 
         CreateApplicationWideCommands(commandManager);
 
@@ -63,7 +62,7 @@ internal class ExplorerViewModel : ViewModelBase
 
         if (settingsProvider.Model is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
         }
 
         Settings = settingsProvider.Model;
@@ -95,29 +94,29 @@ internal class ExplorerViewModel : ViewModelBase
 
     public void SetInitialPageParameters(INuGetExplorerInitialState initialState)
     {
-        var pagename = initialState.Tab.Name;
+        var pageName = initialState.Tab.Name;
 
-        if (string.IsNullOrEmpty(pagename))
+        if (string.IsNullOrEmpty(pageName))
         {
-            Log.Error("Name for explorer page cannot be null or empty");
+            Logger.LogError("Name for explorer page cannot be null or empty");
             return;
         }
 
-        if (_pageSetup.ContainsKey(pagename))
+        if (_pageSetup.ContainsKey(pageName))
         {
-            _pageSetup[pagename] = initialState;
+            _pageSetup[pageName] = initialState;
         }
     }
 
     protected override async Task InitializeAsync()
     {
-        // Pages initializaiton
+        // Pages initialization
         BrowsePageParameters = _pageSetup[ExplorerPageName.Browse];
         InstalledPageParameters = _pageSetup[ExplorerPageName.Installed];
         UpdatesPageParameters = _pageSetup[ExplorerPageName.Updates];
 
         _pageSetup.Values.ForEach(page =>
-            Pages.Add(_typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ExplorerPage>(page)));
+            Pages.Add(ActivatorUtilities.CreateInstance<ExplorerPage>(ServiceProvider, page)));
 
         foreach (var page in Pages)
         {
@@ -164,7 +163,7 @@ internal class ExplorerViewModel : ViewModelBase
         var activeTab = Pages.FirstOrDefault(p => p.IsActive)?.Parameters.Tab;
         if (activeTab is not null)
         {
-            ActivatedExplorerTabMessage.SendWith(activeTab);
+            ActivatedExplorerTabMessage.SendWith(_messageMediator, activeTab);
         }
     }
 

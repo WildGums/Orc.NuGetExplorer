@@ -1,11 +1,12 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using Catel.IoC;
 using Catel.Logging;
 using Microsoft.Extensions.Logging;
 using Orc.FileSystem;
 
-public class RollbackWatcher : PackageManagerContextWatcherBase
+public class RollbackWatcher : PackageManagerContextWatcherBase, IConstructAtStartup
 {
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(RollbackWatcher));
 

@@ -1,12 +1,13 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using Catel.IoC;
 using Catel.Messaging;
 using Orc.FileSystem;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Messaging;
 
-public class DeletemeWatcher : PackageManagerWatcherBase
+public class DeletemeWatcher : PackageManagerWatcherBase, IConstructAtStartup
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly IDirectoryService _directoryService;

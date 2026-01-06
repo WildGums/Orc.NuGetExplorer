@@ -3,7 +3,6 @@
 using System;
 using System.Threading.Tasks;
 using Catel;
-using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 
@@ -11,44 +10,28 @@ public class NuGetExplorerInitializationService : INuGetExplorerInitializationSe
 {
     private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
     private readonly INuGetConfigurationService _nuGetConfigurationService;
+    private readonly ICommandManager _commandManager;
 
-    public NuGetExplorerInitializationService(ILanguageService languageService, ICredentialProviderLoaderService credentialProviderLoaderService,
-        INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, IViewModelLocator vmLocator, ITypeFactory typeFactory)
+    public NuGetExplorerInitializationService(ILanguageService languageService, 
+        ICredentialProviderLoaderService credentialProviderLoaderService,
+        INuGetProjectUpgradeService nuGetProjectUpgradeService, INuGetConfigurationService nuGetConfigurationService, 
+        IViewModelLocator vmLocator, IServiceProvider serviceProvider,
+        ICommandManager commandManager)
     {
-        ArgumentNullException.ThrowIfNull(languageService);
-        ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
-        ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
-        ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
-        ArgumentNullException.ThrowIfNull(vmLocator);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
-        InitializeTypes(ServiceLocator.Default);
-
-        // set language resources
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer", "Orc.NuGetExplorer.Properties", "Resources"));
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.NuGetExplorer.Xaml", "Orc.NuGetExplorer.Properties", "Resources"));
+        InitializeTypes(serviceProvider);
 
         // Note: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
         // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
 
         _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
         _nuGetConfigurationService = nuGetConfigurationService;
+        _commandManager = commandManager;
     }
 
-    private void InitializeTypes(IServiceLocator serviceLocator)
+    private void InitializeTypes(IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(serviceLocator);
-
-        // instantiate watchers
-        serviceLocator.RegisterTypeAndInstantiate<DeletemeWatcher>();
-        serviceLocator.RegisterTypeAndInstantiate<RollbackWatcher>();
-
-        // instantiate package manager listener
-        serviceLocator.RegisterTypeAndInstantiate<NuGetToMicrosoftLoggerTranslator>();
-
         // register commands
-        var commandManager = serviceLocator.ResolveRequiredType<ICommandManager>();
-        commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+        _commandManager.CreateCommandWithGesture(serviceProvider, typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
     }
 
     public string DefaultSourceKey => Settings.NuGet.FallbackUrl;

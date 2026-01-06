@@ -5,10 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.Logging;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 
 internal class PackageCommandService : IPackageCommandService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageCommandService));
 
     private readonly IApiPackageRegistry _apiPackageRegistry;
 
@@ -22,16 +23,10 @@ internal class PackageCommandService : IPackageCommandService
 
     private readonly IBusyIndicatorService _busyIndicatorService;
 
-    public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
+    public PackageCommandService(IBusyIndicatorService busyIndicatorService, IRepositoryService repositoryService, 
+        IPackageQueryService packageQueryService, IPackageOperationService packageOperationService,
         IPackageOperationContextService packageOperationContextService, IApiPackageRegistry apiPackageRegistry)
     {
-        ArgumentNullException.ThrowIfNull(busyIndicatorService);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(packageQueryService);
-        ArgumentNullException.ThrowIfNull(packageOperationService);
-        ArgumentNullException.ThrowIfNull(packageOperationContextService);
-        ArgumentNullException.ThrowIfNull(apiPackageRegistry);
-
         _busyIndicatorService = busyIndicatorService;
         _packageQueryService = packageQueryService;
         _packageOperationService = packageOperationService;
@@ -111,7 +106,7 @@ internal class PackageCommandService : IPackageCommandService
     {
         if (package is null)
         {
-            Log.Debug("Cannot execute command for null package");
+            Logger.LogDebug("Cannot execute command for null package");
             return false;
         }
 
@@ -149,7 +144,7 @@ internal class PackageCommandService : IPackageCommandService
     {
         var packageExists = await VerifyLocalPackageExistsAsync(package);
 
-        Log.Debug($"Can install for '{package}': {packageExists}");
+        Logger.LogDebug($"Can install for '{package}': {packageExists}");
 
         return !packageExists;
     }
@@ -158,7 +153,7 @@ internal class PackageCommandService : IPackageCommandService
     {
         var packageExists = await VerifyLocalPackageExistsAsync(package);
 
-        Log.Debug($"Can update for '{package}': {packageExists}");
+        Logger.LogDebug($"Can update for '{package}': {packageExists}");
 
         return packageExists;
     }
@@ -169,7 +164,7 @@ internal class PackageCommandService : IPackageCommandService
 
         if (package.IsInstalled is null)
         {
-            Log.Debug($"Package '{package}' IsInstalled is null, checking package existence now");
+            Logger.LogDebug($"Package '{package}' IsInstalled is null, checking package existence now");
 
             package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
 
@@ -178,7 +173,7 @@ internal class PackageCommandService : IPackageCommandService
 
         if (package.ValidationContext?.HasErrors ?? false)
         {
-            Log.Debug($"Package '{package}' has validation errors, package is not available locally");
+            Logger.LogDebug($"Package '{package}' has validation errors, package is not available locally");
 
             LogValidationErrors(package);
 
@@ -187,12 +182,12 @@ internal class PackageCommandService : IPackageCommandService
 
         if (!package.IsInstalled.HasValue)
         {
-            Log.Debug($"Package '{package}' IsInstalled value is null, package is not available locally");
+            Logger.LogDebug($"Package '{package}' IsInstalled value is null, package is not available locally");
 
             return false;
         }
 
-        Log.Debug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
+        Logger.LogDebug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
 
         return package.IsInstalled.Value;
     }
@@ -208,7 +203,7 @@ internal class PackageCommandService : IPackageCommandService
 
         foreach (var error in package.ValidationContext.GetErrors())
         {
-            Log.Info($"{package} doesn't satisfy validation rule with error '{error.Message}'");
+            Logger.LogInformation($"{package} doesn't satisfy validation rule with error '{error.Message}'");
         }
     }
 

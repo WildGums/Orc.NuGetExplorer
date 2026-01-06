@@ -6,10 +6,11 @@ using System.Windows;
 using System.Windows.Controls;
 using Catel.Logging;
 using Catel.MVVM;
+using Microsoft.Extensions.Logging;
 
 public class InfiniteScrollListBox : ListBox
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(InfiniteScrollListBox));
 
     private ScrollViewer? _scrollViewer;
 
@@ -45,7 +46,7 @@ public class InfiniteScrollListBox : ListBox
     {
         if (_scrollViewer is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("ScrollViewer not set");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("ScrollViewer not set");
         }
 
         var scrolled = _scrollViewer.VerticalOffset;

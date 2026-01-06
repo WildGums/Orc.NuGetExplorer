@@ -4,48 +4,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Catel;
 using Catel.Fody;
-using Catel.IoC;
 using Catel.MVVM;
 using Orc.NuGetExplorer.Providers;
 
-internal class NuGetSettingsViewModel : ViewModelBase
+internal class NuGetSettingsViewModel : FeaturedViewModelBase
 {
     private const string DefaultTitle = "Package source settings";
 
     private readonly INuGetConfigurationService _nuGetConfigurationService;
     private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
 
-    public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
-        : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider)
+    public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+        INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        IServiceProvider serviceProvider)
+        : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider, serviceProvider)
     {
 
     }
 
     public NuGetSettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
-        INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
-        : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider)
+        INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        IServiceProvider serviceProvider)
+        : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider, serviceProvider)
     {
         Title = title ?? DefaultTitle;
     }
 
-    public NuGetSettingsViewModel(ExplorerSettingsContainer settings, INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
+    public NuGetSettingsViewModel(ExplorerSettingsContainer settings, 
+        INuGetConfigurationService configurationService, 
+        IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        ArgumentNullException.ThrowIfNull(configurationService);
-        ArgumentNullException.ThrowIfNull(defaultPackageSourcesProvider);
-
         _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
         _nuGetConfigurationService = configurationService;
 
         Title = DefaultTitle;
         Settings = settings;
 
-#pragma warning disable IDISP001 // Dispose created.
-        var serviceLocator = this.GetServiceLocator();
-#pragma warning restore IDISP001 // Dispose created.
-
-        if (serviceLocator.IsTypeRegistered<INuGetConfigurationResetService>())
+        if (serviceProvider.IsRegistered<INuGetConfigurationResetService>())
         {
             CanReset = true;
         }

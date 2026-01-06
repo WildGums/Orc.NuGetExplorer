@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Providers;
@@ -13,7 +14,7 @@ using Orc.NuGetExplorer.Web;
 
 public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownloadService, IImageResolveService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageMetadataMediaDownloadService));
 
     private static readonly IconDownloader IconDownloader = new();
 
@@ -51,7 +52,7 @@ public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownload
         }
         catch (WebException ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
     }
 
@@ -106,7 +107,7 @@ public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownload
         }
         catch (WebException ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
         return new BitmapImage(new Uri(DefaultIconUri));
     }
@@ -132,7 +133,7 @@ public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownload
         }
         catch (WebException ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
 
         return new BitmapImage(new Uri(DefaultIconUri));

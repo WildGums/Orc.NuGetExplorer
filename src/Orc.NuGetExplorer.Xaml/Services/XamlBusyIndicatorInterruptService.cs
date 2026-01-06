@@ -3,11 +3,11 @@
 using System;
 using Catel.Services;
 
-public class XamlPleaseWaitInterruptService : IBusyIndicatorInterruptService
+public class XamlBusyIndicatorInterruptService : IBusyIndicatorInterruptService
 {
     private readonly IBusyIndicatorService _busyIndicatorService;
 
-    public XamlPleaseWaitInterruptService(IBusyIndicatorService busyIndicatorService)
+    public XamlBusyIndicatorInterruptService(IBusyIndicatorService busyIndicatorService)
     {
         ArgumentNullException.ThrowIfNull(busyIndicatorService);
 

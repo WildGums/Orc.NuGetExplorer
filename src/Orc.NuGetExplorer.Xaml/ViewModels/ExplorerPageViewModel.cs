@@ -13,6 +13,8 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
@@ -25,9 +27,9 @@ using Orc.NuGetExplorer.Services;
 using Orc.NuGetExplorer.Web;
 using Timer = System.Timers.Timer;
 
-internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
+internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExplorerPageViewModel));
     private static readonly int SingleTasksDelayMs = 800;
     private static readonly IHttpExceptionHandler<FatalProtocolException> PackageLoadingExceptionHandler = new FatalProtocolExceptionHandler();
 
@@ -36,7 +38,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 #pragma warning disable IDE1006 // Naming Styles
     private static IDisposable? _context;
 #pragma warning restore IDE1006 // Naming Styles
-    private readonly IDefferedPackageLoaderService _defferedPackageLoaderService;
+    private readonly IDefferedPackageLoaderService _deferredPackageLoaderService;
     private readonly IDispatcherService _dispatcherService;
     private readonly INuGetFeedVerificationService _nuGetFeedVerificationService;
     private readonly IPackageMetadataMediaDownloadService _packageMetadataMediaDownloadService;
@@ -47,7 +49,6 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     private readonly INuGetCacheManager _nuGetCacheManager;
     private readonly INuGetConfigurationService _nuGetConfigurationService;
     private readonly IDispatcherProviderService _dispatcherProviderService;
-    private readonly ITypeFactory _typeFactory;
     private readonly MetadataOrigin _pageType;
 
     private readonly PackageSearchParameters? _initialSearchParams;
@@ -63,35 +64,20 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         ICommandManager commandManager,
         IDispatcherService dispatcherService,
         IRepositoryContextService repositoryService,
-        ITypeFactory typeFactory,
-        IDefferedPackageLoaderService defferedPackageLoaderService,
+        IServiceProvider serviceProvider,
+        IDefferedPackageLoaderService deferredPackageLoaderService,
         IPackageOperationContextService packageOperationContextService,
         INuGetCacheManager nuGetCacheManager,
         INuGetConfigurationService nuGetConfigurationService,
         IDispatcherProviderService dispatcherProviderService)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(page);
-        ArgumentNullException.ThrowIfNull(packagesLoaderService);
-        ArgumentNullException.ThrowIfNull(settingsProvider);
-        ArgumentNullException.ThrowIfNull(packageMetadataMediaDownloadService);
-        ArgumentNullException.ThrowIfNull(nuGetFeedVerificationService);
-        ArgumentNullException.ThrowIfNull(commandManager);
-        ArgumentNullException.ThrowIfNull(dispatcherService);
-        ArgumentNullException.ThrowIfNull(repositoryService);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(defferedPackageLoaderService);
-        ArgumentNullException.ThrowIfNull(packageOperationContextService);
-        ArgumentNullException.ThrowIfNull(nuGetCacheManager);
-        ArgumentNullException.ThrowIfNull(nuGetCacheManager);
-        ArgumentNullException.ThrowIfNull(dispatcherProviderService);
-
         _dispatcherService = dispatcherService;
         _packageMetadataMediaDownloadService = packageMetadataMediaDownloadService;
         _nuGetFeedVerificationService = nuGetFeedVerificationService;
         _repositoryService = repositoryService;
-        _defferedPackageLoaderService = defferedPackageLoaderService;
+        _deferredPackageLoaderService = deferredPackageLoaderService;
         _packageOperationContextService = packageOperationContextService;
-        _typeFactory = typeFactory;
         _packagesLoaderService = packagesLoaderService;
         _nuGetCacheManager = nuGetCacheManager;
         _nuGetConfigurationService = nuGetConfigurationService;
@@ -99,18 +85,18 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
         if (settingsProvider.Model is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized");
         }
 
         Settings = settingsProvider.Model;
         if (_settings is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized");
         }
 
-        LoadNextPackagePage = new TaskCommand(LoadNextPackagePageExecuteAsync);
-        CancelPageLoading = new TaskCommand(CancelPageLoadingExecuteAsync);
-        RefreshCurrentPage = new TaskCommand(RefreshCurrentPageExecuteAsync);
+        LoadNextPackagePage = new TaskCommand(serviceProvider, LoadNextPackagePageExecuteAsync);
+        CancelPageLoading = new TaskCommand(serviceProvider, CancelPageLoadingExecuteAsync);
+        RefreshCurrentPage = new TaskCommand(serviceProvider, RefreshCurrentPageExecuteAsync);
 
         commandManager.RegisterCommand(nameof(RefreshCurrentPage), RefreshCurrentPage, this);
 
@@ -119,19 +105,17 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
         if (Title != "Browse")
         {
-#pragma warning disable IDISP004 // Don't ignore created IDisposable.
-            _packagesLoaderService = this.GetServiceLocator().ResolveRequiredType<IPackageLoaderService>(Title);
-#pragma warning restore IDISP004 // Don't ignore created IDisposable.
+            _packagesLoaderService = serviceProvider.GetRequiredKeyedService<IPackageLoaderService>(Title);
         }
 
         if (!Enum.TryParse(Title, out _pageType))
         {
-            Log.Error("Unrecognized page type");
+            Logger.LogError("Unrecognized page type");
         }
 
         CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
-        PackageItems = new FastObservableCollection<NuGetPackage>();
+        PackageItems = new FastObservableCollection<NuGetPackage>(dispatcherService);
         Page = page;
     }
 
@@ -279,7 +263,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
             SingleDelayTimer.Elapsed += OnTimerElapsed;
             SingleDelayTimer.AutoReset = false;
 
-            SingleDelayTimer.SynchronizingObject = _typeFactory.CreateInstanceWithParameters<ISynchronizeInvoke>(
+            SingleDelayTimer.SynchronizingObject = ActivatorUtilities.CreateInstance<ISynchronizeInvoke>(ServiceProvider,
                 _dispatcherProviderService.GetCurrentDispatcher());
 
             PackageItems.CollectionChanged += OnPackageItemsCollectionChanged;
@@ -300,12 +284,12 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
             }
             else
             {
-                Log.Info("None of the source feeds configured");
+                Logger.LogInformation("None of the source feeds configured");
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
     }
 
@@ -315,12 +299,12 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
         if (e.HasPropertyChanged(nameof(Invalidated)))
         {
-            Log.Info($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
+            Logger.LogInformation($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
         }
 
         if (e.HasPropertyChanged(nameof(IsActive)) && IsActive)
         {
-            Log.Info($"Switching page: {Title} is active");
+            Logger.LogInformation($"Switching page: {Title} is active");
 
             // Force update selected item
             SelectedPackageItem = PackageItems.FirstOrDefault();
@@ -355,7 +339,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
         SingleDelayTimer.Start();
 
-        Log.Debug("Start loading delay timer");
+        Logger.LogDebug("Start loading delay timer");
     }
 
     private async void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -363,10 +347,10 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         var currentFeed = Settings.ObservedFeed;
         if (currentFeed is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot perform update on empty feed");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot perform update on empty feed");
         }
 
-        Log.Info($"Updating page from feed {currentFeed.Name}");
+        Logger.LogInformation($"Updating page from feed {currentFeed.Name}");
 
         // Reset page package data
         PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
@@ -409,7 +393,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
                 }
 
                 IsCancellationTokenAlive = true;
-                Log.Debug("You can now cancel search from gui");
+                Logger.LogDebug("You can now cancel search from gui");
 
                 using (var pageTcs = GetCancelationTokenSource())
                 {
@@ -453,7 +437,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         }
         catch (OperationCanceledException ex)
         {
-            Log.Info($"Command {nameof(LoadPackagesAsync)} was cancelled by {ex}");
+            Logger.LogInformation($"Command {nameof(LoadPackagesAsync)} was cancelled by {ex}");
 
             IsCancellationTokenAlive = false;
 
@@ -475,7 +459,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
             }
             else
             {
-                Log.Info("Search operation was canceled (interrupted by next user request");
+                Logger.LogInformation("Search operation was canceled (interrupted by next user request");
             }
         }
         catch (FatalProtocolException ex)
@@ -485,23 +469,23 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
             if (result == FeedVerificationResult.AuthenticationRequired)
             {
-                Log.Error($"Authentication credentials required. Cannot load packages from source '{currentSource.Source}'");
+                Logger.LogError($"Authentication credentials required. Cannot load packages from source '{currentSource.Source}'");
             }
             else
             {
-                Log.Error(ex);
+                Logger.LogError(ex, null);
             }
         }
         catch (Exception ex)
         {
             IsCancellationTokenAlive = false;
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
         finally
         {
             if (PackageItems.Any() && IsActive)
             {
-                await _defferedPackageLoaderService.StartLoadingAsync();
+                await _deferredPackageLoaderService.StartLoadingAsync();
             }
         }
     }
@@ -535,7 +519,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         {
             IsLoadingInProcess = true;
 
-            Log.Info($"Start package query on {Title} page");
+            Logger.LogInformation($"Start package query on {Title} page");
 
             var isFirstLoad = pageInfo.Current < 0;
 
@@ -548,7 +532,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
             if (searchParameters.IsRecommendedOnly && _packagesLoaderService is IPackagesUpdatesSearcherService updatesLoaderService)
             {
-                Log.Info("Select only recommended upgrades");
+                Logger.LogInformation("Select only recommended upgrades");
                 packages = await updatesLoaderService.SearchForPackagesUpdatesAsync(token: cancellationToken);
             }
             else
@@ -566,7 +550,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
             Invalidated = false;
 
-            Log.Info($"Page '{Title}' updated with {packages.Count()} packages returned by query from {PageInfo?.Source}'");
+            Logger.LogInformation($"Page '{Title}' updated with {packages.Count()} packages returned by query from {PageInfo?.Source}'");
         }
         finally
         {
@@ -578,9 +562,9 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
     {
         ArgumentNullException.ThrowIfNull(packageSearchMetadataCollection);
 
-        var models = packageSearchMetadataCollection.Select(x => _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetPackage>(x, _pageType)).ToList();
+        var models = packageSearchMetadataCollection.Select(x => ActivatorUtilities.CreateInstance<NuGetPackage>(ServiceProvider, x, _pageType)).ToList();
 
-        //create tokens, used for deffer execution of tasks
+        //create tokens, used for defer execution of tasks
         //obtained states/updates of packages
 
         if (_pageType != MetadataOrigin.Updates)
@@ -597,7 +581,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
                 if (_repositoryService.AcquireContext() != SourceContext.EmptyContext)
                 {
-                    _defferedPackageLoaderService.Add(deferToken);
+                    _deferredPackageLoaderService.Add(deferToken);
                 }
             }
         }
@@ -631,7 +615,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
 
     private async Task CanFeedBeLoadedAsync(INuGetSource source, CancellationToken cancelToken)
     {
-        Log.Info($"'{source}' package source is verified");
+        Logger.LogInformation($"'{source}' package source is verified");
 
         if (source is NuGetFeed singleSource)
         {
@@ -652,7 +636,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
                 if (!feed.IsAccessible)
                 {
                     inaccessibleFeeds.Add(feed);
-                    Log.Warning($"{feed} is inaccessible. It won't be used when 'All' option selected");
+                    Logger.LogWarning($"{feed} is inaccessible. It won't be used when 'All' option selected");
                 }
             }
 
@@ -660,7 +644,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         }
         else
         {
-            Log.Error($"Parameter {source} has invalid type");
+            Logger.LogError($"Parameter {source} has invalid type");
         }
     }
 
@@ -682,7 +666,7 @@ internal class ExplorerPageViewModel : ViewModelBase, IManagerPage
         var currentFeed = Settings.ObservedFeed;
         if (currentFeed is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Could not load NuGet packages from empty feed");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Could not load NuGet packages from empty feed");
         }
 
         await VerifySourceAndLoadPackagesAsync(pageToken, currentFeed, searchParams, pageSize);

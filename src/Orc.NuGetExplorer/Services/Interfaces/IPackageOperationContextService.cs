@@ -8,5 +8,6 @@ public interface IPackageOperationContextService
     IPackageOperationContext? CurrentContext { get; }
 
     event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
+    IDisposable UseOperationContext(PackageOperationType operationType, IPackageDetails package);
     IDisposable UseOperationContext(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages);
 }

@@ -7,7 +7,7 @@ public class PackagesBatch
 {
     public PackagesBatch()
     {
-        PackageList = new FastObservableCollection<IPackageDetails>();
+        PackageList = new ObservableCollection<IPackageDetails>();
     }
 
     public ObservableCollection<IPackageDetails> PackageList { get; set; }

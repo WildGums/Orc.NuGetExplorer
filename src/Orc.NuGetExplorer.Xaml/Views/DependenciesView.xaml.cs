@@ -7,18 +7,8 @@ using Catel.Windows.Controls;
 /// <summary>
 /// Interaction logic for DependenciesView.xaml
 /// </summary>
-internal partial class DependenciesView : UserControl
+internal partial class DependenciesView
 {
-    static DependenciesView()
-    {
-        typeof(DependenciesView).AutoDetectViewPropertiesToSubscribe();
-    }
-
-    public DependenciesView()
-    {
-        InitializeComponent();
-    }
-
     [ViewToViewModel("Collection", MappingType = ViewToViewModelMappingType.TwoWayViewWins)]
     public object? Collection
     {

@@ -3,39 +3,25 @@
 using System;
 using Catel.IoC;
 using Catel.Services;
-using Catel.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Orc.Controls;
-using Orc.NuGetExplorer.ViewModels;
 
 /// <summary>
 /// Interaction logic for SettingsWindow.xaml
 /// </summary>
-internal partial class NuGetSettingsWindow : DataWindow
+internal partial class NuGetSettingsWindow
 {
-    public NuGetSettingsWindow()
-    {
-        InitializeComponent();
-    }
-
-    public NuGetSettingsWindow(NuGetSettingsViewModel viewModel)
-        : base(viewModel, DataWindowMode.OkCancel)
-    {
-        Title = viewModel.Title;
-
-        InitializeComponent();
-    }
-
     protected override void OnLoaded(EventArgs e)
     {
         base.OnLoaded(e);
 
-        var appDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
+        var appDataService = IoCContainer.ServiceProvider.GetService<IAppDataService>();
         appDataService?.LoadWindowSize(this, true);
     }
 
     protected override void OnUnloaded(EventArgs e)
     {
-        var appDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
+        var appDataService = IoCContainer.ServiceProvider.GetService<IAppDataService>();
         appDataService?.SaveWindowSize(this);
 
         base.OnUnloaded(e);
