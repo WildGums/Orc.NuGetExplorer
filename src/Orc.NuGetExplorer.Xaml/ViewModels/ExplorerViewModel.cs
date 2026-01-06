@@ -65,6 +65,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
             throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
         }
 
+        Pages = new ObservableCollection<ExplorerPage>();
         Settings = settingsProvider.Model;
 
         Title = "Package management";
@@ -84,7 +85,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
 
     public INuGetExplorerInitialState? UpdatesPageParameters { get; set; }
 
-    public System.Collections.ObjectModel.ObservableCollection<ExplorerPage> Pages { get; set; } = new System.Collections.ObjectModel.ObservableCollection<ExplorerPage>();
+    public System.Collections.ObjectModel.ObservableCollection<ExplorerPage> Pages { get; set; }
 
     public void ChangeStartPage(string name)
     {
@@ -120,6 +121,11 @@ internal class ExplorerViewModel : FeaturedViewModelBase
         foreach (var page in Pages)
         {
             page.PropertyChanged += OnExplorerPagePropertyChanged;
+
+            if (page.Parameters.Tab.Name == _initialStartPage)
+            {
+                page.IsActive = true;
+            }
         }
 
         StartPage = _initialStartPage;
@@ -135,7 +141,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
 
     protected override Task OnClosingAsync()
     {
-        _configurationService.SetLastRepository("Browse", Settings.ObservedFeed?.Name ?? string.Empty);
+        _configurationService.SetLastRepository(ExplorerPageName.Browse, Settings.ObservedFeed?.Name ?? string.Empty);
         _configurationService.SetIsPrereleaseIncluded(Settings.IsPreReleaseIncluded);
         _configurationService.SetIsHideInstalled(Settings.IsHideInstalled);
 

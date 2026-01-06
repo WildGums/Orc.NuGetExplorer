@@ -134,7 +134,6 @@
                     <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
-
         </orccontrols:TabControl>
 
         <!--detail of current selected package -->

@@ -22,7 +22,7 @@ internal partial class ExplorerTopBarView
     public static readonly DependencyProperty UsedOnProperty =
         DependencyProperty.Register(nameof(UsedOn), typeof(TabControl), typeof(ExplorerTopBarView), new PropertyMetadata(null));
 
-    //[ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+    [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
     public string? StartPage
     {
         get { return (string?)GetValue(StartPageProperty); }
@@ -39,19 +39,19 @@ internal partial class ExplorerTopBarView
 
     private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
-        string selectPageWithName = e.NewValue?.ToString() ?? "Browse";
+        string selectPageWithName = e.NewValue?.ToString() ?? ExplorerPageName.Browse;
 
         switch (selectPageWithName)
         {
-            case "Browse":
+            case ExplorerPageName.Browse:
                 Browse.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
 
-            case "Installed":
+            case ExplorerPageName.Installed:
                 Installed.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
 
-            case "Updates":
+            case ExplorerPageName.Updates:
                 Updates.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
         }
