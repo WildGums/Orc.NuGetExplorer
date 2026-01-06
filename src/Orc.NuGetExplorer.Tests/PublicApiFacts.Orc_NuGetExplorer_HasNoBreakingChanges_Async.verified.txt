@@ -611,10 +611,6 @@ namespace Orc.NuGetExplorer
         public OperationContextEventArgs(Orc.NuGetExplorer.IPackageOperationContext packageOperationContext) { }
         public Orc.NuGetExplorer.IPackageOperationContext PackageOperationContext { get; }
     }
-    public static class OrcNuGetExplorerModule
-    {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcNuGetExplorer(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
-    }
     public static class PackageCollectionExtensions
     {
         public static System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity> GetLatest(this Orc.NuGetExplorer.Packaging.PackageCollection packages, NuGet.Versioning.IVersionComparer versionComparer) { }
@@ -1200,7 +1196,7 @@ namespace Orc.NuGetExplorer.Providers
     public class PackageMetadataProvider : Orc.NuGetExplorer.Providers.IPackageMetadataProvider
     {
         public PackageMetadataProvider(Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider, System.IServiceProvider serviceProvider) { }
-        public PackageMetadataProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, Orc.FileSystem.IDirectoryService directoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider, System.IServiceProvider serviceProvider) { }
+        public PackageMetadataProvider(System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> optionalGlobalLocalRepositories, Orc.FileSystem.IDirectoryService directoryService, Orc.NuGetExplorer.IRepositoryService repositoryService, NuGet.Protocol.Core.Types.ISourceRepositoryProvider repositoryProvider, System.IServiceProvider serviceProvider) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Threading.CancellationToken cancellationToken) { }
         public virtual System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, System.Func<NuGet.Protocol.Core.Types.IPackageSearchMetadata, bool> predicate, System.Threading.CancellationToken cancellationToken) { }
         public System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata?> GetHighestPackageMetadataAsync(string packageId, bool includePrerelease, string[] ignoredReleases, System.Threading.CancellationToken cancellationToken) { }
@@ -1355,5 +1351,12 @@ namespace Orc.NuGetExplorer.Windows
         public CredentialException(string message) { }
         public CredentialException(int error, string message) { }
         public CredentialException(string message, System.Exception innerException) { }
+    }
+}
+namespace Orc
+{
+    public static class OrcNuGetExplorerModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcNuGetExplorer(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }

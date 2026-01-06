@@ -2,24 +2,16 @@
 
 using System.Globalization;
 using System.Windows;
-using System.Windows.Media;
 using Catel;
 using Catel.Configuration;
 using Catel.IoC;
-using Catel.Logging;
 using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Orc.Automation;
-using Orc.Controls;
-using Orc.FileSystem;
-using Orc.Notifications;
 using Orc.NuGetExplorer.Example.Views;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Services;
-using Orc.Serialization.Json;
-using Orc.SystemInfo;
 using Orc.Theming;
 using Orchestra;
 

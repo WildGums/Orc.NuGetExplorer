@@ -236,10 +236,6 @@ namespace Orc.NuGetExplorer
         public static void MoveUp<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, T item)
             where T :  notnull { }
     }
-    public static class OrcNuGetExplorerXamlModule
-    {
-        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcNuGetExplorerXaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
-    }
     public class PackageMetadataMediaDownloadService : Orc.NuGetExplorer.IImageResolveService, Orc.NuGetExplorer.IPackageMetadataMediaDownloadService
     {
         public const string DefaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-" +
@@ -384,6 +380,13 @@ namespace Orc.NuGetExplorer.Windows
     {
         void HideBar(Catel.MVVM.IViewModel vm);
         void ShowBar(Catel.MVVM.IViewModel vm);
+    }
+}
+namespace Orc
+{
+    public static class OrcNuGetExplorerXamlModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcNuGetExplorerXaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }
 namespace Themes
