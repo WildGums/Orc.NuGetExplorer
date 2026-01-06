@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using Catel.IoC;
     using Catel.Services;
+    using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using NuGet.Frameworks;
     using NuGet.Packaging;
@@ -21,7 +22,11 @@
             [Test]
             public async Task Returns_True_For_Registered_Package_Async()
             {
-                var apiPackageRegistry = new ApiPackageRegistry(new LanguageService());
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                var apiPackageRegistry = ActivatorUtilities.CreateInstance<ApiPackageRegistry>(serviceProvider);
 
                 apiPackageRegistry.Register("MyApp.Api", "2.0.0-alpha.9999");
 
@@ -31,7 +36,11 @@
             [Test]
             public async Task Returns_False_For_Unregistered_Package_Async()
             {
-                var apiPackageRegistry = new ApiPackageRegistry(new LanguageService());
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                var apiPackageRegistry = ActivatorUtilities.CreateInstance<ApiPackageRegistry>(serviceProvider);
 
                 apiPackageRegistry.Register("MyApp.Api", "2.0.0-alpha.9999");
 
@@ -45,9 +54,11 @@
             [Test]
             public async Task Returns_Error_When_Current_Version_Is_Smaller_Than_Minimum_Required_Version_Async()
             {
-                var languageService = ServiceLocator.Default.ResolveRequiredType<ILanguageService>();
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
 
-                var apiPackageRegistry = new ApiPackageRegistry(languageService);
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                var apiPackageRegistry = ActivatorUtilities.CreateInstance<ApiPackageRegistry>(serviceProvider);
 
                 apiPackageRegistry.Register("MyApp.Api", "2.0.0-alpha.9999");
 

@@ -34,11 +34,6 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
     private SourceRepository? _localRepository;
 
-    //static PackageMetadataProvider()
-    //{
-    //    NuGetLogger = ServiceLocator.Default.ResolveRequiredType<ILogger>();
-    //}
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private PackageMetadataProvider(IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider,
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

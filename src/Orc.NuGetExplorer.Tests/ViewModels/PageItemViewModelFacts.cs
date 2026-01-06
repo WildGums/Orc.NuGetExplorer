@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.IoC;
 using Catel.MVVM;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NuGet.Versioning;
 using NUnit.Framework;
@@ -18,12 +19,12 @@ internal class PageItemViewModelFacts
         [TestCase]
         public async Task InvalidatesPackagesBatchUpdateCommandAsync()
         {
-#pragma warning disable IDISP001 // Dispose created
-            var serviceLocator = new ServiceLocator(ServiceLocator.Default);
-#pragma warning restore IDISP001 // Dispose created
+            var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
 
-            var commandManager = serviceLocator.ResolveType<ICommandManager>();
-            commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            var commandManager = serviceProvider.GetRequiredService<ICommandManager>();
+            commandManager.CreateCommandWithGesture(serviceProvider, typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
             var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
 
@@ -43,7 +44,7 @@ internal class PageItemViewModelFacts
             var model = GlobalMocks.CreateMockPackage("1.0.0", "WildGums");
             model.InstalledVersion = new NuGetVersion(model.Version);
 
-            var vm = new PageItemViewModel(model, settingsProvider, commandManager);
+            var vm = new PageItemViewModel(model, settingsProvider, commandManager, serviceProvider);
             await vm.InitializeViewModelAsync();
 
             model.IsChecked = true;

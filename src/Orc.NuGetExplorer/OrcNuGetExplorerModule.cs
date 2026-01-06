@@ -33,7 +33,7 @@
             serviceCollection.TryAddSingleton<IPackageSourceProvider, NuGetPackageSourceProvider>();
             serviceCollection.TryAddSingleton<ISourceRepositoryProvider, DefaultSourceRepositoryProvider>();
             serviceCollection.TryAddSingleton<INuGetProjectContextProvider, EmptyProjectContextProvider>();
-            serviceCollection.TryAddSingleton<IPackageCoreReader, PackageReaderBase>();
+            //serviceCollection.TryAddSingleton<IPackageCoreReader, PackageReaderBase>();
 
             serviceCollection.TryAddSingleton<IDefaultNuGetFramework, DefaultNuGetFramework>();
 

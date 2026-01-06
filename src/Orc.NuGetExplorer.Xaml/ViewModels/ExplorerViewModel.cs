@@ -85,7 +85,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
 
     public INuGetExplorerInitialState? UpdatesPageParameters { get; set; }
 
-    public ObservableCollection<ExplorerPage> Pages { get; set; } = new ObservableCollection<ExplorerPage>();
+    public System.Collections.ObjectModel.ObservableCollection<ExplorerPage> Pages { get; set; } = new System.Collections.ObjectModel.ObservableCollection<ExplorerPage>();
 
     public void ChangeStartPage(string name)
     {

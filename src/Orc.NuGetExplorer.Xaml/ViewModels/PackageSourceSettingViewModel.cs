@@ -48,7 +48,7 @@ internal class PackageSourceSettingViewModel : FeaturedViewModelBase
         DefaultSourceName = Constants.DefaultNuGetOrgName;
 
         SettingsFeeds = new List<NuGetFeed>();
-        Feeds = new ObservableCollection<NuGetFeed>();
+        Feeds = new System.Collections.ObjectModel.ObservableCollection<NuGetFeed>();
         PackageSources = new List<IPackageSource>();
 
         Title = _languageService.GetRequiredString("NuGetExplorer_PackageSourceSettingViewModel_Title");
@@ -71,7 +71,7 @@ internal class PackageSourceSettingViewModel : FeaturedViewModelBase
         _nuGetConfigurationResetService = nuGetConfigurationResetService;
     }
 
-    public ObservableCollection<NuGetFeed> Feeds { get; set; }
+    public System.Collections.ObjectModel.ObservableCollection<NuGetFeed> Feeds { get; set; }
 
     public NuGetFeed? SelectedFeed { get; set; }
 

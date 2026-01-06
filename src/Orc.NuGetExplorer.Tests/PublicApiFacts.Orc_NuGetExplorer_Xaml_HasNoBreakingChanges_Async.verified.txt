@@ -158,6 +158,7 @@ namespace Orc.NuGetExplorer.Converters
     public class UriToBitmapConverter : Catel.MVVM.Converters.ValueConverterBase<System.Uri, System.Windows.Media.Imaging.BitmapImage>
     {
         public UriToBitmapConverter() { }
+        public UriToBitmapConverter(Orc.NuGetExplorer.Providers.IApplicationCacheProvider applicationCacheProvider) { }
         protected override object Convert(System.Uri? value, System.Type targetType, object? parameter) { }
     }
 }
@@ -235,6 +236,10 @@ namespace Orc.NuGetExplorer
         public static void MoveUp<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, T item)
             where T :  notnull { }
     }
+    public static class OrcNuGetExplorerXamlModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcNuGetExplorerXaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
+    }
     public class PackageMetadataMediaDownloadService : Orc.NuGetExplorer.IImageResolveService, Orc.NuGetExplorer.IPackageMetadataMediaDownloadService
     {
         public const string DefaultIconUri = "pack://application:,,,/Orc.NuGetExplorer.Xaml;component/Resources/Images/default-" +
@@ -268,35 +273,17 @@ namespace Orc.NuGetExplorer
         public object EndInvoke(System.IAsyncResult result) { }
         public object Invoke(System.Delegate method, object?[]? args) { }
     }
-    public class XamlPleaseWaitInterruptService : Orc.NuGetExplorer.IPleaseWaitInterruptService
+    public class XamlBusyIndicatorInterruptService : Orc.NuGetExplorer.IBusyIndicatorInterruptService
     {
-        public XamlPleaseWaitInterruptService(Catel.Services.IBusyIndicatorService busyIndicatorService) { }
+        public XamlBusyIndicatorInterruptService(Catel.Services.IBusyIndicatorService busyIndicatorService) { }
         public System.IDisposable InterruptTemporarily() { }
     }
 }
 namespace Orc.NuGetExplorer.Logging
 {
-    public class NuGetLogListener : Orc.NuGetExplorer.PackageManagerLogListenerBase, Catel.Logging.ILogListener
+    public class NuGetLogListener : Orc.NuGetExplorer.PackageManagerLogListenerBase, Catel.IoC.IConstructAtStartup
     {
-        public NuGetLogListener(Orc.NuGetExplorer.INuGetLogListeningSevice nuGetLogListeningSevice) { }
-        public bool IgnoreCatelLogging { get; set; }
-        public bool IsDebugEnabled { get; set; }
-        public bool IsErrorEnabled { get; set; }
-        public bool IsInfoEnabled { get; set; }
-        public bool IsStatusEnabled { get; set; }
-        public bool IsWarningEnabled { get; set; }
-        public Catel.Logging.TimeDisplay TimeDisplay { get; set; }
-        public event System.EventHandler<Catel.Logging.LogMessageEventArgs>? LogMessage;
-        public void Debug(Catel.Logging.ILog log, string message, Catel.Logging.LogData logData, System.DateTime time) { }
-        public void Error(Catel.Logging.ILog log, string message, Catel.Logging.LogData logData, System.DateTime time) { }
-        public void Info(Catel.Logging.ILog log, string message, Catel.Logging.LogData logData, System.DateTime time) { }
-        protected override void OnDebug(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnError(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnInfo(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        protected override void OnWarning(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
-        public void Status(Catel.Logging.ILog log, string message, Catel.Logging.LogData logData, System.DateTime time) { }
-        public void Warning(Catel.Logging.ILog log, string message, Catel.Logging.LogData logData, System.DateTime time) { }
-        public void Write(Catel.Logging.ILog log, string message, Catel.Logging.LogEvent logEvent, object? extraData, Catel.Logging.LogData? logData, System.DateTime time) { }
+        public NuGetLogListener(Orc.NuGetExplorer.INuGetLogListeningService nuGetLogListeningService) { }
     }
 }
 namespace Orc.NuGetExplorer.MVVM
@@ -321,14 +308,14 @@ namespace Orc.NuGetExplorer.Providers
 {
     public class ExplorerSettingsContainerModelProvider : Orc.NuGetExplorer.Providers.ModelProvider<Orc.NuGetExplorer.ExplorerSettingsContainer>
     {
-        public ExplorerSettingsContainerModelProvider(Catel.IoC.ITypeFactory typeFactory, Orc.NuGetExplorer.INuGetConfigurationService nugetConfigurationService, Catel.Configuration.IConfigurationService configurationService) { }
+        public ExplorerSettingsContainerModelProvider(System.IServiceProvider serviceProvider, Orc.NuGetExplorer.INuGetConfigurationService nugetConfigurationService, Catel.Configuration.IConfigurationService configurationService) { }
         public bool IsInitialized { get; set; }
         public override Orc.NuGetExplorer.ExplorerSettingsContainer? Model { get; set; }
         public override Orc.NuGetExplorer.ExplorerSettingsContainer Create() { }
     }
     public class NuGetProjectContextProvider : Orc.NuGetExplorer.INuGetProjectContextProvider
     {
-        public NuGetProjectContextProvider(Catel.IoC.ITypeFactory typeFactory) { }
+        public NuGetProjectContextProvider(System.IServiceProvider serviceProvider) { }
         public NuGet.ProjectManagement.INuGetProjectContext GetProjectContext(NuGet.ProjectManagement.FileConflictAction fileConflictAction) { }
     }
 }
@@ -336,7 +323,7 @@ namespace Orc.NuGetExplorer.Services
 {
     public class NuGetExplorerInitializationService : Orc.NuGetExplorer.Services.INuGetExplorerInitializationService
     {
-        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService, Catel.MVVM.IViewModelLocator vmLocator, Catel.IoC.ITypeFactory typeFactory) { }
+        public NuGetExplorerInitializationService(Catel.Services.ILanguageService languageService, Orc.NuGetExplorer.ICredentialProviderLoaderService credentialProviderLoaderService, Orc.NuGetExplorer.Services.INuGetProjectUpgradeService nuGetProjectUpgradeService, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService, Catel.MVVM.IViewModelLocator vmLocator, System.IServiceProvider serviceProvider, Catel.MVVM.ICommandManager commandManager) { }
         public string DefaultSourceKey { get; }
         public int PackageQuerySize { get; set; }
         public virtual System.Threading.Tasks.Task<bool> UpgradeNuGetPackagesIfNeededAsync() { }
@@ -344,12 +331,12 @@ namespace Orc.NuGetExplorer.Services
 }
 namespace Orc.NuGetExplorer.ViewModels
 {
-    public class FeedDetailViewModel : Catel.MVVM.ViewModelBase
+    public class FeedDetailViewModel : Catel.MVVM.FeaturedViewModelBase
     {
         public static readonly Catel.Data.IPropertyData FeedProperty;
         public static readonly Catel.Data.IPropertyData NameProperty;
         public static readonly Catel.Data.IPropertyData SourceProperty;
-        public FeedDetailViewModel(Orc.NuGetExplorer.NuGetFeed feed) { }
+        public FeedDetailViewModel(Orc.NuGetExplorer.NuGetFeed feed, System.IServiceProvider serviceProvider) { }
         [Catel.MVVM.Model]
         public Orc.NuGetExplorer.NuGetFeed Feed { get; set; }
         [Catel.MVVM.ViewModelToModel("", "")]
@@ -368,6 +355,9 @@ namespace Orc.NuGetExplorer.Views
         public static readonly System.Windows.DependencyProperty DefaultSourceNameProperty;
         public static readonly System.Windows.DependencyProperty PackageSourcesProperty;
         public PackageSourceSettingControl() { }
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public PackageSourceSettingControl(System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
+        public PackageSourceSettingControl(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public bool CanReset { get; set; }
         [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]

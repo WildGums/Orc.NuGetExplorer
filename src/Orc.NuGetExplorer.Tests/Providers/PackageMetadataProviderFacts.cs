@@ -3,21 +3,20 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using Catel.IoC;
+    using Microsoft.Extensions.DependencyInjection;
     using Moq;
+    using NuGet.Common;
     using NuGet.Configuration;
-    using NuGet.Protocol.Core.Types;
+    using NuGet.Packaging;
+    using NuGet.Packaging.Core;
     using NuGet.Protocol;
+    using NuGet.Protocol.Core.Types;
+    using NuGet.Versioning;
     using NUnit.Framework;
-    using Orc.FileSystem;
     using Orc.NuGetExplorer.Management;
     using Orc.NuGetExplorer.Providers;
-    using System.Threading;
-    using NuGet.Common;
-    using NuGet.Packaging.Core;
-    using NuGet.Packaging;
-    using NuGet.Versioning;
 
     public partial class PackageMetadataProviderFacts
     {
@@ -27,22 +26,25 @@
             [Test]
             public async Task Respects_Specified_Predicate_Async()
             {
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
                 // Mock registration
                 var nugetConfigurationServiceMock = new Mock<INuGetConfigurationService>();
                 nugetConfigurationServiceMock.Setup(x => x.GetDestinationFolder())
                     .Returns(() => Environment.CurrentDirectory);
+                nugetConfigurationServiceMock.Setup(x => x.LoadPackageSources())
+                    .Returns(() => Array.Empty<IPackageSource>());
 
-                ServiceLocator.Default.RegisterInstance<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
+                serviceCollection.AddSingleton<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
 
                 var mockProject = GlobalMocks.CreateMockProject();
                 var projectProvider = new Mock<IDefaultExtensibleProjectProvider>();
                 projectProvider.Setup(x => x.GetDefaultProject())
                     .Returns(() => mockProject);
 
-                ServiceLocator.Default.RegisterInstance<IDefaultExtensibleProjectProvider>(projectProvider.Object);
+                serviceCollection.AddSingleton<IDefaultExtensibleProjectProvider>(projectProvider.Object);
 
-                var fileService = new FileService();
-                var directoryService = new DirectoryService(fileService);
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
 
                 // IRepositoryService setup
                 var projectRepository = GlobalMocks.CreateMockRepository("Mock", "packages");
@@ -127,8 +129,12 @@
                 var repositoryProvider = repositoryProviderMock.Object;
 
                 // Create tested instance
-                var packageMetadataProvider = new PackageMetadataProvider(new[] { sourceRepositoryMock.Object },
-                    Array.Empty<SourceRepository>(), directoryService, repositoryProviderMock.Object);
+                var packageMetadataProvider = ActivatorUtilities.CreateInstance<PackageMetadataProvider>(serviceProvider,
+                    new object[]
+                    {
+                        new[] { sourceRepositoryMock.Object },
+                        Array.Empty<SourceRepository>()
+                    });
 
                 var package = await packageMetadataProvider.GetHighestPackageMetadataAsync("MyPackage", true,
                     p => p.DependencySets.Any(pdg => !pdg.Packages.Any(d => d.Id.Contains("SomePackage"))), default);

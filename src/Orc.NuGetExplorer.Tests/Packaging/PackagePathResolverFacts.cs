@@ -2,6 +2,7 @@
 
 using Catel.IoC;
 using Catel.Services;
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.Packaging;
 using NUnit.Framework;
 
@@ -15,7 +16,11 @@ public class PackagePathResolverFacts
     [Explicit]
     public void CheckPathAreExpected()
     {
-        var applicationDataService = ServiceLocator.Default.ResolveRequiredType<IAppDataService>();
+        var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+        using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var applicationDataService = serviceProvider.GetRequiredService<IAppDataService>();
         var contentPath = System.IO.Path.Combine(applicationDataService.GetApplicationDataDirectory(Catel.IO.ApplicationDataTarget.UserRoaming),
             @"WildGums\PM\");
         var pathResolver = new PackagePathResolver(contentPath);

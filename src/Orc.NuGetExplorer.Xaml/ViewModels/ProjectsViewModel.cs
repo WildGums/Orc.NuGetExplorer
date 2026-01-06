@@ -28,7 +28,7 @@ internal class ProjectsViewModel : FeaturedViewModelBase
     [Model(SupportIEditableObject = false)]
     public NuGetActionTarget ProjectsModel { get; set; }
 
-    public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
+    public System.Collections.ObjectModel.ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
 
     protected override Task InitializeAsync()
     {
@@ -39,7 +39,7 @@ internal class ProjectsViewModel : FeaturedViewModelBase
 
         var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
 
-        Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
+        Projects = new System.Collections.ObjectModel.ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
             .Select(x =>
                 new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
 

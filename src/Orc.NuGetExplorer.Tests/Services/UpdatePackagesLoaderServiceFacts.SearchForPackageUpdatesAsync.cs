@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
@@ -22,6 +23,10 @@
             [Test]
             public async Task Returns_EmptyList_When_NoUpdatesAvailable_Async()
             {
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
                 // Arrange
                 var localRepositoryMock = CreateLocalRepositoryMock();
 
@@ -45,7 +50,8 @@
                     repositoryServiceMock.Object,
                     projectLocatorMock.Object,
                     packageManagerMock.Object,
-                    packageValidatorProviderMock.Object);
+                    packageValidatorProviderMock.Object,
+                    serviceProvider);
 
                 // Inject the mocked project repository loader
                 service.GetType()
@@ -97,6 +103,10 @@
             [Test]
             public async Task Returns_Updates_When_ValidUpdatesAvailable_Async()
             {
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
                 // Arrange
                 var localRepositoryMock = CreateLocalRepositoryMock();
 
@@ -120,7 +130,8 @@
                     repositoryServiceMock.Object,
                     projectLocatorMock.Object,
                     packageManagerMock.Object,
-                    packageValidatorProviderMock.Object);
+                    packageValidatorProviderMock.Object,
+                    serviceProvider);
 
                 // Inject the mocked project repository loader
                 service.GetType()
@@ -182,6 +193,10 @@
             [Test]
             public async Task Returns_No_Updates_When_InvalidUpdatesAvailable_Async()
             {
+                var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+                using var serviceProvider = serviceCollection.BuildServiceProvider();
+
                 // Arrange
                 var localRepositoryMock = CreateLocalRepositoryMock();
 
@@ -211,7 +226,8 @@
                     repositoryServiceMock.Object,
                     projectLocatorMock.Object,
                     packageManagerMock.Object,
-                    packageValidatorProviderMock.Object);
+                    packageValidatorProviderMock.Object,
+                    serviceProvider);
 
                 // Inject the mocked project repository loader
                 service.GetType()

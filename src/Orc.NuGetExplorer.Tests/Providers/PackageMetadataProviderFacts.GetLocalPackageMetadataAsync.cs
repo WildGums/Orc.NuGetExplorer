@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
@@ -24,22 +25,25 @@ public partial class PackageMetadataProviderFacts
         [TestCase("packages")]
         public async Task Can_RetrieveLocalPackage_From_CustomInstallPath_Async(string relativePath)
         {
+            var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
             // Mock registration
             var nugetConfigurationServiceMock = new Mock<INuGetConfigurationService>();
             nugetConfigurationServiceMock.Setup(x => x.GetDestinationFolder())
                 .Returns(() => Environment.CurrentDirectory);
+            nugetConfigurationServiceMock.Setup(x => x.LoadPackageSources())
+                .Returns(() => Array.Empty<IPackageSource>());
 
-            ServiceLocator.Default.RegisterInstance<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
+            serviceCollection.AddSingleton<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
 
             var mockProject = GlobalMocks.CreateMockProject();
             var projectProvider = new Mock<IDefaultExtensibleProjectProvider>();
             projectProvider.Setup(x => x.GetDefaultProject())
                 .Returns(() => mockProject);
 
-            ServiceLocator.Default.RegisterInstance<IDefaultExtensibleProjectProvider>(projectProvider.Object);
+            serviceCollection.AddSingleton<IDefaultExtensibleProjectProvider>(projectProvider.Object);
 
-            var fileService = new FileService();
-            var directoryService = new DirectoryService(fileService);
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
 
             // IRepositoryService setup
             var projectRepository = GlobalMocks.CreateMockRepository("Mock", "packages");
@@ -62,7 +66,7 @@ public partial class PackageMetadataProviderFacts
             var repositoryProvider = repositoryProviderMock.Object;
 
             // Create tested instance
-            var packageMetadataProvider = new PackageMetadataProvider(directoryService, repositoryService, repositoryProvider);
+            var packageMetadataProvider = ActivatorUtilities.CreateInstance<PackageMetadataProvider>(serviceProvider);
 
             var package = new PackageIdentity("Orc.NuGetExplorer", new NuGet.Versioning.NuGetVersion("1.0.0"));
             _ = await packageMetadataProvider.GetLocalPackageMetadataAsync(package, false, System.Threading.CancellationToken.None);

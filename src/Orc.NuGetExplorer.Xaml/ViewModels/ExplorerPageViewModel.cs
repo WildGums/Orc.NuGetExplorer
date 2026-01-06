@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -115,7 +116,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
         CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
-        PackageItems = new FastObservableCollection<NuGetPackage>(dispatcherService);
+        PackageItems = new ObservableCollection<NuGetPackage>();
         Page = page;
     }
 
@@ -204,7 +205,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
     public bool CanBatchInstallOperations => _pageType == MetadataOrigin.Browse;
 
-    public FastObservableCollection<NuGetPackage> PackageItems { get; set; }
+    public ObservableCollection<NuGetPackage> PackageItems { get; set; }
 
     public void StartLoadingTimerOrInvalidateData()
     {

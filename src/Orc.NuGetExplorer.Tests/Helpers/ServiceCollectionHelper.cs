@@ -2,7 +2,8 @@
 {
     using Catel;
     using Microsoft.Extensions.DependencyInjection;
-    using Orc.Theming;
+    using Orc.Controls;
+    using Orc.FileSystem;
 
     internal static class ServiceCollectionHelper
     {
@@ -13,8 +14,10 @@
             serviceCollection.AddLogging();
             serviceCollection.AddCatelCore();
             serviceCollection.AddCatelMvvm();
-            serviceCollection.AddOrcNotifications();
-            serviceCollection.AddOrcTheming();
+            serviceCollection.AddOrcControls();
+            serviceCollection.AddOrcFileSystem();
+            serviceCollection.AddOrcNuGetExplorer();
+            serviceCollection.AddOrcNuGetExplorerXaml();
 
             return serviceCollection;
         }
