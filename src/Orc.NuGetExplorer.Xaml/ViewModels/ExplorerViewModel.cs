@@ -39,7 +39,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
         { ExplorerPageName.Updates, new NuGetExplorerInitialState(ExplorerTab.Update, null)}
     };
 
-    private string _startPage = DefaultStartPage;
+    private string _initialStartPage = ExplorerPageName.Browse;
 
     public ExplorerViewModel(IServiceProvider serviceProvider, ICommandManager commandManager, 
         IModelProvider<ExplorerSettingsContainer> settingsProvider,
@@ -70,8 +70,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
         Title = "Package management";
     }
 
-    // View to viewmodel
-    public string? StartPage { get; set; } = null;
+    public string? StartPage { get; set; }
 
     public ExplorerSettingsContainer Settings { get; set; }
 
@@ -89,7 +88,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
 
     public void ChangeStartPage(string name)
     {
-        _startPage = name;
+        _initialStartPage = name;
     }
 
     public void SetInitialPageParameters(INuGetExplorerInitialState initialState)
@@ -123,7 +122,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
             page.PropertyChanged += OnExplorerPagePropertyChanged;
         }
 
-        StartPage = _startPage;
+        StartPage = _initialStartPage;
     }
 
     protected override async Task CloseAsync()

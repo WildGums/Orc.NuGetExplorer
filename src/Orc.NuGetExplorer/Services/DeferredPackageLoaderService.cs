@@ -165,7 +165,11 @@ internal class DeferredPackageLoaderService : IDefferedPackageLoaderService
 
             var repos = context.Repositories ?? context.PackageSources?.Select(src => _repositoryService.GetRepository(src)) ?? Array.Empty<SourceRepository>();
 
-            return ActivatorUtilities.CreateInstance<PackageMetadataProvider>(_serviceProvider, repos, localRepos);
+            return ActivatorUtilities.CreateInstance<PackageMetadataProvider>(_serviceProvider, new object[]
+            {
+                repos,
+                localRepos
+            });
         }
     }
 

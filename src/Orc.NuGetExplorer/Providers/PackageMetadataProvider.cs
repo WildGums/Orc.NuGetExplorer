@@ -6,11 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Catel.IoC;
 using Catel.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -62,8 +60,9 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         };
     }
 
-    public PackageMetadataProvider(IEnumerable<SourceRepository> sourceRepositories, IEnumerable<SourceRepository> optionalGlobalLocalRepositories,
-        IDirectoryService directoryService, ISourceRepositoryProvider repositoryProvider, IServiceProvider serviceProvider)
+    public PackageMetadataProvider(IReadOnlyList<SourceRepository> sourceRepositories, IReadOnlyList<SourceRepository> optionalGlobalLocalRepositories,
+        IDirectoryService directoryService, IRepositoryService repositoryService, ISourceRepositoryProvider repositoryProvider, 
+        IServiceProvider serviceProvider)
         : this(directoryService, repositoryProvider, serviceProvider)
     {
         _sourceRepositories = sourceRepositories;

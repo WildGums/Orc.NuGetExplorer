@@ -22,10 +22,10 @@ internal partial class ExplorerTopBarView
     public static readonly DependencyProperty UsedOnProperty =
         DependencyProperty.Register(nameof(UsedOn), typeof(TabControl), typeof(ExplorerTopBarView), new PropertyMetadata(null));
 
-    [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-    public string StartPage
+    //[ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+    public string? StartPage
     {
-        get { return (string)GetValue(StartPageProperty); }
+        get { return (string?)GetValue(StartPageProperty); }
         set { SetValue(StartPageProperty, value); }
     }
 
@@ -34,7 +34,7 @@ internal partial class ExplorerTopBarView
     /// </summary>
     public static readonly DependencyProperty StartPageProperty =
         DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView),
-            new PropertyMetadata(string.Empty, (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
+            new PropertyMetadata(null, (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
 
 
     private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)

@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc
 {
     using System.ComponentModel;
     using Catel.IoC;
@@ -6,6 +6,7 @@
     using Catel.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Logging;
     using Orc.NuGetExplorer.Providers;
     using Orc.NuGetExplorer.Services;

@@ -16,13 +16,13 @@ internal partial class ExplorerWindow
         var screenHeight = SystemParameters.PrimaryScreenHeight;
         TopGrid.SetCurrentValue(HeightProperty, screenHeight * 2 / 3);
 
-        SetCurrentValue(TitleProperty, (string?)ViewModel?.Title);
+        SetBinding(TitleProperty, "DataContext.Title");
     }
 
     [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-    public string StartPage
+    public string? StartPage
     {
-        get { return (string)GetValue(StartPageProperty); }
+        get { return (string?)GetValue(StartPageProperty); }
         set { SetValue(StartPageProperty, value); }
     }
 
@@ -30,7 +30,7 @@ internal partial class ExplorerWindow
     /// Identifies the <see cref="StartPage"/> dependency property.
     /// </summary>
     public static readonly DependencyProperty StartPageProperty =
-        DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
+        DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata(null, (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
 
     private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {

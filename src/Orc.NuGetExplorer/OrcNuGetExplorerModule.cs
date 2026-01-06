@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc
 {
     using Catel.Services;
     using Catel.ThirdPartyNotices;
@@ -11,6 +11,7 @@
     using NuGet.Packaging;
     using NuGet.Packaging.Core;
     using NuGet.Protocol.Core.Types;
+    using Orc.NuGetExplorer;
     using Orc.NuGetExplorer.Cache;
     using Orc.NuGetExplorer.Configuration;
     using Orc.NuGetExplorer.Loggers;

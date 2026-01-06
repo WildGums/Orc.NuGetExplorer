@@ -18,14 +18,14 @@ public class NuGetExplorerInitializationService : INuGetExplorerInitializationSe
         IViewModelLocator vmLocator, IServiceProvider serviceProvider,
         ICommandManager commandManager)
     {
+        _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
+        _nuGetConfigurationService = nuGetConfigurationService;
+        _commandManager = commandManager; 
+        
         InitializeTypes(serviceProvider);
 
         // Note: here you can add any prerequisites if you need to do some operations with installed packages before starting NugetExplorer
         // nuGetProjectUpgradeService.AddUpgradeScenario(basicV3Scenario);
-
-        _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
-        _nuGetConfigurationService = nuGetConfigurationService;
-        _commandManager = commandManager;
     }
 
     private void InitializeTypes(IServiceProvider serviceProvider)

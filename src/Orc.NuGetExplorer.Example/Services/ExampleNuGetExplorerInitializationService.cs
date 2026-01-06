@@ -1,9 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Example;
 
 using System;
-using System.Windows.Media;
-using Catel.IoC;
-using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
 using Orc.NuGetExplorer;
@@ -19,34 +16,16 @@ public class ExampleNuGetExplorerInitializationService : NuGetExplorerInitializa
         INuGetProjectUpgradeService nuGetProjectUpgradeService,
         INuGetConfigurationService nuGetConfigurationService,
         IViewModelLocator vmLocator,
-        ITypeFactory typeFactory,
+        IServiceProvider serviceProvider,
         IExtensibleProjectLocator projectLocator,
-        IAccentColorService accentColorService)
-        : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, nuGetConfigurationService, vmLocator, typeFactory)
+        IAccentColorService accentColorService,
+        ICommandManager commandManager)
+        : base(languageService, credentialProviderLoaderService, nuGetProjectUpgradeService, 
+            nuGetConfigurationService, vmLocator, serviceProvider, commandManager)
     {
-        ArgumentNullException.ThrowIfNull(projectLocator);
-        ArgumentNullException.ThrowIfNull(accentColorService);
-
-        var serviceLocator = ServiceLocator.Default;
-
-        // Example: override default project
-        serviceLocator.RegisterType<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
-
-        serviceLocator.RegisterType<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
-
-        // initialize theme
-        accentColorService.SetAccentColor(Colors.Orange);
-
-        // add loggers
-        serviceLocator.RegisterTypeAndInstantiate<SimpleLogListener>();
-        var catelListener = serviceLocator.RegisterTypeAndInstantiate<CatelLogListener>();
-        LogManager.AddListener(catelListener);
-
-        // add upgrade listener
-        serviceLocator.RegisterTypeAndInstantiate<ExampleUpgradeListener>();
-
+ 
         // IApiPackageRegistry testing
-        var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
+        //var apiRegistry = serviceLocator.ResolveType<IApiPackageRegistry>();
         //apiRegistry.Register("PackageName.Api", "1.0.0-version");
 
         // Example: changing storage for Credentials

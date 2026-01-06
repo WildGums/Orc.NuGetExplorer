@@ -1,11 +1,12 @@
 ﻿namespace Orc.NuGetExplorer.Example;
 
 using System;
+using Catel.IoC;
 using Catel.Services;
 using Orc.NuGetExplorer.Scenario;
 using Orc.NuGetExplorer.Services;
 
-internal class ExampleUpgradeListener : UpgradeListenerBase
+internal class ExampleUpgradeListener : UpgradeListenerBase, IConstructAtStartup
 {
     private readonly IMessageService _messageService;
 

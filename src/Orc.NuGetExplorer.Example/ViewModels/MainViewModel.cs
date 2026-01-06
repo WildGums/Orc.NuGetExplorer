@@ -10,7 +10,7 @@ using Catel.MVVM;
 using Catel.Services;
 using Orc.NuGetExplorer.Services;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : FeaturedViewModelBase
 {
     private readonly INuGetFeedVerificationService _feedVerificationService;
     private readonly IMessageService _messageService;
@@ -21,7 +21,8 @@ public class MainViewModel : ViewModelBase
     private readonly IUIVisualizerService _uiVisualizerService;
     private readonly INuGetProjectUpgradeService _nuGetProjectUpgradeService;
 
-    public MainViewModel(INuGetExplorerInitializationService initializationService,
+    public MainViewModel(IServiceProvider serviceProvider,
+        INuGetExplorerInitializationService initializationService,
         IPackagesUIService packagesUiService,
         IEchoService echoService,
         INuGetConfigurationService nuGetConfigurationService,
@@ -30,17 +31,8 @@ public class MainViewModel : ViewModelBase
         IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
         INuGetProjectUpgradeService nuGetProjectUpgradeService,
         IUIVisualizerService uiVisualizerService)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(initializationService);
-        ArgumentNullException.ThrowIfNull(packagesUiService);
-        ArgumentNullException.ThrowIfNull(echoService);
-        ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
-        ArgumentNullException.ThrowIfNull(feedVerificationService);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(packagesUpdatesSearcherService);
-        ArgumentNullException.ThrowIfNull(nuGetProjectUpgradeService);
-        ArgumentNullException.ThrowIfNull(uiVisualizerService);
-
         _initializationService = initializationService;
         _packagesUiService = packagesUiService;
         _nuGetConfigurationService = nuGetConfigurationService;
@@ -54,12 +46,12 @@ public class MainViewModel : ViewModelBase
 
         AvailableUpdates = new ObservableCollection<IPackageDetails>();
 
-        ShowExplorer = new TaskCommand(OnShowExplorerExecuteAsync);
-        AdddPackageSource = new TaskCommand(OnAdddPackageSourceExecuteAsync, OnAdddPackageSourceCanExecute);
-        VerifyFeed = new TaskCommand(OnVerifyFeedExecuteAsync, OnVerifyFeedCanExecute);
-        CheckForUpdates = new TaskCommand(OnCheckForUpdatesExecuteAsync);
-        OpenUpdateWindow = new TaskCommand(OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
-        Settings = new TaskCommand(OnSettingsExecuteAsync);
+        ShowExplorer = new TaskCommand(serviceProvider, OnShowExplorerExecuteAsync);
+        AddPackageSource = new TaskCommand(serviceProvider, OnAddPackageSourceExecuteAsync, OnAddPackageSourceCanExecute);
+        VerifyFeed = new TaskCommand(serviceProvider, OnVerifyFeedExecuteAsync, OnVerifyFeedCanExecute);
+        CheckForUpdates = new TaskCommand(serviceProvider, OnCheckForUpdatesExecuteAsync);
+        OpenUpdateWindow = new TaskCommand(serviceProvider, OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
+        Settings = new TaskCommand(serviceProvider, OnSettingsExecuteAsync);
 
         Title = "Orc.NuGetExplorer example";
     }
@@ -112,9 +104,9 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public TaskCommand AdddPackageSource { get; private set; }
+    public TaskCommand AddPackageSource { get; private set; }
 
-    private async Task OnAdddPackageSourceExecuteAsync()
+    private async Task OnAddPackageSourceExecuteAsync()
     {
         var packageSourceSaved = await Task.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true));
         if (!packageSourceSaved)
@@ -123,7 +115,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private bool OnAdddPackageSourceCanExecute()
+    private bool OnAddPackageSourceCanExecute()
     {
         return !string.IsNullOrWhiteSpace(PackageSourceName) && !string.IsNullOrWhiteSpace(PackageSourceUrl);
     }

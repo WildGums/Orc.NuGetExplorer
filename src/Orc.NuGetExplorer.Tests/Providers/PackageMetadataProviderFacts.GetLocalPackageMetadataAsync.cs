@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Catel.IoC;
 using Catel.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -13,7 +12,6 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NUnit.Framework;
-using Orc.FileSystem;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Providers;
 
