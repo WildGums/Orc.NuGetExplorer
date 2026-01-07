@@ -30,7 +30,7 @@ internal class PackagesUIService : IPackagesUIService
 
     public async Task ShowPackagesExplorerAsync(INuGetExplorerInitialState initialState)
     {
-        var explorerVM = _viewModelFactory.CreateRequiredViewModel<ExplorerViewModel>(null);
+        var explorerVM = _viewModelFactory.CreateRequiredViewModel<ExplorerViewModel>();
         explorerVM.ChangeStartPage(initialState.Tab.Name);
         explorerVM.SetInitialPageParameters(initialState);
 

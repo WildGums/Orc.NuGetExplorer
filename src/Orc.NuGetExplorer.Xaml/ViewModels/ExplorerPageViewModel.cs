@@ -116,7 +116,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
         CanBatchProjectActions = _pageType != MetadataOrigin.Installed;
 
-        PackageItems = new ObservableCollection<NuGetPackage>();
+        PackageItems = new System.Collections.ObjectModel.ObservableCollection<NuGetPackage>();
         Page = page;
     }
 
@@ -205,7 +205,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
     public bool CanBatchInstallOperations => _pageType == MetadataOrigin.Browse;
 
-    public ObservableCollection<NuGetPackage> PackageItems { get; set; }
+    public System.Collections.ObjectModel.ObservableCollection<NuGetPackage> PackageItems { get; set; }
 
     public void StartLoadingTimerOrInvalidateData()
     {

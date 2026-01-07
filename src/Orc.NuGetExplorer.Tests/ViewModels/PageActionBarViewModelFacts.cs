@@ -65,7 +65,7 @@ internal class PageActionBarViewModelFacts
     {
         public TestPage()
         {
-            PackageItems = new ObservableCollection<NuGetPackage>()
+            PackageItems = new System.Collections.ObjectModel.ObservableCollection<NuGetPackage>()
             {
                 GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
             };
@@ -73,7 +73,7 @@ internal class PageActionBarViewModelFacts
             CanBatchInstallOperations = true;
         }
 
-        public ObservableCollection<NuGetPackage> PackageItems { get; }
+        public System.Collections.ObjectModel.ObservableCollection<NuGetPackage> PackageItems { get; }
         public bool CanBatchUpdateOperations { get; }
         public bool CanBatchInstallOperations { get; }
 

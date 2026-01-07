@@ -65,7 +65,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
             throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
         }
 
-        Pages = new ObservableCollection<ExplorerPage>();
+        Pages = new System.Collections.ObjectModel.ObservableCollection<ExplorerPage>();
         Settings = settingsProvider.Model;
 
         Title = "Package management";
