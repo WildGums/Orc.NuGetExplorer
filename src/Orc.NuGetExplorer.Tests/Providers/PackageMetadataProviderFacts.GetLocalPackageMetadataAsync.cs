@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Catel.Configuration;
 using Catel.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -29,7 +30,7 @@ public partial class PackageMetadataProviderFacts
             var nugetConfigurationServiceMock = new Mock<INuGetConfigurationService>();
             nugetConfigurationServiceMock.Setup(x => x.GetDestinationFolder())
                 .Returns(() => Environment.CurrentDirectory);
-            nugetConfigurationServiceMock.Setup(x => x.LoadPackageSources())
+            nugetConfigurationServiceMock.Setup(x => x.LoadPackageSources(It.IsAny<bool>()))
                 .Returns(() => Array.Empty<IPackageSource>());
 
             serviceCollection.AddSingleton<INuGetConfigurationService>(nugetConfigurationServiceMock.Object);
@@ -42,6 +43,9 @@ public partial class PackageMetadataProviderFacts
             serviceCollection.AddSingleton<IDefaultExtensibleProjectProvider>(projectProvider.Object);
 
             using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            var configurationService = serviceProvider.GetRequiredService<IConfigurationService>();
+            await configurationService.LoadAsync();
 
             // IRepositoryService setup
             var projectRepository = GlobalMocks.CreateMockRepository("Mock", "packages");

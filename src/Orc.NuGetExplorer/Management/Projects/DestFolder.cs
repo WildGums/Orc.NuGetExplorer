@@ -50,9 +50,6 @@ public class DestFolder : IExtensibleProject
 
     public string ContentPath { get; }
 
-    [ObsoleteEx(ReplacementTypeOrMember = "IgnoreMissingDependencies", TreatAsErrorFromVersion = "6.0", RemoveInVersion = "6.0")]
-    public bool IgnoreDependencies { get { return IgnoreMissingDependencies; } }
-
     public bool IgnoreMissingDependencies { get; } = true;
 
     public bool SupportSideBySide { get; } = false;

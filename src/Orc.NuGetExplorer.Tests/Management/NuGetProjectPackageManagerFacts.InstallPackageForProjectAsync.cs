@@ -35,10 +35,17 @@
                 projectMock.Setup(x => x.IgnoreMissingDependencies)
                     .Returns(true);
 
-                await nuGetProjectManagement.InstallPackageForProjectAsync(projectMock.Object, new PackageIdentity("SomePackage", new NuGet.Versioning.NuGetVersion("1.0.0")),
-                    null, default, true);
+                var context = new PackageInstallationContext
+                {
+                    Project = projectMock.Object,
+                    Package = new PackageIdentity("SomePackage", new NuGet.Versioning.NuGetVersion("1.0.0")),
+                    IgnoreMissingPackages = true,
+                    ShowErrors = true
+                };
 
-                var context = nuGetProjectManagement.ReceivedContext;
+                await nuGetProjectManagement.InstallPackageForProjectAsync(context, default);
+
+                var receivedContext = nuGetProjectManagement.ReceivedContext;
 
                 Assert.That(context.IgnoreMissingPackages, Is.True);
             }

@@ -287,7 +287,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
                 }
             }, token);
 
-            await OnInstallAsync(project, package, dependencyInstallResult || project.IgnoreDependencies);
+            await OnInstallAsync(project, package, dependencyInstallResult || project.IgnoreMissingDependencies);
 
             return true;
         }
@@ -322,28 +322,8 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
     }
 
-    [ObsoleteEx(ReplacementTypeOrMember = "InstallPackageForProjectAsync(PackageInstallationContext context, CancellationToken token)", TreatAsErrorFromVersion = "7", RemoveInVersion = "7")]
-    public Task<bool> InstallPackageForProjectAsync(IExtensibleProject project, PackageIdentity package,
-        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token, bool showErrors = true)
-    {
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(package);
-
-        var context = new PackageInstallationContext
-        {
-            Package = package,
-            Project = project,
-            PackagePredicate = packagePredicate,
-            AllowMultipleVersions = false,
-            IgnoreMissingPackages = project.IgnoreMissingDependencies,
-            ShowErrors = showErrors
-        };
-
-        return InstallPackageForProjectAsync(context, token);
-    }
-
     public async Task InstallPackageForMultipleProjectAsync(IReadOnlyList<IExtensibleProject> projects, PackageIdentity package,
-        Func<PackageIdentity, bool>? packagePredicate, CancellationToken token)
+        Func<PackageIdentity, bool>? packagePredicate, bool showErrors, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(projects);
         ArgumentNullException.ThrowIfNull(package);
@@ -352,7 +332,17 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         {
             foreach (var project in projects)
             {
-                await InstallPackageForProjectAsync(project, package, packagePredicate, token);
+                var context = new PackageInstallationContext
+                {
+                    Package = package,
+                    Project = project,
+                    PackagePredicate = packagePredicate,
+                    AllowMultipleVersions = false,
+                    IgnoreMissingPackages = project.IgnoreMissingDependencies,
+                    ShowErrors = showErrors
+                };
+
+                await InstallPackageForProjectAsync(context, token);
             }
         }
 
@@ -476,7 +466,18 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
             await UpdateLocker.WaitAsync(token);
 
             await UninstallPackageForProjectAsync(project, installedVersion, packagePredicate, token);
-            await InstallPackageForProjectAsync(project, new PackageIdentity(installedVersion.Id, targetVersion), packagePredicate, token);
+
+            var context = new PackageInstallationContext
+            {
+                Package = new PackageIdentity(installedVersion.Id, targetVersion),
+                Project = project,
+                PackagePredicate = packagePredicate,
+                AllowMultipleVersions = false,
+                IgnoreMissingPackages = project.IgnoreMissingDependencies,
+                ShowErrors = true
+            };
+
+            await InstallPackageForProjectAsync(context, token);
         }
         finally
         {

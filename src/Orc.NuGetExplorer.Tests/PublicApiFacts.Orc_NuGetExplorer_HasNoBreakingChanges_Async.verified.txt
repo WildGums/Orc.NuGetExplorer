@@ -229,9 +229,6 @@ namespace Orc.NuGetExplorer
     {
         string ContentPath { get; }
         string Framework { get; }
-        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
-            " 6.0.0. Will be removed in version 6.0.0.", false)]
-        bool IgnoreDependencies { get; }
         bool IgnoreMissingDependencies { get; }
         string Name { get; }
         bool NoCache { get; }
@@ -272,7 +269,6 @@ namespace Orc.NuGetExplorer
     }
     public interface INuGetFeedVerificationService
     {
-        Orc.NuGetExplorer.FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true);
         System.Threading.Tasks.Task<Orc.NuGetExplorer.FeedVerificationResult> VerifyFeedAsync(string source, bool authenticateIfRequired = true, System.Threading.CancellationToken cancellationToken = default);
     }
     public interface INuGetLogListeningService
@@ -649,7 +645,7 @@ namespace Orc.NuGetExplorer
         protected virtual void OnInfo(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
         protected virtual void OnWarning(object? sender, Orc.NuGetExplorer.NuGetLogRecordEventArgs e) { }
     }
-    public abstract class PackageManagerWatcherBase
+    public abstract class PackageManagerWatcherBase : Catel.IoC.IConstructAtStartup
     {
         protected PackageManagerWatcherBase(Orc.NuGetExplorer.IPackageOperationNotificationService packageOperationNotificationService) { }
         protected virtual void OnOperationFinished(object? sender, Orc.NuGetExplorer.PackageOperationEventArgs e) { }
@@ -907,9 +903,6 @@ namespace Orc.NuGetExplorer.Management
         public DestFolder(string destinationFolder, Orc.NuGetExplorer.IDefaultNuGetFramework defaultFramework) { }
         public string ContentPath { get; }
         public string Framework { get; }
-        [System.Obsolete("Use `IgnoreMissingDependencies` instead. Will be treated as an error from version" +
-            " 6.0.0. Will be removed in version 6.0.0.", false)]
-        public bool IgnoreDependencies { get; }
         public bool IgnoreMissingDependencies { get; }
         public string Name { get; }
         public bool NoCache { get; }

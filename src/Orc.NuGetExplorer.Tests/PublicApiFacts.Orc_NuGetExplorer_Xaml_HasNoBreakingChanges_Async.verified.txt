@@ -351,7 +351,6 @@ namespace Orc.NuGetExplorer.Views
         public static readonly System.Windows.DependencyProperty DefaultSourceNameProperty;
         public static readonly System.Windows.DependencyProperty PackageSourcesProperty;
         public PackageSourceSettingControl() { }
-        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
         public PackageSourceSettingControl(System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         public PackageSourceSettingControl(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
