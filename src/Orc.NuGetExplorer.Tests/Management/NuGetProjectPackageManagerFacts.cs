@@ -1,6 +1,5 @@
-﻿namespace Orc.NuGetExplorer.Tests.Management
+﻿namespace Orc.NuGetExplorer.Tests.Management;
+
+public partial class NuGetProjectPackageManagerFacts
 {
-    public partial class NuGetProjectPackageManagerFacts
-    {
-    }
 }

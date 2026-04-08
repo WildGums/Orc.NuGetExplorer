@@ -1,22 +1,21 @@
-﻿namespace Orc.NuGetExplorer
+﻿namespace Orc.NuGetExplorer;
+
+using System.Collections.Generic;
+
+public class DefaultPackageValidatorProvider : IPackageValidatorProvider
 {
-    using System.Collections.Generic;
+    private readonly IDefaultNuGetFramework _defaultNuGetFramework;
 
-    public class DefaultPackageValidatorProvider : IPackageValidatorProvider
+    public DefaultPackageValidatorProvider(IDefaultNuGetFramework defaultNuGetFramework)
     {
-        private readonly IDefaultNuGetFramework _defaultNuGetFramework;
+        _defaultNuGetFramework = defaultNuGetFramework;
+    }
 
-        public DefaultPackageValidatorProvider(IDefaultNuGetFramework defaultNuGetFramework)
+    public virtual IReadOnlyList<IPackageValidator> GetValidators()
+    {
+        return new[]
         {
-            _defaultNuGetFramework = defaultNuGetFramework;
-        }
-
-        public virtual IReadOnlyList<IPackageValidator> GetValidators()
-        {
-            return new[]
-            {
-                new PackageTargetFrameworkValidator(_defaultNuGetFramework)
-            };
-        }
+            new PackageTargetFrameworkValidator(_defaultNuGetFramework)
+        };
     }
 }

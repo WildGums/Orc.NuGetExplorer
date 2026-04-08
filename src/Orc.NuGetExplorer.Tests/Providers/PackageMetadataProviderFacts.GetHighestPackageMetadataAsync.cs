@@ -1,6 +1,5 @@
-﻿namespace Orc.NuGetExplorer.Tests
+﻿namespace Orc.NuGetExplorer.Tests;
+
+public partial class PackageMetadataProviderFacts
 {
-    public partial class PackageMetadataProviderFacts
-    {
-    }
 }

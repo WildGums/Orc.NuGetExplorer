@@ -1,6 +1,5 @@
-﻿namespace Orc.NuGetExplorer.Tests.Services
+﻿namespace Orc.NuGetExplorer.Tests.Services;
+
+public partial class PackageInstallationServiceFacts
 {
-    public partial class PackageInstallationServiceFacts
-    {
-    }
 }
