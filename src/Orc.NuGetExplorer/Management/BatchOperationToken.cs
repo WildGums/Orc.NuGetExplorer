@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 internal partial class NuGetProjectPackageManager
 {
@@ -26,7 +27,7 @@ internal partial class NuGetProjectPackageManager
                 return _supressedInvokationEventArgs.Cast<T>();
             }
 
-            Log.Warning("Mixed batched event args");
+            Logger.LogWarning("Mixed batched event args");
             return Enumerable.Empty<T>();
         }
 

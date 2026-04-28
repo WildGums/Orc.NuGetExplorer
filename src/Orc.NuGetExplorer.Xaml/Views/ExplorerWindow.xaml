@@ -12,62 +12,67 @@
                   xmlns:log="clr-namespace:Orc.NuGetExplorer.Logging"
                   mc:Ignorable="d"
                   x:ClassModifier="internal"
-                  x:Name="MainWindow"
                   xmlns:behaviors="clr-namespace:Orc.NuGetExplorer.Behaviors"
                   d:DesignWidth="1000">
-    
+
     <xamlbehaviors:Interaction.Behaviors>
         <behaviors:AnimatedOverlayBehavior IsEnabled="False">
             <behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
-                
-    <!--container for content shown by overlay-->
-    
+
+                <!--container for content shown by overlay-->
+
                 <Grid x:Name="PART_ActiveContainer"
-                    Grid.Row="0"
-                    Grid.RowSpan="3"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Panel.ZIndex="5"
-                    FocusVisualStyle="{x:Null}" />
+                      Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="2"
+                      Panel.ZIndex="5"
+                      FocusVisualStyle="{x:Null}" />
             </behaviors:AnimatedOverlayBehavior.ActiveContentContainer>
             <behaviors:AnimatedOverlayBehavior.OverlayGrid>
-                
-      <!--overlay effect container-->  
-    
+
+                <!--overlay effect container-->
+
                 <Grid x:Name="PART_OverlayBox"
-                    Grid.Row="0"
-                    Grid.RowSpan="3"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Panel.ZIndex="4"
-                    Background="Black"
-                    FocusVisualStyle="{x:Null}"
-                    Focusable="False"
-                    Opacity="0"/>
+                      Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="2"
+                      Panel.ZIndex="4"
+                      Background="Black"
+                      FocusVisualStyle="{x:Null}"
+                      Focusable="False"
+                      Opacity="0" />
             </behaviors:AnimatedOverlayBehavior.OverlayGrid>
             <behaviors:AnimatedOverlayBehavior.OverlayContent>
-                <Viewbox Height="60" Width="60"
+                <Viewbox Height="60"
+                         Width="60"
                          Margin="0 8 0 0">
-                    <Canvas Name="indicatorCanvas" Width="60" Height="60"
+                    <Canvas Name="indicatorCanvas"
+                            Width="60"
+                            Height="60"
                             RenderTransformOrigin="0.5, 0.5">
                         <Canvas.RenderTransform>
-                            <RotateTransform CenterX="0.5" CenterY="0.5"/>
+                            <RotateTransform CenterX="0.5"
+                                             CenterY="0.5" />
                         </Canvas.RenderTransform>
-                        <Ellipse    Canvas.Left="0" 
-                                    Width="60" Height="60"
-                                    StrokeThickness="2" 
-                                    Stroke="{orctheming:ThemeColorBrush ThemeColorStyle=AccentColor}" 
-                                    StrokeStartLineCap="Round" 
+                        <Ellipse    Canvas.Left="0"
+                                    Width="60"
+                                    Height="60"
+                                    StrokeThickness="2"
+                                    Stroke="{orctheming:ThemeColorBrush ThemeColorStyle=AccentColor}"
+                                    StrokeStartLineCap="Round"
                                     StrokeDashArray="12 10"
                                     StrokeEndLineCap="Round">
                             <Ellipse.Triggers>
                                 <EventTrigger RoutedEvent="Loaded">
                                     <BeginStoryboard>
-                                        <Storyboard >
+                                        <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="indicatorCanvas"
-                                                Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
-                                                                     To="-360" 
-                                                                     Duration="0:0:0.8" RepeatBehavior="Forever"/>
+                                                             Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
+                                                             To="-360"
+                                                             Duration="0:0:0.8"
+                                                             RepeatBehavior="Forever" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
@@ -79,54 +84,63 @@
         </behaviors:AnimatedOverlayBehavior>
     </xamlbehaviors:Interaction.Behaviors>
 
-    <Grid Width="900" Margin="0 0 0 30" Name="TopGrid"
+    <Grid Width="900"
+          Margin="0 0 0 30"
+          Name="TopGrid"
           MaxHeight="720">
 
         <Grid.Resources>
-            <mvvm:BindingProxy Data="{Binding }" x:Key="RootContextProxy"/>
+            <mvvm:BindingProxy Data="{Binding }"
+                               x:Key="RootContextProxy" />
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="6*"/>
-            <!--<RowDefinition Height="10"/>--> <!-- used for disabled Gridsplitter -->
-            <!--<RowDefinition Height="1*"/>--> <!-- used for disabled LogViewer -->
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="6*" />
+            <!--<RowDefinition Height="10"/>-->
+            <!-- used for disabled Gridsplitter -->
+            <!--<RowDefinition Height="1*"/>-->
+            <!-- used for disabled LogViewer -->
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.6*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="1.6*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <local:ExplorerTopBarView Grid.ColumnSpan="2" x:Name="TopBar"
-                                      UsedOn="{Binding ElementName=ExplorerPagesTabControl}"
-                                      StartPage="{Binding ElementName=MainWindow, Path=StartPage}"
-                                      DataContext="{Binding Settings}"/>
+        <local:ExplorerTopBarView Grid.ColumnSpan="2"
+                                  x:Name="TopBar"
+                                  UsedOn="{Binding ElementName=ExplorerPagesTabControl}"
+                                  StartPage="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ExplorerWindow}}, Path=StartPage}"
+                                  DataContext="{Binding Settings}" />
 
         <orccontrols:TabControl Name="ExplorerPagesTabControl"
-                                Grid.Column="0" Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.Row="1"
                                 MinHeight="230"
                                 ItemsSource="{Binding Pages}"
                                 LoadTabItems="LazyLoading">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Setter Property="IsSelected" Value="{Binding IsActive}"/>
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                    <Setter Property="IsSelected"
+                            Value="{Binding IsActive}" />
                 </Style>
             </TabControl.ItemContainerStyle>
 
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}"/>
+                    <local:ExplorerPageView SelectedItemOnPage="{Binding Path=Data.SelectedPackageItem, Source={StaticResource RootContextProxy}, Mode=TwoWay}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
-
         </orccontrols:TabControl>
 
         <!--detail of current selected package -->
         <local:PackageDetailsView Package="{Binding SelectedPackageItem}"
                                   Visibility="{Binding Path=SelectedPackageItem, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"
-                                  Grid.Row="1" Grid.Column="1"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
                                   MaxHeight="{Binding ElementName=ExplorerPagesTabControl, Path=ActualHeight}" />
 
 

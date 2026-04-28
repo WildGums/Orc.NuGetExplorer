@@ -3,16 +3,17 @@
 using System;
 using System.Threading;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class SynchronizationContextScopeManager
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(SynchronizationContextScopeManager));
 
     public static IDisposable OutOfContext()
     {
         if (SynchronizationContext.Current is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Invalid synchronization context");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Invalid synchronization context");
         }
         var token = new SynchronizationDisabilityToken(SynchronizationContext.Current);
 

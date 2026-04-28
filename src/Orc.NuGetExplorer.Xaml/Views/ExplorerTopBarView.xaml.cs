@@ -8,20 +8,8 @@ using Catel.MVVM.Views;
 /// <summary>
 /// Interaction logic for ExplorerTopBarView.xaml
 /// </summary>
-internal partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
+internal partial class ExplorerTopBarView
 {
-    static ExplorerTopBarView()
-    {
-        typeof(ExplorerTopBarView).AutoDetectViewPropertiesToSubscribe();
-    }
-
-    public ExplorerTopBarView()
-    {
-        InitializeComponent();
-    }
-
-    #region DependencyProperty
-
     public TabControl? UsedOn
     {
         get { return (TabControl?)GetValue(UsedOnProperty); }
@@ -35,9 +23,9 @@ internal partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
         DependencyProperty.Register(nameof(UsedOn), typeof(TabControl), typeof(ExplorerTopBarView), new PropertyMetadata(null));
 
     [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-    public string StartPage
+    public string? StartPage
     {
-        get { return (string)GetValue(StartPageProperty); }
+        get { return (string?)GetValue(StartPageProperty); }
         set { SetValue(StartPageProperty, value); }
     }
 
@@ -46,28 +34,26 @@ internal partial class ExplorerTopBarView : Catel.Windows.Controls.UserControl
     /// </summary>
     public static readonly DependencyProperty StartPageProperty =
         DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerTopBarView),
-            new PropertyMetadata(string.Empty, (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
+            new PropertyMetadata(null, (s, e) => ((ExplorerTopBarView)s).OnStartPageChanged(s, e)));
 
 
     private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
-        string selectPageWithName = e.NewValue?.ToString() ?? "Browse";
+        string selectPageWithName = e.NewValue?.ToString() ?? ExplorerPageName.Browse;
 
         switch (selectPageWithName)
         {
-            case "Browse":
+            case ExplorerPageName.Browse:
                 Browse.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
 
-            case "Installed":
+            case ExplorerPageName.Installed:
                 Installed.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
 
-            case "Updates":
+            case ExplorerPageName.Updates:
                 Updates.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                 return;
         }
     }
-
-    #endregion
 }

@@ -2,7 +2,7 @@
 
 public enum MetadataOrigin
 {
-    Browse,
-    Installed,
-    Updates
+    Browse = 0,
+    Installed = 1,
+    Updates = 2
 }

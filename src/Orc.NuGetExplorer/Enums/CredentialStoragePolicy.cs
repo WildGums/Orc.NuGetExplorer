@@ -3,7 +3,7 @@
 public enum CredentialStoragePolicy
 {
     None = 0,
-    WindowsVault,
-    WindowsVaultConfigurationFallback,
-    Configuration
+    WindowsVault = 1,
+    WindowsVaultConfigurationFallback = 2,
+    Configuration = 3
 }

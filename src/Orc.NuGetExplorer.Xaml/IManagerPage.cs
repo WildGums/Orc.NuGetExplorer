@@ -1,11 +1,11 @@
 ﻿
 namespace Orc.NuGetExplorer;
 
-using Catel.Collections;
+using System.Collections.ObjectModel;
 
 internal interface IManagerPage
 {
-    FastObservableCollection<NuGetPackage> PackageItems { get; }
+    ObservableCollection<NuGetPackage> PackageItems { get; }
 
     bool CanBatchUpdateOperations { get; }
 

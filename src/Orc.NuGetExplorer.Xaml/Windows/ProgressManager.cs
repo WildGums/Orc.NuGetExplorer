@@ -7,12 +7,13 @@ using Catel.Logging;
 using Catel.MVVM;
 using Catel.Windows;
 using Catel.Windows.Interactivity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xaml.Behaviors;
 using NuGetExplorer.Behaviors;
 
 internal class ProgressManager : IProgressManager
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ProgressManager));
 
     private readonly Dictionary<IViewModel, DataWindow> _storedManagedWindows = new();
 
@@ -21,7 +22,7 @@ internal class ProgressManager : IProgressManager
         var window = GetCurrentActiveDataWindow();
         if (window is null)
         {
-            Log.Warning("No active window found for progress manager");
+            Logger.LogWarning("No active window found for progress manager");
             return;
         }
 

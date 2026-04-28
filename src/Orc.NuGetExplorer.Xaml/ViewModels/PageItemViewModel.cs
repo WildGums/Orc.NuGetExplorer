@@ -7,13 +7,14 @@ using System.Windows.Input;
 using Catel.Fody;
 using Catel.Logging;
 using Catel.MVVM;
+using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using Orc.NuGetExplorer.Enums;
 using Orc.NuGetExplorer.Providers;
 
-internal class PageItemViewModel : ViewModelBase
+internal class PageItemViewModel : FeaturedViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PageItemViewModel));
 
     private static readonly string InstalledVersionText = "Installed version";
     private static readonly string LastVersionText = "Latest version";
@@ -21,23 +22,21 @@ internal class PageItemViewModel : ViewModelBase
 
     private readonly ExplorerSettingsContainer _nugetSettings;
 
-    public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, ICommandManager commandManager)
+    public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+        ICommandManager commandManager, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(package);
-        ArgumentNullException.ThrowIfNull(settingsProvider);
-        ArgumentNullException.ThrowIfNull(commandManager);
-
         Package = package;
-        _nugetSettings = settingsProvider.Model ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+        _nugetSettings = settingsProvider.Model ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
 
         var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
         if (batchUpdateCommand is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to get required command '{Commands.Packages.BatchUpdate}'");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Failed to get required command '{Commands.Packages.BatchUpdate}'");
         }
         InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
-        CheckItem = new Command<MouseButtonEventArgs?>(CheckItemExecute);
+        CheckItem = new Command<MouseButtonEventArgs?>(serviceProvider, CheckItemExecute);
     }
 
     [Model(SupportIEditableObject = false)]

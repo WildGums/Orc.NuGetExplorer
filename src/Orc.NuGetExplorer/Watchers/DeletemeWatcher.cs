@@ -1,17 +1,19 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using Catel.IoC;
 using Catel.Messaging;
 using Orc.FileSystem;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Messaging;
 
-public class DeletemeWatcher : PackageManagerWatcherBase
+public class DeletemeWatcher : PackageManagerWatcherBase, IConstructAtStartup
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly IDirectoryService _directoryService;
     private readonly INuGetPackageManager _nuGetPackageManager;
     private readonly IExtensibleProject _defaultProject;
+
     public DeletemeWatcher(IPackageOperationNotificationService packageOperationNotificationService, IFileSystemService fileSystemService,
         IDirectoryService directoryService, INuGetPackageManager nuGetPackageManager, IDefaultExtensibleProjectProvider projectProvider, IMessageMediator messageMediator)
         : base(packageOperationNotificationService)
@@ -30,6 +32,7 @@ public class DeletemeWatcher : PackageManagerWatcherBase
 
         _defaultProject = projectProvider.GetDefaultProject();
     }
+
     private async void OnDeletemeMessageAsync(PackagingDeletemeMessage message)
     {
         ArgumentNullException.ThrowIfNull(message);

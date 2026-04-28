@@ -10,6 +10,7 @@ using Catel.Fody;
 using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -20,9 +21,10 @@ using NuGetExplorer.Windows;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Packaging;
 
-internal class PackageDetailsViewModel : ViewModelBase
+internal class PackageDetailsViewModel : FeaturedViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageDetailsViewModel));
+
     private static readonly int Timeout = 500;
 
     private static IPackageMetadataProvider? PackageMetadataProvider;
@@ -32,22 +34,19 @@ internal class PackageDetailsViewModel : ViewModelBase
     private readonly IApiPackageRegistry _apiPackageRegistry;
     private readonly IPackageCommandService _packageCommandService;
 
-    public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
-        IPackageCommandService packageCommandService)
+    public PackageDetailsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, 
+        IProgressManager progressManager, IApiPackageRegistry apiPackageRegistry,
+        IPackageCommandService packageCommandService, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(settingsProvider);
-        ArgumentNullException.ThrowIfNull(progressManager);
-        ArgumentNullException.ThrowIfNull(apiPackageRegistry);
-        ArgumentNullException.ThrowIfNull(packageCommandService);
-
         _settingsProvider = settingsProvider;
         _progressManager = progressManager;
         _apiPackageRegistry = apiPackageRegistry;
         _packageCommandService = packageCommandService;
 
-        LoadInfoAboutVersions = new Command(LoadInfoAboutVersionsExecute, () => Package is not null);
-        InstallPackage = new TaskCommand(OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
-        UninstallPackage = new TaskCommand(OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
+        LoadInfoAboutVersions = new Command(serviceProvider, LoadInfoAboutVersionsExecute, () => Package is not null);
+        InstallPackage = new TaskCommand(serviceProvider, OnInstallPackageExecuteAsync, OnInstallPackageCanExecute);
+        UninstallPackage = new TaskCommand(serviceProvider, OnUninstallPackageExecuteAsync, OnUninstallPackageCanExecute);
 
         VersionsCollection = new();
         ValidationContext = new ValidationContext();
@@ -119,7 +118,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
     }
 
@@ -152,7 +151,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error when installing package {Package?.Identity}, installation failed");
+            Logger.LogError(ex, $"Error when installing package {Package?.Identity}, installation failed");
         }
         finally
         {
@@ -199,7 +198,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
+            Logger.LogError(ex, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
         }
         finally
         {
@@ -232,7 +231,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         {
             if (PackageMetadataProvider is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(PackageMetadataProvider)}' value incorrect");
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>($"'{nameof(PackageMetadataProvider)}' value incorrect");
             }
             var versionMetadata = await PackageMetadataProvider.GetPackageMetadataAsync(identity, isPreReleaseIncluded, CancellationToken.None);
             if (versionMetadata?.Identity?.Version is not null)
@@ -244,7 +243,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Metadata retrieve error");
+            Logger.LogError(ex, "Metadata retrieve error");
             return null;
         }
     }
@@ -293,12 +292,12 @@ internal class PackageDetailsViewModel : ViewModelBase
 
             if (_settingsProvider.Model is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
             }
 
             if (Package is null)
             {
-                Log.Debug("No package selected");
+                Logger.LogDebug("No package selected");
                 return;
             }
 
@@ -318,7 +317,7 @@ internal class PackageDetailsViewModel : ViewModelBase
 
     private async void OnPackageChanged()
     {
-        Log.Debug("Package changed");
+        Logger.LogDebug("Package changed");
 
         IsPackageApplied = false;
 
@@ -354,10 +353,10 @@ internal class PackageDetailsViewModel : ViewModelBase
 
             SelectedVersion = selectedVersion;
 
-            PackageMetadataProvider = Providers.PackageMetadataProvider.CreateFromSourceContext(ServiceLocator.Default);
+            PackageMetadataProvider = Providers.PackageMetadataProvider.CreateFromSourceContext(ServiceProvider);
             if (_settingsProvider.Model is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
             }
 
             VersionData = await LoadSinglePackageMetadataAsync(Package.Identity, Package, _settingsProvider.Model.IsPreReleaseIncluded);
@@ -369,7 +368,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error ocurred during view model inititalization, probably package metadata is incorrect");
+            Logger.LogError(ex, "Error occurred during view model initialization, probably package metadata is incorrect");
         }
         finally
         {
@@ -415,7 +414,7 @@ internal class PackageDetailsViewModel : ViewModelBase
         }
         catch (TimeoutException ex)
         {
-            Log.Error(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
+            Logger.LogError(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
         }
     }
 

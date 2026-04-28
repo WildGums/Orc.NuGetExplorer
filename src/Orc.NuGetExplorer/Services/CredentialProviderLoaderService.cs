@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Catel.Configuration;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -13,7 +14,8 @@ using NuGetExplorer.Providers;
 
 internal class CredentialProviderLoaderService : ICredentialProviderLoaderService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(CredentialProviderLoaderService));
+
     private readonly IConfigurationService _configurationService;
 
     public CredentialProviderLoaderService(IConfigurationService configurationService)
@@ -27,7 +29,7 @@ internal class CredentialProviderLoaderService : ICredentialProviderLoaderServic
         // set own provider 
 #pragma warning disable IDISP005 // Return type should indicate that the value should be disposed.
         HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => new ExplorerCredentialService(
-            new AsyncLazy<IEnumerable<ICredentialProvider>>(() => GetCredentialProvidersAsync()),
+            new AsyncLazy<IReadOnlyList<ICredentialProvider>>(() => GetCredentialProvidersAsync()),
             false,
             true)
         );
@@ -36,12 +38,12 @@ internal class CredentialProviderLoaderService : ICredentialProviderLoaderServic
 
     public void SetCredentialPolicy(CredentialStoragePolicy storagePolicy)
     {
-        Log.Info($"Changing credential storage policy to {storagePolicy}");
+        Logger.LogInformation($"Changing credential storage policy to {storagePolicy}");
 
         _configurationService.SetCredentialStoragePolicy(storagePolicy);
     }
 
-    public async Task<IEnumerable<ICredentialProvider>> GetCredentialProvidersAsync()
+    public async Task<IReadOnlyList<ICredentialProvider>> GetCredentialProvidersAsync()
     {
         var providers = new List<ICredentialProvider>();
 

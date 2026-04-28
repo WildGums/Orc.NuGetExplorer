@@ -3,21 +3,19 @@
 using System;
 using System.IO;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using Orc.FileSystem;
 
 internal class BackupFileSystemService : IBackupFileSystemService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(BackupFileSystemService));
+
     private readonly IPackageOperationContextService _operationContextService;
     private readonly IDirectoryService _directoryService;
     private readonly IFileService _fileService;
 
     public BackupFileSystemService(IPackageOperationContextService operationContextService, IDirectoryService directoryService, IFileService fileService)
     {
-        ArgumentNullException.ThrowIfNull(operationContextService);
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(fileService);
-
         _operationContextService = operationContextService;
         _directoryService = directoryService;
         _fileService = fileService;
@@ -25,7 +23,7 @@ internal class BackupFileSystemService : IBackupFileSystemService
 
     public void BackupFolder(string fullPath)
     {
-        Log.Info("Creating backup for {0}", fullPath);
+        Logger.LogInformation("Creating backup for {0}", fullPath);
 
         try
         {
@@ -35,13 +33,13 @@ internal class BackupFileSystemService : IBackupFileSystemService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to create backup for {0}", fullPath);
+            Logger.LogError(ex, "Failed to create backup for {0}", fullPath);
         }
     }
 
     public void BackupFile(string filePath)
     {
-        Log.Info("Creating backup for {0}", filePath);
+        Logger.LogInformation("Creating backup for {0}", filePath);
 
         try
         {
@@ -52,13 +50,13 @@ internal class BackupFileSystemService : IBackupFileSystemService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to create backup for {0}", filePath);
+            Logger.LogError(ex, "Failed to create backup for {0}", filePath);
         }
     }
 
     public void Restore(string fullPath)
     {
-        Log.Info("Restoring backup for {0}", fullPath);
+        Logger.LogInformation("Restoring backup for {0}", fullPath);
 
         try
         {
@@ -79,7 +77,7 @@ internal class BackupFileSystemService : IBackupFileSystemService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to restore backup for {0}", fullPath);
+            Logger.LogError(ex, "Failed to restore backup for {0}", fullPath);
         }
     }
 
@@ -91,7 +89,7 @@ internal class BackupFileSystemService : IBackupFileSystemService
 
         if (string.IsNullOrEmpty(backupDirectory))
         {
-            throw Log.ErrorAndCreateException<InvalidPathException>($"Invalid path found for backup folder on '{fullPath}'");
+            throw Logger.LogErrorAndCreateException<InvalidPathException>($"Invalid path found for backup folder on '{fullPath}'");
         }
 
         return backupDirectory;

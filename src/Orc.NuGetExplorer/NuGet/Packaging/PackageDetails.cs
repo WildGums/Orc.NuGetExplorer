@@ -2,12 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Catel.Data;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-
 
 public class PackageDetails : IPackageDetails
 {
@@ -29,18 +29,19 @@ public class PackageDetails : IPackageDetails
 
         SelectedVersion = metadata.Identity.Version.ToFullString();
 
-        DependencySets = metadata.DependencySets ?? new List<PackageDependencyGroup>();
+        DependencySets = metadata.DependencySets?.ToArray() ?? Array.Empty<PackageDependencyGroup>();
 
         ValidationContext = new ValidationContext();
     }
 
-    public PackageDetails(IPackageSearchMetadata metadata, PackageIdentity identity, bool isLatestVersion = false) : this(metadata, isLatestVersion)
+    public PackageDetails(IPackageSearchMetadata metadata, PackageIdentity identity, bool isLatestVersion = false) 
+        : this(metadata, isLatestVersion)
     {
         Id = identity.Id;
         NuGetVersion = identity.Version;
     }
 
-    public IEnumerable<PackageDependencyGroup> DependencySets { get; set; }
+    public IReadOnlyList<PackageDependencyGroup> DependencySets { get; set; }
 
     #region IPackageDetails
 
@@ -62,7 +63,7 @@ public class PackageDetails : IPackageDetails
 
     public string Title { get; }
 
-    public IEnumerable<string> Authors => _authors.SplitOrEmpty();
+    public IReadOnlyList<string> Authors => _authors.SplitOrEmpty();
 
     public DateTimeOffset? Published { get; }
 

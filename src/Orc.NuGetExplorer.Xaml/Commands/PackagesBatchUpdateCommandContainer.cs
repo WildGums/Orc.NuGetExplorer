@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Packaging;
 using Orc.NuGetExplorer.Windows;
 
 internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManagerPage>
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackagesBatchUpdateCommandContainer));
 
     private readonly IProgressManager _progressManager;
     private readonly IMessageService _messageService;
@@ -23,17 +24,12 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
     private readonly IPackageCommandService _packageCommandService;
     private readonly IPackageOperationContextService _packageOperationContextService;
 
-    public PackagesBatchUpdateCommandContainer(ICommandManager commandManager, IProgressManager progressManager, IMessageService messageService, INuGetPackageManager projectManager,
-        IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService)
-        : base(Commands.Packages.BatchUpdate, commandManager)
+    public PackagesBatchUpdateCommandContainer(ICommandManager commandManager, IProgressManager progressManager, 
+        IMessageService messageService, INuGetPackageManager projectManager,
+        IExtensibleProjectLocator projectLocator, IPackageCommandService packageCommandService, 
+        IPackageOperationContextService packageOperationContextService, IServiceProvider serviceProvider)
+        : base(Commands.Packages.BatchUpdate, commandManager, serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(progressManager);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(projectManager);
-        ArgumentNullException.ThrowIfNull(projectLocator);
-        ArgumentNullException.ThrowIfNull(packageCommandService);
-        ArgumentNullException.ThrowIfNull(packageOperationContextService);
-
         _progressManager = progressManager;
         _messageService = messageService;
         _projectManager = projectManager;
@@ -94,7 +90,7 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
 
                     if (targetVersion is null)
                     {
-                        Log.Warning("Cannot perform upgrade because of 'Target version' is null");
+                        Logger.LogWarning("Cannot perform upgrade because of 'Target version' is null");
                         return;
                     }
 
@@ -116,7 +112,7 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error when updating package");
+            Logger.LogError(ex, $"Error when updating package");
         }
         finally
         {

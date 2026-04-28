@@ -3,23 +3,22 @@
 using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM.Converters;
+using Microsoft.Extensions.Logging;
 using NuGetExplorer.Cache;
 using NuGetExplorer.Providers;
 
 [System.Windows.Data.ValueConversion(typeof(Uri), typeof(BitmapImage))]
-public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
+public partial class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
 {
-    private static readonly IconCache IconCache = InitCache();
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(UriToBitmapConverter));
 
-    private static IconCache InitCache()
+    private readonly IconCache _iconCache;
+
+    public UriToBitmapConverter(IApplicationCacheProvider applicationCacheProvider)
     {
-        var appCacheProvider = ServiceLocator.Default.ResolveRequiredType<IApplicationCacheProvider>();
-
-        return appCacheProvider.EnsureIconCache();
+        _iconCache = applicationCacheProvider.EnsureIconCache();
     }
 
     protected override object Convert(Uri? value, Type targetType, object? parameter)
@@ -32,12 +31,12 @@ public class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
             }
 
             //get bitmap from stream cache
-            return IconCache.GetFromCache(value) ?? DependencyProperty.UnsetValue;
+            return _iconCache.GetFromCache(value) ?? DependencyProperty.UnsetValue;
         }
         catch (Exception ex)
         {
-            // Don't list this as error, it's possible to have pacakges with missed icon.png
-            Log.Warning($"Error occured during value conversion, {ex}");
+            // Don't list this as error, it's possible to have packages with missed icon.png
+            Logger.LogWarning($"Error occurred during value conversion, {ex}");
             return DependencyProperty.UnsetValue;
         }
     }

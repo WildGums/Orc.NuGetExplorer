@@ -6,10 +6,11 @@ using System.Windows.Media.Imaging;
 using Catel.Caching;
 using Catel.Caching.Policies;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class IconCache
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(IconCache));
 
     private static readonly ExpirationPolicy DefaultStoringPolicy = ExpirationPolicy.Duration(TimeSpan.FromDays(30))!;
 

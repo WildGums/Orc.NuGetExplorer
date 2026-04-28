@@ -7,13 +7,15 @@ using System.Reflection;
 using Catel;
 using Catel.Configuration;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 
 internal class NuGetSettings : IVersionedSettings
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetSettings));
+
     private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version
-                                                      ?? throw Log.ErrorAndCreateException<InvalidOperationException>($"'{nameof(Assembly.GetExecutingAssembly)}' was 'null' therefore there is no '{nameof(AssemblyVersion)}' defined");
+                                                      ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>($"'{nameof(Assembly.GetExecutingAssembly)}' was 'null' therefore there is no '{nameof(AssemblyVersion)}' defined");
 
     private const char Separator = '|';
     private const string SectionListKey = "NuGet_sections";
@@ -231,7 +233,7 @@ internal class NuGetSettings : IVersionedSettings
             return;
         }
 
-        Log.Debug($"Cannot add or update unknown item of type {item.GetType()}");
+        Logger.LogDebug($"Cannot add or update unknown item of type {item.GetType()}");
     }
 
     public void Remove(string sectionName, SettingItem item)
@@ -242,14 +244,14 @@ internal class NuGetSettings : IVersionedSettings
             return;
         }
 
-        Log.Debug($"Cannot remove unknown item of type {item.GetType()}");
+        Logger.LogDebug($"Cannot remove unknown item of type {item.GetType()}");
     }
 
     public void SaveToDisk()
     {
         // Note: Implementations of ISettings designed assuming that all updates are storing in-memory and flushed to disk file only on call of SaveToDisk()
         // Here we are using Catel's configuration and saving all changes instantly, thats why implementation of this method is empty
-        Log.Debug("SaveToDisk method called from PackageSourceProvider");
+        Logger.LogDebug("SaveToDisk method called from PackageSourceProvider");
     }
 
     public IList<string> GetConfigFilePaths()

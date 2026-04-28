@@ -3,7 +3,7 @@
 using System;
 using Catel;
 
-public class NoVerboseHttpNuGetLogListeningService : INuGetLogListeningSevice
+public class NoVerboseHttpNuGetLogListeningService : INuGetLogListeningService
 {
     public void SendInfo(string message)
     {

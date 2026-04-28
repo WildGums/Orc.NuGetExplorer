@@ -11,51 +11,46 @@ using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 using NuGetExplorer.Cache;
 using Orc.NuGetExplorer.Messaging;
 
-internal class ExplorerTopBarViewModel : ViewModelBase
+internal class ExplorerTopBarViewModel : FeaturedViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExplorerTopBarViewModel));
 
-    private readonly ITypeFactory _typeFactory;
     private readonly IUIVisualizerService _uIVisualizerService;
     private readonly INuGetCacheManager _nuGetCacheManager;
     private readonly IBusyIndicatorService _busyIndicatorService;
 
     private readonly IMessageService _messageService;
     private readonly IMessageMediator _messageMediator;
+    private readonly IViewModelFactory _viewModelFactory;
     private readonly INuGetConfigurationService _configurationService;
 
-    public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, ITypeFactory typeFactory, IUIVisualizerService uIVisualizerService, INuGetConfigurationService configurationService,
-        INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService, IMessageService messageService, IMessageMediator messageMediator)
+    public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, IServiceProvider serviceProvider,
+        IUIVisualizerService uiVisualizerService, INuGetConfigurationService configurationService,
+        INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService,
+        IMessageService messageService, IMessageMediator messageMediator,
+        IViewModelFactory viewModelFactory)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(uIVisualizerService);
-        ArgumentNullException.ThrowIfNull(configurationService);
-        ArgumentNullException.ThrowIfNull(nuGetCacheManager);
-        ArgumentNullException.ThrowIfNull(busyIndicatorService);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(messageMediator);
-
-        _typeFactory = typeFactory;
-        _uIVisualizerService = uIVisualizerService;
+        _uIVisualizerService = uiVisualizerService;
         _configurationService = configurationService;
         _nuGetCacheManager = nuGetCacheManager;
         _busyIndicatorService = busyIndicatorService;
         _messageService = messageService;
         _messageMediator = messageMediator;
-
+        _viewModelFactory = viewModelFactory;
         Settings = settings;
 
         ActiveFeeds = new();
 
         Title = "Manage NuGet Packages";
 
-        ShowPackageSourceSettings = new TaskCommand(OnShowPackageSourceSettingsExecuteAsync);
-        ShowExtensibles = new TaskCommand(OnShowExtensiblesAsync);
-        RunNuGetCachesClearing = new TaskCommand(OnRunNuGetCachesClearingAsync);
+        ShowPackageSourceSettings = new TaskCommand(serviceProvider, OnShowPackageSourceSettingsExecuteAsync);
+        ShowExtensibles = new TaskCommand(serviceProvider, OnShowExtensiblesAsync);
+        RunNuGetCachesClearing = new TaskCommand(serviceProvider, OnRunNuGetCachesClearingAsync);
     }
 
     [Model(SupportIEditableObject = false)]
@@ -107,16 +102,11 @@ internal class ExplorerTopBarViewModel : ViewModelBase
 
     private async Task OnShowPackageSourceSettingsExecuteAsync()
     {
-        var nugetSettingsVm = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<NuGetSettingsViewModel>();
-
-        if (nugetSettingsVm is not null)
+        var result = await _uIVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>();
+        if (result.DialogResult ?? false)
         {
-            var result = await _uIVisualizerService.ShowDialogAsync(nugetSettingsVm);
-            if (result.DialogResult ?? false)
-            {
-                //update available feeds
-                ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
-            }
+            //update available feeds
+            ActiveFeeds = new ObservableCollection<INuGetSource>(GetActiveFeedsFromSettings());
         }
     }
 
@@ -124,12 +114,7 @@ internal class ExplorerTopBarViewModel : ViewModelBase
 
     private async Task OnShowExtensiblesAsync()
     {
-        var extensiblesVM = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExtensiblesViewModel>();
-
-        if (extensiblesVM is not null)
-        {
-            await _uIVisualizerService.ShowDialogAsync(extensiblesVM);
-        }
+        await _uIVisualizerService.ShowDialogAsync<ExtensiblesViewModel>();
     }
 
     public TaskCommand RunNuGetCachesClearing { get; set; }
@@ -162,7 +147,7 @@ internal class ExplorerTopBarViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, Constants.Messages.CacheClearFailed);
+            Logger.LogError(ex, Constants.Messages.CacheClearFailed);
 
             await _messageService.ShowErrorAsync(Constants.Messages.CacheClearFailed, Constants.PackageManagement);
         }
@@ -170,13 +155,13 @@ internal class ExplorerTopBarViewModel : ViewModelBase
 
     private IEnumerable<INuGetSource> GetActiveFeedsFromSettings()
     {
-        var activefeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList<INuGetSource>();
+        var activeFeeds = Settings.NuGetFeeds.Where(x => x.IsEnabled).ToList<INuGetSource>();
 
-        var allInOneSource = new CombinedNuGetSource(activefeeds);
+        var allInOneSource = new CombinedNuGetSource(activeFeeds);
 
-        activefeeds.Insert(0, allInOneSource);
+        activeFeeds.Insert(0, allInOneSource);
 
-        return activefeeds;
+        return activeFeeds;
     }
 
     private void OnActivatedExplorerTabMessageReceived(ActivatedExplorerTabMessage message)

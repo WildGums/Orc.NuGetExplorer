@@ -1,13 +1,18 @@
 ﻿namespace Orc.NuGetExplorer.Example;
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Windows;
+using Catel;
 using Catel.Configuration;
 using Catel.IoC;
-using Catel.Logging;
 using Catel.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Orc.NuGetExplorer.Example.Views;
+using Orc.NuGetExplorer.Management;
 using Orc.NuGetExplorer.Services;
+using Orc.Theming;
 using Orchestra;
 
 /// <summary>
@@ -15,16 +20,62 @@ using Orchestra;
 /// </summary>
 public partial class App : Application
 {
+#pragma warning disable IDISP006 // Implement IDisposable
+    private readonly IHost _host;
+#pragma warning restore IDISP006 // Implement IDisposable
+
     public App()
     {
-#if DEBUG
-        LogManager.AddDebugListener(true);
-#endif
+        var hostBuilder = new HostBuilder()
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddCatelCore();
+                services.AddCatelMvvm();
+                services.AddOrcAutomation();
+                services.AddOrcControls();
+                services.AddOrcFileSystem();
+                services.AddOrcNotifications();
+                services.AddOrcNuGetExplorer();
+                services.AddOrcNuGetExplorerXaml();
+                services.AddOrcSerializationJson();
+                services.AddOrcSystemInfo();
+                services.AddOrcTheming();
+                services.AddOrchestraCore();
+
+                services.AddSingleton<IEchoService, EchoService>();
+                services.AddSingleton<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
+
+                services.AddSingleton<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
+                services.AddSingleton<INuGetLogListeningService, NoVerboseHttpNuGetLogListeningService>();
+
+                // Example: override default project
+                services.AddSingleton<IDefaultExtensibleProjectProvider, NuGetProjectProvider>();
+                services.AddSingleton<INuGetConfigurationResetService, ExampleNuGetConfigurationResetService>();
+
+                // add upgrade listener
+                services.AddSingleton<ExampleUpgradeListener>();
+
+                services.AddLogging(x =>
+                {
+                    x.AddConsole();
+                    x.AddDebug();
+                });
+            });
+
+        _host = hostBuilder.Build();
+
+        IoCContainer.ServiceProvider = _host.Services;
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
-        var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();
+        base.OnStartup(e);
+
+        var serviceProvider = IoCContainer.ServiceProvider;
+
+        serviceProvider.CreateTypesThatMustBeConstructedAtStartup();
+
+        var languageService = serviceProvider.GetRequiredService<ILanguageService>();
 
         // Note: it's best to use .CurrentUICulture in actual apps since it will use the preferred language
         // of the user. But in order to demo multilingual features for devs (who mostly have en-US as .CurrentUICulture),
@@ -34,21 +85,22 @@ public partial class App : Application
 
         this.ApplyTheme();
 
-        base.OnStartup(e);
+        StyleHelper.CreateStyleForwardersForDefaultStyles();
+
+        var configurationService = serviceProvider.GetRequiredService<IConfigurationService>();
+        await configurationService.LoadAsync();
+
+        var mainWindow = ActivatorUtilities.CreateInstance<MainWindow>(_host.Services);
+        mainWindow.Show();
     }
 
-    [ModuleInitializer]
-    public static async void InitializeAsync()
+    protected override async void OnExit(ExitEventArgs e)
     {
-        var serviceLocator = ServiceLocator.Default;
+        using (_host)
+        {
+            await _host.StopAsync();
+        }
 
-        serviceLocator.RegisterType<IEchoService, EchoService>();
-        serviceLocator.RegisterType<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();
-
-        serviceLocator.RegisterType<INuGetExplorerInitializationService, ExampleNuGetExplorerInitializationService>();
-        serviceLocator.RegisterType<INuGetLogListeningSevice, NoVerboseHttpNuGetLogListeningService>();
-
-        var configurationService = serviceLocator.ResolveRequiredType<IConfigurationService>();
-        await configurationService.LoadAsync();
+        base.OnExit(e);
     }
 }

@@ -2,12 +2,13 @@
 
 using System;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Protocol;
 
 public static class HttpHandlerResourceV3Extensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(HttpHandlerResourceV3Extensions));
 
     public static T GetCredentialServiceImplementation<T>(this HttpHandlerResourceV3 httpResourceHandler)
         where T : class, ICredentialService
@@ -19,7 +20,7 @@ public static class HttpHandlerResourceV3Extensions
             return (T)HttpHandlerResourceV3.CredentialService.Value;
         }
 
-        throw Log.ErrorAndCreateException<InvalidOperationException>("CredentialService is null");
+        throw Logger.LogErrorAndCreateException<InvalidOperationException>("CredentialService is null");
     }
 
     public static void ResetCredentials(this HttpHandlerResourceV3 httpResourceHandler)

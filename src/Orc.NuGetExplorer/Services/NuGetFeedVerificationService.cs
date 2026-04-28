@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -15,20 +16,18 @@ using NuGetExplorer.Web;
 
 internal class NuGetFeedVerificationService : INuGetFeedVerificationService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(NuGetFeedVerificationService));
+
     private static readonly IHttpExceptionHandler<WebException> WebExceptionHandler = new HttpWebExceptionHandler();
     private static readonly IHttpExceptionHandler<FatalProtocolException> FatalProtocolExceptionHandler = new FatalProtocolExceptionHandler();
 
-    private readonly ILogger _nugetLogger;
+    private readonly NuGet.Common.ILogger _nugetLogger;
     private readonly ICredentialProviderLoaderService _credentialProviderLoaderService;
     private readonly ISourceRepositoryProvider _repositoryProvider;
 
-    public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, ISourceRepositoryProvider repositoryProvider, ILogger logger)
+    public NuGetFeedVerificationService(ICredentialProviderLoaderService credentialProviderLoaderService, 
+        ISourceRepositoryProvider repositoryProvider, NuGet.Common.ILogger logger)
     {
-        ArgumentNullException.ThrowIfNull(credentialProviderLoaderService);
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
-        ArgumentNullException.ThrowIfNull(logger);
-
         _credentialProviderLoaderService = credentialProviderLoaderService;
         _repositoryProvider = repositoryProvider;
         _nugetLogger = logger;
@@ -42,7 +41,7 @@ internal class NuGetFeedVerificationService : INuGetFeedVerificationService
 
         var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
 
-        Log.Debug("Verifying feed '{0}'", source);
+        Logger.LogDebug("Verifying feed '{0}'", source);
 
         try
         {
@@ -66,7 +65,7 @@ internal class NuGetFeedVerificationService : INuGetFeedVerificationService
             if (cancellationToken.IsCancellationRequested)
             {
                 //cancel operation
-                throw Log.ErrorAndCreateException<OperationCanceledException>("Verification was canceled", ex, cancellationToken);
+                throw Logger.LogErrorAndCreateException<OperationCanceledException>("Verification was canceled", ex, cancellationToken);
             }
             result = FatalProtocolExceptionHandler.HandleException(ex, source);
         }
@@ -77,90 +76,18 @@ internal class NuGetFeedVerificationService : INuGetFeedVerificationService
         catch (UriFormatException ex)
         {
             errorMessage.Append(", a UriFormatException occurred");
-            Log.Debug(ex, errorMessage.ToString());
+            Logger.LogDebug(ex, errorMessage.ToString());
 
             result = FeedVerificationResult.Invalid;
         }
         catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {
-            Log.Debug(ex, errorMessage.ToString());
+            Logger.LogDebug(ex, errorMessage.ToString());
 
             result = FeedVerificationResult.Invalid;
         }
 
-        Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
-
-        return result;
-    }
-
-    [ObsoleteEx]
-    public FeedVerificationResult VerifyFeed(string source, bool authenticateIfRequired = true)
-    {
-        Argument.IsNotNullOrEmpty(() => source);
-
-        var timeOut = 3000;
-
-        var result = FeedVerificationResult.Valid;
-
-        var errorMessage = new StringBuilder($"Failed to verify feed '{source}'");
-
-        Log.Debug("Verifying feed '{0}'", source);
-
-        try
-        {
-            var packageSource = new PackageSource(source);
-
-            var repository = _repositoryProvider.CreateRepository(packageSource);
-
-            var searchResource = repository.GetResource<PackageSearchResource>();
-
-            using (var cts = new CancellationTokenSource())
-            {
-                var cancellationToken = cts.Token;
-
-                //try to perform search
-                var searchTask = searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
-
-                var searchCompletion = Task.WhenAny(searchTask, Task.Delay(timeOut, cancellationToken)).Result;
-
-                if (searchCompletion != searchTask)
-                {
-                    throw Log.ErrorAndCreateException<TimeoutException>("Search operation has timed out");
-                }
-
-                if (searchTask.IsFaulted && searchTask.Exception is not null)
-                {
-                    throw searchTask.Exception;
-                }
-                if (searchTask.IsCanceled)
-                {
-                    return FeedVerificationResult.Unknown;
-                }
-            }
-        }
-        catch (FatalProtocolException ex)
-        {
-            result = FatalProtocolExceptionHandler.HandleException(ex, source);
-        }
-        catch (WebException ex)
-        {
-            result = WebExceptionHandler.HandleException(ex, source);
-        }
-        catch (UriFormatException ex)
-        {
-            errorMessage.Append(", a UriFormatException occurred");
-            Log.Debug(ex, errorMessage.ToString());
-
-            result = FeedVerificationResult.Invalid;
-        }
-        catch (Exception ex)
-        {
-            Log.Debug(ex, errorMessage.ToString());
-
-            result = FeedVerificationResult.Invalid;
-        }
-
-        Log.Debug("Verified feed '{0}', result is '{1}'", source, result);
+        Logger.LogDebug("Verified feed '{0}', result is '{1}'", source, result);
 
         return result;
     }

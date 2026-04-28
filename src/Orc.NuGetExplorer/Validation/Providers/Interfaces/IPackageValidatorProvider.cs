@@ -1,9 +1,8 @@
-﻿namespace Orc.NuGetExplorer
-{
-    using System.Collections.Generic;
+﻿namespace Orc.NuGetExplorer;
 
-    public interface IPackageValidatorProvider
-    {
-        IReadOnlyList<IPackageValidator> GetValidators();
-    }
+using System.Collections.Generic;
+
+public interface IPackageValidatorProvider
+{
+    IReadOnlyList<IPackageValidator> GetValidators();
 }

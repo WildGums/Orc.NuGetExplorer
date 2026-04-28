@@ -9,13 +9,14 @@ using Catel.Collections;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 using NuGetExplorer.Windows;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Packaging;
 
 internal class PageActionBarViewModel : ViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PageActionBarViewModel));
 
     private readonly IManagerPage _parentManagerPage;
 
@@ -24,24 +25,19 @@ internal class PageActionBarViewModel : ViewModelBase
     private readonly IPackageOperationContextService _packageOperationContextService;
     private readonly IMessageService _messageService;
 
-    public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, IPackageCommandService packageCommandService,
-        IPackageOperationContextService packageOperationContextService, IMessageService messageService, ICommandManager commandManager)
+    public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, 
+        IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, 
+        IMessageService messageService, ICommandManager commandManager, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(managerPage);
-        ArgumentNullException.ThrowIfNull(progressManager);
-        ArgumentNullException.ThrowIfNull(packageCommandService);
-        ArgumentNullException.ThrowIfNull(packageOperationContextService);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(commandManager);
-
         _parentManagerPage = managerPage;
         _progressManager = progressManager;
         _packageCommandService = packageCommandService;
         _packageOperationContextService = packageOperationContextService;
         _messageService = messageService;
 
-        BatchInstall = new TaskCommand(BatchInstallExecuteAsync, BatchInstallCanExecute);
-        CheckAll = new TaskCommand(CheckAllExecuteAsync);
+        BatchInstall = new TaskCommand(serviceProvider, BatchInstallExecuteAsync, BatchInstallCanExecute);
+        CheckAll = new TaskCommand(serviceProvider, CheckAllExecuteAsync);
 
         CanBatchInstall = _parentManagerPage.CanBatchInstallOperations;
         CanBatchUpdate = _parentManagerPage.CanBatchUpdateOperations;
@@ -49,7 +45,7 @@ internal class PageActionBarViewModel : ViewModelBase
         var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
         if (batchUpdateCommand is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
         }
         InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
@@ -106,7 +102,7 @@ internal class PageActionBarViewModel : ViewModelBase
                     var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
                     if (targetVersion is null)
                     {
-                        Log.Debug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
+                        Logger.LogDebug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
                     }
                     else
                     {
@@ -128,7 +124,7 @@ internal class PageActionBarViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error when updating package");
+            Logger.LogError(ex, $"Error when updating package");
         }
         finally
         {

@@ -7,9 +7,9 @@ public class PackagesBatch
 {
     public PackagesBatch()
     {
-        PackageList = new FastObservableCollection<IPackageDetails>();
+        PackageList = new System.Collections.ObjectModel.ObservableCollection<IPackageDetails>();
     }
 
-    public ObservableCollection<IPackageDetails> PackageList { get; set; }
+    public System.Collections.ObjectModel.ObservableCollection<IPackageDetails> PackageList { get; set; }
     public PackageOperationType OperationType { get; set; }
 }

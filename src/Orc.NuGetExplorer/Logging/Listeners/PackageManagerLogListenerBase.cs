@@ -4,7 +4,7 @@ using System;
 
 public abstract class PackageManagerLogListenerBase
 {
-    protected PackageManagerLogListenerBase(INuGetLogListeningSevice nuGetLogListeningSevice)
+    protected PackageManagerLogListenerBase(INuGetLogListeningService nuGetLogListeningSevice)
     {
         ArgumentNullException.ThrowIfNull(nuGetLogListeningSevice);
 

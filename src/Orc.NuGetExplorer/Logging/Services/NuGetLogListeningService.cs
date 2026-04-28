@@ -3,7 +3,7 @@
 using System;
 using Catel;
 
-internal class NuGetLogListeningSevice : INuGetLogListeningSevice
+internal class NuGetLogListeningService : INuGetLogListeningService
 {
     public void SendInfo(string message)
     {

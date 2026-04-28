@@ -1,7 +1,7 @@
 ﻿namespace Orc.NuGetExplorer.Example;
 
 using System;
-using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 using Orc.NuGetExplorer.Management;
 
 public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
@@ -10,14 +10,11 @@ public class NuGetProjectProvider : IDefaultExtensibleProjectProvider
 
     private readonly IExtensibleProject _defaultProject;
 
-    public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, ITypeFactory typeFactory)
+    public NuGetProjectProvider(IExtensibleProjectLocator extensibleProjectLocator, IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
         _extensibleProjectLocator = extensibleProjectLocator;
 
-        _defaultProject = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExampleProject>();
+        _defaultProject = ActivatorUtilities.CreateInstance<ExampleProject>(serviceProvider);
 
         _extensibleProjectLocator.Register(_defaultProject);
         _extensibleProjectLocator.Enable(_defaultProject);

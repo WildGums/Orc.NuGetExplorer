@@ -11,5 +11,5 @@ public interface IPackageLoaderService
 {
     IPackageMetadataProvider? PackageMetadataProvider { get; }
 
-    Task<IEnumerable<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token);
+    Task<IReadOnlyList<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token);
 }

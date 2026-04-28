@@ -50,7 +50,7 @@
             </orccontrols:StackGrid>
 
             <Button Content="verify feed" Command="{Binding VerifyFeed}"/>
-            <Button Content="add package source" Command="{Binding AdddPackageSource}"/>
+            <Button Content="add package source" Command="{Binding AddPackageSource}"/>
         </orccontrols:StackGrid>
 
         <Grid>

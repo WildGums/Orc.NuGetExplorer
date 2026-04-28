@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -11,7 +12,7 @@ using Orc.FileSystem;
 
 public class NuGetCacheManager : INuGetCacheManager, IDisposable
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(NuGetCacheManager));
 
     private readonly SourceCacheContext _sourceContext = new();
     private readonly IDirectoryService _directoryService;
@@ -20,9 +21,6 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
 
     public NuGetCacheManager(IDirectoryService directoryService, IFileService fileService)
     {
-        ArgumentNullException.ThrowIfNull(directoryService);
-        ArgumentNullException.ThrowIfNull(fileService);
-
         _directoryService = directoryService;
         _fileService = fileService;
     }
@@ -34,7 +32,7 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
         noErrors &= ClearNuGetFolder(DefaultNuGetFolders.GetGlobalPackagesFolder(), "Global-packages");
         noErrors &= ClearNuGetFolder(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "Temp");
 
-        Log.Info("Cache clearing operation finished");
+        Logger.LogInformation("Cache clearing operation finished");
 
         return noErrors;
     }
@@ -74,7 +72,7 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
 
         if (!string.IsNullOrEmpty(folderPath))
         {
-            Log.Info($"Clear {folderDescription} folder on path {folderPath}");
+            Logger.LogInformation($"Clear {folderDescription} folder on path {folderPath}");
 
             success &= ClearCacheDirectory(folderPath);
         }
@@ -92,17 +90,17 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
         }
         catch (UnauthorizedAccessException)
         {
-            Log.Warning("Cache clear ended unsuccessfully, directory is in use by another process");
+            Logger.LogWarning("Cache clear ended unsuccessfully, directory is in use by another process");
         }
         catch (Exception ex)
         {
-            Log.Error($"Cache clear ended unsuccessfully, {ex}");
+            Logger.LogError($"Cache clear ended unsuccessfully, {ex}");
         }
         finally
         {
             // log all errors
 
-            LogHelper.LogUnclearedPaths(failedDeletes, Log);
+            LogHelper.LogUnclearedPaths(failedDeletes, Logger);
         }
 
         return !failedDeletes.Any();

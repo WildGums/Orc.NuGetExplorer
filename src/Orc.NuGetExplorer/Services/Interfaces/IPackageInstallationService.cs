@@ -17,15 +17,6 @@ public interface IPackageInstallationService
 
     Task<InstallerResult> InstallAsync(InstallationContext context, CancellationToken cancellationToken = default);
 
-    [ObsoleteEx(ReplacementTypeOrMember = "InstallAsync(InstallationContext context, CancellationToken cancellationToken = default)", TreatAsErrorFromVersion = "6", RemoveInVersion = "7")]
-    public Task<InstallerResult> InstallAsync(
-        PackageIdentity package,
-        IExtensibleProject project,
-        IReadOnlyList<SourceRepository> repositories,
-        bool ignoreMissingPackages = false,
-        Func<PackageIdentity, bool>? packagePredicate = null,
-        CancellationToken cancellationToken = default);
-
     Task UninstallAsync(PackageIdentity package, 
         IExtensibleProject project, 
         IEnumerable<PackageReference> installedPackageReferences,

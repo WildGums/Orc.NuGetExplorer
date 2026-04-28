@@ -8,7 +8,7 @@ using NuGet.Versioning;
 
 public static class PackageSearchMetadataExtensions
 {
-    public static IEnumerable<VersionInfo> ToVersionInfo(this IEnumerable<IPackageSearchMetadata> packages, bool includePrerelease)
+    public static IReadOnlyList<VersionInfo> ToVersionInfo(this IReadOnlyList<IPackageSearchMetadata> packages, bool includePrerelease)
     {
         ArgumentNullException.ThrowIfNull(packages);
 
@@ -18,6 +18,7 @@ public static class PackageSearchMetadataExtensions
             .Select(m => new VersionInfo(m.Identity.Version, m.DownloadCount)
             {
                 PackageSearchMetadata = m
-            });
+            })
+            .ToArray();
     }
 }

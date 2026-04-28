@@ -19,13 +19,6 @@ internal class RepositoryService : IRepositoryService
         INuGetPackageManager projectManager, INuGetConfigurationService nuGetConfigurationService,
         IDefaultExtensibleProjectProvider defaultExtensibleProjectProvider, ISourceRepositoryProvider repositoryProvider)
     {
-        ArgumentNullException.ThrowIfNull(repositoryContextService);
-        ArgumentNullException.ThrowIfNull(extensibleProjectLocator);
-        ArgumentNullException.ThrowIfNull(projectManager);
-        ArgumentNullException.ThrowIfNull(nuGetConfigurationService);
-        ArgumentNullException.ThrowIfNull(defaultExtensibleProjectProvider);
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
-
         _repositoryContextService = repositoryContextService;
         _extensibleProjectLocator = extensibleProjectLocator;
         _projectManager = projectManager;
@@ -38,10 +31,10 @@ internal class RepositoryService : IRepositoryService
 
     public IRepository LocalRepository { get; }
 
-    public IEnumerable<IRepository> GetRepositories(PackageOperationType packageOperationType)
+    public IReadOnlyList<IRepository> GetRepositories(PackageOperationType packageOperationType)
     {
         // Todo get repositories based on packageOperationType
-        // currenly returns all available repositories
+        // currently returns all available repositories
         // create package metadata provider from context
         using (var context = _repositoryContextService.AcquireContext())
         {
@@ -72,12 +65,12 @@ internal class RepositoryService : IRepositoryService
         }
     }
 
-    public IEnumerable<IRepository> GetSourceRepositories()
+    public IReadOnlyList<IRepository> GetSourceRepositories()
     {
         return GetRepositories(PackageOperationType.None);
     }
 
-    public IEnumerable<IRepository> GetUpdateRepositories()
+    public IReadOnlyList<IRepository> GetUpdateRepositories()
     {
         return GetRepositories(PackageOperationType.Update);
     }

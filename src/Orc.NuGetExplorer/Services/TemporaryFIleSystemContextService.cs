@@ -2,24 +2,22 @@
 
 using System;
 using Catel;
-using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class TemporaryFIleSystemContextService : ITemporaryFIleSystemContextService
 {
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public TemporaryFIleSystemContextService(ITypeFactory typeFactory)
+    public TemporaryFIleSystemContextService(IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
-        _typeFactory = typeFactory;
+        _serviceProvider = serviceProvider;
     }
 
     public ITemporaryFileSystemContext? Context { get; private set; }
 
     public IDisposable UseTemporaryFIleSystemContext()
     {
-        using (var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>())
+        using (var context = ActivatorUtilities.CreateInstance<TemporaryFileSystemContext>(_serviceProvider))
         {
             return new DisposableToken<ITemporaryFileSystemContext>(context, token => { }, token => { });
         }

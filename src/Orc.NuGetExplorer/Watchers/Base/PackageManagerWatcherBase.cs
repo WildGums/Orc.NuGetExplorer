@@ -1,8 +1,9 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using Catel.IoC;
 
-public abstract class PackageManagerWatcherBase
+public abstract class PackageManagerWatcherBase : IConstructAtStartup
 {
     protected PackageManagerWatcherBase(IPackageOperationNotificationService packageOperationNotificationService)
     {

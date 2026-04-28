@@ -4,12 +4,13 @@ using System;
 using System.Text.RegularExpressions;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 
 public class PackageIdentityParser
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageIdentityParser));
 
     /// <summary>
     /// This regex follows the same rules as C# namespaces
@@ -26,13 +27,13 @@ public class PackageIdentityParser
 
         if (!match.Success)
         {
-            Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
             return null;
         }
 
         if (match.Captures.Count != 1)
         {
-            Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
             return null;
         }
 
@@ -42,7 +43,7 @@ public class PackageIdentityParser
 
         if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out var version))
         {
-            Log.Warning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
+            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
             return null;
         }
 

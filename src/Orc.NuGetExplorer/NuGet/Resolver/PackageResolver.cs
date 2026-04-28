@@ -26,7 +26,7 @@ public class PackageResolver
     /// <summary>
     /// Resolve a package closure
     /// </summary>
-    public IEnumerable<SourcePackageDependencyInfo> Resolve(PackageResolverContext context, CancellationToken token)
+    public IReadOnlyList<SourcePackageDependencyInfo> Resolve(PackageResolverContext context, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -95,7 +95,7 @@ public class PackageResolver
         var resolverPackages = new List<ResolverPackage>();
 
         // pre-process the available packages to remove any packages that can't possibly form part of a solution
-        var availablePackages = RemoveImpossiblePackages(context.AvailablePackages, context.RequiredPackageIds);
+        var availablePackages = RemoveImpossiblePackages(context.AvailablePackages.ToArray(), context.RequiredPackageIds);
 
         foreach (var package in availablePackages)
         {
@@ -143,7 +143,10 @@ public class PackageResolver
             if (!groupsAdded.Contains(depId))
             {
                 groupsAdded.Add(depId);
-                grouped.Add(new List<ResolverPackage>() { new ResolverPackage(id: depId, version: null, dependencies: null, listed: true, absent: true) });
+                grouped.Add(new List<ResolverPackage>()
+                {
+                    new ResolverPackage(id: depId, version: null, dependencies: null, listed: true, absent: true)
+                });
             }
         }
 
@@ -205,7 +208,7 @@ public class PackageResolver
         throw new NuGetResolverConstraintException(message);
     }
 
-    public async Task<List<SourcePackageDependencyInfo>> ResolveWithVersionOverrideAsync(PackageResolverContext context,
+    public async Task<IReadOnlyList<SourcePackageDependencyInfo>> ResolveWithVersionOverrideAsync(PackageResolverContext context,
         IExtensibleProject project,
         DependencyBehavior dependencyBehavior,
         Action<IExtensibleProject, PackageReference> conflictResolveAction,
@@ -300,12 +303,13 @@ public class PackageResolver
     /// <summary>
     /// Remove packages that can't possibly form part of a solution
     /// </summary>
-    private static IEnumerable<SourcePackageDependencyInfo> RemoveImpossiblePackages(IEnumerable<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
+    private static IReadOnlyList<SourcePackageDependencyInfo> RemoveImpossiblePackages(IReadOnlyList<SourcePackageDependencyInfo> packages, 
+        ISet<string> mustKeep)
     {
         ArgumentNullException.ThrowIfNull(packages);
 
-        List<SourcePackageDependencyInfo> before;
-        var after = new List<SourcePackageDependencyInfo>(packages);
+        IReadOnlyList<SourcePackageDependencyInfo> before;
+        IReadOnlyList<SourcePackageDependencyInfo> after = packages.ToArray();
 
         do
         {
@@ -317,7 +321,8 @@ public class PackageResolver
         return after;
     }
 
-    private static List<SourcePackageDependencyInfo> InnerPruneImpossiblePackages(List<SourcePackageDependencyInfo> packages, ISet<string> mustKeep)
+    private static IReadOnlyList<SourcePackageDependencyInfo> InnerPruneImpossiblePackages(IReadOnlyList<SourcePackageDependencyInfo> packages, 
+        ISet<string> mustKeep)
     {
         ArgumentNullException.ThrowIfNull(packages);
 

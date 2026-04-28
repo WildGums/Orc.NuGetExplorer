@@ -2,24 +2,23 @@
 
 using System;
 using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.ProjectManagement;
 using Orc.NuGetExplorer.Management;
 
 
 public class NuGetProjectContextProvider : INuGetProjectContextProvider
 {
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public NuGetProjectContextProvider(ITypeFactory typeFactory)
+    public NuGetProjectContextProvider(IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
-        _typeFactory = typeFactory;
+        _serviceProvider = serviceProvider;
     }
 
     public INuGetProjectContext GetProjectContext(FileConflictAction fileConflictAction)
     {
-        var projectContext = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<NuGetProjectContext>(fileConflictAction);
+        var projectContext = ActivatorUtilities.CreateInstance<NuGetProjectContext>(_serviceProvider, fileConflictAction);
 
         return projectContext;
     }

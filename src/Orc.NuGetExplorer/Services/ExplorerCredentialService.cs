@@ -8,13 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 
 public class ExplorerCredentialService : ICredentialService, IDisposable
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(ExplorerCredentialService));
 
     private readonly ConcurrentDictionary<string, bool> _retryCache
         = new();
@@ -27,7 +28,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
     /// <summary>
     /// Gets the currently configured providers.
     /// </summary>
-    private AsyncLazy<IEnumerable<ICredentialProvider>> _providers { get; }
+    private AsyncLazy<IReadOnlyList<ICredentialProvider>> _providers { get; }
 
     private readonly Semaphore _providerSemaphore = new(1, 1);
     private bool _disposedValue;
@@ -41,8 +42,8 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
     /// <param name="nonInteractive">If true, the nonInteractive flag will be passed to providers.
     /// <param name="handlesDefaultCredentials"> If true, specifies that this credential service handles default credentials as well.
     /// That means that DefaultNetworkCredentialsCredentialProvider instance is in the list of providers. It's set explicitly as a perfomance optimization.</param>
-    /// NonInteractive requests must not promt the user for credentials.</param>
-    public ExplorerCredentialService(AsyncLazy<IEnumerable<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials)
+    /// NonInteractive requests must not prompt the user for credentials.</param>
+    public ExplorerCredentialService(AsyncLazy<IReadOnlyList<ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials)
     {
         _providers = providers;
         _nonInteractive = nonInteractive;
@@ -90,7 +91,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
             {
                 _providerSemaphore.WaitOne();
 
-                Log.Debug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
+                Logger.LogDebug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
 
                 if (!TryFromCredentialCache(uri, type, isRetry, provider, out var response))
                 {
@@ -106,7 +107,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
                     // Check that the provider gave us a valid response.
                     if (!IsValidResponse(response))
                     {
-                        throw Log.ErrorAndCreateException<ProviderException>("Credential provider gaves malformed response.");
+                        throw Logger.LogErrorAndCreateException<ProviderException>("Credential provider gave malformed response.");
                     }
 
                     if (response.Status == CredentialStatus.UserCanceled)
@@ -123,7 +124,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
                 if (response?.Status == CredentialStatus.Success)
                 {
                     _retryCache[retryKey] = true;
-                    Log.Debug($"_retryCache count now is {_retryCache.Count}");
+                    Logger.LogDebug($"_retryCache count now is {_retryCache.Count}");
                     creds = response.Credentials;
                     break;
                 }
@@ -216,7 +217,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
     public void ClearRetryCache()
     {
         _retryCache.Clear();
-        Log.Debug($"_retryCache count {_retryCache.Count}");
+        Logger.LogDebug($"_retryCache count {_retryCache.Count}");
     }
 
     internal static class CredentialsKeyHelper

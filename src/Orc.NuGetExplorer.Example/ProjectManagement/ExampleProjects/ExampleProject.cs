@@ -2,9 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -12,14 +12,15 @@ using Orc.NuGetExplorer.Example.Packaging;
 
 public class ExampleProject : IExtensibleProject
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExampleProject));
+
     private readonly ExamplePackagePathResolver _pathResolver;
 
-    public ExampleProject(IFrameworkNameProvider frameworkNameProvider)
+    public ExampleProject(IFrameworkNameProvider frameworkNameProvider, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(frameworkNameProvider);
 
-        _pathResolver = TypeFactory.Default.CreateInstanceWithParametersAndAutoCompletion<ExamplePackagePathResolver>();
+        _pathResolver = ActivatorUtilities.CreateInstance<ExamplePackagePathResolver>(serviceProvider);
 
         var targetFramework = FrameworkParser.TryParseFrameworkName(Framework, frameworkNameProvider);
         SupportedPlatforms = [FrameworkParser.ToSpecificPlatform(targetFramework)];
@@ -27,7 +28,7 @@ public class ExampleProject : IExtensibleProject
 
     public string Name => "Example";
 
-    public string Framework => ".NETCoreApp,Version=v8.0";
+    public string Framework => ".NETCoreApp,Version=v10.0";
 
     public string ContentPath => _pathResolver.AppRootDirectory;
 
@@ -53,17 +54,17 @@ public class ExampleProject : IExtensibleProject
 
     public void Install()
     {
-        Log.Info("Installation started");
+        Logger.LogInformation("Installation started");
     }
 
     public void Uninstall()
     {
-        Log.Info("Uninstall started");
+        Logger.LogInformation("Uninstall started");
     }
 
     public void Update()
     {
-        Log.Info("Update started");
+        Logger.LogInformation("Update started");
     }
 
     public override string ToString()

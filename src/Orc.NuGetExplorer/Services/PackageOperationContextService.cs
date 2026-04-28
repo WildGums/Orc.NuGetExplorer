@@ -1,33 +1,38 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using System.Collections.Generic;
 using Catel;
 using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class PackageOperationContextService : IPackageOperationContextService
 {
     private readonly object _lockObject = new();
     private readonly IPackageOperationNotificationService _packageOperationNotificationService;
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
     private PackageOperationContext? _rootContext;
 
-    public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService, ITypeFactory typeFactory)
+    public PackageOperationContextService(IPackageOperationNotificationService packageOperationNotificationService,
+        IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(packageOperationNotificationService);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
         _packageOperationNotificationService = packageOperationNotificationService;
-        _typeFactory = typeFactory;
+        _serviceProvider = serviceProvider;
     }
 
     public IPackageOperationContext? CurrentContext { get; private set; }
 
     public event EventHandler<OperationContextEventArgs>? OperationContextDisposing;
 
-    public IDisposable UseOperationContext(PackageOperationType operationType, params IPackageDetails[] packages)
+    public IDisposable UseOperationContext(PackageOperationType operationType, IPackageDetails package)
+    {
+        return UseOperationContext(operationType, new[] { package });
+    }
+
+    public IDisposable UseOperationContext(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
 #pragma warning disable IDISP001 // Dispose created
-        var context = _typeFactory.CreateRequiredInstance<TemporaryFileSystemContext>();
+        var context = ActivatorUtilities.CreateInstance<TemporaryFileSystemContext>(_serviceProvider);
 #pragma warning restore IDISP001 // Dispose created
         return new DisposableToken<PackageOperationContext>(new PackageOperationContext(packages, context)
             {
@@ -49,7 +54,7 @@ internal class PackageOperationContextService : IPackageOperationContextService
 
                 _rootContext = context;
                 CurrentContext = context;
-                _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages ?? new IPackageDetails[0]);
+                _packageOperationNotificationService.NotifyOperationBatchStarting(context.OperationType, context.Packages);
             }
             else
             {

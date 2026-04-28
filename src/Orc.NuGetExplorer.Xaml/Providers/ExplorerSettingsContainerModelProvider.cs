@@ -5,21 +5,20 @@ using System.Linq;
 using Catel.Configuration;
 using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSettingsContainer>
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExplorerSettingsContainerModelProvider));
 
     private readonly INuGetConfigurationService _nugetConfigurationService;
     private readonly IConfigurationService _configurationService;
     private readonly Lazy<ExplorerSettingsContainer> _explorerSettings;
 
-    public ExplorerSettingsContainerModelProvider(ITypeFactory typeFactory, INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
-        : base(typeFactory)
+    public ExplorerSettingsContainerModelProvider(IServiceProvider serviceProvider, 
+        INuGetConfigurationService nugetConfigurationService, IConfigurationService configurationService)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(nugetConfigurationService);
-        ArgumentNullException.ThrowIfNull(configurationService);
-
         _nugetConfigurationService = nugetConfigurationService;
         _configurationService = configurationService;
 
@@ -41,7 +40,7 @@ public class ExplorerSettingsContainerModelProvider : ModelProvider<ExplorerSett
                 var currentValue = base.Model;
                 if (currentValue is null)
                 {
-                    throw Log.ErrorAndCreateException<InvalidOperationException>("'Model' must be non-null value");
+                    throw Logger.LogErrorAndCreateException<InvalidOperationException>("'Model' must be non-null value");
                 }
                 currentValue.Clear();
                 base.Model = InitializeModel(currentValue);

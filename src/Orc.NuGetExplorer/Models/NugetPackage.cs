@@ -13,10 +13,11 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 using Enums;
 using Packaging;
+using Microsoft.Extensions.Logging;
 
 public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservablePackage
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetPackage));
 
     private readonly IPackageSearchMetadata _packageMetadata;
 
@@ -114,7 +115,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
                 RaiseStatusChanged(eventArgs.OldValue, eventArgs.NewValue);
 
-                Log.Info($"{Identity} status was changed from {eventArgs.OldValue} to {eventArgs.NewValue}");
+                Logger.LogInformation($"{Identity} status was changed from {eventArgs.OldValue} to {eventArgs.NewValue}");
             }
         }
     }
@@ -168,7 +169,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
     public IValidationContext? ValidationContext { get; set; }
 
-    IEnumerable<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+    IReadOnlyList<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
 
     public long? DownloadCount { get; private set; }
 
@@ -222,7 +223,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
         }
         catch (NullReferenceException ex)
         {
-            Log.Warning(ex, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
+            Logger.LogWarning(ex, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
         }
     }
 

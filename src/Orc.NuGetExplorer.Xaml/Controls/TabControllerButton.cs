@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// This is subtype of button
@@ -16,7 +17,7 @@ public class TabControllerButton : RadioButton
 {
     private LinkedList<TabControllerButton> _group = new();
 
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(TabControllerButton));
 
     static TabControllerButton()
     {
@@ -84,7 +85,7 @@ public class TabControllerButton : RadioButton
             foreach (var t in tabBtn._group)
             {
                 t.SetCurrentValue(TabControllerButton.TabSourceProperty, tabBtn.TabSource);
-                Log.Debug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
+                Logger.LogDebug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
             }
         }
     }
@@ -105,7 +106,7 @@ public class TabControllerButton : RadioButton
             if (nextButton is not null)
             {
                 nextButton.SetCurrentValue(TabSourceProperty, TabSource);
-                nextButton._group = _group;   //keep reference on sibling memeber's group
+                nextButton._group = _group;   //keep reference on sibling member's group
 
                 var current = _group.Find(this);
 
@@ -124,7 +125,7 @@ public class TabControllerButton : RadioButton
         }
         catch (Exception ex)
         {
-            Log.Error(ex);
+            Logger.LogError(ex, null);
         }
     }
 

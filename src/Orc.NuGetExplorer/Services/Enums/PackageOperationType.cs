@@ -3,7 +3,7 @@
 public enum PackageOperationType
 {
     None = 0, // default value
-    Install,
-    Uninstall,
-    Update
+    Install = 1,
+    Uninstall = 2,
+    Update = 3
 }

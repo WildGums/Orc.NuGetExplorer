@@ -13,10 +13,11 @@ using Catel.Data;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.Logging;
 
-internal class PackageSourceSettingViewModel : ViewModelBase
+internal class PackageSourceSettingViewModel : FeaturedViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageSourceSettingViewModel));
 
     private static readonly int ValidationDelay = 800;
     private static readonly int VerificationBatch = 5;
@@ -30,16 +31,15 @@ internal class PackageSourceSettingViewModel : ViewModelBase
 
     private readonly INuGetConfigurationResetService? _nuGetConfigurationResetService;
 
-    public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-        ILanguageService languageService)
+    public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, 
+        INuGetFeedVerificationService feedVerificationService,
+        ILanguageService languageService, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(configurationService);
-        ArgumentNullException.ThrowIfNull(feedVerificationService);
-        ArgumentNullException.ThrowIfNull(languageService);
-
         _configurationService = configurationService;
         _feedVerificationService = feedVerificationService;
         _languageService = languageService;
+
         RemovedFeeds = new List<NuGetFeed>();
 
         DeferValidationUntilFirstSaveCall = true;
@@ -48,28 +48,30 @@ internal class PackageSourceSettingViewModel : ViewModelBase
         DefaultSourceName = Constants.DefaultNuGetOrgName;
 
         SettingsFeeds = new List<NuGetFeed>();
-        Feeds = new ObservableCollection<NuGetFeed>();
+        Feeds = new System.Collections.ObjectModel.ObservableCollection<NuGetFeed>();
         PackageSources = new List<IPackageSource>();
 
         Title = _languageService.GetRequiredString("NuGetExplorer_PackageSourceSettingViewModel_Title");
 
-        RemoveFeed = new Command(OnRemoveFeedExecute, () => SelectedFeed is not null);
-        MoveUpFeed = new Command(OnMoveUpFeedExecute, () => SelectedFeed is not null);
-        MoveDownFeed = new Command(OnMoveDownFeedExecute, () => SelectedFeed is not null);
-        AddFeed = new Command(OnAddFeedExecute);
-        Reset = new TaskCommand(OnResetExecuteAsync, OnResetCanExecute);
+        RemoveFeed = new Command(serviceProvider, OnRemoveFeedExecute, () => SelectedFeed is not null);
+        MoveUpFeed = new Command(serviceProvider, OnMoveUpFeedExecute, () => SelectedFeed is not null);
+        MoveDownFeed = new Command(serviceProvider, OnMoveDownFeedExecute, () => SelectedFeed is not null);
+        AddFeed = new Command(serviceProvider, OnAddFeedExecute);
+        Reset = new TaskCommand(serviceProvider, OnResetExecuteAsync, OnResetCanExecute);
     }
 
-    public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, INuGetFeedVerificationService feedVerificationService,
-        INuGetConfigurationResetService nuGetConfigurationResetService, ILanguageService languageService)
-        : this(configurationService, feedVerificationService, languageService)
+    public PackageSourceSettingViewModel(INuGetConfigurationService configurationService, 
+        INuGetFeedVerificationService feedVerificationService,
+        INuGetConfigurationResetService nuGetConfigurationResetService, 
+        ILanguageService languageService, IServiceProvider serviceProvider)
+        : this(configurationService, feedVerificationService, languageService, serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(nuGetConfigurationResetService);
 
         _nuGetConfigurationResetService = nuGetConfigurationResetService;
     }
 
-    public ObservableCollection<NuGetFeed> Feeds { get; set; }
+    public System.Collections.ObjectModel.ObservableCollection<NuGetFeed> Feeds { get; set; }
 
     public NuGetFeed? SelectedFeed { get; set; }
 
@@ -89,7 +91,7 @@ internal class PackageSourceSettingViewModel : ViewModelBase
 
     #endregion
 
-    private bool SupressFeedVerificationOnCollectionChanged { get; set; } = true;
+    private bool SuppressFeedVerificationOnCollectionChanged { get; set; } = true;
 
     private bool IsVerifying { get; set; }
 
@@ -328,7 +330,7 @@ internal class PackageSourceSettingViewModel : ViewModelBase
             Feeds.AddRange(storedPackageSources);
 
             // Validate items on first initialization
-            SupressFeedVerificationOnCollectionChanged = false;
+            SuppressFeedVerificationOnCollectionChanged = false;
             Feeds.ForEach(async x => await VerifyFeedAsync(x));
         }
 
@@ -363,7 +365,7 @@ internal class PackageSourceSettingViewModel : ViewModelBase
         foreach (var item in newFeeds)
         {
             SubscribeToFeedPropertyChanged(item);
-            if (SupressFeedVerificationOnCollectionChanged)
+            if (SuppressFeedVerificationOnCollectionChanged)
             {
                 continue;
             }

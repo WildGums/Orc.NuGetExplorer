@@ -6,7 +6,7 @@ using Catel;
 
 internal class PackageOperationContext : IPackageOperationContext, IUniqueIdentifyable
 {
-    public PackageOperationContext(IPackageDetails[] packages, ITemporaryFileSystemContext fileSystemContext)
+    public PackageOperationContext(IReadOnlyList<IPackageDetails> packages, ITemporaryFileSystemContext fileSystemContext)
     {
         ArgumentNullException.ThrowIfNull(packages);
         ArgumentNullException.ThrowIfNull(fileSystemContext);
@@ -19,7 +19,7 @@ internal class PackageOperationContext : IPackageOperationContext, IUniqueIdenti
 
     public int UniqueIdentifier { get; }
     public IRepository? Repository { get; set; }
-    public IPackageDetails[] Packages { get; set; }
+    public IReadOnlyList<IPackageDetails> Packages { get; set; }
     public PackageOperationType OperationType { get; set; }
     public IPackageOperationContext? Parent { get; set; }
     public IList<Exception>? Exceptions { get; private set; }

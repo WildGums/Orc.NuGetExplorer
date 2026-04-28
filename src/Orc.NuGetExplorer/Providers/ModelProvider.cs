@@ -4,16 +4,16 @@ using System;
 using System.ComponentModel;
 using Catel.Data;
 using Catel.IoC;
+using Microsoft.Extensions.DependencyInjection;
 
-public class ModelProvider<T> : IModelProvider<T> where T : ModelBase
+public class ModelProvider<T> : IModelProvider<T> 
+    where T : ModelBase
 {
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ModelProvider(ITypeFactory typeFactory)
+    public ModelProvider(IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
-        _typeFactory = typeFactory;
+        _serviceProvider = serviceProvider;
     }
 
     private T? _model;
@@ -35,7 +35,7 @@ public class ModelProvider<T> : IModelProvider<T> where T : ModelBase
 
     public virtual T Create()
     {
-        return _typeFactory.CreateRequiredInstance<T>();
+        return ActivatorUtilities.CreateInstance<T>(_serviceProvider);
     }
 
     private void RaisePropertyChanged()

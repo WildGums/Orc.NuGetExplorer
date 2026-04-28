@@ -8,9 +8,9 @@ public class SimpleLogListener : PackageManagerLogListenerBase
     private readonly IDispatcherService _dispatcherService;
     private readonly PackageManagementEcho _echo;
 
-    public SimpleLogListener(INuGetLogListeningSevice nuGetLogListeningSevice,
+    public SimpleLogListener(INuGetLogListeningService nuGetLogListeningService,
         IEchoService echoService, IDispatcherService dispatcherService)
-        : base(nuGetLogListeningSevice)
+        : base(nuGetLogListeningService)
     {
         ArgumentNullException.ThrowIfNull(dispatcherService);
         ArgumentNullException.ThrowIfNull(echoService);

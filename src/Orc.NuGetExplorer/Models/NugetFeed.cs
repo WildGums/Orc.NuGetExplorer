@@ -22,12 +22,14 @@ public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, INotifyDataErr
         Error = string.Empty;
     }
 
-    public NuGetFeed(string name, string source, bool isEnabled) : this(name, source)
+    public NuGetFeed(string name, string source, bool isEnabled) 
+        : this(name, source)
     {
         IsEnabled = isEnabled;
     }
 
-    public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) : this(name, source, isEnabled)
+    public NuGetFeed(string name, string source, bool isEnabled, bool isOfficial) 
+        : this(name, source, isEnabled)
     {
         IsOfficial = isOfficial;
     }
@@ -145,18 +147,6 @@ public sealed class NuGetFeed : ModelBase, ICloneable<NuGetFeed>, INotifyDataErr
     public override string ToString()
     {
         return $"{Name} {Source}";
-    }
-
-    public void ForceCancelEdit()
-    {
-        IEditableObject eo = this;
-        eo.CancelEdit();
-    }
-
-    public void ForceEndEdit()
-    {
-        IEditableObject eo = this;
-        eo.EndEdit();
     }
 
     public bool IsValid()

@@ -9,13 +9,15 @@ using Catel.Configuration;
 using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGetExplorer.Configuration;
 using Settings = Settings;
 
 public class NuGetConfigurationService : INuGetConfigurationService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetConfigurationService));
 
     private readonly IConfigurationService _configurationService;
     private readonly string _defaultDestinationFolder;
@@ -25,7 +27,7 @@ public class NuGetConfigurationService : INuGetConfigurationService
     private readonly Lazy<IPackageSourceProvider> _packageSourceProvider = new(
         () =>
         {
-            return ServiceLocator.Default.ResolveRequiredType<IPackageSourceProvider>();
+            return IoCContainer.ServiceProvider.GetRequiredService<IPackageSourceProvider>();
         }
     );
 
@@ -61,7 +63,7 @@ public class NuGetConfigurationService : INuGetConfigurationService
         _configurationService.SetRoamingValue(Settings.NuGet.DestinationFolder, value);
     }
 
-    public IEnumerable<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
+    public IReadOnlyList<IPackageSource> LoadPackageSources(bool onlyEnabled = false)
     {
         var packageSources = _packageSourceProvider.Value.LoadPackageSources();
 
@@ -70,7 +72,8 @@ public class NuGetConfigurationService : INuGetConfigurationService
             packageSources = packageSources.Where(x => x.IsEnabled);
         }
 
-        return packageSources.ToPackageSourceInterfaces();
+        return packageSources
+            .ToPackageSourceInterfaces();
     }
 
     public bool SavePackageSource(string name, string source, bool isEnabled = true, bool isOfficial = true, bool verifyFeed = true)
@@ -115,7 +118,7 @@ public class NuGetConfigurationService : INuGetConfigurationService
         _packageSourceProvider.Value.RemovePackageSource(source.Name);
     }
 
-    public void SavePackageSources(IEnumerable<IPackageSource> packageSources)
+    public void SavePackageSources(IReadOnlyList<IPackageSource> packageSources)
     {
         ArgumentNullException.ThrowIfNull(packageSources);
 
@@ -151,7 +154,7 @@ public class NuGetConfigurationService : INuGetConfigurationService
         return string.Format("NuGetExplorer.IsPrereleaseAllowed.{0}", repository.OperationType);
     }
 
-    public void SaveProjects(IEnumerable<IExtensibleProject> extensibleProjects)
+    public void SaveProjects(IReadOnlyList<IExtensibleProject> extensibleProjects)
     {
         foreach (var project in extensibleProjects)
         {

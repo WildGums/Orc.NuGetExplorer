@@ -6,6 +6,6 @@ using NuGet.Credentials;
 
 public interface ICredentialProviderLoaderService
 {
-    Task<IEnumerable<ICredentialProvider>> GetCredentialProvidersAsync();
+    Task<IReadOnlyList<ICredentialProvider>> GetCredentialProvidersAsync();
     void SetCredentialPolicy(CredentialStoragePolicy storagePolicy);
 }

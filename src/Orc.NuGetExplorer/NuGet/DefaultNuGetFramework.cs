@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using NuGet.Frameworks;
 
 public class DefaultNuGetFramework : IDefaultNuGetFramework
 {
     private const string BaseFrameworkName = ".NETFramework, Version=";
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DefaultNuGetFramework));
 
     private readonly FrameworkReducer _frameworkReducer = new();
     private readonly IFrameworkNameProvider _frameworkNameProvider;
@@ -25,14 +26,14 @@ public class DefaultNuGetFramework : IDefaultNuGetFramework
         LoadAvailableFrameworks();
     }
 
-    public IEnumerable<NuGetFramework> GetLowest()
+    public IReadOnlyList<NuGetFramework> GetLowest()
     {
-        return _frameworkReducer.ReduceDownwards(_nuGetFrameworks);
+        return _frameworkReducer.ReduceDownwards(_nuGetFrameworks).ToArray();
     }
 
-    public IEnumerable<NuGetFramework> GetHighest()
+    public IReadOnlyList<NuGetFramework> GetHighest()
     {
-        return _frameworkReducer.ReduceUpwards(_nuGetFrameworks);
+        return _frameworkReducer.ReduceUpwards(_nuGetFrameworks).ToArray();
     }
 
     public NuGetFramework? GetFirst()
@@ -93,7 +94,7 @@ public class DefaultNuGetFramework : IDefaultNuGetFramework
         {
             if (ndpKey is null)
             {
-                Log.Info("Could not detect old versions of .NET Framework (< 4.5)");
+                Logger.LogInformation("Could not detect old versions of .NET Framework (< 4.5)");
                 return;
             }
 
@@ -192,7 +193,7 @@ public class DefaultNuGetFramework : IDefaultNuGetFramework
         {
             if (ndpKey is null)
             {
-                Log.Info(".NET Framework Version 4.5 or later wasn't detected.");
+                Logger.LogInformation(".NET Framework Version 4.5 or later wasn't detected.");
                 return;
             }
 
@@ -205,7 +206,7 @@ public class DefaultNuGetFramework : IDefaultNuGetFramework
             }
             else
             {
-                Log.Info(".NET Framework Version 4.5 or later wasn't detected.");
+                Logger.LogInformation(".NET Framework Version 4.5 or later wasn't detected.");
             }
         }
 

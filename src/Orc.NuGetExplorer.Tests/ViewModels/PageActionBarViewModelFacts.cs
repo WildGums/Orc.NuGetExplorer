@@ -1,12 +1,14 @@
 ﻿namespace Orc.NuGetExplorer.Tests.ViewModels;
 
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Catel;
 using Catel.Collections;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using Orc.NuGetExplorer.ViewModels;
@@ -20,15 +22,15 @@ internal class PageActionBarViewModelFacts
         [TestCase]
         public async Task InvalidatesPackagesBatchUpdateCommandAsync()
         {
-#pragma warning disable IDISP001 // Dispose created
-            var serviceLocator = new ServiceLocator(ServiceLocator.Default);
-#pragma warning restore IDISP001 // Dispose created
+            var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
 
             // Resolve Catel services
-            var commandManager = serviceLocator.ResolveType<ICommandManager>();
-            var messageService = serviceLocator.ResolveType<IMessageService>();
+            var commandManager = serviceProvider.GetRequiredService<ICommandManager>();
+            var messageService = serviceProvider.GetRequiredService<IMessageService>();
 
-            commandManager.CreateCommandWithGesture(typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+            commandManager.CreateCommandWithGesture(serviceProvider, typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
 
             // commandManager.RegisterAction(Commands.Packages.BatchUpdate, () => { });
             var testCommand = (ICompositeCommand)commandManager.GetCommand(Commands.Packages.BatchUpdate);
@@ -47,7 +49,8 @@ internal class PageActionBarViewModelFacts
             var packageOperationContextService = new Mock<IPackageOperationContextService>().Object;
 
 
-            var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, packageOperationContextService, messageService, commandManager);
+            var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, 
+                packageOperationContextService, messageService, commandManager, serviceProvider);
             await vm.InitializeViewModelAsync();
 
             var vmCommand = vm.CheckAll;
@@ -62,7 +65,7 @@ internal class PageActionBarViewModelFacts
     {
         public TestPage()
         {
-            PackageItems = new FastObservableCollection<NuGetPackage>()
+            PackageItems = new System.Collections.ObjectModel.ObservableCollection<NuGetPackage>()
             {
                 GlobalMocks.CreateMockPackage("1.0.0", "WildGums"),
             };
@@ -70,7 +73,7 @@ internal class PageActionBarViewModelFacts
             CanBatchInstallOperations = true;
         }
 
-        public FastObservableCollection<NuGetPackage> PackageItems { get; }
+        public System.Collections.ObjectModel.ObservableCollection<NuGetPackage> PackageItems { get; }
         public bool CanBatchUpdateOperations { get; }
         public bool CanBatchInstallOperations { get; }
 

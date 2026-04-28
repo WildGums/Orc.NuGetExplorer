@@ -1,12 +1,15 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using System;
+using System.Collections.Generic;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class PackageOperationNotificationService : IPackageOperationNotificationService
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PackageOperationNotificationService));
+
     private bool _isNotificationsDisabled = false;
 
     public event EventHandler<PackageOperationBatchEventArgs>? OperationsBatchStarting;
@@ -17,7 +20,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
     public bool MuteAutomaticEvents { get; set; }
     public bool IsNotificationsDisabled { get => _isNotificationsDisabled; private set => _isNotificationsDisabled = value; }
 
-    public void NotifyOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
+    public void NotifyOperationBatchStarting(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
         if (IsNotificationsDisabled)
         {
@@ -27,7 +30,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
         OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages));
     }
 
-    public void NotifyOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
+    public void NotifyOperationBatchFinished(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
         if (IsNotificationsDisabled)
         {
@@ -57,7 +60,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
         OperationFinished?.Invoke(this, new PackageOperationEventArgs(packageDetails, installPath, operationType));
     }
 
-    public void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, params IPackageDetails[] packages)
+    public void NotifyAutomaticOperationBatchStarting(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
         if (IsNotificationsDisabled)
         {
@@ -66,14 +69,14 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Log.Info($"{operationType} notification was muted by notification service");
+            Logger.LogInformation($"{operationType} notification was muted by notification service");
             return;
         }
 
         OperationsBatchStarting?.Invoke(this, new PackageOperationBatchEventArgs(operationType, packages) { IsAutomatic = true });
     }
 
-    public void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, params IPackageDetails[] packages)
+    public void NotifyAutomaticOperationBatchFinished(PackageOperationType operationType, IReadOnlyList<IPackageDetails> packages)
     {
         if (IsNotificationsDisabled)
         {
@@ -82,7 +85,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Log.Info($"{operationType} notification was muted by notification service");
+            Logger.LogInformation($"{operationType} notification was muted by notification service");
             return;
         }
 
@@ -98,7 +101,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Log.Info($"{operationType} notification was muted by notification service");
+            Logger.LogInformation($"{operationType} notification was muted by notification service");
             return;
         }
 
@@ -114,7 +117,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Log.Info($"{operationType} notification was muted by notification service");
+            Logger.LogInformation($"{operationType} notification was muted by notification service");
             return;
         }
 

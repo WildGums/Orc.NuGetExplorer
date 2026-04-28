@@ -2,12 +2,14 @@
 
 using System.Collections.Generic;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using Orc.NuGetExplorer.Configuration;
 
 internal class NuGetPackageSourceProvider : PackageSourceProvider
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NuGetPackageSourceProvider));
+
     private readonly ISettings _settingsManager;
 
     public NuGetPackageSourceProvider(ISettings settingsManager, IDefaultPackageSourcesProvider defaultPackageSourcesProvider)
@@ -24,7 +26,7 @@ internal class NuGetPackageSourceProvider : PackageSourceProvider
         }
         else
         {
-            Log.Debug($"Sorting operation for NuGet Settings source of type {_settingsManager.GetType()} is not implemented");
+            Logger.LogDebug($"Sorting operation for NuGet Settings source of type {_settingsManager.GetType()} is not implemented");
         }
     }
 }

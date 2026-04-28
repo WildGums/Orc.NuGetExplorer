@@ -2,6 +2,7 @@
 
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public class PageContinuation
 {
@@ -9,7 +10,7 @@ public class PageContinuation
 
     private readonly int _pageSize = -1;
 
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(PageContinuation));
 
     public PageContinuation(int pageSize, PackageSourceWrapper packageSourceWrapper)
     {
@@ -47,7 +48,7 @@ public class PageContinuation
 
     public int GetNext()
     {
-        Log.Debug($"Got next {Size} positions, starts from {Next}");
+        Logger.LogDebug($"Got next {Size} positions, starts from {Next}");
 
         var next = Next;
 
@@ -58,7 +59,7 @@ public class PageContinuation
 
     public int GetNext(int count)
     {
-        Log.Debug($"Got next {count} positions, starts from {Next}");
+        Logger.LogDebug($"Got next {count} positions, starts from {Next}");
 
         var next = Next;
 

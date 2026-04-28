@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.ViewModels;
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.Collections;
@@ -9,23 +8,26 @@ using Catel.MVVM;
 using NuGetExplorer.Management;
 using Orc.NuGetExplorer;
 
-internal class ProjectsViewModel : ViewModelBase
+internal class ProjectsViewModel : FeaturedViewModelBase
 {
     private readonly IExtensibleProjectLocator _extensiblesManager;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ProjectsViewModel(NuGetActionTarget projectsModel, IExtensibleProjectLocator extensiblesManager)
+    public ProjectsViewModel(NuGetActionTarget projectsModel, 
+        IExtensibleProjectLocator extensiblesManager,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(projectsModel);
-        ArgumentNullException.ThrowIfNull(extensiblesManager);
-
         _extensiblesManager = extensiblesManager;
+        _serviceProvider = serviceProvider;
+
         ProjectsModel = projectsModel;
     }
 
     [Model(SupportIEditableObject = false)]
     public NuGetActionTarget ProjectsModel { get; set; }
 
-    public ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
+    public System.Collections.ObjectModel.ObservableCollection<CheckableUnit<IExtensibleProject>> Projects { get; set; } = new();
 
     protected override Task InitializeAsync()
     {
@@ -36,7 +38,7 @@ internal class ProjectsViewModel : ViewModelBase
 
         var availableProjects = _extensiblesManager.GetAllExtensibleProjects();
 
-        Projects = new ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
+        Projects = new System.Collections.ObjectModel.ObservableCollection<CheckableUnit<IExtensibleProject>>(availableProjects
             .Select(x =>
                 new CheckableUnit<IExtensibleProject>(true, x, NotifyOnProjectSelectionChanged)));
 

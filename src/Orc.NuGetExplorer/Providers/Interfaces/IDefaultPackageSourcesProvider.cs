@@ -6,5 +6,5 @@ public interface IDefaultPackageSourcesProvider
 {
     string DefaultSource { get; set; }
 
-    IEnumerable<IPackageSource> GetDefaultPackages();
+    IReadOnlyList<IPackageSource> GetDefaultPackages();
 }

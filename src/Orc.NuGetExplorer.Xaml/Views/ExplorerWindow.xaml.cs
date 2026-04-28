@@ -2,51 +2,38 @@
 
 using System.Windows;
 using Catel.MVVM.Views;
-using Catel.Windows;
-using Orc.NuGetExplorer.ViewModels;
 
 /// <summary>
 /// Interaction logic for ExplorerWindow.xaml
 /// </summary>
-internal partial class ExplorerWindow : DataWindow
+internal partial class ExplorerWindow
 {
-    static ExplorerWindow()
+    partial void OnInitializedComponent()
     {
-        typeof(ExplorerWindow).AutoDetectViewPropertiesToSubscribe();
-    }
-
-    public ExplorerWindow(ExplorerViewModel viewModel)
-        : base(viewModel, DataWindowMode.Custom)
-    {
-        InitializeComponent();
-        ShowInTaskbar = false;
+        SetCurrentValue(ShowInTaskbarProperty, false);
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
         var screenHeight = SystemParameters.PrimaryScreenHeight;
-        TopGrid.Height = screenHeight * 2 / 3;
+        TopGrid.SetCurrentValue(HeightProperty, screenHeight * 2 / 3);
 
-        Title = viewModel.Title;
+        SetBinding(TitleProperty, "DataContext.Title");
     }
 
-    #region DependencyProperty
+    [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+    public string? StartPage
+    {
+        get { return (string?)GetValue(StartPageProperty); }
+        set { SetValue(StartPageProperty, value); }
+    }
 
     /// <summary>
     /// Identifies the <see cref="StartPage"/> dependency property.
     /// </summary>
     public static readonly DependencyProperty StartPageProperty =
-        DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata("Browse", (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
-
-    [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-    public string StartPage
-    {
-        get { return (string)GetValue(StartPageProperty); }
-        set { SetValue(StartPageProperty, value); }
-    }
+        DependencyProperty.Register(nameof(StartPage), typeof(string), typeof(ExplorerWindow), new PropertyMetadata(null, (s, e) => ((ExplorerWindow)s).OnStartPageChanged(s, e)));
 
     private void OnStartPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
         // Property changed callback
     }
-
-    #endregion
 }

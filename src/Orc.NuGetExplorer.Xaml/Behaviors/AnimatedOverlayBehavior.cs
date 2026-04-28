@@ -9,18 +9,24 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.Windows;
 using Catel.Windows.Interactivity;
+using Microsoft.Extensions.Logging;
 using Orc.NuGetExplorer.Windows;
 
-internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
+internal partial class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(AnimatedOverlayBehavior));
 
     private Grid? _topInternalGrid;
     private Storyboard? _overlayStoryboard;
 
     private SizeChangedEventHandler? _sizeHandler;
 
-    private IAnimationService? AnimationService { get; set; }
+    private readonly IAnimationService _animationService;
+
+    public AnimatedOverlayBehavior(IAnimationService animationService)
+    {
+        _animationService = animationService;
+    }
 
     public Grid? OverlayGrid
     {
@@ -102,10 +108,6 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     protected override void OnAttached()
     {
         base.OnAttached();
-
-#pragma warning disable IDISP004 // Don't ignore created IDisposable.
-        AnimationService = this.GetServiceLocator().ResolveRequiredType<IAnimationService>();
-#pragma warning restore IDISP004 // Don't ignore created IDisposable.
     }
 
     private void AttachOverlay(object? overlay)
@@ -151,7 +153,7 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
         if (AssociatedObject.FindVisualDescendantByName("_InternalGridName") is not Grid internalGrid)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>($"Couldn't find object with name '_InternalGridName'");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Couldn't find object with name '_InternalGridName'");
         }
 
         _topInternalGrid = internalGrid;
@@ -168,7 +170,7 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
 
         if (OverlayContent is null)
         {
-            Log.Debug("Overlay content control is not set");
+            Logger.LogDebug("Overlay content control is not set");
             return;
         }
 
@@ -222,7 +224,7 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
         if (OverlayGrid is null)
         { 
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
         }
 
         if (OverlayGrid.Visibility == Visibility.Visible && _overlayStoryboard is null)
@@ -237,10 +239,10 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
 
         Dispatcher.VerifyAccess();
 
-        var storyboard = AnimationService?.GetFadeInAnimation(OverlayGrid);
+        var storyboard = _animationService.GetFadeInAnimation(OverlayGrid);
         if (storyboard is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Must intitialize animation storyboard to proceed");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
         }
 
         _overlayStoryboard = storyboard;
@@ -273,7 +275,7 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
     {
         if (OverlayGrid is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot find overlay in Associated object");
         }
 
         if (OverlayGrid.Visibility == Visibility.Visible && OverlayGrid.Opacity <= 0.0)
@@ -284,10 +286,10 @@ internal class AnimatedOverlayBehavior : BehaviorBase<DataWindow>
 
         Dispatcher.VerifyAccess();
 
-        var storyboard = AnimationService?.GetFadeOutAnimation(OverlayGrid);
+        var storyboard = _animationService.GetFadeOutAnimation(OverlayGrid);
 
         _overlayStoryboard = storyboard 
-                             ?? throw Log.ErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
+                             ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>("Must initialize animation storyboard to proceed");
 
         if (TryGetOverlayFadingStoryboardAnimation(storyboard, out var animation))
         {

@@ -44,7 +44,7 @@ public class EmptyPackageDetails : IPackageDetails
 
     public string Title { get; }
 
-    public IEnumerable<string> Authors { get; }
+    public IReadOnlyList<string> Authors { get; }
 
     public DateTimeOffset? Published { get; }
 
