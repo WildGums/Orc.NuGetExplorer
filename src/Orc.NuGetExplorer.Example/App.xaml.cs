@@ -73,6 +73,9 @@ public partial class App : Application
 
         var serviceProvider = IoCContainer.ServiceProvider;
 
+        var configurationService = serviceProvider.GetRequiredService<IConfigurationService>();
+        await configurationService.LoadAsync();
+
         serviceProvider.CreateTypesThatMustBeConstructedAtStartup();
 
         var languageService = serviceProvider.GetRequiredService<ILanguageService>();
@@ -87,11 +90,8 @@ public partial class App : Application
 
         StyleHelper.CreateStyleForwardersForDefaultStyles();
 
-        var configurationService = serviceProvider.GetRequiredService<IConfigurationService>();
-        await configurationService.LoadAsync();
-
         var mainWindow = ActivatorUtilities.CreateInstance<MainWindow>(_host.Services);
-        mainWindow.Show();
+        mainWindow.ShowDialog();
     }
 
     protected override async void OnExit(ExitEventArgs e)

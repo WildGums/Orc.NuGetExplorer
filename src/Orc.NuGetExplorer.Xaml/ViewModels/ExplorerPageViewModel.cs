@@ -264,8 +264,8 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
             SingleDelayTimer.Elapsed += OnTimerElapsed;
             SingleDelayTimer.AutoReset = false;
 
-            SingleDelayTimer.SynchronizingObject = ActivatorUtilities.CreateInstance<ISynchronizeInvoke>(ServiceProvider,
-                _dispatcherProviderService.GetCurrentDispatcher());
+            //SingleDelayTimer.SynchronizingObject = ActivatorUtilities.CreateInstance<ISynchronizeInvoke>(ServiceProvider,
+            //    _dispatcherProviderService.GetCurrentDispatcher());
 
             PackageItems.CollectionChanged += OnPackageItemsCollectionChanged;
 
