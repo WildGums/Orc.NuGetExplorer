@@ -60,7 +60,7 @@ internal class NuGetProjectUpgradeService : INuGetProjectUpgradeService
 
             foreach (var scenario in _runOnCheckList)
             {
-                Logger.LogInformation("Run {Scenario}..", scenario);
+                Logger.LogInformation("Run {Scenario}...", scenario);
                 var result = await scenario.RunAsync();
                 Logger.LogInformation("Completed, returned status {Result}", result);
 
