@@ -48,7 +48,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
         if (!_enabledProjects.Add(registeredProject))
         {
-            Logger.LogInformation($"Project {extensibleProject} already enabled");
+            Logger.LogInformation("Project {Project} already enabled", extensibleProject);
         }
     }
 
@@ -65,7 +65,7 @@ internal class ExtensibleProjectLocator : IExtensibleProjectLocator
 
         if (!_enabledProjects.Remove(registeredProject))
         {
-            Logger.LogInformation($"Attempt to disable Project {extensibleProject}, which is not enabled");
+            Logger.LogInformation("Attempt to disable Project {Project}, which is not enabled", extensibleProject);
         }
     }
 

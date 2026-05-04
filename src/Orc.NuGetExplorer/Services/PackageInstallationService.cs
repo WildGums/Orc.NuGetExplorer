@@ -109,7 +109,11 @@ internal class PackageInstallationService : IPackageInstallationService
             DirectDownload = false,
         })
         {
-            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                sourceCacheContext.DirectDownload,
+                sourceCacheContext.IgnoreFailedSources,
+                sourceCacheContext.NoCache,
+                sourceCacheContext.RefreshMemoryCache);
 
             var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                 .GetResourceAsync<DependencyInfoResource>(cancellationToken);
@@ -211,7 +215,11 @@ internal class PackageInstallationService : IPackageInstallationService
 
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+                Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                    sourceCacheContext.DirectDownload,
+                    sourceCacheContext.IgnoreFailedSources,
+                    sourceCacheContext.NoCache,
+                    sourceCacheContext.RefreshMemoryCache);
 
 #pragma warning disable IDISP013 // Await in using.
                 var getDependencyResourcesTasks = repositories.Select(repo => repo.GetResourceAsync<DependencyInfoResource>());
@@ -276,7 +284,7 @@ internal class PackageInstallationService : IPackageInstallationService
 
                 // Step 6. Download everything except main package and extract all
                 availablePackagesToInstall.Remove(mainPackageInfo);
-                _nugetLogger.LogInformation($"Downloading package dependencies...");
+                _nugetLogger.LogInformation("Downloading package dependencies...");
                 var downloadResults = await DownloadPackagesResourcesAsync(availablePackagesToInstall, sourceCacheContext, cancellationToken);
                 downloadResults[mainPackageInfo] = mainDownloadedFiles;
                 _nugetLogger.LogInformation($"{downloadResults.Count - 1} dependencies downloaded");
@@ -318,7 +326,11 @@ internal class PackageInstallationService : IPackageInstallationService
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                sourceCacheContext.DirectDownload,
+                sourceCacheContext.IgnoreFailedSources,
+                sourceCacheContext.NoCache,
+                sourceCacheContext.RefreshMemoryCache);
 
             var rawPackageMetadata = await registrationResource.GetPackageMetadata(packageIdentity, sourceCacheContext, _nugetLogger, default);
             if (rawPackageMetadata is null)

@@ -59,13 +59,13 @@ public class NuGetLogger : ILogger
 
     void ILogger.Log(ILogMessage message)
     {
-        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, $"Send {message.Level} message to log listeners");
+        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, "Send {Level} message to log listeners", message.Level);
         ((ILogger)this).Log(message.Level, message.Message);
     }
 
     public async Task LogAsync(ILogMessage message)
     {
-        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, $"Send {message.Level} message to log listeners");
+        Microsoft.Extensions.Logging.LoggerExtensions.LogDebug(Logger, "Send {Level} message to log listeners", message.Level);
         await LogAsync(message.Level, message.Message);
     }
 

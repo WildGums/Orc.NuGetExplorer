@@ -144,7 +144,7 @@ internal class PackageCommandService : IPackageCommandService
     {
         var packageExists = await VerifyLocalPackageExistsAsync(package);
 
-        Logger.LogDebug($"Can install for '{package}': {packageExists}");
+        Logger.LogDebug("Can install for '{Package}': {PackageExists}", package, packageExists);
 
         return !packageExists;
     }
@@ -153,7 +153,7 @@ internal class PackageCommandService : IPackageCommandService
     {
         var packageExists = await VerifyLocalPackageExistsAsync(package);
 
-        Logger.LogDebug($"Can update for '{package}': {packageExists}");
+        Logger.LogDebug("Can update for '{Package}': {PackageExists}", package, packageExists);
 
         return packageExists;
     }
@@ -164,7 +164,7 @@ internal class PackageCommandService : IPackageCommandService
 
         if (package.IsInstalled is null)
         {
-            Logger.LogDebug($"Package '{package}' IsInstalled is null, checking package existence now");
+            Logger.LogDebug("Package '{Package}' IsInstalled is null, checking package existence now", package);
 
             package.IsInstalled = await _packageQueryService.PackageExistsAsync(_localRepository, package.Id);
 
@@ -173,7 +173,7 @@ internal class PackageCommandService : IPackageCommandService
 
         if (package.ValidationContext?.HasErrors ?? false)
         {
-            Logger.LogDebug($"Package '{package}' has validation errors, package is not available locally");
+            Logger.LogDebug("Package '{Package}' has validation errors, package is not available locally", package);
 
             LogValidationErrors(package);
 
@@ -182,12 +182,12 @@ internal class PackageCommandService : IPackageCommandService
 
         if (!package.IsInstalled.HasValue)
         {
-            Logger.LogDebug($"Package '{package}' IsInstalled value is null, package is not available locally");
+            Logger.LogDebug("Package '{Package}' IsInstalled value is null, package is not available locally", package);
 
             return false;
         }
 
-        Logger.LogDebug($"Package '{package}' IsInstalled value is '{package.IsInstalled}'");
+        Logger.LogDebug("Package '{Package}' IsInstalled value is '{IsInstalled}'", package, package.IsInstalled);
 
         return package.IsInstalled.Value;
     }
@@ -203,7 +203,7 @@ internal class PackageCommandService : IPackageCommandService
 
         foreach (var error in package.ValidationContext.GetErrors())
         {
-            Logger.LogInformation($"{package} doesn't satisfy validation rule with error '{error.Message}'");
+            Logger.LogInformation("{Package} doesn't satisfy validation rule with error '{ErrorMessage}'", package, error.Message);
         }
     }
 

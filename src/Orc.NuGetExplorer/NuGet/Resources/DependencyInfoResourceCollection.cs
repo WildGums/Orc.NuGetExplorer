@@ -62,7 +62,7 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
         // Check is this package satisfy requirements, if not, retrieve all dependency infos and find required package
         if (singlePackage is not null && versionRange.Satisfies(singlePackage.Version))
         {
-            Logger.LogDebug($"Found package {package} satisfying version range {versionRange}. Going to skip request of package with same identity");
+            Logger.LogDebug("Found package {Package} satisfying version range {VersionRange}. Going to skip request of package with same identity", package, versionRange);
             return new[] { singlePackage };
         }
 
@@ -106,7 +106,7 @@ public class DependencyInfoResourceCollection : IEnumerable<DependencyInfoResour
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(projectFramework);
 
-        Logger.LogDebug($"Checking {_resources.Count} resource(s) for '{package}'");
+        Logger.LogDebug("Checking {ResourceCount} resource(s) for '{Package}'", _resources.Count, package);
 
         var packageDependencyInfos = new HashSet<SourcePackageDependencyInfo>();
 

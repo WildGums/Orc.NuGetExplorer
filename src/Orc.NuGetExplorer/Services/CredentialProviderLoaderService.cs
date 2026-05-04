@@ -38,7 +38,7 @@ internal class CredentialProviderLoaderService : ICredentialProviderLoaderServic
 
     public void SetCredentialPolicy(CredentialStoragePolicy storagePolicy)
     {
-        Logger.LogInformation($"Changing credential storage policy to {storagePolicy}");
+        Logger.LogInformation("Changing credential storage policy to {StoragePolicy}", storagePolicy);
 
         _configurationService.SetCredentialStoragePolicy(storagePolicy);
     }

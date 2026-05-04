@@ -94,7 +94,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                     }, token);
                 if (clonedMetadata is null)
                 {
-                    Logger.LogWarning($"Couldn't retrieve update metadata for installed {package.Identity}");
+                    Logger.LogWarning("Couldn't retrieve update metadata for installed {PackageIdentity}", package.Identity);
                     continue;
                 }
 
@@ -161,7 +161,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                     }, token);
                 if (clonedMetadata is null)
                 {
-                    Logger.LogWarning($"Couldn't retrieve update metadata for installed {package.Identity}");
+                    Logger.LogWarning("Couldn't retrieve update metadata for installed {PackageIdentity}", package.Identity);
                     continue;
                 }
 
@@ -224,7 +224,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                     }, token);
                 if (metadata is null)
                 {
-                    Logger.LogDebug($"Couldn't retrieve update metadata for installed package {package.Identity.Id}");
+                    Logger.LogDebug("Couldn't retrieve update metadata for installed package {PackageId}", package.Identity.Id);
                     continue;
                 }
 
@@ -232,7 +232,7 @@ internal class UpdatePackagesLoaderService : IPackageLoaderService, IPackagesUpd
                 if (localPackage is null)
                 {
                     // Normally shouldn't happen
-                    Logger.LogDebug($"Couldn't match retrieved update metadata with any local package");
+                    Logger.LogDebug("Couldn't match retrieved update metadata with any local package");
                     continue;
                 }
 

@@ -34,11 +34,11 @@ public class WindowsCredentialProvider : ICredentialProvider
 
         if (isRetry)
         {
-            Logger.LogDebug($"Retrying to request credentials for '{uri}'");
+            Logger.LogDebug("Retrying to request credentials for '{Uri}'", uri);
         }
         else
         {
-            Logger.LogDebug($"Requesting credentials for '{uri}'");
+            Logger.LogDebug("Requesting credentials for '{Uri}'", uri);
         }
 
         var uriString = uri.ToString().ToLower();

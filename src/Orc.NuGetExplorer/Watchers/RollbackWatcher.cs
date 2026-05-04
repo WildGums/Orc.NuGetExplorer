@@ -78,7 +78,7 @@ public class RollbackWatcher : PackageManagerContextWatcherBase, IConstructAtSta
                         if (!success)
                         {
                             _fileSystemService.CreateDeleteme(e.PackageDetails.Id, e.InstallPath);
-                            Logger.LogError($"Failed to delete directory {e.InstallPath} during rollback actions.");
+                            Logger.LogError("Failed to delete directory {InstallPath} during rollback actions.", e.InstallPath);
                         }
                     }
                 },

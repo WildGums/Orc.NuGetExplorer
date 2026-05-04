@@ -21,7 +21,7 @@ internal class FileSystemService : IFileSystemService
 
     public void CreateDeleteme(string name, string path)
     {
-        Logger.LogDebug($"Creating delete.me file on path '{path}'");
+        Logger.LogDebug("Creating delete.me file on path '{Path}'", path);
 
         var fullPath = GetDeletemePath(name, path);
         var directoryPath = Path.GetDirectoryName(fullPath);
@@ -40,7 +40,7 @@ internal class FileSystemService : IFileSystemService
 
         using (_fileService.Create(fullPath))
         {
-            Logger.LogDebug($"Created delete.me file on path {fullPath}");
+            Logger.LogDebug("Created delete.me file on path {FullPath}", fullPath);
         }
     }
 

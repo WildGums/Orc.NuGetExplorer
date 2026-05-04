@@ -269,7 +269,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                sourceCacheContext.DirectDownload,
+                sourceCacheContext.IgnoreFailedSources,
+                sourceCacheContext.NoCache,
+                sourceCacheContext.RefreshMemoryCache);
 
             //todo
             //check httpCache created inside GetMetadataAsync()
@@ -285,7 +289,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
             //force creating folder for cache even http retry count is 0
             _directoryService.Create(sourceCacheContext.GeneratedTempFolder);
 
-            Logger.LogDebug($"Get all versions metadata, creating temp {sourceCacheContext.GeneratedTempFolder}");
+            Logger.LogDebug("Get all versions metadata, creating temp {TempFolder}", sourceCacheContext.GeneratedTempFolder);
 
             var packages = await metadataResource.GetMetadataAsync(
                 packageId,
@@ -295,7 +299,7 @@ public class PackageMetadataProvider : IPackageMetadataProvider
                 NuGetLogger,
                 cancellationToken) ?? Array.Empty<IPackageSearchMetadata>();
 
-            Logger.LogDebug($"Found packages metadata for package {packageId}, count: {packages.Count()}");
+            Logger.LogDebug("Found packages metadata for package {PackageId}, count: {Count}", packageId, packages.Count());
 
             return packages.ToArray();
         }
@@ -342,7 +346,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                sourceCacheContext.DirectDownload,
+                sourceCacheContext.IgnoreFailedSources,
+                sourceCacheContext.NoCache,
+                sourceCacheContext.RefreshMemoryCache);
 
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
@@ -382,7 +390,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
-            Logger.LogDebug($"Cache context: DirectDownload: {sourceCacheContext.DirectDownload} | IgnoreFailedSources: {sourceCacheContext.IgnoreFailedSources} | NoCache: {sourceCacheContext.NoCache} | RefreshMemoryCache: {sourceCacheContext.RefreshMemoryCache}");
+            Logger.LogDebug("Cache context: DirectDownload: {DirectDownload} | IgnoreFailedSources: {IgnoreFailedSources} | NoCache: {NoCache} | RefreshMemoryCache: {RefreshMemoryCache}",
+                sourceCacheContext.DirectDownload,
+                sourceCacheContext.IgnoreFailedSources,
+                sourceCacheContext.NoCache,
+                sourceCacheContext.RefreshMemoryCache);
 
             var localPackages = await localResource.GetMetadataAsync(
                 packageId,

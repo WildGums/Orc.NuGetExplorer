@@ -102,7 +102,7 @@ internal class PageActionBarViewModel : ViewModelBase
                     var targetVersion = (await package.LoadVersionsAsync() ?? package.Versions)?.OrderByDescending(x => x).FirstOrDefault();
                     if (targetVersion is null)
                     {
-                        Logger.LogDebug($"Target version for batched package '{package}' was null. Consider this is not an error, trying to continue operation");
+                        Logger.LogDebug("Target version for batched package '{Package}' was null. Consider this is not an error, trying to continue operation", package);
                     }
                     else
                     {
@@ -124,7 +124,7 @@ internal class PageActionBarViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error when updating package");
+            Logger.LogError(ex, "Error when updating package");
         }
         finally
         {

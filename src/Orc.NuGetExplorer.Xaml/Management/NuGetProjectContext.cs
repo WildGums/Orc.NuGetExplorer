@@ -35,19 +35,19 @@ internal class NuGetProjectContext : INuGetProjectContext
         switch (level)
         {
             case MessageLevel.Debug:
-                Logger.LogDebug(string.Format(message, args));
+                Logger.LogDebug(message, args);
                 break;
 
             case MessageLevel.Error:
-                Logger.LogError(string.Format(message, args));
+                Logger.LogError(message, args);
                 break;
 
             case MessageLevel.Info:
-                Logger.LogInformation(string.Format(message, args));
+                Logger.LogInformation(message, args);
                 break;
 
             case MessageLevel.Warning:
-                Logger.LogWarning(string.Format(message, args));
+                Logger.LogWarning(message, args);
                 break;
         }
     }

@@ -233,7 +233,7 @@ internal class NuGetSettings : IVersionedSettings
             return;
         }
 
-        Logger.LogDebug($"Cannot add or update unknown item of type {item.GetType()}");
+        Logger.LogDebug("Cannot add or update unknown item of type {ItemType}", item.GetType());
     }
 
     public void Remove(string sectionName, SettingItem item)
@@ -244,7 +244,7 @@ internal class NuGetSettings : IVersionedSettings
             return;
         }
 
-        Logger.LogDebug($"Cannot remove unknown item of type {item.GetType()}");
+        Logger.LogDebug("Cannot remove unknown item of type {ItemType}", item.GetType());
     }
 
     public void SaveToDisk()

@@ -36,7 +36,7 @@ public partial class UriToBitmapConverter : ValueConverterBase<Uri, BitmapImage>
         catch (Exception ex)
         {
             // Don't list this as error, it's possible to have packages with missed icon.png
-            Logger.LogWarning($"Error occurred during value conversion, {ex}");
+            Logger.LogWarning(ex, "Error occurred during value conversion");
             return DependencyProperty.UnsetValue;
         }
     }

@@ -151,7 +151,7 @@ internal class PackageDetailsViewModel : FeaturedViewModelBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error when installing package {Package?.Identity}, installation failed");
+            Logger.LogError(ex, "Error when installing package {PackageIdentity}, installation failed", Package?.Identity);
         }
         finally
         {
@@ -198,7 +198,7 @@ internal class PackageDetailsViewModel : FeaturedViewModelBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error when uninstalling package {Package.Identity}, uninstall was failed");
+            Logger.LogError(ex, "Error when uninstalling package {PackageIdentity}, uninstall was failed", Package.Identity);
         }
         finally
         {
@@ -414,7 +414,7 @@ internal class PackageDetailsViewModel : FeaturedViewModelBase
         }
         catch (TimeoutException ex)
         {
-            Logger.LogError(ex, $"Failed to get package versions for a given time ({Timeout} ms)");
+            Logger.LogError(ex, "Failed to get package versions for a given time ({Timeout} ms)", Timeout);
         }
     }
 

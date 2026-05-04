@@ -81,7 +81,7 @@ internal class DeferredPackageLoaderService : IDefferedPackageLoaderService
                 var taskList = processedTask.ToDictionary(x => CreateTaskFromToken(x, _aliveCancellationToken));
 #pragma warning restore IDISP013 // Await in using.
 
-                Logger.LogInformation($"Start updating {_taskTokenList.Count} items in background");
+                Logger.LogInformation("Start updating {TaskCount} items in background", _taskTokenList.Count);
 
                 while (taskList.Any())
                 {

@@ -69,7 +69,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Logger.LogInformation($"{operationType} notification was muted by notification service");
+            Logger.LogInformation("{OperationType} notification was muted by notification service", operationType);
             return;
         }
 
@@ -85,7 +85,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Logger.LogInformation($"{operationType} notification was muted by notification service");
+            Logger.LogInformation("{OperationType} notification was muted by notification service", operationType);
             return;
         }
 
@@ -101,7 +101,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Logger.LogInformation($"{operationType} notification was muted by notification service");
+            Logger.LogInformation("{OperationType} notification was muted by notification service", operationType);
             return;
         }
 
@@ -117,7 +117,7 @@ public class PackageOperationNotificationService : IPackageOperationNotification
 
         if (MuteAutomaticEvents)
         {
-            Logger.LogInformation($"{operationType} notification was muted by notification service");
+            Logger.LogInformation("{OperationType} notification was muted by notification service", operationType);
             return;
         }
 

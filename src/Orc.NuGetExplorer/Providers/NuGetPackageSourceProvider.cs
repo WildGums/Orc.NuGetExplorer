@@ -26,7 +26,7 @@ internal class NuGetPackageSourceProvider : PackageSourceProvider
         }
         else
         {
-            Logger.LogDebug($"Sorting operation for NuGet Settings source of type {_settingsManager.GetType()} is not implemented");
+            Logger.LogDebug("Sorting operation for NuGet Settings source of type {SettingsManagerType} is not implemented", _settingsManager.GetType());
         }
     }
 }

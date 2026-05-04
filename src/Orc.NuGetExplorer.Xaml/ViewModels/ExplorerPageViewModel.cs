@@ -300,12 +300,12 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
         if (e.HasPropertyChanged(nameof(Invalidated)))
         {
-            Logger.LogInformation($"ViewModel {this} {e.PropertyName} flag set to {Invalidated}");
+            Logger.LogInformation("ViewModel {ViewModel} {PropertyName} flag set to {Invalidated}", this, e.PropertyName, Invalidated);
         }
 
         if (e.HasPropertyChanged(nameof(IsActive)) && IsActive)
         {
-            Logger.LogInformation($"Switching page: {Title} is active");
+            Logger.LogInformation("Switching page: {Title} is active", Title);
 
             // Force update selected item
             SelectedPackageItem = PackageItems.FirstOrDefault();
@@ -351,7 +351,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
             throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot perform update on empty feed");
         }
 
-        Logger.LogInformation($"Updating page from feed {currentFeed.Name}");
+        Logger.LogInformation("Updating page from feed {FeedName}", currentFeed.Name);
 
         // Reset page package data
         PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
@@ -438,7 +438,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
         }
         catch (OperationCanceledException ex)
         {
-            Logger.LogInformation($"Command {nameof(LoadPackagesAsync)} was cancelled by {ex}");
+            Logger.LogInformation(ex, "Command {CommandName} was cancelled", nameof(LoadPackagesAsync));
 
             IsCancellationTokenAlive = false;
 
@@ -470,7 +470,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
             if (result == FeedVerificationResult.AuthenticationRequired)
             {
-                Logger.LogError($"Authentication credentials required. Cannot load packages from source '{currentSource.Source}'");
+                Logger.LogError("Authentication credentials required. Cannot load packages from source '{Source}'", currentSource.Source);
             }
             else
             {
@@ -520,7 +520,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
         {
             IsLoadingInProcess = true;
 
-            Logger.LogInformation($"Start package query on {Title} page");
+            Logger.LogInformation("Start package query on {Title} page", Title);
 
             var isFirstLoad = pageInfo.Current < 0;
 
@@ -551,7 +551,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
             Invalidated = false;
 
-            Logger.LogInformation($"Page '{Title}' updated with {packages.Count()} packages returned by query from {PageInfo?.Source}'");
+            Logger.LogInformation("Page '{Title}' updated with {PackageCount} packages returned by query from {Source}'", Title, packages.Count(), PageInfo?.Source);
         }
         finally
         {
@@ -616,7 +616,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
     private async Task CanFeedBeLoadedAsync(INuGetSource source, CancellationToken cancelToken)
     {
-        Logger.LogInformation($"'{source}' package source is verified");
+        Logger.LogInformation("'{Source}' package source is verified", source);
 
         if (source is NuGetFeed singleSource)
         {
@@ -637,7 +637,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
                 if (!feed.IsAccessible)
                 {
                     inaccessibleFeeds.Add(feed);
-                    Logger.LogWarning($"{feed} is inaccessible. It won't be used when 'All' option selected");
+                    Logger.LogWarning("{Feed} is inaccessible. It won't be used when 'All' option selected", feed);
                 }
             }
 
@@ -645,7 +645,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
         }
         else
         {
-            Logger.LogError($"Parameter {source} has invalid type");
+            Logger.LogError("Parameter {Source} has invalid type", source);
         }
     }
 
