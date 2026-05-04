@@ -74,7 +74,7 @@ internal sealed class ApiPackageRegistry : IApiPackageRegistry
                 break;
 
             default:
-                Logger.LogWarning($"{package} package API cannot be validated, because dependencies aren't recognized");
+                Logger.LogWarning("{Package} package API cannot be validated, because dependencies aren't recognized", package);
                 return;
         }
 

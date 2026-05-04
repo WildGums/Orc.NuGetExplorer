@@ -63,7 +63,7 @@ public class RotationProgressBar : ProgressBar
 
     private void OnIsInProgressChanged(DependencyPropertyChangedEventArgs e)
     {
-        Logger.LogDebug($"Progress status changed: {((bool)e.NewValue ? "activated" : "ended")}");
+        Logger.LogDebug("Progress status changed: {Status}", (bool)e.NewValue ? "activated" : "ended");
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
     }
 
@@ -99,7 +99,7 @@ public class RotationProgressBar : ProgressBar
     private void OnShowWarningChanged(DependencyPropertyChangedEventArgs e)
     {
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-        Logger.LogDebug($"Warning changed: set RotationProgressBar status to {Success}");
+        Logger.LogDebug("Warning changed: set RotationProgressBar status to {Success}", Success);
     }
 
 
@@ -118,6 +118,6 @@ public class RotationProgressBar : ProgressBar
     private void OnShowErrorChanged(DependencyPropertyChangedEventArgs e)
     {
         SetCurrentValue(SuccessProperty, !(ShowWarning || ShowError));
-        Logger.LogDebug($"Error changed: Set RotationProgressBar status to {Success}");
+        Logger.LogDebug("Error changed: Set RotationProgressBar status to {Success}", Success);
     }
 }

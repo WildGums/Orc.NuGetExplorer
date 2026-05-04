@@ -17,7 +17,7 @@ public class IconDownloader
 
     public static async Task<byte[]> GetByUrlAsync(Uri uri, WebClient client)
     {
-        Logger.LogDebug($"Webclient request on {uri}");
+        Logger.LogDebug("Webclient request on {Uri}", uri);
 
         var array = await client.DownloadDataTaskAsync(uri);
 
@@ -26,7 +26,7 @@ public class IconDownloader
 
     public static byte[] GetByUrl(Uri uri, WebClient client)
     {
-        Logger.LogDebug($"Webclient request on {uri}");
+        Logger.LogDebug("Webclient request on {Uri}", uri);
 
         var array = client.DownloadData(uri);
 

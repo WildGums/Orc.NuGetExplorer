@@ -112,7 +112,7 @@ internal class PackagesBatchUpdateCommandContainer : CommandContainerBase<IManag
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error when updating package");
+            Logger.LogError(ex, "Error when updating package");
         }
         finally
         {

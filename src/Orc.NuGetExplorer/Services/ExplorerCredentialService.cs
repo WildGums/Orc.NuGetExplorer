@@ -91,7 +91,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
             {
                 _providerSemaphore.WaitOne();
 
-                Logger.LogDebug($"Requesting credentials, _retryCache count = {_retryCache.Count}");
+                Logger.LogDebug("Requesting credentials, _retryCache count = {RetryCacheCount}", _retryCache.Count);
 
                 if (!TryFromCredentialCache(uri, type, isRetry, provider, out var response))
                 {
@@ -124,7 +124,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
                 if (response?.Status == CredentialStatus.Success)
                 {
                     _retryCache[retryKey] = true;
-                    Logger.LogDebug($"_retryCache count now is {_retryCache.Count}");
+                    Logger.LogDebug("_retryCache count now is {RetryCacheCount}", _retryCache.Count);
                     creds = response.Credentials;
                     break;
                 }
@@ -217,7 +217,7 @@ public class ExplorerCredentialService : ICredentialService, IDisposable
     public void ClearRetryCache()
     {
         _retryCache.Clear();
-        Logger.LogDebug($"_retryCache count {_retryCache.Count}");
+        Logger.LogDebug("_retryCache count {RetryCacheCount}", _retryCache.Count);
     }
 
     internal static class CredentialsKeyHelper

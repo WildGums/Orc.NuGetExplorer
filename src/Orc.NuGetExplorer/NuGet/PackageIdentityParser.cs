@@ -27,13 +27,13 @@ public class PackageIdentityParser
 
         if (!match.Success)
         {
-            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+            Logger.LogWarning("{PackageString} {ErrorMessage}", packageString, Constants.Messages.PackageParserInvalidIdentity);
             return null;
         }
 
         if (match.Captures.Count != 1)
         {
-            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidIdentity}");
+            Logger.LogWarning("{PackageString} {ErrorMessage}", packageString, Constants.Messages.PackageParserInvalidIdentity);
             return null;
         }
 
@@ -43,7 +43,7 @@ public class PackageIdentityParser
 
         if (!NuGetVersion.TryParse(versionString.TrimStart('.'), out var version))
         {
-            Logger.LogWarning($"{packageString} {Constants.Messages.PackageParserInvalidVersion}");
+            Logger.LogWarning("{PackageString} {ErrorMessage}", packageString, Constants.Messages.PackageParserInvalidVersion);
             return null;
         }
 

@@ -52,7 +52,7 @@ public class NuGetPackageCombinator
         {
             //because of version comparer fallen back to StringComparison of non-numeric labels.
 
-            Logger.LogDebug($"Two packages was compared by release labels with result: {comparison}");
+            Logger.LogDebug("Two packages was compared by release labels with result: {ComparisonResult}", comparison);
 
             return comparison < 0 ? PackageStatus.UpdateAvailable : PackageStatus.LastVersionInstalled;
         }

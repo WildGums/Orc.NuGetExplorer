@@ -28,7 +28,7 @@ public class DestFolder : IExtensibleProject
         Framework = targetFramework.DotNetFrameworkName;
         SupportedPlatforms = [FrameworkParser.ToSpecificPlatform(targetFramework)];
 
-        Logger.LogInformation($"Current target framework for plugins set as '{Framework}'");
+        Logger.LogInformation("Current target framework for plugins set as '{Framework}'", Framework);
 
         // Note: commented part for testing correct package resolving to 4.X versions
         //var tfm472 = (defaultFramework as DefaultNuGetFramework).GetFirst();

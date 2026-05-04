@@ -229,7 +229,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
             var repositories = SourceContext.CurrentContext?.Repositories;
             if (repositories is null || !repositories.Any())
             {
-                Logger.LogError($"Failed to install package {package}");
+                Logger.LogError("Failed to install package {Package}", package);
 
                 if (showErrors)
                 {
@@ -280,7 +280,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
                     }
                     catch (InvalidOperationException ex)
                     {
-                        Logger.LogError($"Saving package configuration failed in project {project} when installing package {package}");
+                        Logger.LogError("Saving package configuration failed in project {Project} when installing package {Package}", project, package);
                         Logger.LogError(ex, null);
                         dependencyInstallResult = false;
                     }
@@ -293,7 +293,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (ProjectInstallException ex)
         {
-            Logger.LogError($"Failed to install package {package}");
+            Logger.LogError("Failed to install package {Package}", package);
 
             if (showErrors)
             {
@@ -317,7 +317,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"The Installation of package {package} was failed");
+            Logger.LogError(ex, "The Installation of package {Package} was failed", package);
             throw;
         }
     }
@@ -369,7 +369,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Uninstall of package {package} was failed");
+            Logger.LogError(ex, "Uninstall of package {Package} was failed", package);
         }
     }
 
@@ -418,7 +418,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error during package {packageId} update");
+            Logger.LogError(ex, "Error during package {PackageId} update", packageId);
             throw;
         }
     }
@@ -450,7 +450,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error during package {packageId} update");
+            Logger.LogError(ex, "Error during package {PackageId} update", packageId);
         }
     }
 

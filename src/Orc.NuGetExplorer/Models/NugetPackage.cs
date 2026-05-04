@@ -115,7 +115,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
                 RaiseStatusChanged(eventArgs.OldValue, eventArgs.NewValue);
 
-                Logger.LogInformation($"{Identity} status was changed from {eventArgs.OldValue} to {eventArgs.NewValue}");
+                Logger.LogInformation("{Identity} status was changed from {OldValue} to {NewValue}", Identity, eventArgs.OldValue, eventArgs.NewValue);
             }
         }
     }
@@ -223,7 +223,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
         }
         catch (NullReferenceException ex)
         {
-            Logger.LogWarning(ex, $"possibly because package available only from local source or local package {searchMetadata.Identity} installation is missed or corrupted");
+            Logger.LogWarning(ex, "possibly because package available only from local source or local package {PackageIdentity} installation is missed or corrupted", searchMetadata.Identity);
         }
     }
 

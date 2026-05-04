@@ -22,7 +22,7 @@ public static class V2SearchHelper
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, $"Cannot preload metadata for package {package.Identity.Id} of version {package.Identity.Version} from v2 feed due to error");
+            Logger.LogWarning(ex, "Cannot preload metadata for package {PackageId} of version {PackageVersion} from v2 feed due to error", package.Identity.Id, package.Identity.Version);
         }
     }
 }

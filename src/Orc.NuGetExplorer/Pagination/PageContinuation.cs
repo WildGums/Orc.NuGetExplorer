@@ -48,7 +48,7 @@ public class PageContinuation
 
     public int GetNext()
     {
-        Logger.LogDebug($"Got next {Size} positions, starts from {Next}");
+        Logger.LogDebug("Got next {Size} positions, starts from {Next}", Size, Next);
 
         var next = Next;
 
@@ -59,7 +59,7 @@ public class PageContinuation
 
     public int GetNext(int count)
     {
-        Logger.LogDebug($"Got next {count} positions, starts from {Next}");
+        Logger.LogDebug("Got next {Count} positions, starts from {Next}", count, Next);
 
         var next = Next;
 

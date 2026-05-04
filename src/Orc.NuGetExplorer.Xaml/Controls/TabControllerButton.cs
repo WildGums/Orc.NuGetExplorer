@@ -85,7 +85,7 @@ public class TabControllerButton : RadioButton
             foreach (var t in tabBtn._group)
             {
                 t.SetCurrentValue(TabControllerButton.TabSourceProperty, tabBtn.TabSource);
-                Logger.LogDebug($"Tab source property was set for button {t.Name}, original sender is {tabBtn.Name}");
+                Logger.LogDebug("Tab source property was set for button {ButtonName}, original sender is {SenderName}", t.Name, tabBtn.Name);
             }
         }
     }

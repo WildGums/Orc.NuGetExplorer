@@ -72,7 +72,7 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
 
         if (!string.IsNullOrEmpty(folderPath))
         {
-            Logger.LogInformation($"Clear {folderDescription} folder on path {folderPath}");
+            Logger.LogInformation("Clear {FolderDescription} folder on path {FolderPath}", folderDescription, folderPath);
 
             success &= ClearCacheDirectory(folderPath);
         }
@@ -94,7 +94,7 @@ public class NuGetCacheManager : INuGetCacheManager, IDisposable
         }
         catch (Exception ex)
         {
-            Logger.LogError($"Cache clear ended unsuccessfully, {ex}");
+            Logger.LogError(ex, "Cache clear ended unsuccessfully");
         }
         finally
         {
