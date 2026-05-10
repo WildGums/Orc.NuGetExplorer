@@ -3,10 +3,4 @@
   <MethodTimer />
   <Obsolete />
   <Catel />
-  <LoadAssembliesOnStartup>
-    <IncludeAssemblies>
-      Catel.*
-      Orc.*
-    </IncludeAssemblies>
-  </LoadAssembliesOnStartup>
 </Weavers>
