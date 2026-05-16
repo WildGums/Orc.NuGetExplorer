@@ -44,17 +44,14 @@
                 </Style>
             </StackPanel.Resources>
             <nugetc:TabControllerButton x:Name="Browse"
+                                        Content="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Browse}"
                                         TabSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type catel:UserControl}}, Path=UsedOn}"
-                                        Next="{Binding ElementName=Installed}">
-                Browse
-            </nugetc:TabControllerButton>
+                                        Next="{Binding ElementName=Installed}" />
             <nugetc:TabControllerButton x:Name="Installed"
-                                        Next="{Binding ElementName=Updates}">
-                Installed
-            </nugetc:TabControllerButton>
-            <nugetc:TabControllerButton x:Name="Updates">
-                Updates
-            </nugetc:TabControllerButton>
+                                        Content="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Installed}"
+                                        Next="{Binding ElementName=Updates}" />
+            <nugetc:TabControllerButton x:Name="Updates"
+                                        Content="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Updates}" />
         </StackPanel>
 
         <!-- Hide title for manager, until it uneditable -->
@@ -82,7 +79,7 @@
                         </Canvas>
                     </Viewbox>
 
-                    <TextBlock Text="Enter package id"
+                    <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_TextBlock_Text_EnterPackageId}"
                                Margin="14 0 0 0" />
                 </StackPanel>
             </orccontrols:WatermarkTextBox.Watermark>
@@ -134,12 +131,12 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
             <CheckBox IsChecked="{Binding IsPreReleaseIncluded}">
-                <TextBlock>Include prerelease</TextBlock>
+                <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_CheckBox_Content_IncludePrerelease}" />
             </CheckBox>
 
             <CheckBox IsChecked="{Binding IsHideInstalled}"
                       Visibility="{Binding IsHideInstalledOptionEnabled, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
-                <TextBlock>Hide installed</TextBlock>
+                <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_CheckBox_Content_HideInstalled}" />
             </CheckBox>
         </StackPanel>
 
@@ -149,7 +146,7 @@
                    VerticalAlignment="Center"
                    HorizontalAlignment="Right"
                    Margin="4 0 4 0">
-            Package source:
+            <Run Text="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_TextBlock_Text_PackageSource}" />
         </TextBlock>
 
         <!--selecting source feed-->
@@ -192,7 +189,7 @@
                 HorizontalAlignment="Right"
                 Height="27"
                 Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                ToolTip="Show package source settings">
+                ToolTip="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ShowPackageSourceSettings}">
             <Button.ContentTemplate>
                 <DataTemplate>
                     <Viewbox>
@@ -228,7 +225,7 @@
                 Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                 Margin="0"
                 HorizontalAlignment="Right"
-                ToolTip="Clear NuGet caches">
+                ToolTip="{catel:LanguageBinding ResourceName=NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ClearNuGetCaches}">
             <Button.ContentTemplate>
                 <DataTemplate>
                     <Viewbox>

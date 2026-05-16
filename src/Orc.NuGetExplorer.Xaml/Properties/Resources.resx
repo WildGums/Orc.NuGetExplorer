@@ -189,4 +189,88 @@
   <data name="NuGetExplorer_PagingView_Button_Content_Next" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="NuGetExplorer_DependenciesView_Label_Content_Dependencies" xml:space="preserve">
+    <value>Dependencies:</value>
+  </data>
+  <data name="NuGetExplorer_DependenciesView_TextBlock_Text_NoDependencies" xml:space="preserve">
+    <value>No Dependencies</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ClearNuGetCaches" xml:space="preserve">
+    <value>Clear NuGet caches</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ShowPackageSourceSettings" xml:space="preserve">
+    <value>Show package source settings</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_HideInstalled" xml:space="preserve">
+    <value>Hide installed</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_IncludePrerelease" xml:space="preserve">
+    <value>Include prerelease</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Installed" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Updates" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_EnterPackageId" xml:space="preserve">
+    <value>Enter package id</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_PackageSource" xml:space="preserve">
+    <value>Package source:</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesPrompt" xml:space="preserve">
+    <value>Clean all NuGet caches, including global packages folder?</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesTitle" xml:space="preserve">
+    <value>NuGet Package Management</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Title" xml:space="preserve">
+    <value>Manage NuGet Packages</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerViewModel_Title" xml:space="preserve">
+    <value>Package management</value>
+  </data>
+  <data name="NuGetExplorer_ExtensiblesViewModel_Title" xml:space="preserve">
+    <value>Project extensions</value>
+  </data>
+  <data name="NuGetExplorer_ExtensiblesWindow_Title" xml:space="preserve">
+    <value>Project extensions</value>
+  </data>
+  <data name="NuGetExplorer_FeedDetailView_TextBlock_Text_Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="NuGetExplorer_FeedDetailView_TextBlock_Text_Source" xml:space="preserve">
+    <value>Source:</value>
+  </data>
+  <data name="NuGetExplorer_NuGetSettingsViewModel_Title" xml:space="preserve">
+    <value>Package source settings</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_Button_Content_InstallLatest" xml:space="preserve">
+    <value>Install Latest</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_Button_Content_Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_TextBlock_Text_SelectAllPackages" xml:space="preserve">
+    <value>Select all packages</value>
+  </data>
+  <data name="NuGetExplorer_PageItemView_Run_Text_By" xml:space="preserve">
+    <value>  by:</value>
+  </data>
+  <data name="NuGetExplorer_PageItemView_Run_Text_TotalDownloads" xml:space="preserve">
+    <value> total downloads</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_Button_ToolTip_ResetPackageSourceSettings" xml:space="preserve">
+    <value>Reset package source settings</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_PackageSource" xml:space="preserve">
+    <value>Package source</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingViewModel_Validation_Error_DuplicateFeedName_Template" xml:space="preserve">
+    <value>Two or more feeds have same name '{0}'</value>
+  </data>
 </root>

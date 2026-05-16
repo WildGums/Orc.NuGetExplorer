@@ -13,6 +13,7 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
+using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
@@ -44,7 +45,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
     public ExplorerViewModel(IServiceProvider serviceProvider, ICommandManager commandManager, 
         IModelProvider<ExplorerSettingsContainer> settingsProvider,
         IConfigurationService configurationService, INuGetExplorerInitializationService initializationService, 
-        ISettings nuGetSettings, IMessageMediator messageMediator)
+        ISettings nuGetSettings, IMessageMediator messageMediator, ILanguageService languageService)
         : base(serviceProvider)
     {
         _configurationService = configurationService;
@@ -68,7 +69,7 @@ internal class ExplorerViewModel : FeaturedViewModelBase
         Pages = new System.Collections.ObjectModel.ObservableCollection<ExplorerPage>();
         Settings = settingsProvider.Model;
 
-        Title = "Package management";
+        Title = languageService.GetRequiredString("NuGetExplorer_ExplorerViewModel_Title");
     }
 
     public string? StartPage { get; set; }

@@ -23,6 +23,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
     private readonly INuGetCacheManager _nuGetCacheManager;
     private readonly IBusyIndicatorService _busyIndicatorService;
 
+    private readonly ILanguageService _languageService;
     private readonly IMessageService _messageService;
     private readonly IMessageMediator _messageMediator;
     private readonly IViewModelFactory _viewModelFactory;
@@ -31,7 +32,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
     public ExplorerTopBarViewModel(ExplorerSettingsContainer settings, IServiceProvider serviceProvider,
         IUIVisualizerService uiVisualizerService, INuGetConfigurationService configurationService,
         INuGetCacheManager nuGetCacheManager, IBusyIndicatorService busyIndicatorService,
-        IMessageService messageService, IMessageMediator messageMediator,
+        IMessageService messageService, IMessageMediator messageMediator, ILanguageService languageService,
         IViewModelFactory viewModelFactory)
         : base(serviceProvider)
     {
@@ -39,6 +40,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
         _configurationService = configurationService;
         _nuGetCacheManager = nuGetCacheManager;
         _busyIndicatorService = busyIndicatorService;
+        _languageService = languageService;
         _messageService = messageService;
         _messageMediator = messageMediator;
         _viewModelFactory = viewModelFactory;
@@ -46,7 +48,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
 
         ActiveFeeds = new();
 
-        Title = "Manage NuGet Packages";
+        Title = _languageService.GetRequiredString("NuGetExplorer_ExplorerTopBarViewModel_Title");
 
         ShowPackageSourceSettings = new TaskCommand(serviceProvider, OnShowPackageSourceSettingsExecuteAsync);
         ShowExtensibles = new TaskCommand(serviceProvider, OnShowExtensiblesAsync);
@@ -123,7 +125,10 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
     {
         try
         {
-            var shouldRunClear = await _messageService.ShowAsync("Clean all NuGet caches, including global packages folder?", "NuGet Package Management", MessageButton.YesNo);
+            var shouldRunClear = await _messageService.ShowAsync(
+                _languageService.GetRequiredString("NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesPrompt"),
+                _languageService.GetRequiredString("NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesTitle"),
+                MessageButton.YesNo);
 
             if (shouldRunClear == MessageResult.No)
             {

@@ -23,7 +23,7 @@
                 <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
             </CheckBox.LayoutTransform>
             <CheckBox.Content>
-                <TextBlock Text="Select all packages" 
+                <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorer_PageActionBar_TextBlock_Text_SelectAllPackages}" 
                            Grid.Column="1"
                            VerticalAlignment="Center"
                            Padding="0 2 0 0">
@@ -36,21 +36,19 @@
             </CheckBox.Content>
         </CheckBox>
         <Button Grid.Column="2"
-            HorizontalAlignment="Right" Margin="4 4 0 4"
-            Width="100" Height="28"
-            Visibility="{Binding CanBatchUpdate, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-            Command="{catel:CommandManagerBinding CommandName=Packages.BatchUpdate}"
-            CommandParameter="{Binding Parent}">
-            Update
-        </Button>
+                HorizontalAlignment="Right" Margin="4 4 0 4"
+                Width="100" Height="28"
+                Visibility="{Binding CanBatchUpdate, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
+                Command="{catel:CommandManagerBinding CommandName=Packages.BatchUpdate}"
+                CommandParameter="{Binding Parent}"
+                Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PageActionBar_Button_Content_Update}" />
 
         <Button Grid.Column="2"
                 HorizontalAlignment="Right"
                 Margin="4 4 0 4"
                 Width="100" Height="28"
                 Visibility="{Binding CanBatchInstall, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                Command="{Binding BatchInstall}">
-            Install Latest
-        </Button>
+                Command="{Binding BatchInstall}"
+                Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PageActionBar_Button_Content_InstallLatest}" />
    </Grid>
 </catel:UserControl>

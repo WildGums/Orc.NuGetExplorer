@@ -7,7 +7,7 @@
         xmlns:catel="http://schemas.catelproject.com"
         mc:Ignorable="d"
         x:ClassModifier="internal"
-        Title="ExtensiblesWindow" MinHeight="450" MinWidth="200">
+        Title="{catel:LanguageBinding ResourceName=NuGetExplorer_ExtensiblesWindow_Title}" MinHeight="450" MinWidth="200">
     <catel:DataWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

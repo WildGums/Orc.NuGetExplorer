@@ -14,6 +14,7 @@ public class MainViewModel : FeaturedViewModelBase
 {
     private readonly INuGetFeedVerificationService _feedVerificationService;
     private readonly IMessageService _messageService;
+    private readonly ILanguageService _languageService;
     private readonly INuGetConfigurationService _nuGetConfigurationService;
     private readonly INuGetExplorerInitializationService _initializationService;
     private readonly IPackagesUIService _packagesUiService;
@@ -27,6 +28,7 @@ public class MainViewModel : FeaturedViewModelBase
         IEchoService echoService,
         INuGetConfigurationService nuGetConfigurationService,
         INuGetFeedVerificationService feedVerificationService,
+        ILanguageService languageService,
         IMessageService messageService,
         IPackagesUpdatesSearcherService packagesUpdatesSearcherService,
         INuGetProjectUpgradeService nuGetProjectUpgradeService,
@@ -37,6 +39,7 @@ public class MainViewModel : FeaturedViewModelBase
         _packagesUiService = packagesUiService;
         _nuGetConfigurationService = nuGetConfigurationService;
         _feedVerificationService = feedVerificationService;
+        _languageService = languageService;
         _messageService = messageService;
         _packagesUpdatesSearcherService = packagesUpdatesSearcherService;
         _nuGetProjectUpgradeService = nuGetProjectUpgradeService;
@@ -53,7 +56,7 @@ public class MainViewModel : FeaturedViewModelBase
         OpenUpdateWindow = new TaskCommand(serviceProvider, OnOpenUpdateWindowExecuteAsync, OnOpenUpdateWindowCanExecute);
         Settings = new TaskCommand(serviceProvider, OnSettingsExecuteAsync);
 
-        Title = "Orc.NuGetExplorer example";
+        Title = _languageService.GetRequiredString("NuGetExplorerExample_MainViewModel_Title");
     }
 
     [Model]
@@ -111,7 +114,7 @@ public class MainViewModel : FeaturedViewModelBase
         var packageSourceSaved = await Task.Run(() => _nuGetConfigurationService.SavePackageSource(PackageSourceName, PackageSourceUrl, verifyFeed: true));
         if (!packageSourceSaved)
         {
-            await _messageService.ShowWarningAsync("Feed is invalid or unknown");
+            await _messageService.ShowWarningAsync(_languageService.GetRequiredString("NuGetExplorerExample_MainViewModel_Warning_InvalidOrUnknownFeed"));
         }
     }
 
