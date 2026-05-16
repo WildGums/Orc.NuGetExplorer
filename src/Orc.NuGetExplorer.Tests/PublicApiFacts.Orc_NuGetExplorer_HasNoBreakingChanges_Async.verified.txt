@@ -1203,7 +1203,7 @@ namespace Orc.NuGetExplorer.Providers
     }
     public class WindowsCredentialProvider : NuGet.Credentials.ICredentialProvider
     {
-        public WindowsCredentialProvider(Catel.Configuration.IConfigurationService configurationService) { }
+        public WindowsCredentialProvider(Catel.Configuration.IConfigurationService configurationService, Catel.Services.ILanguageService languageService) { }
         public string Id { get; }
         public System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { }
     }
