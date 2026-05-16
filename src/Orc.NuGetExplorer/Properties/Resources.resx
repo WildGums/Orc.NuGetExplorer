@@ -124,4 +124,10 @@
   <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" xml:space="preserve">
     <value>No package sources provided for installing package '{0}'</value>
   </data>
+  <data name="NuGetExplorer_WindowsCredentialProvider_MainInstruction" xml:space="preserve">
+    <value>Credentials are required to access this feed</value>
+  </data>
+  <data name="NuGetExplorer_WindowsCredentialProvider_WindowTitle" xml:space="preserve">
+    <value>Credentials required</value>
+  </data>
 </root>

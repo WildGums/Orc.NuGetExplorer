@@ -1,4 +1,4 @@
-﻿namespace Orc.NuGetExplorer.ViewModels;
+namespace Orc.NuGetExplorer.ViewModels;
 
 using System;
 using System.Collections.Generic;
@@ -7,41 +7,45 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.Fody;
 using Catel.MVVM;
+using Catel.Services;
 using Orc.NuGetExplorer.Providers;
 
 internal class NuGetSettingsViewModel : FeaturedViewModelBase
 {
-    private const string DefaultTitle = "Package source settings";
-
     private readonly INuGetConfigurationService _nuGetConfigurationService;
     private readonly IDefaultPackageSourcesProvider _defaultPackageSourcesProvider;
+    private readonly ILanguageService _languageService;
 
     public NuGetSettingsViewModel(IModelProvider<ExplorerSettingsContainer> settingsProvider, 
         INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        ILanguageService languageService,
         IServiceProvider serviceProvider)
-        : this(DefaultTitle, settingsProvider, configurationService, defaultPackageSourcesProvider, serviceProvider)
+        : this(null, settingsProvider, configurationService, defaultPackageSourcesProvider, languageService, serviceProvider)
     {
 
     }
 
-    public NuGetSettingsViewModel(string title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
+    public NuGetSettingsViewModel(string? title, IModelProvider<ExplorerSettingsContainer> settingsProvider,
         INuGetConfigurationService configurationService, IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        ILanguageService languageService,
         IServiceProvider serviceProvider)
-        : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider, serviceProvider)
+        : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider, languageService, serviceProvider)
     {
-        Title = title ?? DefaultTitle;
+        Title = title ?? languageService.GetRequiredString("NuGetExplorer_NuGetSettingsViewModel_Title");
     }
 
     public NuGetSettingsViewModel(ExplorerSettingsContainer settings, 
         INuGetConfigurationService configurationService, 
         IDefaultPackageSourcesProvider defaultPackageSourcesProvider,
+        ILanguageService languageService,
         IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _defaultPackageSourcesProvider = defaultPackageSourcesProvider;
         _nuGetConfigurationService = configurationService;
+        _languageService = languageService;
 
-        Title = DefaultTitle;
+        Title = _languageService.GetRequiredString("NuGetExplorer_NuGetSettingsViewModel_Title");
         Settings = settings;
 
         if (serviceProvider.IsRegistered<INuGetConfigurationResetService>())

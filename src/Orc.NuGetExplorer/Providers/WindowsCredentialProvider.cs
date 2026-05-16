@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.Configuration;
 using Catel.Logging;
+using Catel.Services;
 using Microsoft.Extensions.Logging;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -16,13 +17,16 @@ public class WindowsCredentialProvider : ICredentialProvider
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(WindowsCredentialProvider));
 
     private readonly IConfigurationService _configurationService;
+    private readonly ILanguageService _languageService;
     private readonly bool _canAccessStoredCredentials;
 
-    public WindowsCredentialProvider(IConfigurationService configurationService)
+    public WindowsCredentialProvider(IConfigurationService configurationService, ILanguageService languageService)
     {
         ArgumentNullException.ThrowIfNull(configurationService);
+        ArgumentNullException.ThrowIfNull(languageService);
 
         _configurationService = configurationService;
+        _languageService = languageService;
         _canAccessStoredCredentials = _configurationService.GetCredentialStoragePolicy() != CredentialStoragePolicy.None;
     }
 
@@ -47,8 +51,8 @@ public class WindowsCredentialProvider : ICredentialProvider
         {
             AllowStoredCredentials = !isRetry && _canAccessStoredCredentials,
             ShowSaveCheckBox = true,
-            WindowTitle = "Credentials required",
-            MainInstruction = "Credentials are required to access this feed",
+            WindowTitle = _languageService.GetRequiredString("NuGetExplorer_WindowsCredentialProvider_WindowTitle"),
+            MainInstruction = _languageService.GetRequiredString("NuGetExplorer_WindowsCredentialProvider_MainInstruction"),
             Content = message,
             IsAuthenticationRequired = true
         };

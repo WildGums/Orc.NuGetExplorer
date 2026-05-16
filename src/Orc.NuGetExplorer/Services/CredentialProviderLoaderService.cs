@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Catel.Configuration;
 using Catel.Logging;
+using Catel.Services;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -17,12 +18,15 @@ internal class CredentialProviderLoaderService : ICredentialProviderLoaderServic
     private static readonly Microsoft.Extensions.Logging.ILogger Logger = LogManager.GetLogger(typeof(CredentialProviderLoaderService));
 
     private readonly IConfigurationService _configurationService;
+    private readonly ILanguageService _languageService;
 
-    public CredentialProviderLoaderService(IConfigurationService configurationService)
+    public CredentialProviderLoaderService(IConfigurationService configurationService, ILanguageService languageService)
     {
         ArgumentNullException.ThrowIfNull(configurationService);
+        ArgumentNullException.ThrowIfNull(languageService);
 
         _configurationService = configurationService;
+        _languageService = languageService;
 
         // this provider add yourself as default V3 credential
 
@@ -47,7 +51,7 @@ internal class CredentialProviderLoaderService : ICredentialProviderLoaderServic
     {
         var providers = new List<ICredentialProvider>();
 
-        var windowsUserProvider = new WindowsCredentialProvider(_configurationService);
+        var windowsUserProvider = new WindowsCredentialProvider(_configurationService, _languageService);
 
         providers.Add(windowsUserProvider);
 

@@ -23,9 +23,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
-            Dependencies:
-        </Label>
+        <Label Content="{catel:LanguageBinding ResourceName=NuGetExplorer_DependenciesView_Label_Content_Dependencies}"
+               Visibility="{Binding Path=HasDependency, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
         <TreeView Grid.Row="1"
                   ItemsSource="{Binding Collection}"
@@ -46,7 +45,7 @@
 
                         <TextBlock
                             FontStyle="Italic"
-                            Text="No Dependencies"
+                            Text="{catel:LanguageBinding ResourceName=NuGetExplorer_DependenciesView_TextBlock_Text_NoDependencies}"
                             x:Name="_noDependencies"
                             Visibility="{Binding Packages, Converter={StaticResource EmptyCollectionToVisibleConverter}}"/>
                     </StackPanel>

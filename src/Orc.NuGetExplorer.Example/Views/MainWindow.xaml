@@ -21,8 +21,8 @@
             <orctheming:FontSizeSwitcherView />
         </StackPanel>
 
-        <Button Content="Settings" Command="{Binding Settings}"/>
-        <Button Content="Show explorer" Command="{Binding ShowExplorer}" />
+        <Button Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_Settings}" Command="{Binding Settings}"/>
+        <Button Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_ShowExplorer}" Command="{Binding ShowExplorer}" />
 
         <orccontrols:StackGrid>
             <orccontrols:StackGrid.RowDefinitions>
@@ -42,15 +42,15 @@
                     <RowDefinition Height="Auto"/>
                 </orccontrols:StackGrid.RowDefinitions>
 
-                <TextBlock Text="Package source name"/>
+                <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceName}"/>
                 <TextBox Text="{Binding PackageSourceName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Text="Package source feed"/>
+                <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceFeed}"/>
                 <TextBox Text="{Binding PackageSourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
             </orccontrols:StackGrid>
 
-            <Button Content="verify feed" Command="{Binding VerifyFeed}"/>
-            <Button Content="add package source" Command="{Binding AddPackageSource}"/>
+            <Button Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_VerifyFeed}" Command="{Binding VerifyFeed}"/>
+            <Button Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_AddPackageSource}" Command="{Binding AddPackageSource}"/>
         </orccontrols:StackGrid>
 
         <Grid>
@@ -73,8 +73,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="0" Content="Check for updates" Command="{Binding CheckForUpdates}"/>
-                <CheckBox Grid.Row="0" Grid.Column="1" Content="allow prereleases" IsThreeState="True" IsChecked="{Binding AllowPrerelease}"/>
+                <Button Grid.Row="0" Grid.Column="0" Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_CheckForUpdates}" Command="{Binding CheckForUpdates}"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_CheckBox_Content_AllowPrereleases}" IsThreeState="True" IsChecked="{Binding AllowPrerelease}"/>
                 <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding AvailableUpdates}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -83,7 +83,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Open in update window" Command="{Binding OpenUpdateWindow}"/>
+                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{catel:LanguageBinding ResourceName=NuGetExplorerExample_MainWindow_Button_Content_OpenInUpdateWindow}" Command="{Binding OpenUpdateWindow}"/>
             </Grid>
         </Grid>
     </orccontrols:StackGrid>

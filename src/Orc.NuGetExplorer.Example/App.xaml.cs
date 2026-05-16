@@ -41,6 +41,7 @@ public partial class App : Application
                 services.AddOrcSystemInfo();
                 services.AddOrcTheming();
                 services.AddOrchestraCore();
+                services.AddSingleton<ILanguageSource>(new LanguageResourceSource("Orc.NuGetExplorer.Example", "Orc.NuGetExplorer.Example.Properties", "Resources"));
 
                 services.AddSingleton<IEchoService, EchoService>();
                 services.AddSingleton<IDefaultPackageSourcesProvider, DefaultPackageSourcesProvider>();

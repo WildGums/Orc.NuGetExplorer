@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.MVVM;
+using Catel.Services;
 using NuGetExplorer.Management;
 
 internal class ExtensiblesViewModel : ViewModelBase
@@ -12,6 +13,7 @@ internal class ExtensiblesViewModel : ViewModelBase
     private readonly IExtensibleProjectLocator _extensiblesManager;
 
     public ExtensiblesViewModel(IExtensibleProjectLocator extensiblesManager,
+        ILanguageService languageService,
         IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
@@ -19,7 +21,7 @@ internal class ExtensiblesViewModel : ViewModelBase
 
         ExtensiblesCollection = new();
 
-        Title = "Project extensions";
+        Title = languageService.GetRequiredString("NuGetExplorer_ExtensiblesViewModel_Title");
     }
 
     protected override Task InitializeAsync()

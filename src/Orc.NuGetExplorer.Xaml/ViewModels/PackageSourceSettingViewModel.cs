@@ -204,7 +204,9 @@ internal class PackageSourceSettingViewModel : FeaturedViewModelBase
             return;
         }
 
-        var results = names.Select(name => BusinessRuleValidationResult.CreateError($"Two or more feeds have same name '{name}'")).Cast<IBusinessRuleValidationResult>();
+        var results = names
+            .Select(name => BusinessRuleValidationResult.CreateError(string.Format(_languageService.GetRequiredString("NuGetExplorer_PackageSourceSettingViewModel_Validation_Error_DuplicateFeedName_Template"), name)))
+            .Cast<IBusinessRuleValidationResult>();
         validationResults.AddRange(results);
     }
 

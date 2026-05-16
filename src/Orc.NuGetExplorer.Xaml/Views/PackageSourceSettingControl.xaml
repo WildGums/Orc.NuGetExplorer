@@ -34,7 +34,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Package source"
+        <TextBlock Text="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_PackageSource}"
                    VerticalAlignment="Center"
                    Margin="6 2 2 2" />
 
@@ -222,7 +222,7 @@
             <Button x:Name="ResetBtn"
                     Command="{Binding Reset}"
                     Visibility="{Binding CanReset, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                    ToolTip="Reset package source settings">
+                    ToolTip="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageSourceSettingControl_Button_ToolTip_ResetPackageSourceSettings}">
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>

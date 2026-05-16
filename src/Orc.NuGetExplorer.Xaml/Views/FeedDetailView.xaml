@@ -26,7 +26,7 @@
                    Grid.Row="0"
                    VerticalAlignment="Center"
                    Margin="4 2 0 0"
-                   Text="Name:"/>
+                   Text="{catel:LanguageBinding ResourceName=NuGetExplorer_FeedDetailView_TextBlock_Text_Name}"/>
 
         <TextBox Grid.Column="1"
                  Grid.Row="0"
@@ -44,7 +44,7 @@
                    Grid.Row="1"
                    VerticalAlignment="Center"
                    Margin="4 2 0 0"
-                   Text="Source:"/>
+                   Text="{catel:LanguageBinding ResourceName=NuGetExplorer_FeedDetailView_TextBlock_Text_Source}"/>
 
         <TextBox Grid.Column="1"
                  Grid.Row="1"
