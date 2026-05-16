@@ -116,7 +116,7 @@
                            LineHeight="20"
                            LineStackingStrategy="BlockLineHeight">
                          <Run Text="{Binding Title}" FontSize="14" FontWeight="DemiBold" ToolTip="{Binding Title}"></Run>
-                         <Run xml:space="preserve" Text="{catel:LanguageBinding ResourceName=NuGetExplorer_PageItemView_Run_Text_By}" ToolTip="{Binding Authors}"/>
+                         <Run Text="{catel:LanguageBinding ResourceName=NuGetExplorer_PageItemView_Run_Text_By}" ToolTip="{Binding Authors}"/>
                          <Run Text="{Binding Authors}" ToolTip="{Binding Authors}"/>
                     </TextBlock>
 

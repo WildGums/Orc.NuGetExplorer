@@ -31,7 +31,7 @@ internal class NuGetSettingsViewModel : FeaturedViewModelBase
         IServiceProvider serviceProvider)
         : this(settingsProvider?.Model ?? throw new ArgumentException("'model' cannot be null"), configurationService, defaultPackageSourcesProvider, languageService, serviceProvider)
     {
-        Title = title ?? _languageService.GetRequiredString("NuGetExplorer_NuGetSettingsViewModel_Title");
+        Title = title ?? languageService.GetRequiredString("NuGetExplorer_NuGetSettingsViewModel_Title");
     }
 
     public NuGetSettingsViewModel(ExplorerSettingsContainer settings, 
