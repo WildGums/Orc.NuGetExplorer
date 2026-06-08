@@ -239,6 +239,7 @@ internal partial class NuGetProjectPackageManager : INuGetPackageManager, IDispo
 
                 return false;
             }
+
             var installationContext = new InstallationContext
             {
                 Project = project,

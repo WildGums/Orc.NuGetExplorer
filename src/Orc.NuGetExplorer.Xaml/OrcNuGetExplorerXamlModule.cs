@@ -22,7 +22,9 @@ public static class OrcNuGetExplorerXamlModule
     public static IServiceCollection AddOrcNuGetExplorerXaml(this IServiceCollection serviceCollection)
     {
         serviceCollection.TryAddSingleton<IApplicationCacheProvider, ExplorerCacheProvider>();
-        serviceCollection.TryAddSingleton<INuGetProjectContextProvider, NuGetProjectContextProvider>();
+
+        // Must be add to override the empty one from Orc.NuGetExplorer, which is used for non-XAML scenarios (e.g. console app)
+        serviceCollection.AddSingleton<INuGetProjectContextProvider, NuGetProjectContextProvider>();
 
         serviceCollection.TryAddSingleton<ISynchronizeInvoke, SynchronizeInvoker>();
         serviceCollection.TryAddSingleton<IPackageMetadataMediaDownloadService, PackageMetadataMediaDownloadService>();

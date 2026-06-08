@@ -399,7 +399,9 @@ internal class PackageInstallationService : IPackageInstallationService
                     continue;
                 }
 
-                var isPackageRequiresOwnDependencies = !_apiPackageRegistry.IsRegistered(dependencyIdentity.Id);
+                var isApiPackage = _apiPackageRegistry.IsRegistered(dependencyIdentity.Id);
+
+                var isPackageRequiresOwnDependencies = !isApiPackage;
                 if (isPackageRequiresOwnDependencies)
                 {
                     // We can't determine the unknown version yet from range, but can exclude min required if it was already processed
@@ -422,32 +424,34 @@ internal class PackageInstallationService : IPackageInstallationService
                     }
                 }
 
+                // If this is an api package, we can safely ignore it
+                if (isApiPackage)
+                {
+                    resolvingBehavior = DependencyBehavior.Lowest;
+
+                    if (!packageStore.Contains(dependencyIdentity))
+                    {
+                        packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id,
+                            dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
+                    }
+
+                    if (ignoredPackages.Add(dependencyIdentity))
+                    {
+                        // Show only for top package, not much effort to see this message multiple times
+                        if (nextPackage == dependencyInfo)
+                        {
+                            await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Information, $"Package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
+                        }
+                    }
+
+                    continue;
+                }
+
                 // Determine behavior if package cannot be resolved in any way
                 if (ignoreMissingPackages)
                 {
-                    if (_apiPackageRegistry.IsRegistered(dependencyIdentity.Id))
-                    {
-                        resolvingBehavior = DependencyBehavior.Lowest;
-
-                        if (!packageStore.Contains(dependencyIdentity))
-                        {
-                            packageStore.Add(new SourcePackageDependencyInfo(dependencyIdentity.Id, dependencyIdentity.Version, Enumerable.Empty<PackageDependency>(), false, null));
-                        }
-
-                        if (ignoredPackages.Add(dependencyIdentity))
-                        {
-                            // Show only for top package, not much effort to see this message multiple times
-                            if (nextPackage == dependencyInfo)
-                            {
-                                await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Information, $"Package dependency {dependencyIdentity.Id} listed as part of API and can be safely skipped");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        resolvingBehavior = DependencyBehavior.Ignore;
-                        await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Warning, $"Available sources doesn't contain package {dependencyIdentity}. Package {dependencyIdentity} is missing");
-                    }
+                    resolvingBehavior = DependencyBehavior.Ignore;
+                    await _nugetLogger.LogAsync(NuGet.Common.LogLevel.Warning, $"Available sources doesn't contain package {dependencyIdentity}. Package {dependencyIdentity} is missing");
                 }
                 else
                 {

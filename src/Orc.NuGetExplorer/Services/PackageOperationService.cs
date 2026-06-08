@@ -80,11 +80,6 @@ internal sealed class PackageOperationService : IPackageOperationService
         {
             ValidatePackage(package);
 
-            //repositories retrieved inside package manager now
-            //todo use PackageOperationContextService instead on repositoryContextService
-
-            //here was used a flag 'ignoreDependencies = false' and 'ignoreWalkInfo = false' in old code
-
             _packageOperationNotificationService.NotifyOperationStarting(operationPath, PackageOperationType.Install, package);
 
             var context = new PackageInstallationContext

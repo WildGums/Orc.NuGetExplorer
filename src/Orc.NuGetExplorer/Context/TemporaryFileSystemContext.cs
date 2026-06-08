@@ -14,13 +14,11 @@ internal class TemporaryFileSystemContext : ITemporaryFileSystemContext
     private readonly IDirectoryService _directoryService;
     private readonly string _rootDirectory;
 
-    public TemporaryFileSystemContext(IDirectoryService directoryService)
+    public TemporaryFileSystemContext(IDirectoryService directoryService, IEntryAssemblyResolver entryAssemblyResolver)
     {
-        ArgumentNullException.ThrowIfNull(directoryService);
-
         _directoryService = directoryService;
 
-        var assembly = AssemblyHelper.GetRequiredEntryAssembly();
+        var assembly = entryAssemblyResolver.Resolve();
 
         _rootDirectory = Path.Combine(Path.GetTempPath(), assembly.Company() ?? string.Empty, assembly.Title() ?? string.Empty,
             "backup", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
