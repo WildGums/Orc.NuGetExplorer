@@ -57,6 +57,10 @@ internal class PackageQueryService : IPackageQueryService
         var sourceRepository = _repositoryProvider.CreateRepository(packageRepository.ToPackageSource());
 
         var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
+        if (searchResource is null)
+        {
+            return Array.Empty<IPackageDetails>();
+        }
 
         var searchFilters = new SearchFilter(allowPrereleaseVersions);
 

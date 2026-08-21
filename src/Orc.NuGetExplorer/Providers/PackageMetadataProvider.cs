@@ -266,6 +266,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         ArgumentNullException.ThrowIfNull(repository);
 
         var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+        if (metadataResource is null)
+        {
+            Logger.LogWarning("PackageMetadataResource not found for repository {Repository}", repository.PackageSource.Source);
+            return Array.Empty<IPackageSearchMetadata>();
+        }
 
         using (var sourceCacheContext = new SourceCacheContext())
         {
@@ -353,6 +358,10 @@ public class PackageMetadataProvider : IPackageMetadataProvider
                 sourceCacheContext.RefreshMemoryCache);
 
             var metadataResource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+            if (metadataResource is null)
+            {
+                return null;
+            }
 
             sourceCacheContext.MaxAge = DateTimeOffset.UtcNow;
 
@@ -387,6 +396,11 @@ public class PackageMetadataProvider : IPackageMetadataProvider
         ArgumentNullException.ThrowIfNull(localRepository);
 
         var localResource = await localRepository.GetResourceAsync<PackageMetadataResource>(token);
+        if (localResource is null)
+        {
+            Logger.LogWarning("PackageMetadataResource not found for local repository {Repository}", localRepository.PackageSource.Source);
+            return Array.Empty<IPackageSearchMetadata>();
+        }
 
         using (var sourceCacheContext = new SourceCacheContext())
         {

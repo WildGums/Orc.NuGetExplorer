@@ -20,9 +20,6 @@ internal class PackagesLoaderService : IPackageLoaderService
 
     public PackagesLoaderService(ISourceRepositoryProvider repositoryProvider, ILogger logger)
     {
-        ArgumentNullException.ThrowIfNull(repositoryProvider);
-        ArgumentNullException.ThrowIfNull(logger);
-
         _nugetLogger = logger;
         _repositoryProvider = repositoryProvider;
     }
@@ -31,16 +28,23 @@ internal class PackagesLoaderService : IPackageLoaderService
 
     public async Task<IReadOnlyList<IPackageSearchMetadata>> LoadAsync(string searchTerm, PageContinuation pageContinuation, SearchFilter searchFilter, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(pageContinuation);
-        Argument.IsValid(nameof(pageContinuation), pageContinuation, pageContinuation.IsValid);
-
         if (pageContinuation.Source.PackageSources.Count < 2)
         {
-            var repository = _repositoryProvider.CreateRepository(pageContinuation.Source.PackageSources.FirstOrDefault());
+            var packageSource = pageContinuation.Source.PackageSources.FirstOrDefault();
+            if (packageSource is null)
+            {
+                return Array.Empty<IPackageSearchMetadata>();
+            }
+
+            var repository = _repositoryProvider.CreateRepository(packageSource);
 
             try
             {
                 var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+                if (searchResource is null)
+                {
+                    return Array.Empty<IPackageSearchMetadata>();
+                }
 
                 var packages = await searchResource.SearchAsync(searchTerm, searchFilter, pageContinuation.GetNext(), pageContinuation.Size, _nugetLogger, token);
 

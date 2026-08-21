@@ -14,6 +14,8 @@ public class MultiplySourceSearchResource : PackageSearchResource
     private Dictionary<SourceRepository, PackageSearchResource> _resolvedResources = new();
     private bool _v2Used;
 
+    public override bool SupportsPackageTypeFiltering => _resolvedResources.Values.Any(x => x.SupportsPackageTypeFiltering);
+
     private MultiplySourceSearchResource()
     {
     }
@@ -50,6 +52,11 @@ public class MultiplySourceSearchResource : PackageSearchResource
             .Select(async x =>
             {
                 var resource = await x.GetResourceAsync<PackageSearchResource>();
+                if (resource is null)
+                {
+                    return default;
+                }
+
                 return new KeyValuePair<SourceRepository, PackageSearchResource>(x, resource);
             }).ToList();
 

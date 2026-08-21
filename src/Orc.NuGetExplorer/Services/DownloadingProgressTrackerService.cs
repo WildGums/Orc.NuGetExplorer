@@ -53,9 +53,17 @@ public class DownloadingProgressTrackerService : IDownloadingProgressTrackerServ
 
         watcher.Path = directoryName;
 
+        var source = packageDependencyInfo.Source;
+        if (source is null)
+        {
+            return new DisposableToken<IProgress<float>>(new Progress<float>(), 
+                x => { },
+                x => { });
+        }
+
         // determine package size
-        var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, packageDependencyInfo.Source);
-        var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, packageDependencyInfo.Source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
+        var packageByteSize = await packageInstallationService.MeasurePackageSizeFromRepositoryAsync(packageDependencyInfo, source);
+        var trackToken = new DownloadProgressTrackToken(_fileService, this, packageDependencyInfo, source, watcher, OnProgressReportedCallback, packageByteSize ?? 0);
 
         return trackToken;
     }
@@ -86,10 +94,6 @@ internal class DownloadProgressTrackToken : DisposableToken<IProgress<float>>
         EventHandler<float> progressCallback, long downloadSize)
         : base(InitializeInstance(progressCallback), (token) => token.Instance.Report(0f), (token) => token.Instance.Report(1f))
     {
-        ArgumentNullException.ThrowIfNull(fileService);
-        ArgumentNullException.ThrowIfNull(downloadingProgressTrackerService);
-        ArgumentNullException.ThrowIfNull(fileSystemWatcher);
-
         _downloadSize = downloadSize;
         _fileService = fileService;
 

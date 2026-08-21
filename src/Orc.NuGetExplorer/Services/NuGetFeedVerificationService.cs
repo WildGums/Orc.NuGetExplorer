@@ -52,8 +52,13 @@ internal class NuGetFeedVerificationService : INuGetFeedVerificationService
             try
             {
                 var searchResource = await repository.GetResourceAsync<PackageSearchResource>();
+                if (searchResource is null)
+                {
+                    Logger.LogDebug("SearchResource is null for feed '{0}'", source);
+                    return FeedVerificationResult.Invalid;
+                }
 
-                var metadata = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
+                _ = await searchResource.SearchAsync(string.Empty, new SearchFilter(false), 0, 1, _nugetLogger, cancellationToken);
             }
             catch (Exception)
             {

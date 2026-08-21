@@ -9,9 +9,15 @@ internal sealed class CredentialsToken : IDisposable
 {
     private readonly HttpHandlerResourceV3 _repositoryHttpHandler;
 
-    public static async Task<CredentialsToken> CreateAsync(SourceRepository repository)
+    public static async Task<CredentialsToken?> CreateAsync(SourceRepository repository)
     {
-        return new CredentialsToken(await repository.GetResourceAsync<HttpHandlerResourceV3>());
+        var resource = await repository.GetResourceAsync<HttpHandlerResourceV3>();
+        if (resource is null)
+        {
+            return null;
+        }
+
+        return new CredentialsToken(resource);
     }
 
     public CredentialsToken(HttpHandlerResourceV3 httpHandler)

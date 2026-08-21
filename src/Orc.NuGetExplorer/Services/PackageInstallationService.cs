@@ -117,6 +117,10 @@ internal class PackageInstallationService : IPackageInstallationService
 
             var dependencyInfoResource = await project.AsSourceRepository(_sourceRepositoryProvider)
                 .GetResourceAsync<DependencyInfoResource>(cancellationToken);
+            if (dependencyInfoResource is null)
+            {
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Cannot get DependencyInfoResource for project {project.Name}");
+            }
 
             var dependencyInfoResourceCollection = new DependencyInfoResourceCollection(dependencyInfoResource);
 
@@ -339,6 +343,11 @@ internal class PackageInstallationService : IPackageInstallationService
             }
 
             var catalogUrl = rawPackageMetadata.GetValue<string>("@id");
+            if (string.IsNullOrEmpty(catalogUrl))
+            {
+                return null;
+            }
+
             var rawCatalogItem = await httpSourceResource.HttpSource.GetJObjectAsync(new HttpSourceRequest(catalogUrl, _nugetLogger), _nugetLogger, default);
 
             return rawCatalogItem?.GetValue<long>("packageSize");
@@ -497,13 +506,23 @@ internal class PackageInstallationService : IPackageInstallationService
     {
         ArgumentNullException.ThrowIfNull(package);
 
+        if (package.Source is null)
+        {
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Package {package} doesn't have source repository");
+        }
+
         if (string.Equals(globalFolder, string.Empty))
         {
             globalFolder = DefaultNuGetFolders.GetGlobalPackagesFolder();
         }
 
         using var progressToken = await _downloadingProgressTrackerService.TrackDownloadOperationAsync(this, package);
+
         var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
+        if (downloadResource is null)
+        {
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Package {package} doesn't have download resource");
+        }
 
         var downloadResult = await downloadResource.GetDownloadResourceResultAsync
         (
@@ -536,6 +555,12 @@ internal class PackageInstallationService : IPackageInstallationService
             foreach (var packageResource in packageResources)
             {
                 var downloadedPart = packageResource.Value;
+                if (downloadedPart.PackageSource is null ||
+                    downloadedPart.PackageStream is null)
+                {
+                    throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Package {packageResource.Key} doesn't have source or stream for extraction");
+                }
+
                 var packageIdentity = packageResource.Key;
 
                 var nupkgPath = pathResolver.GetInstalledPackageFilePath(packageIdentity);
@@ -632,11 +657,12 @@ internal class PackageInstallationService : IPackageInstallationService
         return extractionContext;
     }
 
-    private async Task<bool> CheckCanBeInstalledAsync(IExtensibleProject project, PackageReaderBase packageReader, NuGetFramework targetFramework, CancellationToken token)
+    private async Task<bool> CheckCanBeInstalledAsync(IExtensibleProject project, PackageReaderBase? packageReader, NuGetFramework targetFramework, CancellationToken token)
     {
-        ArgumentNullException.ThrowIfNull(project);
-        ArgumentNullException.ThrowIfNull(packageReader);
-        ArgumentNullException.ThrowIfNull(targetFramework);
+        if (packageReader is null)
+        {
+            return false;
+        }
 
         var frameworkReducer = new FrameworkReducer();
 
@@ -710,6 +736,10 @@ internal class PackageInstallationService : IPackageInstallationService
         foreach (var package in downloadedPackagesDictionary.Keys)
         {
             var packageReader = downloadedPackagesDictionary[package].PackageReader;
+            if (packageReader is null)
+            {
+                continue;
+            }
 
             var libraries = await packageReader.GetLibItemsAsync(cancellationToken);
 

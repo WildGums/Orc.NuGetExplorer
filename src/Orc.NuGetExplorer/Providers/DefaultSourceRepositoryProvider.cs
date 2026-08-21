@@ -20,7 +20,7 @@ public class DefaultSourceRepositoryProvider : IExtendedSourceRepositoryProvider
     /// <summary>
     /// Unused provider from NuGet library
     /// </summary>
-    public IPackageSourceProvider? PackageSourceProvider => null;
+    public IPackageSourceProvider PackageSourceProvider => null!;
 
     public DefaultSourceRepositoryProvider(IModelProvider<ExplorerSettingsContainer> settingsProvider, INuGetConfigurationService nuGetConfigurationService)
     {
