@@ -468,6 +468,7 @@ namespace Orc.NuGetExplorer
     }
     public class MultiplySourceSearchResource : NuGet.Protocol.Core.Types.PackageSearchResource
     {
+        public override bool SupportsPackageTypeFiltering { get; }
         public override System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>> SearchAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) { }
         public static System.Threading.Tasks.Task<Orc.NuGetExplorer.MultiplySourceSearchResource> CreateAsync(NuGet.Protocol.Core.Types.SourceRepository[] sourceRepositories) { }
     }
@@ -1139,7 +1140,7 @@ namespace Orc.NuGetExplorer.Providers
     public class DefaultSourceRepositoryProvider : NuGet.Protocol.Core.Types.ISourceRepositoryProvider, Orc.NuGetExplorer.IExtendedSourceRepositoryProvider
     {
         public DefaultSourceRepositoryProvider(Orc.NuGetExplorer.Providers.IModelProvider<Orc.NuGetExplorer.ExplorerSettingsContainer> settingsProvider, Orc.NuGetExplorer.INuGetConfigurationService nuGetConfigurationService) { }
-        public NuGet.Configuration.IPackageSourceProvider? PackageSourceProvider { get; }
+        public NuGet.Configuration.IPackageSourceProvider PackageSourceProvider { get; }
         public NuGet.Protocol.Core.Types.SourceRepository CreateLocalRepository(string source) { }
         public NuGet.Protocol.Core.Types.SourceRepository CreateRepository(NuGet.Configuration.PackageSource source) { }
         public NuGet.Protocol.Core.Types.SourceRepository CreateRepository(NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) { }
