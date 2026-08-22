@@ -1,5 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Tests.Windows;
 
+using System.Threading.Tasks;
 using Catel.Configuration;
 using Moq;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ public class CredentialsPrompterFacts
     public class The_Encryption
     {
         [Test]
-        public void Can_Store_And_Restore_Credentials()
+        public async Task Can_Store_And_Restore_Credentials()
         {
             // Arrange
             var targetName = "https://www.wildgums.com/nugetexplorer-test";
@@ -27,6 +28,8 @@ public class CredentialsPrompterFacts
             credentialsPrompter.WriteCredential(targetName, userName, password);
 
             configurationServiceMock.Verify(x => x.SetValue(It.IsAny<ConfigurationContainer>(), It.IsAny<string>(), It.IsAny<string?>()), Times.Never);
+
+            await Task.Delay(1000);
 
             var readCredentials = credentialsPrompter.ReadCredential(targetName, false);
 
