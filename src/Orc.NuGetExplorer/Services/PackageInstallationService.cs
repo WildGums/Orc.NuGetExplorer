@@ -555,7 +555,7 @@ internal class PackageInstallationService : IPackageInstallationService
             foreach (var packageResource in packageResources)
             {
                 var downloadedPart = packageResource.Value;
-                if (downloadedPart.PackageSource is null ||
+                if (downloadedPart.PackageSource is null &&
                     downloadedPart.PackageStream is null)
                 {
                     throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Package {packageResource.Key} doesn't have source or stream for extraction");
@@ -571,8 +571,8 @@ internal class PackageInstallationService : IPackageInstallationService
                     _nugetLogger.LogInformation($"Extracting package {downloadedPart.GetResourceRoot()} to {project} project folder");
 
                     var extractedPaths = await PackageExtractor.ExtractPackageAsync(
-                        downloadedPart.PackageSource,
-                        downloadedPart.PackageStream,
+                        downloadedPart.PackageSource!,
+                        downloadedPart.PackageStream!,
                         pathResolver,
                         extractionContext,
                         cancellationToken
