@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Catel.Fody;
 using Catel.Logging;
 using Catel.MVVM;
+using Catel.Services;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using Orc.NuGetExplorer.Enums;
@@ -16,18 +17,16 @@ internal class PageItemViewModel : FeaturedViewModelBase
 {
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(PageItemViewModel));
 
-    private static readonly string InstalledVersionText = "Installed version";
-    private static readonly string LastVersionText = "Latest version";
-    private static readonly string UpdateVersionText = "Update version";
-
     private readonly ExplorerSettingsContainer _nugetSettings;
+    private readonly ILanguageService _languageService;
 
     public PageItemViewModel(NuGetPackage package, IModelProvider<ExplorerSettingsContainer> settingsProvider, 
-        ICommandManager commandManager, IServiceProvider serviceProvider)
+        ICommandManager commandManager, ILanguageService languageService, IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         Package = package;
         _nugetSettings = settingsProvider.Model ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>("Settings must be initialized first");
+        _languageService = languageService;
 
         var batchUpdateCommand = (ICompositeCommand?)commandManager.GetCommand(Commands.Packages.BatchUpdate);
         if (batchUpdateCommand is null)
@@ -167,16 +166,16 @@ internal class PageItemViewModel : FeaturedViewModelBase
 
         if (MetadataOrigin.Updates == fromPage)
         {
-            SecondaryVersionDescription = $"{UpdateVersionText}: {SecondaryVersion}";
+            SecondaryVersionDescription = $"{_languageService.GetRequiredString("NuGetExplorer_PageItemViewModel_Version_UpdateVersion")}: {SecondaryVersion}";
             return;
         }
 
-        SecondaryVersionDescription = $"{LastVersionText}: {SecondaryVersion}";
+        SecondaryVersionDescription = $"{_languageService.GetRequiredString("NuGetExplorer_PageItemViewModel_Version_LatestVersion")}: {SecondaryVersion}";
     }
 
     private void GetPrimaryVersionInfo(NuGetPackage package)
     {
         PrimaryVersion = package.InstalledVersion ?? package.NuGetVersion;
-        PrimaryVersionDescription = $"{InstalledVersionText}: {PrimaryVersion}";
+        PrimaryVersionDescription = $"{_languageService.GetRequiredString("NuGetExplorer_PageItemViewModel_Version_InstalledVersion")}: {PrimaryVersion}";
     }
 }

@@ -58,10 +58,9 @@
             </Grid.RowDefinitions>
 
             <!-- install/uninstall actions -->
-            <Label  
-                Margin="6 0 3 2">
-                Installed:
-            </Label>
+            <Label
+                Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_Installed}"
+                Margin="6 0 3 2"/>
 
             <TextBox Name="InstalledVersionTextBox"
                  Grid.Column="1"
@@ -72,14 +71,12 @@
 
             <Button Grid.Column="2" 
                 Margin="3 0 10 2"
-                Command="{Binding UninstallPackage}">
-                Uninstall
-            </Button>
+                Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Button_Content_Uninstall}"
+                Command="{Binding UninstallPackage}"/>
 
             <Label Grid.Row="2"
-               Margin="6 0 3 2">
-                Version:
-            </Label>
+               Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_Version}"
+               Margin="6 0 3 2"/>
 
             <ComboBox Grid.Row="2" Grid.Column="1" 
                   Margin="3 0 3 2"
@@ -96,9 +93,8 @@
 
             <Button Grid.Row="2" Grid.Column="2"
                 Margin="3 0 10 2"
-                Command="{Binding InstallPackage}">
-                Install
-            </Button>
+                Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Button_Content_Install}"
+                Command="{Binding InstallPackage}"/>
 
         </Grid>
        
@@ -142,7 +138,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <Label>Version:</Label>
+                    <Label Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_Version}"/>
                     <TextBlock Grid.Column="1"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
@@ -150,7 +146,7 @@
                                ToolTip="{Binding VersionData.Identity.Version}"/>
 
 
-                    <Label Grid.Row="1">Author(s):</Label>
+                    <Label Grid.Row="1" Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_Authors}"/>
                     <TextBlock Grid.Column="1" Grid.Row="1"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
@@ -169,7 +165,7 @@
                                ToolTip="{Binding VersionData.LicenseMetadata.License}"/>
 
 
-                    <Label Grid.Row="3">Date published:</Label>
+                    <Label Grid.Row="3" Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_DatePublished}"/>
                     <TextBlock Grid.Column="1" Grid.Row="3"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
@@ -200,7 +196,7 @@
                                ToolTip="{Binding VersionData.ReportAbuseUrl, Converter={converters:ExtendedUriToStringConverter}}"/>
 
 
-                    <Label Grid.Row="6">Tags:</Label>
+                    <Label Grid.Row="6" Content="{catel:LanguageBinding ResourceName=NuGetExplorer_PackageDetailsView_Label_Content_Tags}"/>
                     <TextBlock Grid.Column="1" Grid.Row="6"
                                TextTrimming="WordEllipsis"
                                MaxWidth="210"
