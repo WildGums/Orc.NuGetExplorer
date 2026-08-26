@@ -24,10 +24,11 @@ internal class PageActionBarViewModel : ViewModelBase
     private readonly IPackageCommandService _packageCommandService;
     private readonly IPackageOperationContextService _packageOperationContextService;
     private readonly IMessageService _messageService;
+    private readonly ILanguageService _languageService;
 
     public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, 
         IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, 
-        IMessageService messageService, ICommandManager commandManager, IServiceProvider serviceProvider)
+        IMessageService messageService, ICommandManager commandManager, ILanguageService languageService, IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _parentManagerPage = managerPage;
@@ -35,6 +36,7 @@ internal class PageActionBarViewModel : ViewModelBase
         _packageCommandService = packageCommandService;
         _packageOperationContextService = packageOperationContextService;
         _messageService = messageService;
+        _languageService = languageService;
 
         BatchInstall = new TaskCommand(serviceProvider, BatchInstallExecuteAsync, BatchInstallCanExecute);
         CheckAll = new TaskCommand(serviceProvider, CheckAllExecuteAsync);
@@ -89,7 +91,7 @@ internal class PageActionBarViewModel : ViewModelBase
 
             if (batchedPackages.Any(x => x.ValidationContext?.HasErrors ?? false))
             {
-                await _messageService.ShowErrorAsync("One or more package(s) cannot be installed due to validation errors", "Can't install packages");
+                await _messageService.ShowErrorAsync(_languageService.GetRequiredString("NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Message"), _languageService.GetRequiredString("NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Title"));
                 return;
             }
 

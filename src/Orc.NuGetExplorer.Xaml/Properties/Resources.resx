@@ -273,4 +273,43 @@
   <data name="NuGetExplorer_PackageSourceSettingViewModel_Validation_Error_DuplicateFeedName_Template" xml:space="preserve">
     <value>Two or more feeds have same name '{0}'</value>
   </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Installed" xml:space="preserve">
+    <value>Installed:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Button_Content_Uninstall" xml:space="preserve">
+    <value>Uninstall</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Version" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Button_Content_Install" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Authors" xml:space="preserve">
+    <value>Author(s):</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_DatePublished" xml:space="preserve">
+    <value>Date published:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Tags" xml:space="preserve">
+    <value>Tags:</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerPageView_Button_Content_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Message" xml:space="preserve">
+    <value>One or more package(s) cannot be installed due to validation errors</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Title" xml:space="preserve">
+    <value>Can't install packages</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_InstalledVersion" xml:space="preserve">
+    <value>Installed version</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_LatestVersion" xml:space="preserve">
+    <value>Latest version</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_UpdateVersion" xml:space="preserve">
+    <value>Update version</value>
+  </data>
 </root>
