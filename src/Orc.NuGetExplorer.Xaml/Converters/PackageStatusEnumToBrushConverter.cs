@@ -9,13 +9,11 @@ using NuGetExplorer.Enums;
 public class PackageStatusEnumToBrushConverter : ValueConverterBase<PackageStatus, Brush>
 {
     private static readonly int Offset = -1;
-    private readonly Themes.Brushes _resourceDictionary;
+    private readonly System.Windows.ResourceDictionary _resourceDictionary;
 
     public PackageStatusEnumToBrushConverter()
     {
-        _resourceDictionary = new Themes.Brushes();
-
-        _resourceDictionary.InitializeComponent();
+        _resourceDictionary = System.Windows.Application.Current.Resources;
     }
 
     protected override object Convert(PackageStatus value, Type targetType, object? parameter)

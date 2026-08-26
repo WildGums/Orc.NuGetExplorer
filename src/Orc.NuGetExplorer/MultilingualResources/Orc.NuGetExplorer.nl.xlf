@@ -9,11 +9,20 @@
         <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" translate="yes" xml:space="preserve">
           <source>Failed to install package '{0}'.
 {1}</source>
-          <target state="new"></target>
+          <target state="new">Pakket '{0}' is niet geïnstalleerd.
+{1}</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" translate="yes" xml:space="preserve">
           <source>No package sources provided for installing package '{0}'</source>
-          <target state="new"></target>
+          <target state="new">Geen pakketbronnen voor het installeren van pakket '{0}'</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_WindowsCredentialProvider_MainInstruction" translate="yes" xml:space="preserve">
+          <source>Credentials are required to access this feed</source>
+          <target state="new">Inloggegevens zijn vereist om toegang te krijgen tot deze feed</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_WindowsCredentialProvider_WindowTitle" translate="yes" xml:space="preserve">
+          <source>Credentials required</source>
+          <target state="new">Vereiste kwalificaties</target>
         </trans-unit>
       </group>
     </body>

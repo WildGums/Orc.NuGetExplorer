@@ -7,24 +7,88 @@
     <body>
       <group id="ORC.NUGETEXPLORER.XAML/PROPERTIES/RESOURCES.RESX" datatype="resx">
         <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_1" translate="yes" xml:space="preserve">
-          <source>The package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</source>
+          <source>Package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</source>
           <target state="needs-review-translation">The package '{0}' depends on API '{1}' min version '{2}' but the installed version is '{3}'</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
         <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_2" translate="yes" xml:space="preserve">
-          <source>The package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</source>
+          <source>Package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</source>
           <target state="needs-review-translation">The package '{0}' depends on API '{1}' min version greater than '{2}' but the installed version is '{3}'</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
         <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_3" translate="yes" xml:space="preserve">
-          <source>The package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</source>
+          <source>Package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</source>
           <target state="needs-review-translation">The package '{0}' depends on API '{1}' max version '{2}' but the installed version is '{3}'</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
         <trans-unit id="NuGetExplorer_ApiPackageRegistry_Validation_Error_Message_Pattern_4" translate="yes" xml:space="preserve">
-          <source>The package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</source>
+          <source>Package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</source>
           <target state="needs-review-translation">The package '{0}' depends on API '{1}' max version lower than '{2}' but the installed version is '{3}'</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_DependenciesView_Label_Content_Dependencies" translate="yes" xml:space="preserve">
+          <source>Dependencies:</source>
+          <target state="new">Dependencias:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_DependenciesView_TextBlock_Text_NoDependencies" translate="yes" xml:space="preserve">
+          <source>No Dependencies</source>
+          <target state="new">Sin dependencias</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerPageView_Button_Content_Cancel" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="new">Cancelar</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesPrompt" translate="yes" xml:space="preserve">
+          <source>Clean all NuGet caches, including global packages folder?</source>
+          <target state="new">¿Limpiar todas las cachés de NuGet, incluida la carpeta global de paquetes?</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesTitle" translate="yes" xml:space="preserve">
+          <source>NuGet Package Management</source>
+          <target state="new">Gestión de paquetes NuGet</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Manage NuGet Packages</source>
+          <target state="new">Gestionar paquetes NuGet</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ClearNuGetCaches" translate="yes" xml:space="preserve">
+          <source>Clear NuGet caches</source>
+          <target state="new">Borrar cachés NuGet</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ShowPackageSourceSettings" translate="yes" xml:space="preserve">
+          <source>Show package source settings</source>
+          <target state="new">Mostrar configuración de código fuente del paquete</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_HideInstalled" translate="yes" xml:space="preserve">
+          <source>Hide installed</source>
+          <target state="new">Escondite instalado</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_IncludePrerelease" translate="yes" xml:space="preserve">
+          <source>Include prerelease</source>
+          <target state="new">Include prerelease</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Browse" translate="yes" xml:space="preserve">
+          <source>Browse</source>
+          <target state="new">Explorar</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Installed" translate="yes" xml:space="preserve">
+          <source>Installed</source>
+          <target state="new">Instalado</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Updates" translate="yes" xml:space="preserve">
+          <source>Updates</source>
+          <target state="new">Actualizaciones</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_EnterPackageId" translate="yes" xml:space="preserve">
+          <source>Enter package id</source>
+          <target state="new">Introduce el ID del paquete</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_PackageSource" translate="yes" xml:space="preserve">
+          <source>Package source:</source>
+          <target state="new">Fuente del paquete:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExplorerViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Package management</source>
+          <target state="new">Gestión de paquetes</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_ExplorerWindow_CheckBox_Content_IncludePrerelease" translate="yes" xml:space="preserve">
           <source>Include prerelease</source>
@@ -35,6 +99,26 @@
           <source>Recommended updates</source>
           <target state="needs-review-translation">Recommended updates</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExtensiblesViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Project extensions</source>
+          <target state="new">Ampliaciones del proyecto</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_ExtensiblesWindow_Title" translate="yes" xml:space="preserve">
+          <source>Project extensions</source>
+          <target state="new">Ampliaciones del proyecto</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_FeedDetailView_TextBlock_Text_Name" translate="yes" xml:space="preserve">
+          <source>Name:</source>
+          <target state="new">Name:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_FeedDetailView_TextBlock_Text_Source" translate="yes" xml:space="preserve">
+          <source>Source:</source>
+          <target state="new">Source:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetSettingsViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Package source settings</source>
+          <target state="new">Configuración de la fuente del paquete</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_PackageBatchWindow_TextBlock_Text_AvailableUpdates" translate="yes" xml:space="preserve">
           <source>Available Updates</source>
@@ -86,6 +170,34 @@
           <target state="needs-review-translation">You must update the shell in order to apply this update</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Button_Content_Install" translate="yes" xml:space="preserve">
+          <source>Install</source>
+          <target state="new">Instalación</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Button_Content_Uninstall" translate="yes" xml:space="preserve">
+          <source>Uninstall</source>
+          <target state="new">Desinstalar</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Label_Content_Authors" translate="yes" xml:space="preserve">
+          <source>Author(s):</source>
+          <target state="new">Autor(es):</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Label_Content_DatePublished" translate="yes" xml:space="preserve">
+          <source>Date published:</source>
+          <target state="new">Fecha de publicación:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Label_Content_Installed" translate="yes" xml:space="preserve">
+          <source>Installed:</source>
+          <target state="new">Instalado:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Label_Content_Tags" translate="yes" xml:space="preserve">
+          <source>Tags:</source>
+          <target state="new">Etiquetas:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageDetailsView_Label_Content_Version" translate="yes" xml:space="preserve">
+          <source>Version:</source>
+          <target state="new">Versión:</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_PackageListView_TextBlock_Text_NoPackagesFound" translate="yes" xml:space="preserve">
           <source>No package details found</source>
           <target state="needs-review-translation">No packages found</target>
@@ -96,8 +208,12 @@
           <target state="needs-review-translation">Prerelease</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingControl_Button_ToolTip_ResetPackageSourceSettings" translate="yes" xml:space="preserve">
+          <source>Reset package source settings</source>
+          <target state="new">Restablecer configuración de la fuente del paquete</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_AvailablePackageSources" translate="yes" xml:space="preserve">
-          <source>Available packageDetails sources</source>
+          <source>Available package details sources</source>
           <target state="needs-review-translation">Available package sources</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
@@ -106,10 +222,62 @@
           <target state="needs-review-translation">Name:</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_PackageSource" translate="yes" xml:space="preserve">
+          <source>Package source</source>
+          <target state="new">Fuente del paquete</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_Source" translate="yes" xml:space="preserve">
           <source>Source:</source>
           <target state="needs-review-translation">Source:</target>
           <note from="MultilingualUpdate" priority="2">When the XLIFF file support was added via MAT, existing resources were found and auto-imported.  This source and target string contained the same value so the resource was marked as 'Needs review' to ensure the translation could be easily reviewed.</note>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Settings</source>
+          <target state="new">Escenarios</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PackageSourceSettingViewModel_Validation_Error_DuplicateFeedName_Template" translate="yes" xml:space="preserve">
+          <source>Two or more feeds have same name '{0}'</source>
+          <target state="new">Dos o más feeds tienen el mismo nombre '{0}'</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Message" translate="yes" xml:space="preserve">
+          <source>One or more package(s) cannot be installed due to validation errors</source>
+          <target state="new">No se puede instalar uno o más paquetes debido a errores de validación</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Title" translate="yes" xml:space="preserve">
+          <source>Can't install packages</source>
+          <target state="new">No se pueden instalar paquetes</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageActionBar_Button_Content_InstallLatest" translate="yes" xml:space="preserve">
+          <source>Install Latest</source>
+          <target state="new">Instalación más reciente</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageActionBar_Button_Content_Update" translate="yes" xml:space="preserve">
+          <source>Update</source>
+          <target state="new">Actualización</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageActionBar_TextBlock_Text_SelectAllPackages" translate="yes" xml:space="preserve">
+          <source>Select all packages</source>
+          <target state="new">Seleccionar todos los paquetes</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageItemViewModel_Version_InstalledVersion" translate="yes" xml:space="preserve">
+          <source>Installed version</source>
+          <target state="new">Versión instalada</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageItemViewModel_Version_LatestVersion" translate="yes" xml:space="preserve">
+          <source>Latest version</source>
+          <target state="new">Última versión</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageItemViewModel_Version_UpdateVersion" translate="yes" xml:space="preserve">
+          <source>Update version</source>
+          <target state="new">Versión actualizada</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageItemView_Run_Text_By" translate="yes" xml:space="preserve">
+          <source>  by:</source>
+          <target state="new">por:</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_PageItemView_Run_Text_TotalDownloads" translate="yes" xml:space="preserve">
+          <source> total downloads</source>
+          <target state="new">Descargas totales</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_PagingView_Button_Content_Back" translate="yes" xml:space="preserve">
           <source>Back</source>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,24 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="NuGetExplorerExample_ExampleUpgradeListener_Message_Upgraded" xml:space="preserve">
+    <value>NuGet-Daten aktualisiert</value>
   </data>
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="NuGetExplorerExample_ExampleUpgradeListener_Message_Upgrading" xml:space="preserve">
+    <value>Aktualisierung der NuGet-Daten</value>
   </data>
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" xml:space="preserve">
-    <value>No se ha conseguido instalar el paquete '{0}'.
-{1}</value>
+  <data name="NuGetExplorerExample_MainViewModel_Title" xml:space="preserve">
+    <value>Beispiel Orc.NuGetExplorer</value>
   </data>
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" xml:space="preserve">
-    <value>No se proporcionan fuentes de paquetes para instalar el paquete '{0}'</value>
+  <data name="NuGetExplorerExample_MainViewModel_Warning_InvalidOrUnknownFeed" xml:space="preserve">
+    <value>Feed ist ungültig oder unbekannt</value>
   </data>
-  <data name="NuGetExplorer_WindowsCredentialProvider_MainInstruction" xml:space="preserve">
-    <value>Se requieren credenciales para acceder a este feed</value>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_AddPackageSource" xml:space="preserve">
+    <value>Paketquellcode hinzufügen</value>
   </data>
-  <data name="NuGetExplorer_WindowsCredentialProvider_WindowTitle" xml:space="preserve">
-    <value>Credenciales requeridas</value>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_CheckForUpdates" xml:space="preserve">
+    <value>Schau nach Updates</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_OpenInUpdateWindow" xml:space="preserve">
+    <value>Im Update-Fenster öffnen</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_ShowExplorer" xml:space="preserve">
+    <value>Show Explorer</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_Button_Content_VerifyFeed" xml:space="preserve">
+    <value>Feed überprüfen</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_CheckBox_Content_AllowPrereleases" xml:space="preserve">
+    <value>Vorveröffentlichungen erlauben</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceFeed" xml:space="preserve">
+    <value>Paketquellen-Feed</value>
+  </data>
+  <data name="NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceName" xml:space="preserve">
+    <value>Paketquellenname</value>
   </data>
 </root>

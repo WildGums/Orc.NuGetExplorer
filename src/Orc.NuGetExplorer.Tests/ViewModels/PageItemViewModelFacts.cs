@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NuGet.Versioning;
@@ -44,7 +45,8 @@ internal class PageItemViewModelFacts
             var model = GlobalMocks.CreateMockPackage("1.0.0", "WildGums");
             model.InstalledVersion = new NuGetVersion(model.Version);
 
-            var vm = new PageItemViewModel(model, settingsProvider, commandManager, serviceProvider);
+            var vm = new PageItemViewModel(model, settingsProvider, commandManager,
+                serviceProvider.GetRequiredService<ILanguageService>(), serviceProvider);
             await vm.InitializeViewModelAsync();
 
             model.IsChecked = true;

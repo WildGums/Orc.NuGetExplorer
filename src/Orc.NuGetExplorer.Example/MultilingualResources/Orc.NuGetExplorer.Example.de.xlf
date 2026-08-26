@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="de" original="ORC.NUGETEXPLORER.EXAMPLE/PROPERTIES/RESOURCES.RESX">
+    <body>
+      <group id="ORC.NUGETEXPLORER.EXAMPLE/PROPERTIES/RESOURCES.RESX" datatype="resx">
+        <trans-unit id="NuGetExplorerExample_ExampleUpgradeListener_Message_Upgraded" translate="yes" xml:space="preserve">
+          <source>NuGet data updated</source>
+          <target state="new">NuGet-Daten aktualisiert</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_ExampleUpgradeListener_Message_Upgrading" translate="yes" xml:space="preserve">
+          <source>Updating NuGet data</source>
+          <target state="new">Aktualisierung der NuGet-Daten</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainViewModel_Title" translate="yes" xml:space="preserve">
+          <source>Orc.NuGetExplorer example</source>
+          <target state="new">Beispiel Orc.NuGetExplorer</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainViewModel_Warning_InvalidOrUnknownFeed" translate="yes" xml:space="preserve">
+          <source>Feed is invalid or unknown</source>
+          <target state="new">Feed ist ungültig oder unbekannt</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_AddPackageSource" translate="yes" xml:space="preserve">
+          <source>add package source</source>
+          <target state="new">Paketquellcode hinzufügen</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_CheckForUpdates" translate="yes" xml:space="preserve">
+          <source>Check for updates</source>
+          <target state="new">Schau nach Updates</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_OpenInUpdateWindow" translate="yes" xml:space="preserve">
+          <source>Open in update window</source>
+          <target state="new">Im Update-Fenster öffnen</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_Settings" translate="yes" xml:space="preserve">
+          <source>Settings</source>
+          <target state="new">Einstellungen</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_ShowExplorer" translate="yes" xml:space="preserve">
+          <source>Show explorer</source>
+          <target state="new">Show Explorer</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_Button_Content_VerifyFeed" translate="yes" xml:space="preserve">
+          <source>verify feed</source>
+          <target state="new">Feed überprüfen</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_CheckBox_Content_AllowPrereleases" translate="yes" xml:space="preserve">
+          <source>allow prereleases</source>
+          <target state="new">Vorveröffentlichungen erlauben</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceFeed" translate="yes" xml:space="preserve">
+          <source>Package source feed</source>
+          <target state="new">Paketquellen-Feed</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorerExample_MainWindow_TextBlock_Text_PackageSourceName" translate="yes" xml:space="preserve">
+          <source>Package source name</source>
+          <target state="new">Paketquellenname</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

@@ -48,9 +48,9 @@ internal class PageActionBarViewModelFacts
             var packageCommandService = new Mock<IPackageCommandService>().Object;
             var packageOperationContextService = new Mock<IPackageOperationContextService>().Object;
 
-
             var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, 
-                packageOperationContextService, messageService, commandManager, serviceProvider);
+                packageOperationContextService, messageService, commandManager,
+                serviceProvider.GetRequiredService<ILanguageService>(), serviceProvider);
             await vm.InitializeViewModelAsync();
 
             var vmCommand = vm.CheckAll;

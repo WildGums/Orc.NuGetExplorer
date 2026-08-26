@@ -81,4 +81,130 @@
   <data name="NuGetExplorer_PagingView_Button_Content_Next" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="NuGetExplorer_PackageSourceSettingViewModel_Title" xml:space="preserve">
+    <value>Escenarios</value>
+  </data>
+  <data name="NuGetExplorer_DependenciesView_Label_Content_Dependencies" xml:space="preserve">
+    <value>Dependencias:</value>
+  </data>
+  <data name="NuGetExplorer_DependenciesView_TextBlock_Text_NoDependencies" xml:space="preserve">
+    <value>Sin dependencias</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ClearNuGetCaches" xml:space="preserve">
+    <value>Borrar cachés NuGet</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_Button_ToolTip_ShowPackageSourceSettings" xml:space="preserve">
+    <value>Mostrar configuración de código fuente del paquete</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_HideInstalled" xml:space="preserve">
+    <value>Escondite instalado</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_CheckBox_Content_IncludePrerelease" xml:space="preserve">
+    <value>Include prerelease</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Browse" xml:space="preserve">
+    <value>Explorar</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Installed" xml:space="preserve">
+    <value>Instalado</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TabControllerButton_Content_Updates" xml:space="preserve">
+    <value>Actualizaciones</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_EnterPackageId" xml:space="preserve">
+    <value>Introduce el ID del paquete</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarView_TextBlock_Text_PackageSource" xml:space="preserve">
+    <value>Fuente del paquete:</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesPrompt" xml:space="preserve">
+    <value>¿Limpiar todas las cachés de NuGet, incluida la carpeta global de paquetes?</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Message_ClearCachesTitle" xml:space="preserve">
+    <value>Gestión de paquetes NuGet</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerTopBarViewModel_Title" xml:space="preserve">
+    <value>Gestionar paquetes NuGet</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerViewModel_Title" xml:space="preserve">
+    <value>Gestión de paquetes</value>
+  </data>
+  <data name="NuGetExplorer_ExtensiblesViewModel_Title" xml:space="preserve">
+    <value>Ampliaciones del proyecto</value>
+  </data>
+  <data name="NuGetExplorer_ExtensiblesWindow_Title" xml:space="preserve">
+    <value>Ampliaciones del proyecto</value>
+  </data>
+  <data name="NuGetExplorer_FeedDetailView_TextBlock_Text_Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="NuGetExplorer_FeedDetailView_TextBlock_Text_Source" xml:space="preserve">
+    <value>Source:</value>
+  </data>
+  <data name="NuGetExplorer_NuGetSettingsViewModel_Title" xml:space="preserve">
+    <value>Configuración de la fuente del paquete</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_Button_Content_InstallLatest" xml:space="preserve">
+    <value>Instalación más reciente</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_Button_Content_Update" xml:space="preserve">
+    <value>Actualización</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBar_TextBlock_Text_SelectAllPackages" xml:space="preserve">
+    <value>Seleccionar todos los paquetes</value>
+  </data>
+  <data name="NuGetExplorer_PageItemView_Run_Text_By" xml:space="preserve">
+    <value>por:</value>
+  </data>
+  <data name="NuGetExplorer_PageItemView_Run_Text_TotalDownloads" xml:space="preserve">
+    <value>Descargas totales</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_Button_ToolTip_ResetPackageSourceSettings" xml:space="preserve">
+    <value>Restablecer configuración de la fuente del paquete</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingControl_TextBlock_Text_PackageSource" xml:space="preserve">
+    <value>Fuente del paquete</value>
+  </data>
+  <data name="NuGetExplorer_PackageSourceSettingViewModel_Validation_Error_DuplicateFeedName_Template" xml:space="preserve">
+    <value>Dos o más feeds tienen el mismo nombre '{0}'</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Installed" xml:space="preserve">
+    <value>Instalado:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Button_Content_Uninstall" xml:space="preserve">
+    <value>Desinstalar</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Version" xml:space="preserve">
+    <value>Versión:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Button_Content_Install" xml:space="preserve">
+    <value>Instalación</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Authors" xml:space="preserve">
+    <value>Autor(es):</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_DatePublished" xml:space="preserve">
+    <value>Fecha de publicación:</value>
+  </data>
+  <data name="NuGetExplorer_PackageDetailsView_Label_Content_Tags" xml:space="preserve">
+    <value>Etiquetas:</value>
+  </data>
+  <data name="NuGetExplorer_ExplorerPageView_Button_Content_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Message" xml:space="preserve">
+    <value>No se puede instalar uno o más paquetes debido a errores de validación</value>
+  </data>
+  <data name="NuGetExplorer_PageActionBarViewModel_Error_CannotInstallPackages_Title" xml:space="preserve">
+    <value>No se pueden instalar paquetes</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_InstalledVersion" xml:space="preserve">
+    <value>Versión instalada</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_LatestVersion" xml:space="preserve">
+    <value>Última versión</value>
+  </data>
+  <data name="NuGetExplorer_PageItemViewModel_Version_UpdateVersion" xml:space="preserve">
+    <value>Versión actualizada</value>
+  </data>
 </root>
