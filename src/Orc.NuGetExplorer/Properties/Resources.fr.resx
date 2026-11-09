@@ -118,17 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template" xml:space="preserve">
     <value>Échec d’installer le paquet '{0}'.
 {1}</value>
   </data>
   <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" xml:space="preserve">
+    <value>Aucune source de paquet n’est fournie pour l’installation du paquet '{0}'</value>
+  </data>
+  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template_Duplicate[1]" xml:space="preserve">
+    <value>Échec d’installer le paquet '{0}'.
+{1}</value>
+  </data>
+  <data name="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template_Duplicate[1]" xml:space="preserve">
     <value>Aucune source de paquet n’est fournie pour l’installation du paquet '{0}'</value>
   </data>
   <data name="NuGetExplorer_WindowsCredentialProvider_MainInstruction" xml:space="preserve">

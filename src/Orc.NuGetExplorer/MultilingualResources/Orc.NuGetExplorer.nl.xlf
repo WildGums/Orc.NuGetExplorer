@@ -12,8 +12,17 @@
           <target state="new">Pakket '{0}' is niet geïnstalleerd.
 {1}</target>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
+          <target state="new">Pakket '{0}' is niet geïnstalleerd.
+{1}</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" translate="yes" xml:space="preserve">
           <source>No package sources provided for installing package '{0}'</source>
+          <target state="new">Geen pakketbronnen voor het installeren van pakket '{0}'</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
           <target state="new">Geen pakketbronnen voor het installeren van pakket '{0}'</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_WindowsCredentialProvider_MainInstruction" translate="yes" xml:space="preserve">

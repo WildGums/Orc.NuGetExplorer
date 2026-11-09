@@ -12,9 +12,18 @@
           <target state="new">Paket '{0}' wurde nicht installiert.
 {1}</target>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
+          <target state="new">Paket '{0}' wurde nicht installiert.
+{1}</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" translate="yes" xml:space="preserve">
           <source>No package sources provided for installing package '{0}'</source>
           <target state="new">Keine Paketquellen für die Installation des Pakets '{0}' bereitgestellt</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
+          <target state="new"></target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_WindowsCredentialProvider_MainInstruction" translate="yes" xml:space="preserve">
           <source>Credentials are required to access this feed</source>

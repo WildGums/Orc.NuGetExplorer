@@ -12,8 +12,17 @@
           <target state="new">No se ha conseguido instalar el paquete '{0}'.
 {1}</target>
         </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_FailedInstall_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
+          <target state="new">No se ha conseguido instalar el paquete '{0}'.
+{1}</target>
+        </trans-unit>
         <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template" translate="yes" xml:space="preserve">
           <source>No package sources provided for installing package '{0}'</source>
+          <target state="new">No se proporcionan fuentes de paquetes para instalar el paquete '{0}'</target>
+        </trans-unit>
+        <trans-unit id="NuGetExplorer_NuGetProjectPackageManager_Error_NoPackageSource_Template_Duplicate[1]" translate="yes" xml:space="preserve">
+          <source></source>
           <target state="new">No se proporcionan fuentes de paquetes para instalar el paquete '{0}'</target>
         </trans-unit>
         <trans-unit id="NuGetExplorer_WindowsCredentialProvider_MainInstruction" translate="yes" xml:space="preserve">
