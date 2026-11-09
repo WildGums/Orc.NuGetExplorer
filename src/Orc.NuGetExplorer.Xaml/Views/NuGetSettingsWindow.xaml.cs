@@ -11,6 +11,11 @@ using Orc.Controls;
 /// </summary>
 internal partial class NuGetSettingsWindow
 {
+    partial void OnInitializingComponent()
+    {
+        Mode = Catel.Windows.DataWindowMode.OkCancel;
+    }
+
     protected override void OnLoaded(EventArgs e)
     {
         base.OnLoaded(e);

@@ -8,6 +8,12 @@ using Catel.MVVM.Views;
 /// </summary>
 internal partial class ExplorerWindow
 {
+    partial void OnInitializingComponent()
+    {
+        // No buttons for now
+        //Mode = Catel.Windows.DataWindowMode.Close;
+    }
+
     partial void OnInitializedComponent()
     {
         SetCurrentValue(ShowInTaskbarProperty, false);
