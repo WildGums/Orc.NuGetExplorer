@@ -187,7 +187,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
     public bool IsCancellationTokenAlive { get; set; }
 
-    public bool IsLoadingInProcess { get; set; }
+    public bool IsLoadingInProgress { get; set; }
 
     public bool IsFirstLoaded { get; set; } = true;
 
@@ -343,20 +343,27 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
     private async void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        var currentFeed = Settings.ObservedFeed;
-        if (currentFeed is null)
+        // Ensure we're on the UI thread
+        await _dispatcherService.InvokeTaskAsync(async () =>
         {
-            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot perform update on empty feed");
-        }
+            var currentFeed = Settings.ObservedFeed;
+            if (currentFeed is null)
+            {
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot perform update on empty feed");
+            }
 
-        Logger.LogInformation("Updating page from feed {FeedName}", currentFeed.Name);
+            Logger.LogInformation("Updating page from feed {FeedName}", currentFeed.Name);
 
-        // Reset page package data
-        PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
+            // Reset invalidation flag since we're now loading
+            Invalidated = false;
 
-        var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
-        var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
-        await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
+            // Reset page package data
+            PageInfo = new PageContinuation(_nuGetConfigurationService.GetPackageQuerySize(), currentFeed.GetPackageSource());
+
+            var searchParams = new PackageSearchParameters(Settings.IsPreReleaseIncluded, Settings.SearchString, Settings.IsRecommendedOnly);
+            var pageSize = _nuGetConfigurationService.GetPackageQuerySize();
+            await VerifySourceAndLoadPackagesAsync(PageInfo, currentFeed, searchParams, pageSize);
+        });
     }
 
     private async Task VerifySourceAndLoadPackagesAsync(PageContinuation pageinfo, INuGetSource currentSource, PackageSearchParameters? searchParams, int pageSize)
@@ -407,7 +414,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
                         return;
                     }
 
-                    if (!IsLoadingInProcess)
+                    if (!IsLoadingInProgress)
                     {
                         await LoadPackagesAsync(pageinfo, searchParams ?? new(), pageTcs.Token);
                     }
@@ -516,7 +523,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
 
         try
         {
-            IsLoadingInProcess = true;
+            IsLoadingInProgress = true;
 
             Logger.LogInformation("Start package query on {Title} page", Title);
 
@@ -553,7 +560,7 @@ internal class ExplorerPageViewModel : FeaturedViewModelBase, IManagerPage
         }
         finally
         {
-            IsLoadingInProcess = false;
+            IsLoadingInProgress = false;
         }
     }
 

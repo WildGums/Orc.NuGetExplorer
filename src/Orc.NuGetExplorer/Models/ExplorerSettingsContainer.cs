@@ -10,6 +10,14 @@ public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
 {
     private INuGetSource? _observedFeed;
 
+    public ExplorerSettingsContainer()
+    {
+        IsPreReleaseIncluded = false;
+        IsHideInstalled = false;
+        IsRecommendedOnly = false;
+        SearchString = string.Empty;
+    }
+
     /// <summary>
     /// All feeds configured in application
     /// </summary>
@@ -40,7 +48,7 @@ public sealed class ExplorerSettingsContainer : ModelBase, INuGetSettings
 
     public bool IsRecommendedOnly { get; set; }
 
-    public string SearchString { get; set; } = string.Empty;
+    public string SearchString { get; set; }
 
     public void Clear()
     {
