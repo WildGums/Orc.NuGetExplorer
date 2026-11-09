@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.Fody;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
 using Microsoft.Extensions.Logging;

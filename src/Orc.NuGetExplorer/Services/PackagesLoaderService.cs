@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Catel;
 using Catel.Collections;
 using NuGet.Common;
 using NuGet.Protocol;

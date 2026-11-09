@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
 using Microsoft.Extensions.Logging;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGetExplorer.Web;

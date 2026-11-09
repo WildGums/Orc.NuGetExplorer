@@ -3,10 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Catel;
-using Catel.IoC;
 using Catel.MVVM.Views;
-using Microsoft.Extensions.DependencyInjection;
 
 public sealed partial class PackageSourceSettingControl
 {

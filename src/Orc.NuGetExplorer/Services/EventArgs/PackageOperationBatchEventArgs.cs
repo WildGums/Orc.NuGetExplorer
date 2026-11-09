@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using Catel;
 
 public class PackageOperationBatchEventArgs : CancelEventArgs
 {

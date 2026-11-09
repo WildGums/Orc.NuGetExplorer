@@ -37,7 +37,7 @@
         </Grid.Resources>
 
         <views:PageActionBar Visibility="{Binding CanBatchProjectActions, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
-                             DataContext="{Binding}"
+                             DataContext="{Binding ElementName=PageGrid, Path=DataContext}"
                              Margin="0 0 0 2"/>
 
 

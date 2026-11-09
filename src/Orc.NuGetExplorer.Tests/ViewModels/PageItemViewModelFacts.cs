@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using Catel;
-using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;

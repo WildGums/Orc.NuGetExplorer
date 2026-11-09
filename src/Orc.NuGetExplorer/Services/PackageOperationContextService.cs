@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Catel;
-using Catel.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
 internal class PackageOperationContextService : IPackageOperationContextService

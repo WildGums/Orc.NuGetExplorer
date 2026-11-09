@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.Configuration;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
@@ -19,7 +18,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
 {
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExplorerTopBarViewModel));
 
-    private readonly IUIVisualizerService _uIVisualizerService;
+    private readonly IUIVisualizerService _uiVisualizerService;
     private readonly INuGetCacheManager _nuGetCacheManager;
     private readonly IBusyIndicatorService _busyIndicatorService;
 
@@ -36,7 +35,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
         IViewModelFactory viewModelFactory)
         : base(serviceProvider)
     {
-        _uIVisualizerService = uiVisualizerService;
+        _uiVisualizerService = uiVisualizerService;
         _configurationService = configurationService;
         _nuGetCacheManager = nuGetCacheManager;
         _busyIndicatorService = busyIndicatorService;
@@ -104,7 +103,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
 
     private async Task OnShowPackageSourceSettingsExecuteAsync()
     {
-        var result = await _uIVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>();
+        var result = await _uiVisualizerService.ShowDialogAsync<NuGetSettingsViewModel>();
         if (result.DialogResult ?? false)
         {
             //update available feeds
@@ -116,7 +115,7 @@ internal class ExplorerTopBarViewModel : FeaturedViewModelBase
 
     private async Task OnShowExtensiblesAsync()
     {
-        await _uIVisualizerService.ShowDialogAsync<ExtensiblesViewModel>();
+        await _uiVisualizerService.ShowDialogAsync<ExtensiblesViewModel>();
     }
 
     public TaskCommand RunNuGetCachesClearing { get; set; }

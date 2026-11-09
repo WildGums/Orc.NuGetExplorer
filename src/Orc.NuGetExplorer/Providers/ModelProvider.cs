@@ -3,7 +3,6 @@
 using System;
 using System.ComponentModel;
 using Catel.Data;
-using Catel.IoC;
 using Microsoft.Extensions.DependencyInjection;
 
 public class ModelProvider<T> : IModelProvider<T> 

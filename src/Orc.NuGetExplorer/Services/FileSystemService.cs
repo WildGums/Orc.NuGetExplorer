@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer;
 
-using System;
 using System.IO;
 using Catel.Logging;
 using Microsoft.Extensions.Logging;

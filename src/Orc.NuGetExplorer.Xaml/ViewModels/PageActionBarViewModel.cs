@@ -28,7 +28,8 @@ internal class PageActionBarViewModel : ViewModelBase
 
     public PageActionBarViewModel(IManagerPage managerPage, IProgressManager progressManager, 
         IPackageCommandService packageCommandService, IPackageOperationContextService packageOperationContextService, 
-        IMessageService messageService, ICommandManager commandManager, ILanguageService languageService, IServiceProvider serviceProvider)
+        IMessageService messageService, ICommandManager commandManager, ILanguageService languageService, 
+        IServiceProvider serviceProvider)
         : base(serviceProvider)
     {
         _parentManagerPage = managerPage;
@@ -49,6 +50,7 @@ internal class PageActionBarViewModel : ViewModelBase
         {
             throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Command '{Commands.Packages.BatchUpdate}' is not valid registered command");
         }
+
         InvalidateCanBatchUpdateExecute = () => batchUpdateCommand.RaiseCanExecuteChanged();
 
         Parent = _parentManagerPage;
@@ -68,12 +70,15 @@ internal class PageActionBarViewModel : ViewModelBase
     {
         _parentManagerPage.PackageItems.CollectionChanged += OnParentPagePackageItemsCollectionChanged;
         NuGetPackage.AnyNuGetPackageCheckedChanged += OnAnyNuGetPackageCheckedChanged;
+
         return base.InitializeAsync();
     }
 
     protected override Task OnClosingAsync()
     {
         _parentManagerPage.PackageItems.CollectionChanged -= OnParentPagePackageItemsCollectionChanged;
+        NuGetPackage.AnyNuGetPackageCheckedChanged -= OnAnyNuGetPackageCheckedChanged;
+
         return base.OnClosingAsync();
     }
 
@@ -143,10 +148,18 @@ internal class PageActionBarViewModel : ViewModelBase
 
     public TaskCommand CheckAll { get; set; }
 
-    private async Task CheckAllExecuteAsync()
+    private Task CheckAllExecuteAsync()
     {
+        ApplyCheckAll();
+
+        return Task.CompletedTask;
+    }
+
+    private void ApplyCheckAll()
+    {
+        var isChecked = IsCheckAll;
         var packages = _parentManagerPage.PackageItems;
-        packages.ForEach(package => package.IsChecked = IsCheckAll);
+        packages.ForEach(package => package.IsChecked = isChecked);
 
         BatchInstall.RaiseCanExecuteChanged();
         InvalidateCanBatchUpdateExecute();
@@ -156,6 +169,14 @@ internal class PageActionBarViewModel : ViewModelBase
 
     private void OnParentPagePackageItemsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
+        if (IsCheckAll && e.NewItems is not null)
+        {
+            foreach (NuGetPackage package in e.NewItems)
+            {
+                package.IsChecked = true;
+            }
+        }
+
         InvalidateCommands();
     }
 

@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer;
 
 using Catel.IoC;
-using Catel.Logging;
 using Microsoft.Extensions.Logging;
 
 public class NuGetToMicrosoftLoggerTranslator : PackageManagerLogListenerBase, IConstructAtStartup

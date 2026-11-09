@@ -1,8 +1,5 @@
 ﻿namespace Orc.NuGetExplorer;
 
-using System.Collections.ObjectModel;
-using Catel.Collections;
-
 public class PackagesBatch
 {
     public PackagesBatch()

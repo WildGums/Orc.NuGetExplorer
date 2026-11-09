@@ -2,14 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Catel.Collections;
 using Catel.Configuration;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;

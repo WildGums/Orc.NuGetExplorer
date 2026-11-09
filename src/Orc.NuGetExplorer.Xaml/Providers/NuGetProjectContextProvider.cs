@@ -1,7 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Providers;
 
 using System;
-using Catel.IoC;
 using Microsoft.Extensions.DependencyInjection;
 using NuGet.ProjectManagement;
 using Orc.NuGetExplorer.Management;

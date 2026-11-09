@@ -2,8 +2,6 @@
 
 using Catel;
 using Microsoft.Extensions.DependencyInjection;
-using Orc.Controls;
-using Orc.FileSystem;
 
 internal static class ServiceCollectionHelper
 {

@@ -1,6 +1,5 @@
 ﻿namespace Orc.NuGetExplorer.Tests.Packaging;
 
-using Catel.IoC;
 using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using NuGet.Packaging;

@@ -1,8 +1,6 @@
 ﻿namespace Orc.NuGetExplorer.Tests.Services;
 
 using System.Threading.Tasks;
-using Catel.IoC;
-using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NuGet.Frameworks;

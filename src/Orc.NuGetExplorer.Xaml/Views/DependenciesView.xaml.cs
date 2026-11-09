@@ -2,7 +2,6 @@
 
 using System.Windows;
 using Catel.MVVM.Views;
-using Catel.Windows.Controls;
 
 /// <summary>
 /// Interaction logic for DependenciesView.xaml

@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -10,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Catel.Collections;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;

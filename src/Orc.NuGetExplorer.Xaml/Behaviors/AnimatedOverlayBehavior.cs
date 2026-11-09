@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using Catel.IoC;
 using Catel.Logging;
 using Catel.Windows;
 using Catel.Windows.Interactivity;

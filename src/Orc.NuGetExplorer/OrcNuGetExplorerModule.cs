@@ -8,8 +8,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 using NuGet.Frameworks;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using Orc.NuGetExplorer;
 using Orc.NuGetExplorer.Cache;

@@ -1,11 +1,13 @@
 ﻿namespace Orc.NuGetExplorer.Tests.ViewModels;
 
 using System;
-using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Data;
 using Catel;
-using Catel.Collections;
-using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,54 @@ internal class PageActionBarViewModelFacts
 {
     public class TheCheckAllExecuteAsyncMethod
     {
+        [TestCase]
+        [Apartment(ApartmentState.STA)]
+        public async Task Checkbox_Selects_And_Deselects_All_Packages_Async()
+        {
+            var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
+            var commandManager = serviceProvider.GetRequiredService<ICommandManager>();
+            commandManager.CreateCommandWithGesture(serviceProvider, typeof(Commands.Packages), nameof(Commands.Packages.BatchUpdate));
+
+            var page = new TestPage();
+            page.PackageItems.Add(GlobalMocks.CreateMockPackage("2.0.0", "Catel"));
+            page.PackageItems.Add(GlobalMocks.CreateMockPackage("3.0.0", "Orchestra"));
+            var vm = new PageActionBarViewModel(page, new Mock<IProgressManager>().Object,
+                new Mock<IPackageCommandService>().Object, new Mock<IPackageOperationContextService>().Object,
+                serviceProvider.GetRequiredService<IMessageService>(), commandManager,
+                serviceProvider.GetRequiredService<ILanguageService>(), serviceProvider);
+            await vm.InitializeViewModelAsync();
+            var checkbox = new CheckBox 
+            { 
+                DataContext = vm, 
+                Command = vm.CheckAll
+            };
+
+            checkbox.SetBinding(CheckBox.IsCheckedProperty, new Binding(nameof(vm.IsCheckAll)));
+            var onClick = typeof(CheckBox).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            onClick.Invoke(checkbox, null);
+
+            await vm.CheckAll.Task;
+
+            Assert.That(page.PackageItems.All(package => package.IsChecked), Is.True);
+
+            page.PackageItems.Add(GlobalMocks.CreateMockPackage("4.0.0", "NextPage"));
+
+            Assert.That(page.PackageItems.All(package => package.IsChecked), Is.True);
+
+            onClick.Invoke(checkbox, null);
+
+            await vm.CheckAll.Task;
+
+            Assert.That(page.PackageItems.All(package => !package.IsChecked), Is.True);
+
+            page.PackageItems.Add(GlobalMocks.CreateMockPackage("5.0.0", "UnselectedNextPage"));
+
+            Assert.That(page.PackageItems.All(package => !package.IsChecked), Is.True);
+            await vm.CloseViewModelAsync(false);
+        }
+
         [TestCase]
         public async Task InvalidatesPackagesBatchUpdateCommandAsync()
         {
@@ -48,7 +98,7 @@ internal class PageActionBarViewModelFacts
             var packageCommandService = new Mock<IPackageCommandService>().Object;
             var packageOperationContextService = new Mock<IPackageOperationContextService>().Object;
 
-            var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService, 
+            var vm = new PageActionBarViewModel(new TestPage(), progressManager, packageCommandService,
                 packageOperationContextService, messageService, commandManager,
                 serviceProvider.GetRequiredService<ILanguageService>(), serviceProvider);
             await vm.InitializeViewModelAsync();

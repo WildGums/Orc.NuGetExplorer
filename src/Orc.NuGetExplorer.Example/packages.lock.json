@@ -149,21 +149,21 @@
       },
       "Catel.Core": {
         "type": "Transitive",
-        "resolved": "7.0.1",
-        "contentHash": "5qPz48rEmScoxaSDbwjJlEKOfSvmWgY7WaZnpl2OtmXS/8sgRgCtTaJIomJ41+I1E90ln7230lW1ldUOLghGoA==",
+        "resolved": "7.1.0-alpha0092",
+        "contentHash": "EcuA0b64prRiO0XDK2GY74dMdIxTEO+AJvciMEU6pDQcKG3K3hH/jhjCgaQMB7IUwW11XFcd/t1VJw5K7aIxdA==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Json": "10.0.11",
-          "Microsoft.Extensions.DependencyInjection": "10.0.11",
-          "Microsoft.Extensions.Logging.Abstractions": "10.0.11"
+          "Microsoft.Extensions.Configuration.Json": "10.0.14",
+          "Microsoft.Extensions.DependencyInjection": "10.0.14",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.14"
         }
       },
       "Catel.MVVM": {
         "type": "Transitive",
-        "resolved": "7.0.1",
-        "contentHash": "Xi0YNsSBHlySyLxxfvcbnDZ9GEQqoM/RTc4zVGHOeeUzgzpNFabwFd1mp+gfXjYuGQrWqo6BZRumMIid8zW7RQ==",
+        "resolved": "7.1.0-alpha0092",
+        "contentHash": "EaashywAfDtrb12juj/vErxDshayb5al7yIew3jsGpfqWCObTQXopG4Sfs6bYOphrcynLXFDMsOb7FhxCYN3AQ==",
         "dependencies": {
-          "Catel.Core": "7.0.1",
-          "Microsoft.Xaml.Behaviors.Wpf": "1.1.158",
+          "Catel.Core": "7.1.0-alpha0092",
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.161",
           "System.ComponentModel.Annotations": "5.0.0"
         }
       },
@@ -414,8 +414,8 @@
       },
       "Microsoft.Xaml.Behaviors.Wpf": {
         "type": "Transitive",
-        "resolved": "1.1.158",
-        "contentHash": "TPQyXvLV/p4/RUeSqaEOUE2pBipFlvNVdrAsTd1qgNzBoIEN2UMJHwH0SrcUFVuDWqpZbphjXiZ/fGA9WnmbTg=="
+        "resolved": "1.1.161",
+        "contentHash": "V20pH5zYDm6RPjqASdDiidUckWreGntPwDx1YUEMXiRqMVSHvypAiwSeET3ZwoJbFLMTsXXxqsoyhkNOB3Vp4Q=="
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
@@ -610,7 +610,7 @@
       "orc.nugetexplorer": {
         "type": "Project",
         "dependencies": {
-          "Catel.MVVM": "[7.0.1, )",
+          "Catel.MVVM": "[7.1.0-alpha0092, )",
           "NuGet.PackageManagement": "[7.9.0, )",
           "Orc.FileSystem": "[6.0.0, )"
         }

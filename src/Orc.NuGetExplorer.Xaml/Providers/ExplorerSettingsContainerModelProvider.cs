@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 using Catel.Configuration;
-using Catel.IoC;
 using Catel.Logging;
 using Microsoft.Extensions.Logging;
 
