@@ -76,9 +76,9 @@
       },
       "Orc.Controls": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "tqZybfFZSBVjjUszTQmiqqhQutaJQewDAy2GzmwUFRUdWNekNGJGTJJEuPZXRJeUvnolTdZos9BsPcG8QpsvMg==",
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "CVzyknBtcwkLIfFf8ASdSMMf0YyXkbBCqWBErhcs9yUhsGbMOHkisFBHly+PwYihYS7SeVu4qGStQA4siJjsRA==",
         "dependencies": {
           "Orc.Automation": "6.0.1",
           "Orc.FileSystem": "6.0.0",
@@ -471,9 +471,9 @@
       },
       "Orc.Controls": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "tqZybfFZSBVjjUszTQmiqqhQutaJQewDAy2GzmwUFRUdWNekNGJGTJJEuPZXRJeUvnolTdZos9BsPcG8QpsvMg==",
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "CVzyknBtcwkLIfFf8ASdSMMf0YyXkbBCqWBErhcs9yUhsGbMOHkisFBHly+PwYihYS7SeVu4qGStQA4siJjsRA==",
         "dependencies": {
           "Orc.Automation": "6.0.1",
           "Orc.FileSystem": "6.0.0",
@@ -860,9 +860,9 @@
       },
       "Orc.Controls": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "tqZybfFZSBVjjUszTQmiqqhQutaJQewDAy2GzmwUFRUdWNekNGJGTJJEuPZXRJeUvnolTdZos9BsPcG8QpsvMg==",
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "CVzyknBtcwkLIfFf8ASdSMMf0YyXkbBCqWBErhcs9yUhsGbMOHkisFBHly+PwYihYS7SeVu4qGStQA4siJjsRA==",
         "dependencies": {
           "Orc.Automation": "6.0.1",
           "Orc.FileSystem": "6.0.0",
