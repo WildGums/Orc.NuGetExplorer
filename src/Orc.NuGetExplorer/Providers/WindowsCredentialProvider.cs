@@ -32,7 +32,7 @@ public class WindowsCredentialProvider : ICredentialProvider
 
     public string Id => "Windows Credentials";
 
-    public async Task<CredentialResponse> GetAsync(Uri uri, IWebProxy proxy, CredentialRequestType type, string message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken)
+    public async Task<CredentialResponse> GetAsync(Uri uri, IWebProxy? proxy, CredentialRequestType type, string? message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(uri);
 
@@ -53,7 +53,7 @@ public class WindowsCredentialProvider : ICredentialProvider
             ShowSaveCheckBox = true,
             WindowTitle = _languageService.GetRequiredString("NuGetExplorer_WindowsCredentialProvider_WindowTitle"),
             MainInstruction = _languageService.GetRequiredString("NuGetExplorer_WindowsCredentialProvider_MainInstruction"),
-            Content = message,
+            Content = message ?? string.Empty,
             IsAuthenticationRequired = true
         };
 

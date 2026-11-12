@@ -90,13 +90,13 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
     public string Title { get; private set; }
 
-    public string Description { get; private set; }
+    public string? Description { get; private set; }
 
-    public string Authors { get; private set; }
+    public string? Authors { get; private set; }
 
-    public string Summary { get; private set; }
+    public string? Summary { get; private set; }
 
-    public Uri IconUrl { get; private set; }
+    public Uri? IconUrl { get; private set; }
 
     private PackageStatus _status = PackageStatus.NotInstalled;
     public PackageStatus Status
@@ -169,7 +169,7 @@ public sealed class NuGetPackage : ObservableObject, IPackageDetails, IObservabl
 
     public IValidationContext? ValidationContext { get; set; }
 
-    IReadOnlyList<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+    IReadOnlyList<string> IPackageDetails.Authors => Authors?.SplitOrEmpty() ?? Array.Empty<string>();
 
     public long? DownloadCount { get; private set; }
 

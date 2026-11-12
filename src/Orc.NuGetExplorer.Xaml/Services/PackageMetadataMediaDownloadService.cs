@@ -36,19 +36,25 @@ public class PackageMetadataMediaDownloadService : IPackageMetadataMediaDownload
 
         try
         {
-            //skip if already in cache
-            if (_iconCache.IsCached(packageMetadata.IconUrl))
+            var iconUrl = packageMetadata.IconUrl;
+            if (iconUrl is null)
             {
                 return;
             }
 
-            if (packageMetadata.IconUrl.IsLoopback)
+            // Skip if already in cache
+            if (_iconCache.IsCached(iconUrl))
+            {
+                return;
+            }
+
+            if (iconUrl.IsLoopback)
             {
                 // No need to cache local files
                 return;
             }
 
-            await DownloadFromAsync(packageMetadata.IconUrl);
+            await DownloadFromAsync(iconUrl);
         }
         catch (WebException ex)
         {

@@ -304,7 +304,7 @@ namespace Orc.NuGetExplorer
     public interface IPackageDetails
     {
         System.Collections.Generic.IReadOnlyList<string> Authors { get; }
-        string Description { get; }
+        string? Description { get; }
         long? DownloadCount { get; }
         string FullName { get; }
         System.Uri? IconUrl { get; }
@@ -557,12 +557,12 @@ namespace Orc.NuGetExplorer
     public sealed class NuGetPackage : Catel.Data.ObservableObject, Orc.NuGetExplorer.IPackageDetails
     {
         public NuGetPackage(NuGet.Protocol.Core.Types.IPackageSearchMetadata packageMetadata, Orc.NuGetExplorer.Enums.MetadataOrigin fromPage) { }
-        public string Authors { get; }
-        public string Description { get; }
+        public string? Authors { get; }
+        public string? Description { get; }
         public long? DownloadCount { get; }
         public Orc.NuGetExplorer.Enums.MetadataOrigin FromPage { get; }
         public string FullName { get; }
-        public System.Uri IconUrl { get; }
+        public System.Uri? IconUrl { get; }
         public string Id { get; }
         public NuGet.Packaging.Core.PackageIdentity Identity { get; }
         public NuGet.Versioning.NuGetVersion? InstalledVersion { get; set; }
@@ -577,7 +577,7 @@ namespace Orc.NuGetExplorer
         public System.DateTimeOffset? Published { get; }
         public string SelectedVersion { get; set; }
         public Orc.NuGetExplorer.Enums.PackageStatus Status { get; set; }
-        public string Summary { get; }
+        public string? Summary { get; }
         public string Title { get; }
         public Catel.Data.IValidationContext? ValidationContext { get; set; }
         public System.Version Version { get; }
@@ -1063,10 +1063,10 @@ namespace Orc.NuGetExplorer.Packaging
         public PackageDetails(NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, NuGet.Packaging.Core.PackageIdentity identity, bool isLatestVersion = false) { }
         public System.Collections.Generic.IReadOnlyList<string> Authors { get; }
         public System.Collections.Generic.IReadOnlyList<NuGet.Packaging.PackageDependencyGroup> DependencySets { get; set; }
-        public string Description { get; }
+        public string? Description { get; }
         public long? DownloadCount { get; }
         public string FullName { get; }
-        public System.Uri IconUrl { get; }
+        public System.Uri? IconUrl { get; }
         public string Id { get; }
         public bool? IsInstalled { get; set; }
         public bool IsLatestVersion { get; }
@@ -1206,7 +1206,7 @@ namespace Orc.NuGetExplorer.Providers
     {
         public WindowsCredentialProvider(Catel.Configuration.IConfigurationService configurationService, Catel.Services.ILanguageService languageService) { }
         public string Id { get; }
-        public System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { }
+        public System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse> GetAsync(System.Uri uri, System.Net.IWebProxy? proxy, NuGet.Configuration.CredentialRequestType type, string? message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) { }
     }
 }
 namespace Orc.NuGetExplorer.Resolver

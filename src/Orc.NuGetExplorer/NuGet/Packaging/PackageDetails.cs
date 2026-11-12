@@ -11,7 +11,7 @@ using NuGet.Versioning;
 
 public class PackageDetails : IPackageDetails
 {
-    private readonly string _authors;
+    private readonly string? _authors;
 
     public PackageDetails(IPackageSearchMetadata metadata, bool isLatestVersion = false)
     {
@@ -49,9 +49,9 @@ public class PackageDetails : IPackageDetails
 
     public string FullName { get; }
 
-    public string Description { get; }
+    public string? Description { get; }
 
-    public Uri IconUrl { get; }
+    public Uri? IconUrl { get; }
 
     public Version Version => NuGetVersion.Version;
 
@@ -63,7 +63,7 @@ public class PackageDetails : IPackageDetails
 
     public string Title { get; }
 
-    public IReadOnlyList<string> Authors => _authors.SplitOrEmpty();
+    public IReadOnlyList<string> Authors => _authors?.SplitOrEmpty() ?? Array.Empty<string>();
 
     public DateTimeOffset? Published { get; }
 

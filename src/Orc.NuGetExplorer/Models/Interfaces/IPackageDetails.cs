@@ -12,7 +12,7 @@ public interface IPackageDetails
 
     string FullName { get; }
 
-    string Description { get; }
+    string? Description { get; }
 
     Uri? IconUrl { get; }
 

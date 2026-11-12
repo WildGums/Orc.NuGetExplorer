@@ -21,8 +21,6 @@ internal class CredentialsPrompter
 
     public CredentialsPrompter(IConfigurationService configurationService, string target)
     {
-        ArgumentNullException.ThrowIfNull(configurationService);
-
         _configurationService = configurationService;
 
         _credentialStoragePolicy = _configurationService.GetCredentialStoragePolicy();

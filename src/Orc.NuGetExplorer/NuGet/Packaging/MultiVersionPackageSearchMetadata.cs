@@ -51,7 +51,7 @@ internal class MultiVersionPackageSearchMetadata : ClonedPackageSearchMetadata, 
 
     public IValidationContext? ValidationContext { get; set; } = new ValidationContext();
 
-    IReadOnlyList<string> IPackageDetails.Authors => Authors.SplitOrEmpty();
+    IReadOnlyList<string> IPackageDetails.Authors => Authors?.SplitOrEmpty() ?? Array.Empty<string>();
 
     long? IPackageDetails.DownloadCount => DownloadCount;
 
